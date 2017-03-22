@@ -1,0 +1,182 @@
+package com.cn.leedane.controller;
+
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cn.leedane.model.CommentBean;
+import com.cn.leedane.service.CommentService;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.ResponseMap;
+
+@RestController
+@RequestMapping("/cm")
+public class CommentController extends BaseController{
+
+	protected final Log log = LogFactory.getLog(getClass());
+
+	//评论service
+	@Autowired
+	private CommentService<CommentBean> commentService;
+	
+	/**
+	 * 发表评论
+	 * @return
+	 */
+	@RequestMapping(value = "/comment", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> add(HttpServletRequest request, HttpServletResponse response){
+		ResponseMap message = new ResponseMap();
+		try {
+			if(!checkParams(message, request))
+				return message.getMap();
+			
+			message.putAll(commentService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
+			return message.getMap();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
+		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		return message.getMap();
+	}
+
+	/**
+	 * 获取对象的主要评论列表
+	 * @return
+	 */
+	@RequestMapping(value = "/comments", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> paging(
+			HttpServletRequest request, HttpServletResponse response){
+		ResponseMap message = new ResponseMap();
+		try {
+			checkParams(message, request);
+			message.put("message", commentService.getCommentsByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
+			message.put("isSuccess", true);
+			return message.getMap();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
+		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		return message.getMap();
+	}
+	
+	
+	/**
+	 * 获取每条评论的子评论列表
+	 * @return
+	 */
+	@RequestMapping("/getItemsPaging")
+	public Map<String, Object> getItemsPaging(HttpServletRequest request, HttpServletResponse response){
+		ResponseMap message = new ResponseMap();
+		try {
+			if(!checkParams(message, request))
+				return message.getMap();
+			
+			message.put("message", commentService.getOneCommentItemsByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
+			message.put("isSuccess", true);
+			return message.getMap();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
+		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		return message.getMap();
+	}
+	
+	/**
+	 * 获取每一条评论的评论总数
+	 * @return
+	 */
+	@RequestMapping("/getCountByObject")
+	public Map<String, Object> getCountByObject(HttpServletRequest request, HttpServletResponse response){
+		ResponseMap message = new ResponseMap();
+		try {
+			if(!checkParams(message, request))
+				return message.getMap();
+			
+			message.put("message", commentService.getCountByObject(getJsonFromMessage(message), getUserFromMessage(message), request));
+			message.put("isSuccess", true);
+			return message.getMap();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
+		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		return message.getMap();
+	}
+	
+	/**
+	 * 获取用户所有的评论数量
+	 * @return
+	 */
+	@RequestMapping("/getCommentsCountByUser")
+	public Map<String, Object> getCommentsCountByUser(HttpServletRequest request, HttpServletResponse response){
+		ResponseMap message = new ResponseMap();
+		try {
+			if(!checkParams(message, request))
+				return message.getMap();
+			
+			message.put("message", commentService.getCountByUser(getJsonFromMessage(message), getUserFromMessage(message), request));
+			message.put("isSuccess", true);
+			return message.getMap();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
+		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		return message.getMap();
+	}
+	
+	/**
+	 * 删除评论
+	 * @return
+	 */
+	@RequestMapping(value = "/comment/{cid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> delete(HttpServletRequest request, HttpServletResponse response){
+		ResponseMap message = new ResponseMap();
+		try {
+			//{"cid":1, "create_user_id":1}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
+			message.putAll(commentService.deleteComment(getJsonFromMessage(message), getUserFromMessage(message), request));
+			return message.getMap();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}     
+        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
+		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		return message.getMap();
+	}
+	
+	/**
+	 * 更改评论编辑状态
+	 * {'can_comment':true, 'table_name':'t_mood', 'table_id': 1},所有参数全部必须
+	 * @return
+	 */
+	@RequestMapping(value = "/comment", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> updateCommentStatus(HttpServletRequest request, HttpServletResponse response){
+		ResponseMap message = new ResponseMap();
+		try {
+			if(!checkParams(message, request))
+				return message.getMap();
+			
+			message.putAll(commentService.updateCommentStatus(getJsonFromMessage(message), getUserFromMessage(message), request));
+			return message.getMap();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
+		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		return message.getMap();
+	}
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebSockete Demo</title>
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+<script type="text/javascript">
+//验证浏览器是否支持WebSocket协议
+if(!window.WebSocket){
+	alert("WebSockeet not supported by this browser!");
+}
+var ws;
+function display(first){
+	ws = new WebSocket("ws://127.0.0.1:8080/leedaneMVC/websocket");
+	//监听消息
+	ws.onmessage = function(event){
+	log(event.data);
+	}
+ 
+	//关闭WebSocket
+	ws.onclose = function(event){
+		display(false);
+	}
+	//打开WebSocket
+	ws.onopen = function(event){
+		if(first)
+			ws.send("大家好，我是 ");
+	}
+	ws.onerror = function(event){
+		//alert(1);
+	}
+}
+var log = function(s){
+	if(document.readyState !== "complete"){
+		log.buffer.pust(s);
+	}else{
+		document.getElementById("contendId").innerHTML += (s + "\n");
+	}
+}
+function sendMsg(){
+	var msg = document.getElementById("messageId");
+	ws.send(msg.value);
+}
+</script>
+  </head>
+  
+  <body onload="display(true);">
+    <div id="valueLabel"></div>
+    <textarea rows="20" cols="30" id="contendId"></textarea>
+    <br/>
+    <input name="message" id="messageId"/>
+    <button id="sendButton" onClick="javascript:sendMsg()">Send</button>
+  </body>
+</html>

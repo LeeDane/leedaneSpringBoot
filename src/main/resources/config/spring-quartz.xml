@@ -1,0 +1,332 @@
+<beans xmlns="http://www.springframework.org/schema/beans"    
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   
+    xmlns:p="http://www.springframework.org/schema/p"  
+    xmlns:aop="http://www.springframework.org/schema/aop"   
+    xmlns:context="http://www.springframework.org/schema/context"  
+    xmlns:jee="http://www.springframework.org/schema/jee"  
+    xmlns:tx="http://www.springframework.org/schema/tx"  
+    xsi:schemaLocation="    
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd  
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd  
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd  
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.0.xsd">   
+
+    <context:component-scan base-package="com.cn.leedane.task"/>
+   	<!-- <bean id="myBean" class="com.cn.leedane.task.spring.scheduling.MyBean" init-method="printMessage"></bean> -->
+   
+   	<!-- For times when you just need to invoke a method on a specific object -->
+	<!-- <bean id="simpleJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="myBean" />
+		<property name="targetMethod" value="printMessage" />
+	</bean> -->
+
+
+	<!-- 网易新闻抓取数据 -->
+	<bean name="wangyiNewsCrawlJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.cn.leedane.task.spring.quartz.WangyiNewsCrawlScheduledJob" />
+		<property name="jobDataMap">
+			<map>
+				<entry key="wangyiNewsBean" value-ref="wangyiNewsBean" />
+			</map>
+		</property>
+		<property name="durability" value="true" />
+	</bean>
+	
+	<!-- 网易新闻处理数据 -->
+	<bean name="wangyiNewsDealJob" 	class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.cn.leedane.task.spring.quartz.WangyiNewsDealScheduledJob" />
+		<property name="jobDataMap">
+			<map>
+				<entry key="wangyiNewsBean" value-ref="wangyiNewsBean" />
+			</map>
+		</property>
+		<property name="durability" value="true" />
+	</bean>
+	
+	<!-- 散文网抓取数据 -->
+	<bean name="sanwenNetCrawlJob" 	class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.cn.leedane.task.spring.quartz.SanwenNetCrawlScheduledJob" />
+		<property name="jobDataMap">
+			<map>
+				<entry key="sanwenNetBean" value-ref="sanwenNetBean" />
+			</map>
+		</property>
+		<property name="durability" value="true" />
+	</bean>
+	
+	<!-- 散文网处理数据 -->
+	<bean name="sanwenNetDealJob" 	class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.cn.leedane.task.spring.quartz.SanwenNetDealScheduledJob" />
+		<property name="jobDataMap">
+			<map>
+				<entry key="sanwenNetBean" value-ref="sanwenNetBean" />
+			</map>
+		</property>
+		<property name="durability" value="true" />
+	</bean>
+	
+	<!-- 散文网短篇小说抓取数据 -->
+	<bean name="sanwenNetNovelCrawlJob" 	class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.cn.leedane.task.spring.quartz.SanwenNetNovelCrawlScheduledJob" />
+		<property name="jobDataMap">
+			<map>
+				<entry key="sanwenNetNovelBean" value-ref="sanwenNetNovelBean" />
+			</map>
+		</property>
+		<property name="durability" value="true" />
+	</bean>
+	
+	<!-- 散文网短篇小说处理数据 -->
+	<bean name="sanwenNetNovelDealJob" 	class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.cn.leedane.task.spring.quartz.SanwenNetNovelDealScheduledJob" />
+		<property name="jobDataMap">
+			<map>
+				<entry key="sanwenNetNovelBean" value-ref="sanwenNetNovelBean" />
+			</map>
+		</property>
+		<property name="durability" value="true" />
+	</bean>
+	
+	<!-- 上传七牛云存储服务器 -->
+	<bean name="uploadQiniuCloudJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.cn.leedane.task.spring.quartz.UploadQiniuCloudScheduledJob" />
+		<property name="jobDataMap">
+			<map>
+				<entry key="uploadQiniuCloud" value-ref="uploadQiniuCloud" />
+			</map>
+		</property>
+		<property name="durability" value="true" />
+	</bean>
+	
+	<!-- 处理记账月报信息 -->
+	<bean name="financialMonthJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.cn.leedane.task.spring.quartz.FinancialMonthScheduledJob" />
+		<property name="jobDataMap">
+			<map>
+				<entry key="financialMonth" value-ref="financialMonth" />
+			</map>
+		</property>
+		<property name="durability" value="true" />
+	</bean>
+	
+	<!-- 删除临时文件的调度任务 -->
+	<bean name="deleteTemporaryFilesJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.cn.leedane.task.spring.quartz.DeleteTemporaryFilesScheduledJob" />
+		<property name="jobDataMap">
+			<map>
+				<entry key="deleteTemporaryFiles" value-ref="deleteTemporaryFiles" />
+			</map>
+		</property>
+		<property name="durability" value="true" />
+	</bean>
+	
+	<!-- 加入solr索引的调度任务 -->
+	<bean name="solrIndexJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.cn.leedane.task.spring.quartz.SolrIndexScheduledJob" />
+		<property name="jobDataMap">
+			<map>
+				<entry key="solrIndex" value-ref="solrIndex" />
+			</map>
+		</property>
+		<property name="durability" value="true" />
+	</bean>
+	<!-- Run the job every 2 seconds with initial delay of 1 second -->
+	<!-- <bean id="simpleTrigger"  class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+		<property name="jobDetail" ref="simpleJobDetail" />
+		<property name="startDelay" value="1000" />
+		<property name="repeatInterval" value="20000" />
+	</bean>
+ -->
+
+	<!-- 网易新闻抓取数据触发器 -->
+	<bean id="wangyiNewsCrawlTrigger"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="wangyiNewsCrawlJob" />
+		<!--<property name="cronExpression" value="0 2 0 ? * *" /> 每天0点02分触发 -->
+		<property name="cronExpression" value="0 0/55 * * * ?" /><!-- 每隔15分钟运行一次 -->
+	</bean>
+	
+	<!-- 网易新闻处理数据触发器 -->
+	<bean id="wangyiNewsDealTrigger"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="wangyiNewsDealJob" />
+		<!-- <property name="cronExpression" value="0 55 0 ? * *" />每天0点55分触发 -->
+		<property name="cronExpression" value="0 0/55 * * * ?" /><!--  每隔30分钟运行一次 -->
+	</bean>
+	
+	<!-- 散文网抓取数据触发器 -->
+	<bean id="sanwenNetCrawlTrigger"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="sanwenNetCrawlJob" />
+		<property name="cronExpression" value="0 38 1 ? * *" /> <!--每天1点38分触发 -->
+		<!--<property name="cronExpression" value="0 0/50 * * * ?" /> 每隔20分钟运行一次 -->
+	</bean>
+	
+	<!-- 散文网处理数据触发器 -->
+	<bean id="sanwenNetDealTrigger"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="sanwenNetDealJob" />
+		<property name="cronExpression" value="0 55 2 ? * *" /> <!--每天2点55分触发 -->
+		<!--<property name="cronExpression" value="0 0/15 * * * ?" /> 每隔50分钟运行一次 -->
+	</bean>
+	
+	<!-- 散文网短篇小说抓取数据触发器 -->
+	<bean id="sanwenNetNovelCrawlTrigger"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="sanwenNetNovelCrawlJob" />
+		<property name="cronExpression" value="0 38 3 ? * *" /><!-- 每天3点38分触发 -->
+	</bean>
+	
+	<!-- 散文网短篇小说处理数据触发器 -->
+	<bean id="sanwenNetNovelDealTrigger"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="sanwenNetNovelDealJob" />
+		<property name="cronExpression" value="0 45 3 ? * *" /><!-- 每天3点45分触发 -->
+	</bean>
+	
+	<!-- 上传云存储服务器触发器 -->
+	<bean id="uploadQiniuCloudTrigger"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="uploadQiniuCloudJob" />
+		<property name="cronExpression" value="0 0/59 * * * ?" /><!-- 测试，每隔59分钟运行一次 -->
+	</bean>
+	
+	<!-- 记账月报触发器 -->
+	<bean id="financialMonthTrigger"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="financialMonthJob" />
+		<property name="cronExpression" value="0 0 2 1 * ?" /><!-- 每月1号凌晨2点0分触发  -->
+	</bean>
+	
+	<!-- 删除临时文件触发器 -->
+	<bean id="deleteTemporaryFilesTrigger"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="deleteTemporaryFilesJob" />
+		<property name="cronExpression" value="0 0 4 * * ?" /><!-- 每天凌晨4点运行一次 -->
+	</bean>
+	
+	<!-- 加入solr索引触发器 -->
+	<bean id="solrIndexTrigger"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="solrIndexJob" />
+		<property name="cronExpression" value="0 0 5 * * ?" /><!-- 每天凌晨5点运行一次 -->
+	</bean>
+	<!-- 调度工厂去胶合任务和触发器来配置Quartz调度：Scheduler factory bean to glue together jobDetails and triggers to Configure Quartz Scheduler -->
+	<bean  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="jobDetails">
+			<list>
+				<!-- <ref bean="simpleJobDetail" /> -->
+				<ref bean="wangyiNewsCrawlJob" />
+				<ref bean="wangyiNewsDealJob" />
+				<ref bean="sanwenNetCrawlJob" />
+				<ref bean="sanwenNetDealJob" />
+				<ref bean="sanwenNetNovelCrawlJob" />
+				<ref bean="sanwenNetNovelDealJob" />
+				<ref bean="uploadQiniuCloudJob" />
+				<ref bean="deleteTemporaryFilesJob" />
+				<ref bean="solrIndexJob" />
+				<ref bean="financialMonthJob"/>
+			</list>
+		</property>
+
+		<property name="triggers">
+			<list>
+				<!-- <ref bean="simpleTrigger" /> -->
+				<ref bean="wangyiNewsCrawlTrigger" />
+				<ref bean="wangyiNewsDealTrigger" />
+				<ref bean="sanwenNetCrawlTrigger" />
+				<ref bean="sanwenNetDealTrigger" />
+				<ref bean="sanwenNetNovelCrawlTrigger" />
+				<ref bean="sanwenNetNovelDealTrigger" />
+				<ref bean="uploadQiniuCloudTrigger" />
+				<ref bean="deleteTemporaryFilesTrigger" />
+				<ref bean="solrIndexTrigger" />
+				<ref bean="financialMonthTrigger" />
+			</list>
+		</property>
+	</bean>
+    
+<!-- 
+网络上关于quartz CronExpression表达式:
+
+一个cron表达式有至少6个（也可能7个）有空格分隔的时间元素。按顺序依次为1.秒（0~59）2.分钟（0~59）3.小时（0~23）4.天（月）（0~31，但是你需要考虑你月的天数）5.月（0~11）6.天（星期）（1~7 1=SUN 或 SUN，MON，TUE，WED，THU，FRI，SAT）7.年份（1970－2099）
+
+其中每个元素可以是一个值(如6),一个连续区间(9-12),一个间隔时间(8-18/4)(/表示每隔4小时),一个列表(1,3,5),通配符。由于"月份中的日期"和"星期中的日期"这两个元素互斥的,必须要对其中一个设置?.
+
+0 0 10,14,16 * * ? 每天上午10点，下午2点，4点0 0/30 9-17 * * ??? 朝九晚五工作时间内每半小时0 0 12 ? * WED 表示每个星期三中午12点
+
+有些子表达式能包含一些范围或列表例如：子表达式（天（星期））可以为 “MON-FRI”，“MON，WED，FRI”，“MON-WED,SAT”
+
+“*”字符代表所有可能的值因此，“*”在子表达式（月）里表示每个月的含义，“*”在子表达式（天（星期））表示星期的每一天
+
+“/”字符用来指定数值的增量例如：在子表达式（分钟）里的“0/15”表示从第0分钟开始，每15分钟 ;在子表达式（分钟）里的“3/20”表示从第3分钟开始，每20分钟（它和“3，23，43”）的含义一样“？”字符仅被用于天（月）和天（星期）两个子表达式，表示不指定值当2个子表达式其中之一被指定了值以后，为了避免冲突，需要将另一个子表达式的值设为“？”
+
+
+“L” 字符仅被用于天（月）和天（星期）两个子表达式，它是单词“last”的缩写
+
+但是它在两个子表达式里的含义是不同的。
+
+在天（月）子表达式中，“L”表示一个月的最后一天 ,在天（星期）自表达式中，“L”表示一个星期的最后一天，也就是SAT
+
+如果在“L”前有具体的内容，它就具有其他的含义了
+
+例如：“6L”表示这个月的倒数第６天，“ＦＲＩＬ”表示这个月的最后一个星期五
+
+注意：在使用“L”参数时，不要指定列表或范围，因为这会导致问题
+
+============================================
+
+
+CronTrigger配置完整格式为： [秒] [分] [小时] [日] [月] [周] [年]
+
+ 
+
+ 序号    说明     是否必填     允许填写的值    允许的通配符    
+
+ 1     秒     是     0-59       , - * /    
+
+ 2     分     是     0-59       , - * /    
+
+ 3    小时     是     0-23      , - * /    
+
+ 4     日     是     1-31      , - * ? / L W    
+
+ 5     月     是     1-12 or JAN-DEC      , - * /    
+
+ 6     周     是     1-7 or SUN-SAT      , - * ? / L #    
+
+ 7     年     否     empty 或 1970-2099      , - * /    
+
+通配符说明:*表示所有值. 例如:在分的字段上设置 "*",表示每一分钟都会触发。? 表示不指定值。使用的场景为不需要关心当前设置这个字段的值。例如:要在每月的10号触发一个操作，但不关心是周几，所以需要周位置的那个字段设置为"?" 具体设置为 0 0 0 10 * ?- 表示区间。例如 在小时上设置 "10-12",表示 10,11,12点都会触发。, 表示指定多个值，例如在周字段上设置 "MON,WED,FRI" 表示周一，周三和周五触发/用于递增触发。如在秒上面设置"5/15" 表示从5秒开始，每增15秒触发(5,20,35,50)。 在月字段上设置'1/3'所示每月1号开始，每隔三天触发一次。L 表示最后的意思。在日字段设置上，表示当月的最后一天(依据当前月份，如果是二月还会依据是否是润年[leap]), 在周字段上表示星期六，相当于"7"或"SAT"。如果在"L"前加上数字，则表示该数据的最后一个。例如在周字段上设置"6L"这样的格式,则表示“本月最后一个星期五" W 表示离指定日期的最近那个工作日(周一至周五). 例如在日字段上设置"15W"，表示离每月15号最近的那个工作日触发。如果15号正好是周六，则找最近的周五(14号)触发, 如果15号是周未，则找最近的下周一(16号)触发.如果15号正好在工作日(周一至周五)，则就在该天触发。如果指定格式为 "1W",它则表示每月1号往后最近的工作日触发。如果1号正是周六，则将在3号下周一触发。(注，"W"前只能设置具体的数字,不允许区间"-").# 序号(表示每月的第几个周几)，例如在周字段上设置"6#3"表示在每月的第三个周六.注意如果指定"#5",正好第五周没有周六，则不会触发该配置(用在母亲节和父亲节再合适不过了) ；小提示：'L'和 'W'可以一组合使用。如果在日字段上设置"LW",则表示在本月的最后一个工作日触发；周字段的设置，若使用英文字母是不区分大小写的，即MON与mon相同；常用示例:
+
+ 
+
+0 0 12 * * ?    每天12点触发    
+
+0 15 10 ? * *    每天10点15分触发    
+
+0 15 10 * * ?    每天10点15分触发    
+
+0 15 10 * * ? *    每天10点15分触发    
+
+0 15 10 * * ? 2005    2005年每天10点15分触发    
+
+0 * 14 * * ?    每天下午的 2点到2点59分每分触发    
+
+0 0/5 14 * * ?    每天下午的 2点到2点59分(整点开始，每隔5分触发)    
+
+0 0/5 14,18 * * ?    每天下午的 2点到2点59分、18点到18点59分(整点开始，每隔5分触发)    
+
+0 0-5 14 * * ?    每天下午的 2点到2点05分每分触发    
+
+0 10,44 14 ? 3 WED    3月分每周三下午的 2点10分和2点44分触发    
+
+0 15 10 ? * MON-FRI    从周一到周五每天上午的10点15分触发    
+
+0 15 10 15 * ?    每月15号上午10点15分触发    
+
+0 15 10 L * ?    每月最后一天的10点15分触发    
+
+0 15 10 ? * 6L    每月最后一周的星期五的10点15分触发    
+
+0 15 10 ? * 6L 2002-2005    从2002年到2005年每月最后一周的星期五的10点15分触发    
+
+0 15 10 ? * 6#3    每月的第三周的星期五开始触发    
+
+0 0 12 1/5 * ?    每月的第一个中午开始每隔5天触发一次    
+
+0 11 11 11 11 ?    每年的11月11号 11点11分触发(光棍节)   -->
+    
+</beans>

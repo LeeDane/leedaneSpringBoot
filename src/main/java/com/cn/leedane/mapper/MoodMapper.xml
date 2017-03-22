@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.MoodMapper">
+	
+	 <!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="getLimit" parameterType="java.util.Map" resultType="MoodBean">
+		<if test="method == 'firstloading'">
+			select a.id, a.table_name, a.table_id, a.create_user_id, u.account, date_format(a.create_time,'%Y-%c-%d %H:%i:%s') create_time from t_attention  a inner join t_user  u on u.id = a.create_user_id 
+			where a.create_user_id = #{toUserId} and a.status = #{status} order by a.id desc limit 0,#{pageSize}
+		</if>
+		
+		<if test="method == 'uploading'">
+			select a.id, a.table_name, a.table_id, a.create_user_id, u.account, date_format(a.create_time,'%Y-%c-%d %H:%i:%s') create_time from t_attention  a inner join t_user  u on u.id = a.create_user_id 
+			where a.create_user_id = #{toUserId} and a.status = #{status} and a.id > #{firstId} limit 0,#{pageSize}  
+		</if>
+	</select>
+	
+	<select id="shakeSearch" resultType="Integer">
+		select id from t_mood where status = #{status} and create_user_id != #{createUserId} order by rand() limit 1
+	</select>
+</mapper>

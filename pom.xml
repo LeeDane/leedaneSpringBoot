@@ -1,0 +1,406 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.cn.leedane</groupId>
+  <artifactId>leedaneSpringBoot</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+ <!-- Inherit defaults from Spring Boot -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.4.0.RELEASE</version>
+    </parent>
+    
+    <properties>
+    	<!-- myBatis -->
+        <mybatis.version>3.4.0</mybatis.version>
+        <mybatis-generator-core.version>1.3.2</mybatis-generator-core.version>
+        <mybatis-spring.version>1.3.0</mybatis-spring.version>
+        <mysql-connector-java.version>5.1.14</mysql-connector-java.version>
+        <!-- mybatis pagehelper -->
+        <pagehelper.version>3.6.3</pagehelper.version>
+        <!-- Jedis -->
+        <jedis.version>2.1.0</jedis.version>
+        
+        <!-- Spring -->
+        <spring.version>4.3.2.RELEASE</spring.version>
+        
+        <!-- Ehcache -->
+        <ehcache.version>2.4.3</ehcache.version>
+        
+        <!-- okhttp -->
+        <okhttp.version>2.5.0</okhttp.version>
+        
+    </properties>
+
+    <!-- Add typical dependencies for a web application -->
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!-- 如果在使用自带tomcat请注释下面，如果使用第三方tomcat不要注释下面 -->  
+        	<!-- <exclusions>    
+               <exclusion>    
+                   <groupId>org.springframework</groupId>    
+                   <artifactId>spring-context</artifactId>    
+               </exclusion>    
+           </exclusions> -->
+           
+           <exclusions>  
+		        <exclusion>  
+		            <groupId>org.springframework.boot</groupId>  
+		            <artifactId>spring-boot-starter-logging</artifactId>  
+		        </exclusion>  
+		    </exclusions> 
+        </dependency>
+        
+        <dependency>
+		    <groupId>log4j</groupId>
+		    <artifactId>log4j</artifactId>
+		    <version>1.2.12</version>
+		</dependency>
+        
+        <dependency>  
+            <groupId>org.springframework.boot</groupId>  
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>  
+        </dependency>  
+     
+     <!-- servlet依赖. -->
+        <dependency>
+               <groupId>javax.servlet</groupId>
+               <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+        <!--
+        		JSTL（JSP Standard TagLibrary，JSP标准标签库)是一个不断完善的开放源代码的JSP标签库，是由apache的jakarta小组来维护的。JSTL只能运行在支持JSP1.2和Servlet2.3规范的容器上，如tomcat 4.x。在JSP2.0中也是作为标准支持的。
+                                 不然报异常信息：javax.servlet.ServletException:Circular view path [/helloJsp]: would dispatch back to the current handler URL[/helloJsp] again. Check your ViewResolver setup! (Hint: This may be the resultof an unspecified view, due to default view name generation.)
+         -->
+
+        <dependency>
+               	<groupId>javax.servlet</groupId>
+               	<artifactId>jstl</artifactId>
+        </dependency>
+        
+        <dependency>
+         		<groupId>org.springframework.boot</groupId>
+         		<artifactId>spring-boot-starter-tomcat</artifactId>
+     	</dependency>
+        <dependency> 
+        		<groupId>org.apache.tomcat.embed</groupId> 
+        		<artifactId>tomcat-embed-jasper</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>4.10.4</version><!--$NO-MVN-MAN-VER$-->
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/net.sf.json-lib/json-lib -->
+		<dependency>
+		    <groupId>net.sf.json-lib</groupId>
+		    <artifactId>json-lib</artifactId>
+		    <version>2.1</version>
+		    <classifier>jdk15</classifier><!--指定jdk版本-->
+		</dependency>
+		
+		<!-- myBatis -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>${mybatis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>${mybatis-spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.generator</groupId>
+            <artifactId>mybatis-generator-core</artifactId>
+            <version>${mybatis-generator-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!-- mybatis pagehelper -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>${pagehelper.version}</version>
+        </dependency>
+        
+        <!-- Jedis https://mvnrepository.com/artifact/redis.clients/jedis -->
+		<dependency>
+		    <groupId>redis.clients</groupId>
+		    <artifactId>jedis</artifactId>
+		    <version>${jedis.version}</version>
+		</dependency>
+        
+        <!-- spring-test -->
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-test</artifactId>
+		    <version>${spring.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-jdbc</artifactId>
+		    <version>${spring.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context-support -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context-support</artifactId>
+		    <version>${spring.version}</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+		<!-- <dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context</artifactId>
+		    <version>4.0.4.RELEASE</version>
+		</dependency> -->
+		
+		
+		<!-- freemarker https://mvnrepository.com/artifact/org.freemarker/freemarker -->
+		<!-- <dependency>
+		    <groupId>org.freemarker</groupId>
+		    <artifactId>freemarker</artifactId>
+		    <version>2.3.19</version>
+		</dependency> -->
+		
+		
+        
+        <!-- comet4j -->
+        <dependency>
+	     	<groupId>com.leedane.comet4j</groupId>
+	     	<artifactId>comet4j</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\comet4j-tomcat7.jar</systemPath>
+	  	</dependency>
+	  	
+	  	<!-- jpush -->
+	  	<dependency>
+	     	<groupId>com.leedane.jpush</groupId>
+	     	<artifactId>jpush</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\jpush-client-3.2.7.jar</systemPath>
+	  	</dependency>
+	  	
+	  	<!-- zxing -->
+	  	<dependency>
+	     	<groupId>com.leedane.zxing</groupId>
+	     	<artifactId>core</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\zxing_core_3.2.0.jar</systemPath>
+	  	</dependency>
+	  	<dependency>
+	     	<groupId>com.leedane.zxing</groupId>
+	     	<artifactId>javase</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\zxing-javase.jar</systemPath>
+	  	</dependency>
+	  	
+	  	<!-- Ehcache -->
+		<dependency>
+		    <groupId>com.leedane.ehcache</groupId>
+	     	<artifactId>core</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\ehcache-core-2.4.3.jar</systemPath>
+		</dependency>
+	  	
+	  	<!-- axis -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>axis</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\axis.jar</systemPath>
+	  	</dependency>
+	  	<dependency>
+		    <groupId>com.leedane.other</groupId>
+	     	<artifactId>jaxrpc</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\jaxrpc.jar</systemPath>
+		</dependency>
+		
+		<!-- email -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>smtp</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\smtp.jar</systemPath>
+	  	</dependency>
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>mailapi</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\mailapi.jar</systemPath>
+	  	</dependency>
+	  	
+	  	<!-- taobao -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>taobao</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\taobao-sdk-java-auto_1452788057542-20160126.jar</systemPath>
+	  	</dependency>
+	  	
+	  	<!-- okHttp https://mvnrepository.com/artifact/com.squareup.okhttp/okhttp -->
+		<dependency>
+		    <groupId>com.squareup.okhttp</groupId>
+		    <artifactId>okhttp</artifactId>
+		    <version>${okhttp.version}</version>
+		</dependency>
+		
+		<!-- Lucene -->
+	  	<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-core -->
+		<dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-core</artifactId>
+		    <version>4.10.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-queryparser -->
+		<dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-queryparser</artifactId>
+		    <version>4.10.2</version>
+		</dependency>
+		<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>IKAnalyzer</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\IKAnalyzer2012_FF.jar</systemPath>
+	  	</dependency>
+	  	
+	  	<!-- Jsoup https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+		<dependency>
+		    <groupId>org.jsoup</groupId>
+		    <artifactId>jsoup</artifactId>
+		    <version>1.8.2</version>
+		</dependency>
+	  	
+	  	<!-- fastjson找不到1.1.16，暂时代替一下 https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+		<dependency>
+		    <groupId>com.alibaba</groupId>
+		    <artifactId>fastjson</artifactId>
+		    <version>1.2.25</version>
+		</dependency>
+	  	
+	  	<!--  jmimemagic -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>jmimemagic</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\jmimemagic-0.1.2.jar</systemPath>
+	  	</dependency>
+	  	
+	  	<!-- rabbitmq 跟服务器一样同一个版本 https://mvnrepository.com/artifact/com.rabbitmq/amqp-client -->
+		<dependency>
+		    <groupId>com.rabbitmq</groupId>
+		    <artifactId>amqp-client</artifactId>
+		    <version>3.6.4</version>
+		</dependency>
+	  	
+	  	<!-- dom4j https://mvnrepository.com/artifact/dom4j/dom4j -->
+		<dependency>
+		    <groupId>dom4j</groupId>
+		    <artifactId>dom4j</artifactId>
+		    <version>1.6.1</version>
+		</dependency>
+	  	
+	  	<!-- xstream https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
+		<dependency>
+		    <groupId>com.thoughtworks.xstream</groupId>
+		    <artifactId>xstream</artifactId>
+		    <version>1.4</version>
+		</dependency>
+		
+		<!-- gson https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+		<dependency>
+		    <groupId>com.google.code.gson</groupId>
+		    <artifactId>gson</artifactId>
+		    <version>1.7.1</version>
+		</dependency>
+		
+	  	<!-- quartz https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->
+		<dependency>
+		    <groupId>org.quartz-scheduler</groupId>
+		    <artifactId>quartz</artifactId>
+		    <version>2.2.1</version>
+		</dependency>
+	  	
+	  	<!-- Qrcode -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>Qrcode</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\Qrcode_swetake.jar</systemPath>
+	  	</dependency>
+	  	
+	  	<!-- ueditor-1.1.1.jar -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>ueditor</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\ueditor-1.1.1.jar</systemPath>
+	  	</dependency>
+	  	
+	  	<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+		    <groupId>org.json</groupId>
+		    <artifactId>json</artifactId>
+		    <version>20160810</version>
+		</dependency>
+	  	
+	  	<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+		<dependency>
+		    <groupId>commons-fileupload</groupId>
+		    <artifactId>commons-fileupload</artifactId>
+		    <version>1.3.1</version>
+		</dependency>
+	  	
+	  	<!-- commons-codec -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>commons-codec</artifactId>
+	     	<scope>system</scope>
+	     	<version>1.0</version>
+	     	<systemPath>${basedir}\src\lib\commons-codec-1.9.jar</systemPath>
+	  	</dependency>
+	  	
+        <dependency>  
+		    <groupId>junit</groupId>  
+		    <artifactId>junit</artifactId>  
+		</dependency>
+    </dependencies>
+
+    <!-- Package as an executable jar -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head>
+	 	<meta charset="utf-8" />
+	   	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	   	<style type="text/css">
+			.padding-five{
+				padding: 5px;
+			}
+			.cut-text{
+				display: block;
+				white-space: nowrap; 
+				overflow: hidden; 
+				text-overflow: ellipsis;
+			}
+			.text-align-center{
+				text-align: center;
+			}
+			
+	   	</style>
+	</head>
+	<body>
+		<div th:include="/admin/common :: hello">what?</div>
+		<script th:src="@{/page/admin/user/black.js}" type="text/javascript"></script>
+	  	<div class="container clearFloat">
+	  		<div class="row" style="margin-top: 10px;">
+		   		<div class="col-lg-12">
+				    <table class="table table-bordered main-table">
+						<caption>以下是黑名单用户列表</caption>
+						<thead>
+							<tr height="50">
+								<th width="10" ><!-- <input type="checkbox" value="选择"> --></th>
+								<th width="200" class="text-align-center">标题</th>
+								<th class="text-align-center">简要</th>
+								<th width="100" class="text-align-center">发布人</th>
+								<th width="150" class="text-align-center">发布时间</th>
+								<th width="80" class="text-align-center">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- <tr class="each-row" height="50">
+								<td><input type="checkbox" value="选择"></td>
+								<td>Rabbitmq和Redis的队列的比较</td>
+								<td><a href="http://127.0.0.1:8080/leedaneMVC/page/detail.jsp?bid=6551" target="_blank">一生只谈三次恋爱最好，一次懵懂，一次刻骨，一次一生。谈的太多会比较，无法确定；经历太多会麻木，不再相信爱情，行尸走肉，最后与不爱的人结婚，无法发自内心的爱对方，日常表现的应付，对方则抱怨你不够关心和不顾家，最后这失败的爱情，让你在遗憾和凑合中走完一生。</a></td>
+								<td>leedane</td>
+								<td>2016-10-10 10:10</td>
+								<th width="150" class="text-align-center"><button type="button" class="btn btn-primary">立即审核</button></th>
+							</tr> -->
+						</tbody>
+					</table>
+				</div>
+		   	</div>	
+		</div>
+		
+	<!-- 模态框审核信息 -->
+	<div class="modal fade" id="check-blog" data-id= "0" tabindex="-1" role="dialog" aria-labelledby="checkModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="checkModalLabel">
+						文章审核
+					</h4>
+				</div>
+				<div class="modal-body modal-body-check">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="btn-group" data-toggle="buttons">
+								<label class="btn btn-primary check-btn">
+									<input type="radio" name="options" id="agree" type-value="1" /> 通过
+								</label>
+								<label class="btn btn-primary check-btn">
+									<input type="radio" name="options" id="no-agree" type-value="2" /> 不通过
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="row" style="margin-top: 8px;">
+						<div class="col-lg-12">
+							<div class="form-group reason-group">
+							  <label for="reason">不通过原因<font color="red">*</font></label>
+							  <textarea class="form-control" name="reason" placeholder="请输入详细的原因"></textarea>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭
+					</button>
+					<button type="button" class="btn btn-primary" onclick="check(this);">
+						确定
+					</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal -->
+	</div>
+	</body>
+</html>  

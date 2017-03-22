@@ -1,0 +1,88 @@
+<beans xmlns="http://www.springframework.org/schema/beans"    
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   
+    xmlns:p="http://www.springframework.org/schema/p"  
+    xmlns:aop="http://www.springframework.org/schema/aop"   
+    xmlns:context="http://www.springframework.org/schema/context"  
+    xmlns:jee="http://www.springframework.org/schema/jee"  
+    xmlns:tx="http://www.springframework.org/schema/tx"  
+    xsi:schemaLocation="    
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd  
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd  
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd  
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.0.xsd">   
+
+    <context:component-scan base-package="com.cn.leedane"></context:component-scan>
+    
+    <!-- 基本mapper,Service类配置 -->
+    <bean id="basemapper" class="com.cn.leedane.mapper.impl.BasemapperImpl" abstract="true">
+        	<property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+    <!-- baseService以前是注释掉的 -->
+	<bean id="baseService" class="com.cn.leedane.service.impl.BaseServiceImpl" abstract="true">
+		<property name="basemapper" ref ="basemapper"></property>
+	</bean>
+	
+	<!-- 操作日志Action类配置 -->
+    <!-- <bean id="operateLogmapper" class="com.cn.leedane.mapper.impl.OperateLogmapperImpl">
+        	<property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+	<bean id="operateLogService" class="com.cn.leedane.service.impl.OperateLogServiceImpl">
+		<property name="operateLogmapper" ref ="operateLogmapper"></property>
+	</bean> -->
+	
+	<bean id="userHandler" class="com.cn.leedane.handler.UserHandler">
+			<property name="userService" ref="userService"></property>
+	</bean>
+	
+	<bean id="commentHandler" class="com.cn.leedane.handler.CommentHandler">
+			<property name="commentService" ref="commentService"></property>
+	</bean>
+	
+	<bean id="transmitHandler" class="com.cn.leedane.handler.TransmitHandler">
+			<property name="transmitService" ref="transmitService"></property>
+	</bean>
+	
+	<bean id="zanHandler" class="com.cn.leedane.handler.ZanHandler">
+			<property name="zanService" ref="zanService"></property>
+	</bean>
+	
+	<bean id="moodHandler" class="com.cn.leedane.handler.MoodHandler">
+			<property name="moodService" ref="moodService"></property>
+	</bean>
+	<bean id="commonHandler" class="com.cn.leedane.handler.CommonHandler">
+			<property name="moodHandler" ref="moodHandler"></property>
+	</bean>
+	<bean id="blogHandler" class="com.cn.leedane.handler.BlogHandler">
+			<property name="blogService" ref="blogService"></property>
+	</bean>
+	
+	<bean id="cloudStoreHandler" class="com.cn.leedane.handler.CloudStoreHandler">
+			<property name="systemCache" ref="systemCache"></property>
+	</bean>
+	
+	<bean id="wechatHandler" class="com.cn.leedane.handler.WechatHandler">
+	</bean>
+	<bean id="circleOfFriendsHandler" class="com.cn.leedane.handler.CircleOfFriendsHandler">
+		<property name="moodService" ref="moodService"></property>
+	</bean>
+	
+	<bean id="fanHandler" class="com.cn.leedane.handler.FanHandler">
+		<property name="fanService" ref="fanService"></property>
+	</bean>
+	
+	<bean id="notificationHandler" class="com.cn.leedane.handler.NotificationHandler">
+			<property name="notificationService" ref="notificationService"></property>
+			<property name="friendHandler" ref="friendHandler"></property>
+			<property name="userHandler" ref="userHandler"></property>
+	</bean>
+	
+	<bean id="chatSquareHandler" class="com.cn.leedane.handler.ChatSquareHandler">
+	</bean>
+	
+	<!-- <bean id="myEhcache" class="com.cn.leedane.Utils.MyEhcache">
+     	<property name="cache" ref="cache"></property>
+     </bean> -->
+	
+</beans>

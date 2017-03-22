@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.UserMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="findAll" resultType="UserBean">
+		select id,account,age, date_format(register_time,'%Y-%c-%d %H:%i:%s') registerTime from t_user
+	</select>
+	
+	<select id="findAllList" resultType="HashMap">
+		select id,account,age, date_format(register_time,'%Y-%c-%d %H:%i:%s') registerTime from t_user
+	</select>
+	<select id="loginUser" resultType="UserBean">
+		select * from t_user where (account=#{condition} or email=#{condition}) and password=#{password} limit 1
+	</select>
+	<select id="loginUserByPhone" resultType="UserBean">
+		select * from t_user where mobile_phone = #{mobilePhone} limit 1
+	</select>
+	
+	<select id="loginByWeChat" resultType="UserBean">
+		select * from t_user where wechat_user_name = #{fromUserName} and status = #{status} 
+	</select>
+	
+	<select id="checkRegisterCode" resultType="UserBean">
+		select * from t_user where registerCode=#{registerCode} and status = 2
+	</select>
+	
+	<select id="find4MoreUser" resultType="java.util.Map">
+		
+	</select>
+	
+	<select id="getAllUsers" resultType="UserBean">
+		select * from t_user where status=#{status}
+	</select>
+	
+	<select id="getUserByNoLoginCode" resultType="UserBean">
+		select * from t_user where account = #{account} and no_login_code = #{noLoginCode} and status = #{status}
+	</select>
+	
+	<select id="shakeSearch" resultType="UserBean">
+		select * from t_user where status = #{status} and id != #{createUserId} order by rand() limit 1
+	</select>
+</mapper>

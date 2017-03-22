@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.FinancialMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 --> 
+	<select id="getLimit" resultType="java.util.Map">
+		select * from t_financial where date_format(create_time,'%Y')=#{year} and status=#{status} and create_user_id=#{userId} order by create_time desc
+	</select>
+	
+	<select id="getAll" resultType="java.util.Map">
+		select imei,model,money, one_level, two_level, has_img, path, location, 
+			longitude, latitude, financial_desc, date_format(addition_time,'%Y-%m-%d %H:%i:%s') addition_time
+			, date_format(create_time,'%Y-%m-%d %H:%i:%s') create_time
+			, id, create_user_id, status  
+		from t_financial where status=#{status} and create_user_id=#{userId} 
+		order by create_time desc
+	</select>
+	
+	<select id="getByTimeRange" resultType="FinancialBean">
+		select * from t_financial where status=#{status} and create_user_id=#{createUserId}  and addition_time between #{startTime} and #{endTime} 
+		order by create_time desc
+	</select>
+</mapper>

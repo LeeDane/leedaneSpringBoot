@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	
+	<welcome-file-list>
+		<welcome-file>index</welcome-file>
+	</welcome-file-list>
+	<!-- 优先级是content-param > listener > filter > servlet -->
+	
+	<!-- comet4j配置 -->
+	<listener>  
+            <description>Comet4J容器侦听</description>  
+            <listener-class>org.comet4j.core.CometAppListener</listener-class>  
+    </listener>
+    <servlet>  
+            <description>Comet连接[默认:org.comet4j.core.CometServlet]</description>  
+            <display-name>CometServlet</display-name>  
+            <servlet-name>CometServlet</servlet-name>  
+            <servlet-class>org.comet4j.core.CometServlet</servlet-class>  
+    </servlet>  
+    <servlet-mapping>  
+            <servlet-name>CometServlet</servlet-name>  
+            <url-pattern>/conn</url-pattern>  
+    </servlet-mapping>  
+    
+    <listener>                              
+     <description>Comet4jServer</description>
+     <listener-class>com.cn.leedane.comet4j.Comet4jServer</listener-class>
+   </listener>
+   
+   	<servlet>
+   		<servlet-name>websocket</servlet-name>  
+		<servlet-class>com.cn.leedane.chat_room.ChatWebsocketServlet</servlet-class>  
+		<load-on-startup>1</load-on-startup>  
+	</servlet>  
+	<servlet-mapping>    
+	        <servlet-name>websocket</servlet-name>    
+	        <url-pattern>/websocket</url-pattern>    
+	</servlet-mapping>
+   
+    <servlet>  
+             <description>销毁操作页面key</description>  
+             <display-name>destroyedComet4jServlet</display-name>  
+             <servlet-name>destroyedComet4jServlet</servlet-name>  
+             <servlet-class>com.cn.leedane.servlet.DestroyedComet4jServlet</servlet-class>  
+     </servlet>  
+     <servlet-mapping>  
+             <servlet-name>destroyedComet4jServlet</servlet-name>  
+             <url-pattern>/destroyedComet4jServlet</url-pattern>  
+    </servlet-mapping>
+	
+	<!-- 设置Spring容器加载所有的配置文件的路径 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:config/spring-*.xml</param-value>
+	</context-param>
+
+	<!-- 配置SpringMVC核心控制器 -->
+	<servlet>
+		<servlet-name>springMVC</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<!-- 配置初始配置化文件,前面contextConfigLocation看情况二选一 -->  
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value></param-value>
+		</init-param>
+		<!-- 启动加载一次 -->  
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<!-- 加载Spring容器配置 -->
+	<listener>
+		<listener-class>com.cn.leedane.listener.CacheContextLoaderListener</listener-class>
+	</listener>
+
+	<!--为DispatcherServlet建立映射 -->
+	<servlet-mapping>
+		<servlet-name>springMVC</servlet-name>
+		<!-- 此处可以可以配置成*.do，对应struts的后缀习惯 -->
+		<!-- <url-pattern>/</url-pattern> -->
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>springMVC</servlet-name>
+		<url-pattern>/index</url-pattern><!-- 必须 -->
+	</servlet-mapping>
+
+	<!-- 防止Spring内存溢出监听器 -->
+	<listener>
+		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+	</listener>
+
+	<!-- 解决工程编码过滤器 -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	
+	<servlet>  
+            <description>LoginQrCode生成登录二维码</description>  
+            <servlet-name>LoginQrCode</servlet-name>  
+            <servlet-class>com.cn.leedane.servlet.LoginQrCode</servlet-class>  
+    </servlet>  
+    <servlet-mapping>  
+            <servlet-name>LoginQrCode</servlet-name>  
+            <url-pattern>/loginQrCode</url-pattern>  
+    </servlet-mapping> 
+    
+    <servlet>  
+            <description>百度富文本编辑器上传文件</description>  
+            <servlet-name>UeditorFileUploadServlet</servlet-name>  
+            <servlet-class>com.cn.leedane.servlet.UeditorFileUploadServlet</servlet-class>  
+    </servlet>  
+    <servlet-mapping>  
+            <servlet-name>UeditorFileUploadServlet</servlet-name>  
+            <url-pattern>/UeditorFileUploadServlet</url-pattern>  
+    </servlet-mapping>  
+    
+    
+	
+    
+    <!-- Comet4J可选参数配置-->
+    <context-param>
+            <description>语言[支持：zh,en,默认:zh，详细http://www.loc.gov/standards/iso639-2/php/English_list.php]</description>
+            <param-name>Comet.Language</param-name>
+            <param-value>zh</param-value>
+    </context-param>
+    <context-param>
+            <description>请求超时时间/微妙[默认:60000,1分钟,建议至少设置3秒以上]</description>
+            <param-name>Comet.Timeout</param-name>
+            <param-value>60000</param-value>
+    </context-param>
+    <context-param>
+            <description>连接空闲过期时间/微妙[默认:5000,5秒]</description>
+            <param-name>Comet.ConnExpires</param-name>
+            <param-value>5000</param-value>
+    </context-param>
+    <context-param>
+            <description>连接检查频率/微妙[默认:5000,5秒]</description>
+            <param-name>Comet.ConnFrequency</param-name>
+            <param-value>5000</param-value>
+    </context-param>
+    <context-param>
+            <description>缓存信息过期时间/微妙[默认:60000,1分种]</description>
+            <param-name>Comet.CacheExpires</param-name>
+            <param-value>60000</param-value>
+    </context-param>
+    <context-param>
+            <description>缓存信息过期检查频率/微妙[默认:60000,1分种]</description>
+            <param-name>Comet.CacheFrequency</param-name>
+            <param-value>60000</param-value>
+    </context-param>
+    <context-param>
+            <description>连接模式[auto(默认)/stream/lpool]</description>
+            <param-name>Comet.WorkStyle</param-name>
+            <param-value>lpool</param-value>
+    </context-param>
+    <context-param>
+            <description>开启调试[false(默认)/true]</description>
+            <param-name>Comet.Debug</param-name>
+            <param-value>false</param-value>
+    </context-param>
+</web-app>
