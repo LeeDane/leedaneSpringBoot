@@ -3,10 +3,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -278,7 +276,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			BlogSolrHandler.getInstance().deleteBean(String.valueOf(id));
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作成功.value);
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
@@ -463,11 +461,10 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	}
 
 	@Override
-	public Map<String, Object> edit(JSONObject jo, UserBean user,
+	public Map<String, Object> edit(int blogId, UserBean user,
 			HttpServletRequest request) {
-		logger.info("BlogServiceImpl-->edit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
+		logger.info("BlogServiceImpl-->edit():blogId=" +blogId +", user=" +user.getAccount());
 		
-		int blogId = JsonUtil.getIntValue(jo, "blog_id");
 		Map<String,Object> message = new HashMap<String,Object>();
 		message.put("isSuccess", false);
 		if(blogId < 1){

@@ -202,6 +202,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 		if(result){
 			message.put("isSuccess", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);

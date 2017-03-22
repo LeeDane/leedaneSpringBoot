@@ -11,9 +11,9 @@ var ue = UE.getEditor('editor', {
               'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
               'directionalityltr', 'directionalityrtl', 'indent', '|',
               'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
-              'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
-              'simpleupload', 'insertimage', 'emotion', 'scrawl', 'insertvideo'/* , 'music' MP3*/, 'attachment', 'map', /* 'gmap', 谷歌地图 */ 'insertframe', 'insertcode'/* , 'webapp' 百度应用 */, 'pagebreak', 'template', 'background', '|',
-              'horizontal', 'date', 'time', 'spechars', 'snapscreen', 'wordimage', '|',
+              'link', 'unlink', 'anchor', '|', /*'imagenone', 'imageleft', 'imageright', 'imagecenter', '|', 
+              'simpleupload', */'insertimage','emotion', 'scrawl'/*, 'insertvideo' , 'music' MP3*/, 'attachment', 'map', /* 'gmap', 谷歌地图 */ 'insertframe', 'insertcode'/* , 'webapp' 百度应用 */, 'pagebreak', 'template', 'background', '|',
+              'horizontal', 'date', 'time', 'spechars', /*'snapscreen', */'wordimage', '|',
               'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
               'print', 'preview', 'searchreplace', 'drafts'/* , 'help' 帮助 */
           ]],
@@ -54,9 +54,7 @@ $(function(){
  */
 function getEditBlog(bid){
 	$.ajax({
-		type : "post",
-		data : {blog_id: bid},
-		url : getBasePath() +"leedane/blog/edit.action",
+		url : "/bg/blog/edit/"+ bid,
 		dataType: 'json', 
 		beforeSend:function(){
 		},
@@ -66,11 +64,11 @@ function getEditBlog(bid){
 			}else{
 				layer.msg(data.message);
 				javascript:window.history.forward(1);
-				setTimeout('window.open("'+getBasePath()+'page/publish-blog.jsp", "_self")', 1500);
+				setTimeout('window.open("/pb", "_self")', 1500);
 			}
 		},
-		error : function() {
-			layer.msg("网络请求失败");
+		error : function(data) {
+			ajaxError(data);
 		}
 	});
 }
@@ -215,7 +213,7 @@ function clearTag(obj){
 		$.ajax({
 			type : "post",
 			data : jsonParams,
-			url : getBasePath() +"leedane/blog/releaseBlog.action",
+			url : "/bg/blog",
 			dataType: 'json', 
 			beforeSend:function(){
 			},
@@ -228,9 +226,9 @@ function clearTag(obj){
 					layer.msg(data.message);
 				}
 			},
-			error : function() {
+			error : function(data) {
 				layer.close(loadi);
-				layer.msg("网络请求失败");
+				ajaxError(data);
 			}
 		});
  }
@@ -356,8 +354,7 @@ function clearTag(obj){
  function draftlist(){
 	 var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 		$.ajax({
-			type : "post",
-			url : getBasePath() +"leedane/blog/draftList.action",
+			url : "/bg/drafts",
 			dataType: 'json', 
 			beforeSend:function(){
 				$("#draft-group-list").empty();
@@ -372,9 +369,9 @@ function clearTag(obj){
 					layer.msg(data.message);
 				}
 			},
-			error : function() {
+			error : function(data) {
 				layer.close(loadi);
-				layer.msg("网络请求失败");
+				ajaxError(data);
 			}
 		});
  }
@@ -442,9 +439,8 @@ function clearTag(obj){
 	}, function(){
 		var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 		$.ajax({
-			type : "post",
-			data : {b_id: draftList[index].id, t: Math.random()},
-			url : getBasePath() +"leedane/blog/deleteBlog.action",
+			type: "delete",
+			url : "/bg/blog?b_id=" + draftList[index].id,
 			dataType: 'json', 
 			beforeSend:function(){
 			},
@@ -456,9 +452,9 @@ function clearTag(obj){
 				}
 				layer.msg(data.message);
 			},
-			error : function() {
-				layer.msg("网络请求失败");
+			error : function(data) {
 				layer.close(loadi);
+				ajaxError(data);
 			}
 		});
 	}, function(){

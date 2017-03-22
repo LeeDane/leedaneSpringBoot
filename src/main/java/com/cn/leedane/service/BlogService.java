@@ -211,12 +211,12 @@ public interface BlogService <T extends IDBean>{
 
 	/**
 	 * 编辑文章
-	 * @param json
+	 * @param blogId
 	 * @param user
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> edit(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> edit(int blogId, UserBean user, HttpServletRequest request);
 
 	/**
 	 * 未审核文章列表

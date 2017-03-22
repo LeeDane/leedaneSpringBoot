@@ -16,6 +16,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -279,9 +280,9 @@ public class BlogController extends BaseController{
 	 * @return
 	 * @throws Exception 
 	 */
-	@RequestMapping(value="/blog", method = RequestMethod.GET)
+	@RequestMapping(value="/blog/{blogId}", method = RequestMethod.GET)
 	public Map<String, Object> getOneBlog(
-			@RequestParam("blogId") int blogId,
+			@PathVariable("blogId") int blogId,
 			HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try{
@@ -446,14 +447,14 @@ public class BlogController extends BaseController{
 	 * 编辑文章
 	 * @return
 	 */
-	@RequestMapping(value="/blog", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> edit(HttpServletRequest request){
+	@RequestMapping(value="/blog/edit/{blog_id}", method = RequestMethod.GET)
+	public Map<String, Object> edit(@PathVariable("blog_id") int blogId, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))
 				return message.getMap();
 			
-			message.putAll(blogService.edit(getJsonFromMessage(message), getUserFromMessage(message), request));
+			message.putAll(blogService.edit(blogId, getUserFromMessage(message), request));
 			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();

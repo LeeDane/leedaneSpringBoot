@@ -1078,7 +1078,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		if(result){
 			message.put("isSuccess", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.新密码修改成功.value));
-			message.put("responseCode", EnumUtil.ResponseCode.新密码修改成功.value);
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);

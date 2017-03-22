@@ -974,7 +974,7 @@ public class UserController extends BaseController{
 				
 				UserSolrHandler.getInstance().updateBean(user);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
-				message.put("responseCode", EnumUtil.ResponseCode.操作成功.value);
+				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 				message.put("isSuccess", true);
 				
 				// 保存用户绑定日志信息
