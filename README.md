@@ -6,7 +6,7 @@
 
 #主要使用到的技术
   * springboot+maven
-  * Jsoup实现对网站的爬去和解析
+  * Jsoup实现对网站的爬虫和解析
   * Redis对用户信息/文章/心情等进行缓存
   * 用springMVC来支持restful接口风格
   * Solr实现对用户/文章/心情的全文检索
