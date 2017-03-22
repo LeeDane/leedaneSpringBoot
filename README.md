@@ -1,14 +1,14 @@
 #说在前面的话
-  > 提醒：自2016-7-14日起，将不维护spring+struts2+hibernate这个项目，原来SSH框架项目地址[点击这里](https://github.com/LeeDane/appServer)，今后只开发spring+springmvc+mybatis组合框架实现版 
+  > 最近在其他技术论坛上看到微服务的入门级微框架springboot，感觉还是挺有意思的，就想到把服务器端改造一下，就有现在的版本。经过一个星期的学习和努力，springmvc版本的大部分功能都已经集成过来了，网站页面大多数都能正常使用。目前还没有集成的是任务调度、扫码登录(用到comet4j的servlet)、ueditor的文件上传(springboot不推荐使用JSP)、聊天功能(springboot用到tomcat8,不想修改这块，稍后再集成)等，主要做的调整是将原先的大部分的jsp页面换成HTML+thymeleaf实现、把网站所用到的接口全部改成restful风格(app用到的接口稍后修改)。
 
 #前言
   > 大家好，这个是本人日常学习的项目--java服务器端源码。目前先把原形做出来，很多代码还没有来得及重构，阅读的时候难免有问题，希望看到兄弟能多多指正，共同学习。android app端地址[请点击这里](https://github.com/LeeDane/app)
 
 #主要使用到的技术
-  * Websocket+redis聊天室
+  * springboot
   * Jsoup实现对网站的爬去和解析
   * Redis对用户信息/文章/心情等进行缓存
-  * 用springMVC来支持restful接口规范
+  * 用springMVC来支持restful接口风格
   * Solr实现对用户/文章/心情的全文检索
   * Rabbitmq提供消息队列
   * Echarts展示分析结果的图表
