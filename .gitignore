@@ -15,3 +15,5 @@ src/main/java/com/cn/leedane/weibo
 target
 build
 logs
+src/main/resources/appConfig.properties
+src/main/resources/application.properties
