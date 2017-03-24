@@ -1,0 +1,53 @@
+package com.cn.leedane.shiro;
+
+import org.apache.shiro.authc.UsernamePasswordToken;
+
+import com.cn.leedane.utils.EnumUtil.PlatformType;
+
+/**
+ * 自定义身份校验
+ * @author LeeDane
+ * 2017年3月24日 上午10:59:54
+ * version 1.0
+ */
+public class CustomAuthenticationToken extends UsernamePasswordToken{
+	
+	//标记平台的类型
+	private PlatformType platformType = PlatformType.网页版;
+	
+	//非网页平台要校验的token码
+	private String token;
+	
+	//用户的唯一ID
+	private int userId;
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public PlatformType getPlatformType() {
+		return platformType;
+	}
+
+	public void setPlatformType(PlatformType platformType) {
+		this.platformType = platformType;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+	
+}
