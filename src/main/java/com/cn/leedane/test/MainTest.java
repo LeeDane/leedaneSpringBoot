@@ -11,10 +11,14 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.Map;
 
-import com.cn.leedane.model.UserBean;
+import net.sf.json.JSONObject;
+
+import com.cn.leedane.utils.Base64Util;
+import com.cn.leedane.utils.DES;
 import com.cn.leedane.utils.DateUtil;
+import com.cn.leedane.utils.HttpConnectionUtil;
 
 /**
  * main方法相关的测试类
@@ -62,7 +66,7 @@ public class MainTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		testIntAndInteger();
+		//testIntAndInteger();
 		//SqlSessionTemplate sqlSessionTemplate = (SqlSessionTemplate) SpringUtil.getBean("sqlSessionTemplate");
 		//Object o = sqlSessionTemplate.selectOne("select id from t_user");
 		//sqlSessionTemplate
@@ -70,12 +74,12 @@ public class MainTest {
 		/*UserService<UserBean> userService = (UserService<UserBean>) SpringUtil.getBean("userService");
 		UserBean user = userService.findById(1);
 		System.out.println(user.getAccount());*/
-		UserBean user = new UserBean();
-		user.setAccount("dane");
+		//UserBean user = new UserBean();
+		//user.setAccount("dane");
 		
 		/*UserBean user1 = new UserBean();
 		user1.setAccount("dane");*/
-		UserBean user1 = user;
+		/*UserBean user1 = user;
 		
 		System.out.println(user.equals(user1));
 		HashMap<String, Object> obj1 = new HashMap<String, Object>();
@@ -85,8 +89,30 @@ public class MainTest {
 		Hashtable<String, Object> hashtable = new Hashtable<String, Object>();
 		hashtable.put("12", 12);
 		hashtable.put("hehe", "122");
-		System.out.println(hashtable.contains("12"));
+		System.out.println(hashtable.contains("12"));*/
+		String dd = HttpConnectionUtil.sendGetRequest("http://127.0.0.1:8088/md/moods?page_size=15&last_id=0&first_id=0&method=firstloading&to_user_id=1&t=0.48936390729158696");
+		System.out.println("响应："+ dd);
 		
+		 
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("username", "管理员");
+		map.put("pwd", "54a2ec5f4421fa24bfa9bf6461e649a2");
+		map.put("time", "20170324000000");
+		map.put("overdue", "20170424000000");
+		JSONObject json = JSONObject.fromObject(map);
+		String value = json.toString();
+		try {
+			byte[] key = DES.generateKey();
+			//byte[] ff = DES.encrypt(value.getBytes(), key);
+			//String ffV = new String(ff, "UTF-8");
+			char[] hh = Base64Util.encode(value.getBytes());
+			System.out.println(new String(hh) + "数据---");
+			byte[] gg = Base64Util.decode(new String(hh).toCharArray());
+			System.out.println("还原---" + new String(gg));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	private static void testIntAndInteger() {
 		int i = 10;

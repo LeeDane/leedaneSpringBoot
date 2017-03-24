@@ -5,8 +5,7 @@ import javax.annotation.Resource;
 import org.junit.Test;
 
 import com.cn.leedane.mapper.RolesMapper;
-import com.cn.leedane.model.RolesBean;
-import com.cn.leedane.service.RolesService;
+import com.cn.leedane.model.RoleBean;
 
 /**
  * 角色相关的测试类
@@ -15,14 +14,14 @@ import com.cn.leedane.service.RolesService;
  * Version 1.0
  */
 
-public class RolesTest extends BaseTest {
+public class RoleTest extends BaseTest {
 	
 	@Resource
 	private RolesMapper rolesMapper;
 	
 	@Test
 	public void addCompany() throws Exception{
-		RolesBean roles = rolesMapper.findById(RolesBean.class, 1);
-		rolesMapper.save(roles);
+		RoleBean role = rolesMapper.findById(RoleBean.class, 1);
+		rolesMapper.save(role);
 	}	
 }

@@ -11,6 +11,6 @@ import com.cn.leedane.model.IDBean;
  * Version 1.0
  */
 @Transactional("txManager")
-public interface RolesService <T extends IDBean>{
+public interface RoleService <T extends IDBean>{
 	
 }

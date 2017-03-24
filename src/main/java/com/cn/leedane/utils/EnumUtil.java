@@ -381,7 +381,8 @@ public class EnumUtil {
 		链接操作失败(3085),
 		没有更多数据(3086),
 		目前暂不支持的操作方法(3087),
-		非正常登录状态(3088)
+		非正常登录状态(3088),
+		不能访问没有授权的链接(2010),
 		;
 		
 		private ResponseCode(int value) {
@@ -470,6 +471,19 @@ public class EnumUtil {
         快递("快递"),
         运动("运动");
         FinancialIcons(String value) {
+            this.value = value;
+        }
+        public final String value;
+    }
+    
+    /**
+     * 平台类型
+     * value为展示的文字
+     */
+    public enum PlatformType{
+        网页版("web"),
+        安卓版("android");
+        PlatformType(String value) {
             this.value = value;
         }
         public final String value;

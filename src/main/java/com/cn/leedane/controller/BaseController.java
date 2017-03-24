@@ -2,6 +2,7 @@ package com.cn.leedane.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -12,19 +13,32 @@ import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONObject;
 
+import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.ExcessiveAttemptsException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authz.Permission;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.subject.Subject;
 import org.springframework.util.CollectionUtils;
 
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.UserService;
+import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.PlatformType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.SessionManagerUtil;
 import com.cn.leedane.utils.StringUtil;
 
 public class BaseController {
-	
+	private Logger logger = Logger.getLogger(getClass());
+
 	@Resource
 	protected UserService<UserBean> userService;
 	
@@ -119,8 +133,147 @@ public class BaseController {
 		return result;
 	}
 	
+	/**
+	 * 校验是否有单个角色
+	 * @param permission
+	 * @return
+	 * @throws UnauthorizedException
+	 */
+	protected boolean checkRoleAuthor(String role) throws UnauthorizedException{//不授权异常
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        boolean rs = currentUser.hasRole(role);
+        if(rs)
+        	return rs;
+		
+        throw new UnauthorizedException();
+	}
+	
+	/**
+	 * 校验是否有角色(全部角色都要满足)
+	 * @param request
+	 * @return
+	 */
+	protected boolean checkAllRoleAuthor(String ... roles) throws UnauthorizedException{//不授权异常
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        boolean rs = currentUser.hasAllRoles(Arrays.asList(roles));
+        if(rs)
+        	return rs;
+		
+        throw new UnauthorizedException();
+	}
+	
+	/**
+	 * 校验是否有角色(只要一个满足就行,这种方式需要检验所有的role)
+	 * @param roles
+	 * @return
+	 * @throws UnauthorizedException 不成功将抛出“不授权异常”
+	 */
+	protected boolean checkAnyRoleAuthor(String ... roles) throws UnauthorizedException{//不授权异常
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        boolean[] rs = currentUser.hasRoles(Arrays.asList(roles));
+        for(boolean r: rs)
+	        if(r)
+	        	return r;
+		
+        throw new UnauthorizedException();
+	}
+	
+	/**
+	 * 校验是否有角色(只要一个满足就行,这种方式按照顺序遍历role，验证成功将直接返回)
+	 * @param traverse
+	 * @param roles
+	 * @return
+	 * @throws UnauthorizedException 不成功将抛出“不授权异常”
+	 */
+	protected boolean checkAnyRoleAuthor(boolean traverse, String ... roles) throws UnauthorizedException{//不授权异常
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        for(String role: roles){
+        	if(currentUser.hasRole(role)){
+        		return true;
+        	}
+        }
+        
+        throw new UnauthorizedException();
+	}
+	
+	/**
+	 * 校验是否有单个权限
+	 * @param permission
+	 * @return
+	 * @throws UnauthorizedException
+	 */
+	protected boolean checkPermissionAuthor(String permission) throws UnauthorizedException{//不授权异常
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        boolean rs = currentUser.isPermitted(permission);
+        if(rs)
+        	return rs;
+		
+        throw new UnauthorizedException();
+	}
+	
+	/**
+	 * 校验是否有权限(全部权限都要满足)
+	 * @param request
+	 * @return
+	 */
+	protected boolean checkAllPermissionAuthor(String ... permissions) throws UnauthorizedException{//不授权异常
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        boolean rs = currentUser.isPermittedAll(permissions);
+        if(rs)
+        	return rs;
+		
+        throw new UnauthorizedException();
+	}
+	
+	/**
+	 * 校验是否有权限(只要一个满足就行,这种方式需要检验所有的permission)
+	 * @param permissions
+	 * @return
+	 * @throws UnauthorizedException 不成功将抛出“不授权异常”
+	 */
+	@Deprecated
+	protected boolean checkAnyPermissionAuthor(String ... permissions) throws UnauthorizedException{//不授权异常
+		/*Permission permission = new 
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        boolean[] rs = currentUser.isPermitted(Arrays.asList(permissions));
+        for(boolean r: rs)
+	        if(r)
+	        	return r;
+		*/
+        throw new UnauthorizedException();
+	}
+	
+	/**
+	 * 校验是否有权限(只要一个满足就行,这种方式按照顺序遍历permission，验证成功将直接返回)
+	 * @param traverse
+	 * @param roles
+	 * @return
+	 * @throws UnauthorizedException 不成功将抛出“不授权异常”
+	 */
+	@Deprecated
+	protected boolean checkAnyPermissionAuthor(boolean traverse, String ... permissions) throws UnauthorizedException{//不授权异常
+		//获取当前的Subject  
+        /*Subject currentUser = SecurityUtils.getSubject();
+        for(String role: permissions){
+        	if(currentUser.hasRole(role)){
+        		return true;
+        	}
+        }*/
+        
+        throw new UnauthorizedException();
+	}
+	
 	public boolean checkLogin(HttpServletRequest request, Map<String, Object> message){
 		boolean result = false;
+		
+		//获取session
 		Object sessionUserInfo = request.getSession().getAttribute(UserController.USER_INFO_KEY);
 		
 		UserBean user = null;
@@ -163,14 +316,9 @@ public class BaseController {
 				}
 			}
 			
-			
-			//从请求免登录码获取用户信息
-			if(user == null && json.has("no_login_code") && json.has("account")){						
-				//拿到免登陆码
-				String noLoginCode = JsonUtil.getStringValue(json, "no_login_code");
-				//拿到登录账户
-				String account = JsonUtil.getStringValue(json, "account");
-				user = userService.getUserByNoLoginCode(account, noLoginCode);
+			//对于有token的再进行shiro校验
+			if(user == null){						
+				result = appAuthCheck(request, message);
 			}
 			
 			if(user != null){
@@ -220,11 +368,134 @@ public class BaseController {
 					message.put("responseCode", returnErrorCode);
 				}
 			}else{
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value));
-				message.put("responseCode", EnumUtil.ResponseCode.请先登录.value);
+				if(!result && !message.containsKey("message")){
+					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value));
+					message.put("responseCode", EnumUtil.ResponseCode.请先登录.value);
+				}
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * 统一App登录验证检查
+	 * @param request
+	 * @return
+	 */
+	public boolean appAuthCheck(HttpServletRequest request, Map<String, Object> message){
+		//拿到token码
+		String token = request.getHeader("token");
+		
+		//校验token
+		if(StringUtil.isNotNull(token)){
+			//拿token到shiro进行登录校验
+			//JSONObject js = JSONObject.fromObject(new String(Base64Util.decode(token.toCharArray())));
+	        int userid = StringUtil.changeObjectToInt(request.getHeader("userid"));
+			
+	        //从token获取到密码
+			//拿到username用户名称
+	        CustomAuthenticationToken usernamePasswordToken = new CustomAuthenticationToken();
+	        usernamePasswordToken.setUserId(userid);;
+	        usernamePasswordToken.setPassword(token.toCharArray());
+	        usernamePasswordToken.setToken(token);
+	        usernamePasswordToken.setRememberMe(true);
+	        usernamePasswordToken.setPlatformType(PlatformType.安卓版);
+	        
+	        //获取当前的Subject  
+	        Subject currentUser = SecurityUtils.getSubject();
+	        
+	        try {  
+	            //在调用了login方法后,SecurityManager会收到AuthenticationToken,并将其发送给已配置的Realm执行必须的认证检查  
+	            //每个Realm都能在必要时对提交的AuthenticationTokens作出反应  
+	            //所以这一步在调用login(token)方法时,它会走到MyRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法  
+	            logger.info("对用户[" + userid + "]进行登录验证..验证开始");  
+	            currentUser.login(usernamePasswordToken);  
+	            logger.info("对用户[" + userid + "]进行登录验证..验证通过");  
+	        }catch(UnknownAccountException uae){  
+	            logger.info("对用户[" + userid + "]进行登录验证..验证未通过,未知账户");  
+	            message.put("message", "未知账户");  
+	        }catch(IncorrectCredentialsException ice){  
+	            logger.info("对用户[" + userid + "]进行登录验证..验证未通过,错误的凭证");  
+	            message.put("message", "密码不正确");  
+	        }catch(LockedAccountException lae){  
+	            logger.info("对用户[" + userid + "]进行登录验证..验证未通过,账户已锁定");  
+	            message.put("message", "账户已锁定");  
+	        }catch(ExcessiveAttemptsException eae){  
+	            logger.info("对用户[" + userid + "]进行登录验证..验证未通过,错误次数过多");  
+	            message.put("message", "用户名或密码错误次数过多");  
+	        }catch(AuthenticationException ae){  
+	            //通过处理Shiro的运行时AuthenticationException就可以控制用户登录失败或密码错误时的情景  
+	            logger.info("对用户[" + userid + "]进行登录验证..验证未通过,堆栈轨迹如下");  
+	            ae.printStackTrace();  
+	            message.put("message", "用户名或密码不正确");  
+	        }  
+	        //验证是否登录成功  
+	        if(currentUser.isAuthenticated()){  
+	            logger.info("用户[" + userid + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)"); 
+	            message.put("message", "恭喜您登录成功"); 
+	            message.put("isSuccess", true); 
+	            return true;
+	        }else{  
+	        	usernamePasswordToken.clear();  
+	        } 
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * 统一登录验证检查
+	 * @param request
+	 * @return
+	 */
+	public boolean loginAuthCheck(HttpServletRequest request, String username, String pwd, Map<String, Object> message){
+		
+			
+		//拿到username用户名称
+        CustomAuthenticationToken usernamePasswordToken = new CustomAuthenticationToken();
+        usernamePasswordToken.setPassword(pwd.toCharArray());
+        usernamePasswordToken.setUsername(username);
+        usernamePasswordToken.setRememberMe(true);
+        
+        //获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        
+        try {  
+            //在调用了login方法后,SecurityManager会收到AuthenticationToken,并将其发送给已配置的Realm执行必须的认证检查  
+            //每个Realm都能在必要时对提交的AuthenticationTokens作出反应  
+            //所以这一步在调用login(token)方法时,它会走到MyRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法  
+            logger.info("对用户[" + username + "]进行登录验证..验证开始");  
+            currentUser.login(usernamePasswordToken);  
+            logger.info("对用户[" + username + "]进行登录验证..验证通过");  
+        }catch(UnknownAccountException uae){  
+            logger.info("对用户[" + username + "]进行登录验证..验证未通过,未知账户");  
+            message.put("message", "未知账户");  
+        }catch(IncorrectCredentialsException ice){  
+            logger.info("对用户[" + username + "]进行登录验证..验证未通过,错误的凭证");  
+            message.put("message", "密码不正确");  
+        }catch(LockedAccountException lae){  
+            logger.info("对用户[" + username + "]进行登录验证..验证未通过,账户已锁定");  
+            message.put("message", "账户已锁定");  
+        }catch(ExcessiveAttemptsException eae){  
+            logger.info("对用户[" + username + "]进行登录验证..验证未通过,错误次数过多");  
+            message.put("message", "用户名或密码错误次数过多");  
+        }catch(AuthenticationException ae){  
+            //通过处理Shiro的运行时AuthenticationException就可以控制用户登录失败或密码错误时的情景  
+            logger.info("对用户[" + username + "]进行登录验证..验证未通过,堆栈轨迹如下");  
+            ae.printStackTrace();  
+            message.put("message", "用户名或密码不正确");  
+        }  
+        //验证是否登录成功  
+        if(currentUser.isAuthenticated()){  
+            logger.info("用户[" + username + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)"); 
+            message.put("message", "恭喜您登录成功"); 
+            message.put("isSuccess", true); 
+            return true;
+        }else{  
+        	usernamePasswordToken.clear();  
+        }
+		
+		return false;
 	}
 	
 	/**

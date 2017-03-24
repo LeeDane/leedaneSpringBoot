@@ -2,8 +2,8 @@ package com.cn.leedane.service.impl;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.model.UserRoleBean;
-import com.cn.leedane.service.UserRoleService;
+import com.cn.leedane.model.RoleBean;
+import com.cn.leedane.service.RoleService;
 
 /**
  * 用户角色service实现类
@@ -12,6 +12,6 @@ import com.cn.leedane.service.UserRoleService;
  * Version 1.0
  */
 @Service("userRoleService")
-public class UserRoleServiceImpl implements UserRoleService<UserRoleBean> {
+public class RoleServiceImpl implements RoleService<RoleBean> {
 	Logger logger = Logger.getLogger(getClass());
 }

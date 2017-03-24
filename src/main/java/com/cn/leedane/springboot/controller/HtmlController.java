@@ -64,15 +64,10 @@ public class HtmlController extends BaseController{
 		return "index";
 	}*/
 	
-	@RequestMapping("/")
+	@RequestMapping(value = {"/", "/index"})
 	public String index1(Model model, HttpSession httpSession, HttpServletRequest request){
 		//首页不需要验证是否登录
 		return loginRoleCheck("index", model, httpSession, request);
-	}
-	
-	@RequestMapping("/index")
-	public String index2(Model model, HttpSession httpSession, HttpServletRequest request){
-		return index1(model, httpSession, request);
 	}
 	
 	@RequestMapping("/pt")
@@ -160,6 +155,11 @@ public class HtmlController extends BaseController{
 	@RequestMapping("/cs")
 	public String chatSquare(Model model, HttpSession httpSession, HttpServletRequest request){
 		return loginRoleCheck("chat-square", model, httpSession, request);
+	}
+	
+	@RequestMapping("/403")
+	public String unauthorizedRole(Model model, HttpSession httpSession, HttpServletRequest request){
+		return loginRoleCheck("403", model, httpSession, request);
 	}
 	
 	/**

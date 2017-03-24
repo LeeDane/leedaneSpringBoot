@@ -33,6 +33,7 @@ var connId = ""; //当前页面的连接ID
 		  return;
 	  }
 	  var params = {account: account, pwd: $.md5(password), t: Math.random()};
+	  //params[parameterName] = token;
 	  var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	  $.ajax({
 			type : "post",
@@ -58,9 +59,9 @@ var connId = ""; //当前页面的连接ID
 					$("#errorMessage").html(errorHtml);
 				}
 			},
-			error : function() {
+			error : function(data) {
 				layer.close(loadi);
-				layer.msg("网络请求失败");
+				ajaxError(data);
 			}
 		});
   }

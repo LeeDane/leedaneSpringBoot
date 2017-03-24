@@ -8,15 +8,13 @@ import net.sf.json.JSONObject;
 
 import org.junit.Test;
 
+import com.cn.leedane.model.RoleBean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.RoleService;
+import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.Base64ImageUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.model.RolesBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.UserRoleBean;
-import com.cn.leedane.service.RolesService;
-import com.cn.leedane.service.UserRoleService;
-import com.cn.leedane.service.UserService;
 
 /**
  * 用户相关的测试类
@@ -29,10 +27,7 @@ public class UserTest extends BaseTest {
 	private UserService<UserBean> userService;
 	
 	@Resource
-	private RolesService<RolesBean> rolesService;
-	
-	@Resource
-	private UserRoleService<UserRoleBean> userRoleService;
+	private RoleService<RoleBean> rolesService;
 	
 	private Date[] dates ={DateUtil.stringToDate("2015-06-16 14:10:37"),DateUtil.stringToDate("2015-07-10 12:13:08")
 			,DateUtil.stringToDate("2015-07-08 09:03:07"),DateUtil.stringToDate("2015-07-09 21:53:33")

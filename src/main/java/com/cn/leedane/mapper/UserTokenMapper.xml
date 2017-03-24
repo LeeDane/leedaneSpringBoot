@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.UserTokenMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="getUserToken" resultType="UserTokenBean">
+		select * from t_user_token t inner join t_user u on u.id = t.create_user_id 
+			where u.status=#{status} and t.status = #{status} and t.token = #{token} and t.create_user_id=#{createUserId} 
+			and t.overdue <![CDATA[ >=  ]]> #{serverTime} limit 1
+	</select>
+</mapper>

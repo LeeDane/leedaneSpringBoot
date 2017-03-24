@@ -1,6 +1,6 @@
 package com.cn.leedane.mapper;
 
-import com.cn.leedane.model.UserRoleBean;
+import com.cn.leedane.model.RoleBean;
 
 /**
  * 用户角色mapper接口类
@@ -8,6 +8,6 @@ import com.cn.leedane.model.UserRoleBean;
  * 2016年7月12日 上午11:21:30
  * Version 1.0
  */
-public interface UserRoleMapper extends BaseMapper<UserRoleBean>{
+public interface RoleMapper extends BaseMapper<RoleBean>{
 	
 }

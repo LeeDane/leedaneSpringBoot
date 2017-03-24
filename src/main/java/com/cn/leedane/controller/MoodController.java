@@ -10,6 +10,10 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -161,19 +165,29 @@ public class MoodController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/moods", method = RequestMethod.GET)
+	//@RequiresRoles("ADMIN")
+	//@RequiresPermissions("ADMIN_MANAGER")
 	public Map<String, Object> getPagingMood(HttpServletRequest request, HttpServletResponse response){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))
 				return message.getMap();
+			
+			//checkAnyRoleAuthor("ADMIN");
+			checkPermissionAuthor("ADMIN_MANAGER");
 				
 			message.putAll(moodService.getMoodByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 			return message.getMap();
-		} catch (Exception e) {
+		} catch (UnauthorizedException e) {
 			e.printStackTrace();
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.不能访问没有授权的链接.value));
+			message.put("responseCode", EnumUtil.ResponseCode.不能访问没有授权的链接.value);
+		}catch (Exception e) {
+			e.printStackTrace();
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
+			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
 		return message.getMap();
 	}
 	

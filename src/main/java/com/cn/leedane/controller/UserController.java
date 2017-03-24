@@ -13,12 +13,23 @@ import javax.servlet.http.HttpSession;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.ExcessiveAttemptsException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cn.leedane.enums.LoginType;
 import com.cn.leedane.handler.WechatHandler;
@@ -28,6 +39,7 @@ import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
@@ -49,6 +61,8 @@ import com.cn.leedane.wechat.util.WeixinUtil;
 @RequestMapping("/us")
 public class UserController extends BaseController{
 	
+	private Logger logger = Logger.getLogger(getClass());
+	
 	public static final String USER_INFO_KEY = "user_info";
 	
 	@Autowired
@@ -68,12 +82,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})  
-	public Map<String, Object> login(@RequestParam(value="account", required = true) String account,
-			@RequestParam(value="pwd", required = true) String password,
+	public Map<String, Object> login(@RequestParam(value="account") String account,
+			@RequestParam(value="pwd") String password,
 			@RequestParam(value="login_mothod", required = false) String loginMethod,
 			@RequestParam(value="no_login_code", required = false) String noLoginCode,
 			Model model, HttpSession session,
-			HttpServletRequest request){
+			HttpServletRequest request, RedirectAttributes redirectAttributes){
 		ResponseMap message = new ResponseMap();
 		boolean isSuccess = false;
 		try {
@@ -103,12 +117,50 @@ public class UserController extends BaseController{
 					}
 				}
 				
+				//lo
+				
+				
 				//执行密码等信息的验证
 				UserBean user = userService.loginUser(account, password);
 				if (user != null) {
-				
-					//清楚登录失败的缓存
-					
+					String username = user.getAccount();
+					CustomAuthenticationToken token = new CustomAuthenticationToken();
+					token.setUsername(username);
+					token.setPassword(user.getPassword().toCharArray());
+					token.setRememberMe(true);
+			        //获取当前的Subject  
+			        Subject currentUser = SecurityUtils.getSubject();  
+			        try {  
+			            //在调用了login方法后,SecurityManager会收到AuthenticationToken,并将其发送给已配置的Realm执行必须的认证检查  
+			            //每个Realm都能在必要时对提交的AuthenticationTokens作出反应  
+			            //所以这一步在调用login(token)方法时,它会走到MyRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法  
+			            logger.info("对用户[" + username + "]进行登录验证..验证开始");  
+			            currentUser.login(token);  
+			            logger.info("对用户[" + username + "]进行登录验证..验证通过");  
+			        }catch(UnknownAccountException uae){  
+			            logger.info("对用户[" + username + "]进行登录验证..验证未通过,未知账户");  
+			            redirectAttributes.addFlashAttribute("message", "未知账户");  
+			        }catch(IncorrectCredentialsException ice){  
+			            logger.info("对用户[" + username + "]进行登录验证..验证未通过,错误的凭证");  
+			            redirectAttributes.addFlashAttribute("message", "密码不正确");  
+			        }catch(LockedAccountException lae){  
+			            logger.info("对用户[" + username + "]进行登录验证..验证未通过,账户已锁定");  
+			            redirectAttributes.addFlashAttribute("message", "账户已锁定");  
+			        }catch(ExcessiveAttemptsException eae){  
+			            logger.info("对用户[" + username + "]进行登录验证..验证未通过,错误次数过多");  
+			            redirectAttributes.addFlashAttribute("message", "用户名或密码错误次数过多");  
+			        }catch(AuthenticationException ae){  
+			            //通过处理Shiro的运行时AuthenticationException就可以控制用户登录失败或密码错误时的情景  
+			            logger.info("对用户[" + username + "]进行登录验证..验证未通过,堆栈轨迹如下");  
+			            ae.printStackTrace();  
+			            redirectAttributes.addFlashAttribute("message", "用户名或密码不正确");  
+			        }  
+			        //验证是否登录成功  
+			        if(currentUser.isAuthenticated()){  
+			            logger.info("用户[" + username + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)");  
+			        }else{  
+			            token.clear();  
+			        }  
 					
 					
 					//校验权限和角色
@@ -393,15 +445,13 @@ public class UserController extends BaseController{
 	 * 找回密码
 	 * @return
 	 */
-	@RequestMapping("/findPassword")
-	public String findPassword(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/findPwd", method = RequestMethod.GET)
+	public Map<String, Object> findPassword(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {	
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
 			JSONObject json = getJsonFromMessage(message);
 			//获得找回密码的类型(0:邮箱,1:手机)
 			if(JsonUtil.getIntValue(json, "type") == 0){
@@ -415,27 +465,24 @@ public class UserController extends BaseController{
 				message.put("responseCode", EnumUtil.ResponseCode.未知的找回密码类型.value);
 			}
 			
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 			//this.operateLogService.saveOperateLog(user, request, null, user.getAccount()+"寻找密码", "findPassword", resIsSuccess? 1 : 0, 0);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件发送失败.value));
 		message.put("responseCode", EnumUtil.ResponseCode.邮件发送失败.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 	
 	/**
 	 * 退出系统
 	 * @return
 	 */
-	@RequestMapping("/logout")
-	public String logout(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		HttpSession session = request.getSession();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public Map<String, Object> logout(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		/*HttpSession session = request.getSession();
 		//判断是否有在线的用户，那就先取消该用户的session
 		if(session.getAttribute(USER_INFO_KEY) != null) {
 			UserBean user = (UserBean) session.getAttribute(USER_INFO_KEY);
@@ -446,8 +493,7 @@ public class UserController extends BaseController{
 				message.put("responseCode", EnumUtil.ResponseCode.注销成功.value);
 				message.put("isSuccess", true);
 				SessionManagerUtil.getInstance().removeSession(user.getId());
-				printWriter(message, response, start);
-				return null;
+				return message.getMap();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -457,9 +503,13 @@ public class UserController extends BaseController{
 			message.put("isSuccess", true);
 		}
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);*/
+		//使用权限管理工具进行用户的退出，跳出登录，给出提示信息
+        SecurityUtils.getSubject().logout(); 
+        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注销成功.value));
+		message.put("responseCode", EnumUtil.ResponseCode.注销成功.value);
+		message.put("isSuccess", true);
+		return message.getMap();
 	}
 	
 	/**

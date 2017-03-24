@@ -161,12 +161,9 @@
 	
 	//退出登录
 	function logout(){
-		var params = {t: Math.random()};
 		$.ajax({
-			type : "post",
-			data : params,
 			dataType: 'json',
-			url : "user/logout.action",
+			url : "us/logout",
 			beforeSend:function(){
 			},
 			success : function(data) {
