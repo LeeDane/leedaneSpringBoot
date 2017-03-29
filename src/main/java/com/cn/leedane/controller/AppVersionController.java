@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.service.AppVersionService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @RestController
-@RequestMapping("/av")
+@RequestMapping(value = ControllerBaseNameUtil.av)
 public class AppVersionController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -29,7 +30,7 @@ public class AppVersionController extends BaseController{
 	 * 获取APP的最新版本信息
 	 * @return
 	 */
-	@RequestMapping(value = "/newest", method = RequestMethod.GET)
+	@RequestMapping(value = "/newest", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getNewest(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {

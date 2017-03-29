@@ -20,12 +20,13 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.FilePathService;
 import com.cn.leedane.service.UploadService;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.ResponseCode;
 import com.cn.leedane.utils.StringUtil;
 
 @Controller
-@RequestMapping("/leedane/appUpload")
+@RequestMapping(value = ControllerBaseNameUtil.aul)
 public class AppFileUploadController extends BaseController{
 
 	/**

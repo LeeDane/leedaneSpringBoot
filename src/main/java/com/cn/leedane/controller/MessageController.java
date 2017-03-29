@@ -1,20 +1,21 @@
 package com.cn.leedane.controller;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.ResponseMap;
 
-@Controller
-@RequestMapping("/leedane/message")
+@RestController
+@RequestMapping(value = ControllerBaseNameUtil.ms)
 public class MessageController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -24,15 +25,13 @@ public class MessageController extends BaseController{
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping("/send")
-	public String send(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/message", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> send(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
 			/*UserBean user = (UserBean) getSession().get(ConstantsUtil.USER_SESSION);
 			int fromUserID = 1;
 			if(user != null){
@@ -50,15 +49,13 @@ public class MessageController extends BaseController{
 			sender.sendMsg();
 			message.put("isSuccess", true);
 			message.put("message", "发送消息成功");*/
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 		
 	}
 	
@@ -67,8 +64,8 @@ public class MessageController extends BaseController{
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping("/receive")
-	public String receive(HttpServletRequest request, HttpServletResponse response){
+	@RequestMapping(value = "/message/receive", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> receive(HttpServletRequest request){
 		/*UserBean user = (UserBean) session.get(ConstantsUtil.USER_SESSION);
 		if(user != null){
 			RecieveMessage recieveMessage = new RecieveMessage(String.valueOf(user.getId()));
@@ -91,11 +88,9 @@ public class MessageController extends BaseController{
 			message.put("isSuccess", false);
 			message.put("message", "请先登录");
 		}*/
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+		ResponseMap message = new ResponseMap();
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 }

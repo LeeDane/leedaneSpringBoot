@@ -1,16 +1,15 @@
 package com.cn.leedane.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.handler.CloudStoreHandler;
 import com.cn.leedane.model.BlogBean;
@@ -21,10 +20,12 @@ import com.cn.leedane.service.FilePathService;
 import com.cn.leedane.service.SignInService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 
-@Controller
-@RequestMapping("/leedane/batchDeal")
+@RestController
+@RequestMapping(value = ControllerBaseNameUtil.bd)
 public class BatchDealController extends BaseController{
 
 	@Autowired
@@ -43,8 +44,8 @@ public class BatchDealController extends BaseController{
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping("/registerByPhoneNoValidate")
-	public String registerByPhoneNoValidate(HttpServletRequest request, HttpServletResponse response){
+	@RequestMapping(value = "/registerByPhoneNoValidate", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> registerByPhoneNoValidate(HttpServletRequest request){
 		/*List<SignInBean> signInBeans = signInService.executeHQL("SignInBean", null);
 		if(signInBeans.size() > 0){
 			Date time = null;
@@ -54,8 +55,7 @@ public class BatchDealController extends BaseController{
 				signInService.update(signInBean);
 			}
 		}*/
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+		ResponseMap message = new ResponseMap();
 		for(int i = 1504;i > 0; i--){
 			List<BlogBean> blogs = blogService.getBlogBeans("select id, digest from "+DataTableType.博客.value+" where id=?", i);
 			if(!blogs.isEmpty() && blogs.size() >0){
@@ -74,8 +74,7 @@ public class BatchDealController extends BaseController{
 			}
 			System.out.println("i="+i);
 		}
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 	
 	/**
@@ -83,10 +82,9 @@ public class BatchDealController extends BaseController{
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping("/upload10")
-	public String upload10(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/upload10", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> upload10(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
 			List<Map<String, Object>> paths = filePathService.executeSQL("select * from "+DataTableType.文件.value+" where is_upload_qiniu = 0 and table_name <> '"+DataTableType.心情.value+"' order by id desc limit 10");
 			if(paths != null && paths.size() > 0){	
@@ -104,7 +102,6 @@ public class BatchDealController extends BaseController{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 }

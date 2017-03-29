@@ -19,12 +19,13 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.service.FilePathService;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.ResponseCode;
 import com.cn.leedane.utils.StringUtil;
 
 @Controller
-@RequestMapping("/leedane/appDownload")
+@RequestMapping(value = ControllerBaseNameUtil.adl)
 public class AppFileDownloadController extends BaseController{
 
 	/**

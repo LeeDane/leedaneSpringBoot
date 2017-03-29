@@ -1,10 +1,8 @@
 package com.cn.leedane.controller;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.model.FinancialLocationBean;
 import com.cn.leedane.service.FinancialLocationService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
@@ -25,7 +24,7 @@ import com.cn.leedane.utils.ResponseMap;
  * Version 1.0
  */
 @RestController
-@RequestMapping("/fn")
+@RequestMapping(value = ControllerBaseNameUtil.fn)
 public class FinancialLocationController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -39,106 +38,90 @@ public class FinancialLocationController extends BaseController{
 	 * 添加位置信息
 	 * @return
 	 */
-	@RequestMapping(value = "/location", method = RequestMethod.POST)
-	public String add(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/location", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> add(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
 			message.putAll(financialLocationService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 	
 	/**
 	 * 更新位置信息
 	 * @return
 	 */
-	@RequestMapping(value = "/location", method = RequestMethod.PUT)
-	public String update(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/location", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> update(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
 			message.putAll(financialLocationService.update(getJsonFromMessage(message), getUserFromMessage(message), request));
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 	
 	/**
 	 * 删除位置信息
 	 * @return
 	 */
-	@RequestMapping(value = "/location", method = RequestMethod.DELETE)
-	public String delete(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/location", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> delete(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
 			message.putAll(financialLocationService.delete(getJsonFromMessage(message), getUserFromMessage(message), request));
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 	
 	/**
 	 * 获取位置列表
 	 * @return
 	 */
-	@RequestMapping(value = "/locations", method = RequestMethod.GET)
-	public String paging(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/locations", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> paging(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
 			message.putAll(financialLocationService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 	
 	/**
 	 * 获取所有的位置列表
 	 * @return
 	 */
-	@RequestMapping(value = "/locations/all", method = RequestMethod.GET)
-	public Map<String, Object> getAll(HttpServletRequest request, HttpServletResponse response){
+	@RequestMapping(value = "/locations/all", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> getAll(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))

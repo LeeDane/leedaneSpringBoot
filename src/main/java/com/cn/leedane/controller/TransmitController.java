@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,11 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.model.TransmitBean;
 import com.cn.leedane.service.TransmitService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @RestController
-@RequestMapping("/ts")
+@RequestMapping(value = ControllerBaseNameUtil.ts)
 public class TransmitController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -32,7 +32,7 @@ public class TransmitController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/transmit", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> add(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))
@@ -53,7 +53,7 @@ public class TransmitController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/transmit", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> delete(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))
@@ -73,8 +73,8 @@ public class TransmitController extends BaseController{
 	 * 获取转发列表
 	 * @return
 	 */
-	@RequestMapping(value="/transmits", method = RequestMethod.GET)
-	public Map<String, Object> paging(HttpServletRequest request, HttpServletResponse response){
+	@RequestMapping(value="/transmits", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			checkParams(message, request);
@@ -98,7 +98,7 @@ public class TransmitController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/transmit", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> updateTransmitStatus(HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> updateTransmitStatus(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))

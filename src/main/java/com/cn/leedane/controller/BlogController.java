@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
@@ -27,6 +26,7 @@ import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
@@ -36,7 +36,7 @@ import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 
 @RestController
-@RequestMapping("/bg")
+@RequestMapping(value = ControllerBaseNameUtil.bg)
 public class BlogController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(BlogController.class);
@@ -166,7 +166,7 @@ public class BlogController extends BaseController{
 	 * 删除博客
 	 * @return
 	 */
-	@RequestMapping(value = "/blog", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/blog", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> deleteBlog(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
@@ -187,7 +187,7 @@ public class BlogController extends BaseController{
 	 * 获得分页的Blog
 	 * @return
 	 */
-	@RequestMapping(value = "/blogs", method = RequestMethod.GET)
+	@RequestMapping(value = "/blogs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> paging(@RequestParam(value="pageSize", required = false) int pageSize,
 				@RequestParam(value="last_id", required = false) int lastId,
 				@RequestParam(value="first_id", required = false) int firstId,
@@ -258,7 +258,7 @@ public class BlogController extends BaseController{
 	 * 获取博客的的基本信息(不包括内容)
 	 * @return
 	 */
-	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	@RequestMapping(value = "/info", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getInfo(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
@@ -280,7 +280,7 @@ public class BlogController extends BaseController{
 	 * @return
 	 * @throws Exception 
 	 */
-	@RequestMapping(value="/blog/{blogId}", method = RequestMethod.GET)
+	@RequestMapping(value="/blog/{blogId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getOneBlog(
 			@PathVariable("blogId") int blogId,
 			HttpServletRequest request){
@@ -301,7 +301,7 @@ public class BlogController extends BaseController{
 	 * 获得最热门的n条记录
 	 * @return
 	 */
-	@RequestMapping(value = "/hotestBlogs", method = RequestMethod.GET)
+	@RequestMapping(value = "/hotestBlogs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getHotestBlogs(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
@@ -321,7 +321,7 @@ public class BlogController extends BaseController{
 	 * 获得最新的n条记录
 	 * @return
 	 */
-	@RequestMapping(value="/newestBlogs", method = RequestMethod.GET)
+	@RequestMapping(value="/newestBlogs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getNewestBlogs(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
@@ -341,7 +341,7 @@ public class BlogController extends BaseController{
 	 * 获得推荐的n条博客
 	 * @return
 	 */
-	@RequestMapping(value="/recommendBlogs", method = RequestMethod.GET)
+	@RequestMapping(value="/recommendBlogs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getRecommendBlogs(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
@@ -361,7 +361,7 @@ public class BlogController extends BaseController{
 	 * 获取轮播图片信息
 	 * @return
 	 */
-	@RequestMapping(value="/carouselImgs", method = RequestMethod.GET)
+	@RequestMapping(value="/carouselImgs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getCarouselImgs(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try{
@@ -427,7 +427,7 @@ public class BlogController extends BaseController{
 	 * 查看草稿列表
 	 * @return
 	 */
-	@RequestMapping(value="/drafts", method = RequestMethod.GET)
+	@RequestMapping(value="/drafts", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> draftList(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
@@ -447,7 +447,7 @@ public class BlogController extends BaseController{
 	 * 编辑文章
 	 * @return
 	 */
-	@RequestMapping(value="/blog/edit/{blog_id}", method = RequestMethod.GET)
+	@RequestMapping(value="/blog/edit/{blog_id}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> edit(@PathVariable("blog_id") int blogId, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
@@ -468,7 +468,7 @@ public class BlogController extends BaseController{
 	 * 未审核文章列表
 	 * @return
 	 */
-	@RequestMapping(value="/noChecks", method = RequestMethod.GET)
+	@RequestMapping(value="/noChecks", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> noCheckPaging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
@@ -490,7 +490,7 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/check", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> check(HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> check(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))

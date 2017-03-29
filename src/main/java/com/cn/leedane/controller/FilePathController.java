@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
@@ -24,6 +23,7 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.FilePathService;
 import com.cn.leedane.service.UploadService;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
@@ -34,7 +34,7 @@ import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 
 @RestController
-@RequestMapping("/fp")
+@RequestMapping(value = ControllerBaseNameUtil.fp)
 public class FilePathController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -51,8 +51,8 @@ public class FilePathController extends BaseController{
 	 * 分页获取指定的图片列表
 	 * @return
 	 */
-	@RequestMapping(value = "/userImages", method = RequestMethod.GET)
-	public Map<String, Object> getUserImagePaging(HttpServletRequest request, HttpServletResponse response){
+	@RequestMapping(value = "/userImages", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> getUserImagePaging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))
@@ -155,8 +155,8 @@ public class FilePathController extends BaseController{
      * 合并成功后删除片段的临时文件
      * @return
      */
-	@RequestMapping(value = "/portFile", method = RequestMethod.DELETE)
-    public Map<String, Object> deletePortFile(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/portFile", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+    public Map<String, Object> deletePortFile(HttpServletRequest request) {
 		ResponseMap message = new ResponseMap();
         try {
         	if(!checkParams(message, request))
@@ -206,7 +206,7 @@ public class FilePathController extends BaseController{
      * 分页获取上传的文件
      * @return
      */
-	@RequestMapping(value = "/paths", method = RequestMethod.GET)
+	@RequestMapping(value = "/paths", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
     public Map<String, Object> paging(HttpServletRequest request) {
     	ResponseMap message = new ResponseMap();
     	try{

@@ -12,7 +12,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
@@ -40,6 +39,7 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.MoodService;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
@@ -54,7 +54,7 @@ import com.cn.leedane.utils.StringUtil;
  * Version 1.0
  */
 @RestController
-@RequestMapping("/s")
+@RequestMapping(value = ControllerBaseNameUtil.s)
 public class SearchController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -78,7 +78,7 @@ public class SearchController extends BaseController{
 	 * 执行搜索
 	 */
 	@RequestMapping(value="/s", method=RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> execute(HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> execute(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		
 		try {
@@ -212,75 +212,63 @@ public class SearchController extends BaseController{
 	 * 搜索用户
 	 * @return
 	 */
-	@RequestMapping("/user")
-	public String user(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/user", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> user(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
 			message.putAll(userService.search(getJsonFromMessage(message), getUserFromMessage(message), request));
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}     
         message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 	
 	/**
 	 * 搜索心情
 	 * @return
 	 */
-	@RequestMapping("/mood")
-	public String mood(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/mood", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> mood(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
 			message.putAll(moodService.search(getJsonFromMessage(message), getUserFromMessage(message), request));
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}     
         message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 	
 	/**
 	 * 搜索心情
 	 * @return
 	 */
-	@RequestMapping("/blog")
-	public String blog(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/blog", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> blog(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
 			message.putAll(blogService.search(getJsonFromMessage(message), getUserFromMessage(message), request));
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}     
         message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 	
 	

@@ -8,8 +8,9 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -34,6 +35,7 @@ import com.cn.leedane.service.UserService;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.utils.CommonUtil;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.BlogCategory;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
@@ -60,70 +62,78 @@ public class HtmlController extends BaseController{
 	 * @return
 	 */
 	/*@RequestMapping
-	public String index(Model model, HttpSession httpSession){
+	public String index(Model model){
 		return "index";
 	}*/
 	
-	@RequestMapping(value = {"/", "/index"})
-	public String index1(Model model, HttpSession httpSession, HttpServletRequest request){
+	@RequestMapping(value = {"/", ControllerBaseNameUtil.index})
+	public String index1(Model model, HttpServletRequest request){
 		//首页不需要验证是否登录
-		return loginRoleCheck("index", model, httpSession, request);
+		return loginRoleCheck("index", model, request);
 	}
 	
-	@RequestMapping("/pt")
-	public String photo(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("photo", true, model, httpSession, request);
+	@RequestMapping(ControllerBaseNameUtil.pt)
+	public String photo(Model model, HttpServletRequest request){
+		return loginRoleCheck("photo", true, model, request);
 	}
 	
-	@RequestMapping("/fn")
-	public String financial(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("financial", true, model, httpSession, request);
+	@RequestMapping(ControllerBaseNameUtil.fn)
+	public String financial(Model model, HttpServletRequest request){
+		return loginRoleCheck("financial", true, model, request);
 	}
 	
-	@RequestMapping("/dl")
-	public String download(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("download", model, httpSession, request);
+	@RequestMapping(ControllerBaseNameUtil.dl)
+	public String download(Model model, HttpServletRequest request){
+		return loginRoleCheck("download", model, request);
 	}
 	
-	@RequestMapping(value="/dt/{bid}")
+	@RequestMapping(ControllerBaseNameUtil.dt +"/{bid}")
 	public String detail(
 			@PathVariable(value="bid") int blogId,
-				Model model, HttpSession httpSession, HttpServletRequest request){
+				Model model, HttpServletRequest request){
 		model.addAttribute("bid", blogId);
-		return loginRoleCheck("detail", model, httpSession, request);
+		return loginRoleCheck("detail", model, request);
 	}
 	
-	@RequestMapping("/lg")
-	public String login(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("login", model, httpSession, request);
+	@RequestMapping(ControllerBaseNameUtil.lg)
+	public String login(Model model, HttpServletRequest request){
+		return loginRoleCheck("login", model, request);
 	}
 	
-	@RequestMapping("/my")
-	public String my(Model model, HttpSession httpSession, HttpServletRequest request){
-		Object o = httpSession.getAttribute(UserController.USER_INFO_KEY);
-		if(o != null){
-			UserBean user = (UserBean)o;
-			model.addAttribute("uid", user.getId());
-			model.addAttribute("isLoginUser", true);
-		}
-		
-		return loginRoleCheck("my", true, model, httpSession, request);
+	@RequestMapping(ControllerBaseNameUtil.my)
+	public String my(Model model, HttpServletRequest request){
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        if(currentUser.isAuthenticated()){
+        	Object o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        	if(o != null){
+        		UserBean user = (UserBean)o;
+    			model.addAttribute("uid", user.getId());
+    			model.addAttribute("isLoginUser", true);
+    			return loginRoleCheck("my", true, model, request);
+    		}
+        }
+        return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();	
 	}
 	
-	@RequestMapping("/my/{uid}")
-	public String my1(@PathVariable(value="uid") int uid, Model model, HttpSession httpSession, HttpServletRequest request){
-		Object o = httpSession.getAttribute(UserController.USER_INFO_KEY);
-		if(o != null){
-			UserBean user = (UserBean)o;
-			model.addAttribute("uid", uid);
-			model.addAttribute("isLoginUser", uid == user.getId());
-		}
-		
-		return loginRoleCheck("my", true, model, httpSession, request);
+	@RequestMapping(ControllerBaseNameUtil.my + "/{uid}")
+	public String my1(@PathVariable(value="uid") int uid, Model model, HttpServletRequest request){
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        if(currentUser.isAuthenticated()){
+        	Object o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        	if(o != null){
+    			UserBean user = (UserBean)o;
+    			model.addAttribute("uid", uid);
+    			model.addAttribute("isLoginUser", uid == user.getId());
+    			return loginRoleCheck("my", true, model, request);
+    		}
+        }
+		return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();	
 	}
 	
-	@RequestMapping("/pb")
-	public String publishBlog(Model model, HttpSession httpSession, HttpServletRequest request){
+	@RequestMapping(ControllerBaseNameUtil.pb)
+	public String publishBlog(Model model, HttpServletRequest request){
 		int blogId = 0;
 		String bidStr = request.getParameter("bid");
 		if(StringUtil.isNotNull(bidStr))
@@ -144,22 +154,22 @@ public class HtmlController extends BaseController{
 		model.addAttribute("blogId", blogId);
 		model.addAttribute("noHeader1", noHeader1);
 		
-		return loginRoleCheck("publish-blog", true, model, httpSession, request);
+		return loginRoleCheck("publish-blog", true, model, request);
 	}
 	
-	@RequestMapping("/s")
-	public String search(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("search", model, httpSession, request);
+	@RequestMapping(ControllerBaseNameUtil.s)
+	public String search(Model model, HttpServletRequest request){
+		return loginRoleCheck("search", model, request);
 	}
 	
-	@RequestMapping("/cs")
-	public String chatSquare(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("chat-square", model, httpSession, request);
+	@RequestMapping(ControllerBaseNameUtil.cs)
+	public String chatSquare(Model model, HttpServletRequest request){
+		return loginRoleCheck("chat-square", model, request);
 	}
 	
 	@RequestMapping("/403")
-	public String unauthorizedRole(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("403", model, httpSession, request);
+	public String unauthorizedRole(Model model, HttpServletRequest request){
+		return loginRoleCheck("403", model, request);
 	}
 	
 	/**
@@ -169,8 +179,8 @@ public class HtmlController extends BaseController{
 	 * @param httpSession
 	 * @return
 	 */
-	public String loginRoleCheck(String urlParse, Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck(urlParse, false, model, httpSession, request);
+	public String loginRoleCheck(String urlParse, Model model, HttpServletRequest request){
+		return loginRoleCheck(urlParse, false, model, request);
 	}
 	
 	/**
@@ -181,8 +191,14 @@ public class HtmlController extends BaseController{
 	 * @param httpSession
 	 * @return
 	 */
-	public String loginRoleCheck(String urlParse, boolean mustLogin, Model model, HttpSession httpSession, HttpServletRequest request){
-		Object o = httpSession.getAttribute(UserController.USER_INFO_KEY);
+	public String loginRoleCheck(String urlParse, boolean mustLogin, Model model, HttpServletRequest request){
+		Object o = null;
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        if(currentUser.isAuthenticated()){
+        	o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        }
+		
 		boolean isLogin = false;
 		boolean isAdmin = false;
 		if(o != null){

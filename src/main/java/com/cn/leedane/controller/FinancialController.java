@@ -1,10 +1,8 @@
 package com.cn.leedane.controller;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.model.FinancialBean;
 import com.cn.leedane.service.FinancialService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
@@ -23,7 +22,7 @@ import com.cn.leedane.utils.ResponseMap;
  * Version 1.0
  */
 @RestController
-@RequestMapping("/fn")
+@RequestMapping(value = ControllerBaseNameUtil.fn)
 public class FinancialController extends BaseController{
 	
 	@Autowired
@@ -33,8 +32,8 @@ public class FinancialController extends BaseController{
      * 客户端数据同步
      * @return 返回成功插入数据库的ID
      */
-	@RequestMapping(value = "/financial", method = RequestMethod.POST)
-    public Map<String, Object> save(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/financial", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+    public Map<String, Object> save(HttpServletRequest request) {
     	ResponseMap message = new ResponseMap();
     	try{
     		if(!checkParams(message, request))
@@ -54,8 +53,8 @@ public class FinancialController extends BaseController{
      * 客户端数据更新
      * @return
      */
-	@RequestMapping(value = "/financial", method = RequestMethod.PUT)
-    public Map<String, Object> update(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/financial", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
+    public Map<String, Object> update(HttpServletRequest request) {
 		ResponseMap message = new ResponseMap();
     	try{
     		if(!checkParams(message, request))
@@ -75,8 +74,8 @@ public class FinancialController extends BaseController{
      * 客户端数据删除
      * @return
      */
-	@RequestMapping(value = "/financial", method = RequestMethod.DELETE)
-    public Map<String, Object> delete(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/financial", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+    public Map<String, Object> delete(HttpServletRequest request) {
     	ResponseMap message = new ResponseMap();
     	try{
     		if(!checkParams(message, request))
@@ -96,27 +95,21 @@ public class FinancialController extends BaseController{
      * 客户端数据同步
      * @return 返回成功同步的数量和有冲突的数据ID数组
      */
-	@RequestMapping("/synchronous")
-    public String synchronous(HttpServletRequest request, HttpServletResponse response) {
-    	long startTime = System.currentTimeMillis();
-    	Map<String, Object> message = new HashMap<String, Object>();
+	@RequestMapping(value = "/synchronous", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    public Map<String, Object> synchronous(HttpServletRequest request) {
+		ResponseMap message = new ResponseMap();
     	try{
-    		if(!checkParams(message, request)){
-				printWriter(message, response, startTime);
-				return null;
-			}
+    		if(!checkParams(message, request))
+				return message.getMap();
+			
 			message.putAll(financialService.synchronous(getJsonFromMessage(message), getUserFromMessage(message), request));
-			printWriter(message, response, startTime);
-			return null;
+			return message.getMap();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-        long endTime = System.currentTimeMillis();
-        System.out.println("记账数据同步总计耗时："+ (endTime - startTime) +"毫秒");
         message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, startTime);
-		return null;
+		return message.getMap();
     }
     
     /**
@@ -129,89 +122,71 @@ public class FinancialController extends BaseController{
      * 
      * @return
      */
-	@RequestMapping("/force")
-    public String force(HttpServletRequest request, HttpServletResponse response) {
-    	long startTime = System.currentTimeMillis();
-    	Map<String, Object> message = new HashMap<String, Object>();
+	@RequestMapping(value = "/force", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    public Map<String, Object> force(HttpServletRequest request) {
+		ResponseMap message = new ResponseMap();
     	try{
-    		if(!checkParams(message, request)){
-				printWriter(message, response, startTime);
-				return null;
-			}
+    		if(!checkParams(message, request))
+				return message.getMap();
+			
 			message.putAll(financialService.force(getJsonFromMessage(message), getUserFromMessage(message), request));
-			printWriter(message, response, startTime);
-			return null;
+			return message.getMap();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-        long endTime = System.currentTimeMillis();
-        System.out.println("强制更新记账数据总计耗时："+ (endTime - startTime) +"毫秒");
         message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, startTime);
-		return null;
+		return message.getMap();
     }
 	
 	/**
 	 * 获取该用户指定年份的数据
      * @return
      */
-	@RequestMapping("/getByYear")
-    public String getByYear(HttpServletRequest request, HttpServletResponse response) {
-    	long startTime = System.currentTimeMillis();
-    	Map<String, Object> message = new HashMap<String, Object>();
+	@RequestMapping(value = "/byYear", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    public Map<String, Object> getByYear(HttpServletRequest request) {
+		ResponseMap message = new ResponseMap();
     	try{
-    		if(!checkParams(message, request)){
-				printWriter(message, response, startTime);
-				return null;
-			}
+    		if(!checkParams(message, request))
+				return message.getMap();
+			
 			message.putAll(financialService.getByYear(getJsonFromMessage(message), getUserFromMessage(message), request));
-			printWriter(message, response, startTime);
-			return null;
+			return message.getMap();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-        long endTime = System.currentTimeMillis();
-        System.out.println("获取一年的总记账数据总计耗时："+ (endTime - startTime) +"毫秒");
         message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, startTime);
-		return null;
+		return message.getMap();
     }
 	
 	/**
 	 * 获取该用户全部的数据
      * @return
      */
-	@RequestMapping("/getAll")
-    public String getAll(HttpServletRequest request, HttpServletResponse response) {
-    	long startTime = System.currentTimeMillis();
-    	Map<String, Object> message = new HashMap<String, Object>();
+	@RequestMapping(value = "/all", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    public Map<String, Object> getAll(HttpServletRequest request) {
+		ResponseMap message = new ResponseMap();
     	try{
-    		if(!checkParams(message, request)){
-				printWriter(message, response, startTime);
-				return null;
-			}
+    		if(!checkParams(message, request))
+				return message.getMap();
+			
 			message.putAll(financialService.getAll(getJsonFromMessage(message), getUserFromMessage(message), request));
-			printWriter(message, response, startTime);
-			return null;
+			return message.getMap();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-        long endTime = System.currentTimeMillis();
-        System.out.println("获取全部总记账数据总计耗时："+ (endTime - startTime) +"毫秒");
         message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, startTime);
-		return null;
+		return message.getMap();
     }
 	
 	/**
 	 * 搜索查询
      * @return
      */
-	@RequestMapping(value = "/query", method = RequestMethod.GET)
-    public Map<String, Object> query(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/query", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    public Map<String, Object> query(HttpServletRequest request) {
     	ResponseMap message = new ResponseMap();
     	try{
     		if(!checkParams(message, request))
@@ -231,8 +206,8 @@ public class FinancialController extends BaseController{
 	 * 分页查询
      * @return
      */
-	@RequestMapping(value = "/financials", method = RequestMethod.GET)
-    public Map<String, Object> paging(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/financials", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    public Map<String, Object> paging(HttpServletRequest request) {
     	ResponseMap message = new ResponseMap();
     	try{
     		if(!checkParams(message, request))

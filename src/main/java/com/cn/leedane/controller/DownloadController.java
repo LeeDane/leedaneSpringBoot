@@ -14,15 +14,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.cn.leedane.utils.Base64ImageUtil;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.HttpUtil;
 import com.cn.leedane.utils.StringUtil;
 
 @Controller
-@RequestMapping("/dl")
+@RequestMapping(value = ControllerBaseNameUtil.dl)
 public class DownloadController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -37,7 +39,7 @@ public class DownloadController extends BaseController{
 	/**
 	 * 下载
 	 */
-	@RequestMapping("/executeDown")
+	@RequestMapping(value = "/execute", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public void executeDown(HttpServletRequest request, HttpServletResponse response){
 		try {
 			//获取下载的范围

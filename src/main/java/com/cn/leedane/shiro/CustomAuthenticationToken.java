@@ -2,6 +2,7 @@ package com.cn.leedane.shiro;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
 
+import com.cn.leedane.model.UserBean;
 import com.cn.leedane.utils.EnumUtil.PlatformType;
 
 /**
@@ -20,6 +21,8 @@ public class CustomAuthenticationToken extends UsernamePasswordToken{
 	
 	//用户的唯一ID
 	private int userId;
+	
+	private UserBean user;
 
 	/**
 	 * 
@@ -49,5 +52,12 @@ public class CustomAuthenticationToken extends UsernamePasswordToken{
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
-	
+
+	public UserBean getUser() {
+		return user;
+	}
+
+	public void setUser(UserBean user) {
+		this.user = user;
+	}
 }

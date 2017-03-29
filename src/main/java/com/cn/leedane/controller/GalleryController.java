@@ -1,11 +1,9 @@
 package com.cn.leedane.controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,11 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.model.GalleryBean;
 import com.cn.leedane.service.GalleryService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @RestController
-@RequestMapping("/gl")
+@RequestMapping(value = ControllerBaseNameUtil.gl)
 public class GalleryController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -34,9 +33,8 @@ public class GalleryController extends BaseController{
 	 * 添加网络链接到图库
 	 * @return
 	 */
-	
-	@RequestMapping("/addLink")
-	public Map<String, Object> addLink(HttpServletRequest request, HttpServletResponse response){
+	@RequestMapping(value = "/photo", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> addLink(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request)){
@@ -84,23 +82,19 @@ public class GalleryController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/photo/{gid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"}) 
-	public String delete(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	public Map<String, Object> delete(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
 			message.putAll(galleryService.delete(getJsonFromMessage(message), getUserFromMessage(message), request));
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 }

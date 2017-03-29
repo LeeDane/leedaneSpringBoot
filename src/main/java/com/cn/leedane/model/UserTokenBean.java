@@ -11,7 +11,7 @@ import com.cn.leedane.mybatis.table.annotation.Column;
  * 2017年3月24日 下午1:08:11
  * version 1.0
  */
-public class UserTokenBean extends StatusBean{
+public class UserTokenBean extends RecordTimeBean{
 	
 	private static final long serialVersionUID = 1L;
 	//用户状态    0:被禁止使用 1：正常，8、注册未激活,6：未完善信息 ， 4：被禁言 ，2:注销

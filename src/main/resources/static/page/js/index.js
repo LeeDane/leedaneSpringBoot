@@ -83,10 +83,10 @@ function getWebBackgroud(){
 			beforeSend:function(){
 			},
 			success : function(data) {
-				if(data != null)
-					$(".main_bg").css('background', 'url("'+data+'")');
-				else
-					layer.msg("获取背景图片失败");
+				if(data != null && data.isSuccess){
+					$(".main_bg").css('background', 'url("'+data.message+'")');
+				}else
+					layer.msg(data.message);
 			},
 			error : function(data) {
 				ajaxError(data);

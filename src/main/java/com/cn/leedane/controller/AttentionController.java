@@ -14,12 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.model.AttentionBean;
 import com.cn.leedane.service.AttentionService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @RestController
-@RequestMapping("/at")
+@RequestMapping(value = ControllerBaseNameUtil.at)
 public class AttentionController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());

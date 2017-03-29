@@ -383,6 +383,7 @@ public class EnumUtil {
 		目前暂不支持的操作方法(3087),
 		非正常登录状态(3088),
 		不能访问没有授权的链接(2010),
+		token获取异常(2010),
 		;
 		
 		private ResponseCode(int value) {

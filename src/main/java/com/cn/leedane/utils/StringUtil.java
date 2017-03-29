@@ -4,13 +4,17 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.cn.leedane.exception.ErrorException;
 
 import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicException;
@@ -47,13 +51,42 @@ public class StringUtil {
 	}
 	
 	/***
-	 * 获取免登陆验证码
+	 * 获取免登陆验证码(7天过期)
 	 * @param account
 	 * @param loginTime
 	 * @return
+	 * @throws ErrorException 
 	 */
-	public static String getNoLoginCode(String account){
-		return System.currentTimeMillis() + MD5Util.compute(account) + Math.random()*1000;
+	public static String getUserToken(String userid, String pwd) throws ErrorException{
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("userid", userid);
+		map.put("pwd", pwd);
+		Date currentDate = DateUtil.getCurrentTime();
+		map.put("time", DateUtil.DateToString(currentDate, "yyyyMMddHHmmss"));
+		map.put("overdue", DateUtil.DateToString(DateUtil.getOverdueTime(currentDate, "7天")));
+		JSONObject json = JSONObject.fromObject(map);
+		String value = json.toString();
+		return new String(Base64Util.encode(value.getBytes()));
+	}
+	
+	/***
+	 * 获取免登陆验证码
+	 * @param account
+	 * @param pwd
+	 * @param overdue
+	 * @return
+	 * @throws ErrorException
+	 */
+	public static String getUserToken(String userid, String pwd, Date overdue) throws ErrorException{
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("userid", userid);
+		map.put("pwd", pwd);
+		Date currentDate = DateUtil.getCurrentTime();
+		map.put("time", DateUtil.DateToString(currentDate, "yyyyMMddHHmmss"));
+		map.put("overdue", DateUtil.DateToString(overdue, "yyyyMMddHHmmss"));
+		JSONObject json = JSONObject.fromObject(map);
+		String value = json.toString();
+		return new String(Base64Util.encode(value.getBytes()));
 	}
 	
 	/**

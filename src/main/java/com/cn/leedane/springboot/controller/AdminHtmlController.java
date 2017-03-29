@@ -15,6 +15,7 @@ import com.cn.leedane.controller.UserController;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.CommonUtil;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.ResponseCode;
 import com.cn.leedane.utils.StringUtil;
@@ -26,7 +27,6 @@ import com.cn.leedane.utils.StringUtil;
  * Version 1.0
  */
 @Controller
-@RequestMapping("/ad")
 public class AdminHtmlController extends BaseController{
 	
 	@Autowired
@@ -43,53 +43,53 @@ public class AdminHtmlController extends BaseController{
 		return "index";
 	}*/
 	
-	@RequestMapping("/")
+	@RequestMapping(ControllerBaseNameUtil.ad +"/")
 	public String index1(Model model, HttpSession httpSession, HttpServletRequest request){
 		//首页不需要验证是否登录
 		return loginRoleCheck("/admin/index", model, httpSession, request);
 	}
 	
-	@RequestMapping("/index")
+	@RequestMapping(ControllerBaseNameUtil.ad + "/index")
 	public String index2(Model model, HttpSession httpSession, HttpServletRequest request){
 		return index1(model, httpSession, request);
 	}
 	
-	@RequestMapping("/wc/welcome")
+	@RequestMapping(ControllerBaseNameUtil.adwc + "/welcome")
 	public String wcWelcome(Model model, HttpSession httpSession, HttpServletRequest request){
 		return loginRoleCheck("/admin/welcome/welcome", true, model, httpSession, request);
 	}
 	
-	@RequestMapping("/wc/loginHistory")
+	@RequestMapping(ControllerBaseNameUtil.adwc + "/loginHistory")
 	public String wcLoginHistory(Model model, HttpSession httpSession, HttpServletRequest request){
 		return loginRoleCheck("/admin/welcome/loginHistory", true, model, httpSession, request);
 	}
 	
-	@RequestMapping("/wc/about")
+	@RequestMapping("ControllerBaseNameUtil.adwc + /about")
 	public String wcAbout(Model model, HttpSession httpSession, HttpServletRequest request){
 		return loginRoleCheck("/admin/welcome/about", false, model, httpSession, request);
 	}
 	
-	@RequestMapping("/wc/contact")
+	@RequestMapping(ControllerBaseNameUtil.adwc + "/contact")
 	public String wcContact(Model model, HttpSession httpSession, HttpServletRequest request){
 		return loginRoleCheck("/admin/welcome/contact", false, model, httpSession, request);
 	}
 	
-	@RequestMapping("/wc/download")
+	@RequestMapping(ControllerBaseNameUtil.adwc + "/download")
 	public String wcDownload(Model model, HttpSession httpSession, HttpServletRequest request){
 		return loginRoleCheck("/admin/welcome/download", false, model, httpSession, request);
 	}
 	
-	@RequestMapping("/us/search")
+	@RequestMapping(ControllerBaseNameUtil.adus + "/search")
 	public String usSearch(Model model, HttpSession httpSession, HttpServletRequest request){
 		return loginRoleCheck("/admin/user/search", true, model, httpSession, request);
 	}
 	
-	@RequestMapping("/us/new")
+	@RequestMapping(ControllerBaseNameUtil.adus + "/new")
 	public String usNew(Model model, HttpSession httpSession, HttpServletRequest request){
 		return loginRoleCheck("/admin/user/new", true, model, httpSession, request);
 	}
 	
-	@RequestMapping("/us/black")
+	@RequestMapping(ControllerBaseNameUtil.adus + "/black")
 	public String usBlack(Model model, HttpSession httpSession, HttpServletRequest request){
 		return loginRoleCheck("/admin/user/black", true, model, httpSession, request);
 	}

@@ -102,7 +102,7 @@ public class MainTest {
 		JSONObject json = JSONObject.fromObject(map);
 		String value = json.toString();
 		try {
-			byte[] key = DES.generateKey();
+			byte[] key = null;
 			//byte[] ff = DES.encrypt(value.getBytes(), key);
 			//String ffV = new String(ff, "UTF-8");
 			char[] hh = Base64Util.encode(value.getBytes());

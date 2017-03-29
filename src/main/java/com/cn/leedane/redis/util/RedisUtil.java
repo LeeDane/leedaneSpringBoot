@@ -149,7 +149,7 @@ public class RedisUtil{
 	/**
 	 * 添加字符串数据
 	 * @param key
-	 * @param members
+	 * @param member
 	 * @return
 	 */
 	public boolean addString(String key, String member){
@@ -174,6 +174,48 @@ public class RedisUtil{
 	 * @return
 	 */
 	public String getString(String key){
+		if(!isPing()) return null;
+		
+		Jedis jedis = getJedis();
+		try {
+			if(jedis != null)
+				return jedis.get(key);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			RedisUtil.returnResource(jedis);
+		}
+		return null;
+	}
+	
+	/**
+	 * 添加序列化数据
+	 * @param key
+	 * @param seriamember 序列化
+	 * @return
+	 */
+	public boolean addSerialize(String key, byte[] seriamember){
+		boolean result = false;
+		Jedis jedis = getJedis();
+		try {
+			if(jedis !=null){
+				jedis.set(key.getBytes(), seriamember);
+				result = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			RedisUtil.returnResource(jedis);
+		}
+		return result;
+	}
+	
+	/**
+	 * 获取序列化数据
+	 * @param key
+	 * @return 
+	 */
+	public byte[] getSerialize(byte[] key){
 		if(!isPing()) return null;
 		
 		Jedis jedis = getJedis();

@@ -13,11 +13,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.handler.WechatHandler;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.utils.sensitiveWord.SensitivewordFilter;
 import com.cn.leedane.wechat.bean.WeixinCacheBean;
@@ -33,8 +35,8 @@ import com.cn.leedane.wechat.util.CheckUtil;
 import com.cn.leedane.wechat.util.MessageUtil;
 import com.cn.leedane.wechat.util.WeixinUtil;
 
-@Controller
-@RequestMapping("/leedane/weixin")
+@RestController
+@RequestMapping(value = ControllerBaseNameUtil.wx)
 public class WeixinController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -53,7 +55,7 @@ public class WeixinController extends BaseController{
 	@Autowired
 	private WechatHandler wechatHandler;
 	
-	@RequestMapping("/execute")
+	@RequestMapping(value="/execute", method=RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public String execute(HttpServletRequest request, HttpServletResponse response){
 		PrintWriter out = null;
 		try {

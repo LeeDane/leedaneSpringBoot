@@ -1,18 +1,19 @@
 package com.cn.leedane.controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.WebBackground;
 
 /**
@@ -22,7 +23,7 @@ import com.cn.leedane.utils.WebBackground;
  * Version 1.0
  */
 @RestController
-@RequestMapping("wc")
+@RequestMapping(value = ControllerBaseNameUtil.wc)
 public class WebConfigController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -36,26 +37,21 @@ public class WebConfigController extends BaseController{
 	 */
 	public static final String REQUEST_METHOD_POST = "POST";
 	
-	@RequestMapping(value= "/background", method = RequestMethod.GET)
-	public String background(HttpServletRequest request, HttpServletResponse response){
-		/*PrintWriter out = null;
+	@RequestMapping(value= "/background", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> background(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
-			request.setCharacterEncoding("utf-8");
-			response.setCharacterEncoding("utf-8");
-			out = response.getWriter();
-		} catch (IOException e ) {
+			checkParams(message, request);
+			
+			message.put("message", new WebBackground().getImage());
+			message.put("isSuccess", true);
+			return message.getMap();
+		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		try{
-			out.print(new WebBackground().getImage());
-		}catch(Exception e){
-			e.printStackTrace();
-			closePrintWriter(out);
-		}finally{
-			closePrintWriter(out);
-		}
-		*/
-		return new WebBackground().getImage();
+		}     
+        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
+		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		return message.getMap();
 	}
 	
 	/*private void closePrintWriter(PrintWriter out){

@@ -1,44 +1,42 @@
 package com.cn.leedane.controller;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.cn.leedane.redis.util.RedisUtil;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 
 @Controller
-@RequestMapping("/leedane/redis")
+@RequestMapping(value = ControllerBaseNameUtil.rd)
 public class RedisController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
 	/**
-	 * 添加赞
+	 * 删除redis
 	 * @return
 	 */
-	@RequestMapping("/delete")
-	public String delete(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/redis", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> delete(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
 			String key = getJsonFromMessage(message).getString("key");
 			if(StringUtil.isNull(key)){
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少参数.value));
 				message.put("responseCode", EnumUtil.ResponseCode.缺少参数.value);
-				printWriter(message, response, start);
-				return null;
+				return message.getMap();
 			}
 			RedisUtil redisUtil = RedisUtil.getInstance();
 			boolean result = redisUtil.delete(key);
@@ -48,25 +46,22 @@ public class RedisController extends BaseController{
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
 				message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
 			}
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 	
 	/**
 	 * 清除所有的缓存数据
 	 * @return
 	 */
-	@RequestMapping("/clearAll")
-	public String clearAll(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/redis/clear", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> clearAll(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
 			RedisUtil redisUtil = RedisUtil.getInstance();
 			boolean result = redisUtil.clearAll();
@@ -76,14 +71,12 @@ public class RedisController extends BaseController{
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
 				message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
 			}
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
@@ -21,13 +20,14 @@ import com.cn.leedane.model.SignInBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.SignInService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @RestController
-@RequestMapping("/si")
+@RequestMapping(value = ControllerBaseNameUtil.si)
 public class SignInController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -45,7 +45,7 @@ public class SignInController extends BaseController{
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/signIn", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> signIn(HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> signIn(HttpServletRequest request){
 		//保存签到记录
 		//更新积分
 		//更新操作日志
@@ -70,8 +70,8 @@ public class SignInController extends BaseController{
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/currentDateIsSignIn", method = RequestMethod.GET)
-	public Map<String, Object> currentDateIsSignIn(HttpServletRequest request, HttpServletResponse response){
+	@RequestMapping(value = "/currentDateIsSignIn", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> currentDateIsSignIn(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))
@@ -104,7 +104,7 @@ public class SignInController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/signIns", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))

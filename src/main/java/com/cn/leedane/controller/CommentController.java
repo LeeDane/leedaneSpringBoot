@@ -3,7 +3,6 @@ package com.cn.leedane.controller;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,11 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.model.CommentBean;
 import com.cn.leedane.service.CommentService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @RestController
-@RequestMapping("/cm")
+@RequestMapping(value = ControllerBaseNameUtil.cm)
 public class CommentController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -32,7 +32,7 @@ public class CommentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/comment", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> add(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))
@@ -53,8 +53,7 @@ public class CommentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/comments", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(
-			HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			checkParams(message, request);
@@ -74,8 +73,8 @@ public class CommentController extends BaseController{
 	 * 获取每条评论的子评论列表
 	 * @return
 	 */
-	@RequestMapping("/getItemsPaging")
-	public Map<String, Object> getItemsPaging(HttpServletRequest request, HttpServletResponse response){
+	@RequestMapping(value = "/items", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> getItemsPaging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))
@@ -96,8 +95,8 @@ public class CommentController extends BaseController{
 	 * 获取每一条评论的评论总数
 	 * @return
 	 */
-	@RequestMapping("/getCountByObject")
-	public Map<String, Object> getCountByObject(HttpServletRequest request, HttpServletResponse response){
+	@RequestMapping(value = "/count", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> getCountByObject(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))
@@ -118,8 +117,8 @@ public class CommentController extends BaseController{
 	 * 获取用户所有的评论数量
 	 * @return
 	 */
-	@RequestMapping("/getCommentsCountByUser")
-	public Map<String, Object> getCommentsCountByUser(HttpServletRequest request, HttpServletResponse response){
+	@RequestMapping(value = "/countByUser", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> getCommentsCountByUser(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))
@@ -141,7 +140,7 @@ public class CommentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/comment/{cid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> delete(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			//{"cid":1, "create_user_id":1}
@@ -164,7 +163,7 @@ public class CommentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/comment", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> updateCommentStatus(HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> updateCommentStatus(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
 			if(!checkParams(message, request))

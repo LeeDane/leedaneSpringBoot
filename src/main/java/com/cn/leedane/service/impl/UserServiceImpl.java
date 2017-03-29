@@ -58,6 +58,7 @@ import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EmailUtil;
 import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.EmailType;
 import com.cn.leedane.utils.FileUtil;
@@ -1233,34 +1234,18 @@ public class UserServiceImpl implements UserService<UserBean> {
 
 	@Override
 	public Map<String, Object> scanLogin(JSONObject jo,
-			UserBean userFromMessage, HttpServletRequest request) {
+			final UserBean user, HttpServletRequest request) {
 		logger.info("UserServiceImpl-->scanLogin():jo=" +jo.toString());		
-		String noLoginCode = JsonUtil.getStringValue(jo, "no_login_code");//获取免登录码
-		String account = JsonUtil.getStringValue(jo, "account");//获取账号名称
 		final String cid = JsonUtil.getStringValue(jo, "cid");//获取连接ID
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		
-		String password = userHandler.getNoLoginCode(noLoginCode);	
-		
-		if(StringUtil.isNull(cid)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.免登录码为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.免登录码为空.value);
-			return message;
-		}
-		
-		if(StringUtil.isNull(noLoginCode) || StringUtil.isNull(account) || StringUtil.isNull(password)
-				|| !StringUtil.checkNoLoginCode(noLoginCode, account, ConstantsUtil.NO_LOGIN_CODE_OUT_FORMAT)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请先登录.value);
-			return message;
-		}
-		
-		if(AppStore.getInstance().getScanLogin(cid) == null){
+		ResponseMap message = new ResponseMap();
+		if(StringUtil.isNull(cid) || AppStore.getInstance().getScanLogin(cid) == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.登录页面已经过期.value));
 			message.put("responseCode", EnumUtil.ResponseCode.登录页面已经过期.value);
 			return message;
 		}
+		
+		String account = user.getAccount();
+		String pwd = user.getPassword();
 		
 		//获取登录失败的数量
 		int number = userHandler.getLoginErrorNumber(account);
@@ -1282,31 +1267,25 @@ public class UserServiceImpl implements UserService<UserBean> {
 				}
 			}
 		}
-		final UserBean user = loginUserNoComputePSW(account, password);
-		
-		if(user != null){
-			message.put("isSuccess", true);
-			//扫码校验成功，将信息推送给客户端
-			HttpSession session = (HttpSession) AppStore.getInstance().getScanLogin(cid);
-			boolean result = false;
-			if(session != null){
-				CometEngine engine = CometContext.getInstance().getEngine();
-				Map<String, Object> map = new HashMap<String, Object>();
-				result = true;
-				map.put("isSuccess", result);
-				engine.sendTo(Comet4jServer.SCAN_LOGIN, engine.getConnection(cid), JSONObject.fromObject(map).toString());
-				session.setAttribute(UserController.USER_INFO_KEY, user);
-				userHandler.removeLoginErrorNumber(user.getAccount());
-			}else{
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.登录页面已经过期.value));
-				message.put("responseCode", EnumUtil.ResponseCode.登录页面已经过期.value);
-			}
-			//保存操作日志
-			operateLogService.saveOperateLog(user, request, null, user.getAccount()+"进行扫码登陆，校验"+ StringUtil.getSuccessOrNoStr(result), "扫码登录", ConstantsUtil.STATUS_NORMAL, 0);
+		message.put("isSuccess", true);
+		//扫码校验成功，将信息推送给客户端
+		HttpSession session = (HttpSession) AppStore.getInstance().getScanLogin(cid);
+		boolean result = false;
+		if(session != null){
+			CometEngine engine = CometContext.getInstance().getEngine();
+			Map<String, Object> map = new HashMap<String, Object>();
+			result = true;
+			map.put("isSuccess", result);
+			engine.sendTo(Comet4jServer.SCAN_LOGIN, engine.getConnection(cid), JSONObject.fromObject(map).toString());
+			//session.setAttribute(UserController.USER_INFO_KEY, user);
+			userHandler.removeLoginErrorNumber(account);
 		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请先登录.value);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.登录页面已经过期.value));
+			message.put("responseCode", EnumUtil.ResponseCode.登录页面已经过期.value);
 		}
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"进行扫码登陆，校验"+ StringUtil.getSuccessOrNoStr(result), "扫码登录", ConstantsUtil.STATUS_NORMAL, 0);
+
 		return message;
 	}
 	

@@ -3,7 +3,6 @@ package com.cn.leedane.controller;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.model.FinancialOneLevelCategoryBean;
 import com.cn.leedane.service.FinancialOneCategoryService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
@@ -22,7 +22,7 @@ import com.cn.leedane.utils.ResponseMap;
  * Version 1.0
  */
 @RestController
-@RequestMapping("/fn/category/")
+@RequestMapping(value = ControllerBaseNameUtil.fnc)
 public class FinancialOneCategoryController extends BaseController{
 	
 	@Autowired
@@ -32,8 +32,8 @@ public class FinancialOneCategoryController extends BaseController{
      * 获取二级分类的
      * @return 
      */
-	@RequestMapping(value = "/ones", method = RequestMethod.GET)
-    public Map<String, Object> getAll(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/ones", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    public Map<String, Object> getAll(HttpServletRequest request) {
     	ResponseMap message = new ResponseMap();
     	try{
     		if(!checkParams(message, request))

@@ -1,7 +1,6 @@
 package com.cn.leedane.shiro;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,23 +9,31 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.pam.UnsupportedTokenException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.cn.leedane.exception.user.BannedAccountException;
+import com.cn.leedane.exception.user.CancelAccountException;
+import com.cn.leedane.exception.user.NoActiveAccountException;
+import com.cn.leedane.exception.user.NoCompleteAccountException;
+import com.cn.leedane.exception.user.NoValidationEmailAccountException;
+import com.cn.leedane.exception.user.StopUseAccountException;
+import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.UserMapper;
 import com.cn.leedane.model.RoleBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.UserTokenBean;
+import com.cn.leedane.service.UserService;
 import com.cn.leedane.service.UserTokenService;
+import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.PlatformType;
 
 /**
@@ -45,8 +52,10 @@ public class MyShiroRealm extends AuthorizingRealm{
     private UserTokenService<UserTokenBean> userTokenService;
     
     @Autowired
-
-    private SessionDAO sessionDAO;
+    private UserHandler userHandle;
+    
+    @Autowired
+    private UserService<UserBean> userService;
 
     /**
      * 权限认证，为当前登录的Subject授予角色和权限 
@@ -108,24 +117,38 @@ public class MyShiroRealm extends AuthorizingRealm{
     	 }*/
     	 
        //throw new LockedAccountException();
-       if(customAuthenticationToken.getPlatformType() == PlatformType.安卓版){
-        	
-        	//在数据库校验token
-        	UserTokenBean userTokenBean = userTokenService.getUserToken(customAuthenticationToken.getUserId(), customAuthenticationToken.getToken());
-        	if(userTokenBean != null)
-        		return new SimpleAuthenticationInfo(customAuthenticationToken.getUserId(), userTokenBean.getToken(), getName());
-        	else
-        		throw new UnsupportedTokenException(); //抛出不支持的token异常
+    	 UserBean user = customAuthenticationToken.getUser();
+    	 if(user == null)
+    		 throw new UnknownAccountException(); //抛出未知异常
+    	 
+    	 if(user.getStatus() != ConstantsUtil.STATUS_NORMAL){
+     		if(user.getStatus() == ConstantsUtil.STATUS_NO_TALK){
+					throw new BannedAccountException(); //抛出用户被禁言异常
+				}else if(user.getStatus() == ConstantsUtil.STATUS_DELETE){
+					throw new CancelAccountException(); //抛出用户已经注销异常
+				}else if(user.getStatus() == ConstantsUtil.STATUS_DISABLE){
+					throw new StopUseAccountException(); //抛出用户暂时被禁止使用异常
+				}else if(user.getStatus() == ConstantsUtil.STATUS_NO_VALIDATION_EMAIL){
+					throw new NoValidationEmailAccountException(); //抛出用户未校验邮箱异常
+				}else if(user.getStatus() == ConstantsUtil.STATUS_NO_ACTIVATION){
+					throw new NoActiveAccountException(); //抛出用户未激活异常
+				}else if(user.getStatus() == ConstantsUtil.STATUS_INFORMATION){
+					throw new NoCompleteAccountException(); //抛出用户未完善信息异常
+				}else{
+					throw new UnknownAccountException(); //抛出未知异常
+				}
+    	 }
+    	 
+    	 if(customAuthenticationToken.getPlatformType() == PlatformType.安卓版){
+	    	 //在数据库校验token
+	       	UserTokenBean userTokenBean = userTokenService.getUserToken(user, customAuthenticationToken.getToken(), null);
+	       	if(userTokenBean != null){
+	       		return new SimpleAuthenticationInfo(customAuthenticationToken.getUserId(), userTokenBean.getToken(), getName());
+	       	}else
+	       		throw new UnsupportedTokenException(); //抛出不支持的token异常	
         }else{
-        	//查出是否有此用户
-            UserBean user = userMapper.findById(/*token.getUsername() */UserBean.class, 1);
-            if(user!=null){
-                // 若存在，将此用户存放到登录认证info中，无需自己做密码对比，Shiro会为我们进行密码对比校验
-                return new SimpleAuthenticationInfo(user.getAccount(), user.getPassword(), getName());
-            }
+        	return new SimpleAuthenticationInfo(user.getAccount(), customAuthenticationToken.getPassword(), getName());
         }
-        
-        return null;
     }
     
     @Override

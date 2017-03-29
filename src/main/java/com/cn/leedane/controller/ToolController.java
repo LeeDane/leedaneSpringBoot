@@ -29,6 +29,7 @@ import com.cn.leedane.rabbitmq.send.EmailSend;
 import com.cn.leedane.rabbitmq.send.ISend;
 import com.cn.leedane.utils.Base64Util;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.EmailType;
 import com.cn.leedane.utils.JsonUtil;
@@ -38,7 +39,7 @@ import com.cn.leedane.wechat.util.HttpRequestUtil;
 import com.qiniu.util.Auth;
 
 @RestController
-@RequestMapping("/tl")
+@RequestMapping(value = ControllerBaseNameUtil.tl)
 public class ToolController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -47,7 +48,7 @@ public class ToolController extends BaseController{
 	 * 翻译
 	 * @return
 	 */
-	@RequestMapping(value = "/fanyi", method = RequestMethod.GET)
+	@RequestMapping(value = "/fanyi", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> fanyi(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
@@ -162,7 +163,7 @@ public class ToolController extends BaseController{
 	 * 获取七牛服务器的token凭证
 	 * @return
 	 */
-	@RequestMapping(value = "/qiNiuToken", method = RequestMethod.GET)
+	@RequestMapping(value = "/qiNiuToken", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getQiNiuToken(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
@@ -185,7 +186,7 @@ public class ToolController extends BaseController{
 	 * @param request
 	 * @param response
 	 */
-	@RequestMapping(value = "/networdImage", method = RequestMethod.GET)
+	@RequestMapping(value = "/networdImage", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getNetwordImage(@RequestParam("url") String imgUrl, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		InputStream is = null;

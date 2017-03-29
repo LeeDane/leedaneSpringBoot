@@ -1,11 +1,9 @@
 package com.cn.leedane.controller;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
@@ -14,15 +12,18 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.cn.leedane.model.ScoreBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.ScoreService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 
 @Controller
-@RequestMapping("/leedane/score")
+@RequestMapping(value = ControllerBaseNameUtil.sc)
 public class ScoreController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -39,25 +40,21 @@ public class ScoreController extends BaseController{
 	 * 分页获取积分历史列表
 	 * @return
 	 */
-	@RequestMapping("/paging")
-	public String paging(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/scores", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> paging(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
 			message.putAll(scoreService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}     
         message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 	
 	
@@ -65,40 +62,34 @@ public class ScoreController extends BaseController{
 	 * 获得指定用户的总积分
 	 * @return
 	 */
-	@RequestMapping("/getTotalScore")
-	public String getTotalScore(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/score/total", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> getTotalScore(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
 			message.putAll(scoreService.getTotalScore(getJsonFromMessage(message), getUserFromMessage(message), request));
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}     
         message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 	
 	/**
 	 * 减少积分
 	 * @return
 	 */
-	@RequestMapping("/reduceScore")
-	public String reduceScore(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
+	@RequestMapping(value = "/score/reduce", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> reduceScore(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
 		try {
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
+			if(!checkParams(message, request))
+				return message.getMap();
+			
 			JSONObject json = getJsonFromMessage(message);
 			UserBean user = getUserFromMessage(message);
 			int score = JsonUtil.getIntValue(json, "score", 0);
@@ -106,14 +97,12 @@ public class ScoreController extends BaseController{
 			int tableId = JsonUtil.getIntValue(json, "tableId");
 			String tableName = JsonUtil.getStringValue(json, "tableName");
 			message.putAll(scoreService.reduceScore(score, desc, tableName, tableId, user));
-			printWriter(message, response, start);
-			return null;
+			return message.getMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}     
         message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		return message.getMap();
 	}
 }

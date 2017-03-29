@@ -5,21 +5,24 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.UserTokenBean;
+import com.cn.leedane.redis.util.RedisUtil;
+import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.StringUtil;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.UserService;
 
 /**
  * 用户的处理类
@@ -124,22 +127,45 @@ public class UserHandler {
 	 * @return
 	 */
 	public JSONObject getUserDetail(int userId){
+		UserBean user = getUserBean(userId);
+		if(user != null){
+			return JSONObject.fromObject(user);
+		}
+		return new JSONObject();
+	}
+	
+	/**
+	 * 获取用户Bean
+	 * @param userId 用户Id
+	 * @return
+	 */
+	public UserBean getUserBean(int userId){
 		String userInfoKey = getRedisUserInfoKey(userId);
-		JSONObject userInfo = null;
 		if(redisUtil.hasKey(userInfoKey)){
-			userInfo = JSONObject.fromObject(redisUtil.getString(userInfoKey));
+			return (UserBean) SerializationUtils.deserialize(redisUtil.getSerialize(userInfoKey.getBytes()));
 		}
+		UserBean user = userService.findById(userId);
 		
-		if(userInfo == null){
-			//查找数据库，找到用户的头像
-			List<Map<String, Object>> list = userService.executeSQL("select id, account, email, age, mobile_phone, qq, sex, is_admin, no_login_code, personal_introduction from "+DataTableType.用户.value+" u where status=? and id=? limit 1", ConstantsUtil.STATUS_NORMAL, userId);
-			if(list != null && list.size()>0){
-				userInfo = JSONObject.fromObject(list.get(0));
-				redisUtil.addString(userInfoKey, userInfo.toString());
-			}
-			
+		if(user != null){
+			redisUtil.addSerialize(userInfoKey, SerializationUtils.serialize(user));
+			return user;
 		}
-		return userInfo;
+		return null;
+	}
+	
+	/**
+	 * 获取用户Bean
+	 * @param userId 用户Id
+	 * @return
+	 */
+	public UserBean getUserBean(String username, String pwd){
+		UserBean user = userService.loginUser(username, pwd);		
+		if(user != null){
+			String userInfoKey = getRedisUserInfoKey(user.getId());
+			redisUtil.addSerialize(userInfoKey, SerializationUtils.serialize(user));
+			return user;
+		}
+		return null;
 	}
 	
 	/**
@@ -223,9 +249,9 @@ public class UserHandler {
 				e.printStackTrace();
 			}*/
 			
-			if(isSelf){
+			if(!isSelf){/*
 				infos.put("no_login_code", user2.getNoLoginCode());
-			}else{
+			}else{*/
 				infos.put("last_request_time", getLastRequestTime(user2.getId()));//最近操作记录
 			}
 			infos.put("personal_introduction", StringUtil.changeNotNull(user2.getPersonalIntroduction()));
@@ -369,23 +395,39 @@ public class UserHandler {
 	
 	/**
 	 * 添加免登录码
-	 * @param account
+	 * @param userTokenBean
 	 * @return
 	 */
-	public boolean addNoLoginCode(String noLoginCode, String password){
-		String key = getRedisNoLoginCodeKey(noLoginCode);
-		redisUtil.addString(key, password);
-		return true;
+	public boolean addTokenCode(UserTokenBean userTokenBean){
+		String key = getRedisUserTokenKey(String.valueOf(userTokenBean.getCreateUserId()));
+		if(redisUtil.addSet(key, userTokenBean.getToken()) && userTokenBean.getOverdue() != null){
+			int overdueTime = (int)(userTokenBean.getOverdue().getTime() - DateUtil.getCurrentTime().getTime()) / 1000;
+			if(overdueTime > 10)
+				return redisUtil.expire(key, userTokenBean.getToken(), overdueTime);
+			
+			return true;
+		}
+		return false;
 	}
 	
 	/**
 	 * 获取免登录码
-	 * @param account
+	 * @param userid
 	 * @return
 	 */
-	public String getNoLoginCode(String noLoginCode){
-		String key = getRedisNoLoginCodeKey(noLoginCode);
-		return redisUtil.getString(key);
+	public Set<String> getTokens(int userid){
+		String key = getRedisUserTokenKey(String.valueOf(userid));
+		return redisUtil.getSet(key);
+	}
+	
+	/**
+	 * 该用户是否有免登录码
+	 * @param token
+	 * @return
+	 */
+	public boolean hasToken(int userid, String token){
+		String key = getRedisUserTokenKey(String.valueOf(userid));
+		return redisUtil.isInSet(key, token);
 	}
 	
 	/**
@@ -448,12 +490,12 @@ public class UserHandler {
 	}
 	
 	/**
-	 * 缓存免登录码信息
-	 * @param username
+	 * 缓存token信息
+	 * @param token
 	 * @return
 	 */
-	public static String getRedisNoLoginCodeKey(String noLoginCode){
-		return "no_login_"+noLoginCode;
+	public static String getRedisUserTokenKey(String token){
+		return "user_token_"+token;
 	}
 	
 	/**

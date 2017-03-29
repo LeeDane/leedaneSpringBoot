@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @RestController
-@RequestMapping("/ol")
+@RequestMapping(value = ControllerBaseNameUtil.ol)
 public class OperateLogController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -30,7 +31,7 @@ public class OperateLogController extends BaseController{
 	 * 分页获取用户登录操作日志列表
 	 * @return
 	 */
-	@RequestMapping(value = "/logins", method = RequestMethod.GET)
+	@RequestMapping(value = "/logins", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> loginPaging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {

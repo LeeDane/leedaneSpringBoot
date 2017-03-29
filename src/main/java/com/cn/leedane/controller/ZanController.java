@@ -14,11 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.model.ZanBean;
 import com.cn.leedane.service.ZanService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @RestController
-@RequestMapping("/lk")  //like的意思
+@RequestMapping(value = ControllerBaseNameUtil.lk)  //like的意思
 public class ZanController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
@@ -72,7 +73,7 @@ public class ZanController extends BaseController{
 	 * 获取赞列表
 	 * @return
 	 */
-	@RequestMapping(value = "/zans", method = RequestMethod.GET)
+	@RequestMapping(value = "/zans", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
@@ -96,7 +97,7 @@ public class ZanController extends BaseController{
 	 * 获取点赞用户列表
 	 * @return
 	 */
-	@RequestMapping(value = "/allZanUsers", method = RequestMethod.GET)
+	@RequestMapping(value = "/allZanUsers", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getAllZanUser(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		try {
