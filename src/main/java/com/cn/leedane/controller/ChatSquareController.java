@@ -38,7 +38,7 @@ public class ChatSquareController extends BaseController{
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/active", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/user/active", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getActiveUser(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);

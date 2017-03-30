@@ -1,5 +1,6 @@
 package com.cn.leedane.handler;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.SerializeUtil;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -142,7 +144,11 @@ public class UserHandler {
 	public UserBean getUserBean(int userId){
 		String userInfoKey = getRedisUserInfoKey(userId);
 		if(redisUtil.hasKey(userInfoKey)){
-			return (UserBean) SerializationUtils.deserialize(redisUtil.getSerialize(userInfoKey.getBytes()));
+			try {
+				return (UserBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(userInfoKey.getBytes()), UserBean.class);
+			} catch (ClassNotFoundException | IOException e) {
+				e.printStackTrace();
+			}
 		}
 		UserBean user = userService.findById(userId);
 		

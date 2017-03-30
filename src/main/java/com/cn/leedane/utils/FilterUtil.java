@@ -36,4 +36,36 @@ public class FilterUtil {
 		//content = EmojiUtil.filterEmoji(content);
 		return false;
 	}
+	
+	/**
+	 * 过滤是否含有敏感词汇并且过滤emoji表情
+	 * @param content
+	 * @param message
+	 * @return
+	 */
+	public static boolean filter(String content){
+		//检测敏感词
+		SensitivewordFilter filter = new SensitivewordFilter();
+		long beginTime = System.currentTimeMillis();
+		Set<String> set = filter.getSensitiveWord(content, 1);
+		if(set.size() > 0){
+			long endTime = System.currentTimeMillis();
+			System.out.println("总共消耗时间为：" + (endTime - beginTime));
+			return true;
+		}
+		
+		//过滤掉emoji
+		content = EmojiUtil.filterEmoji(content);
+		return false;
+	}
+	
+	/**
+	 * 过滤是否含有敏感词汇
+	 * @param content
+	 * @param sensitiveWords
+	 */
+	public static Set<String> getFilter(String content){
+		//检测敏感词
+		return new SensitivewordFilter().getSensitiveWord(content, 1);
+	}
 }

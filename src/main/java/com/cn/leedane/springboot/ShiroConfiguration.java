@@ -142,7 +142,6 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("/s", "anon");//anon 不拦截搜索详情链接
         filterChainDefinitionMap.put("/s", "anon");//anon 不拦截搜索详情链接
         filterChainDefinitionMap.put("/403", "anon");//anon 不拦截403链接
-        
         // authc：该过滤器下的页面必须验证后才能访问，它是Shiro内置的一个拦截器org.apache.shiro.web.filter.authc.FormAuthenticationFilter
         filterChainDefinitionMap.put("/*", "authc");// 拦截全部的链接
         // anon：它对应的过滤器里面是空的,什么都没做

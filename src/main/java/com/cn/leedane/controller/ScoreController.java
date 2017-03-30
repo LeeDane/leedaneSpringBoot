@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.model.ScoreBean;
 import com.cn.leedane.model.UserBean;
@@ -21,7 +22,7 @@ import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 
-@Controller
+@RestController
 @RequestMapping(value = ControllerBaseNameUtil.sc)
 public class ScoreController extends BaseController{
 

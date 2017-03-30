@@ -50,6 +50,7 @@ public class MShiroFilterFactoryBean extends ShiroFilterFactoryBean{
         ignoreExt.add(".bmp");
         ignoreExt.add(".js");
         ignoreExt.add(".css");
+        ignoreExt.add(".do");
     }
 
     @Override

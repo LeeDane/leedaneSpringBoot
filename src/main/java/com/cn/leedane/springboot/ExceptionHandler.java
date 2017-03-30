@@ -34,7 +34,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         StringPrintWriter strintPrintWriter = new StringPrintWriter();  
         exception.printStackTrace(strintPrintWriter);
         logger.info(strintPrintWriter.getString());
-        message.put("message", strintPrintWriter.getString());//将错误信息传递给view  
+        message.put("message", /*"服务器异常"*/strintPrintWriter.getString());//将错误信息传递给view  
         
         JSONObject jsonObject = JSONObject.fromObject(message);
 		response.setCharacterEncoding("utf-8");
