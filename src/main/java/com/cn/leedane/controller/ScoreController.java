@@ -18,7 +18,6 @@ import com.cn.leedane.model.ScoreBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.ScoreService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 
@@ -43,17 +42,10 @@ public class ScoreController extends BaseController{
 	@RequestMapping(value = "/scores", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(scoreService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(scoreService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -65,17 +57,10 @@ public class ScoreController extends BaseController{
 	@RequestMapping(value = "/score/total", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getTotalScore(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(scoreService.getTotalScore(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(scoreService.getTotalScore(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -86,23 +71,16 @@ public class ScoreController extends BaseController{
 	@RequestMapping(value = "/score/reduce", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> reduceScore(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			JSONObject json = getJsonFromMessage(message);
-			UserBean user = getUserFromMessage(message);
-			int score = JsonUtil.getIntValue(json, "score", 0);
-			String desc = JsonUtil.getStringValue(json, "desc");
-			int tableId = JsonUtil.getIntValue(json, "tableId");
-			String tableName = JsonUtil.getStringValue(json, "tableName");
-			message.putAll(scoreService.reduceScore(score, desc, tableName, tableId, user));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		JSONObject json = getJsonFromMessage(message);
+		UserBean user = getUserFromMessage(message);
+		int score = JsonUtil.getIntValue(json, "score", 0);
+		String desc = JsonUtil.getStringValue(json, "desc");
+		int tableId = JsonUtil.getIntValue(json, "tableId");
+		String tableName = JsonUtil.getStringValue(json, "tableName");
+		message.putAll(scoreService.reduceScore(score, desc, tableName, tableId, user));
 		return message.getMap();
 	}
 }

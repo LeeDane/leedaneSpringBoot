@@ -29,7 +29,7 @@ public interface TransmitService<T extends IDBean>{
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<String, Object> add(JSONObject jo, UserBean user, HttpServletRequest request) throws Exception;
+	public Map<String, Object> add(JSONObject jo, UserBean user, HttpServletRequest request);
 
 	
 

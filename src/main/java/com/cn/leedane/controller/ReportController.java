@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.cn.leedane.model.ReportBean;
 import com.cn.leedane.service.ReportService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @Controller
@@ -35,17 +34,10 @@ public class ReportController extends BaseController{
 	@RequestMapping(value = "/report", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> add(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(reportService.addReport(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(reportService.addReport(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -56,17 +48,10 @@ public class ReportController extends BaseController{
 	@RequestMapping(value = "/report", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> cancel(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(reportService.cancel(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(reportService.cancel(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -77,20 +62,13 @@ public class ReportController extends BaseController{
 	@RequestMapping(value = "/reports", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			List<Map<String, Object>> result= reportService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
-			System.out.println("获得举报的数量：" +result.size());
-			message.put("isSuccess", true);
-			message.put("message", result);
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		List<Map<String, Object>> result= reportService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
+		System.out.println("获得举报的数量：" +result.size());
+		message.put("isSuccess", true);
+		message.put("message", result);
 		return message.getMap();
 	}
 }

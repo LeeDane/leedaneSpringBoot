@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.cn.leedane.model.PrivateChatBean;
 import com.cn.leedane.service.PrivateChatService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @Controller
@@ -32,17 +31,10 @@ public class PrivateChatController extends BaseController{
 	@RequestMapping(value = "/privatechat", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> send(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(privateChatService.send(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(privateChatService.send(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -53,17 +45,10 @@ public class PrivateChatController extends BaseController{
 	@RequestMapping(value = "/privatechats", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(privateChatService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(privateChatService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 }

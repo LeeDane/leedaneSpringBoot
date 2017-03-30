@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @RestController
@@ -34,17 +33,10 @@ public class OperateLogController extends BaseController{
 	@RequestMapping(value = "/logins", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> loginPaging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(operateLogService.getUserLoginLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(operateLogService.getUserLoginLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cn.leedane.exception.ErrorException;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.SignInBean;
 import com.cn.leedane.model.UserBean;
@@ -50,18 +51,11 @@ public class SignInController extends BaseController{
 		//更新积分
 		//更新操作日志
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			int id = JsonUtil.getIntValue(getJsonFromMessage(message), "id", getUserFromMessage(message).getId());
-			message.put("isSuccess", signInService.saveSignIn(getJsonFromMessage(message), userService.findById(id), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		int id = JsonUtil.getIntValue(getJsonFromMessage(message), "id", getUserFromMessage(message).getId());
+		message.put("isSuccess", signInService.saveSignIn(getJsonFromMessage(message), userService.findById(id), request));
 		return message.getMap();
 	}
 	
@@ -73,30 +67,24 @@ public class SignInController extends BaseController{
 	@RequestMapping(value = "/currentDateIsSignIn", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> currentDateIsSignIn(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.put("isSuccess", true);
-			JSONObject json = getJsonFromMessage(message);
-			UserBean user = getUserFromMessage(message);
-			if(json.has("id")) {
-				int id = JsonUtil.getIntValue(getJsonFromMessage(message), "id", getUserFromMessage(message).getId());
-				String dateTime = DateUtil.DateToString(new Date(), "yyyy-MM-dd");		
-				message.put("isSuccess", signInService.isSign(id, dateTime));
-				
-				// 保存操作日志信息
-				String subject = user.getAccount()+"判断当天是否签到";
-				this.operateLogService.saveOperateLog(user, request, new Date(), subject, "currentDateIsSignIn", 1, 0);
-				return message.getMap();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
+		if(!checkParams(message, request))
+			return message.getMap();
+		
 		message.put("isSuccess", true);
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		return message.getMap();
+		JSONObject json = getJsonFromMessage(message);
+		UserBean user = getUserFromMessage(message);
+		if(json.has("id")) {
+			int id = JsonUtil.getIntValue(getJsonFromMessage(message), "id", getUserFromMessage(message).getId());
+			String dateTime = DateUtil.DateToString(new Date(), "yyyy-MM-dd");		
+			message.put("isSuccess", signInService.isSign(id, dateTime));
+			
+			// 保存操作日志信息
+			String subject = user.getAccount()+"判断当天是否签到";
+			this.operateLogService.saveOperateLog(user, request, new Date(), subject, "currentDateIsSignIn", 1, 0);
+			return message.getMap();
+		}
+		
+		throw new ErrorException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
 	}
 	
 	/**
@@ -106,20 +94,13 @@ public class SignInController extends BaseController{
 	@RequestMapping(value = "/signIns", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			List<Map<String, Object>> result= signInService.getSignInByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
-			System.out.println("获得签到的数量：" +result.size());
-			message.put("isSuccess", true);
-			message.put("message", result);
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		List<Map<String, Object>> result= signInService.getSignInByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
+		System.out.println("获得签到的数量：" +result.size());
+		message.put("isSuccess", true);
+		message.put("message", result);
 		return message.getMap();
 	}
 }

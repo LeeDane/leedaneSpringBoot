@@ -36,17 +36,10 @@ public class AttentionController extends BaseController{
 	@RequestMapping(value = "/attention", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> add(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(attentionService.addAttention(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(attentionService.addAttention(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -57,17 +50,10 @@ public class AttentionController extends BaseController{
 	@RequestMapping(value = "/attention", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> delete(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request)){
-				return message.getMap();
-			}
-			message.putAll(attentionService.deleteAttention(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request)){
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		message.putAll(attentionService.deleteAttention(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -78,27 +64,20 @@ public class AttentionController extends BaseController{
 	@RequestMapping(value = "/attentions", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			//为了安全，必须是登录用户才能操作
-			int toUserId = JsonUtil.getIntValue(getJsonFromMessage(message), "toUserId");
-			if(toUserId != getUserFromMessage(message).getId()){
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-				message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-				return message.getMap();
-			}
-			List<Map<String, Object>> result= attentionService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
-			System.out.println("获得关注的数量：" +result.size());
-			message.put("isSuccess", true);
-			message.put("message", result);
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
+		
+		//为了安全，必须是登录用户才能操作
+		int toUserId = JsonUtil.getIntValue(getJsonFromMessage(message), "toUserId");
+		if(toUserId != getUserFromMessage(message).getId()){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
+			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
+			return message.getMap();
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		List<Map<String, Object>> result= attentionService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
+		System.out.println("获得关注的数量：" +result.size());
+		message.put("isSuccess", true);
+		message.put("message", result);
 		return message.getMap();
 	}
 }

@@ -1,8 +1,8 @@
 package com.cn.leedane.controller;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.cn.leedane.utils.Base64ImageUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.HttpUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 
 @Controller
@@ -113,36 +113,29 @@ public class DownloadController extends BaseController{
 	 * @return
 	 * @throws Exception 
 	 */
-	@RequestMapping("/getLocalBase64Image")
-	public String getLocalBase64Image(HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> message = new HashMap<String, Object>();
-		long start = System.currentTimeMillis();
-		try{
-			if(!checkParams(message, request)){
-				printWriter(message, response, start);
-				return null;
-			}
-			String filename = getJsonFromMessage(message).getString("filename");
-			if(StringUtil.isNull(filename)){
-				message.put("isSuccess", false);
-				message.put("message", "文件名称为空");
-				printWriter(message, response, start);
-				return null;
-			}
-			
-			String suffixs = StringUtil.getSuffixs(filename);	
-			System.out.println("suffixs:"+suffixs);
-			filename = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER + "file//" + filename;
-			message.put("message", Base64ImageUtil.convertImageToBase64(filename, suffixs));
-			message.put("isSuccess", true);
-			printWriter(message, response, start);
-			return null;
-		}catch(Exception e){
-			e.printStackTrace();
+	@RequestMapping(value = "/localBase64Image", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> getLocalBase64Image(HttpServletRequest request, HttpServletResponse response){
+		ResponseMap message = new ResponseMap();
+		
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		String filename = getJsonFromMessage(message).getString("filename");
+		if(StringUtil.isNull(filename)){
+			message.put("message", "文件名称为空");
+			return message.getMap();
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, start);
-		return null;
+		
+		String suffixs = StringUtil.getSuffixs(filename);	
+		System.out.println("suffixs:"+suffixs);
+		filename = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER + "file//" + filename;
+		try {
+			message.put("message", Base64ImageUtil.convertImageToBase64(filename, suffixs));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return message.getMap();
+		}
+		message.put("isSuccess", true);
+		return message.getMap();
 	}
 }

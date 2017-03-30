@@ -33,16 +33,9 @@ public class AppVersionController extends BaseController{
 	@RequestMapping(value = "/newest", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getNewest(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			checkParams(message, request);
-			message.putAll(appVersionService.getNewest(getJsonFromMessage(message), getUserFromMessage(message), request));
-			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		return message.getMap();
+		checkParams(message, request);
+		message.putAll(appVersionService.getNewest(getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();	
 	}
 	
 	/**
@@ -52,16 +45,8 @@ public class AppVersionController extends BaseController{
 	@RequestMapping(value = "/versions", method = RequestMethod.GET)
 	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			checkParams(message, request);
-			
-			message.putAll(appVersionService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
-			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		checkParams(message, request);
+		message.putAll(appVersionService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 }

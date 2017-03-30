@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.model.UploadBean;
@@ -23,6 +24,7 @@ import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.ResponseCode;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 
 @Controller
@@ -43,10 +45,9 @@ public class AppFileUploadController extends BaseController{
      * 注意app要保证编号的正确性和顺序，到时合并的时候将按照大小进行合并
      * @return
      */
-	@RequestMapping("/execute")
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
-    	long startTime = System.currentTimeMillis();
-    	Map<String, Object> message = new HashMap<String, Object>();
+	@RequestMapping(value = "/execute", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    public Map<String, Object> execute(HttpServletRequest request) {
+    	ResponseMap message = new ResponseMap();
         try {
         	int uid = StringUtil.parseInt(request.getParameter("uid"), 0);
             
@@ -54,8 +55,7 @@ public class AppFileUploadController extends BaseController{
             if(user == null){
             	message.put("message", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
             	message.put("responseCode", ResponseCode.请先登录.value);
-            	printWriter(message, response, startTime);
-				return null;
+				return message.getMap();
         	}
             
             request.setCharacterEncoding("UTF-8");
@@ -95,7 +95,7 @@ public class AppFileUploadController extends BaseController{
             	if(StringUtil.isNull(fileName) || StringUtil.isNull(tableName)){
             		message.put("message", EnumUtil.getResponseValue(ResponseCode.某些参数为空.value));
                 	message.put("responseCode", ResponseCode.某些参数为空.value);
-            		return null;
+            		return message.getMap();
             	}
             	
             	fileFullPath.append(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER);
@@ -131,8 +131,7 @@ public class AppFileUploadController extends BaseController{
             
            if(serialNumber == 0 ){ 	   
         	   message.put("isSuccess", filePathService.saveSourceAndEachFile(fileFullPath.toString(), user, tableUuid, tableName, order, null, null));
-        	   printWriter(message, response, startTime);
-        	   return null;
+        	   return message.getMap();
            }else{
         	   UploadBean upload = new UploadBean();
         	   upload.setCreateTime(new Date());
@@ -149,18 +148,14 @@ public class AppFileUploadController extends BaseController{
         		   	message.put("message", EnumUtil.getResponseValue(ResponseCode.文件上传失败.value));
                		message.put("responseCode", ResponseCode.文件上传失败.value);
         	   }
-        	   printWriter(message, response, startTime);
-        	   return null;
+        	   return message.getMap();
            }
         } catch (Exception e) {
             System.out.println("上传文件发生异常,错误原因 : " + e.getMessage());
         }
         
-        long endTime = System.currentTimeMillis();
         message.put("message", EnumUtil.getResponseValue(ResponseCode.服务器处理异常.value));
    		message.put("responseCode", ResponseCode.服务器处理异常.value);
-        System.out.println("上传总计耗时："+ (endTime - startTime) +"毫秒");
-        printWriter(message, response, startTime);
-		return null;
+		return message.getMap();
     }
 }

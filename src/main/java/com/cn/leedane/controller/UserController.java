@@ -91,141 +91,134 @@ public class UserController extends BaseController{
 			HttpServletRequest request, RedirectAttributes redirectAttributes){
 		ResponseMap message = new ResponseMap();
 		boolean isSuccess = false;
-		try {
-			checkParams(message, request);
-			if(StringUtil.isNull(username) || StringUtil.isNull(password)){
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.账号或密码为空.value));
-				message.put("responseCode", EnumUtil.ResponseCode.账号或密码为空.value);
-			}else{
-				//获取登录失败的数量
-				int number = userHandler.getLoginErrorNumber(username);
-				if(number > 5){
-					Date date = userHandler.getLoginErrorTime(username);
-					if(date != null){
-						//是否在禁止5分钟内
-						if(DateUtil.isInMinutes(new Date(), date, 5)){
-							//计算还剩下几分钟
-							int minutes = DateUtil.leftMinutes(new Date(), date);
-							if(minutes > 1){
-								message.put("message", "由于您的账号失败连续超过5次，系统已限制您5分钟内不能登录,大概还剩余"+ minutes +"分钟");
-							}else{
-								message.put("message", "由于您的账号失败连续超过5次，系统已限制您5分钟内不能登录,大概还剩余"+ DateUtil.leftSeconds(new Date(), date) +"秒");
-							}
-							
-							message.put("responseCode", EnumUtil.ResponseCode.您的账号登录失败太多次.value);
-							return message.getMap();
+		checkParams(message, request);
+		if(StringUtil.isNull(username) || StringUtil.isNull(password)){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.账号或密码为空.value));
+			message.put("responseCode", EnumUtil.ResponseCode.账号或密码为空.value);
+		}else{
+			//获取登录失败的数量
+			int number = userHandler.getLoginErrorNumber(username);
+			if(number > 5){
+				Date date = userHandler.getLoginErrorTime(username);
+				if(date != null){
+					//是否在禁止5分钟内
+					if(DateUtil.isInMinutes(new Date(), date, 5)){
+						//计算还剩下几分钟
+						int minutes = DateUtil.leftMinutes(new Date(), date);
+						if(minutes > 1){
+							message.put("message", "由于您的账号失败连续超过5次，系统已限制您5分钟内不能登录,大概还剩余"+ minutes +"分钟");
+						}else{
+							message.put("message", "由于您的账号失败连续超过5次，系统已限制您5分钟内不能登录,大概还剩余"+ DateUtil.leftSeconds(new Date(), date) +"秒");
 						}
+						
+						message.put("responseCode", EnumUtil.ResponseCode.您的账号登录失败太多次.value);
+						return message.getMap();
 					}
 				}
-				
-				CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken();
-				authenticationToken.setUsername(username);
-				authenticationToken.setPassword(password.toCharArray());
-				//这里只负责获取用户，不做校验，校验交给shiro的realm里面去做
-		        UserBean user = userHandler.getUserBean(username, password);
-		        authenticationToken.setUser(user);
-		        authenticationToken.setRememberMe(true);
-				
-		        //获取当前的Subject  
-		        Subject currentUser = SecurityUtils.getSubject();  
-		        try {  
-		            //在调用了login方法后,SecurityManager会收到AuthenticationToken,并将其发送给已配置的Realm执行必须的认证检查  
-		            //每个Realm都能在必要时对提交的AuthenticationTokens作出反应  
-		            //所以这一步在调用login(token)方法时,它会走到MyRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法  
-		            logger.info("对用户[" + username + "]进行登录验证..验证开始");  
-		            currentUser.login(authenticationToken);
-		            logger.info("对用户[" + username + "]进行登录验证..验证通过");  
-		        }catch(UnknownAccountException uae){  
-		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,未知账户");  
-		            redirectAttributes.addFlashAttribute("message", "未知账户");  
-		        }catch(BannedAccountException ba){  
-		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户已经被禁言了");  
-		            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已被禁言.value));  
-		        }catch(CancelAccountException ca){  
-		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户已经注销了");  
-		            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已经注销.value));  
-		        }catch(StopUseAccountException sua){  
-		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户暂时被禁止使用");  
-		            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已被禁止使用.value));  
-		        }catch(NoValidationEmailAccountException nveca){  
-		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户未验证邮箱");  
-		            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先验证邮箱.value));  
-		        }catch(NoActiveAccountException naa){  
-		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户未激活");  
-		            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注册未激活账户.value));  
-		        }catch(NoCompleteAccountException naa){  
-		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户未完善信息");  
-		            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.未完善信息.value));  
-		        }catch(IncorrectCredentialsException ice){  
-		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,错误的凭证");  
-		            redirectAttributes.addFlashAttribute("message", "密码不正确");  
-		        }catch(LockedAccountException lae){  
-		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,账户已锁定");  
-		            redirectAttributes.addFlashAttribute("message", "账户已锁定");  
-		        }catch(ExcessiveAttemptsException eae){  
-		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,错误次数过多");  
-		            redirectAttributes.addFlashAttribute("message", "用户名或密码错误次数过多");  
-		        }catch(AuthenticationException ae){  
-		            //通过处理Shiro的运行时AuthenticationException就可以控制用户登录失败或密码错误时的情景  
-		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,堆栈轨迹如下");  
-		            ae.printStackTrace();  
-		            redirectAttributes.addFlashAttribute("message", "用户名或密码不正确");  
-		        } 
-		        
-		        //验证是否登录成功  
-		        if(currentUser.isAuthenticated()){  
-		            logger.info("用户[" + username + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)");
-		            
-		            currentUser.getSession().setAttribute(USER_INFO_KEY, user);
-		            //获取平台，如果是android就继续获取token
-		            String platform = request.getHeader("platform");
-		            
-		            Map<String, Object> userinfo = userHandler.getUserInfo(user, true);
-		            if(StringUtil.isNotNull(platform) && PlatformType.安卓版.value == platform){
-		            	UserTokenBean userTokenBean = new UserTokenBean();
-		            	Date overdue = DateUtil.getOverdueTime(new Date(), "7天");
-		            	userTokenBean.setToken(StringUtil.getUserToken(String.valueOf(user.getId()), user.getPassword(), overdue));
-		            	userTokenBean.setCreateTime(new Date());
-		            	userTokenBean.setCreateUserId(user.getId());
-		            	userTokenBean.setOverdue(overdue);
-		            	userTokenBean.setStatus(ConstantsUtil.STATUS_NORMAL);
-		            	if(userHandler.addTokenCode(userTokenBean)){
-		            		userinfo.put("token", userTokenBean.getToken());
-		            	}else{
-		            		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.token获取异常.value));
-		            		message.put("responseCode", EnumUtil.ResponseCode.token获取异常.value);
-		            		return message.getMap();
-		            	}
-		            }
-		            
-					userHandler.removeLoginErrorNumber(username);
-					message.put("userinfo", userinfo);
-					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您登录成功.value));
-					message.put("responseCode", EnumUtil.ResponseCode.恭喜您登录成功.value);
-					isSuccess = true;
-					message.put("isSuccess", isSuccess);				
-		        }else{  
-		        	authenticationToken.clear(); 
-					number = userHandler.addLoginErrorNumber(username);	
-					if(number > 5){
-						message.put("message", "您的账号已经连续登陆失败"+number+"次，账号已被限制5分钟");
-					}else{
-						message.put("message", "您的账号已经连续登陆失败"+number+"次，还剩下" +(5- number)+"次");
-					}
-					message.put("responseCode", EnumUtil.ResponseCode.账号或密码不匹配.value);
-		        }
-				
-				// 保存用户登录日志信息
-				String subject = user != null ? user.getAccount()+"登录系统": "账号" + username + "登录系统失败";
-				this.operateLogService.saveOperateLog(user, request, new Date(), subject, "账号登录", (isSuccess ? 1: 0), 0);
-			
 			}
-			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
+			
+			CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken();
+			authenticationToken.setUsername(username);
+			authenticationToken.setPassword(password.toCharArray());
+			//这里只负责获取用户，不做校验，校验交给shiro的realm里面去做
+	        UserBean user = userHandler.getUserBean(username, password);
+	        authenticationToken.setUser(user);
+	        authenticationToken.setRememberMe(true);
+			
+	        //获取当前的Subject  
+	        Subject currentUser = SecurityUtils.getSubject();  
+	        try {  
+	            //在调用了login方法后,SecurityManager会收到AuthenticationToken,并将其发送给已配置的Realm执行必须的认证检查  
+	            //每个Realm都能在必要时对提交的AuthenticationTokens作出反应  
+	            //所以这一步在调用login(token)方法时,它会走到MyRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法  
+	            logger.info("对用户[" + username + "]进行登录验证..验证开始");  
+	            currentUser.login(authenticationToken);
+	            logger.info("对用户[" + username + "]进行登录验证..验证通过");  
+	        }catch(UnknownAccountException uae){  
+	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,未知账户");  
+	            redirectAttributes.addFlashAttribute("message", "未知账户");  
+	        }catch(BannedAccountException ba){  
+	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户已经被禁言了");  
+	            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已被禁言.value));  
+	        }catch(CancelAccountException ca){  
+	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户已经注销了");  
+	            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已经注销.value));  
+	        }catch(StopUseAccountException sua){  
+	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户暂时被禁止使用");  
+	            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已被禁止使用.value));  
+	        }catch(NoValidationEmailAccountException nveca){  
+	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户未验证邮箱");  
+	            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先验证邮箱.value));  
+	        }catch(NoActiveAccountException naa){  
+	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户未激活");  
+	            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注册未激活账户.value));  
+	        }catch(NoCompleteAccountException naa){  
+	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户未完善信息");  
+	            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.未完善信息.value));  
+	        }catch(IncorrectCredentialsException ice){  
+	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,错误的凭证");  
+	            redirectAttributes.addFlashAttribute("message", "密码不正确");  
+	        }catch(LockedAccountException lae){  
+	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,账户已锁定");  
+	            redirectAttributes.addFlashAttribute("message", "账户已锁定");  
+	        }catch(ExcessiveAttemptsException eae){  
+	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,错误次数过多");  
+	            redirectAttributes.addFlashAttribute("message", "用户名或密码错误次数过多");  
+	        }catch(AuthenticationException ae){  
+	            //通过处理Shiro的运行时AuthenticationException就可以控制用户登录失败或密码错误时的情景  
+	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,堆栈轨迹如下");  
+	            ae.printStackTrace();  
+	            redirectAttributes.addFlashAttribute("message", "用户名或密码不正确");  
+	        } 
+	        
+	        //验证是否登录成功  
+	        if(currentUser.isAuthenticated()){  
+	            logger.info("用户[" + username + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)");
+	            
+	            currentUser.getSession().setAttribute(USER_INFO_KEY, user);
+	            //获取平台，如果是android就继续获取token
+	            String platform = request.getHeader("platform");
+	            
+	            Map<String, Object> userinfo = userHandler.getUserInfo(user, true);
+	            if(StringUtil.isNotNull(platform) && PlatformType.安卓版.value == platform){
+	            	UserTokenBean userTokenBean = new UserTokenBean();
+	            	Date overdue = DateUtil.getOverdueTime(new Date(), "7天");
+	            	userTokenBean.setToken(StringUtil.getUserToken(String.valueOf(user.getId()), user.getPassword(), overdue));
+	            	userTokenBean.setCreateTime(new Date());
+	            	userTokenBean.setCreateUserId(user.getId());
+	            	userTokenBean.setOverdue(overdue);
+	            	userTokenBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+	            	if(userHandler.addTokenCode(userTokenBean)){
+	            		userinfo.put("token", userTokenBean.getToken());
+	            	}else{
+	            		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.token获取异常.value));
+	            		message.put("responseCode", EnumUtil.ResponseCode.token获取异常.value);
+	            		return message.getMap();
+	            	}
+	            }
+	            
+				userHandler.removeLoginErrorNumber(username);
+				message.put("userinfo", userinfo);
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您登录成功.value));
+				message.put("responseCode", EnumUtil.ResponseCode.恭喜您登录成功.value);
+				isSuccess = true;
+				message.put("isSuccess", isSuccess);				
+	        }else{  
+	        	authenticationToken.clear(); 
+				number = userHandler.addLoginErrorNumber(username);	
+				if(number > 5){
+					message.put("message", "您的账号已经连续登陆失败"+number+"次，账号已被限制5分钟");
+				}else{
+					message.put("message", "您的账号已经连续登陆失败"+number+"次，还剩下" +(5- number)+"次");
+				}
+				message.put("responseCode", EnumUtil.ResponseCode.账号或密码不匹配.value);
+	        }
+			
+			// 保存用户登录日志信息
+			String subject = user != null ? user.getAccount()+"登录系统": "账号" + username + "登录系统失败";
+			this.operateLogService.saveOperateLog(user, request, new Date(), subject, "账号登录", (isSuccess ? 1: 0), 0);
+		
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		return message.getMap();
 	}
 	
@@ -277,17 +270,10 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/searchByIdOrAccount", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> searchUserByUserIdOrAccount(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request)){
-				return message.getMap();
-			}
-			message.putAll(userService.searchUserByUserIdOrAccount(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request)){
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		message.putAll(userService.searchUserByUserIdOrAccount(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -317,28 +303,21 @@ public class UserController extends BaseController{
 			removeMultSession(ConstantsUtil.USER_SESSION);
 		}*/
 		ResponseMap message = new ResponseMap();
-		try{
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			JSONObject json = getJsonFromMessage(message);
-			UserBean user = new UserBean();
-			user.setAccount(JsonUtil.getStringValue(json, "account"));
-			user.setEmail(JsonUtil.getStringValue(json, "email"));
-			user.setPassword(MD5Util.compute(JsonUtil.getStringValue(json, "password")));
-			Date registerTime = new Date();
-			user.setRegisterTime(registerTime);
-			user.setRegisterCode(StringUtil.produceRegisterCode(DateUtil.DateToString(registerTime, "YYYYMMDDHHmmss"),
-					JsonUtil.getStringValue(json, "account")));
-			message.putAll(userService.saveUser(user));
-			//保存操作日志
-			this.operateLogService.saveOperateLog(OptionUtil.adminUser, request, null, user.getAccount()+"注册成功", "register", 1, 0);
+		if(!checkParams(message, request))
 			return message.getMap();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		JSONObject json = getJsonFromMessage(message);
+		UserBean user = new UserBean();
+		user.setAccount(JsonUtil.getStringValue(json, "account"));
+		user.setEmail(JsonUtil.getStringValue(json, "email"));
+		user.setPassword(MD5Util.compute(JsonUtil.getStringValue(json, "password")));
+		Date registerTime = new Date();
+		user.setRegisterTime(registerTime);
+		user.setRegisterCode(StringUtil.produceRegisterCode(DateUtil.DateToString(registerTime, "YYYYMMDDHHmmss"),
+				JsonUtil.getStringValue(json, "account")));
+		message.putAll(userService.saveUser(user));
+		//保存操作日志
+		this.operateLogService.saveOperateLog(OptionUtil.adminUser, request, null, user.getAccount()+"注册成功", "register", 1, 0);
 		return message.getMap();
 	}
 	
@@ -370,45 +349,39 @@ public class UserController extends BaseController{
 	
 	/**
 	 * 再次发送邮箱验证信息
+	 * @throws Exception 
 	 */
 	@RequestMapping(value="/register/againSend", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> againSendRegisterEmail(HttpServletRequest request){
+	public Map<String, Object> againSendRegisterEmail(HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
-		try {	
-			if(!checkParams(message, request))
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		JSONObject json = getJsonFromMessage(message);
+		//根据账号和密码找到该用户(密码需要再进行MD5加密)
+		UserBean user = userService.loginUser(JsonUtil.getStringValue(json, "account"), JsonUtil.getStringValue(json, "password"));
+		this.operateLogService.saveOperateLog(user, request, null, user.getAccount()+"请求发送邮箱", "againSendRegisterEmail", 1, 0);
+		if(user != null && user.getStatus() == 2){
+			//生成注册码
+			String newRegisterCode = StringUtil.produceRegisterCode(DateUtil.DateToString(new Date(),"YYYYMMDDHHmmss"),
+					user.getAccount());
+			user.setRegisterCode(newRegisterCode);
+			boolean isUpdate = userService.update(user);
+				if(isUpdate){
+					//发送邮件
+					userService.sendEmail(user);
+					UserSolrHandler.getInstance().updateBean(user);
+				}
+					
+				message.put("isSuccess", true);
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件已发送成功.value));
+				message.put("responseCode", EnumUtil.ResponseCode.邮件已发送成功.value);
 				return message.getMap();
-			
-			JSONObject json = getJsonFromMessage(message);
-			//根据账号和密码找到该用户(密码需要再进行MD5加密)
-			UserBean user = userService.loginUser(JsonUtil.getStringValue(json, "account"), JsonUtil.getStringValue(json, "password"));
-			this.operateLogService.saveOperateLog(user, request, null, user.getAccount()+"请求发送邮箱", "againSendRegisterEmail", 1, 0);
-			if(user != null && user.getStatus() == 2){
-				//生成注册码
-				String newRegisterCode = StringUtil.produceRegisterCode(DateUtil.DateToString(new Date(),"YYYYMMDDHHmmss"),
-						user.getAccount());
-				user.setRegisterCode(newRegisterCode);
-				boolean isUpdate = userService.update(user);
-					if(isUpdate){
-						//发送邮件
-						userService.sendEmail(user);
-						UserSolrHandler.getInstance().updateBean(user);
-					}
-						
-					message.put("isSuccess", true);
-					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件已发送成功.value));
-					message.put("responseCode", EnumUtil.ResponseCode.邮件已发送成功.value);
-					return message.getMap();
-			}else{
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.不是未注册状态邮箱不能发注册码.value));
-				message.put("responseCode", EnumUtil.ResponseCode.不是未注册状态邮箱不能发注册码.value);
-				return message.getMap();
-			}	
-		} catch (Exception e) {
-			e.printStackTrace();
+		}else{
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.不是未注册状态邮箱不能发注册码.value));
+			message.put("responseCode", EnumUtil.ResponseCode.不是未注册状态邮箱不能发注册码.value);
+			return message.getMap();
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件发送失败.value));
-		message.put("responseCode", EnumUtil.ResponseCode.邮件发送失败.value);
-		return message.getMap();
 	}
 	
 	/**
@@ -418,31 +391,24 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/findPwd", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> findPassword(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {	
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			JSONObject json = getJsonFromMessage(message);
-			//获得找回密码的类型(0:邮箱,1:手机)
-			if(JsonUtil.getIntValue(json, "type") == 0){
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.暂时不支持手机找回密码功能.value));
-				message.put("responseCode", EnumUtil.ResponseCode.暂时不支持手机找回密码功能.value);
-			}else if(JsonUtil.getIntValue(json, "type") == 1){
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.暂时不支持邮箱找回密码功能.value));
-				message.put("responseCode", EnumUtil.ResponseCode.暂时不支持邮箱找回密码功能.value);
-			}else{
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.未知的找回密码类型.value));
-				message.put("responseCode", EnumUtil.ResponseCode.未知的找回密码类型.value);
-			}
-			
+		if(!checkParams(message, request))
 			return message.getMap();
-			//this.operateLogService.saveOperateLog(user, request, null, user.getAccount()+"寻找密码", "findPassword", resIsSuccess? 1 : 0, 0);
-		} catch (Exception e) {
-			e.printStackTrace();
+		
+		JSONObject json = getJsonFromMessage(message);
+		//获得找回密码的类型(0:邮箱,1:手机)
+		if(JsonUtil.getIntValue(json, "type") == 0){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.暂时不支持手机找回密码功能.value));
+			message.put("responseCode", EnumUtil.ResponseCode.暂时不支持手机找回密码功能.value);
+		}else if(JsonUtil.getIntValue(json, "type") == 1){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.暂时不支持邮箱找回密码功能.value));
+			message.put("responseCode", EnumUtil.ResponseCode.暂时不支持邮箱找回密码功能.value);
+		}else{
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.未知的找回密码类型.value));
+			message.put("responseCode", EnumUtil.ResponseCode.未知的找回密码类型.value);
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件发送失败.value));
-		message.put("responseCode", EnumUtil.ResponseCode.邮件发送失败.value);
+		
 		return message.getMap();
+		//this.operateLogService.saveOperateLog(user, request, null, user.getAccount()+"寻找密码", "findPassword", resIsSuccess? 1 : 0, 0);
 	}
 	
 	/**
@@ -519,22 +485,16 @@ public class UserController extends BaseController{
 	 * 根据用户的id获取用户的base64位图像信息
 	 * {"uid":2, "size":"30x30"} "order":0默认是0, tablename:"t_user"
 	 * @return
+	 * @throws Exception 
 	 */
 	@RequestMapping(value="/head/img", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getHeadBase64StrById(HttpServletRequest request){
+	public Map<String, Object> getHeadBase64StrById(HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.put("message", userService.getHeadBase64StrById(getJsonFromMessage(message), getUserFromMessage(message), request));
-			message.put("isSuccess", true);
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件发送失败.value));
-		message.put("responseCode", EnumUtil.ResponseCode.邮件发送失败.value);
+		
+		message.put("message", userService.getHeadBase64StrById(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.put("isSuccess", true);
 		return message.getMap();
 	}
 	
@@ -545,19 +505,12 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/head/path", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getHeadPath(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			String picSize = JsonUtil.getStringValue(getJsonFromMessage(message), "picSize", "30x30");
-			message.put("message", userHandler.getUserPicPath(getUserFromMessage(message).getId(), picSize));
-			message.put("isSuccess", true);
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		String picSize = JsonUtil.getStringValue(getJsonFromMessage(message), "picSize", "30x30");
+		message.put("message", userHandler.getUserPicPath(getUserFromMessage(message).getId(), picSize));
+		message.put("isSuccess", true);
 		return message.getMap();
 	}
 	
@@ -565,21 +518,17 @@ public class UserController extends BaseController{
 	 * 用户上传个人的头像
 	 * {"base64":"hhdjshuffnfbnfds"}
 	 * @return
+	 * @throws Exception 
 	 */
 	@RequestMapping(value="/head", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> uploadHeadBase64Str(HttpServletRequest request){
+	public Map<String, Object> uploadHeadBase64Str(HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			UserBean user = getUserFromMessage(message);
-			message.put("isSuccess", userService.uploadHeadBase64StrById(getJsonFromMessage(message), user, request));
-			operateLogService.saveOperateLog(user, request, null, user.getAccount()+"上传头像" + StringUtil.getSuccessOrNoStr(true), "uploadHeadBase64Str", ConstantsUtil.STATUS_NORMAL, 0);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		UserBean user = getUserFromMessage(message);
+		message.put("isSuccess", userService.uploadHeadBase64StrById(getJsonFromMessage(message), user, request));
+		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"上传头像" + StringUtil.getSuccessOrNoStr(true), "uploadHeadBase64Str", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
 	}
 	
@@ -621,12 +570,7 @@ public class UserController extends BaseController{
 			ls = userService.find4MoreUser(sort + "limit ?,?", s, l);
 			buildGetAllUserResp(ls,total);
 		}
-		
-		try {
-			this.operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看所有用户", "getAllUsers", 1, 0);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看所有用户", "getAllUsers", 1, 0);
 		return message.getMap();
 	}
 	
@@ -643,11 +587,7 @@ public class UserController extends BaseController{
 		message.put("yaxis", "人数"); //Y轴名称
 		message.put("maximum", getMaximum(ls)); //年龄段人数最多的数字
 		message.put("data", ls);
-		try {
-			this.operateLogService.saveOperateLog(getUserFromMessage(message), request, null, "统计所有用户的年龄", "getAllUsers", 1, 0);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.operateLogService.saveOperateLog(getUserFromMessage(message), request, null, "统计所有用户的年龄", "getAllUsers", 1, 0);
 		return message.getMap();
 	}
 	
@@ -766,17 +706,10 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/phone/register/code", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getPhoneRegisterCode(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(userService.getPhoneRegisterCode(getJsonFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(userService.getPhoneRegisterCode(getJsonFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -787,17 +720,10 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/phone/login/code", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getPhoneLoginCode(@RequestParam("mobilePhone") String mobilePhone, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(userService.getPhoneLoginCode(mobilePhone, request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(userService.getPhoneLoginCode(mobilePhone, request));
 		return message.getMap();
 	}
 	
@@ -808,35 +734,28 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/phone/register", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> registerByPhone(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		UserBean user = userService.registerByPhone(getJsonFromMessage(message), request);
+		if(user == null){
+			message.put("message", "用户不存在或者参数不正确");
+			return message.getMap();
+		}else{
+			if(user.getStatus() == 4 ){
+				message.put("message", "用户已经被注销,有疑问请联系客服");
 				return message.getMap();
-			
-			UserBean user = userService.registerByPhone(getJsonFromMessage(message), request);
-			if(user == null){
-				message.put("message", "用户不存在或者参数不正确");
+			}else if(user.getStatus() == 0){
+				message.put("message", "请先登录邮箱完成注册...");
 				return message.getMap();
 			}else{
-				if(user.getStatus() == 4 ){
-					message.put("message", "用户已经被注销,有疑问请联系客服");
-					return message.getMap();
-				}else if(user.getStatus() == 0){
-					message.put("message", "请先登录邮箱完成注册...");
-					return message.getMap();
-				}else{
-					UserSolrHandler.getInstance().addBean(user);
-					message.put("userinfo", userHandler.getUserInfo(user, true));
-					message.put("isSuccess", true);
-					message.put("message", "登录成功，正在为您跳转...");
-					return message.getMap();
-				}
+				UserSolrHandler.getInstance().addBean(user);
+				message.put("userinfo", userHandler.getUserInfo(user, true));
+				message.put("isSuccess", true);
+				message.put("message", "登录成功，正在为您跳转...");
+				return message.getMap();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		return message.getMap();
 	}
 	
 	/**
@@ -846,16 +765,9 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/phone/register/noValidate", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> registerByPhoneNoValidate(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			checkParams(message, request);
-			
-			message.putAll(userService.registerByPhoneNoValidate(getJsonFromMessage(message), request));
-			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		checkParams(message, request);
+		
+		message.putAll(userService.registerByPhoneNoValidate(getJsonFromMessage(message), request));
 		return message.getMap();
 	}
 	/**
@@ -865,49 +777,42 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/phone/login", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> loginByPhone(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			UserBean user = userService.loginByPhone(getJsonFromMessage(message), request);
-			if(user == null){
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
-				message.put("responseCode", EnumUtil.ResponseCode.用户不存在或请求参数不对.value);
-			}else{
-				if(user.getStatus() == ConstantsUtil.STATUS_NO_TALK){
-					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已被禁言.value));
-					message.put("responseCode", EnumUtil.ResponseCode.用户已被禁言.value);
-				}else if(user.getStatus() == ConstantsUtil.STATUS_DELETE){
-					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已经注销.value));
-					message.put("responseCode", EnumUtil.ResponseCode.用户已经注销.value);
-				}else if(user.getStatus() == ConstantsUtil.STATUS_DISABLE){
-					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已被禁止使用.value));
-					message.put("responseCode", EnumUtil.ResponseCode.用户已被禁止使用.value);
-				}else if(user.getStatus() == ConstantsUtil.STATUS_NO_VALIDATION_EMAIL){
-					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先验证邮箱.value));
-					message.put("responseCode", EnumUtil.ResponseCode.请先验证邮箱.value);
-				}else if(user.getStatus() == ConstantsUtil.STATUS_NO_ACTIVATION){
-					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注册未激活账户.value));
-					message.put("responseCode", EnumUtil.ResponseCode.注册未激活账户.value);
-				}else if(user.getStatus() == ConstantsUtil.STATUS_INFORMATION){
-					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.未完善信息.value));
-					message.put("responseCode", EnumUtil.ResponseCode.未完善信息.value);
-				}else if(user.getStatus() == ConstantsUtil.STATUS_NORMAL){
-					message.put("userinfo", userHandler.getUserInfo(user, true));
-					message.put("isSuccess", true);
-					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您登录成功.value));
-					message.put("responseCode", EnumUtil.ResponseCode.恭喜您登录成功.value);
-				}else{
-					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.非正常登录状态.value));
-					message.put("responseCode", EnumUtil.ResponseCode.非正常登录状态.value);
-				}
-			}
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
+		
+		UserBean user = userService.loginByPhone(getJsonFromMessage(message), request);
+		if(user == null){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
+			message.put("responseCode", EnumUtil.ResponseCode.用户不存在或请求参数不对.value);
+		}else{
+			if(user.getStatus() == ConstantsUtil.STATUS_NO_TALK){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已被禁言.value));
+				message.put("responseCode", EnumUtil.ResponseCode.用户已被禁言.value);
+			}else if(user.getStatus() == ConstantsUtil.STATUS_DELETE){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已经注销.value));
+				message.put("responseCode", EnumUtil.ResponseCode.用户已经注销.value);
+			}else if(user.getStatus() == ConstantsUtil.STATUS_DISABLE){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已被禁止使用.value));
+				message.put("responseCode", EnumUtil.ResponseCode.用户已被禁止使用.value);
+			}else if(user.getStatus() == ConstantsUtil.STATUS_NO_VALIDATION_EMAIL){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先验证邮箱.value));
+				message.put("responseCode", EnumUtil.ResponseCode.请先验证邮箱.value);
+			}else if(user.getStatus() == ConstantsUtil.STATUS_NO_ACTIVATION){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注册未激活账户.value));
+				message.put("responseCode", EnumUtil.ResponseCode.注册未激活账户.value);
+			}else if(user.getStatus() == ConstantsUtil.STATUS_INFORMATION){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.未完善信息.value));
+				message.put("responseCode", EnumUtil.ResponseCode.未完善信息.value);
+			}else if(user.getStatus() == ConstantsUtil.STATUS_NORMAL){
+				message.put("userinfo", userHandler.getUserInfo(user, true));
+				message.put("isSuccess", true);
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您登录成功.value));
+				message.put("responseCode", EnumUtil.ResponseCode.恭喜您登录成功.value);
+			}else{
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.非正常登录状态.value));
+				message.put("responseCode", EnumUtil.ResponseCode.非正常登录状态.value);
+			}
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		return message.getMap();
 	}
 	
@@ -918,17 +823,10 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/check/account", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> checkAccount(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(userService.checkAccount(getJsonFromMessage(message), request, getUserFromMessage(message)));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(userService.checkAccount(getJsonFromMessage(message), request, getUserFromMessage(message)));
 		return message.getMap();
 	}
 	
@@ -940,51 +838,44 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/wechat/bing", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> bingWechat(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			JSONObject json = getJsonFromMessage(message);
-			String FromUserName = JsonUtil.getStringValue(json, "FromUserName");
-			String account = JsonUtil.getStringValue(json, "account");
-			String password = JsonUtil.getStringValue(json, "password");
-			if(StringUtil.isNull(FromUserName) || StringUtil.isNull(account) || StringUtil.isNull(password)){
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
-				message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-				return message.getMap();
-			}
-			
-			//执行绑定
-			UserBean user = userService.bindByWeChat(FromUserName, account, password);
-			if (user != null) {
-				WeixinCacheBean cacheBean = new WeixinCacheBean();
-				String currentType = JsonUtil.getStringValue(json, "currentType", WeixinUtil.MODEL_MAIN_MENU);
-				cacheBean.setBindLogin(true);
-				cacheBean.setCurrentType(currentType);
-				cacheBean.setLastBlogId(0);
-				
-				wechatHandler.addCache(FromUserName, cacheBean);
-				
-				UserSolrHandler.getInstance().updateBean(user);
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
-				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-				message.put("isSuccess", true);
-				
-				// 保存用户绑定日志信息
-				String subject = user.getAccount()+"绑定账号微信账号"+ FromUserName +"成功";
-				this.operateLogService.saveOperateLog(user, request, new Date(), subject, "bingWechat", 1, 0);
-				return message.getMap();
-			}else{
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.账号或密码不匹配.value));
-				message.put("responseCode", EnumUtil.ResponseCode.账号或密码不匹配.value);
-				return message.getMap();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		JSONObject json = getJsonFromMessage(message);
+		String FromUserName = JsonUtil.getStringValue(json, "FromUserName");
+		String account = JsonUtil.getStringValue(json, "account");
+		String password = JsonUtil.getStringValue(json, "password");
+		if(StringUtil.isNull(FromUserName) || StringUtil.isNull(account) || StringUtil.isNull(password)){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
+			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
+			return message.getMap();
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		return message.getMap();
+		
+		//执行绑定
+		UserBean user = userService.bindByWeChat(FromUserName, account, password);
+		if (user != null) {
+			WeixinCacheBean cacheBean = new WeixinCacheBean();
+			String currentType = JsonUtil.getStringValue(json, "currentType", WeixinUtil.MODEL_MAIN_MENU);
+			cacheBean.setBindLogin(true);
+			cacheBean.setCurrentType(currentType);
+			cacheBean.setLastBlogId(0);
+			
+			wechatHandler.addCache(FromUserName, cacheBean);
+			
+			UserSolrHandler.getInstance().updateBean(user);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+			message.put("isSuccess", true);
+			
+			// 保存用户绑定日志信息
+			String subject = user.getAccount()+"绑定账号微信账号"+ FromUserName +"成功";
+			this.operateLogService.saveOperateLog(user, request, new Date(), subject, "bingWechat", 1, 0);
+			return message.getMap();
+		}else{
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.账号或密码不匹配.value));
+			message.put("responseCode", EnumUtil.ResponseCode.账号或密码不匹配.value);
+			return message.getMap();
+		}
 	}
 	
 	/**
@@ -994,17 +885,10 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/user/info", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getUserInfoData(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(userService.getUserInfoData(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(userService.getUserInfoData(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -1015,17 +899,10 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/user/base", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> updateUserBase(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(userService.updateUserBase(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(userService.updateUserBase(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -1036,17 +913,10 @@ public class UserController extends BaseController{
 	@RequestMapping(value = "/user/pwd", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> updatePassword(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(userService.updatePassword(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(userService.updatePassword(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -1057,17 +927,10 @@ public class UserController extends BaseController{
 	@RequestMapping(value = "/scan/login", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> scanLogin(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(userService.scanLogin(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(userService.scanLogin(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -1078,16 +941,9 @@ public class UserController extends BaseController{
 	@RequestMapping(value = "/scan/cancel", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> CancelScanLogin(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			checkParams(message, request);
-			
-			message.putAll(userService.cancelScanLogin(getJsonFromMessage(message), getUserFromMessage(message), request));
-			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		checkParams(message, request);
+		
+		message.putAll(userService.cancelScanLogin(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -1098,17 +954,10 @@ public class UserController extends BaseController{
 	@RequestMapping(value = "/websearch", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> websearch(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(userService.webSearch(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(userService.webSearch(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -1119,17 +968,10 @@ public class UserController extends BaseController{
 	@RequestMapping(value = "/ad/user", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> adminUpdateUserBase(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(userService.adminUpdateUserBase(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(userService.adminUpdateUserBase(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -1140,17 +982,10 @@ public class UserController extends BaseController{
 	@RequestMapping(value = "/ad/resetPwd", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> adminResetPassword(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(userService.adminResetPassword(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(userService.adminResetPassword(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -1161,17 +996,10 @@ public class UserController extends BaseController{
 	@RequestMapping(value = "/user", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> deleteUser(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(userService.deleteUser(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(userService.deleteUser(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -1182,17 +1010,10 @@ public class UserController extends BaseController{
 	@RequestMapping(value = "/user", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"}) 
 	public Map<String, Object> addUser(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(userService.addUser(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(userService.addUser(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	/*@RequestMapping("/aaa")

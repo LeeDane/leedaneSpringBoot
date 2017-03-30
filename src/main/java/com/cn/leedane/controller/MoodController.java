@@ -8,7 +8,6 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,7 +22,6 @@ import com.cn.leedane.service.MoodService;
 import com.cn.leedane.service.TemporaryBase64Service;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 
@@ -53,40 +51,27 @@ public class MoodController extends BaseController{
 	@RequestMapping(value= "/mood", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> send(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			JSONObject jsonObject = getJsonFromMessage(message);
-			int status = JsonUtil.getIntValue(jsonObject, "status", ConstantsUtil.STATUS_NORMAL);
-			message.putAll(moodService.updateMoodStatus(jsonObject, status, request, getUserFromMessage(message)));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		JSONObject jsonObject = getJsonFromMessage(message);
+		int status = JsonUtil.getIntValue(jsonObject, "status", ConstantsUtil.STATUS_NORMAL);
+		message.putAll(moodService.updateMoodStatus(jsonObject, status, request, getUserFromMessage(message)));
 		return message.getMap();
 	}
 	
 	/**
 	 * 发表心情(为了用户可以后悔取消，这里只是先保存为草稿状态，需要用户再次发送请求调用send()方法保存为正常状态)
 	 * @return
+	 * @throws Exception 
 	 */
 	@RequestMapping(value= "/sendDraft", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> sendDraft(HttpServletRequest request){
+	public Map<String, Object> sendDraft(HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(moodService.saveMood(getJsonFromMessage(message), getUserFromMessage(message), ConstantsUtil.STATUS_DRAFT, request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(moodService.saveMood(getJsonFromMessage(message), getUserFromMessage(message), ConstantsUtil.STATUS_DRAFT, request));
 		return message.getMap();
 	}
 	
@@ -97,20 +82,13 @@ public class MoodController extends BaseController{
 	@RequestMapping(value= "/sendWord", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> sendWord(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			JSONObject jsObject = getJsonFromMessage(message);
-			int status = JsonUtil.getIntValue(jsObject, "status", ConstantsUtil.STATUS_NORMAL);
-			
-			message.putAll(moodService.sendWord(jsObject, getUserFromMessage(message), status, request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		JSONObject jsObject = getJsonFromMessage(message);
+		int status = JsonUtil.getIntValue(jsObject, "status", ConstantsUtil.STATUS_NORMAL);
+		
+		message.putAll(moodService.sendWord(jsObject, getUserFromMessage(message), status, request));
 		return message.getMap();
 	}
 	
@@ -121,17 +99,10 @@ public class MoodController extends BaseController{
 	@RequestMapping(value= "/wordAndLink", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> sendWordAndLink(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(moodService.sendWordAndLink(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(moodService.sendWordAndLink(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -142,17 +113,10 @@ public class MoodController extends BaseController{
 	@RequestMapping(value= "/mood", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> delete(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(moodService.deleteMood(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(moodService.deleteMood(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -165,25 +129,13 @@ public class MoodController extends BaseController{
 	//@RequiresPermissions("ADMIN_MANAGER")
 	public Map<String, Object> getPagingMood(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			//checkAnyRoleAuthor("ADMIN");
-			checkPermissionAuthor("ADMIN_MANAGER");
-				
-			message.putAll(moodService.getMoodByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (UnauthorizedException e) {
-			e.printStackTrace();
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.不能访问没有授权的链接.value));
-			message.put("responseCode", EnumUtil.ResponseCode.不能访问没有授权的链接.value);
-		}catch (Exception e) {
-			e.printStackTrace();
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		}
 		
+		//checkAnyRoleAuthor("ADMIN");
+		checkPermissionAuthor("ADMIN_MANAGER");
+			
+		message.putAll(moodService.getMoodByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -196,33 +148,27 @@ public class MoodController extends BaseController{
 	 *  以最新的覆盖前面的值(考虑到网络问题，其中某次服务器保存了，客户端没有接收到正确的返回，客户端可以再次发送请求)
 	 * 客户端：发送的请求包含{"start":0, "content":"base64strhhhfdjhsdjAM,ZKKASKN", "end": 10000,"uuid":"78778223hdyy8e", "order":1, "isEnd": false}
 	 * @return
+	 * @throws Exception 
 	 */
 	@RequestMapping(value = "/img", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> uploadBase64Str(HttpServletRequest request){
+	public Map<String, Object> uploadBase64Str(HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			JSONObject json = getJsonFromMessage(message);
-			UserBean user = getUserFromMessage(message);
-					
-			boolean isEnd = JsonUtil.getBooleanValue(json, "isEnd");
-			
-			//上传该base64字符串结束
-			if(isEnd){
-				filePathService.saveEachTemporaryBase64ToFilePath(json, user, request);
-				message.put("isSuccess", true);
-			//直接保存上传记录
-			}else{
-				message.put("isSuccess", temporaryBase64Service.saveBase64Str(json, user, request));
-			}
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
+		
+		JSONObject json = getJsonFromMessage(message);
+		UserBean user = getUserFromMessage(message);
+				
+		boolean isEnd = JsonUtil.getBooleanValue(json, "isEnd");
+		
+		//上传该base64字符串结束
+		if(isEnd){
+			filePathService.saveEachTemporaryBase64ToFilePath(json, user, request);
+			message.put("isSuccess", true);
+		//直接保存上传记录
+		}else{
+			message.put("isSuccess", temporaryBase64Service.saveBase64Str(json, user, request));
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		return message.getMap();
 	}
 	
@@ -234,17 +180,10 @@ public class MoodController extends BaseController{
 	@RequestMapping(value = "/divide", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> sendDivideMood(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(moodService.saveDividedMood(getJsonFromMessage(message), getUserFromMessage(message), ConstantsUtil.STATUS_NORMAL, request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(moodService.saveDividedMood(getJsonFromMessage(message), getUserFromMessage(message), ConstantsUtil.STATUS_NORMAL, request));
 		return message.getMap();
 	}
 	
@@ -256,16 +195,9 @@ public class MoodController extends BaseController{
 	@RequestMapping(value = "/img", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> deleteUploadBase64Str(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
 		return message.getMap();
 	}
 	
@@ -273,22 +205,16 @@ public class MoodController extends BaseController{
 	 * 下载图片源(查找t_filepath)
 	 * {"uuid":"jhasdjdasd", "order": "1", "size":"default"}
 	 * @return
+	 * @throws Exception 
 	 */
 	@RequestMapping(value = "/img/source", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> downloadBase64Str(HttpServletRequest request){
+	public Map<String, Object> downloadBase64Str(HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.put("isSuccess", true);
-			message.put("message", filePathService.downloadBase64Str(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.put("isSuccess", true);
+		message.put("message", filePathService.downloadBase64Str(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -323,19 +249,11 @@ public class MoodController extends BaseController{
 	@RequestMapping(value = "/count", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getCountByUser(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
 			if(!checkParams(message, request))
 				return message.getMap();
 			
-			message.put("message", moodService.getCountByUser(getJsonFromMessage(message), getUserFromMessage(message), request));
-			message.put("isSuccess", true);
-			return null;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		return message.getMap();
+			message.putAll(moodService.getCountByUser(getJsonFromMessage(message), getUserFromMessage(message), request));
+			return message.getMap();
 	}
 	/**
 	 * 获取心情的信息
@@ -345,17 +263,10 @@ public class MoodController extends BaseController{
 	@RequestMapping(value = "/detail", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> detail(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(moodService.detail(getJsonFromMessage(message), getUserFromMessage(message), request, "120x120"));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(moodService.detail(getJsonFromMessage(message), getUserFromMessage(message), request, "120x120"));
 		return message.getMap();
 	}
 	/**
@@ -366,17 +277,10 @@ public class MoodController extends BaseController{
 	@RequestMapping(value = "/detail/imgs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> detailImgs(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(moodService.detailImgs(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(moodService.detailImgs(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -387,17 +291,10 @@ public class MoodController extends BaseController{
 	@RequestMapping(value = "/topic", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> topic(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(moodService.getTopicByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(moodService.getTopicByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 }

@@ -41,17 +41,10 @@ public class ChatSquareController extends BaseController{
 	@RequestMapping(value = "/active", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getActiveUser(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			checkParams(message, request);
-			
-			message.putAll(chatSquareService.getActiveUser(DateUtil.getTodayStart(), 8));
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		checkParams(message, request);
+		
+		message.putAll(chatSquareService.getActiveUser(DateUtil.getTodayStart(), 8));
+		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		return message.getMap();
 	}
 }

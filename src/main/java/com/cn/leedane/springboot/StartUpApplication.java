@@ -240,6 +240,11 @@ public class StartUpApplication implements TransactionManagementConfigurer{
 		}  
         return null;
     }
+	
+	@Bean(name= "exceptionHandler")
+	public ExceptionHandler getExceptionHandler(){
+		return new ExceptionHandler();
+	}
     
 	public static void main(String[] args) {
 		System.out.println( "项目开始启动。。。" );

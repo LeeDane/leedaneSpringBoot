@@ -1,20 +1,17 @@
 ﻿package com.cn.leedane.test;
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Resource;
 
 import net.sf.json.JSONObject;
 
 import org.junit.Test;
 
-import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.model.CommentBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.CommentService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserService;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
 
 /**
  * 评论相关的测试类
@@ -53,7 +50,7 @@ public class CommentTest extends BaseTest {
 	
 	@Test
 	public void getCommentByLimit(){
-		UserBean user = userService.findById(1);
+		/*UserBean user = userService.findById(1);
 		
 		String str = "{\"table_name\":\""+DataTableType.心情.value+"\", \"table_id\":1,\"pageSize\":5,\"first_id\": 2, \"last_id\":2, \"method\":\"firstloading\"}";
 		JSONObject jo = JSONObject.fromObject(str);
@@ -68,12 +65,12 @@ public class CommentTest extends BaseTest {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	@Test
 	public void getOneCommentItemsByLimit(){
-		UserBean user = userService.findById(1);
+		/*UserBean user = userService.findById(1);
 		
 		String str = "{\"table_name\":\""+DataTableType.心情.value+"\", \"cid\":1, \"table_id\":1,\"first_id\": 2, \"last_id\":2, \"method\":\"firstloading\"}";
 		JSONObject jo = JSONObject.fromObject(str);
@@ -87,12 +84,12 @@ public class CommentTest extends BaseTest {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	@Test
 	public void getCommentsCount(){
-		UserBean user = userService.findById(1);
+		/*UserBean user = userService.findById(1);
 		
 		String str = "{\"table_name\":\""+DataTableType.心情.value+"\", \"table_id\":1}";
 		JSONObject jo = JSONObject.fromObject(str);
@@ -102,7 +99,7 @@ public class CommentTest extends BaseTest {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 }

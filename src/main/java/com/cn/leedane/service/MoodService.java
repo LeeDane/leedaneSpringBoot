@@ -113,7 +113,7 @@ public interface MoodService <T extends IDBean>{
 	 */
 	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public int getCountByUser(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getCountByUser(JSONObject jo, UserBean user, HttpServletRequest request);
 	
 	/**
 	 * 获取指定心情的列表

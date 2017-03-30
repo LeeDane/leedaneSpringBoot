@@ -16,17 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.FileUtil;
-import com.cn.leedane.utils.FilterUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.handler.CircleOfFriendsHandler;
 import com.cn.leedane.handler.CommentHandler;
 import com.cn.leedane.handler.FriendHandler;
@@ -38,7 +27,6 @@ import com.cn.leedane.handler.ZanHandler;
 import com.cn.leedane.lucene.solr.MoodSolrHandler;
 import com.cn.leedane.mapper.FilePathMapper;
 import com.cn.leedane.mapper.MoodMapper;
-import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.model.FriendBean;
 import com.cn.leedane.model.MoodBean;
@@ -58,6 +46,18 @@ import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.MoodService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserService;
+import com.cn.leedane.utils.CollectionUtil;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.DateUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.EnumUtil.NotificationType;
+import com.cn.leedane.utils.FileUtil;
+import com.cn.leedane.utils.FilterUtil;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.SqlUtil;
+import com.cn.leedane.utils.StringUtil;
 
 /**
  * 心情service实现类
@@ -435,7 +435,7 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 	
 
 	@Override
-	public int getCountByUser(JSONObject jo, UserBean user, HttpServletRequest request){
+	public Map<String, Object> getCountByUser(JSONObject jo, UserBean user, HttpServletRequest request){
 		logger.info("MoodServiceImpl-->getCountByUser():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		
 		int uid = JsonUtil.getIntValue(jo, "uid", user.getId()); //计算的用户id
@@ -446,8 +446,10 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 		count = SqlUtil.getTotalByList(moodMapper.getTotal(DataTableType.心情.value, sql.toString()));
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"查询用户ID为：", uid, "得到其已经发表成功的心情总数是：", count, "条").toString(), "getCountByUser()", ConstantsUtil.STATUS_NORMAL, 0);
-				
-		return count;
+		ResponseMap message = new ResponseMap();
+		message.put("isSuccess", true);
+		message.put("message", count);
+		return message.getMap();
 	}
 
 	@Override

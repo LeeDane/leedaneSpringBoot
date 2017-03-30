@@ -3,7 +3,6 @@ package com.cn.leedane.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,16 +15,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.exception.ErrorException;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.FilterUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.OptionUtil;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.handler.CommentHandler;
 import com.cn.leedane.handler.CommonHandler;
 import com.cn.leedane.handler.FriendHandler;
@@ -42,6 +31,16 @@ import com.cn.leedane.service.CommentService;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.NotificationService;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.EnumUtil.NotificationType;
+import com.cn.leedane.utils.FilterUtil;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.OptionUtil;
+import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.SqlUtil;
+import com.cn.leedane.utils.StringUtil;
 /**
  * 评论service的实现类
  * @author LeeDane
@@ -196,9 +195,10 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	}
 
 	@Override
-	public List<Map<String, Object>> getCommentsByLimit(JSONObject jo,
-			UserBean user, HttpServletRequest request) throws Exception {
+	public Map<String, Object> getCommentsByLimit(JSONObject jo,
+			UserBean user, HttpServletRequest request){
 		logger.info("CommentServiceImpl-->getCommentByLimit():jsonObject=" +jo.toString());
+		ResponseMap message = new ResponseMap();
 		
 		if(user == null)
 			user = OptionUtil.adminUser;
@@ -314,8 +314,9 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户ID为：",toUserId,",表名：",tableName,"，表id为：",tableId,"的评论列表").toString(), "getCommentByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
-				
-		return rs;
+		message.put("isSuccess", true);
+		message.put("message", rs);
+		return message.getMap();
 	}
 	
 	/**
@@ -342,15 +343,18 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	}*/
 
 	@Override
-	public List<Map<String, Object>> getOneCommentItemsByLimit(JSONObject jo,
-			UserBean user, HttpServletRequest request) throws Exception {
+	public Map<String, Object> getOneCommentItemsByLimit(JSONObject jo,
+			UserBean user, HttpServletRequest request){
 		logger.info("CommentServiceImpl-->getOneCommentItemsByLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		 //{\"table_name\":\"t_mood\", \"table_id\":123
 		//, \"first_id\": 2, \"last_id\":2, \"method\":\"firstloading\"}
+		ResponseMap message = new ResponseMap();
 		List<Map<String, Object>> rs = new ArrayList<>();
 		int cid = JsonUtil.getIntValue(jo, "cid");
-		if(cid < 1) 
-			throw new ErrorException("评论id为空");
+		if(cid < 1){
+			message.put("message", "评论ID为空");
+			return message.getMap();
+		}
 		
 		String tableName = JsonUtil.getStringValue(jo, "table_name"); //操作表名
 		int tableId = JsonUtil.getIntValue(jo, "table_id", 0); //操作表中的id
@@ -393,8 +397,9 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"查看表：",tableName,"，表id为：",tableId,"，评论ID为：", cid, "的评论详情列表").toString(), "getOneCommentItemsByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
-				
-		return rs;
+		message.put("isSuccess", true);
+		message.put("message", rs);
+		return message.getMap();
 	}
 	
 	/**
@@ -408,10 +413,10 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	}
 
 	@Override
-	public int getCountByObject(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception {
+	public Map<String, Object> getCountByObject(JSONObject jo, UserBean user,
+			HttpServletRequest request){
 		logger.info("CommentServiceImpl-->getCountByObject():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		
+		ResponseMap message = new ResponseMap();
 		String tableName = JsonUtil.getStringValue(jo, "table_name"); //操作表名
 		int tableId = JsonUtil.getIntValue(jo, "table_id", 0); //操作表中的id
 		
@@ -423,15 +428,16 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		count = SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, sql.toString()));
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"查看表：",tableName,"，表id为：",tableId,"，查询得到的总数是：", count, "条").toString(), "getCountByObject()", ConstantsUtil.STATUS_NORMAL, 0);
-				
-		return count;
+		message.put("isSuccess", true);
+		message.put("message", count);
+		return message.getMap();
 	}
 
 	@Override
-	public int getCountByUser(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception{
+	public Map<String, Object> getCountByUser(JSONObject jo, UserBean user,
+			HttpServletRequest request){
 		logger.info("CommentServiceImpl-->getCountByUser():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		
+		ResponseMap message = new ResponseMap();
 		int uid = JsonUtil.getIntValue(jo, "uid", user.getId()); //计算的用户id
 		
 		StringBuffer sql = new StringBuffer();
@@ -441,7 +447,9 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"查询用户ID为：", uid, "得到其评论总数是：", count, "条").toString(), "getCountByUser()", ConstantsUtil.STATUS_NORMAL, 0);
 				
-		return count;
+		message.put("isSuccess", true);
+		message.put("message", count);
+		return message.getMap();
 	}
 
 	@Override

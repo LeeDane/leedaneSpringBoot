@@ -61,7 +61,7 @@ public interface CommentService<T extends IDBean>{
 	 */
 	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<Map<String, Object>> getCommentsByLimit(JSONObject jo, UserBean user, HttpServletRequest request) throws Exception;
+	public Map<String, Object> getCommentsByLimit(JSONObject jo, UserBean user, HttpServletRequest request);
 	
 	/**
 	 * 获得当个评论的所有子评论列表
@@ -75,7 +75,7 @@ public interface CommentService<T extends IDBean>{
 	 */
 	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<Map<String, Object>> getOneCommentItemsByLimit(JSONObject jo, UserBean user, HttpServletRequest request) throws Exception;
+	public Map<String, Object> getOneCommentItemsByLimit(JSONObject jo, UserBean user, HttpServletRequest request);
 
 	/**
 	 * 获取每个评论对象所有的评论数
@@ -88,8 +88,7 @@ public interface CommentService<T extends IDBean>{
 	 */
 	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public int getCountByObject(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception;
+	public Map<String, Object> getCountByObject(JSONObject jo, UserBean user, HttpServletRequest request);
 
 	/**
 	 * 获取每个用户的评论数量
@@ -101,8 +100,7 @@ public interface CommentService<T extends IDBean>{
 	 */
 	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public int getCountByUser(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception;
+	public Map<String, Object> getCountByUser(JSONObject jo, UserBean user, HttpServletRequest request);
 
 	/**
 	 * 删除评论

@@ -29,7 +29,7 @@ public interface ReportService<T extends IDBean>{
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<String, Object> addReport(JSONObject jo, UserBean user, HttpServletRequest request) throws Exception;
+	public Map<String, Object> addReport(JSONObject jo, UserBean user, HttpServletRequest request);
 
 	
 

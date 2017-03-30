@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cn.leedane.model.ZanBean;
 import com.cn.leedane.service.ZanService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @RestController
@@ -34,17 +33,10 @@ public class ZanController extends BaseController{
 	@RequestMapping(value = "/zan", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> add(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(zanService.addZan(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(zanService.addZan(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -55,17 +47,10 @@ public class ZanController extends BaseController{
 	@RequestMapping(value = "/zan", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> delete(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(zanService.deleteZan(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(zanService.deleteZan(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -76,20 +61,13 @@ public class ZanController extends BaseController{
 	@RequestMapping(value = "/zans", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			List<Map<String, Object>> result= zanService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
-			System.out.println("获得赞的数量：" +result.size());
-			message.put("isSuccess", true);
-			message.put("message", result);
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		List<Map<String, Object>> result= zanService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
+		System.out.println("获得赞的数量：" +result.size());
+		message.put("isSuccess", true);
+		message.put("message", result);
 		return message.getMap();
 	}
 	
@@ -100,17 +78,10 @@ public class ZanController extends BaseController{
 	@RequestMapping(value = "/allZanUsers", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getAllZanUser(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(zanService.getAllZanUser(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(zanService.getAllZanUser(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 }

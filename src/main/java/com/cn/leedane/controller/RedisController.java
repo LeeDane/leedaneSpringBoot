@@ -28,30 +28,23 @@ public class RedisController extends BaseController{
 	@RequestMapping(value = "/redis", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> delete(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			String key = getJsonFromMessage(message).getString("key");
-			if(StringUtil.isNull(key)){
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少参数.value));
-				message.put("responseCode", EnumUtil.ResponseCode.缺少参数.value);
-				return message.getMap();
-			}
-			RedisUtil redisUtil = RedisUtil.getInstance();
-			boolean result = redisUtil.delete(key);
-			if(result){
-				message.put("isSuccess", true);
-			}else{
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
-				message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-			}
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
+		
+		String key = getJsonFromMessage(message).getString("key");
+		if(StringUtil.isNull(key)){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少参数.value));
+			message.put("responseCode", EnumUtil.ResponseCode.缺少参数.value);
+			return message.getMap();
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		RedisUtil redisUtil = RedisUtil.getInstance();
+		boolean result = redisUtil.delete(key);
+		if(result){
+			message.put("isSuccess", true);
+		}else{
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
+			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
+		}
 		return message.getMap();
 	}
 	
@@ -62,21 +55,14 @@ public class RedisController extends BaseController{
 	@RequestMapping(value = "/redis/clear", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> clearAll(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			RedisUtil redisUtil = RedisUtil.getInstance();
-			boolean result = redisUtil.clearAll();
-			if(result){
-				message.put("isSuccess", true);
-			}else{
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
-				message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-			}
-			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
+		RedisUtil redisUtil = RedisUtil.getInstance();
+		boolean result = redisUtil.clearAll();
+		if(result){
+			message.put("isSuccess", true);
+		}else{
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
+			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		return message.getMap();
 	}
 }

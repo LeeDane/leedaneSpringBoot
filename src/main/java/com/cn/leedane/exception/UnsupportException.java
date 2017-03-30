@@ -8,7 +8,7 @@ package com.cn.leedane.exception;
  * 2016年7月12日 上午10:16:52
  * Version 1.0
  */
-public class UnsupportException extends Exception {
+public class UnsupportException extends RuntimeException{
 
 	private static final long serialVersionUID = 1L;
 	

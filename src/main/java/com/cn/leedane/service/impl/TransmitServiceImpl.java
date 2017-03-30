@@ -75,8 +75,7 @@ public class TransmitServiceImpl implements TransmitService<TransmitBean>{
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	@Override
-	public Map<String, Object> add(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception {
+	public Map<String, Object> add(JSONObject jo, UserBean user, HttpServletRequest request){
 		//{\"table_name\":\"t_mood\", \"table_id\":1, 'content':'转发信息'}
 		logger.info("TransmitServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String tableName = JsonUtil.getStringValue(jo, "table_name");

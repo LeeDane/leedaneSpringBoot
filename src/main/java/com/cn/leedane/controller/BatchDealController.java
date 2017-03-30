@@ -85,22 +85,18 @@ public class BatchDealController extends BaseController{
 	@RequestMapping(value = "/upload10", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> upload10(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			List<Map<String, Object>> paths = filePathService.executeSQL("select * from "+DataTableType.文件.value+" where is_upload_qiniu = 0 and table_name <> '"+DataTableType.心情.value+"' order by id desc limit 10");
-			if(paths != null && paths.size() > 0){	
-				List<Map<String,Object>> fileBeans = cloudStoreHandler.executeUpload(paths);
-				if(fileBeans != null && fileBeans.size() >0){
-					for(Map<String, Object> m: fileBeans){
-						if(m.containsKey("id")){
-							filePathService.updateUploadQiniu(StringUtil.changeObjectToInt(m.get("id")), ConstantsUtil.QINIU_SERVER_URL + StringUtil.changeNotNull(m.get("path")));
-						}
+		List<Map<String, Object>> paths = filePathService.executeSQL("select * from "+DataTableType.文件.value+" where is_upload_qiniu = 0 and table_name <> '"+DataTableType.心情.value+"' order by id desc limit 10");
+		if(paths != null && paths.size() > 0){	
+			List<Map<String,Object>> fileBeans = cloudStoreHandler.executeUpload(paths);
+			if(fileBeans != null && fileBeans.size() >0){
+				for(Map<String, Object> m: fileBeans){
+					if(m.containsKey("id")){
+						filePathService.updateUploadQiniu(StringUtil.changeObjectToInt(m.get("id")), ConstantsUtil.QINIU_SERVER_URL + StringUtil.changeNotNull(m.get("path")));
 					}
 				}
-			}else{
-				System.out.println("没有要上传的文件");
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		}else{
+			System.out.println("没有要上传的文件");
 		}
 		return message.getMap();
 	}

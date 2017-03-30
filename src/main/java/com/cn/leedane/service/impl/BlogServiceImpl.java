@@ -79,7 +79,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	
 	
 	@Override
-	public Map<String,Object> addBlog(BlogBean blog, UserBean user) throws Exception{	
+	public Map<String,Object> addBlog(BlogBean blog, UserBean user){	
 		logger.info("BlogServiceImpl-->addBlog():blog="+blog);
 		Map<String,Object> message = new HashMap<String,Object>();
 		message.put("isSuccess",false);

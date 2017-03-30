@@ -3,7 +3,6 @@ package com.cn.leedane.controller;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.WebBackground;
 
@@ -40,17 +38,10 @@ public class WebConfigController extends BaseController{
 	@RequestMapping(value= "/background", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> background(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			checkParams(message, request);
-			
-			message.put("message", new WebBackground().getImage());
-			message.put("isSuccess", true);
-			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		checkParams(message, request);
+		
+		message.put("message", new WebBackground().getImage());
+		message.put("isSuccess", true);
 		return message.getMap();
 	}
 	

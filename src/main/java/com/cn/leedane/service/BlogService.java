@@ -38,7 +38,7 @@ public interface BlogService <T extends IDBean>{
 	 * @return
 	 * @throws Exception
 	 */
-	public  Map<String,Object> addBlog(BlogBean blog, UserBean user) throws Exception;	
+	public  Map<String,Object> addBlog(BlogBean blog, UserBean user);	
 	
 	/**
 	 * 根据条件查询记录，where语句，"where"需要用户自己写

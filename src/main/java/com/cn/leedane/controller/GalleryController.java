@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cn.leedane.model.GalleryBean;
 import com.cn.leedane.service.GalleryService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @RestController
@@ -32,22 +31,17 @@ public class GalleryController extends BaseController{
 	/**
 	 * 添加网络链接到图库
 	 * @return
+	 * @throws Exception 
 	 */
 	@RequestMapping(value = "/photo", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> addLink(HttpServletRequest request){
+	public Map<String, Object> addLink(HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request)){
-				return message.getMap();
-			}
-			message.putAll(galleryService.addLink(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request)){
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		message.putAll(galleryService.addLink(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
+		
 	}
 	
 	/**
@@ -61,18 +55,13 @@ public class GalleryController extends BaseController{
 			@RequestParam(value="method", required = true) String method,
 			HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			List<Map<String, Object>> result= galleryService.getGalleryByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
-			System.out.println("获得图库的数量：" +result.size());
-			message.put("isSuccess", true);
-			message.put("message", result);
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
+		List<Map<String, Object>> result= galleryService.getGalleryByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
+		System.out.println("获得图库的数量：" +result.size());
+		message.put("isSuccess", true);
+		message.put("message", result);
 		return message.getMap();
 	}
 	
@@ -84,17 +73,10 @@ public class GalleryController extends BaseController{
 	@RequestMapping(value = "/photo/{gid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"}) 
 	public Map<String, Object> delete(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(galleryService.delete(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(galleryService.delete(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 }

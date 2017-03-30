@@ -20,7 +20,6 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @RestController
@@ -44,17 +43,10 @@ public class FriendController extends BaseController{
 	@RequestMapping(value = "/friend", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> delete(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(friendService.deleteFriends(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(friendService.deleteFriends(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	/**
@@ -64,19 +56,11 @@ public class FriendController extends BaseController{
 	@RequestMapping(value = "/friend", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> add(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			//{"id":1, "to_user_id": 2, "add_introduce":"你好,我是XX"}
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(friendService.addFriend(getJsonFromMessage(message), getUserFromMessage(message), request));
+		//{"id":1, "to_user_id": 2, "add_introduce":"你好,我是XX"}
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			//resmessage = "抱歉，添加好友执行出现异常！请核实提交的信息后重试或者联系管理员";
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(friendService.addFriend(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -87,18 +71,11 @@ public class FriendController extends BaseController{
 	@RequestMapping(value = "/friend/agree", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> agreeFriend(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			//{"relation_id":100}
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(friendService.addAgree(getJsonFromMessage(message), getUserFromMessage(message), request));
+		//{"relation_id":100}
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);      
+		
+		message.putAll(friendService.addAgree(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -109,31 +86,25 @@ public class FriendController extends BaseController{
 	@RequestMapping(value = "/is", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> isFriend(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			//{"id":1, "to_user_id": 2}
-			if(!checkParams(message, request))
+		//{"id":1, "to_user_id": 2}
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		JSONObject json = getJsonFromMessage(message);
+		UserBean user = getUserFromMessage(message);
+		if(json.has("to_user_id")) {
+			int to_user_id = json.getInt("to_user_id");			
+			UserBean toUser = userService.findById(to_user_id);
+			if(toUser!= null){
+				message.put("isSuccess", friendService.isFriend(getUserFromMessage(message).getId(), to_user_id));
+				
+				// 保存操作日志信息
+				String subject = user.getAccount()+"判断跟"+toUser.getAccount()+"是否是朋友";
+				this.operateLogService.saveOperateLog(user, request, new Date(), subject, "isFriend", 1, 0);
 				return message.getMap();
-			
-			JSONObject json = getJsonFromMessage(message);
-			UserBean user = getUserFromMessage(message);
-			if(json.has("to_user_id")) {
-				int to_user_id = json.getInt("to_user_id");			
-				UserBean toUser = userService.findById(to_user_id);
-				if(toUser!= null){
-					message.put("isSuccess", friendService.isFriend(getUserFromMessage(message).getId(), to_user_id));
-					
-					// 保存操作日志信息
-					String subject = user.getAccount()+"判断跟"+toUser.getAccount()+"是否是朋友";
-					this.operateLogService.saveOperateLog(user, request, new Date(), subject, "isFriend", 1, 0);
-					return message.getMap();
-				}	
-					
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+			}	
+				
+		}
 		return message.getMap();
 	}
 	
@@ -144,18 +115,11 @@ public class FriendController extends BaseController{
 	@RequestMapping(value = "/friends", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> friendsPaging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			//{"id":1, "to_user_id": 2}
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(friendService.friendsAlreadyPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		//{"id":1, "to_user_id": 2}
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(friendService.friendsAlreadyPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -166,18 +130,11 @@ public class FriendController extends BaseController{
 	@RequestMapping(value = "/notyetfriends", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> friendsNotyetPaging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			//{"id":1, "to_user_id": 2}
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(friendService.friendsNotyetPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		//{"id":1, "to_user_id": 2}
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(friendService.friendsNotyetPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -189,17 +146,10 @@ public class FriendController extends BaseController{
 	@RequestMapping(value = "/friends/all", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> friends(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(friendService.friends(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(friendService.friends(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -210,18 +160,11 @@ public class FriendController extends BaseController{
 	@RequestMapping(value = "/friends/request", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> requestPaging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			//{"id":1, "to_user_id": 2}
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(friendService.requestPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		//{"id":1, "to_user_id": 2}
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(friendService.requestPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -232,18 +175,11 @@ public class FriendController extends BaseController{
 	@RequestMapping(value = "/friends/response", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> responsePaging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			//{"id":1, "to_user_id": 2}
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(friendService.responsePaging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		//{"id":1, "to_user_id": 2}
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(friendService.responsePaging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -254,18 +190,11 @@ public class FriendController extends BaseController{
 	@RequestMapping(value = "/friends/match", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> matchContact(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			//{"id":1, "to_user_id": 2}
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(friendService.matchContact(getJsonFromMessage(message), getUserFromMessage(message), request));
+		//{"id":1, "to_user_id": 2}
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(friendService.matchContact(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -276,18 +205,11 @@ public class FriendController extends BaseController{
 	@RequestMapping(value = "/topic", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> topic(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			//{"id":1, "to_user_id": 2}
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(friendService.matchContact(getJsonFromMessage(message), getUserFromMessage(message), request));
+		//{"id":1, "to_user_id": 2}
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(friendService.matchContact(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 }

@@ -64,7 +64,7 @@ public class AdminHtmlController extends BaseController{
 		return loginRoleCheck("/admin/welcome/loginHistory", true, model, httpSession, request);
 	}
 	
-	@RequestMapping("ControllerBaseNameUtil.adwc + /about")
+	@RequestMapping(ControllerBaseNameUtil.adwc + "/about")
 	public String wcAbout(Model model, HttpSession httpSession, HttpServletRequest request){
 		return loginRoleCheck("/admin/welcome/about", false, model, httpSession, request);
 	}

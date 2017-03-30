@@ -41,7 +41,6 @@ import com.cn.leedane.service.MoodService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
@@ -80,131 +79,124 @@ public class SearchController extends BaseController{
 	@RequestMapping(value="/s", method=RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> execute(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
 		
-		try {
-			checkParams(message, request);
-			UserBean user = getUserFromMessage(message);
-			JSONObject jsonObject = getJsonFromMessage(message);
-			//查询的类型，目前支持0、全部，1、博客（正文和标题），2、说说(正文)，3、用户(姓名，中文名，邮件，手机号码，证件号码)
-			int type = JsonUtil.getIntValue(jsonObject, "type", 0);
-			String keyword = JsonUtil.getStringValue(jsonObject, "keyword"); //搜索关键字
-			//String platform = JsonUtil.getStringValue(jsonObject, "platform", "web");//平台名称
-			if(StringUtil.isNull(keyword)){
-				message.put("message", "请检索关键字为空");
-				return message.getMap();
-			}
-			List<Map<String, Object>> responses = new ArrayList<Map<String, Object>>();
-			List<Integer> tempIds = new ArrayList<Integer>();
-			//获取全部
-			if(type == 0){
-				tempIds.add(ConstantsUtil.SEARCH_TYPE_BLOG);
-				tempIds.add(ConstantsUtil.SEARCH_TYPE_MOOD);
-				tempIds.add(ConstantsUtil.SEARCH_TYPE_USER);
-			}else{
-				tempIds.add(type);
-			}
-			//启动多线程
-			List<Future<Map<String, Object>>> futures = new ArrayList<Future<Map<String, Object>>>();
-			SingleSearchTask searchTask;
-			//派发5个线程执行
-			ExecutorService threadpool = Executors.newFixedThreadPool(5);
-			for(int tempId: tempIds){
-				searchTask = new SingleSearchTask(tempId, keyword, 0);
-				futures.add(threadpool.submit(searchTask));
-			}
-			threadpool.shutdown();
-			
-			for(int i = 0; i < futures.size() ;i++){
-				try {
-					//保存每次请求执行后的结果
-					if(futures.get(i).get() != null)
-							responses.add(futures.get(i).get());
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					futures.get(i).cancel(true);
-				} catch (ExecutionException e) {
-					e.printStackTrace();
-					futures.get(i).cancel(true);
-				}
-			}
-			
-			Map<String, List<Map<String, Object>>> docsMap = new HashMap<String, List<Map<String,Object>>>();
-			boolean platformApp = JsonUtil.getBooleanValue(jsonObject, "platformApp"); //搜索关键字
-			for(Map<String, Object> response1: responses){
-				int tempId = StringUtil.changeObjectToInt(response1.get("tempId"));
-				QueryResponse response2 = (QueryResponse) response1.get("queryResponse");
-				SolrDocumentList documentList= response2.getResults();
-				List<Map<String, Object>> ds = new ArrayList<Map<String,Object>>();
-				 
-		        for (SolrDocument solrDocument : documentList){
-		        	solrDocument.removeFields("_version_");
-		        	
-		        	if(solrDocument.containsKey("createTime")){
-		        		solrDocument.setField("createTime", DateUtil.formatLocaleTime(StringUtil.changeNotNull(solrDocument.getFieldValue("createTime")), DateUtil.DEFAULT_DATE_FORMAT));
-		            }
-		            
-		            if(solrDocument.containsKey("registerTime")){
-		            	solrDocument.setField("registerTime", DateUtil.formatLocaleTime(StringUtil.changeNotNull(solrDocument.getFieldValue("registerTime")), DateUtil.DEFAULT_DATE_FORMAT));
-		            }
-		            Map<String, Object> map = new HashMap<String, Object>();
-		            for(Entry<String, Object> m: solrDocument.entrySet()){
-		            	map.put(m.getKey(), m.getValue());
-		            }
-		            
-		            if(tempId == ConstantsUtil.SEARCH_TYPE_USER){
-		            	int userId = StringUtil.changeObjectToInt(solrDocument.getFieldValue("id"));
-		            	map.putAll(userHandler.getBaseUserInfo(userId));
-		            	if(platformApp && user != null && userId != user.getId()){
-		            		map.put("isFan", fanHandler.inAttention(user.getId(), userId));
-        					map.put("isFriend", friendHandler.inFriend(user.getId(), userId));
-		            	}
-		            }else if(tempId == ConstantsUtil.SEARCH_TYPE_MOOD){
-		            	map.putAll(userHandler.getBaseUserInfo(StringUtil.changeObjectToInt(solrDocument.getFieldValue("createUserId"))));
-		            	if(StringUtil.changeObjectToBoolean(solrDocument.getFieldValue("hasImg"))){
-		            		String uuid = StringUtil.changeNotNull(solrDocument.getFieldValue("uuid"));
-		            		map.put("imgs", moodHandler.getMoodImg(DataTableType.心情.value, uuid, ConstantsUtil.DEFAULT_PIC_SIZE));
-		            	}
-		            }else if(tempId == ConstantsUtil.SEARCH_TYPE_BLOG){
-		            	map.put("account", userHandler.getUserName(StringUtil.changeObjectToInt(solrDocument.getFieldValue("createUserId"))));
-		            }
-		        	 //对web平台处理高亮
-					/*if("web".equalsIgnoreCase(platform) && !response2.getHighlighting().isEmpty()){
-						Map<String, Map<String, List<String>>>  highlightings = response2.getHighlighting();
-						Map<String, List<String>> msMap = highlightings.get(String.valueOf(tempId));
-					}*/
-		            /*System.out.println("id = " +solrDocument.getFieldValue("id"));
-		            System.out.println("account = " +solrDocument.getFieldValue("account"));
-		            System.out.println("personalIntroduction = " +solrDocument.getFieldValue("personalIntroduction"));*/
-		            
-		            ds.add(map);
-		        }
-		        docsMap.put(String.valueOf(tempId), ds);
-				//搜索得到的结果数
-			    System.out.println("Find:" + documentList.getNumFound());
-			}
-			//System.out.println("data="+com.alibaba.fastjson.JSONArray.toJSONString(rs));
-			
-			//UserBean userBean = userService.findById(1);
-			//UserSolrHandler.getInstance().addBean(userBean);
-			//List<UserBean> userBeans = userService.getAllUsers(1);
-			//UserSolrHandler.getInstance().addBeans(userBeans);
-			
-			//List<UserBean> userBeans4 = userService.getAllUsers(4);
-			//UserSolrHandler.getInstance().addBeans(userBeans4);
-			
-			//List<BlogBean> blogs = blogService.getBlogBeans("select * from t_blog where status=?", ConstantsUtil.STATUS_NORMAL);
-			//BlogSolrHandler.getInstance().addBeans(blogs);
-			
-			//List<MoodBean> moods = moodService.getMoodBeans("select * from t_mood where status=?", ConstantsUtil.STATUS_NORMAL);
-			//MoodSolrHandler.getInstance().addBeans(moods);
-			message.put("message", docsMap);
-			message.put("isSuccess", true);
+		UserBean user = getUserFromMessage(message);
+		JSONObject jsonObject = getJsonFromMessage(message);
+		//查询的类型，目前支持0、全部，1、博客（正文和标题），2、说说(正文)，3、用户(姓名，中文名，邮件，手机号码，证件号码)
+		int type = JsonUtil.getIntValue(jsonObject, "type", 0);
+		String keyword = JsonUtil.getStringValue(jsonObject, "keyword"); //搜索关键字
+		//String platform = JsonUtil.getStringValue(jsonObject, "platform", "web");//平台名称
+		if(StringUtil.isNull(keyword)){
+			message.put("message", "请检索关键字为空");
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		}
+		List<Map<String, Object>> responses = new ArrayList<Map<String, Object>>();
+		List<Integer> tempIds = new ArrayList<Integer>();
+		//获取全部
+		if(type == 0){
+			tempIds.add(ConstantsUtil.SEARCH_TYPE_BLOG);
+			tempIds.add(ConstantsUtil.SEARCH_TYPE_MOOD);
+			tempIds.add(ConstantsUtil.SEARCH_TYPE_USER);
+		}else{
+			tempIds.add(type);
+		}
+		//启动多线程
+		List<Future<Map<String, Object>>> futures = new ArrayList<Future<Map<String, Object>>>();
+		SingleSearchTask searchTask;
+		//派发5个线程执行
+		ExecutorService threadpool = Executors.newFixedThreadPool(5);
+		for(int tempId: tempIds){
+			searchTask = new SingleSearchTask(tempId, keyword, 0);
+			futures.add(threadpool.submit(searchTask));
+		}
+		threadpool.shutdown();
+		
+		for(int i = 0; i < futures.size() ;i++){
+			try {
+				//保存每次请求执行后的结果
+				if(futures.get(i).get() != null)
+						responses.add(futures.get(i).get());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				futures.get(i).cancel(true);
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+				futures.get(i).cancel(true);
+			}
+		}
+		
+		Map<String, List<Map<String, Object>>> docsMap = new HashMap<String, List<Map<String,Object>>>();
+		boolean platformApp = JsonUtil.getBooleanValue(jsonObject, "platformApp"); //搜索关键字
+		for(Map<String, Object> response1: responses){
+			int tempId = StringUtil.changeObjectToInt(response1.get("tempId"));
+			QueryResponse response2 = (QueryResponse) response1.get("queryResponse");
+			SolrDocumentList documentList= response2.getResults();
+			List<Map<String, Object>> ds = new ArrayList<Map<String,Object>>();
+			 
+	        for (SolrDocument solrDocument : documentList){
+	        	solrDocument.removeFields("_version_");
+	        	
+	        	if(solrDocument.containsKey("createTime")){
+	        		solrDocument.setField("createTime", DateUtil.formatLocaleTime(StringUtil.changeNotNull(solrDocument.getFieldValue("createTime")), DateUtil.DEFAULT_DATE_FORMAT));
+	            }
+	            
+	            if(solrDocument.containsKey("registerTime")){
+	            	solrDocument.setField("registerTime", DateUtil.formatLocaleTime(StringUtil.changeNotNull(solrDocument.getFieldValue("registerTime")), DateUtil.DEFAULT_DATE_FORMAT));
+	            }
+	            Map<String, Object> map = new HashMap<String, Object>();
+	            for(Entry<String, Object> m: solrDocument.entrySet()){
+	            	map.put(m.getKey(), m.getValue());
+	            }
+	            
+	            if(tempId == ConstantsUtil.SEARCH_TYPE_USER){
+	            	int userId = StringUtil.changeObjectToInt(solrDocument.getFieldValue("id"));
+	            	map.putAll(userHandler.getBaseUserInfo(userId));
+	            	if(platformApp && user != null && userId != user.getId()){
+	            		map.put("isFan", fanHandler.inAttention(user.getId(), userId));
+    					map.put("isFriend", friendHandler.inFriend(user.getId(), userId));
+	            	}
+	            }else if(tempId == ConstantsUtil.SEARCH_TYPE_MOOD){
+	            	map.putAll(userHandler.getBaseUserInfo(StringUtil.changeObjectToInt(solrDocument.getFieldValue("createUserId"))));
+	            	if(StringUtil.changeObjectToBoolean(solrDocument.getFieldValue("hasImg"))){
+	            		String uuid = StringUtil.changeNotNull(solrDocument.getFieldValue("uuid"));
+	            		map.put("imgs", moodHandler.getMoodImg(DataTableType.心情.value, uuid, ConstantsUtil.DEFAULT_PIC_SIZE));
+	            	}
+	            }else if(tempId == ConstantsUtil.SEARCH_TYPE_BLOG){
+	            	map.put("account", userHandler.getUserName(StringUtil.changeObjectToInt(solrDocument.getFieldValue("createUserId"))));
+	            }
+	        	 //对web平台处理高亮
+				/*if("web".equalsIgnoreCase(platform) && !response2.getHighlighting().isEmpty()){
+					Map<String, Map<String, List<String>>>  highlightings = response2.getHighlighting();
+					Map<String, List<String>> msMap = highlightings.get(String.valueOf(tempId));
+				}*/
+	            /*System.out.println("id = " +solrDocument.getFieldValue("id"));
+	            System.out.println("account = " +solrDocument.getFieldValue("account"));
+	            System.out.println("personalIntroduction = " +solrDocument.getFieldValue("personalIntroduction"));*/
+	            
+	            ds.add(map);
+	        }
+	        docsMap.put(String.valueOf(tempId), ds);
+			//搜索得到的结果数
+		    System.out.println("Find:" + documentList.getNumFound());
+		}
+		//System.out.println("data="+com.alibaba.fastjson.JSONArray.toJSONString(rs));
+		
+		//UserBean userBean = userService.findById(1);
+		//UserSolrHandler.getInstance().addBean(userBean);
+		//List<UserBean> userBeans = userService.getAllUsers(1);
+		//UserSolrHandler.getInstance().addBeans(userBeans);
+		
+		//List<UserBean> userBeans4 = userService.getAllUsers(4);
+		//UserSolrHandler.getInstance().addBeans(userBeans4);
+		
+		//List<BlogBean> blogs = blogService.getBlogBeans("select * from t_blog where status=?", ConstantsUtil.STATUS_NORMAL);
+		//BlogSolrHandler.getInstance().addBeans(blogs);
+		
+		//List<MoodBean> moods = moodService.getMoodBeans("select * from t_mood where status=?", ConstantsUtil.STATUS_NORMAL);
+		//MoodSolrHandler.getInstance().addBeans(moods);
+		message.put("message", docsMap);
+		message.put("isSuccess", true);
 		return message.getMap();
 	}
 	
@@ -215,17 +207,10 @@ public class SearchController extends BaseController{
 	@RequestMapping(value = "/user", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> user(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(userService.search(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(userService.search(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -236,17 +221,10 @@ public class SearchController extends BaseController{
 	@RequestMapping(value = "/mood", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> mood(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(moodService.search(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(moodService.search(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -257,17 +235,10 @@ public class SearchController extends BaseController{
 	@RequestMapping(value = "/blog", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> blog(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		try {
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(blogService.search(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		
+		message.putAll(blogService.search(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	

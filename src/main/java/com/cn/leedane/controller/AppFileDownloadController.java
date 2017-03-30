@@ -127,50 +127,40 @@ public class AppFileDownloadController extends BaseController{
     public String getSizeAndDownloadCode(HttpServletRequest request, HttpServletResponse response) {
     	long startTime = System.currentTimeMillis();
     	Map<String, Object> message = new HashMap<String, Object>();
-        try {
-        	String fileName = request.getParameter("fileName");//必须
-        	String tableUuid = request.getParameter("uuid");  //客户端生成的唯一性uuid标识符
-        	int uid = StringUtil.parseInt(request.getParameter("uid"), 0);
-        	
-        	UserBean user = userService.findById(uid);
-            System.out.println("用户ID为："+uid);
-            
-            if(user == null){
-            	message.put("message", ResponseCode.请先登录.value);
-            	message.put("responseCode", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
-            	printWriter(message, response, startTime);
-				return null;
-        	}
-            
-            String fileFullPath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +FileType.FILE.value +"//" +fileName;
-            File file = new File(fileFullPath);
-            
-            //判断文件存在
-            if(!file.exists() || !file.isFile()){  
-            	message.put("message", ResponseCode.文件不存在.value);
-            	message.put("responseCode", EnumUtil.getResponseValue(ResponseCode.文件不存在.value));
-            	printWriter(message, response, startTime);
-				return null;
-            }
-            
-        	Map<String, Object> m = new HashMap<String, Object>();
-        	message.put("isSuccess", true);
-        	m.put("size", file.length());
-        	String downloadCode = StringUtil.produceDownloadCode(uid, fileName, tableUuid);
-        	RedisUtil.getInstance().addString(downloadCode, fileName);
-        	m.put("downloadCode", downloadCode);
-        	message.put("message", m);
+        
+    	String fileName = request.getParameter("fileName");//必须
+    	String tableUuid = request.getParameter("uuid");  //客户端生成的唯一性uuid标识符
+    	int uid = StringUtil.parseInt(request.getParameter("uid"), 0);
+    	
+    	UserBean user = userService.findById(uid);
+        System.out.println("用户ID为："+uid);
+        
+        if(user == null){
+        	message.put("message", ResponseCode.请先登录.value);
+        	message.put("responseCode", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
         	printWriter(message, response, startTime);
 			return null;
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+    	}
+        
+        String fileFullPath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +FileType.FILE.value +"//" +fileName;
+        File file = new File(fileFullPath);
+        
+        //判断文件存在
+        if(!file.exists() || !file.isFile()){  
+        	message.put("message", ResponseCode.文件不存在.value);
+        	message.put("responseCode", EnumUtil.getResponseValue(ResponseCode.文件不存在.value));
+        	printWriter(message, response, startTime);
+			return null;
         }
-        long endTime = System.currentTimeMillis();
-        System.out.println("获取下载文件信息总计耗时："+ (endTime - startTime) +"毫秒");
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response, startTime);
+        
+    	Map<String, Object> m = new HashMap<String, Object>();
+    	message.put("isSuccess", true);
+    	m.put("size", file.length());
+    	String downloadCode = StringUtil.produceDownloadCode(uid, fileName, tableUuid);
+    	RedisUtil.getInstance().addString(downloadCode, fileName);
+    	m.put("downloadCode", downloadCode);
+    	message.put("message", m);
+    	printWriter(message, response, startTime);
 		return null;
     }
 }
