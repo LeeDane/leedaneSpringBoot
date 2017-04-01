@@ -68,7 +68,7 @@ public class MyShiroRealm extends AuthorizingRealm{
         logger.info("##################执行Shiro权限认证##################");
         System.out.println("##################执行Shiro权限认证##################");
         //获取当前登录输入的用户名，等价于(String) principalCollection.fromRealm(getName()).iterator().next();
-        String loginName = (String)super.getAvailablePrincipal(principalCollection); 
+        int userid = (int)super.getAvailablePrincipal(principalCollection); 
         //到数据库查是否有此对象
         UserBean user = userMapper.findById(UserBean.class, 1);//userMapper.findByName(loginName);// 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
         if(user!=null){
@@ -147,7 +147,7 @@ public class MyShiroRealm extends AuthorizingRealm{
 	       	}else
 	       		throw new UnsupportedTokenException(); //抛出不支持的token异常	
         }else{
-        	return new SimpleAuthenticationInfo(user.getAccount(), customAuthenticationToken.getPassword(), getName());
+        	return new SimpleAuthenticationInfo(user.getId(), customAuthenticationToken.getPassword(), getName());
         }
     }
     

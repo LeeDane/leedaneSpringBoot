@@ -503,7 +503,7 @@ public class StringUtil {
 	 * @param tablename
 	 * @return
 	 */
-	public String buildUUID(String tablename){
+	public static String buildUUID(String tablename){
 		return UUID.randomUUID().toString() + tablename + System.currentTimeMillis();
 	}
 	
@@ -663,6 +663,19 @@ public class StringUtil {
 		}
 		return r;
 	}
+	
+	/**
+	 * 将头尾有"的字符串去掉"
+	 * @param source
+	 * @return
+	 */
+	public static String parseJSONToString(String source){
+		StringBuffer b = new StringBuffer(source);
+		b.deleteCharAt(0);
+		b.deleteCharAt(b.length() -1);
+		return b.toString();
+	}
+	
 	
 	public static void main(String[] args) {
 		//System.out.println(StringUtil.changeNotNullAndUtf8("赵本山代表作被指\"丑化\"农民 丢弃农村传统底蕴"));

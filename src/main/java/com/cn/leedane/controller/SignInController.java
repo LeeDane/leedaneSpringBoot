@@ -71,20 +71,15 @@ public class SignInController extends BaseController{
 			return message.getMap();
 		
 		message.put("isSuccess", true);
-		JSONObject json = getJsonFromMessage(message);
 		UserBean user = getUserFromMessage(message);
-		if(json.has("id")) {
-			int id = JsonUtil.getIntValue(getJsonFromMessage(message), "id", getUserFromMessage(message).getId());
-			String dateTime = DateUtil.DateToString(new Date(), "yyyy-MM-dd");		
-			message.put("isSuccess", signInService.isSign(id, dateTime));
-			
-			// 保存操作日志信息
-			String subject = user.getAccount()+"判断当天是否签到";
-			this.operateLogService.saveOperateLog(user, request, new Date(), subject, "currentDateIsSignIn", 1, 0);
-			return message.getMap();
-		}
+		int id = JsonUtil.getIntValue(getJsonFromMessage(message), "id", getUserFromMessage(message).getId());
+		String dateTime = DateUtil.DateToString(new Date(), "yyyy-MM-dd");		
+		message.put("isSuccess", signInService.isSign(id, dateTime));
 		
-		throw new ErrorException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
+		// 保存操作日志信息
+		String subject = user.getAccount()+"判断当天是否签到";
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "currentDateIsSignIn", 1, 0);
+		return message.getMap();
 	}
 	
 	/**

@@ -170,9 +170,9 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/blogs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(@RequestParam(value="pageSize", required = false) int pageSize,
-				@RequestParam(value="last_id", required = false) int lastId,
-				@RequestParam(value="first_id", required = false) int firstId,
+	public Map<String, Object> paging(@RequestParam(value="pageSize", required = false) Integer pageSize,
+				@RequestParam(value="last_id", required = false) Integer lastId,
+				@RequestParam(value="first_id", required = false) Integer firstId,
 				@RequestParam(value="method", required = true) String method,
 				HttpServletRequest request){
 		ResponseMap message = new ResponseMap();

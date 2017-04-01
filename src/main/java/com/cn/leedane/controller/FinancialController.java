@@ -73,7 +73,7 @@ public class FinancialController extends BaseController{
      * 客户端数据同步
      * @return 返回成功同步的数量和有冲突的数据ID数组
      */
-	@RequestMapping(value = "/synchronous", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/synchronous", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     public Map<String, Object> synchronous(HttpServletRequest request) {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))

@@ -1,7 +1,11 @@
-var connId = ""; //当前页面的连接ID
   $(function () {
       $("#show-login-qr-code-btn").on("click", function(){
-    	  loadQRCode();
+    	  //验证浏览器是否支持WebSocket协议
+    	  if(!window.WebSocket){
+    		  layer.msg("您当前的浏览器不支持扫描登录功能。");
+    		  return;
+    	  }
+    	  init();
     	  $("#load-qr-code").modal("show");
       });
       
@@ -131,48 +135,23 @@ var connId = ""; //当前页面的连接ID
 		});
   }
   
-  function init(){
-      JS.Engine.on({  
-    	  scan_login : function(data){
-    		 	data = eval('(' + data + ')');
-    			if(data.isSuccess){
-    				if("cancel" == data.message){
-    					//window.close();
-    					window.open("about:blank","_self").close();
-    					//window.open("","_self").close()
-    				}else
-    					window.location.reload();
-    			}
-      			//alert("返回的数据是："+data);
-          }  
-      });  
-      JS.Engine.start('/leedaneMVC/conn?channel=scan_login'); 
-      JS.Engine.on('start',function(cid){
-    	connId = cid;
-      	console.log("长链接连接"+cid);
-      });
-      JS.Engine.on('stop',function(cause, cid, url, engine){//页面刷新执行
-      	console.log("长链接已经断连接"+cid);
-      	connId = cid;
-      	//移除id
-      	$.ajax({
-				type : "post",
-				data : "cid=" + cid+"&&channel=scan_login",
-				url : "destroyedComet4jServlet",
-				async: false,
-				//dataType : "json",
-				timeout:1000,
-				cache : false,
-				beforeSend : function() {
-				},
-				success : function(data) {
-					console.log("移除id"+cid);
-				},
-				error : function() {
-				}
-		});
-      });
-	}
+  var websocket;
+  
+function init(){
+	//验证浏览器是否支持WebSocket协议
+    if(!window.WebSocket){
+    	layer.alert('WebSockeet not supported by this browser!', {
+    		  skin: 'layui-layer-molv' //样式类名
+    		  ,closeBtn: 0
+   		}, function(){
+   			//
+   			closeModal();
+   			$("#show-login-qr-code-btn").hide();
+   		});
+    }else{
+    	initWebsocket();
+   }
+}
   
 //回车执行登录
 document.onkeydown=function(event){
@@ -182,40 +161,54 @@ document.onkeydown=function(event){
    }
 }
  
-//页面关闭和刷新执行方法
-  window.onbeforeunload = onbeforeunload_handler;
-  window.onunload = onunload_handler;
-  function onbeforeunload_handler() {//页面关闭执行
-  	if(connId != ""){
-  		$.ajax({
-  			type : "post",
-  			data : "cid=" + connId +"&channel=scan_login",
-  			url : "destroyedComet4jServlet",
-  			async: false,
-  			//dataType : "json",
-  			timeout:1000,
-  			cache : false,
-  			beforeSend : function() {
-  			},
-  			success : function(data) {
-  				console.log("移除id"+cId);
-  			},
-  			error : function() {
-  			}
-  		});
-  	}
-  	//return connId;
-  }
-  function onunload_handler() {//页面关闭执行
+function initWebsocket(){
+	websocket = new WebSocket("ws://127.0.0.1:8088/scanLogin");
+
+	//连接发生错误的回调方法
+	websocket.onerror = function(){
+	  setMessageInnerHTML("error");
+	};
+
+	//连接成功建立的回调方法
+	websocket.onopen = function(event){
 		
 	}
+
+	//接收到消息的回调方法
+	websocket.onmessage = function(event){
+		//setMessageInnerHTML(event.data);
+		//event.data
+		loadQRCode(event.data);
+	}
+
+	//连接关闭的回调方法
+	websocket.onclose = function(){
+		
+	}
+
+	//监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+	window.onbeforeunload = function(){
+	  websocket.close();
+	}
+}
+
+//将消息显示在网页上
+function setMessageInnerHTML(innerHTML){
+  //document.getElementById('message').innerHTML += innerHTML + '<br/>';
+	alert("data---"+innerHTML)
+}
+
+//关闭连接
+function closeWebSocket(){
+  websocket.close();
+}
+
   
-  function loadQRCode(){
+  function loadQRCode(connId){
 	  var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	  $.ajax({
-			type : "post",
-			data : "cid="+connId,
-			url : "loginQrCode",
+			data : "cnid="+connId,
+			url : "/tl/loginQrCode",
 			dataType: 'json', 
 			beforeSend:function(){
 			},
@@ -253,4 +246,8 @@ document.onkeydown=function(event){
   		return "";
   	}
   	return a[1];
+  }
+  
+  function closeModal(){
+	  $("#load-qr-code").modal("hide");
   }

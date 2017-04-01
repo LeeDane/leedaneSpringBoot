@@ -48,6 +48,14 @@
 			top: 100px;
 			right: 0px;
 			z-index: 999;
+			border: 1px solid #ff0;
+		    border-radius: 30px;
+		    padding: 3px 5px 3px 5px;
+		    background-color: #ff0;
+		    display: inline-block;
+		}
+		.screen-play-content{
+			margin-left: 5px;
 		}
 	</style>
 </head>
@@ -67,8 +75,9 @@
 				<div class="row">
 					<div class="panel panel-info">
 					    <div class="panel-heading">
-					    		&nbsp;&nbsp;当前积分：<span id="score">0</span>
-					        	<button class="btn btn-default panel-title" type="button" onclick="goToLogin();">去登录</button>
+					    	您好：<span th:if="${isLogin}" th:text="${account}"></span><span th:if="${not isLogin}">访客</span>
+					    	&nbsp;&nbsp;当前积分：<span th:text="${isLogin ? '' :'0'}" id="score"></span>
+					    	<button th:if="${not isLogin}" class="btn btn-default panel-title" type="button" onclick="goToLogin();">去登录</button>
 					    </div>
 					    <!-- <div class="panel-body">
 					        <div class="row">

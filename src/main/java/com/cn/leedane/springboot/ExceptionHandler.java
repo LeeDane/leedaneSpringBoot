@@ -38,7 +38,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         
         JSONObject jsonObject = JSONObject.fromObject(message);
 		response.setCharacterEncoding("utf-8");
-		System.out.println("服务器返回:"+jsonObject.toString());
+		//System.out.println("服务器返回:"+jsonObject.toString());
 		PrintWriter writer = null;
 		try {
 			writer = response.getWriter();

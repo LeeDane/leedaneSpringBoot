@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.cache.SystemCache;
+import com.cn.leedane.chat_room.ScanLoginWebSocket;
 import com.cn.leedane.comet4j.AppStore;
 import com.cn.leedane.comet4j.Comet4jServer;
 import com.cn.leedane.controller.UserController;
@@ -1188,9 +1189,9 @@ public class UserServiceImpl implements UserService<UserBean> {
 		message.put("isSuccess", false);
 		
 		if(type == 0){
-			searchUserId = JsonUtil.getIntValue(jo, "key");
+			searchUserId = JsonUtil.getIntValue(jo, "searchUserIdOrAccount");
 		}else if(type == 1){
-			String account = JsonUtil.getStringValue(jo, "key");
+			String account = JsonUtil.getStringValue(jo, "searchUserIdOrAccount");
 			if(StringUtil.isNull(account)){
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户名不能为空.value));
 				message.put("responseCode", EnumUtil.ResponseCode.用户名不能为空.value);
@@ -1238,7 +1239,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		logger.info("UserServiceImpl-->scanLogin():jo=" +jo.toString());		
 		final String cid = JsonUtil.getStringValue(jo, "cid");//获取连接ID
 		ResponseMap message = new ResponseMap();
-		if(StringUtil.isNull(cid) || AppStore.getInstance().getScanLogin(cid) == null){
+		if(StringUtil.isNull(cid) || !ScanLoginWebSocket.scanLoginSocket.containsKey(cid)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.登录页面已经过期.value));
 			message.put("responseCode", EnumUtil.ResponseCode.登录页面已经过期.value);
 			return message;

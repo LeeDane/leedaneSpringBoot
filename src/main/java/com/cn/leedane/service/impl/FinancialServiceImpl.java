@@ -221,6 +221,7 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 			}else{
 				FinancialBean financialBean = (FinancialBean)appFinancialBean;
 				financialBean.setCreateTime(new Date());
+				financialBean.setCreateUserId(1);
 				
 				//校验记录是否存在
 				if(!checkExists(imei, financialBean.getLocalId(), financialBean.getAdditionTime())){
@@ -304,17 +305,16 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 	 * @param key  键名称
 	 * @return
 	 */
-	private List<FinancialBean> getListValue(JSONObject object, String key){				
+	private static List<FinancialBean> getListValue(JSONObject object, String key){				
 		if(JsonUtil.hasKey(object, key)){
 			String s = String.valueOf(object.get(key));
 			if(StringUtil.isNotNull(s)){
-				return JSONArray.parseArray(s, FinancialBean.class);
+				return JSONArray.parseArray(StringUtil.parseJSONToString(s), FinancialBean.class);
 			}
 			return new ArrayList<FinancialBean>();
 		}
 		return new ArrayList<FinancialBean>();
 	}
-	
 	/*public static Object jsonToObject(String json, Class cls)
 			throws JsonGenerationException, JsonMappingException, IOException {
 			Object obj = null;
@@ -334,7 +334,7 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		if(JsonUtil.hasKey(object, key)){
 			String s = String.valueOf(object.get(key));
 			if(StringUtil.isNotNull(s)){
-				FinancialBean financialBean = JSON.parseObject(s, FinancialBean.class);
+				FinancialBean financialBean = JSON.parseObject(StringUtil.parseJSONToString(s), FinancialBean.class);
 				if(financialBean != null){
 					financialBean.setCreateUserId(user.getId());
 					financialBean.setCreateTime(new Date());

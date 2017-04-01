@@ -6,19 +6,25 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
+import com.cn.leedane.model.UserBean;
 import com.cn.leedane.utils.Base64Util;
+import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DES;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.HttpConnectionUtil;
+import com.cn.leedane.utils.StringUtil;
 
 /**
  * main方法相关的测试类
@@ -90,30 +96,68 @@ public class MainTest {
 		hashtable.put("12", 12);
 		hashtable.put("hehe", "122");
 		System.out.println(hashtable.contains("12"));*/
-		String dd = HttpConnectionUtil.sendGetRequest("http://127.0.0.1:8088/md/moods?page_size=15&last_id=0&first_id=0&method=firstloading&to_user_id=1&t=0.48936390729158696");
-		System.out.println("响应："+ dd);
+		UserBean user = new UserBean();
+		set(user);
 		
-		 
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("username", "管理员");
-		map.put("pwd", "54a2ec5f4421fa24bfa9bf6461e649a2");
-		map.put("time", "20170324000000");
-		map.put("overdue", "20170424000000");
-		JSONObject json = JSONObject.fromObject(map);
-		String value = json.toString();
-		try {
-			byte[] key = null;
-			//byte[] ff = DES.encrypt(value.getBytes(), key);
-			//String ffV = new String(ff, "UTF-8");
-			char[] hh = Base64Util.encode(value.getBytes());
-			System.out.println(new String(hh) + "数据---");
-			byte[] gg = Base64Util.decode(new String(hh).toCharArray());
-			System.out.println("还原---" + new String(gg));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		System.out.println(user.getAccount());
 	}
+	
+	public static void set(UserBean user){
+		UserBean user1 = new UserBean();
+		user1.setAccount("leedane");
+		user = user1;
+		int i = 0;
+		System.out.println(i);
+	}
+	
+	public static InputStream getGetOrDeleteRequestInputStream(String method, String serverPath, int requestTimeOut, int responseTimeOut) throws IOException {
+        URL url = new URL(serverPath);
+        //打开对服务器的连接
+        HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
+        //设置连接超时时间
+        urlConnection.setConnectTimeout(requestTimeOut > 0 ? requestTimeOut : 3000);
+        //设置读取超时时间
+        urlConnection.setReadTimeout(responseTimeOut > 0 ? responseTimeOut : 3000);
+
+        //设置允许输入，输出
+        urlConnection.setDoInput(true);
+        urlConnection.setDoOutput(true);
+
+        // 设置字符集
+        urlConnection.setRequestProperty("Charset", "UTF-8");
+        // 设置文件类型
+        urlConnection.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+
+        //设置请求模式为GET
+        urlConnection.setRequestMethod(method);
+        //连接服务器
+        urlConnection.connect();
+        InputStream is = null;
+        //响应成功
+        if(urlConnection.getResponseCode() == 200){
+            is = urlConnection.getInputStream();
+        }
+
+        //断开连接
+       // if(urlConnection != null) urlConnection.disconnect();
+        return is;
+    }
+	
+	public static boolean isLink(String origin){
+
+        if(!StringUtil.isNull(origin)){
+            Pattern p = Pattern.compile("(http://|ftp://|https://|www){0,1}[^\u4e00-\u9fa5\\s]*?\\.(com|net|cn|me|tw|fr)[^\u4e00-\u9fa5\\s]*");
+            String group;
+            Matcher m=p.matcher(origin);
+            while(m.find()){
+                group = m.group().trim();
+                if(StringUtil.isNotNull(group)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 	private static void testIntAndInteger() {
 		int i = 10;
 		Integer i1 = 10;

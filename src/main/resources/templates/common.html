@@ -95,22 +95,23 @@
     <div>
         <ul class="nav navbar-nav">
             <li class="active nav-blog nav-main-li"><a href="/index.html" th:href="@{/index}">博客</a></li>
-            <li class="nav-photo nav-main-li"><a href="/photo.html" th:href="@{/pt}">相册</a></li>
-            	<li class="nav-my nav-main-li"><a href="/my.html" th:href="@{/my}">个人中心</a></li>
-            	<li class="nav-financial nav-main-li"><a href="/financial.html" th:href="@{/fn}">记账</a></li>
+            <li class="nav-photo nav-main-li" th:if="${isLogin}"><a href="/photo.html" th:href="@{/pt}">相册</a></li>
+            <li class="nav-my nav-main-li" th:if="${isLogin}"><a href="/my.html" th:href="@{/my}">个人中心</a></li>
+            <li class="nav-financial nav-main-li" th:if="${isLogin}"><a href="/financial.html" th:href="@{/fn}">记账</a></li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                			我
+                			<span th:if="${isLogin}" th:text="${account}"></span>
+                			<span th:if="not ${isLogin}">我</span>
                     	 <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                	<li><a href="publish-blog.html" th:href="@{/pb}">记一博</a></li>
+                	<li th:if="${isLogin}"><a href="publish-blog.html" th:href="@{/pb}">记一博</a></li>
                     <li><a href="#">关于我</a></li>
                     <li><a href="/chat-square.html" th:href="@{/cs}">聊天室</a></li>
                     <li><a href="/download.html" th:href="@{/dl}">app下载</a></li>
-               		<li><a href="/admin/index.html" th:href="@{/ad/index}">系统后台</a></li>
-                	<li><a href="javascript:void(0);" onclick="logout()">退出</a></li>
-                	<li><a href="/login.html" th:href="@{/lg}">登录</a></li>
+               		<li th:if="${isLogin}"><a href="/admin/index.html" th:href="@{/ad/index}">系统后台</a></li>
+                	<li th:if="${isLogin}"><a href="javascript:void(0);" onclick="logout()">退出</a></li>
+                	<li th:if="${not isLogin}"><a href="/login.html" th:href="@{/lg}">登录</a></li>
                 </ul>
             </li>
         </ul>
@@ -163,7 +164,7 @@
 	function logout(){
 		$.ajax({
 			dataType: 'json',
-			url : "us/logout",
+			url : "/us/logout",
 			beforeSend:function(){
 			},
 			success : function(data) {
@@ -173,7 +174,8 @@
 					window.location.reload();					
 			},
 			error : function() {
-				layer.msg("网络请求失败");
+				//刷新当前页面
+				window.location.reload();	
 			}
 		});
 	}

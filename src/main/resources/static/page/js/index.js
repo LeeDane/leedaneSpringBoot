@@ -503,5 +503,5 @@ function my(create_user_id){
 		layer.msg("该用户不存在，请联系管理员核实");
 		return;
 	}
-	window.open(getBasePath() +"page/my.jsp?uid="+create_user_id, "_blank");
+	linkToMy(create_user_id);
 }

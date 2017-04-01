@@ -3,11 +3,13 @@ package com.cn.leedane.controller;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -261,13 +263,19 @@ public class MoodController extends BaseController{
 	 * @return 返回心情的内容，图片地址（120x120大小的图像）
 	 */
 	@RequestMapping(value = "/detail", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> detail(HttpServletRequest request){
-		ResponseMap message = new ResponseMap();
-		if(!checkParams(message, request))
+	public Map<String, Object> detail(HttpServletRequest request, HttpServletResponse response){
+		try {
+			ResponseMap message = new ResponseMap();
+			if(!checkParams(message, request))
+				return message.getMap();
+			
+			message.putAll(moodService.detail(getJsonFromMessage(message), getUserFromMessage(message), request, "120x120"));
+			//printWriter(message, response);
 			return message.getMap();
-		
-		message.putAll(moodService.detail(getJsonFromMessage(message), getUserFromMessage(message), request, "120x120"));
-		return message.getMap();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	/**
 	 * 获取心情的图片

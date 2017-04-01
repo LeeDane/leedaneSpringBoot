@@ -41,6 +41,7 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.UserTokenBean;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.service.UserTokenService;
 import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
@@ -79,19 +80,31 @@ public class UserController extends BaseController{
 	@Autowired
 	protected OperateLogService<OperateLogBean> operateLogService;
 	
+    
+    @Autowired
+	private UserTokenService<UserTokenBean> userTokenService;
+	
 	/**
 	 * 登录
 	 * @param request
 	 * @return
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})  
-	public Map<String, Object> login(@RequestParam(value="account") String username,
-			@RequestParam(value="pwd") String password,
+	public Map<String, Object> login(@RequestParam(value="account", required = false) String username,
+			@RequestParam(value="pwd", required = false) String password,
 			Model model, /*HttpSession session,*/
 			HttpServletRequest request, RedirectAttributes redirectAttributes){
 		ResponseMap message = new ResponseMap();
 		boolean isSuccess = false;
 		checkParams(message, request);
+		
+		if(StringUtil.isNull(username) || StringUtil.isNull(password)){
+			JSONObject json = getJsonFromMessage(message);
+			username = JsonUtil.getStringValue(json, "account");
+			password = JsonUtil.getStringValue(json, "pwd");
+		}
+			
+		
 		if(StringUtil.isNull(username) || StringUtil.isNull(password)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.账号或密码为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.账号或密码为空.value);
@@ -180,7 +193,7 @@ public class UserController extends BaseController{
 	            String platform = request.getHeader("platform");
 	            
 	            Map<String, Object> userinfo = userHandler.getUserInfo(user, true);
-	            if(StringUtil.isNotNull(platform) && PlatformType.安卓版.value == platform){
+	            if(StringUtil.isNotNull(platform) && PlatformType.安卓版.value.equals(platform)){
 	            	UserTokenBean userTokenBean = new UserTokenBean();
 	            	Date overdue = DateUtil.getOverdueTime(new Date(), "7天");
 	            	userTokenBean.setToken(StringUtil.getUserToken(String.valueOf(user.getId()), user.getPassword(), overdue));
@@ -188,7 +201,8 @@ public class UserController extends BaseController{
 	            	userTokenBean.setCreateUserId(user.getId());
 	            	userTokenBean.setOverdue(overdue);
 	            	userTokenBean.setStatus(ConstantsUtil.STATUS_NORMAL);
-	            	if(userHandler.addTokenCode(userTokenBean)){
+	            	ResponseMap responseMap = userTokenService.addUserToken(user, userTokenBean.getToken(), overdue, request);
+	            	if(StringUtil.changeObjectToBoolean(responseMap.get("isSuccess"))){
 	            		userinfo.put("token", userTokenBean.getToken());
 	            	}else{
 	            		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.token获取异常.value));
@@ -804,10 +818,34 @@ public class UserController extends BaseController{
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.未完善信息.value));
 				message.put("responseCode", EnumUtil.ResponseCode.未完善信息.value);
 			}else if(user.getStatus() == ConstantsUtil.STATUS_NORMAL){
-				message.put("userinfo", userHandler.getUserInfo(user, true));
-				message.put("isSuccess", true);
+				Map<String, Object> userinfo = userHandler.getUserInfo(user, true);
+				
+				//获取平台，如果是android就继续获取token
+	            String platform = request.getHeader("platform");
+	            if(StringUtil.isNotNull(platform) && PlatformType.安卓版.value.equals(platform)){
+	            	UserTokenBean userTokenBean = new UserTokenBean();
+	            	Date overdue = DateUtil.getOverdueTime(new Date(), "7天");
+	            	userTokenBean.setToken(StringUtil.getUserToken(String.valueOf(user.getId()), user.getPassword(), overdue));
+	            	userTokenBean.setCreateTime(new Date());
+	            	userTokenBean.setCreateUserId(user.getId());
+	            	userTokenBean.setOverdue(overdue);
+	            	userTokenBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+	            	ResponseMap responseMap = userTokenService.addUserToken(user, userTokenBean.getToken(), overdue, request);
+	            	if(StringUtil.changeObjectToBoolean(responseMap.get("isSuccess"))){
+	            		userinfo.put("token", userTokenBean.getToken());
+	            	}else{
+	            		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.token获取异常.value));
+	            		message.put("responseCode", EnumUtil.ResponseCode.token获取异常.value);
+	            		return message.getMap();
+	            	}
+	            }
+	            
+				userHandler.removeLoginErrorNumber(user.getAccount());
+				message.put("userinfo", userinfo);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您登录成功.value));
 				message.put("responseCode", EnumUtil.ResponseCode.恭喜您登录成功.value);
+				message.put("isSuccess", true);
+				return message.getMap();
 			}else{
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.非正常登录状态.value));
 				message.put("responseCode", EnumUtil.ResponseCode.非正常登录状态.value);

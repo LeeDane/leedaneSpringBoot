@@ -3,6 +3,7 @@ package com.cn.leedane.controller;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.websocket.server.PathParam;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,8 +50,7 @@ public class CommentController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
-		message.put("message", commentService.getCommentsByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
-		message.put("isSuccess", true);
+		message.putAll(commentService.getCommentsByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -101,7 +101,7 @@ public class CommentController extends BaseController{
 	 * 删除评论
 	 * @return
 	 */
-	@RequestMapping(value = "/comment/{cid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/comment", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> delete(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))

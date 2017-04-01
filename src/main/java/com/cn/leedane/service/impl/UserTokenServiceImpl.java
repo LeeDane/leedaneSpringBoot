@@ -58,7 +58,7 @@ public class UserTokenServiceImpl implements UserTokenService<UserTokenBean> {
 	@Override
 	public ResponseMap addUserToken(UserBean user, String token,
 			Date overdue, HttpServletRequest request) {
-		logger.info("UserTokenServiceImpl-->getUserToken():createUserId="+user.getId()+",token="+token);
+		logger.info("UserTokenServiceImpl-->addUserToken():createUserId="+user.getId()+",token="+token);
 		ResponseMap message = new ResponseMap();
 		UserTokenBean userTokenBean = new UserTokenBean();
 		userTokenBean.setToken(token);

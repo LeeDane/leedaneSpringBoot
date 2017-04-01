@@ -61,7 +61,7 @@ public class ShakeController extends BaseController{
 	 * 摇一摇搜索心情
 	 * @return
 	 */
-	@RequestMapping("/mood")
+	@RequestMapping(value = "/mood", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> mood(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
@@ -75,7 +75,7 @@ public class ShakeController extends BaseController{
 	 * 摇一摇搜索心情
 	 * @return
 	 */
-	@RequestMapping("/blog")
+	@RequestMapping(value = "/blog", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> blog(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.handler.CloudStoreHandler;
+import com.cn.leedane.handler.ZXingCodeHandler;
 import com.cn.leedane.model.EmailBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.rabbitmq.SendMessage;
@@ -36,6 +37,7 @@ import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.wechat.util.HttpRequestUtil;
+import com.google.zxing.WriterException;
 import com.qiniu.util.Auth;
 
 @RestController
@@ -67,7 +69,7 @@ public class ToolController extends BaseController{
 	 * 发送邮件通知的接口
 	 * @return
 	 */
-	@RequestMapping(value = "/sendEmail", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/sendEmail", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> sendEmail(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
@@ -127,7 +129,7 @@ public class ToolController extends BaseController{
 	 * 发送信息
 	 * @return
 	 */
-	@RequestMapping(value = "/sendMsg", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/sendMsg", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> sendMessage(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
@@ -196,7 +198,6 @@ public class ToolController extends BaseController{
 		return message.getMap();
 	}
 	
-	
 	/**
      * 获取token 本地生成
      * 
@@ -206,4 +207,27 @@ public class ToolController extends BaseController{
     	Auth auth = Auth.create(CloudStoreHandler.ACCESSKEY, CloudStoreHandler.SECRETKEY);
     	return auth.uploadToken(CloudStoreHandler.BUCKETNAME);
     }
+    
+    /**
+	 * 根据图片地址获取网络图片流
+	 * @param request
+	 * @param response
+     * @throws WriterException 
+	 */
+	@RequestMapping(value = "/loginQrCode", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> loginQrCode(@RequestParam("cnid") String cnid, HttpServletRequest request) throws WriterException{
+		ResponseMap message = new ResponseMap();
+		if(StringUtil.isNull(cnid)){
+			message.put("message", "连接id为空");
+			message.put("responseCode", EnumUtil.ResponseCode.参数不存在或为空.value);
+			return message.getMap();
+		}
+		String bp = request.getScheme()+"://"+request.getServerName() +
+				(request.getServerName().endsWith("com")? "" : ":"+request.getServerPort())
+				+request.getContextPath()+"/";
+		String bpath = bp +"dl?scan_login=" + cnid;
+		message.put("message", ZXingCodeHandler.createQRCode(bpath, 200));
+		message.put("isSuccess", true);
+		return message.getMap();
+	}
 }

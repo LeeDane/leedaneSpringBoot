@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +20,6 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.UserTokenBean;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.service.UserService;
-import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
@@ -37,10 +37,6 @@ public class UserHandler {
 
 	@Autowired
 	private UserService<UserBean> userService;
-	
-	public void setUserService(UserService<UserBean> userService) {
-		this.userService = userService;
-	}
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
@@ -406,11 +402,11 @@ public class UserHandler {
 	 */
 	public boolean addTokenCode(UserTokenBean userTokenBean){
 		String key = getRedisUserTokenKey(String.valueOf(userTokenBean.getCreateUserId()));
-		if(redisUtil.addSet(key, userTokenBean.getToken()) && userTokenBean.getOverdue() != null){
+		if(redisUtil.addString(key, userTokenBean.getToken()) && userTokenBean.getOverdue() != null){
 			int overdueTime = (int)(userTokenBean.getOverdue().getTime() - DateUtil.getCurrentTime().getTime()) / 1000;
 			if(overdueTime > 10)
 				return redisUtil.expire(key, userTokenBean.getToken(), overdueTime);
-			
+				
 			return true;
 		}
 		return false;
@@ -423,7 +419,9 @@ public class UserHandler {
 	 */
 	public Set<String> getTokens(int userid){
 		String key = getRedisUserTokenKey(String.valueOf(userid));
-		return redisUtil.getSet(key);
+		Set<String> set = new HashSet<String>();
+		set.add(redisUtil.getString(key));
+		return set;
 	}
 	
 	/**
@@ -433,7 +431,7 @@ public class UserHandler {
 	 */
 	public boolean hasToken(int userid, String token){
 		String key = getRedisUserTokenKey(String.valueOf(userid));
-		return redisUtil.isInSet(key, token);
+		return redisUtil.hasKey(key) && redisUtil.getString(key).equals(token);
 	}
 	
 	/**
@@ -501,7 +499,7 @@ public class UserHandler {
 	 * @return
 	 */
 	public static String getRedisUserTokenKey(String token){
-		return "user_token_"+token;
+		return "user_token_a_"+token;
 	}
 	
 	/**

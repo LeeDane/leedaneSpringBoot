@@ -1,4 +1,5 @@
-  //回车执行登录
+var colorsList = ["#FFC0CB", "#D8BFD8", "#DDA0DD", "#9932CC", "#E6E6FA", "#4169E1", "#E0FFFF"];
+//回车执行登录
 document.onkeydown=function(event){
     var e = event || window.event || arguments.callee.caller.arguments[0];
     if(e && e.keyCode==13){ // enter 键
@@ -249,6 +250,9 @@ var log = function(s){
 		var json = eval('(' + s + ')'); 
 		var container = $("#content");
 		
+		if(isLogin && loginUserId == json.id && json['type'] && json.type == "welcome")
+			return;
+		
 		if(isLogin && loginUserId == json.id){
 			container.append(buildEachRightRow(json));
 		}else{
@@ -266,10 +270,15 @@ var log = function(s){
  	    }
  	    if(json.type == 'PlayScreen'){
  	    	var palyScreenContainerId = "play-screen-" + getRandomNumber(10000);
+ 	    	
+ 	    	var userPath = "";
+ 	    	if(isNotEmpty(json.user_pic_path)){
+ 	    		userPath = json.user_pic_path;
+ 	    	}
  	    	if(isNotEmpty(json.screenText)){
- 	    		var ht = '<div id="'+ palyScreenContainerId +'" class="play-screen">'+ json.screenText +'</div>';
+ 	    		var ht = '<div id="'+ palyScreenContainerId +'" class="play-screen"><span class="screen-play-img"><img class="img-circle hand" width="25" height="25" src="'+ userPath +'"></span><span class="screen-play-content">'+ json.screenText +'</span></div>';
  	    	}else{
- 	    		var ht = '<div id="'+ palyScreenContainerId +'" class="play-screen">'+ json.content +'</div>';
+ 	    		var ht = '<div id="'+ palyScreenContainerId +'" class="play-screen"><span class="screen-play-img"><img class="img-circle hand" width="25" height="25" src="'+ userPath +'"></span><span class="screen-play-content">'+ json.content +'</span></div>';
  	    	}
  	    	
  	    	$("body").append(ht);
@@ -279,12 +288,17 @@ var log = function(s){
  	    		topIndex = 0;
  	    	}
  	    	
- 	    	$("#"+palyScreenContainerId).css("top", topArray[topIndex] + "px");
+ 	    	var color = colorsList[getRandomNumber1(colorsList.length)];
+ 	    	var palyScreenContainer = $("#"+palyScreenContainerId);
+ 	    	palyScreenContainer.css("top", topArray[topIndex] + "px");
+ 	    	palyScreenContainer.css("background-color", color);
+ 	    	palyScreenContainer.css("border", "1px solid "+ color);
+ 	    	palyScreenContainer.find(".screen-play-content").css("line-height", palyScreenContainer.outerHeight() + "px");
  	        //setInterval('playScreen()',"1000");
- 	        playScreen(palyScreenContainerId);
- 	        
+ 	        playScreen(palyScreenContainer);
+
  	        //当前信息是自己发的，就重新去获取新的积分
- 	       // if(isLogin && <%=userId %> == json.id)
+ 	    	if(isLogin && loginUserId == json.id)
  	       		getScore();
  	    }
  	   
@@ -295,13 +309,21 @@ var log = function(s){
 /**
 *	执行弹屏的动画效果
 */
-function playScreen(palyScreenContainerId){
-	//随机5秒到8秒
-	var time = 5000 + getRandomNumber1(4) * 1000;
-	var width = $("#"+palyScreenContainerId).width();
-	$("#"+palyScreenContainerId).animate({right: (pageW - width) +"px"}, time, function(){
-		$("#"+palyScreenContainerId).remove();
+function playScreen(palyScreenContainer){
+	//随机8秒到14秒
+	var time = 8000 + getRandomNumber1(6) * 1000;
+	var width = palyScreenContainer.outerWidth();
+	palyScreenContainer.animate({right: (pageW - width) +"px"}, time, function(){
+		palyScreenContainer.remove();
 	});
+	
+	palyScreenContainer.hover(function(){  
+		palyScreenContainer.stop();  
+     },function(){  
+		 palyScreenContainer.animate({right: (pageW - width) +"px"}, time, function(){
+			 palyScreenContainer.remove();
+		 });
+     })  
 	//right = right + 150;
 }
 

@@ -114,6 +114,8 @@ public class MoodHandler {
 			redisUtil.addString(moodKey, jsonArray.toString());
 		}else{
 			String mood = redisUtil.getString(moodKey);
+			//要把null转化成“”字符串，在json转化才不会报错：net.sf.json.JSONException: null object
+			mood = mood.replaceAll("null", "\"\"");
 			if(StringUtil.isNotNull(mood) && !"[null]".equalsIgnoreCase(mood)){
 				jsonArray = JSONArray.fromObject(mood);
 				list = (List<Map<String, Object>>) jsonArray;

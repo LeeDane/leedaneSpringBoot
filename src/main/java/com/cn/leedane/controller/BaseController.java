@@ -3,7 +3,6 @@ package com.cn.leedane.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -21,10 +20,8 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -36,12 +33,14 @@ import com.cn.leedane.exception.user.NoValidationEmailAccountException;
 import com.cn.leedane.exception.user.StopUseAccountException;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.UserTokenBean;
 import com.cn.leedane.service.UserService;
+import com.cn.leedane.service.UserTokenService;
 import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.PlatformType;
-import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.HttpUtil;
 import com.cn.leedane.utils.StringUtil;
 
 public class BaseController {
@@ -308,6 +307,8 @@ public class BaseController {
 		if(sessionUserInfo != null){
 			result = true;
 			user = (UserBean)sessionUserInfo;
+			message.put("user", user);
+			message.put("message", result);
 			//HttpSession session = SessionManagerUtil.getInstance().getSession(user.getId());
 			//if(session == null){
 				//user = null;
@@ -316,11 +317,10 @@ public class BaseController {
 		
 		//请求参数
 		String params = request.getParameter("params");
-		JSONObject json = null;
+		JSONObject json = new JSONObject();
 		if(StringUtil.isNull(params)){
 			try {
 				json = convertParameterMapToJsonObject(request.getParameterMap());
-				System.out.println("请求参数:"+json.toString());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -329,10 +329,18 @@ public class BaseController {
 			json = JSONObject.fromObject(params);
 		}
 		
-		if(json != null){
-			message.put("json", json);
+		if(json == null || json.isEmpty()){
+			try {
+				json = HttpUtil.getJsonObjectFromInputStream(request);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		if(json != null)
+			System.out.println("请求参数:"+json.toString());
+		//if(json != null && !json.isEmpty()){
 			//从请求ID获取用户信息
-			if(user == null){
+			/*if(user == null){
 				if(json.has("id")){
 					//设置为了防止过滤路径，直接在这里加载用户请求有id为默认登录用户
 					try {
@@ -341,11 +349,12 @@ public class BaseController {
 						e.printStackTrace();
 					}
 				}
-			}
+			}*/
 			
 			//对于有token的再进行shiro校验
-			if(user == null){						
-				result = appAuthCheck(request, message);
+			if(user == null){			
+				//user = userService.findById(1);
+				user = appAuthCheck(request, message, result);
 			}
 			
 			if(user != null){
@@ -400,19 +409,23 @@ public class BaseController {
 					message.put("responseCode", EnumUtil.ResponseCode.请先登录.value);
 				}
 			}
-		}
+		//}
+		message.put("json", json == null ? new JSONObject(): json);
 		return result;
 	}
 	
 	/**
 	 * 统一App登录验证检查
 	 * @param request
+	 * @param message
+	 * @param user
 	 * @return
 	 */
-	public boolean appAuthCheck(HttpServletRequest request, Map<String, Object> message){
+	public UserBean appAuthCheck(HttpServletRequest request, Map<String, Object> message, boolean result){
 		//拿到token码
 		String token = request.getHeader("token");
-		
+		int useridq = StringUtil.changeObjectToInt(request.getHeader("userid"));
+		UserBean user = null;
 		//校验token
 		if(StringUtil.isNotNull(token)){
 			//拿token到shiro进行登录校验
@@ -428,7 +441,7 @@ public class BaseController {
 	        usernamePasswordToken.setRememberMe(true);
 	        usernamePasswordToken.setPlatformType(PlatformType.安卓版);
 	        //这里只负责获取用户，不做校验，校验交给shiro的realm里面去做
-	        UserBean user = userHandler.getUserBean(userid);
+	        user = userHandler.getUserBean(userid);
 	        usernamePasswordToken.setUser(user);
 	        
 	        //获取当前的Subject  
@@ -481,14 +494,15 @@ public class BaseController {
 	        if(currentUser.isAuthenticated()){  
 	            logger.info("用户[" + userid + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)"); 
 	            message.put("message", "恭喜您登录成功"); 
-	            message.put("isSuccess", true); 
-	            return true;
+	            result = true;
+	            message.put("isSuccess", result); 
+	            return user;
 	        }else{  
 	        	usernamePasswordToken.clear();  
 	        } 
 		}
 		
-		return false;
+		return null;
 	}
 	
 	/**
