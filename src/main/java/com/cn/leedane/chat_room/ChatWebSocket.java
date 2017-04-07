@@ -92,13 +92,34 @@ public class ChatWebSocket {
             JSONObject jsonObject = JSONObject.fromObject(message);
         	jsonObject.put("time", DateUtil.DateToString(new Date()));
         	UserHandler userHandler = (UserHandler) SpringUtil.getBean("userHandler");
-        	String keyString = jsonObject.getString("id");
-        	final int userId = StringUtil.changeObjectToInt(keyString.split("UNION")[0]);
+        	final int userId = StringUtil.changeObjectToInt(jsonObject.getString("id"));
         	Map<String, Object> userInfo = new HashMap<String, Object>();
         	
         	//非访客身份将不进行进一步的操作
-        	if(userId == Integer.parseInt(Util.VISITORS_ID))
+        	if(userId == 0 || userId == Integer.parseInt(Util.VISITORS_ID)){
+        		jsonObject.put("account", "匿名用户");
+        		jsonObject.put("id", userId);
+        		Set<String> sensitiveWords = FilterUtil.getFilter(jsonObject.getString("content"));
+            	//进行敏感词过滤和emoji过滤
+        		if(sensitiveWords != null && sensitiveWords.size() > 0){
+        			jsonObject.put("type", "error");
+                	StringBuffer words = new StringBuffer();
+                	words.append("您发送的内容\"");
+                	words.append(jsonObject.getString("content"));
+                	words.append("\"");
+                	words.append("中【");
+                	for(String sensitiveWord: sensitiveWords){
+                		words.append(sensitiveWord + "、");
+                	}
+                	words.deleteCharAt(words.length() -1);
+                	words.append("】等是敏感词，请核实！");
+                	jsonObject.put("content", words.toString());
+                	sendMessageToSelf(jsonObject, userId);
+        		}else{
+        			sendMessageToAll(false, jsonObject, userId);
+        		}
         		return;
+        	}	
         	
     		userInfo = userHandler.getBaseUserInfo(userId);
     		jsonObject.put("user_pic_path", userInfo.get("user_pic_path"));
@@ -116,12 +137,15 @@ public class ChatWebSocket {
     			type = "error";
             	jsonObject.put("type", type);
             	StringBuffer words = new StringBuffer();
-            	words.append("您发送的内容有【");
+            	words.append("您发送的内容\"");
+            	words.append(jsonObject.getString("content"));
+            	words.append("\"");
+            	words.append("中【");
             	for(String sensitiveWord: sensitiveWords){
             		words.append(sensitiveWord + "、");
             	}
             	words.deleteCharAt(words.length() -1);
-            	words.append("】等敏感词，请核实！");
+            	words.append("】等是敏感词，请核实！");
             	jsonObject.put("content", words.toString());
             	sendMessageToSelf(jsonObject, userId);
             	return;
@@ -138,7 +162,7 @@ public class ChatWebSocket {
 					e.printStackTrace();
 				}
         	}else{
-        		sendMessageToAll(type, jsonObject, userId);
+        		sendMessageToAll((StringUtil.isNotNull(type) && "welcome".equals(type)), jsonObject, userId);
         	}
         } catch (IOException e) {  
             e.printStackTrace();  
@@ -154,13 +178,13 @@ public class ChatWebSocket {
     }
     
     /**
-     * 给所有人发信息
-     * @param message
+     * 是否保存该操作记录
+     * @param saveRecord
+     * @param jsonObject
+     * @param userId
      */
-    public void sendMessageToAll(String type, JSONObject jsonObject, int userId){
-    	boolean welcome = StringUtil.isNotNull(type) && "welcome".equals(type);
-    	
-    	if(!welcome){
+    public void sendMessageToAll(boolean saveRecord, JSONObject jsonObject, int userId){    	
+    	if(saveRecord){
     		saveRecore(userId, jsonObject);
     	}
     	//群发消息
@@ -211,7 +235,7 @@ public class ChatWebSocket {
 			if(StringUtil.changeObjectToBoolean(map.get("isSuccess"))){
 				
 				jsonObject.put("screenText", screenText); //弹屏内容，纯文本
-				sendMessageToAll(type, jsonObject, userId);
+				sendMessageToAll((StringUtil.isNotNull(type) && "welcome".equals(type)), jsonObject, userId);
 				return;
 			}else{
 				jsonObject.put("content", "扣除积分失败");

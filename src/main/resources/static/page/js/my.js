@@ -86,7 +86,7 @@ $(function(){
 function loadUserInfo(){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
-		url : "/us/searchByIdOrAccount?key="+ uid +"&t=" + Math.random(),
+		url : "/us/searchByIdOrAccount?searchUserIdOrAccount="+ uid +"&t=" + Math.random(),
 		dataType: 'json', 
 		beforeSend:function(){
 		},
@@ -723,7 +723,7 @@ function getCTRequestParams(table_id){
 	if(ct_method != 'firstloading')
 		pageSize = 10;
 	//return {pageSize: pageSize, last_id: ct_last_id, first_id: ct_first_id, method: ct_method, table_name: 't_mood', showUserInfo: true, table_id: table_id, t: Math.random()};
-	return "?page_size="+ pageSize +"&last_id="+ last_id +"&first_id="+ first_id+"&method="+ method+ "&table_name=t_mood&show_user_info=true&table_id="+ table_id +"&t="+Math.random();
+	return "?page_size="+ pageSize +"&last_id="+ ct_last_id +"&first_id="+ ct_first_id+"&method="+ ct_method+ "&table_name=t_mood&show_user_info=true&table_id="+ table_id +"&t="+Math.random();
 }
 
 /**

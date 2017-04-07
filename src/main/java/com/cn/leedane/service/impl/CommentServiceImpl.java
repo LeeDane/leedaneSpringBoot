@@ -206,9 +206,9 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		//, \"first_id\": 2, \"last_id\":2, \"method\":\"firstloading\"}
 		String tableName = JsonUtil.getStringValue(jo, "table_name"); //操作表名
 		int tableId = JsonUtil.getIntValue(jo, "table_id", 0); //操作表中的id
-		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
+		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
-		int toUserId = JsonUtil.getIntValue(jo, "toUserId"); //操作的对象用户的id
+		int toUserId = JsonUtil.getIntValue(jo, "to_user_id"); //操作的对象用户的id
 		int firstId = JsonUtil.getIntValue(jo, "first_id", 0); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		boolean showUserInfo = JsonUtil.getBooleanValue(jo, "showUserInfo");

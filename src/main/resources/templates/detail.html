@@ -128,17 +128,19 @@ jEmoji.unifiedToHTML(emojiText) -->
 			</div>
 	   </div>
 	   <div class="row" id="comment">
-	   		<div class="col-lg-12" style="text-align: center;">
+	   		<div class="col-lg-12" th:if="${not isLogin}" style="text-align: center;">
 			        您还未登录，无法参与评论 <a type="button" class="btn btn-info" href="javascript:void(0);" onclick="linkToLogin();">登录</a>
 			</div>
 			
-			<div class="col-lg-6" style="text-align: center;">
-			     <form class="form-signin" role="form">
-				     <fieldset>
-					     <textarea class="form-control" name="add-comment" style="min-height: 125px;" autofocus ="true"></textarea>
-					     <button class="btn btn-lg btn-primary btn-block" type="button" style="margin-top: 10px;" onclick="addComment(this);">发表评论</button>
-				     </fieldset>
-				 </form>
+			<div class="col-lg-12" th:if="${isLogin}" style="text-align: center;">
+				<div class="row">
+					<textarea class="form-control" name="add-comment" style="min-height: 125px;" autofocus ="true"></textarea>
+				</div>
+				<div class="row">
+					<div class="col-lg-1 col-lg-offset-11">
+						<button class="btn btn-md btn-primary btn-block" type="button" style="margin-top: 10px;" onclick="addComment(this);">评论</button>
+					</div>
+				</div>
 			</div>
 	   </div>
 	   <!-- <div class="row comment-list comment-list-padding">

@@ -164,7 +164,7 @@
 								<div class="row" style="margin-top: 8px;">
 									<div class="col-lg-12">
 										<button class="btn btn-default" type="button" onclick="sendMsg();">发送</button>
-										<button class="btn btn-default" id="send-play-screen" type="button" onclick="sendPlayScreen();">发送弹屏(扣一分积分)</button>
+										<button th:if="${isLogin}" class="btn btn-default" id="send-play-screen" type="button" onclick="sendPlayScreen();">发送弹屏(扣一分积分)</button>
 										<button class="btn btn-default" type="button" onclick="clearMsg();">清屏</button>
 									</div>
 								</div>

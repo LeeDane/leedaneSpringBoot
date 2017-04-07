@@ -253,6 +253,12 @@ var log = function(s){
 		if(isLogin && loginUserId == json.id && json['type'] && json.type == "welcome")
 			return;
 		
+		//处理错误提示信息
+		if(json['type'] && json.type == "error"){
+			container.append(buildEachErrorRow(json));
+			return;
+		}
+		
 		if(isLogin && loginUserId == json.id){
 			container.append(buildEachRightRow(json));
 		}else{
@@ -383,19 +389,36 @@ function clearMsg(){
 }
 
 /**
+ * At某人
+ * @param account
+ * @param id
+ */
+function atOther(account, id){
+	console.log("account="+ account);
+	//获取编辑器内容
+  	var content = ue.getContent();
+	if(isEmpty(content)){
+		ue.setContent("@"+ account +" ");
+	}else{
+		ue.setContent("@"+ account +" " + content);
+	}
+}
+
+/**
  *	构建左侧的
  */
  function buildEachLeftRow(chat){
- 	var html = '<div class="row chat-list-row">'+
-			   		'<div class="col-lg-1" style="text-align: center;margin-top: 10px;">';
+	 var canClick = isLogin && chat.id != loginUserId && chat.account;
+ 	var html = '<div class="row chat-list-row'+ (canClick ? ' hand' : '') +'" '+ (canClick ? 'onclick="atOther(\''+ chat.account +'\','+ chat.id +');"': '') +'>'+
+			   		'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;margin-top: 10px;">';
 			   		if(isNotEmpty(chat.user_pic_path)){
-			   			html += '<img width="100%" style="max-width: 45px;" height="45" class="img-rounded hand" alt="" src="'+ chat.user_pic_path + '"  onclick="showSingleImg(this);"/>';
+			   			html += '<img style="width: 40px; Height: 40px;"" class="img-rounded hand" alt="" src="'+ chat.user_pic_path + '"  onclick="showSingleImg(this);"/>';
 			   		}else{
-			   			html += '<img width="100%" style="max-width: 45px;" height="45" class="img-rounded" alt="" src=""/>';
+			   			html += '<img style="width: 40px; Height: 40px;" class="img-rounded" alt="" src=""/>';
 			   		}
 						
 			html += '</div>'+
-					'<div class="col-lg-10">'+
+					'<div class="col-lg-10 col-md-10 col-sm-8 col-xs-8">'+
 						'<div class="row" style="font-family: \'微软雅黑\'; font-size: 15px; margin-top: 10px;">'+
 							'<div class="col-lg-12">'+
 								'<span class="chat-user-name"><a href="JavaScript:void(0);" onclick="linkToMy('+ chat.id +')">'+ chat.account +'</a></span>'+
@@ -406,7 +429,7 @@ function clearMsg(){
 							'<div class="col-lg-12">'+ chat.content +'</div>'+
 						'</div>'+
 					'</div>'+
- 					'<div class="col-lg-1" style="text-align: center;margin-top: 10px;">'+
+ 					'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;margin-top: 10px;">'+
  					'</div>'+
 				'</div>';
  	
@@ -418,9 +441,9 @@ function clearMsg(){
   */
   function buildEachRightRow(chat){
   	var html = '<div class="row chat-list-row">'+
-			   		'<div class="col-lg-1" style="text-align: center;margin-top: 10px;">'+
+			   		'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;margin-top: 10px;">'+
 			   		'</div>'+
-					'<div class="col-lg-10"  style="text-align: right;">'+
+					'<div class="col-lg-10 col-md-10 col-sm-8 col-xs-8"  style="text-align: right;">'+
 						'<div class="row" style="font-family: \'微软雅黑\'; font-size: 15px; margin-top: 10px;">'+
 							'<div class="col-lg-12">'+
 								'<span class="chat-create-time">'+ chat.time +'</span>'+
@@ -431,14 +454,29 @@ function clearMsg(){
 							'<div class="col-lg-12">'+ chat.content +'</div>'+
 						'</div>'+
 					'</div>'+
-  					'<div class="col-lg-1" style="text-align: center;margin-top: 10px;">';
+  					'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;margin-top: 10px;">';
   				if(isNotEmpty(chat.user_pic_path)){
-			   			html += '<img width="100%" style="max-width: 45px;" height="45" class="img-rounded hand" alt="" src="'+ chat.user_pic_path + '"  onclick="showSingleImg(this);"/>';
+			   			html += '<img style="width: 40px; Height: 40px;" class="img-rounded carousel-inner hand" alt="" src="'+ chat.user_pic_path + '"  onclick="showSingleImg(this);"/>';
 			   		}else{
-			   			html += '<img width="100%" style="max-width: 45px;" height="45" class="img-rounded" alt="" src=""/>';
+			   			html += '<img style="width: 40px; Height: 40px;" class="img-rounded carousel-inner " alt="" src=""/>';
 			   		}
  			html += '</div>'+
 	 			'</div>';
   	
   	return html;
   }
+  
+  /**
+   * 构建错误提示行
+   * @param chat
+   * @returns {String}
+   */
+   function buildEachErrorRow(chat){
+   	var html = '<div class="row chat-list-row">'+
+   					'<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align: center;margin-top: 10px; color: #999">'+
+   						chat.content
+   					'</div>'+
+  				'</div>';
+   	
+   	return html;
+   }

@@ -61,16 +61,16 @@ function getInfo(bid){
 				$("#b-account").html(changeNotNullString(blog.account));
 				$("#b-account").attr("onclick", 'linkToMy('+ blog.create_user_id +')');
 				$("#b-create-time").html("发表于:"+changeNotNullString(blog.create_time));
-				$("#b-read-time").html("阅读量:"+blog.read_number);
-				$("#b-comment-number").html("评论量:"+blog.comment_number);
-				$("#b-transmit-number").html("转发量:"+blog.transmit_number);
-				$("#b-zan-number").html("点赞量:"+blog.zan_number);
-				$("#b-share-number").html("分享量:"+blog.share_number);
+				$("#b-read-time").html("阅读:"+blog.read_number);
+				$("#b-comment-number").html("评论:"+blog.comment_number);
+				$("#b-transmit-number").html("转发:"+blog.transmit_number);
+				$("#b-zan-number").html("点赞:"+blog.zan_number);
+				$("#b-share-number").html("分享:"+blog.share_number);
 				var keywords = blog.keywords;
 				if(typeof(keywords) != 'undefined' && keywords.length > 0){
 					$("#keywords").find("a").remove();
 					for(var i = 0; i < keywords.length; i++){
-						$("#keywords").append('<a href="'+ getBasePath() +'page/search.jsp?q='+ keywords[i] +'&t='+ Math.random() +'" target="_self" class="marginRight">'+ keywords[i] +'</a>');
+						$("#keywords").append('<a href="/s?q='+ keywords[i] +'&t='+ Math.random() +'" target="_self" class="marginRight">'+ keywords[i] +'</a>');
 					}
 				}
 				var tag = blog.tag;
@@ -171,21 +171,22 @@ function getComments(bid){
  */
 function buildEachCommentRow(index, comment){
 	var html = '<div class="row comment-list comment-list-padding">'+
-			   		'<div class="col-lg-1">'+
+			   		'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-3">'+
 						'<img src="'+ changeNotNullString(comment.user_pic_path) +'" width="100%" height="70px" class="img-rounded">'+
 					'</div>'+
-					'<div class="col-lg-11">'+
+					'<div class="col-lg-11 col-md-11 col-sm-10 col-xs-9">'+
 				       '<div class="list-group">'+
 				       		'<div class="list-group-item comment-list-item active">'+
 				       			'<a href="JavaScript:void(0);" onclick="linkToMy('+ comment.create_user_id +')" target="_blank" class="marginRight">'+ changeNotNullString(comment.account)+'</a>'+
 				       			'<span class="marginRight publish-time">发表于:'+ changeNotNullString(comment.create_time) +'</span>'+
 				       			'<span class="marginRight publish-time">来自:'+ changeNotNullString(comment.froms) +'</span>'+
 				       		'</div>';
+						html += '<div class="list-group-item comment-list-item">'+
+									'<div class="row">'+
+									'<div class="col-lg-12">'+ changeNotNullString(comment.content) +'</div>'+
+								'</div>';
 							if(isLogin){
-								html += '<div class="list-group-item comment-list-item">'+
-							       			'<div class="row">'+
-						       				'<div class="col-lg-12">'+ changeNotNullString(comment.content) +'</div>'+
-						       			'</div>'+
+								html += 
 						       			'<div class="row">'+
 						       				'<div class="col-lg-offset-11 col-lg-1 text-align-right">'+
 						       					 '<button class="btn btn-sm btn-primary btn-block reply-other-btn" style="width: 60px;" type="button">回复TA</button>'+
@@ -197,12 +198,12 @@ function buildEachCommentRow(index, comment){
 							    			'<div class="col-lg-12">'+
 							    				'<form class="form-signin" role="form">'+
 							    			     '<fieldset>'+
-							    				     '<textarea class="form-control"> </textarea>'+
+							    				     '<textarea class="form-control reply-comment-text"> </textarea>'+
 							    			     '</fieldset>'+
 							    			 '</form>'+
 							    			'</div>'+
 							    			'<div class="col-lg-offset-11 col-lg-1 text-align-right" style="margin-top: 10px;">'+
-							    				'<button class="btn btn-sm btn-info btn-block" style="width: 60px;" type="button">评论</button>'+
+							    				'<button class="btn btn-sm btn-info btn-block" style="width: 60px;" type="button" onclick="commentItem(this, '+ comment.id +', '+ comment.table_id +');">评论</button>'+
 							    			'</div>'+
 							    		'</div>'+
 							    	'</div>';
@@ -215,12 +216,23 @@ function buildEachCommentRow(index, comment){
 	$(".container").append(html);
 }
 
+
+/**
+ * 评论别人的评论
+ * @param obj
+ */
+function commentItem(obj, pid, bid){
+	var content = $(obj).closest(".reply-container").find(".reply-comment-text").val();
+	var params = {table_name: "t_blog", table_id: bid, content: content, pid: pid, froms: "web端", t: Math.random()};
+	doAddComment(params);
+}
+
 /**
  * 添加评论
  * @param obj
  */
 function addComment(obj){
-	var addCommentObj = $(obj).parent().find('[name="add-comment"]');
+	var addCommentObj = $("#comment").find('[name="add-comment"]');
 	if(isEmpty(addCommentObj.val())){
 		addCommentObj.focus();
 		layer.msg("评论内容不能为空");

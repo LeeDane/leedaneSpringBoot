@@ -1181,31 +1181,26 @@ public class UserServiceImpl implements UserService<UserBean> {
 	public Map<String, Object> searchUserByUserIdOrAccount(JSONObject jo,
 			UserBean user, HttpServletRequest request) {
 		logger.info("UserServiceImpl-->searchUserByUserIdOrAccount():jo=" +jo.toString());
-		long start = System.currentTimeMillis();
 		
 		int type = JsonUtil.getIntValue(jo, "type", 0);// 0表示ID，1表示名称
 		int searchUserId = 0;
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		
+		ResponseMap message = new ResponseMap();		
 		if(type == 0){
-			searchUserId = JsonUtil.getIntValue(jo, "searchUserIdOrAccount");
+			searchUserId = JsonUtil.getIntValue(jo, "searchUserIdOrAccount", user.getId());
 		}else if(type == 1){
 			String account = JsonUtil.getStringValue(jo, "searchUserIdOrAccount");
 			if(StringUtil.isNull(account)){
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户名不能为空.value));
 				message.put("responseCode", EnumUtil.ResponseCode.用户名不能为空.value);
-				return message;
+				return message.getMap();
 			}
-			
 			searchUserId = getUserIdByName(account);
 		}
-		
 		
 		if(searchUserId < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 			message.put("responseCode", EnumUtil.ResponseCode.用户不存在或请求参数不对.value);
-			return message;
+			return message.getMap();
 		}
 		
 		//执行密码等信息的验证
@@ -1222,10 +1217,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户名ID"+searchUserId +"的个人基本信息", "searchUserByUserIdOrAccount()", ConstantsUtil.STATUS_NORMAL, 0);
-		
-		long end = System.currentTimeMillis();
-		System.out.println("查看用户ID"+ searchUserId +"的个人基本信息总计耗时：" +(end - start) +"毫秒");
-		return message;
+		return message.getMap();
 	}
 
 	@Override

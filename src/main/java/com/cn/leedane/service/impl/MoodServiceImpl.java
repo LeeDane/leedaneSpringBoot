@@ -291,9 +291,9 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 			UserBean user, HttpServletRequest request){
 		logger.info("MoodServiceImpl-->getMoodByLimit():jo=" +jo.toString());
 		long start = System.currentTimeMillis();
-		int toUserId = JsonUtil.getIntValue(jo, "toUserId", user.getId()); //
+		int toUserId = JsonUtil.getIntValue(jo, "to_user_id", user.getId()); //
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
-		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
+		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
 		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
