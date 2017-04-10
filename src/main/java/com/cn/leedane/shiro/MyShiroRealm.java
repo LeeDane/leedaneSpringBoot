@@ -1,6 +1,5 @@
 package com.cn.leedane.shiro;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,7 +13,6 @@ import org.apache.shiro.authc.pam.UnsupportedTokenException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
-import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +26,18 @@ import com.cn.leedane.exception.user.NoValidationEmailAccountException;
 import com.cn.leedane.exception.user.StopUseAccountException;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.UserMapper;
+import com.cn.leedane.model.PermissionBean;
 import com.cn.leedane.model.RoleBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.UserRoleBean;
 import com.cn.leedane.model.UserTokenBean;
+import com.cn.leedane.service.UserRoleService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.service.UserTokenService;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.PlatformType;
+import com.cn.leedane.utils.StringUtil;
 
 /**
  * 
@@ -56,6 +59,9 @@ public class MyShiroRealm extends AuthorizingRealm{
     
     @Autowired
     private UserService<UserBean> userService;
+    
+    @Autowired
+    private UserRoleService<UserRoleBean> userRoleService;
 
     /**
      * 权限认证，为当前登录的Subject授予角色和权限 
@@ -70,21 +76,28 @@ public class MyShiroRealm extends AuthorizingRealm{
         //获取当前登录输入的用户名，等价于(String) principalCollection.fromRealm(getName()).iterator().next();
         int userid = (int)super.getAvailablePrincipal(principalCollection); 
         //到数据库查是否有此对象
-        UserBean user = userMapper.findById(UserBean.class, 1);//userMapper.findByName(loginName);// 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
-        if(user!=null){
+        List<RoleBean> roleBeans = userRoleService.getUserRoleBeans(userid);// 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
+        if(CollectionUtil.isNotEmpty(roleBeans)){
             //权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
             SimpleAuthorizationInfo info=new SimpleAuthorizationInfo();
+            
             Set<String> roles = new HashSet<String>();
-            roles.add("ADMIN");
+            Set<String> permissions = new HashSet<String>();
+            for(RoleBean roleBean: roleBeans){
+            	if(StringUtil.isNotNull(roleBean.getCode()))
+            		roles.add(roleBean.getCode());
+                for (PermissionBean permissionBean : roleBean.getPermissions()) {
+                	if(StringUtil.isNotNull(permissionBean.getCode()))
+                		permissions.add(permissionBean.getCode()); 
+                }
+            }
+            
+            
             //用户的角色集合
-            info.setRoles(/*user.getRolesName()*/roles);
+            info.setRoles(roles);
             //用户的角色对应的所有权限，如果只使用角色定义访问权限，下面的四行可以不要
-            List<RoleBean> roleList = /*user.getRoleList()*/ new ArrayList<RoleBean>();
-            //for (RoleBean role : roleList) {
-            	Set<String> permissions = new HashSet<String>();
-            	permissions.add("ADMIN_MANAGER");
-                info.addStringPermissions(/*role.getPermissionsName()*/ permissions);
-            //}
+            if(permissions.size() > 0)
+            	info.addStringPermissions(permissions);
             // 或者按下面这样添加
             //添加一个角色,不是配置意义上的添加,而是证明该用户拥有admin角色    
 //            simpleAuthorInfo.addRole("admin");  

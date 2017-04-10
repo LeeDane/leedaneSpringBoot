@@ -37,7 +37,12 @@
 		<typeAlias alias="TransmitBean" type="com.cn.leedane.model.TransmitBean" />
 		<typeAlias alias="UploadBean" type="com.cn.leedane.model.UploadBean" /> -->
 		<typeAlias alias="UserBean" type="com.cn.leedane.model.UserBean" />
+		<typeAlias alias="RoleBean" type="com.cn.leedane.model.RoleBean" />
+		<typeAlias alias="UserRoleBean" type="com.cn.leedane.model.UserRoleBean" />
+		<typeAlias alias="PermissionBean" type="com.cn.leedane.model.PermissionBean" />
+		<typeAlias alias="RolePermissionBean" type="com.cn.leedane.model.RolePermissionBean" />
 		<typeAlias alias="UserTokenBean" type="com.cn.leedane.model.UserTokenBean" />
+		<typeAlias alias="LinkManageBean" type="com.cn.leedane.model.LinkManageBean" />
 		<!-- <typeAlias alias="ZanBean" type="com.cn.leedane.model.ZanBean" /> -->
 	</typeAliases>
 	<!-- 实体接口映射资源 -->
@@ -72,7 +77,9 @@
 		<mapper resource="com/cn/leedane/mapper/TransmitMapper.xml" />
 		<mapper resource="com/cn/leedane/mapper/UploadMapper.xml" /> -->
 		<mapper resource="com/cn/leedane/mapper/UserMapper.xml" />
+		<mapper resource="com/cn/leedane/mapper/UserRoleMapper.xml" />
 		<mapper resource="com/cn/leedane/mapper/UserTokenMapper.xml" />
+		<mapper resource="com/cn/leedane/mapper/LinkManageMapper.xml" />
 		<!-- <mapper resource="com/cn/leedane/mapper/ZanMapper.xml" /> -->
 	</mappers>
 

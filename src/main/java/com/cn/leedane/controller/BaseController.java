@@ -31,12 +31,14 @@ import com.cn.leedane.exception.user.NoActiveAccountException;
 import com.cn.leedane.exception.user.NoCompleteAccountException;
 import com.cn.leedane.exception.user.NoValidationEmailAccountException;
 import com.cn.leedane.exception.user.StopUseAccountException;
+import com.cn.leedane.handler.LinkManageHandler;
 import com.cn.leedane.handler.UserHandler;
+import com.cn.leedane.model.LinkManageBean;
+import com.cn.leedane.model.LinkManagesBean;
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.UserTokenBean;
 import com.cn.leedane.service.UserService;
-import com.cn.leedane.service.UserTokenService;
 import com.cn.leedane.shiro.CustomAuthenticationToken;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.PlatformType;
@@ -51,6 +53,9 @@ public class BaseController {
 	
 	@Resource
 	protected UserHandler userHandler;
+	
+	@Resource
+	private LinkManageHandler linkManageHandler;
 	
 
     @Autowired
@@ -248,16 +253,14 @@ public class BaseController {
 	 * @return
 	 * @throws UnauthorizedException 不成功将抛出“不授权异常”
 	 */
-	@Deprecated
 	protected boolean checkAnyPermissionAuthor(String ... permissions) throws UnauthorizedException{//不授权异常
-		/*Permission permission = new 
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        boolean[] rs = currentUser.isPermitted(Arrays.asList(permissions));
+        boolean[] rs = currentUser.isPermitted(permissions);
         for(boolean r: rs)
-	        if(r)
-	        	return r;
-		*/
+	        if(!r)
+	        	return !r;
+		
         throw new UnauthorizedException();
 	}
 	
@@ -546,5 +549,43 @@ public class BaseController {
 				json.put(entry.getKey(), entry.getValue()[0]);
 		}
 		return json;
+	}
+	
+	/**
+	 * 必须做角色校验
+	 */
+	public void mustAnyRole(HttpServletRequest request){
+		LinkManagesBean beans = linkManageHandler.getAllLinks();
+		if(beans != null && CollectionUtil.isNotEmpty(beans.getLinkManageBean())){
+			String uri = request.getRequestURI();
+			for(LinkManageBean bean: beans.getLinkManageBean()){
+				if(bean.getLink().equals(uri) && bean.getType() == 1){
+					String roleCodes = bean.getRoleCodes();
+					if(StringUtil.isNotNull(roleCodes)){
+						String[] codes = roleCodes.split(",");
+							checkAnyRoleAuthor(codes);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 必须做权限校验
+	 */
+	public void mustAnyPermission(HttpServletRequest request){
+		LinkManagesBean beans = linkManageHandler.getAllLinks();
+		if(beans != null && CollectionUtil.isNotEmpty(beans.getLinkManageBean())){
+			String uri = request.getRequestURI();
+			for(LinkManageBean bean: beans.getLinkManageBean()){
+				if(bean.getLink().equals(uri) && bean.getType() == 2){
+					String permissionCodes = bean.getPermissionCodes();
+					if(StringUtil.isNotNull(permissionCodes)){
+						String[] codes = permissionCodes.split(",");
+						checkAnyPermissionAuthor(codes);
+					}
+				}
+			}
+		}
 	}
 }

@@ -229,3 +229,127 @@ CREATE TABLE `t_user_token` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 -- 创建索引
 ALTER TABLE `t_user_token` ADD INDEX t_user_token_index_name ( `token`, `overdue`)
+
+-- ----------------------------
+-- Table structure for t_role
+-- ----------------------------
+DROP TABLE IF EXISTS `t_role`;
+CREATE TABLE `t_role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `role_desc` varchar(255) COMMENT '角色描述信息',
+  `role_name` varchar(255) COMMENT '角色信息',
+  `role_code` varchar(255) COMMENT '角色编码，唯一',
+  `role_order` int(4) COMMENT '角色排序',
+  PRIMARY KEY (`id`),
+  KEY `FK_role_create_user` (`create_user_id`),
+  KEY `FK_role_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_role_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_role_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+ALTER TABLE t_role ADD UNIQUE KEY(role_code);
+
+-- ----------------------------
+-- Table structure for t_user_role
+-- ----------------------------
+DROP TABLE IF EXISTS `t_user_role`;
+CREATE TABLE `t_user_role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `role_id` int(11) NOT NULL COMMENT '角色ID',
+  `user_id` int(11) NOT NULL COMMENT '用户ID',
+  PRIMARY KEY (`id`),
+  KEY `FK_user_role_create_user` (`create_user_id`),
+  KEY `FK_user_role_modify_user` (`modify_user_id`),
+  KEY `FK_user_role_role_id` (`role_id`),
+  KEY `FK_user_role_user_id` (`user_id`),
+  CONSTRAINT `FK_user_role_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_user_role_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_user_role_role_id` FOREIGN KEY (`role_id`) REFERENCES `t_role` (`id`),
+  CONSTRAINT `FK_user_role_user_id` FOREIGN KEY (`user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+-- 创建索引
+ALTER TABLE `t_user_role` ADD INDEX t_user_Role_index_name ( `role_id`, `user_id`)
+
+-- ----------------------------
+-- Table structure for t_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `t_permission`;
+CREATE TABLE `t_permission` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `permission_desc` varchar(255) COMMENT '权限描述信息',
+  `permission_name` varchar(255) COMMENT '权限信息',
+  `permission_code` varchar(255) COMMENT '权限编码，唯一',
+  `permission_order` int(4) COMMENT '权限排序',
+  PRIMARY KEY (`id`),
+  KEY `FK_permission_create_user` (`create_user_id`),
+  KEY `FK_permission_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_permission_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_permission_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+ALTER TABLE t_permission ADD UNIQUE KEY(permission_code);
+
+-- ----------------------------
+-- Table structure for t_role_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `t_role_permission`;
+CREATE TABLE `t_role_permission` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `role_id` int(11) NOT NULL COMMENT '角色ID',
+  `permission_id` int(11) NOT NULL COMMENT '权限ID',
+  PRIMARY KEY (`id`),
+  KEY `FK_role_permission_create_user` (`create_user_id`),
+  KEY `FK_role_permission_modify_user` (`modify_user_id`),
+  KEY `FK_role_permission_role_id` (`role_id`),
+  KEY `FK_role_permission_permission_id` (`permission_id`),
+  CONSTRAINT `FK_role_permissione_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_role_permission_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_role_permission_role_id` FOREIGN KEY (`role_id`) REFERENCES `t_role` (`id`),
+  CONSTRAINT `FK_role_permission_permission_id` FOREIGN KEY (`permission_id`) REFERENCES `t_permission` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+-- 创建索引
+ALTER TABLE `t_role_permission` ADD INDEX t_role_permission_index_name ( `permission_id`, `role_id`)
+
+-- ----------------------------
+-- Table structure for t_link_manage
+-- ----------------------------
+DROP TABLE IF EXISTS `t_link_manage`;
+CREATE TABLE `t_link_manage` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `link` varchar(255) NOT NULL COMMENT '链接',
+  `alias` varchar(255) NOT NULL COMMENT '链接的别名',
+  `permission_codes` varchar(255) COMMENT '权限Code集合，多个用,分开',
+  `role_codes` varchar(255) COMMENT '角色Code集合，多个用,分开',
+  `link_type` int(1) NOT NULL COMMENT '类型：1表示permissionId不能为空，2表示roleId不能为空',
+  `link_order` int(4) NOT NULL DEFAULT 1 COMMENT '排序',
+  PRIMARY KEY (`id`),
+  KEY `FK_link_manage_create_user` (`create_user_id`),
+  KEY `FK_link_manage_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_link_manage_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_link_manage_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+-- 创建索引
+ALTER TABLE t_link_manage ADD UNIQUE KEY(alias);

@@ -18,7 +18,9 @@ import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
+import com.cn.leedane.handler.LinkManageHandler;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.Base64Util;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DES;
@@ -96,10 +98,9 @@ public class MainTest {
 		hashtable.put("12", 12);
 		hashtable.put("hehe", "122");
 		System.out.println(hashtable.contains("12"));*/
-		UserBean user = new UserBean();
-		set(user);
-		
-		System.out.println(user.getAccount());
+		RedisUtil redisUtil = RedisUtil.getInstance();
+		redisUtil.delete(LinkManageHandler.getLinkManageKey());
+		System.out.println("删除成功");
 	}
 	
 	public static void set(UserBean user){

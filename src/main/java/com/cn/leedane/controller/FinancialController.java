@@ -154,7 +154,6 @@ public class FinancialController extends BaseController{
     	ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
-		
 		message.putAll(financialService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }

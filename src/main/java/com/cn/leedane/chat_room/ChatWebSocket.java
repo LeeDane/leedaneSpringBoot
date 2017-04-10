@@ -162,7 +162,7 @@ public class ChatWebSocket {
 					e.printStackTrace();
 				}
         	}else{
-        		sendMessageToAll((StringUtil.isNotNull(type) && "welcome".equals(type)), jsonObject, userId);
+        		sendMessageToAll((StringUtil.isNull(type) || !"welcome".equals(type)), jsonObject, userId);
         	}
         } catch (IOException e) {  
             e.printStackTrace();  
@@ -235,7 +235,7 @@ public class ChatWebSocket {
 			if(StringUtil.changeObjectToBoolean(map.get("isSuccess"))){
 				
 				jsonObject.put("screenText", screenText); //弹屏内容，纯文本
-				sendMessageToAll((StringUtil.isNotNull(type) && "welcome".equals(type)), jsonObject, userId);
+				sendMessageToAll((StringUtil.isNull(type) || !"welcome".equals(type)), jsonObject, userId);
 				return;
 			}else{
 				jsonObject.put("content", "扣除积分失败");

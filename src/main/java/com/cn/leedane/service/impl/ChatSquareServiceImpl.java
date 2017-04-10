@@ -58,6 +58,9 @@ public class ChatSquareServiceImpl extends AdminRoleCheckService implements Chat
 		bean.setCreateUserId(userId);
 		bean.setCreateTime(new Date());
 		bean.setStatus(ConstantsUtil.STATUS_NORMAL);
+		if(jsonObject.has("at_other")){
+			bean.setAtOther(jsonObject.getString("at_other"));
+		}
 		if(jsonObject.has("type")){
 			bean.setType(jsonObject.getString("type"));
 		}

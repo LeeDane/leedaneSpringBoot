@@ -11,7 +11,7 @@ import com.cn.leedane.service.RoleService;
  * 2016年7月12日 下午2:17:51
  * Version 1.0
  */
-@Service("userRoleService")
+@Service("roleService")
 public class RoleServiceImpl implements RoleService<RoleBean> {
 	Logger logger = Logger.getLogger(getClass());
 }

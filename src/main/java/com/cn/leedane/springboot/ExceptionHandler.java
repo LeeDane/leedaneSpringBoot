@@ -16,6 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.ResponseCode;
+
 /**
  * sprngmvc全局异常的处理类
  * @author LeeDane
@@ -29,13 +32,19 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 	@Override
 	public ModelAndView resolveException(HttpServletRequest request,
 			HttpServletResponse response, Object handler, Exception exception) {
+		
 		Map<String, Object> message = new HashMap<String, Object>();
-        message.put("isSuccess", false);        
-        StringPrintWriter strintPrintWriter = new StringPrintWriter();  
-        exception.printStackTrace(strintPrintWriter);
-        logger.info(strintPrintWriter.getString());
-        message.put("message", /*"服务器异常"*/strintPrintWriter.getString());//将错误信息传递给view  
-        
+        message.put("isSuccess", false);
+		if(exception instanceof org.apache.shiro.authz.UnauthorizedException){
+			 message.put("message", EnumUtil.getResponseValue(ResponseCode.没有操作权限.value));//将错误信息传递给view
+			 message.put("responseCode", ResponseCode.没有操作权限.value);
+		}else{
+			StringPrintWriter strintPrintWriter = new StringPrintWriter();  
+	        exception.printStackTrace(strintPrintWriter);
+	        logger.info(strintPrintWriter.getString());
+	        message.put("message", /*"服务器异常"*/strintPrintWriter.getString());//将错误信息传递给view  
+		}
+		
         JSONObject jsonObject = JSONObject.fromObject(message);
 		response.setCharacterEncoding("utf-8");
 		//System.out.println("服务器返回:"+jsonObject.toString());

@@ -136,8 +136,8 @@ public class AppFileDownloadController extends BaseController{
         System.out.println("用户ID为："+uid);
         
         if(user == null){
-        	message.put("message", ResponseCode.请先登录.value);
-        	message.put("responseCode", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
+        	message.put("message", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
+        	message.put("responseCode", ResponseCode.请先登录.value);
         	printWriter(message, response, startTime);
 			return null;
     	}

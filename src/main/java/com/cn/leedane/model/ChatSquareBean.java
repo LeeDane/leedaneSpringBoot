@@ -1,5 +1,9 @@
 package com.cn.leedane.model;
 
+import org.apache.solr.client.solrj.beans.Field;
+
+import com.cn.leedane.mybatis.table.annotation.Column;
+
 /**
  * 聊天广场实体Bean
  * @author LeeDane
@@ -16,6 +20,10 @@ public class ChatSquareBean extends RecordTimeBean{
 	private String content; //聊天内容
 	
 	private String type; //消息内容
+	
+	@Column("at_other")
+	@Field
+	private String atOther; //at某人，多个用,分开
 
 	public String getContent() {
 		return content;
@@ -31,6 +39,14 @@ public class ChatSquareBean extends RecordTimeBean{
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getAtOther() {
+		return atOther;
+	}
+
+	public void setAtOther(String atOther) {
+		this.atOther = atOther;
 	}
 	
 	

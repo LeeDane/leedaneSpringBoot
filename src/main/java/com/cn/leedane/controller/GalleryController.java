@@ -57,7 +57,8 @@ public class GalleryController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
-		
+
+		checkPermissionAuthor("admin:delet2ve");
 		List<Map<String, Object>> result= galleryService.getGalleryByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
 		System.out.println("获得图库的数量：" +result.size());
 		message.put("isSuccess", true);

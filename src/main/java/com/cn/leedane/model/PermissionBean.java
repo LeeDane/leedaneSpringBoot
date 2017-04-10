@@ -6,13 +6,17 @@ package com.cn.leedane.model;
  * 2017年3月23日 下午12:54:50
  * version 1.0
  */
-public class PermissionBean extends IDBean{
+public class PermissionBean extends RecordTimeBean{
 
 	private static final long serialVersionUID = 1L;
 
 	private String name;
 
-    private RoleBean role;// 一个权限对应一个角色
+    private int order;//排序
+    
+    private String desc; //描述信息
+    
+    private String code;
 
 	public String getName() {
 		return name;
@@ -22,13 +26,29 @@ public class PermissionBean extends IDBean{
 		this.name = name;
 	}
 
-	public RoleBean getRole() {
-		return role;
+	public int getOrder() {
+		return order;
 	}
 
-	public void setRole(RoleBean role) {
-		this.role = role;
+	public void setOrder(int order) {
+		this.order = order;
 	}
-    
-    
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+	
+	
 }

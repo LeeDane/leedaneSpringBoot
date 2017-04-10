@@ -1,16 +1,24 @@
 package com.cn.leedane.service;
 
+import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.RoleBean;
 
 /**
  * 用户角色service接口类
  * @author LeeDane
- * 2016年7月12日 上午11:36:35
- * Version 1.0
+ * 2017年4月10日 上午10:29:18
+ * version 1.0
  */
 @Transactional("txManager")
-public interface UserRoleService <T extends IDBean>{
+public interface UserRoleService<UserRoleBean>{
 	
+	/**
+	 * 获取该用户的全部角色
+	 * @param user
+	 * @return
+	 */
+	public List<RoleBean> getUserRoleBeans(int userid);
 }

@@ -1,5 +1,6 @@
 package com.cn.leedane.model;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.solr.client.solrj.beans.Field;
 
@@ -231,7 +232,7 @@ public class UserBean extends StatusBean{
 	/**
 	 * 扩展字段2
 	 */
-	private String str2; 
+	private String str2;
 	
 	public UserBean(){
 		
@@ -479,7 +480,6 @@ public class UserBean extends StatusBean{
 	public void setWechatUserName(String wechatUserName) {
 		this.wechatUserName = wechatUserName;
 	}
-	
 	
 	/**
 	 * 对用户的修CRUD操作不会影响到roles，所以选择CascadeType.REFRESH

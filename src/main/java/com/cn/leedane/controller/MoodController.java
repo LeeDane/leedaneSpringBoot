@@ -134,8 +134,8 @@ public class MoodController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		//checkAnyRoleAuthor("ADMIN");
-		checkPermissionAuthor("ADMIN_MANAGER");
+		mustAnyRole(request);
+		mustAnyPermission(request);
 			
 		message.putAll(moodService.getMoodByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();

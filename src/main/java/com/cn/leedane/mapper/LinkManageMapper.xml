@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.LinkManageMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="getAllLinks" parameterType="int" resultMap="linkMap">
+		select id, link, alias, permission_codes, role_codes, link_type, link_order
+		from t_link_manage lm
+	</select>
+	
+	<resultMap type="com.cn.leedane.model.LinkManageBean" id="linkMap">
+        <id property="id" column="id"/>
+        <result property="link" column="link"/>
+        <result property="alias" column="alias"/>
+        <result property="permissionCodes" column="permission_codes"/>
+        <result property="roleCodes" column="role_codes"/>
+        <result property="type" column="link_type"/>
+        <result property="order" column="link_order"/>
+   </resultMap>
+</mapper>

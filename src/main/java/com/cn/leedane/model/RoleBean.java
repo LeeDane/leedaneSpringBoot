@@ -2,6 +2,7 @@ package com.cn.leedane.model;
 
 import java.util.List;
 
+
 /**
  * 用户角色的实体类(需要单独去维持)
  * @author LeeDane
@@ -9,31 +10,19 @@ import java.util.List;
  * Version 1.0
  */
 //@Table(name="T_USER_ROLE")
-public class RoleBean extends IDBean{
+public class RoleBean extends RecordTimeBean{
 	
 	private static final long serialVersionUID = 1L;
 
     private String name;
+        
+    private int order; //角色排序
     
-    private List<PermissionBean> permissions;// 一个角色对应多个权限
+    private String desc; //角色描述信息
     
-    private List<UserBean> users;// 一个角色对应多个用户
-
-	public List<PermissionBean> getPermissions() {
-		return permissions;
-	}
-
-	public void setPermissions(List<PermissionBean> permissions) {
-		this.permissions = permissions;
-	}
-
-	public List<UserBean> getUsers() {
-		return users;
-	}
-
-	public void setUsers(List<UserBean> users) {
-		this.users = users;
-	}
+    private String code; //唯一编码
+    
+    private List<PermissionBean> permissions; //权限的列表
 
 	public String getName() {
 		return name;
@@ -42,6 +31,37 @@ public class RoleBean extends IDBean{
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
+	public int getOrder() {
+		return order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public List<PermissionBean> getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(List<PermissionBean> permissions) {
+		this.permissions = permissions;
+	}
 	
 }

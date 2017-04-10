@@ -259,10 +259,23 @@ var log = function(s){
 			return;
 		}
 		
+		
 		if(isLogin && loginUserId == json.id){
 			container.append(buildEachRightRow(json));
 		}else{
 			container.append(buildEachLeftRow(json));
+		}
+		
+		//处理at某人
+		if(json['at_other'] && isNotEmpty(json.at_other)){
+			console.log("at--"+ json.at_other);
+			var others = json.at_other.split(",");
+			for(var j = 0; j < others.length; j++){
+				if(loginUserId == others[j]){
+					//展示at用户
+					break;
+				}
+			}
 		}
 		
 		var height = container.height(); //页面总高度
@@ -344,9 +357,23 @@ function sendMsg(){
   		ue.focus();
   		return;
   	}
-  	sendMessageToServer(getSendJson(loginUserId, content));
+  	
+  	var buttons = $("#at-other-container").children("button");
+  	if(buttons && buttons.length > 0){
+  		var atOther = "";
+  		for(var i = 0; i < buttons.length; i++){
+  			atOther += $(buttons[i]).attr("uid") + ",";
+  		}
+  		atOther = atOther.substring(0,atOther.length-1)
+  		sendMessageToServer(JSON.stringify({id: loginUserId, at_other: atOther, content: content}));
+  	}else{
+  		sendMessageToServer(getSendJson(loginUserId, content));
+  	}
+  	
+  	
 	//清空编辑器的内容
 	ue.setContent("");
+	$("#at-other-container").empty();
 }
 
 /**
@@ -368,9 +395,22 @@ function sendPlayScreen(){
   		ue.focus();
   		return;
   	}
-  	sendMessageToServer(JSON.stringify({id: loginUserId, content: content, type: "PlayScreen"}));
+  	
+  	var buttons = $("#at-other-container").children("button");
+  	if(buttons && buttons.length > 0){
+  		var atOther = "";
+  		for(var i = 0; i < buttons.length; i++){
+  			atOther += $(buttons[i]).attr("uid") + ",";
+  		}
+  		atOther = atOther.substring(0,atOther.length-1)
+  		sendMessageToServer(JSON.stringify({id: loginUserId, at_other: atOther, content: content, type: "PlayScreen"}));
+  	}else{
+  		sendMessageToServer(JSON.stringify({id: loginUserId, content: content, type: "PlayScreen"}));
+  	}
+  	
 	//清空编辑器的内容
 	ue.setContent("");
+	$("#at-other-container").empty();
 }
 
 /**
@@ -382,10 +422,20 @@ function clearMsg(){
 	  btn: ['确定','点错了'] //按钮
 	}, function(){
 	  $("#content").empty();
+	  $("#at-other-container").empty();
 	  layer.msg('已清空 ', {icon: 1, time: 800});
 	}, function(){
 	  
 	});
+}
+
+/**
+ * 删除At某人
+ * @param obj
+ */
+function deleteAt(obj){
+	var o = $(obj);
+	o.remove();
 }
 
 /**
@@ -395,13 +445,18 @@ function clearMsg(){
  */
 function atOther(account, id){
 	console.log("account="+ account);
-	//获取编辑器内容
-  	var content = ue.getContent();
-	if(isEmpty(content)){
-		ue.setContent("@"+ account +" ");
-	}else{
-		ue.setContent("@"+ account +" " + content);
+	//获取所有At列表，判断是否已经存在
+	var buttons = $("#at-other-container").children("button");
+	if(buttons){
+		for(var i = 0; i < buttons.length; i++){
+			if($(buttons[i]).attr("uid") == id)
+				return;
+		}
 	}
+	
+	$("#at-other-container").append('<button type="button" class="btn btn-default btn-xs" uid="'+ id +'" onclick="deleteAt(this)">' +
+			  							'@'+ account +' <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>' +
+									'</button>');
 }
 
 /**
