@@ -91,17 +91,34 @@ public class HtmlController extends BaseController{
 	public String detail(
 			@PathVariable(value="bid") int blogId,
 				Model model, HttpServletRequest request){
+		
+		//检查博客id是否存在
+		
 		model.addAttribute("bid", blogId);
 		return loginRoleCheck("detail", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.lg)
 	public String login(Model model, HttpServletRequest request){
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        
+		int errorcode = StringUtil.changeObjectToInt(request.getParameter("errorcode"));
+		if(errorcode > 0){
+			currentUser.logout(); 
+			model.addAttribute("errorMessage", EnumUtil.getResponseValue(errorcode));
+			model.addAttribute("error", true);
+		}else{
+	        if(currentUser.isAuthenticated()){
+	        	return "redirect:/";
+	        }
+		}
 		return loginRoleCheck("login", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.my)
 	public String my(Model model, HttpServletRequest request){
+		
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
         if(currentUser.isAuthenticated()){
@@ -172,6 +189,17 @@ public class HtmlController extends BaseController{
 		return loginRoleCheck("403", model, request);
 	}
 	
+	@RequestMapping("/404")
+	public String nonexistence(Model model, HttpServletRequest request){
+		String errorMessage = request.getParameter("errorMessage");
+		if(StringUtil.isNotNull(errorMessage)){
+			model.addAttribute("error", true);
+			model.addAttribute("errorMessage", errorMessage);
+		}
+		
+		return loginRoleCheck("404", model, request);
+	}
+	
 	/**
 	 * 校验地址，不校验是否登录
 	 * @param urlParse
@@ -217,6 +245,7 @@ public class HtmlController extends BaseController{
 		
 		return StringUtil.isNotNull(urlParse) ? urlParse : "404";
 	}
+
 	
 	/**
 	 * 获取博客的内容

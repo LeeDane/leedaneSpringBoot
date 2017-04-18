@@ -68,7 +68,7 @@ function doSearch(){
 				}
 				
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 		},
 		error : function(data) {

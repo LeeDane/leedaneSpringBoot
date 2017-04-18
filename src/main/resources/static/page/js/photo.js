@@ -14,7 +14,16 @@ var canLoadData = true;
 var winH = $(window).height(); 
 var isLoad = false;
 $(function(){
-	
+	$("img").bind("click", function(event){
+		if(event.type == "mouseover"){
+			//鼠标悬浮
+			alert("over");
+		}else if(event.type == "mouseout"){
+			//鼠标离开
+			alert("out");
+		}
+		alert("out");
+	});
 	$(window).scroll(function (e) {
 		e = e || window.event;
         if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件             
@@ -93,7 +102,7 @@ function getWebPhotos(){
 				resetSideHeight();
 				asynchronousPhotos();
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 			isLoad = false;
 		},
@@ -151,8 +160,7 @@ function asynchronousPhotos(){
 	$(".out-link").each(function(index){
 		var object = $(this);
 		var ajax = $.ajax({
-			type : "post",
-			url : getBasePath() +"leedane/tool/getNetwordImage.action?url="+object.attr("temp-src"),
+			url : "/tl/networdImage?url="+object.attr("temp-src"),
 			dataType: 'json', 
 			beforeSend:function(){
 			},
@@ -164,10 +172,10 @@ function asynchronousPhotos(){
 				}
 					
 				else
-					layer.msg(data.message);
+					ajaxError(data);
 			},
-			error : function() {
-				layer.msg("网络请求失败");
+			error : function(data) {
+				ajaxError(data);
 			}
 		});
 		photosAjaxArray.push(ajax);
@@ -211,10 +219,10 @@ function findColumnToAdd(photo, index){
 
 	//判断是否是内部链接
 	if(photo.path.indexOf("7xnv8i.com1.z0.glb.clouddn.com") >= 0){
-		img = '<img width="100%" title="'+ (isNotEmpty(photo.desc) ? isNotEmpty(photo.desc) : '') +'" title" height="'+height+'" style="margin-top: 10px;" class="img-rounded index_'+index+'" alt="" src="'+ photo.path+'" onclick="showImg('+index+')">';
+		img = '<img width="100%" title="'+ (isNotEmpty(photo.desc) ? isNotEmpty(photo.desc) : '') +'" title" height="'+height+'" style="margin-top: 10px;" class="img-rounded index_'+index+'" alt="" src="'+ photo.path+'" onclick="showImg('+index+')" onmouseover="imgHandOver(this, '+ index +');" onmouseout="imgHandOut(this, '+ index +');">';
 
 	}else{
-		img = '<img width="100%" title="'+ (isNotEmpty(photo.desc) ? isNotEmpty(photo.desc) : '') +'" height="'+height+'" style="margin-top: 10px;" class="img-rounded out-link index_'+index+'" alt="" temp-src="'+ photo.path+'" onclick="showImg('+index+')">';
+		img = '<img width="100%" title="'+ (isNotEmpty(photo.desc) ? isNotEmpty(photo.desc) : '') +'" height="'+height+'" style="margin-top: 10px;" class="img-rounded out-link index_'+index+'" alt="" temp-src="'+ photo.path+'" onclick="showImg('+index+')" onmouseover="imgHandOver(this, '+ index +');" onmouseout="imgHandOut(this, '+ index +');">';
 	}
 	if(min == column1Height){
 		$("#column-01").append(img);
@@ -234,6 +242,37 @@ function findColumnToAdd(photo, index){
 		return;
 	}
 }
+
+/**
+ * 图片的鼠标悬停事件
+ * @param obj
+ * @param index
+ */
+function imgHandOver(obj, index){
+	var photo = photos[index];
+	if(isNotEmpty(photo['gallery_desc'])){
+		var top = $(obj).offset().top;
+		var left = $(obj).offset().left;
+		$("body").append('<span id="desc_'+ index +'">'+ photo['gallery_desc'] +'</span>');
+		$("#desc_"+index).css("position", "absolute");
+		$("#desc_"+index).css("top", top);
+		$("#desc_"+index).css("left", left);
+		$("#desc_"+index).css("color", "#fff");
+		$("#desc_"+index).css("background-color", "#666");
+	}
+	console.log("over");
+}
+
+/**
+ * 图片的鼠标离开事件
+ * @param obj
+ * @param index
+ */
+function imgHandOut(obj, index){
+	$("#desc_"+index).remove();
+	console.log("out");
+}
+
 /**
  * 添加图片链接
  * @param params

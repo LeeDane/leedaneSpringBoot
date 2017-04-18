@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.BlogHandler;
 import com.cn.leedane.handler.CommentHandler;
 import com.cn.leedane.handler.NotificationHandler;
@@ -513,8 +514,8 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		Map<String,Object> message = new HashMap<String,Object>();
 		message.put("isSuccess", false);
 		if(!user.isAdmin()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请用管理员账号登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请用管理员账号登录.value);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value);
 			return message;
 		}
 		
@@ -572,8 +573,8 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		Map<String,Object> message = new HashMap<String,Object>();
 		message.put("isSuccess", false);
 		if(!user.isAdmin()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请用管理员账号登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请用管理员账号登录.value);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value);
 			return message;
 		}
 		
@@ -639,9 +640,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		
 		List<Map<String, Object>> ls = blogMapper.getOneBlog(ConstantsUtil.STATUS_NORMAL, blogId);
 		if(CollectionUtil.isEmpty(ls)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.该博客不存在.value);
-			return message;
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
 		}
 		
 		if(ls !=null && ls.size() > 0){

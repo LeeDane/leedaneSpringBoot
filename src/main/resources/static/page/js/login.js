@@ -110,7 +110,7 @@
 	  $.ajax({
 			type : "post",
 			data : params,
-			url : "us/registerByPhoneNoValidate.action",
+			url : "us/phone/register/noValidate",
 			dataType: 'json',
 			withCredentials:true,
 			beforeSend:function(request){
@@ -128,9 +128,9 @@
 					$("#registerErrorMessage").html(errorHtml);
 				}
 			},
-			error : function() {
+			error : function(data) {
 				layer.close(loadi);
-				layer.msg("网络请求失败");
+				ajaxError(data);
 			}
 		});
   }
@@ -178,7 +178,13 @@ function initWebsocket(){
 	websocket.onmessage = function(event){
 		//setMessageInnerHTML(event.data);
 		//event.data
-		loadQRCode(event.data);
+		var data = eval('(' + event.data + ')');
+		var message = data['message'];
+		if(message == 'login'){
+			checkToken(data.token, data.userid);
+		}else{
+			loadQRCode(data.message);
+		}
 	}
 
 	//连接关闭的回调方法
@@ -196,6 +202,34 @@ function initWebsocket(){
 function setMessageInnerHTML(innerHTML){
   //document.getElementById('message').innerHTML += innerHTML + '<br/>';
 	alert("data---"+innerHTML)
+}
+/**
+ * 校验token
+ * @param connId
+ */
+function checkToken(token, userid){
+	  var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+	  layer.msg("正在检查校验");
+	  $.ajax({
+		  	type : "post",
+			data : {token: token, userid: userid, t: Math.random()},
+			url : "/us/scan/check",
+			dataType: 'json', 
+			beforeSend:function(request){
+				request.setRequestHeader("token", token);
+				request.setRequestHeader("userid", userid);
+			},
+			success : function(data) {
+				if(data.isSuccess)
+					reloadPage(1);
+				else
+					ajaxError(data);
+			},
+			error : function(data) {
+				layer.close(loadi);
+				ajaxError(data);
+			}
+		});
 }
 
 //关闭连接

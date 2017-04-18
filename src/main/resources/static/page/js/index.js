@@ -13,6 +13,11 @@ $(function(){
 	//getLogin();
 	//getScore();
 	
+	$(".navbar-nav .nav-main-li").each(function(){
+		$(this).removeClass("active");
+	});
+	$(".nav-blog").addClass("active");
+	
 	getWebBackgroud();
 	$(window).scroll(function (e) {
 		e = e || window.event;
@@ -86,7 +91,7 @@ function getWebBackgroud(){
 				if(data != null && data.isSuccess){
 					$(".main_bg").css('background', 'url("'+data.message+'")');
 				}else
-					layer.msg(data.message);
+					ajaxError(data);
 			},
 			error : function(data) {
 				ajaxError(data);
@@ -143,7 +148,7 @@ function getMainContentData(){
 				}
 				resetSideHeight();
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 			console.log(data);
 			isLoad = false;
@@ -346,9 +351,11 @@ function attention(id, index){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			layer.msg(data.message);
 			if(data.isSuccess){
+				layer.msg(data.message);
 				$(".row_"+index).find(".attention").text("已关注");
+			}else{
+				ajaxError(data);
 			}
 		},
 		error : function(data) {
@@ -374,9 +381,11 @@ function collect(id, index){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			layer.msg(data.message);
 			if(data.isSuccess){
+				layer.msg(data.message);
 				$(".row_"+index).find(".collection").text("已收藏");
+			}else{
+				ajaxError(data);
 			}
 		},
 		error : function(data) {
@@ -405,9 +414,11 @@ function deleteBlog(id, index){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				layer.msg(data.message);
 				if(data.isSuccess){
+					layer.msg(data.message);
 					$(".row_"+index).remove();
+				}else{
+					ajaxError(data);
 				}
 			},
 			error : function(data) {

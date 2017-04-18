@@ -62,7 +62,7 @@ function getEditBlog(bid){
 			if(data != null && data.isSuccess && data.message.length == 1){
 				addToEdit(data.message[0]);
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 				javascript:window.history.forward(1);
 				setTimeout('window.open("/pb", "_self")', 1500);
 			}
@@ -223,7 +223,7 @@ function clearTag(obj){
 					layer.msg("发布文章成功");
 					window.location.reload();
 				}else{
-					layer.msg(data.message);
+					ajaxError(data);
 				}
 			},
 			error : function(data) {
@@ -366,7 +366,7 @@ function clearTag(obj){
 					$("#load-draft").modal("show");
 					buildDraftList(data.message);
 				}else{
-					layer.msg(data.message);
+					ajaxError(data);
 				}
 			},
 			error : function(data) {
@@ -447,17 +447,20 @@ function clearTag(obj){
 			success : function(data) {
 				layer.close(loadi);
 				if(data.isSuccess){
+					layer.msg(data.message);
 					draftList.splice(index,1);
 					buildDraftList(draftList);
+				}else{
+					ajaxError(data);
 				}
-				layer.msg(data.message);
 			},
 			error : function(data) {
 				layer.close(loadi);
 				ajaxError(data);
 			}
 		});
-	}, function(){
+	}, function(data){
+		ajaxError(data);
 	});
  }
  

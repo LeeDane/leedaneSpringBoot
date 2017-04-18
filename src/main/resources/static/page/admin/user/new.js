@@ -63,7 +63,7 @@ function add(obj){
 				layer.msg(data.message +",1秒钟后自动刷新");
 				setTimeout("window.location.reload();", 1000);
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 		},
 		error : function(data) {

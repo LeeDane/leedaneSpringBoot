@@ -9,24 +9,23 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
-import org.comet4j.core.CometContext;
-import org.comet4j.core.CometEngine;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.chat_room.ScanLoginWebSocket;
-import com.cn.leedane.comet4j.AppStore;
-import com.cn.leedane.comet4j.Comet4jServer;
 import com.cn.leedane.controller.UserController;
 import com.cn.leedane.enums.NotificationType;
 import com.cn.leedane.exception.ErrorException;
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CommentHandler;
 import com.cn.leedane.handler.FanHandler;
 import com.cn.leedane.handler.FriendHandler;
@@ -119,6 +118,9 @@ public class UserServiceImpl implements UserService<UserBean> {
 	
 	@Autowired
 	private NotificationHandler notificationHandler;
+	
+	@Autowired
+	private SessionDAO sessionDAO;
 
 	
 	@Override
@@ -837,8 +839,8 @@ public class UserServiceImpl implements UserService<UserBean> {
 		message.put("isSuccess", false);
 		
 		if(!user.isAdmin()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请用管理员账号登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请用管理员账号登录.value);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value);
 			return message;
 		}
 		
@@ -989,8 +991,8 @@ public class UserServiceImpl implements UserService<UserBean> {
 		Map<String, Object> message = new HashMap<String, Object>();
 		message.put("isSuccess", false);
 		if(!user.isAdmin()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请用管理员账号登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请用管理员账号登录.value);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value);
 			return message;
 		}
 		
@@ -998,9 +1000,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		String account = JsonUtil.getStringValue(jo, "account");
 		int status = JsonUtil.getIntValue(jo, "status", ConstantsUtil.STATUS_NORMAL);
 		if(toUserId < 1 || StringUtil.isNull(account)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
-			message.put("responseCode", EnumUtil.ResponseCode.用户不存在或请求参数不对.value);
-			return message;
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 		}
 
 		UserBean updateUserBean = userMapper.findById(UserBean.class, toUserId);
@@ -1100,8 +1100,8 @@ public class UserServiceImpl implements UserService<UserBean> {
 		Map<String, Object> message = new HashMap<String, Object>();
 		message.put("isSuccess", false);
 		if(!user.isAdmin()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请用管理员账号登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请用管理员账号登录.value);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value);
 			return message;
 		}
 		
@@ -1198,9 +1198,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		}
 		
 		if(searchUserId < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
-			message.put("responseCode", EnumUtil.ResponseCode.用户不存在或请求参数不对.value);
-			return message.getMap();
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 		}
 		
 		//执行密码等信息的验证
@@ -1211,8 +1209,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 			message.put("userinfo", userHandler.getUserInfo(searchUser, false));
 			message.put("isSuccess", true);
 		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
-			message.put("responseCode", EnumUtil.ResponseCode.用户不存在或请求参数不对.value);
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 		}
 		
 		//保存操作日志
@@ -1238,7 +1235,6 @@ public class UserServiceImpl implements UserService<UserBean> {
 		}
 		
 		String account = user.getAccount();
-		String pwd = user.getPassword();
 		
 		//获取登录失败的数量
 		int number = userHandler.getLoginErrorNumber(account);
@@ -1260,18 +1256,35 @@ public class UserServiceImpl implements UserService<UserBean> {
 				}
 			}
 		}
-		message.put("isSuccess", true);
+		
 		//扫码校验成功，将信息推送给客户端
-		HttpSession session = (HttpSession) AppStore.getInstance().getScanLogin(cid);
+		ScanLoginWebSocket scanLoginWebSocket = ScanLoginWebSocket.scanLoginSocket.get(cid);
 		boolean result = false;
-		if(session != null){
-			CometEngine engine = CometContext.getInstance().getEngine();
+		if(scanLoginWebSocket != null){
+			//获取当前的Subject  
+//	        Subject currentUser = SecurityUtils.getSubject();
+//	        currentUser.getSession().setAttribute(UserController.USER_INFO_KEY, user);
+	        
+//	        sessionDAO.create(scanLoginWebSocket.getSession())
+//			scanLoginWebSocket.setLogin(user);
+			
 			Map<String, Object> map = new HashMap<String, Object>();
-			result = true;
-			map.put("isSuccess", result);
-			engine.sendTo(Comet4jServer.SCAN_LOGIN, engine.getConnection(cid), JSONObject.fromObject(map).toString());
+			map.put("message", "login");
+			
+			//拿到token码
+			String token = request.getHeader("token");
+			int useridq = StringUtil.changeObjectToInt(request.getHeader("userid"));
+			//校验token
+			if(StringUtil.isNotNull(token)){
+				map.put("token", token);
+				map.put("userid", useridq);
+			}
+			
+			map.put("isSuccess", true);
+			scanLoginWebSocket.sendMessage(JSONObject.fromObject(map).toString());
 			//session.setAttribute(UserController.USER_INFO_KEY, user);
 			userHandler.removeLoginErrorNumber(account);
+			message.put("isSuccess", true);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.登录页面已经过期.value));
 			message.put("responseCode", EnumUtil.ResponseCode.登录页面已经过期.value);
@@ -1296,22 +1309,20 @@ public class UserServiceImpl implements UserService<UserBean> {
 			return message;
 		}
 		
-		if(AppStore.getInstance().getScanLogin(cid) == null){
+		if(ScanLoginWebSocket.scanLoginSocket.get(cid) == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.登录页面已经过期.value));
 			message.put("responseCode", EnumUtil.ResponseCode.登录页面已经过期.value);
 			return message;
 		}
 		
 		message.put("isSuccess", true);
-		CometEngine engine = CometContext.getInstance().getEngine();
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("isSuccess", true);
 		map.put("message", "cancel");
-		HttpSession session = (HttpSession) AppStore.getInstance().getScanLogin(cid);
-		if(session != null){
-			session.removeAttribute(UserController.USER_INFO_KEY);
+		ScanLoginWebSocket scanLoginWebSocket = ScanLoginWebSocket.scanLoginSocket.get(cid);
+		if(scanLoginWebSocket != null){
+			//TODO ..
 		}
-		engine.sendTo(Comet4jServer.SCAN_LOGIN, engine.getConnection(cid), JSONObject.fromObject(map).toString());
 		userHandler.removeLoginErrorNumber(user.getAccount());
 		return message;
 	}
@@ -1455,8 +1466,8 @@ public class UserServiceImpl implements UserService<UserBean> {
 		Map<String, Object> message = new HashMap<String, Object>();
 		message.put("isSuccess", false);
 		if(!user.isAdmin()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请用管理员账号登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请用管理员账号登录.value);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value);
 			return message;
 		}
 		
@@ -1549,7 +1560,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		
 		boolean result = false;
 		//生成统一的uuid
-		String uuid =  user.getAccount() + "user_head_link" + UUID.randomUUID().toString();
+		//String uuid =  user.getAccount() + "user_head_link" + UUID.randomUUID().toString();
 
 		FilePathBean filePathBean = null;
 		long[] widthAndHeight;

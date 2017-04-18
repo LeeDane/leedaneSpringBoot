@@ -73,7 +73,7 @@ function queryPaging(){
 					}
 				}
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 			isLoad = false;
 		},

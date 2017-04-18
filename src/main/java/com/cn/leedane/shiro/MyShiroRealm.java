@@ -31,7 +31,7 @@ import com.cn.leedane.model.RoleBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.UserRoleBean;
 import com.cn.leedane.model.UserTokenBean;
-import com.cn.leedane.service.UserRoleService;
+import com.cn.leedane.service.RolePermissionService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.service.UserTokenService;
 import com.cn.leedane.utils.CollectionUtil;
@@ -61,7 +61,7 @@ public class MyShiroRealm extends AuthorizingRealm{
     private UserService<UserBean> userService;
     
     @Autowired
-    private UserRoleService<UserRoleBean> userRoleService;
+    private RolePermissionService<UserRoleBean> rolePermissionService;
 
     /**
      * 权限认证，为当前登录的Subject授予角色和权限 
@@ -76,7 +76,7 @@ public class MyShiroRealm extends AuthorizingRealm{
         //获取当前登录输入的用户名，等价于(String) principalCollection.fromRealm(getName()).iterator().next();
         int userid = (int)super.getAvailablePrincipal(principalCollection); 
         //到数据库查是否有此对象
-        List<RoleBean> roleBeans = userRoleService.getUserRoleBeans(userid);// 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
+        List<RoleBean> roleBeans = rolePermissionService.getUserRoleBeans(userid);// 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
         if(CollectionUtil.isNotEmpty(roleBeans)){
             //权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
             SimpleAuthorizationInfo info=new SimpleAuthorizationInfo();
@@ -154,11 +154,15 @@ public class MyShiroRealm extends AuthorizingRealm{
     	 
     	 if(customAuthenticationToken.getPlatformType() == PlatformType.安卓版){
 	    	 //在数据库校验token
-	       	UserTokenBean userTokenBean = userTokenService.getUserToken(user, customAuthenticationToken.getToken(), null);
-	       	if(userTokenBean != null){
-	       		return new SimpleAuthenticationInfo(customAuthenticationToken.getUserId(), userTokenBean.getToken(), getName());
-	       	}else
-	       		throw new UnsupportedTokenException(); //抛出不支持的token异常	
+	       	List<UserTokenBean> userTokenBeans = userTokenService.getUserToken(user, customAuthenticationToken.getToken(), null);
+	       	if(CollectionUtil.isNotEmpty(userTokenBeans)){
+	       		for(UserTokenBean userTokenBean: userTokenBeans){
+	       			if(userTokenBean.getToken().equals(customAuthenticationToken.getToken()))
+	       				return new SimpleAuthenticationInfo(customAuthenticationToken.getUserId(), userTokenBean.getToken(), getName());
+	       		}
+	       	}
+	       	
+	       	throw new UnsupportedTokenException(); //抛出不支持的token异常	
         }else{
         	return new SimpleAuthenticationInfo(user.getId(), customAuthenticationToken.getPassword(), getName());
         }

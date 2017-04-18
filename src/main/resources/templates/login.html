@@ -97,9 +97,9 @@
 	      <form class="form-signin" role="form">
 	        <h2 class="form-signin-heading">登录<span class="form-signin-heading-small">注册</span></h2>
 	        <div id="errorMessage">
-		        <div class="alert alert-warning alert-dismissible" role="alert">
+		        <div class="alert alert-warning alert-dismissible" role="alert" th:if="${error}">
 				  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-				  <strong>警告!</strong> 
+				  <strong>警告!</strong> <span th:utext="${errorMessage}"></span>
 				</div>
 			</div>
 	        <input type="text" id="account" class="form-control" placeholder="account" autofocus="true" value="leedane"/>
@@ -124,7 +124,7 @@
 	        <input type="password" id="rg-password" class="form-control" style="margin-top: 10px;" placeholder="Password" data-placement="bottom" />
 	        <input type="password" id="rg-confirmPassword" class="form-control" style="margin-top: 10px;" placeholder="ConfirmPassord" data-placement="bottom" />
 	        <input type="number" id="rg-phone" class="form-control" placeholder="phone" />
-	        <button class="btn btn-lg btn-primary btn-block" type="button" onclick="doRegister();">Sign up</button>
+	        <button class="btn btn-lg btn-primary btn-block" type="button" onclick="doRegister();" style="margin-top: 10px;">Sign up</button>
 	      </form>
     </div>
     

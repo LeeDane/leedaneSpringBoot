@@ -47,6 +47,15 @@ function changeObjNotNullString(obj, key){
 	return obj[key];
 }
 
+/**
+ * 删除最后一个字符
+ * @param str
+ */
+function deleteLastStr(str){
+	if(isEmpty(str))
+		return str;
+	return str.substring(0, str.length - 1);  
+}
 
 /**
  * 展示图片的链接
@@ -126,10 +135,41 @@ function serializeArrayToJsonObject(array){
 }
 
 /**
+ * 自动刷新页面
+ * @param time 多少秒后
+ */
+function reloadPage(time){
+	setTimeout("window.location.reload();", time);
+}
+
+/**
  * 跳转到登录页面
  */
 function linkToLogin(){
-	window.open("/lg", "_self");
+	var href = window.location.href;
+	if(isEmpty(href))
+		href = "";
+	else
+		href = "?ref=" + href;
+	window.open("/lg"+ href, "_self");
+}
+
+/**
+ * 跳转到404页面
+ */
+function linkTo404(errorMessage){
+	if(isEmpty(errorMessage))
+		errorMessage = "";
+	else
+		errorMessage = "?errorMessage=" + errorMessage;
+	window.open("/404"+ errorMessage, "_self");
+}
+
+/**
+ * 跳转到403页面
+ */
+function linkTo403(){
+	window.open("/403", "_self");
 }
 
 /**
@@ -280,9 +320,28 @@ function getRandomNumber1(number){
  * @returns
  */
 function ajaxError(data){
-	var text = eval('(' + data.responseText + ')');
-	layer.msg(text.message);
+	var json = isJson(data)? data : eval('(' + data.responseText + ')');
+	
+	//如果是需要用户登录
+	if(json['responseCode'] && json.responseCode == 1001){
+		linkToLogin();
+	}else if(json['responseCode'] && json.responseCode == 404){
+		linkTo404(json.message);
+	}else if(json['responseCode'] && json.responseCode == 403){
+		linkTo403(json.message);
+	}else{
+		layer.msg(json.message);
+	}
 }
+
+/**
+ * 判断obj是否为json对象
+ * @param obj
+ * @returns {Boolean}
+ */
+function isJson(obj){  
+    return typeof(obj) == "object" && Object.prototype.toString.call(obj).toLowerCase() == "[object object]" && !obj.length;   
+}  
 
 /**
  * 将json对象转换成get请求参数字符串

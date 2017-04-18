@@ -94,6 +94,23 @@ public class AdminHtmlController extends BaseController{
 		return loginRoleCheck("/admin/user/black", true, model, httpSession, request);
 	}
 	
+	
+	@RequestMapping(ControllerBaseNameUtil.adbg + "/check")
+	public String bgCheck(Model model, HttpSession httpSession, HttpServletRequest request){
+		return loginRoleCheck("/admin/blog/check", true, model, httpSession, request);
+	}
+	
+	/****************    权限管理          ***********************/
+	@RequestMapping(ControllerBaseNameUtil.adpm + "/role")
+	public String pmRole(Model model, HttpSession httpSession, HttpServletRequest request){
+		return loginRoleCheck("/admin/permission/role", true, model, httpSession, request);
+	}
+	
+	@RequestMapping(ControllerBaseNameUtil.adpm + "/impowerRole")
+	public String pmImpowerRole(Model model, HttpSession httpSession, HttpServletRequest request){
+		return loginRoleCheck("/admin/permission/impowerRole", true, model, httpSession, request);
+	}
+	
 	/**
 	 * 校验地址，不校验是否登录
 	 * @param urlParse
@@ -130,8 +147,8 @@ public class AdminHtmlController extends BaseController{
 				model.addAttribute("account", account);
 			}else{
 				httpSession.removeAttribute(UserController.USER_INFO_KEY);
-				model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请用管理员账号登录.value));
-				return "redirect:/lg?errorcode=" +EnumUtil.ResponseCode.请用管理员账号登录.value +"&t="+ UUID.randomUUID().toString() +"&ref="+ CommonUtil.getFullPath(request);
+				model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请使用有管理员权限的账号登录.value));
+				return "redirect:/lg?errorcode=" +EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value +"&t="+ UUID.randomUUID().toString() +"&ref="+ CommonUtil.getFullPath(request);
 			}
 		}else{
 			System.out.println("obj为空");

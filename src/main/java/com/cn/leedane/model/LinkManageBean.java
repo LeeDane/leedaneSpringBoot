@@ -20,9 +20,11 @@ public class LinkManageBean extends RecordTimeBean{
     
     private String roleCodes; //角色Code集合，多个用,分开
     
-    private int type; //类型：1表示permissionId不能为空，2表示roleId不能为空
+    private boolean role; //类型：true表示roleId不能为空，false表示permissionId不能为空
     
     private int order; //排序
+    
+    private boolean all; //是否是全部都符合，true是全部都符合，false是任意一个符合，默认是true
 
 	public String getLink() {
 		return link;
@@ -57,12 +59,20 @@ public class LinkManageBean extends RecordTimeBean{
 		this.roleCodes = roleCodes;
 	}
 
-	public int getType() {
-		return type;
+	public boolean isRole() {
+		return role;
 	}
 
-	public void setType(int type) {
-		this.type = type;
+	public void setRole(boolean role) {
+		this.role = role;
+	}
+
+	public boolean isAll() {
+		return all;
+	}
+
+	public void setAll(boolean all) {
+		this.all = all;
 	}
 
 	public int getOrder() {

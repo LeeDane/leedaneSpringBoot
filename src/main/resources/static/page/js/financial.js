@@ -104,7 +104,7 @@ function getOneCategorys(){
 				//获取二级分类
 				getTwoCategorys();
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 		},
 		error : function(data) {
@@ -137,7 +137,7 @@ function getTwoCategorys(){
 					$('[name="levels"]').append('<option>'+ oneCategoryValue + '>>>' + twoCategorys[i].category_value +'</option>');
 				}
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 		},
 		error : function(data) {
@@ -159,7 +159,7 @@ function getLocations(){
 			if(data.isSuccess){
 				locations = data.message;
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 		},
 		error : function(data) {
@@ -196,7 +196,7 @@ function querySearch(params){
 				
 				notifyChartOrListChange();
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 		},
 		error : function(data) {
@@ -262,7 +262,7 @@ function queryPaging(params){
 				}
 				notifyChartOrListChange();
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 			isLoad = false;
 		},
@@ -411,7 +411,7 @@ function deleteFinancial(index){
 						layer.msg("记账信息删除成功,1秒钟后自动刷新");
 						setTimeout("window.location.reload();", 1000);
 					}else{
-						layer.msg(data.message);
+						ajaxError(data);
 					}
 				},
 				error : function(data) {

@@ -72,7 +72,7 @@ function querySearch(params){
 				for(var i = 0; i < data.message.length; i++)
 					buildEachRow(data.message[i], i);
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 		},
 		error : function(data) {
@@ -252,7 +252,7 @@ function editUser(obj){
 				layer.msg(data.message +",1秒钟后自动刷新");
 				setTimeout("window.location.reload();", 1000);
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 		},
 		error : function(data) {
@@ -284,7 +284,7 @@ function deleteUser(obj, index){
 						layer.msg(data.message +",1秒钟后自动刷新");
 						setTimeout("window.location.reload();", 1000);
 					}else{
-						layer.msg(data.message);
+						ajaxError(data);
 					}
 				},
 				error : function(data) {
@@ -321,9 +321,9 @@ function resetPassword(obj, index){
 					layer.close(loadi);
 					if(data.isSuccess){
 						layer.msg(data.message +",1秒钟后自动刷新");
-						setTimeout("window.location.reload();", 1000);
+						reloadPage(1000);
 					}else{
-						layer.msg(data.message);
+						ajaxError(data);
 					}
 				},
 				error : function(data) {
@@ -379,9 +379,11 @@ function sendMessage(obj){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			layer.msg(data.message);
 			if(data.isSuccess){
+				layer.msg(data.message);
 				$("#send-message").modal("hide");
+			}else{
+				ajaxError(data);
 			}
 		},
 		error : function(data) {
@@ -424,10 +426,11 @@ function uploadHeadLink(obj){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			layer.msg(data.message);
 			if(data.isSuccess){
 				layer.msg(data.message +",1秒钟后自动刷新");
-				setTimeout("window.location.reload();", 1000);
+				reloadPage(1000);
+			}else{
+				ajaxError(data);
 			}
 		},
 		error : function(data) {

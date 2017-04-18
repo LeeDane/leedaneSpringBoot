@@ -12,10 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.authc.pam.UnsupportedTokenException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cn.leedane.exception.RE404Exception;
+import com.cn.leedane.utils.CommonUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.ResponseCode;
 
@@ -33,11 +36,29 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 	public ModelAndView resolveException(HttpServletRequest request,
 			HttpServletResponse response, Object handler, Exception exception) {
 		
+		
+		boolean isPageRequest = CommonUtil.isPageRequest(request, response);
+		
 		Map<String, Object> message = new HashMap<String, Object>();
         message.put("isSuccess", false);
-		if(exception instanceof org.apache.shiro.authz.UnauthorizedException){
-			 message.put("message", EnumUtil.getResponseValue(ResponseCode.没有操作权限.value));//将错误信息传递给view
+        
+		if(exception instanceof org.apache.shiro.authz.UnauthorizedException){//没有授权异常
+			if(isPageRequest)
+				return new ModelAndView("/403");
+			 message.put("message", EnumUtil.getResponseValue(ResponseCode.没有操作权限.value));
 			 message.put("responseCode", ResponseCode.没有操作权限.value);
+		}else if(exception instanceof UnsupportedTokenException){//不支持token异常
+			if(isPageRequest)
+				return new ModelAndView("/lg");
+			message.put("message", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
+			 message.put("responseCode", ResponseCode.请先登录.value);
+			
+		}else if(exception instanceof RE404Exception){//404异常
+			if(isPageRequest)
+				return new ModelAndView("/404");
+			
+			 message.put("message", exception.getMessage());
+			 message.put("responseCode", ResponseCode.资源不存在.value);
 		}else{
 			StringPrintWriter strintPrintWriter = new StringPrintWriter();  
 	        exception.printStackTrace(strintPrintWriter);

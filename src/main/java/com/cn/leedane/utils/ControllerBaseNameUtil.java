@@ -228,6 +228,11 @@ public class ControllerBaseNameUtil {
 	public static final String pb = "/pb";
 	
 	/**
+	 * 权限管理
+	 */
+	public static final String pm = "/pm";
+	
+	/**
 	 * 管理员
 	 */
 	public static final String ad = "/ad";
@@ -241,5 +246,15 @@ public class ControllerBaseNameUtil {
 	 * 管理员->用户管理
 	 */
 	public static final String adus = "/ad/us";
+	
+	/**
+	 * 管理员->博客管理
+	 */
+	public static final String adbg = "/ad/bg";
+	
+	/**
+	 * 管理员->权限管理
+	 */
+	public static final String adpm = "/ad/pm";
     
 }

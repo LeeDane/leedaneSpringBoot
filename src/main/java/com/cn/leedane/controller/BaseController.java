@@ -259,9 +259,8 @@ public class BaseController {
         boolean[] rs = currentUser.isPermitted(permissions);
         for(boolean r: rs)
 	        if(!r)
-	        	return !r;
-		
-        throw new UnauthorizedException();
+	        	throw new UnauthorizedException();
+        return true;
 	}
 	
 	/**
@@ -552,37 +551,34 @@ public class BaseController {
 	}
 	
 	/**
-	 * 必须做角色校验
+	 * 必须进行检查角色和权限
+	 * 方法只有调用该方法才做权限控制
+	 * @param request
 	 */
-	public void mustAnyRole(HttpServletRequest request){
+	protected void checkRoleOrPermission(HttpServletRequest request){
 		LinkManagesBean beans = linkManageHandler.getAllLinks();
 		if(beans != null && CollectionUtil.isNotEmpty(beans.getLinkManageBean())){
 			String uri = request.getRequestURI();
 			for(LinkManageBean bean: beans.getLinkManageBean()){
-				if(bean.getLink().equals(uri) && bean.getType() == 1){
-					String roleCodes = bean.getRoleCodes();
-					if(StringUtil.isNotNull(roleCodes)){
-						String[] codes = roleCodes.split(",");
-							checkAnyRoleAuthor(codes);
-					}
-				}
-			}
-		}
-	}
-	
-	/**
-	 * 必须做权限校验
-	 */
-	public void mustAnyPermission(HttpServletRequest request){
-		LinkManagesBean beans = linkManageHandler.getAllLinks();
-		if(beans != null && CollectionUtil.isNotEmpty(beans.getLinkManageBean())){
-			String uri = request.getRequestURI();
-			for(LinkManageBean bean: beans.getLinkManageBean()){
-				if(bean.getLink().equals(uri) && bean.getType() == 2){
-					String permissionCodes = bean.getPermissionCodes();
-					if(StringUtil.isNotNull(permissionCodes)){
-						String[] codes = permissionCodes.split(",");
-						checkAnyPermissionAuthor(codes);
+				if(bean.getLink().equals(uri)){
+					if(bean.isRole()){
+						String roleCodes = bean.getRoleCodes();
+						if(StringUtil.isNotNull(roleCodes)){
+							String[] codes = roleCodes.split(",");
+							if(bean.isAll())
+								checkAllRoleAuthor(codes);
+							else
+								checkAnyRoleAuthor(codes);
+						}
+					}else{
+						String permissionCodes = bean.getPermissionCodes();
+						if(StringUtil.isNotNull(permissionCodes)){
+							String[] codes = permissionCodes.split(",");
+							if(bean.isAll())
+								checkAllPermissionAuthor(codes);
+							else
+								checkAnyPermissionAuthor(codes);
+						}
 					}
 				}
 			}

@@ -9,7 +9,7 @@ document.onkeydown=function(event){
 
 var websocket = null;
 
-
+var atScrollIndex = 0;
 
 //将消息显示在网页上
 function setMessageInnerHTML(innerHTML){
@@ -106,6 +106,15 @@ function init(){
 	//$("#content").empty();
 	initWebSocket(true);
 	
+	$("#has-at-style").click(function(){
+		$(this).hide();
+		if(atScrollIndex > 0){
+			$("#content").stop(true);
+			$("#content").animate({scrollTop: $(".chat-list-row").eq(atScrollIndex).offset().top}, 1000);
+			atScrollIndex = 0;
+		}
+	});
+	
 	var height = $("#content").height(); //页面总高度
     
     $("#content").scroll(function (e) {
@@ -154,7 +163,7 @@ function init(){
 				}
 				$("#score").html(sc);
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 		},
 		error : function(data) {
@@ -196,6 +205,8 @@ function getActiveUsers(){
 						$("#active-users").append('<a href="javascript:void(0);" class="list-group-item active-users-item" onclick="linkToMy('+ message[i].create_user_id+');"><img width="30" height="30" class="img-circle hand" alt="" src="'+ userPicPath +'"  onclick="showSingleImg(this);"/>&nbsp;&nbsp; '+ message[i].account+'<span class="badge '+ colorClass +'">'+ message[i].count +'</span></a>');
 					}
 				}
+			}else{
+				ajaxError(data);
 			}
 		},
 		error : function(data) {
@@ -272,6 +283,8 @@ var log = function(s){
 			var others = json.at_other.split(",");
 			for(var j = 0; j < others.length; j++){
 				if(loginUserId == others[j]){
+					$("#has-at-style").show();
+					atScrollIndex = $(".chat-list-row").length - 1;
 					//展示at用户
 					break;
 				}
@@ -463,7 +476,8 @@ function atOther(account, id){
  *	构建左侧的
  */
  function buildEachLeftRow(chat){
-	 var canClick = isLogin && chat.id != loginUserId && chat.account;
+	//var canClick = isLogin && chat.id != loginUserId && chat.account;
+	 var canClick = (isLogin && chat.id > 0 && chat.id != loginUserId && chat.account) || (!isLogin && chat.id > 0 && chat.account) ;
  	var html = '<div class="row chat-list-row'+ (canClick ? ' hand' : '') +'" '+ (canClick ? 'onclick="atOther(\''+ chat.account +'\','+ chat.id +');"': '') +'>'+
 			   		'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;margin-top: 10px;">';
 			   		if(isNotEmpty(chat.user_pic_path)){

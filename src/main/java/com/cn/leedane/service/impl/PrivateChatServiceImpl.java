@@ -21,6 +21,7 @@ import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.cn.leedane.utils.FilterUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.PrivateChatMapper;
@@ -69,9 +70,7 @@ public class PrivateChatServiceImpl implements PrivateChatService<PrivateChatBea
 		message.put("isSuccess", false);
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id"); //发送给对方的用户ID
 		if(toUserId < 1 || user.getId() == toUserId){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
-			message.put("responseCode", EnumUtil.ResponseCode.用户不存在或请求参数不对.value);
-			return message;
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 		}
 		String content = JsonUtil.getStringValue(jo, "content"); //私信内容
 		

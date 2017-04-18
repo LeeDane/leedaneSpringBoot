@@ -11,7 +11,7 @@ import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.RoleBean;
 import com.cn.leedane.model.UserRoleBean;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.service.UserRoleService;
+import com.cn.leedane.service.RolePermissionService;
 import com.cn.leedane.utils.ConstantsUtil;
 
 /**
@@ -21,9 +21,9 @@ import com.cn.leedane.utils.ConstantsUtil;
  * version 1.0
  */
 
-@Service("userRoleService")
+@Service("rolePermissionService")
 @Transactional  //此处不再进行创建SqlSession和提交事务，都已交由spring去管理了。
-public class UserRoleServiceImpl implements UserRoleService<UserRoleBean> {
+public class RolePermissionServiceImpl implements RolePermissionService<UserRoleBean> {
 	
 	Logger logger = Logger.getLogger(getClass());
 	

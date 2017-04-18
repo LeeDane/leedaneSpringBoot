@@ -120,6 +120,8 @@ function loadUserInfo(){
 				
 				buildShowUserinfo();
 				buildEditUserinfo();
+			}else{
+				ajaxError(data);
 			}
 		},
 		error : function(data) {
@@ -197,7 +199,7 @@ function getMoods(){
 				console.log(monthArray);
 				resetSideHeight();
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 			console.log(data);
 			isLoad = false;
@@ -417,7 +419,7 @@ function editUserinfo(params){
 	$.ajax({
 		type : "put",
 		data : params,
-		url : "us/updateUserBase",
+		url : "us/user/base",
 		dataType: 'json', 
 		beforeSend:function(){
 		},
@@ -781,7 +783,7 @@ function asynchronousLoadData(){
 						}
 					}
 				}else{
-					layer.msg(data.message);
+					ajaxError(data);
 				}
 				console.log(data);
 				ct_isLoad = false;

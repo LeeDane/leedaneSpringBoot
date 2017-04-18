@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.RoleBean;
 
 /**
@@ -13,7 +14,7 @@ import com.cn.leedane.model.RoleBean;
  * version 1.0
  */
 @Transactional("txManager")
-public interface UserRoleService<UserRoleBean>{
+public interface RolePermissionService<T extends IDBean>{
 	
 	/**
 	 * 获取该用户的全部角色

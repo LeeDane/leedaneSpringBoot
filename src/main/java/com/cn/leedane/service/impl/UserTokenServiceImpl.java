@@ -1,5 +1,7 @@
 package com.cn.leedane.service.impl;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,16 +45,17 @@ public class UserTokenServiceImpl implements UserTokenService<UserTokenBean> {
 	private OperateLogService<OperateLogBean> operateLogService;
 
 	@Override
-	public UserTokenBean getUserToken(UserBean user, String token, HttpServletRequest request) {
+	public List<UserTokenBean> getUserToken(UserBean user, String token, HttpServletRequest request) {
 		logger.info("UserTokenServiceImpl-->getUserToken():createUserId="+ user.getId() +",token="+token);
 		if(!userHandler.hasToken(user.getId(), token)){
 			return userTokenMapper.getUserToken(user.getId(), ConstantsUtil.STATUS_NORMAL, token, DateUtil.getCurrentTime());
 		}
-		
+		List<UserTokenBean> userTokenBeans = new ArrayList<UserTokenBean>();
 		UserTokenBean userTokenBean = new UserTokenBean();
 		userTokenBean.setToken(token);
 		userTokenBean.setStatus(ConstantsUtil.STATUS_NORMAL);
-		return userTokenBean;
+		userTokenBeans.add(userTokenBean);
+		return userTokenBeans;
 	}
 
 	@Override

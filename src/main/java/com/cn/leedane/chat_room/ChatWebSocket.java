@@ -96,7 +96,7 @@ public class ChatWebSocket {
         	Map<String, Object> userInfo = new HashMap<String, Object>();
         	
         	//非访客身份将不进行进一步的操作
-        	if(userId == 0 || userId == Integer.parseInt(Util.VISITORS_ID)){
+        	if(userId < 1){
         		jsonObject.put("account", "匿名用户");
         		jsonObject.put("id", userId);
         		Set<String> sensitiveWords = FilterUtil.getFilter(jsonObject.getString("content"));

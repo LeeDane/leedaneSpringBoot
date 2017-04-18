@@ -1,6 +1,7 @@
 package com.cn.leedane.service;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,7 +27,7 @@ public interface UserTokenService<T extends UserTokenBean>{
 	 * @param request
 	 * @return
 	 */
-	public UserTokenBean getUserToken(UserBean user, String token, HttpServletRequest request);
+	public List<UserTokenBean> getUserToken(UserBean user, String token, HttpServletRequest request);
 	
 	/**
 	 * 添加token

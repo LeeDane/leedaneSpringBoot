@@ -88,7 +88,7 @@ function getInfo(bid){
 					}
 				}
 			}else{
-				layer.msg(data.message);
+				ajaxError(data);
 			}
 		},
 		error : function(data) {
@@ -152,7 +152,7 @@ function getComments(bid){
 					}
 				}
 			}else{
-				layer.msg("获取评论列表失败，"+data.message);
+				ajaxError(data);
 			}
 			isLoad = false;
 		},

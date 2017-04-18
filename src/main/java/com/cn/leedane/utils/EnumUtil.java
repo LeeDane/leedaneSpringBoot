@@ -75,7 +75,7 @@ public class EnumUtil {
 		博客("t_blog"),心情("t_mood"), 评论("t_comment"),转发("t_transmit"),赞("t_zan"),用户("t_user"),通知("t_notification"), 
 		聊天("t_chat"), 聊天背景("t_chat_bg"), 聊天背景与用户("t_chat_bg_user"), 私信("t_private_chat"),文件("t_file_path"), 
 		粉丝("t_fan"), 收藏("t_collection"),关注("t_attention"), 好友("t_friend"), 图库("t_gallery"), 操作日志("t_operate_log"),
-		举报("t_report"), 积分("t_score"), 签到("t_sign_in"), 上传("t_upload");
+		举报("t_report"), 积分("t_score"), 签到("t_sign_in"), 上传("t_upload"), 权限("t_permission"), 角色权限("t_role_permission");
 	
 		private DataTableType(String value) {
 			this.value = value;
@@ -262,6 +262,7 @@ public class EnumUtil {
 		账号已被注销(1013),
 		服务器处理异常(500),
 		链接不存在(400),
+		资源不存在(404),
 		请求返回成功码(200),
 		文件不存在(2001),
 		操作文件失败(2002),
@@ -365,7 +366,7 @@ public class EnumUtil {
 		获取不到二级分类列表(3069),
 		举报成功(3070),
 		不能举报自己发布的资源(3071),
-		请用管理员账号登录(3072),
+		请使用有管理员权限的账号登录(3072),
 		数据库修改失败(3073),
 		用户不存在(3074),
 		密码重置成功(3075),

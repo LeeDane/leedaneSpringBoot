@@ -133,9 +133,7 @@ public class MoodController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
-		
-		mustAnyRole(request);
-		mustAnyPermission(request);
+		checkRoleOrPermission(request);
 			
 		message.putAll(moodService.getMoodByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();

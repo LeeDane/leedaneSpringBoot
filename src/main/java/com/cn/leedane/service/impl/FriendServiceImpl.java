@@ -23,6 +23,7 @@ import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.FriendHandler;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
@@ -150,9 +151,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		
 		UserBean toUser = userService.findById(toUserId);
 		if(toUser == null){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
-			message.put("responseCode", EnumUtil.ResponseCode.用户不存在或请求参数不对.value);
-			return message;	
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 		}
 		
 		if(toUserId == user.getId()){

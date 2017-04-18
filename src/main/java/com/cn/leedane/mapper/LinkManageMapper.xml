@@ -10,7 +10,7 @@
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
 	<select id="getAllLinks" parameterType="int" resultMap="linkMap">
-		select id, link, alias, permission_codes, role_codes, link_type, link_order
+		select id, link, alias, permission_codes, role_codes, role, order_, all_
 		from t_link_manage lm
 	</select>
 	
@@ -20,7 +20,8 @@
         <result property="alias" column="alias"/>
         <result property="permissionCodes" column="permission_codes"/>
         <result property="roleCodes" column="role_codes"/>
-        <result property="type" column="link_type"/>
-        <result property="order" column="link_order"/>
+        <result property="role" column="role"/>
+        <result property="order" column="order_"/>
+        <result property="all" column="all_"/>
    </resultMap>
 </mapper>

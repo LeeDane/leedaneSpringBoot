@@ -231,7 +231,7 @@ public class RedisUtil{
 	}
 	
 	/**
-	 * 获取字符串数据
+	 * 判断单个键是否存在
 	 * @param key
 	 * @return
 	 */
@@ -249,6 +249,8 @@ public class RedisUtil{
 		}
 		return false;
 	}
+	
+	
 	/********************************* Map *****************************/
 	/**
 	 * 添加map集合数据

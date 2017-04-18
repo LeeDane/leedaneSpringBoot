@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>聊天广场</title>
+	<title>实时在线聊天室</title>
 	<link rel="stylesheet" th:href="@{/page/other/layui/css/layui.css}" />
 	<style type="text/css">
 		#main-container{
@@ -65,13 +65,14 @@
 		    border: 1px solid #999; 
 		    display: inline-block; */
 		}
-		.has-at-style{
+		#has-at-style{
 			position: absolute; 
 		    top: 285px;
 		    right: 10px;
 		    border: 1px solid #999;
 		    z-index: 1000;
 		    cursor: pointer;
+		    display: none;
 		}
 	</style>
 </head>
@@ -114,7 +115,7 @@
 			<div class="col-lg-9">
 				<div>系统当前时间为：2017-12-12 11：10：10</div>
 				<div class="panel panel-default" style="position: relative;">
-					<div class="has-at-style"> 有人@您 </div>
+					<div id="has-at-style"> 有人@您 </div>
 					<div class="panel-body" id="content">
 						<!-- <div class="row chat-list-row">
 					   		<div class="col-lg-2" style="text-align: center;margin-top: 10px;">

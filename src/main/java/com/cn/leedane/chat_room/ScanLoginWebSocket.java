@@ -1,6 +1,7 @@
 package com.cn.leedane.chat_room;
 
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.websocket.OnClose;
@@ -10,8 +11,14 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import net.sf.json.JSONObject;
+
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Component;
 
+import com.cn.leedane.controller.UserController;
+import com.cn.leedane.model.UserBean;
 import com.cn.leedane.utils.StringUtil;
 
 @ServerEndpoint(value = "/scanLogin")
@@ -24,6 +31,10 @@ public class ScanLoginWebSocket {
     private Session session;
     
     private String cnid;
+    
+    public Session getSession() {
+		return session;
+	}
 
     /**
      * 连接建立成功调用的方法*/
@@ -32,11 +43,10 @@ public class ScanLoginWebSocket {
         this.session = session;
         cnid = StringUtil.buildUUID("scan");
         scanLoginSocket.put(cnid, this);
-        try {
-            sendMessage(cnid);
-        } catch (IOException e) {
-            System.out.println("IO异常");
-        }
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("message", cnid);
+		map.put("isSuccess", true);
+		sendMessage(JSONObject.fromObject(map).toString());
     }
 
     /**
@@ -45,7 +55,6 @@ public class ScanLoginWebSocket {
     @OnClose
     public void onClose(Session session) {
     	scanLoginSocket.remove(this);  //从set中删除
-    	
     }
 
     /**
@@ -68,10 +77,9 @@ public class ScanLoginWebSocket {
         error.printStackTrace();
     }
 
-
-    public void sendMessage(String message) throws IOException {
+    public void sendMessage(String message){
     	//这个是同步，线程阻塞
-        this.session.getBasicRemote().sendText(message);
-        //this.session.getAsyncRemote().sendText(message);
+        //this.session.getBasicRemote().sendText(message);
+        this.session.getAsyncRemote().sendText(message);
     }
 }

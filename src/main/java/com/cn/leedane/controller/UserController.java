@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.exception.user.BannedAccountException;
 import com.cn.leedane.exception.user.CancelAccountException;
 import com.cn.leedane.exception.user.NoActiveAccountException;
@@ -796,8 +797,7 @@ public class UserController extends BaseController{
 		
 		UserBean user = userService.loginByPhone(getJsonFromMessage(message), request);
 		if(user == null){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
-			message.put("responseCode", EnumUtil.ResponseCode.用户不存在或请求参数不对.value);
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 		}else{
 			if(user.getStatus() == ConstantsUtil.STATUS_NO_TALK){
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已被禁言.value));
@@ -969,6 +969,31 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		message.putAll(userService.scanLogin(getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 扫码登陆验证
+	 * @return
+	 */
+	@RequestMapping(value = "/scan/check", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> checkToken(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        if(currentUser.isAuthenticated()){
+        	currentUser.getSession().setAttribute(USER_INFO_KEY, getUserFromMessage(message));
+        	message.put("isSuccess", true);
+        	message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您登录成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.恭喜您登录成功.value);
+        	return message.getMap();
+        }
+        
+        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.登录页面已经过期.value));
+		message.put("responseCode", EnumUtil.ResponseCode.登录页面已经过期.value);
 		return message.getMap();
 	}
 	

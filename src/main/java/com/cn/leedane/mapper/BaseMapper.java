@@ -33,6 +33,25 @@ public interface BaseMapper<T> {
     @DeleteProvider(type = SqlProvider.class, method = "deleteById")
     public int deleteById(Class<?> clazz, int id);
     
+    /**
+     * 批量删除
+     * @param clazz
+     * @param ids
+     * @return
+     */
+    @DeleteProvider(type = SqlProvider.class, method = "deleteByIds")
+    public int deleteByIds(Class<?> clazz, int ...ids);
+    
+    /**
+     * 批量删除
+     * @param clazz
+     * @param filed
+     * @param ids
+     * @return
+     */
+    @DeleteProvider(type = SqlProvider.class, method = "deleteByField")
+    public int deleteByField(Class<?> clazz, String filed, Object ...values);
+    
     @DeleteProvider(type = SqlProvider.class, method = "deleteSql")
     public int deleteSql(Class<?> clazz, String sql, Object ... params);
 

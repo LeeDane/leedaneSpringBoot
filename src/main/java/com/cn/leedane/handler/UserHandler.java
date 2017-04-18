@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -401,7 +400,7 @@ public class UserHandler {
 	 * @return
 	 */
 	public boolean addTokenCode(UserTokenBean userTokenBean){
-		String key = getRedisUserTokenKey(String.valueOf(userTokenBean.getCreateUserId()));
+		String key = getRedisUserTokenKey(userTokenBean.getCreateUserId(), userTokenBean.getId());
 		if(redisUtil.addString(key, userTokenBean.getToken()) && userTokenBean.getOverdue() != null){
 			int overdueTime = (int)(userTokenBean.getOverdue().getTime() - DateUtil.getCurrentTime().getTime()) / 1000;
 			if(overdueTime > 10)
@@ -417,11 +416,9 @@ public class UserHandler {
 	 * @param userid
 	 * @return
 	 */
-	public Set<String> getTokens(int userid){
-		String key = getRedisUserTokenKey(String.valueOf(userid));
-		Set<String> set = new HashSet<String>();
-		set.add(redisUtil.getString(key));
-		return set;
+	private Set<String> getTokens(int userid){
+		String key = getRedisUserTokenKey(userid, 0);
+		return redisUtil.keys(key);
 	}
 	
 	/**
@@ -430,8 +427,14 @@ public class UserHandler {
 	 * @return
 	 */
 	public boolean hasToken(int userid, String token){
-		String key = getRedisUserTokenKey(String.valueOf(userid));
-		return redisUtil.hasKey(key) && redisUtil.getString(key).equals(token);
+		Set<String> set = getTokens(userid);
+		if(set != null && set.size() > 0){
+			for(String str: set){
+				if(token.equals(redisUtil.getString(str)))
+					return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -498,8 +501,8 @@ public class UserHandler {
 	 * @param token
 	 * @return
 	 */
-	public static String getRedisUserTokenKey(String token){
-		return "user_token_a_"+token;
+	public static String getRedisUserTokenKey(int userId, int userTokenId){
+		return "user_token_a_"+userId +"_" + (userTokenId > 0? userTokenId : "*");
 	}
 	
 	/**

@@ -1,6 +1,7 @@
 package com.cn.leedane.mapper;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -14,7 +15,7 @@ import com.cn.leedane.model.UserTokenBean;
  */
 public interface UserTokenMapper  extends BaseMapper<UserTokenBean>{
 	
-	public UserTokenBean getUserToken(
+	public List<UserTokenBean> getUserToken(
 				@Param("createUserId") int createUserId, 
 				@Param("status") int status, 
 				@Param("token") String token, 

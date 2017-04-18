@@ -177,6 +177,38 @@ public class SqlProvider {
 		deleteSql.append(" delete from ").append(tableName).append(" where id="+id);
 		return deleteSql.toString();
 	}
+	
+	public String deleteByIds(Class<?> clazz, int ...ids) {
+		String tableName = getTableName(clazz);
+		StringBuilder deleteSql = new StringBuilder();
+		deleteSql.append(" delete from ").append(tableName).append(" where ");
+		for(int i = 0 ; i < ids.length; i++){
+			if(i == ids.length -1)
+				deleteSql.append(" id="+ids[i] );
+			else{
+				deleteSql.append(" id="+ids[i]);
+				deleteSql.append(" or ");
+			}
+		}
+			
+		return deleteSql.toString();
+	}
+	
+	public String deleteByField(Class<?> clazz, String field, Object[] values) {
+		String tableName = getTableName(clazz);
+		StringBuilder deleteSql = new StringBuilder();
+		deleteSql.append(" delete from ").append(tableName).append(" where ");
+		for(int i = 0 ; i < values.length; i++){
+			if(i == values.length -1)
+				deleteSql.append(field + "=" + values[i] );
+			else{
+				deleteSql.append(field + "=" + values[i]);
+				deleteSql.append(" or ");
+			}
+		}
+			
+		return deleteSql.toString();
+	}
 
 	/*public String findFirst(Object bean) {
 		Class<?> beanClass = bean.getClass();

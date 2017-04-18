@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 系统中相同部分的工具类
@@ -161,6 +162,20 @@ public class CommonUtil {
 		  url.append(request.getQueryString());
 		}
 		return url.toString();
+	}
+	
+	/**
+	 * 判断请求是否是页面，是页面请求才返回true
+	 * 注意：非page请求需要添加request的header X-Requested-With值为XMLHttpRequest
+	 * @param request
+	 * @return
+	 */
+	public static boolean isPageRequest(HttpServletRequest request, HttpServletResponse response){
+		
+		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With")))
+			return false;
+		
+		return true;
 	}
 	
 	/**
