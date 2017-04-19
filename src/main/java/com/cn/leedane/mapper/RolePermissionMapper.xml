@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.RolePermissionMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<insert id="insertByBatch" parameterType="java.util.List">
+        insert into t_role_permission (status, role_id, permission_id, create_user_id, create_time)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (1, #{item.role_id, jdbcType=INTEGER}, #{item.permission_id,jdbcType=INTEGER}, #{item.create_user_id,jdbcType=INTEGER},#{item.create_time,jdbcType=DATE})
+        </foreach>
+    </insert>
+</mapper>

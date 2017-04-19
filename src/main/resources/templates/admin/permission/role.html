@@ -17,6 +17,15 @@
 	   			margin-left: 10px!important;
 	   			margin-top: 10px!important;
 	   		}
+	   		
+	   		.label-primary{
+	   			cursor: pointer;
+	   			margin-right: 8px;
+	   		}
+	   		.label-info{
+	   			cursor: pointer;
+	   			margin-right: 8px;
+	   		}
 			
 	   	</style>
 	</head>
@@ -41,7 +50,7 @@
 							</button>
 		    			</li>
 		    			<li>
-		    				<button type="button" class="btn btn-danger btn-sm" onclick="deletePermission();">
+		    				<button type="button" class="btn btn-danger btn-sm" onclick="deletesPermission();">
 						  		<span class="glyphicon glyphicon-trash" aria-hidden="true"></span> 删除
 							</button>
 		    			</li>
@@ -53,14 +62,15 @@
 							<!-- <caption>响应式表格布局</caption> -->
 							<thead>
 								<tr>
-									<th width="30"><input type="checkbox" /></th>
+									<th width="30"><input type="checkbox" id="totalCheckbox"/></th>
 									<th>名称</th>
 									<th>编码</th>
 									<th>排序</th>
 									<th>描述</th>
+									<th>角色</th>
 									<th width="50">状态</th>
 									<th width="150">时间</th>
-									<th width="100">操作</th>
+									<th width="140">操作</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -200,6 +210,46 @@
 				</button>
 				<button type="button" class="btn btn-primary add-or-edit-permission-btn" onclick="addOrEditCommit(this);">
 					编辑/新增
+				</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+<!-- 模态框编辑 -->
+<div class="modal fade" data-id="" id="role-list" tabindex="-1" role="dialog" aria-labelledby="roleListModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="roleListModalLabel">
+					角色分配
+				</h4>
+			</div>
+			<div class="modal-body">
+				已经分配:
+				<div style="margin-bottom: 8px;" id="alreadyRoles">
+					<span class="label label-primary">Primary</span>
+					<span class="label label-primary">Primary</span>
+					<span class="label label-primary">Primary</span>
+					<span class="label label-primary">Primary</span>
+				</div>
+				
+				待分配:
+				<div id="notRoles">
+					<span class="label label-info">Info</span>
+					<span class="label label-info">Info</span>
+					<span class="label label-info">Info</span>
+					<span class="label label-info">Info</span>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭
+				</button>
+				<button type="button" class="btn btn-primary role-list-btn" onclick="role(this);">
+					分配
 				</button>
 			</div>
 		</div><!-- /.modal-content -->

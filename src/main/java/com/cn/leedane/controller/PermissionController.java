@@ -5,10 +5,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cn.leedane.model.PermissionBean;
 import com.cn.leedane.service.PermissionService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 /**
@@ -66,7 +70,7 @@ public class PermissionController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/permission/{pmid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(HttpServletRequest request, @PathParam("pmid") int pmid){
+	public Map<String, Object> delete(HttpServletRequest request, @PathVariable("pmid") int pmid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -100,6 +104,37 @@ public class PermissionController extends BaseController{
 			return message.getMap();
 		
 		message.putAll(permissionService.deletes(pmids, getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 分页获取权限列表
+	 * @return
+	 */
+	@RequestMapping(value = "/permission/{pmid}/roles", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> roles(HttpServletRequest request, @PathVariable("pmid") int pmid){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		message.putAll(permissionService.roles(pmid, getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 角色的分配
+	 * @return
+	 */
+	@RequestMapping(value = "/permission/{pmid}/roles/allot", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> allot(HttpServletRequest request, @PathVariable("pmid") int pmid){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		JSONObject json = getJsonFromMessage(message);
+		String roles = JsonUtil.getStringValue(json, "roles");
+		
+		message.putAll(permissionService.allot(pmid, roles, getUserFromMessage(message), request));
 		return message.getMap();
 	}
 }

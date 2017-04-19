@@ -64,4 +64,23 @@ public interface PermissionService <T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> deletes(String pmids, UserBean user, HttpServletRequest request);
+	
+	/**
+	 * 根据权限ID获取角色列表
+	 * @param pmid
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> roles(int pmid, UserBean user, HttpServletRequest request);
+
+	/**
+	 * 给角色分配权限
+	 * @param pmid
+	 * @param roles
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> allot(int pmid,String roles, UserBean user, HttpServletRequest request);
 }

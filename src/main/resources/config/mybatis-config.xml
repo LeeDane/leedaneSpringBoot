@@ -76,6 +76,7 @@
 		<mapper resource="com/cn/leedane/mapper/TemporaryBase64Mapper.xml" />
 		<mapper resource="com/cn/leedane/mapper/TransmitMapper.xml" />
 		<mapper resource="com/cn/leedane/mapper/UploadMapper.xml" /> -->
+		<mapper resource="com/cn/leedane/mapper/PermissionMapper.xml" />
 		<mapper resource="com/cn/leedane/mapper/UserMapper.xml" />
 		<mapper resource="com/cn/leedane/mapper/UserRoleMapper.xml" />
 		<mapper resource="com/cn/leedane/mapper/UserTokenMapper.xml" />

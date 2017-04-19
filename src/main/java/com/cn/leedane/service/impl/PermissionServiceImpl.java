@@ -1,7 +1,7 @@
 package com.cn.leedane.service.impl;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
 
+import org.apache.ibatis.type.JdbcType;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.PermissionService;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
@@ -127,6 +129,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		
 		sql.append("select p.id, p.permission_desc, p.permission_name, p.permission_code, p.permission_order, date_format(p.create_time,'%Y-%m-%d %H:%i:%s') create_time , p.create_user_id, p.status");
+		sql.append(", (select group_concat(r.role_code) from t_role_permission rp INNER JOIN t_role r on rp.role_id = r.id where rp.permission_id = p.id) roles");
 		sql.append(" from "+DataTableType.权限.value+" p ");
 		sql.append(" order by p.permission_order desc limit ?,?");
 		rs = permissionMapper.executeSQL(sql.toString(), start, pageSize);
@@ -188,6 +191,70 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			}
 		
+		
+		return message.getMap();
+	}
+
+	@Override
+	public Map<String, Object> roles(int pmid, UserBean user,
+			HttpServletRequest request) {
+		logger.info("PermissionServiceImpl-->roles():pmid="+pmid);
+		ResponseMap message = new ResponseMap();
+		List<Map<String, Object>> rs = permissionMapper.roles(pmid);
+				
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取角色列表").toString(), "roles()", ConstantsUtil.STATUS_NORMAL, 0);		
+		message.put("message", rs);
+		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		message.put("isSuccess", true);
+		
+		return message.getMap();
+	}
+
+	@Override
+	public Map<String, Object> allot(int pmid, String roles, UserBean user,
+			HttpServletRequest request) {
+		logger.info("PermissionServiceImpl-->allot():pmid="+pmid +", roles="+ roles);
+		
+		ResponseMap message = new ResponseMap();
+		
+		//根据权限id去删除所有相关的角色
+		String[] roleArray = roles.split(",");
+		int[] roleIds = new int[roleArray.length];
+		for(int i = 0; i < roleArray.length; i++){
+			roleIds[i] = StringUtil.changeObjectToInt(roleArray[i]);
+		}
+		
+		rolePermissionMapper.deleteByField(RolePermissionBean.class, "permission_id", pmid);
+		
+		//RolePermissionBean rolePermissionBean;
+		Date createTime = DateUtil.getCurrentTime();
+		List<Map<String, Object>> data = new ArrayList<Map<String,Object>>();
+		for(int roleId: roleIds){
+			Map<String, Object> map = new HashMap<String, Object>();
+			//rolePermissionBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+			//rolePermissionBean.setCreateTime(createTime);
+			//rolePermissionBean.setCreateUserId(user.getId());
+			//rolePermissionBean.se
+			map.put("role_id", roleId);
+			map.put("permission_id", pmid);
+			map.put("create_user_id", user.getId());
+			map.put("create_time", createTime);
+			data.add(map);
+		}
+		
+		//删除所有的
+		
+		if(StringUtil.isNotNull(roles)){
+			rolePermissionMapper.insertByBatch(data);
+		}
+		
+				
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给权限ID为"+ pmid +",分配角色ids"+roles).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, 0);		
+		message.put("message", "操作成功");
+		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		message.put("isSuccess", true);
 		
 		return message.getMap();
 	}

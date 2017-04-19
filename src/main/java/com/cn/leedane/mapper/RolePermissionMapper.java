@@ -1,5 +1,8 @@
 package com.cn.leedane.mapper;
 
+import java.util.List;
+import java.util.Map;
+
 import com.cn.leedane.model.RolePermissionBean;
 
 /**
@@ -9,5 +12,5 @@ import com.cn.leedane.model.RolePermissionBean;
  * version 1.0
  */
 public interface RolePermissionMapper extends BaseMapper<RolePermissionBean>{
-	
+	public void insertByBatch(List<Map<String, Object>> data);
 }

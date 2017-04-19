@@ -261,7 +261,7 @@ public class MoodController extends BaseController{
 	 * @return 返回心情的内容，图片地址（120x120大小的图像）
 	 */
 	@RequestMapping(value = "/detail", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> detail(HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> detail(HttpServletRequest request){
 		try {
 			ResponseMap message = new ResponseMap();
 			if(!checkParams(message, request))

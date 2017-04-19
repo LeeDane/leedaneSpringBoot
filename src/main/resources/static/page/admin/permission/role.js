@@ -5,11 +5,24 @@ var totalPage = 0;
 //浏览器可视区域页面的高度
 $(function(){
 	
-	$("input[type='checkbox']").toggle(function(){
-		//$("tr.each-row").find("input[type='checkbox']").attr("checked", "checked");
-	}, function(){
-		//$("tr.each-row").find("input[type='checkbox']").removeAttr("checked");
+	$("#totalCheckbox").change(function(){
+		if(!$(this).hasClass("checked")){
+			$("tr.each-row").find("input[type='checkbox']").each(function(){
+				$(this).prop("checked", "true");
+			});
+			$(this).addClass("checked");
+		}else{
+			$("tr.each-row").find("input[type='checkbox']").each(function(){
+				$(this).removeAttr("checked");
+			});
+			$(this).removeClass("checked");
+		}
+			
 	});
+	$("tr.each-row").find("input[type='checkbox']").on("click", function(){
+		alert("ddd");
+	});
+	
 	//默认查询操作
 	getPermissions();
 });
@@ -92,9 +105,68 @@ function editPermission(){
 }
 
 /**
- * 删除权限
+ * 修改权限
  */
-function deletePermission(){
+function rowEditPermission(obj){
+	var tr = $(obj).closest("tr.each-row");
+	var index = tr.attr("index");
+	
+	var permission = permissions[index];
+	$("#add-or-edit-permission").attr("data-id", permission.id);
+	$("#add-or-edit-permission").find('input[name="code"]').val(permission.permission_code);
+	$("#add-or-edit-permission").find('input[name="name"]').val(permission.permission_name);
+	$("#add-or-edit-permission").find('input[name="order"]').val(permission.permission_order);
+	$("#add-or-edit-permission").find('textarea[name="desc"]').val(permission.permission_desc);
+	if(permission.status == 1){
+		$("#add-or-edit-permission").find('input[name1="status_normal"]').attr("checked", "checked");
+		$("#add-or-edit-permission").find('input[name1="status_disabled"]').removeAttr("checked");
+	}else{
+		$("#add-or-edit-permission").find('input[name1="status_disabled"]').attr("checked", "checked");
+		$("#add-or-edit-permission").find('input[name1="status_normal"]').removeAttr("checked");
+	}
+	$("#add-or-edit-permission").modal("show");
+}
+
+/**
+ * 删除单个权限
+ */
+function rowDeletePermission(obj){
+	var tr = $(obj).closest("tr.each-row");
+	var dataId = tr.attr("data-id");
+	
+	layer.confirm('您要删除这1条权限记录吗？', {
+		  btn: ['确定','点错了'] //按钮
+	}, function(){
+		var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+		$.ajax({
+			type: "delete",
+			url : "/pm/permission/" + dataId,
+			dataType: 'json', 
+			beforeSend:function(){
+			},
+			success : function(data) {
+				layer.close(loadi);
+				if(data.isSuccess){
+					layer.msg(data.message + ",1秒后自动刷新");
+					reloadPage(1000);
+				}else{
+					ajaxError(data);
+				}
+			},
+			error : function(data) {
+				layer.close(loadi);
+				ajaxError(data);
+			}
+		});
+	}, function(){
+	});
+	
+}
+
+/**
+ * 删除多个权限
+ */
+function deletesPermission(){
 	var checkboxs = $("tr.each-row").find('input[type="checkbox"]:checked');
 	
 	if(!checkboxs || checkboxs.length == 0){
@@ -136,6 +208,123 @@ function deletePermission(){
 	}, function(){
 	});
 	
+}
+
+/**
+ * 展示角色列表
+ * @param obj
+ * @param pmid
+ */
+function showRoleList(obj, pmid){
+	//获取所有的角色列表
+	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+	$.ajax({
+		url : "/pm/permission/"+ pmid +"/roles",
+		dataType: 'json', 
+		beforeSend:function(){
+			$("#alreadyRoles").html("");
+			$("#notRoles").html("");
+		},
+		success : function(data) {
+			layer.close(loadi);
+			if(data.isSuccess){
+				for(var i = 0 ; i < data.message.length; i++){
+					if(isEmpty(data.message[i].has)){
+						buildNotRolesHtml(data.message[i]);
+					}else{
+						buildAlreadyRolesHtml(data.message[i]);
+					}
+				}
+				$("#role-list").modal("show");
+				$("#role-list").attr("data-id", pmid)
+			}else{
+				ajaxError(data);
+			}
+		},
+		error : function(data) {
+			layer.close(loadi);
+			ajaxError(data);
+		}
+	});
+	
+}
+
+/**
+ * 添加没有分配角色的html
+ * @param role
+ */
+function buildNotRolesHtml(role){
+	var html = '<span class="label label-info" data-id="'+ role.id +'" onclick="notClick(this);">'+ role.role_code +'</span>';
+	$("#notRoles").append(html);
+}
+
+/**
+ * 添加已经分配角色的html
+ * @param role
+ */
+function buildAlreadyRolesHtml(role){
+	var html = '<span class="label label-primary" data-id="'+ role.id +'" onclick="alreadyClick(this);">'+ role.role_code +'</span>';
+	$("#alreadyRoles").append(html);
+}
+
+/**
+ * 将已经分配的取消，加入待分配列表
+ * @param obj
+ */
+function notClick(obj){
+	var role = {};
+	role.id = $(obj).attr("data-id");
+	role.role_code = $(obj).text();
+	$(obj).remove();
+	buildAlreadyRolesHtml(role);
+}
+
+/**
+ * 将已经分配的取消，加入待分配列表
+ * @param obj
+ */
+function alreadyClick(obj){
+	var role = {};
+	role.id = $(obj).attr("data-id");
+	role.role_code = $(obj).text();
+	$(obj).remove();
+	buildNotRolesHtml(role);
+}
+
+/**
+ * 分配权限操作
+ * @param obj
+ */
+function role(obj){
+	var modal = $(obj).closest(".modal");
+	var pmid = modal.attr("data-id");
+	var alreadyRoles = modal.find("#alreadyRoles span");
+	var roleIds = "";
+	alreadyRoles.each(function(){
+		roleIds += $(this).attr("data-id") +",";
+	});
+	
+	roleIds = deleteLastStr(roleIds);
+	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+	$.ajax({
+		url : "/pm/permission/"+ pmid +"/roles/allot?roles="+ roleIds,
+		dataType: 'json', 
+		beforeSend:function(){
+		},
+		success : function(data) {
+			layer.close(loadi);
+			if(data.isSuccess){
+				layer.msg(data.message + ",1秒后自动刷新");
+				reloadPage(1000);
+			}else{
+				ajaxError(data);
+			}
+		},
+		error : function(data) {
+			layer.close(loadi);
+			ajaxError(data);
+		}
+	});
 }
 
 /**
@@ -206,10 +395,20 @@ function buildRow(permission, index){
 					'<td>'+ permission.permission_name+'</td>'+
 					'<td>'+ permission.permission_code+'</td>'+
 					'<td>'+ permission.permission_order+'</td>'+
-					'<td>'+ permission.permission_desc+'</td>'+
-					'<td>'+ (permission.status == 1? '正常': '禁用')+'</td>'+
+					'<td>'+ permission.permission_desc+'</td>';
+		if(isNotEmpty(permission.roles)){
+			var roles = permission.roles.split(",");
+			html += '<td>';
+			for(var rl = 0; rl < roles.length; rl++)
+				html += '<span class="label label-primary">'+ roles[rl] +'</span>';
+			
+			html += '</td>';
+		}else{
+			html += '<td></td>';
+		}
+		html += '<td>'+ (permission.status == 1? '正常': '禁用')+'</td>'+
 					'<td>'+ permission.create_time+'</td>'+
-					'<td><a href="">编辑</a><a href="" style="margin-left: 10px;">删除</a></td>'+
+					'<td><a href="javascript:void(0);" onclick="showRoleList(this, '+ permission.id +');" style="margin-left: 10px;">分配</a><a href="javascript:void(0);" onclick="rowEditPermission(this);" style="margin-left: 10px;">编辑</a><a href="javascript:void(0);" onclick="rowDeletePermission(this);" style="margin-left: 10px;">删除</a></td>'+
 				'</tr>';
 	return html;
 }
