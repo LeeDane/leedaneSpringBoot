@@ -2,7 +2,6 @@ package com.cn.leedane.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CommonHandler;
 import com.cn.leedane.handler.FriendHandler;
 import com.cn.leedane.handler.UserHandler;
@@ -26,9 +26,10 @@ import com.cn.leedane.service.AttentionService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
 /**
  * 关注service的实现类
@@ -64,20 +65,17 @@ public class AttentionServiceImpl extends AdminRoleCheckService implements Atten
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
 		int tableId = JsonUtil.getIntValue(jo, "table_id");
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-	
+		ResponseMap message = new ResponseMap();
+		
 		if(SqlUtil.getBooleanByList(attentionMapper.exists(AttentionBean.class, tableName, tableId, user.getId()))){
 			message.put("message", "您已关注，请勿重复关注！");
 			message.put("responseCode", EnumUtil.ResponseCode.添加的记录已经存在.value);
-			return message;
+			return message.getMap();
 		}
 		
-		if(!SqlUtil.getBooleanByList(attentionMapper.recordExists(tableName, tableId))){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-			return message;
-		}
+		if(!SqlUtil.getBooleanByList(attentionMapper.recordExists(tableName, tableId)))
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
+			
 		AttentionBean bean = new AttentionBean();
 		bean.setCreateTime(new Date());
 		bean.setCreateUserId(user.getId());
@@ -96,7 +94,7 @@ public class AttentionServiceImpl extends AdminRoleCheckService implements Atten
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		message.put("isSuccess", result);
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -106,23 +104,14 @@ public class AttentionServiceImpl extends AdminRoleCheckService implements Atten
 		int aid = JsonUtil.getIntValue(jo, "aid");
 		//int createUserId = JsonUtil.getIntValue(jo, "create_user_id");
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		
-		if(aid < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作实例.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();		
+		if(aid < 1)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
 		
 		AttentionBean attentionBean = attentionMapper.findById(AttentionBean.class, aid);
 		
 		//非登录用户不能删除操作
-		if(!checkAdmin(user, attentionBean.getCreateUserId())){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-			return message;
-		}
+		checkAdmin(user, attentionBean.getCreateUserId());
 		
 		boolean result = attentionMapper.deleteById(AttentionBean.class, attentionBean.getId()) > 0;
 		if(result){
@@ -134,7 +123,7 @@ public class AttentionServiceImpl extends AdminRoleCheckService implements Atten
 		}	
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除关注ID为", aid, "的数据", StringUtil.getSuccessOrNoStr(result)).toString(), "deleteAttention()", ConstantsUtil.STATUS_NORMAL, 0);
-		return message;
+		return message.getMap();
 	}
 
 	@Override

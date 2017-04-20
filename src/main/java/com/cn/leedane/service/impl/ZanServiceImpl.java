@@ -2,7 +2,6 @@ package com.cn.leedane.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,13 +15,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.handler.CommonHandler;
 import com.cn.leedane.handler.FriendHandler;
 import com.cn.leedane.handler.NotificationHandler;
@@ -35,6 +27,14 @@ import com.cn.leedane.model.ZanBean;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.ZanService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.EnumUtil.NotificationType;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.SqlUtil;
+import com.cn.leedane.utils.StringUtil;
 /**
  * 赞service的实现类
  * @author LeeDane
@@ -75,18 +75,17 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 		String content = JsonUtil.getStringValue(jo, "content");
 		String froms = JsonUtil.getStringValue(jo, "froms");
 		int tableId = JsonUtil.getIntValue(jo, "table_id", 0);
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if(SqlUtil.getBooleanByList(zanMapper.exists(ZanBean.class, tableName, tableId, user.getId()))){
 			message.put("message", "您已点赞，请勿重复操作！");
 			message.put("responseCode", EnumUtil.ResponseCode.添加的记录已经存在.value);
-			return message;
+			return message.getMap();
 		}
 		
 		if(!SqlUtil.getBooleanByList(zanMapper.recordExists(tableName, tableId))){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-			return message;
+			return message.getMap();
 		}
 		ZanBean bean = new ZanBean();
 		bean.setCreateTime(new Date());
@@ -114,7 +113,7 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 		//记录到redis服务器中
 		zanHandler.addZanUser(tableId, tableName, user);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -207,20 +206,19 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 		int zid = JsonUtil.getIntValue(jo, "zid");
 		int createUserId = JsonUtil.getIntValue(jo, "create_user_id");
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		//非登录用户不能删除操作
 		if(createUserId != user.getId()){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请先登录.value);
-			return message;
+			return message.getMap();
 		}
 		
 		if(zid < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
 			message.put("responseCode", EnumUtil.ResponseCode.没有操作实例.value);
-			return message;
+			return message.getMap();
 		}
 		
 		boolean result = false;
@@ -239,19 +237,17 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 		}			
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除赞ID为", zid, "的数据", StringUtil.getSuccessOrNoStr(result)).toString(), "deleteZan()", StringUtil.changeBooleanToInt(result), 0);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> getAllZanUser(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("ZanServiceImpl-->getAllZanUser():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		int tableId = JsonUtil.getIntValue(jo, "table_id");
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
-		
-		
+
 		if(tableId == 0 || StringUtil.isNull(tableName)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
@@ -283,7 +279,7 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取表ID为：", tableId, ",表名为：", tableName, "的全部赞用户", StringUtil.getSuccessOrNoStr(true)).toString(), "getAllZanUser()", ConstantsUtil.STATUS_NORMAL, 0);
 		
-		return message;
+		return message.getMap();
 	}
 
 	@Override

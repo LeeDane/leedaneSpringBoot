@@ -58,6 +58,7 @@ public class FilePathController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		List<Map<String, Object>> result= filePathService.getUserImageByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
 		System.out.println("获得文件路径的数量：" +result.size());
 		message.put("isSuccess", true);
@@ -78,6 +79,8 @@ public class FilePathController extends BaseController{
     	if(!checkParams(message, request))
 			return message.getMap();
 		
+    	checkRoleOrPermission(request);
+    	
     	JSONObject json = getJsonFromMessage(message);
     	UserBean user = getUserFromMessage(message);
     	String fileName = JsonUtil.getStringValue(json, "fileName");//必须
@@ -89,7 +92,7 @@ public class FilePathController extends BaseController{
         
     	
     	//只有APP_Version才需要版本号和版本描述信息
-    	if(user.isAdmin() && ConstantsUtil.UPLOAD_APP_VERSION_TABLE_NAME.equalsIgnoreCase(tableName)){
+    	if(ConstantsUtil.UPLOAD_APP_VERSION_TABLE_NAME.equalsIgnoreCase(tableName)){
 			if(StringUtil.isNull(version) || StringUtil.isNull(desc)){
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 				message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
@@ -151,6 +154,8 @@ public class FilePathController extends BaseController{
     	if(!checkParams(message, request))
 			return message.getMap();
 		
+    	checkRoleOrPermission(request);
+    	
     	JSONObject json = getJsonFromMessage(message);
     	UserBean user = getUserFromMessage(message);
     	String tableUuid = JsonUtil.getStringValue(json, "uuid"); //客户端生成的唯一性uuid标识符
@@ -199,6 +204,8 @@ public class FilePathController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
+		
 		message.putAll(filePathService.getUploadFileByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -212,6 +219,8 @@ public class FilePathController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
+		
+		checkRoleOrPermission(request);
 		
 		message.putAll(userService.uploadUserHeadImageLink(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();

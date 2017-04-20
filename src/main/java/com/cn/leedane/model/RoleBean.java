@@ -2,6 +2,10 @@ package com.cn.leedane.model;
 
 import java.util.List;
 
+import org.apache.solr.client.solrj.beans.Field;
+
+import com.cn.leedane.mybatis.table.annotation.Column;
+
 
 /**
  * 用户角色的实体类(需要单独去维持)
@@ -14,12 +18,20 @@ public class RoleBean extends RecordTimeBean{
 	
 	private static final long serialVersionUID = 1L;
 
+	@Column("role_name")
+	@Field
     private String name;
         
+	@Column("role_order")
+	@Field
     private int order; //角色排序
     
+	@Column("role_desc")
+	@Field
     private String desc; //角色描述信息
     
+	@Column("role_code")
+	@Field
     private String code; //唯一编码
     
     private List<PermissionBean> permissions; //权限的列表

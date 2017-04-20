@@ -38,6 +38,7 @@ public class CollectionController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(collectionService.addCollect(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -52,6 +53,7 @@ public class CollectionController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(collectionService.deleteCollection(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -66,6 +68,7 @@ public class CollectionController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		//为了安全，必须是登录用户才能操作
 		int toUserId = JsonUtil.getIntValue(getJsonFromMessage(message), "toUserId");
 		if(toUserId != getUserFromMessage(message).getId()){

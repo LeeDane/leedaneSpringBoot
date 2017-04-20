@@ -1,7 +1,6 @@
 package com.cn.leedane.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,11 +12,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CommonHandler;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
@@ -28,6 +23,12 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.NotificationService;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.StringUtil;
 /**
  * 通知service的实现类
  * @author LeeDane
@@ -67,13 +68,10 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
 		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		if(StringUtil.isNull(type)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该通知类型不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.该通知类型不存在.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+		if(StringUtil.isNull(type))
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该通知类型不存在.value));
+			
 		StringBuffer sql = new StringBuffer();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		//分页查找该用户的通知列表
@@ -116,20 +114,20 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取收到的通知列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("isSuccess", true);
 		message.put("message", rs);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> sendBroadcast(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("NotificationServiceImpl-->sendBroadcast():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
+		
 		String broadcast = JsonUtil.getStringValue(jo, "broadcast");
 		if(StringUtil.isNull(broadcast)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		boolean result = notificationHandler.sendBroadcast(broadcast);
@@ -137,33 +135,24 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"向所有在线用户发送通知", StringUtil.getSuccessOrNoStr(result)).toString(), "sendBroadcast()", StringUtil.changeBooleanToInt(result), 0);
 		message.put("isSuccess", result);
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
 	public Map<String, Object> deleteNotification(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("NotificationServiceImpl-->deleteNotification():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		int nid = JsonUtil.getIntValue(jo, "nid");
-		if(nid < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-			return message;
-		}
-		NotificationBean notificationBean = notificationMapper.findById(NotificationBean.class, nid);
-		if(notificationBean == null){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除的通知不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.删除的通知不存在.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
 		
-		if(!checkAdmin(user, notificationBean.getToUserId())){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-			return message;
-		}
+		int nid = JsonUtil.getIntValue(jo, "nid");
+		if(nid < 1)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
+			
+		NotificationBean notificationBean = notificationMapper.findById(NotificationBean.class, nid);
+		if(notificationBean == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除的通知不存在.value));
+		
+		checkAdmin(user, notificationBean.getToUserId());
 		
 		boolean result = false;
 		result = notificationMapper.deleteById(NotificationBean.class, nid) > 0;
@@ -178,7 +167,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"刪除通知Id为：", nid , StringUtil.getSuccessOrNoStr(result)).toString(), "deleteNotification()", StringUtil.changeBooleanToInt(result), 0);
 		message.put("isSuccess", result);
-		return message;
+		return message.getMap();
 	}
 
 	@Override

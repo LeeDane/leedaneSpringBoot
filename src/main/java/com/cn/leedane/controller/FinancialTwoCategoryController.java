@@ -37,6 +37,7 @@ public class FinancialTwoCategoryController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialTwoCategoryService.getAll(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }

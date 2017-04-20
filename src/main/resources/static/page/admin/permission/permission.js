@@ -1,6 +1,6 @@
-var roles;
+var permissions;
 var currentIndex = 0;
-var pageSize = 2;
+var pageSize = 8;
 var totalPage = 0;
 //浏览器可视区域页面的高度
 $(function(){
@@ -24,16 +24,16 @@ $(function(){
 	});
 	
 	//默认查询操作
-	getRoles();
+	getPermissions();
 });
 
 /**
 * 查询
 */
-function getRoles(){
+function getPermissions(){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
-		url : "/rl/roles?"+ jsonToGetRequestParams(getQueryPagingParams()),
+		url : "/pm/permissions?"+ jsonToGetRequestParams(getQueryPagingParams()),
 		dataType: 'json', 
 		beforeSend:function(){
 		
@@ -48,9 +48,9 @@ function getRoles(){
 					return;
 				}
 				
-				roles = data.message;
-				for(var i = 0; i < roles.length; i++){
-					$(".table").append(buildRow(roles[i], i));
+				permissions = data.message;
+				for(var i = 0; i < permissions.length; i++){
+					$(".table").append(buildRow(permissions[i], i));
 				}
 				
 				pageDivUtil(data.total);
@@ -67,80 +67,80 @@ function getRoles(){
 }
 
 /**
- * 添加角色
+ * 添加权限
  */
-function addRole(){
-	$("#add-or-edit-role").modal("show");
+function addPermission(){
+	$("#add-or-edit-permission").modal("show");
 }
 
 /**
- * 修改角色
+ * 修改权限
  */
-function editRole(){
+function editPermission(){
 	var checkboxs = $("tr.each-row").find('input[type="checkbox"]:checked');
 	
 	if(!checkboxs || checkboxs.length == 0){
-		layer.msg("请选择您要编辑的角色");
+		layer.msg("请选择您要编辑的权限");
 		return;
 	}
 	if(checkboxs && checkboxs.length > 1 ){
-		layer.msg("一次只能编辑一个角色");
+		layer.msg("一次只能编辑一个权限");
 		return;
 	}
 	
-	var role = roles[$(checkboxs[0]).closest("tr").attr("index")];
-	$("#add-or-edit-role").attr("data-id", role.id);
-	$("#add-or-edit-role").find('input[name="code"]').val(role.role_code);
-	$("#add-or-edit-role").find('input[name="name"]').val(role.role_name);
-	$("#add-or-edit-role").find('input[name="order"]').val(role.role_order);
-	$("#add-or-edit-role").find('textarea[name="desc"]').val(role.role_desc);
-	if(role.status == 1){
-		$("#add-or-edit-role").find('input[name1="status_normal"]').attr("checked", "checked");
-		$("#add-or-edit-role").find('input[name1="status_disabled"]').removeAttr("checked");
+	var permission = permissions[$(checkboxs[0]).closest("tr").attr("index")];
+	$("#add-or-edit-permission").attr("data-id", permission.id);
+	$("#add-or-edit-permission").find('input[name="code"]').val(permission.permission_code);
+	$("#add-or-edit-permission").find('input[name="name"]').val(permission.permission_name);
+	$("#add-or-edit-permission").find('input[name="order"]').val(permission.permission_order);
+	$("#add-or-edit-permission").find('textarea[name="desc"]').val(permission.permission_desc);
+	if(permission.status == 1){
+		$("#add-or-edit-permission").find('input[name1="status_normal"]').attr("checked", "checked");
+		$("#add-or-edit-permission").find('input[name1="status_disabled"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role").find('input[name1="status_disabled"]').attr("checked", "checked");
-		$("#add-or-edit-role").find('input[name1="status_normal"]').removeAttr("checked");
+		$("#add-or-edit-permission").find('input[name1="status_disabled"]').attr("checked", "checked");
+		$("#add-or-edit-permission").find('input[name1="status_normal"]').removeAttr("checked");
 	}
-	$("#add-or-edit-role").modal("show");
+	$("#add-or-edit-permission").modal("show");
 }
 
 /**
- * 修改角色
+ * 修改权限
  */
-function rowEditRole(obj){
+function rowEditPermission(obj){
 	var tr = $(obj).closest("tr.each-row");
 	var index = tr.attr("index");
 	
-	var role = roles[index];
-	$("#add-or-edit-role").attr("data-id", role.id);
-	$("#add-or-edit-role").find('input[name="code"]').val(role.role_code);
-	$("#add-or-edit-role").find('input[name="name"]').val(role.role_name);
-	$("#add-or-edit-role").find('input[name="order"]').val(role.role_order);
-	$("#add-or-edit-role").find('textarea[name="desc"]').val(role.role_desc);
-	if(role.status == 1){
-		$("#add-or-edit-role").find('input[name1="status_normal"]').attr("checked", "checked");
-		$("#add-or-edit-role").find('input[name1="status_disabled"]').removeAttr("checked");
+	var permission = permissions[index];
+	$("#add-or-edit-permission").attr("data-id", permission.id);
+	$("#add-or-edit-permission").find('input[name="code"]').val(permission.permission_code);
+	$("#add-or-edit-permission").find('input[name="name"]').val(permission.permission_name);
+	$("#add-or-edit-permission").find('input[name="order"]').val(permission.permission_order);
+	$("#add-or-edit-permission").find('textarea[name="desc"]').val(permission.permission_desc);
+	if(permission.status == 1){
+		$("#add-or-edit-permission").find('input[name1="status_normal"]').attr("checked", "checked");
+		$("#add-or-edit-permission").find('input[name1="status_disabled"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role").find('input[name1="status_disabled"]').attr("checked", "checked");
-		$("#add-or-edit-role").find('input[name1="status_normal"]').removeAttr("checked");
+		$("#add-or-edit-permission").find('input[name1="status_disabled"]').attr("checked", "checked");
+		$("#add-or-edit-permission").find('input[name1="status_normal"]').removeAttr("checked");
 	}
-	$("#add-or-edit-role").modal("show");
+	$("#add-or-edit-permission").modal("show");
 }
 
 /**
- * 删除单个角色
+ * 删除单个权限
  */
-function rowDeleteRole(obj){
+function rowDeletePermission(obj){
 	var tr = $(obj).closest("tr.each-row");
 	var dataId = tr.attr("data-id");
 	
-	layer.confirm('您要删除这1条角色记录吗？', {
+	layer.confirm('您要删除这1条权限记录吗？', {
 		  btn: ['确定','点错了'] //按钮
 	}, function(){
 		var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 		$.ajax({
 			type: "delete",
-			url : "/rl/role/" + dataId,
+			url : "/pm/permission/" + dataId,
 			dataType: 'json', 
 			beforeSend:function(){
 			},
@@ -164,30 +164,30 @@ function rowDeleteRole(obj){
 }
 
 /**
- * 删除多个角色
+ * 删除多个权限
  */
-function deletesRole(){
+function deletesPermission(){
 	var checkboxs = $("tr.each-row").find('input[type="checkbox"]:checked');
 	
 	if(!checkboxs || checkboxs.length == 0){
-		layer.msg("请选择您要删除的角色");
+		layer.msg("请选择您要删除的权限");
 		return;
 	}
 	
-	layer.confirm('您要删除这'+ checkboxs.length +'条角色记录吗？', {
+	layer.confirm('您要删除这'+ checkboxs.length +'条权限记录吗？', {
 		  btn: ['确定','点错了'] //按钮
 	}, function(){
-		var rlids = "";
+		var pmids = "";
 		for(var i = 0; i < checkboxs.length; i++){
-			rlids += $(checkboxs[i]).closest("tr.each-row").attr("data-id") +",";
+			pmids += $(checkboxs[i]).closest("tr.each-row").attr("data-id") +",";
 		}
 		
-		rlids = deleteLastStr(rlids);
+		pmids = deleteLastStr(pmids);
 		
 		var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 		$.ajax({
 			type: "delete",
-			url : "/rl/roles?rlids=" + rlids,
+			url : "/pm/permissions?pmids=" + pmids,
 			dataType: 'json', 
 			beforeSend:function(){
 			},
@@ -213,30 +213,30 @@ function deletesRole(){
 /**
  * 展示角色列表
  * @param obj
- * @param rlid
+ * @param pmid
  */
-function showUserList(obj, rlid){
+function showRoleList(obj, pmid){
 	//获取所有的角色列表
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
-		url : "/rl/role/"+ rlid +"/users",
+		url : "/pm/permission/"+ pmid +"/roles",
 		dataType: 'json', 
 		beforeSend:function(){
-			$("#alreadyUsers").html("");
-			$("#notUsers").html("");
+			$("#alreadyRoles").html("");
+			$("#notRoles").html("");
 		},
 		success : function(data) {
 			layer.close(loadi);
 			if(data.isSuccess){
 				for(var i = 0 ; i < data.message.length; i++){
 					if(isEmpty(data.message[i].has)){
-						buildNotUsersHtml(data.message[i]);
+						buildNotRolesHtml(data.message[i]);
 					}else{
-						buildAlreadyUsersHtml(data.message[i]);
+						buildAlreadyRolesHtml(data.message[i]);
 					}
 				}
 				$("#role-list").modal("show");
-				$("#role-list").attr("data-id", rlid)
+				$("#role-list").attr("data-id", pmid)
 			}else{
 				ajaxError(data);
 			}
@@ -251,20 +251,20 @@ function showUserList(obj, rlid){
 
 /**
  * 添加没有分配角色的html
- * @param user
+ * @param role
  */
-function buildNotUsersHtml(user){
-	var html = '<span class="label label-info" data-id="'+ user.id +'" onclick="notClick(this);">'+ user.account +'</span>';
-	$("#notUsers").append(html);
+function buildNotRolesHtml(role){
+	var html = '<span class="label label-info" data-id="'+ role.id +'" onclick="notClick(this);">'+ role.role_code +'</span>';
+	$("#notRoles").append(html);
 }
 
 /**
  * 添加已经分配角色的html
- * @param user
+ * @param role
  */
-function buildAlreadyUsersHtml(user){
-	var html = '<span class="label label-primary" data-id="'+ user.id +'" onclick="alreadyClick(this);">'+ user.account +'</span>';
-	$("#alreadyUsers").append(html);
+function buildAlreadyRolesHtml(role){
+	var html = '<span class="label label-primary" data-id="'+ role.id +'" onclick="alreadyClick(this);">'+ role.role_code +'</span>';
+	$("#alreadyRoles").append(html);
 }
 
 /**
@@ -272,11 +272,11 @@ function buildAlreadyUsersHtml(user){
  * @param obj
  */
 function notClick(obj){
-	var user = {};
-	user.id = $(obj).attr("data-id");
-	user.account = $(obj).text();
+	var role = {};
+	role.id = $(obj).attr("data-id");
+	role.role_code = $(obj).text();
 	$(obj).remove();
-	buildAlreadyUsersHtml(user);
+	buildAlreadyRolesHtml(role);
 }
 
 /**
@@ -284,30 +284,30 @@ function notClick(obj){
  * @param obj
  */
 function alreadyClick(obj){
-	var user = {};
-	user.id = $(obj).attr("data-id");
-	user.account = $(obj).text();
+	var role = {};
+	role.id = $(obj).attr("data-id");
+	role.role_code = $(obj).text();
 	$(obj).remove();
-	buildNotUsersHtml(user);
+	buildNotRolesHtml(role);
 }
 
 /**
- * 分配角色操作
+ * 分配权限操作
  * @param obj
  */
 function role(obj){
 	var modal = $(obj).closest(".modal");
-	var rlid = modal.attr("data-id");
-	var alreadyUsers = modal.find("#alreadyUsers span");
-	var userIds = "";
-	alreadyUsers.each(function(){
-		userIds += $(this).attr("data-id") +",";
+	var pmid = modal.attr("data-id");
+	var alreadyRoles = modal.find("#alreadyRoles span");
+	var roleIds = "";
+	alreadyRoles.each(function(){
+		roleIds += $(this).attr("data-id") +",";
 	});
 	
-	userIds = deleteLastStr(userIds);
+	roleIds = deleteLastStr(roleIds);
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
-		url : "/rl/role/"+ rlid +"/users/allot?users="+ userIds,
+		url : "/pm/permission/"+ pmid +"/roles/allot?roles="+ roleIds,
 		dataType: 'json', 
 		beforeSend:function(){
 		},
@@ -360,7 +360,7 @@ function addOrEditCommit(obj){
 		$.ajax({
 			type : isEmpty(dataId) ? "post" : "put",
 			data : params,
-			url : "/rl/role",
+			url : "/pm/permission",
 			dataType: 'json', 
 			beforeSend:function(){
 			},
@@ -389,26 +389,26 @@ function getQueryPagingParams(){
 	return {page_size: pageSize, current: currentIndex, t: Math.random()};
 }
 
-function buildRow(role, index){
-	var html = '<tr class="each-row" data-id="'+ role.id+'" index="'+ index +'">'+
+function buildRow(permission, index){
+	var html = '<tr class="each-row" data-id="'+ permission.id+'" index="'+ index +'">'+
 					'<td><input type="checkbox" /></td>'+
-					'<td>'+ changeNotNullString(role.role_name) +'</td>'+
-					'<td>'+ role.role_code+'</td>'+
-					'<td>'+ changeNotNullString(role.role_order) +'</td>'+
-					'<td>'+ changeNotNullString(role.role_desc) +'</td>';
-		if(isNotEmpty(role.users)){
-			var users = role.users.split(",");
+					'<td>'+ changeNotNullString(permission.permission_name) +'</td>'+
+					'<td>'+ permission.permission_code+'</td>'+
+					'<td>'+ changeNotNullString(permission.permission_order) +'</td>'+
+					'<td>'+ changeNotNullString(permission.permission_desc) +'</td>';
+		if(isNotEmpty(permission.roles)){
+			var roles = permission.roles.split(",");
 			html += '<td>';
-			for(var rl = 0; rl < users.length; rl++)
-				html += '<span class="label label-primary">'+ users[rl] +'</span>';
+			for(var rl = 0; rl < roles.length; rl++)
+				html += '<span class="label label-primary">'+ roles[rl] +'</span>';
 			
 			html += '</td>';
 		}else{
 			html += '<td></td>';
 		}
-		html += '<td>'+ (role.status == 1? '正常': '禁用')+'</td>'+
-					'<td>'+ role.create_time+'</td>'+
-					'<td><a href="javascript:void(0);" onclick="showUserList(this, '+ role.id +');" style="margin-left: 10px;">分配</a><a href="javascript:void(0);" onclick="rowEditRole(this);" style="margin-left: 10px;">编辑</a><a href="javascript:void(0);" onclick="rowDeleteRole(this);" style="margin-left: 10px;">删除</a></td>'+
+		html += '<td>'+ (permission.status == 1? '正常': '禁用')+'</td>'+
+					'<td>'+ permission.create_time+'</td>'+
+					'<td><a href="javascript:void(0);" onclick="showRoleList(this, '+ permission.id +');" style="margin-left: 10px;">分配</a><a href="javascript:void(0);" onclick="rowEditPermission(this);" style="margin-left: 10px;">编辑</a><a href="javascript:void(0);" onclick="rowDeletePermission(this);" style="margin-left: 10px;">删除</a></td>'+
 				'</tr>';
 	return html;
 }
@@ -460,7 +460,7 @@ function optionChange(){
 	var objS = document.getElementsByTagName("select")[0];
     var index = objS.options[objS.selectedIndex].value;
     currentIndex = index;
-    getRoles();
+    getPermissions();
 }
 
 /**
@@ -468,7 +468,7 @@ function optionChange(){
  */
 function goIndex(index){
 	currentIndex = index;
-	getRoles();
+	getPermissions();
 }
 
 /**
@@ -478,7 +478,7 @@ function pre(){
 	currentIndex --;
 	if(currentIndex < 0)
 		currentIndex = 0;
-	getRoles();
+	getPermissions();
 }
 
 
@@ -489,5 +489,5 @@ function next(){
 	currentIndex ++;
 	if(currentIndex > totalPage)
 		currentIndex = totalPage;
-	getRoles();
+	getPermissions();
 }

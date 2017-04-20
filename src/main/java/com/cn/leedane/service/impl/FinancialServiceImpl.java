@@ -21,6 +21,7 @@ import com.cn.leedane.mapper.FinancialMapper;
 import com.cn.leedane.model.FinancialBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.FinancialService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.ConstantsUtil;
@@ -28,6 +29,7 @@ import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.FinancialWebImeiUtil;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 /**
  * 记账相关service的实现类
@@ -36,7 +38,7 @@ import com.cn.leedane.utils.StringUtil;
  * Version 1.0
  */
 @Service("financialService")
-public class FinancialServiceImpl implements FinancialService<FinancialBean>{
+public class FinancialServiceImpl extends AdminRoleCheckService implements FinancialService<FinancialBean>{
 	Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
@@ -51,13 +53,12 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		logger.info("FinancialServiceImpl-->save():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		FinancialBean financialBean = getValue(jo, "data", user);
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if(financialBean == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有要同步的数据.value));
 			message.put("responseCode", EnumUtil.ResponseCode.没有要同步的数据.value);
 			message.put("isSuccess", true);
-			return message;
+			return message.getMap();
 		}
 		
 		boolean result = false;
@@ -69,7 +70,7 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 				message.put("message", "您已添加过该记账记录，请勿重复操作！");
 				message.put("responseCode", EnumUtil.ResponseCode.添加的记录已经存在.value);
 				message.put("isSuccess", true);
-				return message;
+				return message.getMap();
 			}
 			result = financialMapper.save(financialBean) > 0;
 		}
@@ -86,7 +87,7 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"新添一条记账,ID为：", financialBean.getId(), StringUtil.getSuccessOrNoStr(result)).toString(), "save()", ConstantsUtil.STATUS_NORMAL, 0);
-		return message;
+		return message.getMap();
 	}
 	
 	/**
@@ -115,13 +116,12 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		logger.info("FinancialServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		FinancialBean financialBean = getValue(jo, "data", user);
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if(financialBean == null || financialBean.getId() < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有要同步的数据.value));
 			message.put("responseCode", EnumUtil.ResponseCode.没有要同步的数据.value);
 			message.put("isSuccess", true);
-			return message;
+			return message.getMap();
 		}
 		
 		boolean result = financialMapper.update(financialBean) > 0;
@@ -133,7 +133,7 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"更新一条记账，ID为", financialBean.getId(), StringUtil.getSuccessOrNoStr(result)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, 0);
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -142,20 +142,16 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		logger.info("FinancialServiceImpl-->delete():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int fid = JsonUtil.getIntValue(jo, "fid");
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if(fid < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.参数不存在或为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		FinancialBean bean = financialMapper.findById(FinancialBean.class, fid);
-		if(!user.isAdmin() && bean.getCreateUserId() != user.getId()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-			return message;
-		}
+		
+		checkAdmin(user, bean.getCreateUserId());
 		
 		boolean result = financialMapper.deleteById(FinancialBean.class, fid) > 0;
 		if(result){
@@ -166,7 +162,7 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除一条记账,Id为：", fid, StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, 0);
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -175,13 +171,12 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		logger.info("FinancialServiceImpl-->synchronous():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		List<FinancialBean> appFinancialBeans = getListValue(jo, "datas");
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if(CollectionUtils.isEmpty(appFinancialBeans)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有要同步的数据.value));
 			message.put("responseCode", EnumUtil.ResponseCode.没有要同步的数据.value);
 			message.put("isSuccess", true);
-			return message;
+			return message.getMap();
 		}
 		
 		//设置imei值
@@ -248,7 +243,7 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		//message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据同步成功.value));
 		message.put("message", jsonObject);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -258,13 +253,12 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		
 		int type = JsonUtil.getIntValue(jo, "type"); //1表示强制以客户端数据为主，2表示强制以服务器端数据为主
 		List<FinancialBean> financialBeans = getListValue(jo, "datas");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if(type == 0 || CollectionUtils.isEmpty(financialBeans)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有要同步的数据.value));
 			message.put("responseCode", EnumUtil.ResponseCode.没有要同步的数据.value);
 			message.put("isSuccess", true);
-			return message;
+			return message.getMap();
 		}
 				
 		int fId = 0;
@@ -296,7 +290,7 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"强制更新数据").toString(), "force()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", returnBeans);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 	
 	/**
@@ -386,12 +380,11 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		logger.info("FinancialServiceImpl-->getByYear():jsonObject=" +jsonObject.toString() +", user=" +user.getAccount());
 		
 		int year = JsonUtil.getIntValue(jsonObject, "year"); //年份
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if(year < 1990){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.系统不支持查找该年份的数据.value));
 			message.put("responseCode", EnumUtil.ResponseCode.系统不支持查找该年份的数据.value);
-			return message;
+			return message.getMap();
 		}
 		
 		List<Map<String, Object>> list = financialMapper.getLimit(year, ConstantsUtil.STATUS_NORMAL, user.getId());
@@ -400,7 +393,7 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取", year, "年的记账数据").toString(), "getByYear()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", list);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -408,15 +401,14 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 			UserBean user, HttpServletRequest request) {
 		logger.info("FinancialServiceImpl-->getAll():jsonObject=" +jsonObject.toString() +", user=" +user.getAccount());
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		List<Map<String, Object>> list = financialMapper.getAll(ConstantsUtil.STATUS_NORMAL, user.getId());
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取全部的记账数据").toString(), "getAll()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", list);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -434,8 +426,7 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		String start = JsonUtil.getStringValue(json, "start");
 		String end = JsonUtil.getStringValue(json, "end");
 		String level = JsonUtil.getStringValue(json, "levels");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		StringBuffer sqlBuffer = new StringBuffer();
 		sqlBuffer.append("select local_id, id, status, model, money, one_level, two_level, has_img, path");
 		sqlBuffer.append("	, location, longitude, latitude, financial_desc, create_user_id, date_format(create_time,'%Y-%m-%d %H:%i:%s') create_time, date_format(addition_time,'%Y-%m-%d %H:%i:%s') addition_time");
@@ -466,7 +457,7 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"查询记账列表，查询条件：", json.toString()).toString(), "query()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", list);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -484,8 +475,7 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 				
 		StringBuffer sql = new StringBuffer();
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		if("firstloading".equalsIgnoreCase(method)){
 			sql.append("select local_id, id, status, model, money, one_level, two_level, has_img, path");
@@ -538,6 +528,6 @@ public class FinancialServiceImpl implements FinancialService<FinancialBean>{
 		logger.info("获取记账列表总计耗时：" +(end - start) +"毫秒, 总数是："+rs.size());
 		message.put("message", rs);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 }

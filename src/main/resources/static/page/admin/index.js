@@ -82,16 +82,14 @@ var config = [{
              id: 'permission', 
              homePage: 'resource',
              menu:[{
-                 text:'角色管理',
-                 items:[
-                        {id:'resource',text:'角色列表',href:'/ad/pm/role'},
-                        {id:'loader',text:'管理角色',href:'/ad/pm/impowerRole'}
-                 ]
-             },{
                  text:'权限管理',
                  items:[
-                        {id:'resource',text:'权限列表',href:'/ad/us/addRole'},
-                        {id:'loader',text:'管理权限',href:'/ad/us/managerRole'}
+                        {id:'resource',text:'权限管理',href:'/ad/pm/permission'}
+                 ]
+             },{
+                 text:'角色管理',
+                 items:[
+                        {id:'resource',text:'角色管理',href:'/ad/pm/role'}
                  ]
              },{
                  text:'链接管理',

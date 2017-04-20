@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.alibaba.fastjson.JSONArray;
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CircleOfFriendsHandler;
 import com.cn.leedane.handler.CommentHandler;
 import com.cn.leedane.handler.FriendHandler;
@@ -42,6 +42,7 @@ import com.cn.leedane.observer.template.UpdateMoodTemplate;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.AddReadSend;
 import com.cn.leedane.rabbitmq.send.ISend;
+import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.FilePathService;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.MoodService;
@@ -67,7 +68,7 @@ import com.cn.leedane.utils.StringUtil;
  * Version 1.0
  */
 @Service("moodService")
-public class MoodServiceImpl implements MoodService<MoodBean> {
+public class MoodServiceImpl extends AdminRoleCheckService implements MoodService<MoodBean> {
 	Logger logger = Logger.getLogger(getClass());
 	@Autowired
 	private MoodMapper moodMapper;
@@ -123,17 +124,16 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 	public Map<String, Object> saveMood(JSONObject jsonObject, UserBean user, int status, HttpServletRequest request) throws Exception {
 		logger.info("MoodServiceImpl-->saveMood():jsonObject=" +jsonObject.toString() +", status=" +status);
 		String content = JsonUtil.getStringValue(jsonObject, "content");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		//进行敏感词过滤和emoji过滤
 		if(FilterUtil.filter(content, message))
-			return message;
+			return message.getMap();
 		
 		if(StringUtil.isNull(content)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 				
 		MoodBean moodBean = new MoodBean();
@@ -187,7 +187,7 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 		// 保存发表心情日志信息
 		String subject = user.getAccount() + "发表了心情" + StringUtil.getSuccessOrNoStr(result);
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "saveMood()", StringUtil.changeBooleanToInt(result), 0);
-		return message;
+		return message.getMap();
 	}
 
 	
@@ -195,20 +195,15 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 	public Map<String, Object> updateMoodStatus(JSONObject jsonObject, int status, HttpServletRequest request, UserBean user) {
 		int mid = JsonUtil.getIntValue(jsonObject, "mid");
 		logger.info("MoodServiceImpl-->updateMoodStatus():mid=" +mid +", status=" +status + ",jsonObject="+jsonObject.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		boolean result = false;
-		if(mid < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-			return message;
-		}
+		if(mid < 1)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
+		
 		MoodBean oldMoodBean = moodMapper.findById(MoodBean.class, mid);
-		if(!user.isAdmin() && (oldMoodBean == null || oldMoodBean.getCreateUserId() != user.getId())){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-			return message;
-		}
+		
+		checkAdmin(user, oldMoodBean.getCreateUserId());
+		
 		oldMoodBean.setStatus(status);
 		try {
 			//moodMapper.executeSQL("update "+DataTableType.心情.value+" set status = ? where id = ? ", status, mid);
@@ -230,27 +225,20 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		}
-		return message;
+		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> deleteMood(JSONObject jo, UserBean user, HttpServletRequest request){
 		int mid = JsonUtil.getIntValue(jo, "mid");
 		logger.info("MoodServiceImpl-->deleteMood():mid=" +mid +",jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		if(mid < 1) {
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+		if(mid < 1) 
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
+			
 		MoodBean moodBean = moodMapper.findById(MoodBean.class, mid);
 		
-		if(!user.isAdmin() && (moodBean == null || moodBean.getCreateUserId() != user.getId())){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-			return message;
-		}
+		checkAdmin(user, moodBean.getCreateUserId());
 		
 		String tableUuid = moodBean.getUuid();
 		//有图片的先删掉图片
@@ -283,7 +271,7 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		}
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -300,8 +288,7 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 		String picSize = ConstantsUtil.DEFAULT_PIC_SIZE; //JsonUtil.getStringValue(jo, "pic_size"); //图像的规格(大小)		
 				
 		StringBuffer sql = new StringBuffer();
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		if("firstloading".equalsIgnoreCase(method)){
 			sql.append("select m.id, m.status, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img, m.can_comment, m.can_transmit,");
@@ -357,7 +344,7 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 		logger.info("获取心情列表总计耗时：" +(end - start) +"毫秒, 总数是："+rs.size());
 		message.put("message", rs);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 	
 	
@@ -390,8 +377,7 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 		String uuid = JsonUtil.getStringValue(jsonObject, "uuid");
 		String froms = JsonUtil.getStringValue(jsonObject, "froms");
 		boolean hasImg = JsonUtil.getBooleanValue(jsonObject, "hasImg");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		//检查uuid是否已经存在了
 		if(moodMapper.executeSQL("select id from "+DataTableType.心情.value+" where table_uuid =? ", uuid).size() > 0){
 			String oldUUid = uuid;
@@ -430,7 +416,7 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		}
-		return message;
+		return message.getMap();
 	}
 	
 	
@@ -458,14 +444,11 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 			HttpServletRequest request, String picSize){
 		logger.info("MoodServiceImpl-->detail():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		final int mid = JsonUtil.getIntValue(jo, "mid", 0); //心情ID
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		try {
-			if(mid < 1){
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-				message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-				return message;
-			}
+			if(mid < 1)
+				throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
+				
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			list = moodHandler.getMoodDetail(mid, user);
 			if(!CollectionUtils.isEmpty(list)){
@@ -497,7 +480,7 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 			e.printStackTrace();
 		}
 		
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -507,19 +490,18 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 		//从客户端获取uuid(有图片的情况下)，为空表示无图，有图就有值
 		String uuid = JsonUtil.getStringValue(jsonObject, "uuid");
 				
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		//进行敏感词过滤和emoji过滤
 		if(FilterUtil.filter(content, message))
-			return message;
+			return message.getMap();
 		
 		
 		//没有图片并且内容为空就报错返回
 		if(StringUtil.isNull(content) && StringUtil.isNull(uuid)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		MoodBean moodBean = new MoodBean();
@@ -582,7 +564,7 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 		String subject = user.getAccount() + "发表了心情" + StringUtil.getSuccessOrNoStr(result);
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "sendWord", ConstantsUtil.STATUS_NORMAL, 0);
 		
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -591,19 +573,18 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 		String content = JsonUtil.getStringValue(jsonObject, "content");
 		String links = JsonUtil.getStringValue(jsonObject, "links"); //多张以“;”分开,必须
 				
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		//进行敏感词过滤和emoji过滤
 		if(FilterUtil.filter(content, message))
-			return message;
+			return message.getMap();
 		
 		
 		//没有图片链接并且内容为空就报错返回
 		if(StringUtil.isNull(content) && StringUtil.isNull(links)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 		boolean result = false;
 		
@@ -700,20 +681,16 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 		String subject = user.getAccount() + "发表了心情" + StringUtil.getSuccessOrNoStr(result);
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "sendWordAndLink", ConstantsUtil.STATUS_NORMAL, 0);
 		
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
 	public Map<String, Object> detailImgs(JSONObject jo, UserBean user, HttpServletRequest request) {
 		logger.info("MoodServiceImpl-->detailImgs():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int mid = JsonUtil.getIntValue(jo, "mid", 0); //心情ID
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		if(mid < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+		if(mid < 1)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			
 		String tableName = JsonUtil.getStringValue(jo, "table_name"); //数据量表名
 		String tableUuid = JsonUtil.getStringValue(jo, "table_uuid"); //uuid
@@ -722,9 +699,7 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 		//list = moodHandler.getMoodIms(tableName, tableUuid);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取心情ID为", mid, "的图像列表").toString(), "detailImgs()", ConstantsUtil.STATUS_NORMAL, 0);
-		
-		
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -732,13 +707,12 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 			HttpServletRequest request) {
 		logger.info("MoodServiceImpl-->search():jo="+jo.toString());
 		String searchKey = JsonUtil.getStringValue(jo, "searchKey");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		if(StringUtil.isNull(searchKey)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.检索关键字不能为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.检索关键字不能为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		List<Map<String, Object>> rs = moodMapper.executeSQL("select id, content, uuid, froms, create_user_id, date_format(create_time,'%Y-%m-%d %H:%i:%s') create_time, has_img , can_comment, can_transmit from "+DataTableType.心情.value+" where status=? and content like '%"+searchKey+"%' order by create_time desc limit 25", ConstantsUtil.STATUS_NORMAL);
@@ -760,7 +734,7 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 		}
 		message.put("isSuccess", true);
 		message.put("message", rs);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -768,8 +742,7 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 			HttpServletRequest request) {
 		logger.info("MoodServiceImpl-->shakeSearch():jo="+jo.toString());
 		int moodId = 0; //获取到的心情的ID
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		moodId = moodMapper.shakeSearch(user.getId(), ConstantsUtil.STATUS_NORMAL);
 		if(moodId > 0 ){
@@ -794,7 +767,7 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 			
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "摇一摇搜索，得到心情Id为"+ moodId, StringUtil.getSuccessOrNoStr(moodId > 0)).toString(), "shakeSearch()", StringUtil.changeBooleanToInt(moodId > 0), 0);		
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -816,14 +789,10 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 		String topic = JsonUtil.getStringValue(jo, "topic");
 				
 		StringBuffer sql = new StringBuffer();
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
-		if(StringUtil.isNull(topic)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.话题不能为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.话题不能为空.value);
-			return message;
-		}
+		if(StringUtil.isNull(topic))
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.话题不能为空.value));
 		
 		if(!topic.startsWith("#") && !topic.endsWith("#"))
 			topic = "#" + topic + "#";
@@ -889,7 +858,7 @@ public class MoodServiceImpl implements MoodService<MoodBean> {
 		System.out.println("获取话题列表总计耗时：" +(end - start) +"毫秒，总数是："+rs.size());
 		message.put("message", rs);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 
 	@Override

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cn.leedane.controller.BaseController;
+import com.cn.leedane.controller.RoleController;
 import com.cn.leedane.controller.UserController;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.UserBean;
@@ -232,7 +233,7 @@ public class HtmlController extends BaseController{
 		if(o != null){
 			isLogin = true;
 			UserBean user = (UserBean)o;
-			isAdmin = user.isAdmin();
+			isAdmin = currentUser.hasRole(RoleController.ADMIN_ROLE_CODE);
 			model.addAttribute("account", user.getAccount());
 			model.addAttribute("loginUserId", user.getId());
 		}

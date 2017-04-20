@@ -35,6 +35,7 @@ public class CircleOfFriendController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(circleOfFriendService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

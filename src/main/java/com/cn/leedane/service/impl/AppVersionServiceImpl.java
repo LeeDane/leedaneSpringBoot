@@ -1,6 +1,5 @@
 package com.cn.leedane.service.impl;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +21,7 @@ import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -48,8 +48,7 @@ public class AppVersionServiceImpl implements AppVersionService<FilePathBean> {
 	public Map<String, Object> getNewest(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("AppVersionServiceImpl-->getNewest():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		String versionName = JsonUtil.getStringValue(jo, "versionName");
 		//String versionCode = JsonUtil.getStringValue(jo, "versionCode");
 		
@@ -77,7 +76,7 @@ public class AppVersionServiceImpl implements AppVersionService<FilePathBean> {
 			message.put("isSuccess", true);
 			message.put("message", list);
 		}
-		return message;
+		return message.getMap();
 	}
 
 	/**
@@ -115,8 +114,7 @@ public class AppVersionServiceImpl implements AppVersionService<FilePathBean> {
 		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
 		StringBuffer sql = new StringBuffer();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if("firstloading".equalsIgnoreCase(method)){
 			sql.append("select f.id, f.file_desc, f.file_version, f.qiniu_path path, f.lenght, date_format(f.create_time,'%Y-%m-%d %H:%i:%s') create_time");
 			sql.append(" from "+DataTableType.文件.value+" f");
@@ -144,7 +142,7 @@ public class AppVersionServiceImpl implements AppVersionService<FilePathBean> {
 		message.put("isSuccess", true);
 		message.put("message", rs);
 		System.out.println("获得记账位置的数量：" +rs.size());
-		return message;
+		return message.getMap();
 	}
 	
 }

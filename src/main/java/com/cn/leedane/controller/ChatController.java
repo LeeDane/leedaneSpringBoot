@@ -35,6 +35,7 @@ public class ChatController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(chatService.send(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -49,6 +50,7 @@ public class ChatController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(chatService.deleteChat(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -63,6 +65,7 @@ public class ChatController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(chatService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -77,6 +80,7 @@ public class ChatController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(chatService.updateRead(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -91,6 +95,7 @@ public class ChatController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(chatService.noReadList(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -107,6 +112,7 @@ public class ChatController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(chatService.getOneChatByAllUser(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

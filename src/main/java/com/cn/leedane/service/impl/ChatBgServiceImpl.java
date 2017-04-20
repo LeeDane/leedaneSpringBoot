@@ -1,11 +1,8 @@
 package com.cn.leedane.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,13 +12,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.ChatBgUserHandler;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
@@ -34,9 +25,16 @@ import com.cn.leedane.model.ScoreBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.service.ChatBgService;
-import com.cn.leedane.service.ChatBgUserService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.ScoreService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.EnumUtil.NotificationType;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.SqlUtil;
+import com.cn.leedane.utils.StringUtil;
 
 /**
  * 聊天背景相关service实现类
@@ -74,8 +72,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 	public Map<String, Object> paging(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("ChatBgServiceImpl-->paging():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
 		int type = JsonUtil.getIntValue(jo, "type", 0); //聊天背景的类型，0：免费,1:收费, 2:全部
@@ -126,7 +123,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 			
 		message.put("isSuccess", true);
 		message.put("message", rs);
-		return message;
+		return message.getMap();
 	}
 
 	/**
@@ -155,8 +152,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 	public Map<String, Object> publish(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("ChatBgServiceImpl-->send():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		String desc = JsonUtil.getStringValue(jo, "desc"); //聊天背景的描述
 		String path = JsonUtil.getStringValue(jo, "path"); //聊天背景的路径	
 		int type = JsonUtil.getIntValue(jo, "type", 0); //聊天背景的类型
@@ -165,14 +161,14 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 		if(type == 1 && score < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请填写每次用户每次下载扣取的积分.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请填写每次用户每次下载扣取的积分.value);
-			return message;
+			return message.getMap();
 		}
 		
 		//检查是否有数据存在
 		if(this.chatBgMapper.executeSQL("select id from "+DataTableType.聊天背景.value+" where create_user_id = ? and path=?", user.getId(), path).size() > 0 ){
 			message.put("message", "您已发布过该聊天背景，请勿重复发布！");
 			message.put("responseCode", EnumUtil.ResponseCode.添加的记录已经存在.value);
-			return message;
+			return message.getMap();
 		}
 		
 		ChatBgBean chatBgBean = new ChatBgBean();
@@ -194,7 +190,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		}
-		return message;
+		return message.getMap();
 	}
 
 
@@ -202,21 +198,17 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 	public Map<String, Object> addChatBg(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("ChatBgServiceImpl-->verifyChatBg():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		int cid = JsonUtil.getIntValue(jo, "cid", 0); //聊天背景的ID
 		
 		ChatBgBean chatBg = null;
-		if(cid < 1 || (chatBg = chatBgMapper.findById(ChatBgBean.class, cid)) == null){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-			return message;
-		}
+		if(cid < 1 || (chatBg = chatBgMapper.findById(ChatBgBean.class, cid)) == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 		
 		if(chatBg.getCreateUserId() == user.getId()){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.自己上传的聊天背景资源.value));
 			message.put("isSuccess", true);
-			return message;
+			return message.getMap();
 		}
 		
 		RedisUtil redisUtil = RedisUtil.getInstance();
@@ -239,14 +231,14 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 				if(chatBg.getType() == 0){
 					message.put("message", "这个是免费的资源，不需要扣下载积分");
 					message.put("isSuccess", true);
-					return message;
+					return message.getMap();
 				}
 				result = saveScore(chatBg, user);
 			}else{
 				redisUtil.addString(chatBgUserKey, "false");
 				message.put("message", "已经下载过该资源");
 				message.put("isSuccess", true);
-				return message;
+				return message.getMap();
 			}
 		}else{
 			String val = redisUtil.getString(chatBgUserKey);
@@ -265,18 +257,18 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 					if(chatBg.getType() == 0){
 						message.put("message", "这个是免费的资源，不需要扣下载积分");
 						message.put("isSuccess", true);
-						return message;
+						return message.getMap();
 					}
 					result = saveScore(chatBg, user);
 				}else{
 					message.put("message", "已经下载过该资源");
 					message.put("isSuccess", true);
-					return message;
+					return message.getMap();
 				}
 			}else{
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 				message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-				return message;
+				return message.getMap();
 			}
 		}
 		
@@ -289,7 +281,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
-		return message;
+		return message.getMap();
 	}
 	
 	private boolean saveScore(ChatBgBean chatBg, UserBean user){

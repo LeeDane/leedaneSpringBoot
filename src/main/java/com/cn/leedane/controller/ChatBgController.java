@@ -38,6 +38,7 @@ public class ChatBgController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(chatBgService.publish(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -52,6 +53,7 @@ public class ChatBgController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(chatBgService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -66,6 +68,7 @@ public class ChatBgController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(chatBgService.addChatBg(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

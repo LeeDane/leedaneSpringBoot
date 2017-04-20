@@ -1,7 +1,6 @@
 package com.cn.leedane.service.impl;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +22,7 @@ import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 /**
  * 聊天广场service的实现类
@@ -71,7 +71,7 @@ public class ChatSquareServiceImpl extends AdminRoleCheckService implements Chat
 	@Override
 	public Map<String, Object> getActiveUser(Date date, int top) {
 		logger.info("ChatSquareServiceImpl-->getActiveUser()");
-		Map<String, Object> message = new HashMap<String, Object>();
+		ResponseMap message = new ResponseMap();
 		message.put("isSuccess", true);
 		
 		StringBuffer sql = new StringBuffer();
@@ -85,7 +85,7 @@ public class ChatSquareServiceImpl extends AdminRoleCheckService implements Chat
 			}
 		}
 		message.put("message", rs);
-		return message;
+		return message.getMap();
 	}
 	
 }

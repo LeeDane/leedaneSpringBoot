@@ -5,12 +5,15 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cn.leedane.controller.BaseController;
+import com.cn.leedane.controller.RoleController;
 import com.cn.leedane.controller.UserController;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.UserService;
@@ -101,15 +104,22 @@ public class AdminHtmlController extends BaseController{
 	}
 	
 	/****************    权限管理          ***********************/
+	@RequestMapping(ControllerBaseNameUtil.adpm + "/permission")
+	public String pmPermission(Model model, HttpSession httpSession, HttpServletRequest request){
+		return loginRoleCheck("/admin/permission/permission", true, model, httpSession, request);
+	}
+	
+	@RequestMapping(ControllerBaseNameUtil.adpm + "/impowerPermission")
+	public String pmImpowerPermission(Model model, HttpSession httpSession, HttpServletRequest request){
+		return loginRoleCheck("/admin/permission/impowerRole", true, model, httpSession, request);
+	}
+	
+	/****************    角色管理          ***********************/
 	@RequestMapping(ControllerBaseNameUtil.adpm + "/role")
 	public String pmRole(Model model, HttpSession httpSession, HttpServletRequest request){
 		return loginRoleCheck("/admin/permission/role", true, model, httpSession, request);
 	}
 	
-	@RequestMapping(ControllerBaseNameUtil.adpm + "/impowerRole")
-	public String pmImpowerRole(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("/admin/permission/impowerRole", true, model, httpSession, request);
-	}
 	
 	/**
 	 * 校验地址，不校验是否登录
@@ -139,8 +149,11 @@ public class AdminHtmlController extends BaseController{
 			System.out.println("obj不为空");
 			isLogin = !isLogin;
 			userBean = (UserBean)obj;
+
+			//获取当前的Subject  
+	        Subject currentUser = SecurityUtils.getSubject();
 			//后台只有管理员权限才能操作
-			if(userBean.isAdmin()){
+			if(currentUser.hasRole(RoleController.ADMIN_ROLE_CODE)){
 				isLogin = !isLogin;
 				account = userBean.getAccount();
 				model.addAttribute("isLogin", isLogin);

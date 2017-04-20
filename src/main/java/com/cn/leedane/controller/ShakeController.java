@@ -53,6 +53,7 @@ public class ShakeController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(userService.shakeSearch(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -67,6 +68,7 @@ public class ShakeController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(moodService.shakeSearch(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -81,6 +83,7 @@ public class ShakeController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(blogService.shakeSearch(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

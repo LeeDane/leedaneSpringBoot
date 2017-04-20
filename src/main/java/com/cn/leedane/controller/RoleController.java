@@ -15,39 +15,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.PermissionBean;
-import com.cn.leedane.service.PermissionService;
+import com.cn.leedane.model.RoleBean;
+import com.cn.leedane.service.RoleService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 /**
- * 权限管理接口controller
+ * 角色管理接口controller
  * @author LeeDane
- * 2017年4月17日 下午2:15:23
- * version 1.0
+ * 2017年4月20日 上午9:52:07
+ * Version 1.0
  */
 @RestController
-@RequestMapping(value = ControllerBaseNameUtil.pm)
-public class PermissionController extends BaseController{
+@RequestMapping(value = ControllerBaseNameUtil.rl)
+public class RoleController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
 
 	@Autowired
-	private PermissionService<PermissionBean> permissionService;
+	private RoleService<RoleBean> roleService;
+	
+	public static final String ADMIN_ROLE_CODE = "ADMIN_MANAGER";
 	
 	/**
 	 * 添加权限
 	 * @return
 	 */
-	@RequestMapping(value = "/permission", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/role", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> add(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(permissionService.save(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(roleService.save(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -55,14 +57,14 @@ public class PermissionController extends BaseController{
 	 * 修改权限
 	 * @return
 	 */
-	@RequestMapping(value = "/permission", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/role", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> update(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(permissionService.edit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(roleService.edit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -70,14 +72,14 @@ public class PermissionController extends BaseController{
 	 * 删除权限
 	 * @return
 	 */
-	@RequestMapping(value = "/permission/{pmid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(HttpServletRequest request, @PathVariable("pmid") int pmid){
+	@RequestMapping(value = "/role/{rlid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> delete(HttpServletRequest request, @PathVariable("rlid") int rlid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(permissionService.delete(pmid, getUserFromMessage(message), request));
+		message.putAll(roleService.delete(rlid, getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -85,14 +87,14 @@ public class PermissionController extends BaseController{
 	 * 分页获取权限列表
 	 * @return
 	 */
-	@RequestMapping(value = "/permissions", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/roles", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(permissionService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(roleService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -100,14 +102,14 @@ public class PermissionController extends BaseController{
 	 * 批量删除权限
 	 * @return
 	 */
-	@RequestMapping(value = "/permissions", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deletes(HttpServletRequest request, @Param("pmids") String pmids){
+	@RequestMapping(value = "/roles", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> deletes(HttpServletRequest request, @Param("rlids") String rlids){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(permissionService.deletes(pmids, getUserFromMessage(message), request));
+		message.putAll(roleService.deletes(rlids, getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -115,14 +117,14 @@ public class PermissionController extends BaseController{
 	 * 分页获取权限列表
 	 * @return
 	 */
-	@RequestMapping(value = "/permission/{pmid}/roles", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> roles(HttpServletRequest request, @PathVariable("pmid") int pmid){
+	@RequestMapping(value = "/role/{rlid}/users", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> roles(HttpServletRequest request, @PathVariable("rlid") int rlid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(permissionService.roles(pmid, getUserFromMessage(message), request));
+		message.putAll(roleService.users(rlid, getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -130,17 +132,17 @@ public class PermissionController extends BaseController{
 	 * 角色的分配
 	 * @return
 	 */
-	@RequestMapping(value = "/permission/{pmid}/roles/allot", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> allot(HttpServletRequest request, @PathVariable("pmid") int pmid){
+	@RequestMapping(value = "/role/{rlid}/users/allot", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> allot(HttpServletRequest request, @PathVariable("rlid") int rlid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
 		JSONObject json = getJsonFromMessage(message);
-		String roles = JsonUtil.getStringValue(json, "roles");
+		String users = JsonUtil.getStringValue(json, "users");
 		
-		message.putAll(permissionService.allot(pmid, roles, getUserFromMessage(message), request));
+		message.putAll(roleService.allot(rlid, users, getUserFromMessage(message), request));
 		return message.getMap();
 	}
 }

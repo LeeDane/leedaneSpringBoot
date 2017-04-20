@@ -2,7 +2,6 @@ package com.cn.leedane.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,12 +13,14 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CommonHandler;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.mapper.ReportMapper;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.ReportBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.ReportService;
 import com.cn.leedane.utils.ConstantsUtil;
@@ -27,6 +28,7 @@ import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
 /**
@@ -36,7 +38,7 @@ import com.cn.leedane.utils.StringUtil;
  * Version 1.0
  */
 @Service("reportService")
-public class ReportServiceImpl implements ReportService<ReportBean>{
+public class ReportServiceImpl extends AdminRoleCheckService implements ReportService<ReportBean>{
 	Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
@@ -60,13 +62,12 @@ public class ReportServiceImpl implements ReportService<ReportBean>{
 		int type = JsonUtil.getIntValue(jo, "type", 0);
 		String reason = JsonUtil.getStringValue(jo, "reason");
 		final boolean anonymous = JsonUtil.getBooleanValue(jo, "anonymous", true); //是否匿名举报，默认是匿名
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		if(SqlUtil.getBooleanByList(reportMapper.exists(ReportBean.class, tableName, tableId, user.getId()))){
 			message.put("message", "您已经对此举报过，请稍待我们审核！");
 			message.put("responseCode", EnumUtil.ResponseCode.添加的记录已经存在.value);
-			return message;
+			return message.getMap();
 		}
 		
 		final int resourcesCreateUserId = SqlUtil.getCreateUserIdByList(reportMapper.getObjectCreateUserId(tableName, tableId));
@@ -74,14 +75,12 @@ public class ReportServiceImpl implements ReportService<ReportBean>{
 		if(user.getId() == resourcesCreateUserId){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.不能举报自己发布的资源.value));
 			message.put("responseCode", EnumUtil.ResponseCode.不能举报自己发布的资源.value);
-			return message;
+			return message.getMap();
 		}
 		
-		if(!SqlUtil.getBooleanByList(reportMapper.recordExists(tableName, tableId))){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-			return message;
-		}
+		if(!SqlUtil.getBooleanByList(reportMapper.recordExists(tableName, tableId)))
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
+			
 		ReportBean bean = new ReportBean();
 		bean.setCreateTime(new Date());
 		bean.setCreateUserId(user.getId());
@@ -119,7 +118,7 @@ public class ReportServiceImpl implements ReportService<ReportBean>{
 		//保存操作日志
 		String subject = user.getAccount() + "举报，表名："+tableName+",表ID:"+tableId+StringUtil.getSuccessOrNoStr(result);
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "addReport()", StringUtil.changeBooleanToInt(result) , 0);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -129,15 +128,11 @@ public class ReportServiceImpl implements ReportService<ReportBean>{
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
 		int tableId = JsonUtil.getIntValue(jo, "table_id");
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 	
 		int createUserId = SqlUtil.getCreateUserIdByList(reportMapper.getObjectCreateUserId(tableName, tableId));
-		if(!user.isAdmin() && (user.getId() != createUserId)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-			return message;
-		}
+		
+		checkAdmin(user, createUserId);
 		
 		boolean result = reportMapper.deleteSql(EnumUtil.getBeanClass(EnumUtil.getTableCNName(DataTableType.举报.value)), " where table_id = ? and table_name = ? and create_user_id=?", tableId, tableName, user.getId()) > 0;
 		if(result){
@@ -150,7 +145,7 @@ public class ReportServiceImpl implements ReportService<ReportBean>{
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"取消举报，表名是"+tableName+",表ID为："+ tableId, "cancel()", StringUtil.changeBooleanToInt(result), 0);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -158,16 +153,16 @@ public class ReportServiceImpl implements ReportService<ReportBean>{
 			HttpServletRequest request) {
 		logger.info("ReportServiceImpl-->getLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int userId = JsonUtil.getIntValue(jo, "uid", user.getId());
-		String tableName = JsonUtil.getStringValue(jo, "table_name");
-		int tableId = JsonUtil.getIntValue(jo, "table_id", 0);
-		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
-		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
+//		String tableName = JsonUtil.getStringValue(jo, "table_name");
+//		int tableId = JsonUtil.getIntValue(jo, "table_id", 0);
+//		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
+//		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
+//		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
+//		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
 		
 		if(userId < 1)
 			return new ArrayList<Map<String,Object>>();
-		StringBuffer sql = new StringBuffer();
+//		StringBuffer sql = new StringBuffer();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		
 		return rs;

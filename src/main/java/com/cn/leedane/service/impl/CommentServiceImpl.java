@@ -2,7 +2,6 @@ package com.cn.leedane.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CommentHandler;
 import com.cn.leedane.handler.CommonHandler;
 import com.cn.leedane.handler.FriendHandler;
@@ -87,22 +87,21 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		int tableId = JsonUtil.getIntValue(jo, "table_id", 0);
 		String content = JsonUtil.getStringValue(jo, "content");
 		String from = JsonUtil.getStringValue(jo, "froms");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		//进行敏感词过滤和emoji过滤
 		if(FilterUtil.filter(content, message))
-			return message;
+			return message.getMap();
 		
 		if(StringUtil.isNull(tableName) || tableId < 1 || StringUtil.isNull(content)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		//评论权限校验
 		if(!checkComment(tableName, tableId, message)){
-			return message;
+			return message.getMap();
 		}
 		
 		int level = JsonUtil.getIntValue(jo, "level", 5);
@@ -153,7 +152,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			commentHandler.addComment(tableName, tableId);
 		}
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 	
 	/**
@@ -456,31 +455,20 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	public Map<String, Object> deleteComment(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("CommentServiceImpl-->deleteComment():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
+		
 		int cid = JsonUtil.getIntValue(jo, "cid");
 		int createUserId = JsonUtil.getIntValue(jo, "create_user_id");
 		
-		//非登录用户不能删除操作
-		if(createUserId != user.getId()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请先登录.value);
-			return message;
-		}
-		
-		if(cid < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作实例.value);
-			return message;
-		}
+		if(cid < 1)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
 		
 		boolean result = false;
 		CommentBean commentBean = commentMapper.findById(CommentBean.class, cid);
 		if(commentBean != null && commentBean.getCreateUserId() == createUserId){
 			result = commentMapper.deleteById(CommentBean.class, cid) > 0;
 		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 		}
 		
 		if(result){
@@ -489,7 +477,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		}			
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除评论ID为", cid, "的数据", StringUtil.getSuccessOrNoStr(result)).toString(), "deleteComment()", StringUtil.changeBooleanToInt(result), 0);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -504,16 +492,11 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
 		int tableId = JsonUtil.getIntValue(jo, "table_id");
 		boolean canComment = JsonUtil.getBooleanValue(jo, "can_comment", true);
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		int createUserId = SqlUtil.getCreateUserIdByList(commentMapper.getObjectCreateUserId(tableName, tableId));
 		
-		if(!checkAdmin(user, createUserId)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-			return message;
-		}
+		checkAdmin(user, createUserId);
 		
 		boolean result = commentMapper.updateSql(EnumUtil.getBeanClass(EnumUtil.getTableCNName(tableName)), " set can_comment=? where id=?", canComment, tableId) > 0;
 		
@@ -527,7 +510,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"更新表名为：", tableName ,",表ID为：", tableId, "评论状态为", canComment, "，结果更新", StringUtil.getSuccessOrNoStr(result)).toString(), "updateCommentStatus()", StringUtil.changeBooleanToInt(result), 0);
 		message.put("isSuccess", result);
-		return message;
+		return message.getMap();
 	}
 
 	@Override

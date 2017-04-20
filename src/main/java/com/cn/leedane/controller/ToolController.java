@@ -57,6 +57,7 @@ public class ToolController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		String content = JsonUtil.getStringValue(getJsonFromMessage(message), "content");
 		String msg = HttpRequestUtil.sendAndRecieveFromYoudao(content);
 		msg = StringUtil.getYoudaoFanyiContent(msg);
@@ -76,6 +77,7 @@ public class ToolController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		JSONObject json = getJsonFromMessage(message);
 		String toUserId = JsonUtil.getStringValue(json, "to_user_id");//接收邮件的用户的Id，必须
 		String content = JsonUtil.getStringValue(json, "content"); //邮件的内容，必须
@@ -135,6 +137,7 @@ public class ToolController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		//type: 1为通知，2为邮件，3为私信，4为短信
 		message.putAll(userService.sendMessage(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
@@ -150,6 +153,7 @@ public class ToolController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.put("isSuccess", true);
 		message.put("message", getToken());
 		return message.getMap();

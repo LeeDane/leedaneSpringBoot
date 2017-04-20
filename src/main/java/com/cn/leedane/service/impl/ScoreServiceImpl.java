@@ -2,7 +2,6 @@ package com.cn.leedane.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,19 +13,19 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.mapper.ScoreMapper;
-import com.cn.leedane.model.AttentionBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.ScoreBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.ScoreService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.SqlUtil;
+import com.cn.leedane.utils.StringUtil;
 /**
  * 积分service的实现类
  * @author LeeDane
@@ -57,8 +56,7 @@ public class ScoreServiceImpl implements ScoreService<ScoreBean>{
 		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
 		StringBuffer sql = new StringBuffer();
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		//只有登录用户才能
 		/*if(user == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value));
@@ -90,7 +88,7 @@ public class ScoreServiceImpl implements ScoreService<ScoreBean>{
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取积分记录").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("isSuccess", true);
-		return message;		
+		return message.getMap();		
 	}
 
 	@Override
@@ -103,20 +101,20 @@ public class ScoreServiceImpl implements ScoreService<ScoreBean>{
 	public Map<String, Object> getTotalScore(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("ScoreServiceImpl-->getTotalScore():jsonObject=" +jo.toString() +", user=" +user.getAccount()); 		
-		Map<String, Object> message = new HashMap<String, Object>();
+		ResponseMap message = new ResponseMap();
 		int score = getTotalScore(user.getId());
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取总积分").toString(), "getTotalScore()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", score);
 		message.put("isSuccess", true);
-		return message;		
+		return message.getMap();		
 	}
 
 	@Override
 	public Map<String, Object> reduceScore(int reduceScore, String desc, String tableName, int tableId, UserBean user) {
 		logger.info("ScoreServiceImpl-->reduceScore():user=" +user.getAccount()); 		
 		
-		Map<String, Object> message = new HashMap<String, Object>();
+		ResponseMap message = new ResponseMap();
 		int sc = getTotalScore(user.getId());
 		ScoreBean scoreBean = new ScoreBean();
 		scoreBean.setTotalScore(sc - reduceScore);
@@ -138,6 +136,6 @@ public class ScoreServiceImpl implements ScoreService<ScoreBean>{
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		message.put("isSuccess", result);
-		return message;	
+		return message.getMap();
 	}
 }

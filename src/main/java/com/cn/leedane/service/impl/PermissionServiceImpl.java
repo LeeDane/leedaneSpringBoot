@@ -131,7 +131,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		sql.append("select p.id, p.permission_desc, p.permission_name, p.permission_code, p.permission_order, date_format(p.create_time,'%Y-%m-%d %H:%i:%s') create_time , p.create_user_id, p.status");
 		sql.append(", (select group_concat(r.role_code) from t_role_permission rp INNER JOIN t_role r on rp.role_id = r.id where rp.permission_id = p.id) roles");
 		sql.append(" from "+DataTableType.权限.value+" p ");
-		sql.append(" order by p.permission_order desc limit ?,?");
+		sql.append(" order by p.permission_order desc,p.id desc limit ?,?");
 		rs = permissionMapper.executeSQL(sql.toString(), start, pageSize);
 
 		if(rs !=null && rs.size() > 0){

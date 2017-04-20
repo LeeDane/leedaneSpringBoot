@@ -6,23 +6,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.chat_room.ScanLoginWebSocket;
-import com.cn.leedane.controller.UserController;
 import com.cn.leedane.enums.NotificationType;
 import com.cn.leedane.exception.ErrorException;
 import com.cn.leedane.exception.RE404Exception;
@@ -48,6 +44,7 @@ import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.EmailSend;
 import com.cn.leedane.rabbitmq.send.ISend;
 import com.cn.leedane.redis.util.RedisUtil;
+import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.FilePathService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.ScoreService;
@@ -76,7 +73,7 @@ import com.cn.leedane.utils.StringUtil;
 
 @Service("userService")
 @Transactional  //此处不再进行创建SqlSession和提交事务，都已交由spring去管理了。
-public class UserServiceImpl implements UserService<UserBean> {
+public class UserServiceImpl extends AdminRoleCheckService implements UserService<UserBean> {
 	
 	Logger logger = Logger.getLogger(getClass());
 	
@@ -385,14 +382,13 @@ public class UserServiceImpl implements UserService<UserBean> {
 			UserBean user) {
 		logger.info("UserServiceImpl-->checkAccount():jo="+jo.toString());
 		String account = JsonUtil.getStringValue(jo, "account");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		boolean result = false;
 		
 		if(StringUtil.isNull(account)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 		result = userMapper.executeSQL("select id from "+DataTableType.用户.value+" where account = ?", account).size() >0;
 		if(result){
@@ -403,7 +399,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		}
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -438,29 +434,24 @@ public class UserServiceImpl implements UserService<UserBean> {
 		logger.info("UserServiceImpl-->getPhoneRegisterCode():jo="+jo.toString());
 		String mobilePhone = JsonUtil.getStringValue(jo, "mobilePhone");
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		boolean result = false;
 		
 		if(StringUtil.isNull(mobilePhone) || mobilePhone.length() != 11){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.手机号为空或者不是11位数.value));
 			message.put("responseCode", EnumUtil.ResponseCode.手机号为空或者不是11位数.value);
-			return message;
+			return message.getMap();
 		}
 		
 		//检验手机是否存在
 		if(checkMobilePhone(jo, request, null)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该手机号已被注册.value));
 			message.put("responseCode", EnumUtil.ResponseCode.该手机号已被注册.value);
-			return message;
+			return message.getMap();
 		}
 		
 		//保存操作日志
-		try {
-			operateLogService.saveOperateLog(null, request, null, "手机号码："+mobilePhone+"用户获取注册验证码", "getPhoneRegisterCode", ConstantsUtil.STATUS_NORMAL, 0);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
+		operateLogService.saveOperateLog(null, request, null, "手机号码："+mobilePhone+"用户获取注册验证码", "getPhoneRegisterCode", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		List<String> list = RedisUtil.getInstance().getMap("register_"+mobilePhone, "validationCode", "createTime", "endTime");
 		if(list.size() > 0){
@@ -470,7 +461,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 				if(DateUtil.isInMinutes(DateUtil.stringToDate(createTime), new Date(), 1)){
 					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作过于频繁.value));
 					message.put("responseCode", EnumUtil.ResponseCode.操作过于频繁.value);
-					return message;
+					return message.getMap();
 				}
 			}
 		}
@@ -498,27 +489,23 @@ public class UserServiceImpl implements UserService<UserBean> {
 			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		}
 			
-		return message;
+		return message.getMap();
 	}
 	@Override
 	public Map<String, Object> getPhoneLoginCode(String mobilePhone, HttpServletRequest request) {
 		logger.info("UserServiceImpl-->getPhoneLoginCode():mobilePhone="+mobilePhone);
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		boolean result = false;
 		
 		if(StringUtil.isNull(mobilePhone) || mobilePhone.length() != 11){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.手机号为空或者不是11位数.value));
 			message.put("responseCode", EnumUtil.ResponseCode.手机号为空或者不是11位数.value);
-			return message;
+			return message.getMap();
 		}
 		
 		//保存操作日志
-		try {
-			operateLogService.saveOperateLog(null, request, null, "手机号码："+mobilePhone+"用户获取手机登录验证码", "getPhoneLoginCode", ConstantsUtil.STATUS_NORMAL, 0);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
+		operateLogService.saveOperateLog(null, request, null, "手机号码："+mobilePhone+"用户获取手机登录验证码", "getPhoneLoginCode", ConstantsUtil.STATUS_NORMAL, 0);
+		
 		List<String> list = RedisUtil.getInstance().getMap("login_"+mobilePhone, "validationCode", "createTime", "endTime");
 		if(list.size() > 0){
 			if(list.get(0) != null){
@@ -527,7 +514,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 				if(!StringUtil.isNull(createTime) && DateUtil.isInMinutes(DateUtil.stringToDate(createTime), new Date(), 1)){
 					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作过于频繁.value));
 					message.put("responseCode", EnumUtil.ResponseCode.操作过于频繁.value);
-					return message;
+					return message.getMap();
 				}
 			}
 		}
@@ -561,7 +548,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		}
-		return message;
+		return message.getMap();
 	}
 	@Override
 	public UserBean registerByPhone(JSONObject jo, HttpServletRequest request) {
@@ -583,12 +570,8 @@ public class UserServiceImpl implements UserService<UserBean> {
 		
 		
 		//保存操作日志
-		try {
-			operateLogService.saveOperateLog(null, request, null, "手机号码："+mobilePhone+"用户获取注册验证码", "getPhoneRegisterCode", ConstantsUtil.STATUS_NORMAL, 0);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		
+		operateLogService.saveOperateLog(null, request, null, "手机号码："+mobilePhone+"用户获取注册验证码", "getPhoneRegisterCode", ConstantsUtil.STATUS_NORMAL, 0);
+
 		userBean.setAccount(account);
 		userBean.setMobilePhone(mobilePhone);
 		userBean.setEmail(email);
@@ -688,8 +671,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 	public Map<String, Object> getUserInfoData(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("UserServiceImpl-->getUserInfoData():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -708,7 +690,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		message.put("isSuccess", true);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -719,38 +701,37 @@ public class UserServiceImpl implements UserService<UserBean> {
 		String password = JsonUtil.getStringValue(jo, "password");
 		String confirmPassword = JsonUtil.getStringValue(jo, "confirmPassword");
 		String phone = JsonUtil.getStringValue(jo, "mobilePhone");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		if(StringUtil.isNull(account)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户名不能为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.用户名不能为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		if(StringUtil.isNull(password) || StringUtil.isNull(confirmPassword)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.密码不能为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.密码不能为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		if(!password.equals(confirmPassword)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.两次密码不匹配.value));
 			message.put("responseCode", EnumUtil.ResponseCode.两次密码不匹配.value);
-			return message;
+			return message.getMap();
 		}
 		
 		if(StringUtil.isNull(phone) || phone.length() != 11){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.手机号为空或者不是11位数.value));
 			message.put("responseCode", EnumUtil.ResponseCode.手机号为空或者不是11位数.value);
-			return message;
+			return message.getMap();
 		}
 		
 		//检查账号是否被占用
 		if(userMapper.executeSQL("select id from "+DataTableType.用户.value+" where account = ?", account).size() > 0){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该用户已被占用.value));
 			message.put("responseCode", EnumUtil.ResponseCode.该用户已被占用.value);
-			return message;
+			return message.getMap();
 		}
 		
 		//检查手机已经被注册
@@ -758,13 +739,13 @@ public class UserServiceImpl implements UserService<UserBean> {
 		if(checkMobilePhone(jo, request, null)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该手机号已被注册.value));
 			message.put("responseCode", EnumUtil.ResponseCode.该手机号已被注册.value);
-			return message;
+			return message.getMap();
 		}
 		
 		UserBean user = new UserBean();
 		user.setAccount(account);
 		user.setPassword(MD5Util.compute(password));
-		user.setAdmin(false);
+		//user.setAdmin(false);
 		user.setAge(0);
 		user.setChinaName(account);
 		user.setStatus(ConstantsUtil.STATUS_NORMAL);
@@ -792,7 +773,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("注册账号为", account , ",手机号码为：", StringUtil.getSuccessOrNoStr(result)).toString(), "registerByPhoneNoValidate()", ConstantsUtil.STATUS_NORMAL, 0);	
 		
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -800,13 +781,12 @@ public class UserServiceImpl implements UserService<UserBean> {
 			HttpServletRequest request) {
 		logger.info("UserServiceImpl-->search():jo="+jo.toString());
 		String searchKey = JsonUtil.getStringValue(jo, "searchKey");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		if(StringUtil.isNull(searchKey)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.检索关键字不能为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.检索关键字不能为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		
@@ -826,7 +806,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		message.put("isSuccess", true);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -835,15 +815,9 @@ public class UserServiceImpl implements UserService<UserBean> {
 		logger.info("UserServiceImpl-->webSearch():jo="+jo.toString());
 		String searchKey = JsonUtil.getStringValue(jo, "search_key");
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", 25); //默认获取25条最符合条件的记录
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		
-		if(!user.isAdmin()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value);
-			return message;
-		}
-		
+		ResponseMap message = new ResponseMap();
+		//检查是否有管理员角色
+		checkAdmin(user);
 		
 		String registerStartTime = JsonUtil.getStringValue(jo, "register_time_start");
 		String registerEndTime = JsonUtil.getStringValue(jo, "register_time_end");
@@ -907,7 +881,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "搜索用户列表。搜索json语句是"+ jo.toString()).toString(), "webSearch()", ConstantsUtil.STATUS_NORMAL, 0);	
 				
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -915,8 +889,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 			HttpServletRequest request) {
 		logger.info("UserServiceImpl-->shakeSearch():jo="+jo.toString());
 		int userId = 0; //获取到的用户的ID
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		UserBean userBean = userMapper.shakeSearch(user.getId(), ConstantsUtil.STATUS_NORMAL);
 		if(userBean != null ){
@@ -933,7 +906,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "摇一摇搜索，得到用户Id为"+ userId, StringUtil.getSuccessOrNoStr(userId > 0)).toString(), "shakeSearch()", StringUtil.changeBooleanToInt(userId > 0), 0);	
 		
-		return message;
+		return message.getMap();
 	}
 
 
@@ -948,8 +921,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		String birthDay = JsonUtil.getStringValue(jo, "birth_day");
 		String educationBackground = JsonUtil.getStringValue(jo, "education_background");
 		String personalIntroduction = JsonUtil.getStringValue(jo, "personal_introduction");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		user.setSex(sex);
 		user.setMobilePhone(mobilePhone);
 		user.setQq(qq);
@@ -980,7 +952,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "用户更新基本信息", StringUtil.getSuccessOrNoStr(result)).toString(), "updateUserBase()", StringUtil.changeBooleanToInt(result), 0);	
 		
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -988,13 +960,10 @@ public class UserServiceImpl implements UserService<UserBean> {
 			HttpServletRequest request) {
 		logger.info("UserServiceImpl-->adminUpdateUserBase():jo="+jo.toString());
 
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		if(!user.isAdmin()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+		
+		//检查是否具有管理员权限
+		checkAdmin(user);
 		
 		final int toUserId = JsonUtil.getIntValue(jo, "to_user_id");
 		String account = JsonUtil.getStringValue(jo, "account");
@@ -1007,7 +976,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		if(updateUserBean == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在.value));
 			message.put("responseCode", EnumUtil.ResponseCode.用户不存在.value);
-			return message;
+			return message.getMap();
 		}
 
 		updateUserBean.setAccount(account);
@@ -1042,7 +1011,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 			
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("管理员账号为", user.getAccount() , "更新用户ID为", toUserId, "基本信息", StringUtil.getSuccessOrNoStr(result)).toString(), "adminUpdateUserBase()", StringUtil.changeBooleanToInt(result), 0);	
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -1054,24 +1023,23 @@ public class UserServiceImpl implements UserService<UserBean> {
 		String password = JsonUtil.getStringValue(jo, "password"); //原来的密码
 		String newPassword = JsonUtil.getStringValue(jo, "new_password"); //后来的密码
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if(StringUtil.isNull(password) || StringUtil.isNull(newPassword)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		if(!user.getPassword().equals(MD5Util.compute(password))){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.原密码错误.value));
 			message.put("responseCode", EnumUtil.ResponseCode.原密码错误.value);
-			return message;
+			return message.getMap();
 		}
 		
 		if(password.equals(newPassword)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.要修改的密码跟原密码相同.value));
 			message.put("responseCode", EnumUtil.ResponseCode.要修改的密码跟原密码相同.value);
-			return message;
+			return message.getMap();
 		}
 		
 		user.setPassword(MD5Util.compute(newPassword));
@@ -1089,7 +1057,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "用户更改登录密码", StringUtil.getSuccessOrNoStr(result)).toString(), "updatePassword()", StringUtil.changeBooleanToInt(result), 0);	
 		
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -1097,13 +1065,10 @@ public class UserServiceImpl implements UserService<UserBean> {
 			HttpServletRequest request) {
 		logger.info("UserServiceImpl-->adminResetPassword():jo="+jo.toString());
 
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		if(!user.isAdmin()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+		
+		//检查是否有管理员的角色
+		checkAdmin(user);
 		
 		//都是经过第一次MD5加密后的字符串
 		final int toUserId = JsonUtil.getIntValue(jo, "to_user_id"); //重置密码的用户
@@ -1111,7 +1076,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		if(updateUserBean == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在.value));
 			message.put("responseCode", EnumUtil.ResponseCode.用户不存在.value);
-			return message;
+			return message.getMap();
 		}
 		
 		//两次MD5加密
@@ -1140,7 +1105,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("管理员账号为", user.getAccount() , "更改用户账号为", updateUserBean.getAccount(),"登录密码", StringUtil.getSuccessOrNoStr(result)).toString(), "adminResetPassword()", StringUtil.changeBooleanToInt(result), 0);	
 		
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -1300,19 +1265,18 @@ public class UserServiceImpl implements UserService<UserBean> {
 			UserBean user, HttpServletRequest request) {
 		logger.info("UserServiceImpl-->cancelScanLogin():jo=" +jo.toString());		
 		String cid = JsonUtil.getStringValue(jo, "cid");//获取连接ID
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		if(StringUtil.isNull(cid)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.免登录码为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.免登录码为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		if(ScanLoginWebSocket.scanLoginSocket.get(cid) == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.登录页面已经过期.value));
 			message.put("responseCode", EnumUtil.ResponseCode.登录页面已经过期.value);
-			return message;
+			return message.getMap();
 		}
 		
 		message.put("isSuccess", true);
@@ -1324,7 +1288,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 			//TODO ..
 		}
 		userHandler.removeLoginErrorNumber(user.getAccount());
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -1332,21 +1296,17 @@ public class UserServiceImpl implements UserService<UserBean> {
 			HttpServletRequest request) {
 		logger.info("UserServiceImpl-->deleteUser():jo=" +jo.toString());
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id", user.getId());// 0表示ID，1表示名称
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		
-		if(!user.isAdmin() && (user.getId() != toUserId)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+
+		//
+		checkAdmin(user, toUserId);
 		
 		UserBean updateUserBean = userMapper.findById(UserBean.class, toUserId);
 		
 		if(updateUserBean == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已经注销.value));
 			message.put("responseCode", EnumUtil.ResponseCode.用户已经注销.value);
-			return message;
+			return message.getMap();
 		}
 		
 		updateUserBean.setStatus(ConstantsUtil.STATUS_DELETE);
@@ -1365,7 +1325,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"执行删除用户Id为"+toUserId +"的用户", "deleteUser()", StringUtil.changeBooleanToInt(result), 0);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -1375,26 +1335,25 @@ public class UserServiceImpl implements UserService<UserBean> {
 		//type: 1为通知，2为邮件，3为私信，4为短信
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id");
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if(toUserId < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		
 		if(toUserId == user.getId()){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.不能给自己发信息.value));
 			message.put("responseCode", EnumUtil.ResponseCode.不能给自己发信息.value);
-			return message;
+			return message.getMap();
 		}
 		
 		UserBean toUser = userMapper.findById(UserBean.class, toUserId);
 		if(toUser == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该用户不存在.value));
 			message.put("responseCode", EnumUtil.ResponseCode.该用户不存在.value);
-			return message;
+			return message.getMap();
 		}
 		int type = JsonUtil.getIntValue(jo, "type");
 		String content = JsonUtil.getStringValue(jo, "content");
@@ -1455,7 +1414,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"给用户Id为"+toUserId +"的用户发送信息，信息类型为："+type, "sendMessage()", ConstantsUtil.STATUS_NORMAL, 0);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -1463,20 +1422,17 @@ public class UserServiceImpl implements UserService<UserBean> {
 			HttpServletRequest request) {
 		logger.info("UserServiceImpl-->addUser():jo="+jo.toString());
 
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		if(!user.isAdmin()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+		
+		//检查是否具有管理员权限
+		checkAdmin(user);
 		
 		String account = JsonUtil.getStringValue(jo, "account");
 		String password = JsonUtil.getStringValue(jo, "password");
 		if(StringUtil.isNull(account) || StringUtil.isNull(password)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 
 		UserBean addUserBean = new UserBean();
@@ -1521,7 +1477,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("管理员账号为", user.getAccount() , "添加新用户，用户账号是：", account, StringUtil.getSuccessOrNoStr(result)).toString(), "addUser()", StringUtil.changeBooleanToInt(result), 0);	
 		
-		return message;
+		return message.getMap();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -1532,27 +1488,22 @@ public class UserServiceImpl implements UserService<UserBean> {
 		String link = JsonUtil.getStringValue(jo, "link"); //必须
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id"); //必须
 				
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);	
+		ResponseMap message = new ResponseMap();	
 		
 		//没有图片链接报错返回
 		if(StringUtil.isNull(link) || toUserId < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		if(!StringUtil.isLink(link)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.非合法的链接.value));
 			message.put("responseCode", EnumUtil.ResponseCode.非合法的链接.value);
-			return message;
+			return message.getMap();
 		}
 		
-		if(!user.isAdmin() && toUserId != user.getId()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-			return message;
-		}
+		checkAdmin(user, toUserId);
 		
 		//获取操作用户对象
 		if(toUserId != user.getId())
@@ -1577,13 +1528,13 @@ public class UserServiceImpl implements UserService<UserBean> {
 		if(length < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.链接操作失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.链接操作失败.value);
-			return message;
+			return message.getMap();
 		}
 		
 		if(length > 1024* 1024* 500){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.上传的文件过大.value));
 			message.put("responseCode", EnumUtil.ResponseCode.上传的文件过大.value);
-			return message;
+			return message.getMap();
 		}
 		
 		filePathBean = new FilePathBean();
@@ -1614,7 +1565,7 @@ public class UserServiceImpl implements UserService<UserBean> {
 		
 		String subject = user.getAccount() + "上传了头像" + StringUtil.getSuccessOrNoStr(result);
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "uploadUserHeadImageLink", StringUtil.changeBooleanToInt(result), 0);	
-		return message;
+		return message.getMap();
 	}
 
 	@Override

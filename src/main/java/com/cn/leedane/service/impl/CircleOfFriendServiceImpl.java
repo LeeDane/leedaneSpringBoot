@@ -1,7 +1,6 @@
 package com.cn.leedane.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +33,7 @@ import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 /**
  * 朋友圈service的实现类
@@ -107,7 +107,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
 		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
-		Map<String, Object> message = new HashMap<String, Object>();
+		ResponseMap message = new ResponseMap();
 		message.put("isSuccess", false);
 		
 		int start = 0;
@@ -153,7 +153,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取朋友圈列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 				
-		return message;*/
+		return message.getMap();*/
 		
 		long start = System.currentTimeMillis();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
@@ -169,8 +169,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 		fids.add(String.valueOf(user.getId()));
 		
 		StringBuffer sql = new StringBuffer();
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if("firstloading".equalsIgnoreCase(method)){
 			sql.append("select m.id table_id, '"+DataTableType.心情.value+"' table_name, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img,");
 			sql.append(" m.read_number, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account");
@@ -239,7 +238,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 		System.out.println("获取好友圈列表总计耗时：" +(end - start) +"毫秒");
 		message.put("message", rs);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 	
 	/**

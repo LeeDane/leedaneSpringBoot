@@ -39,6 +39,8 @@ public class GalleryController extends BaseController{
 		if(!checkParams(message, request)){
 			return message.getMap();
 		}
+		
+		checkRoleOrPermission(request);
 		message.putAll(galleryService.addLink(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 		
@@ -78,6 +80,7 @@ public class GalleryController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(galleryService.delete(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

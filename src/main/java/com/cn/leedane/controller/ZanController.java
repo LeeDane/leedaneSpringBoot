@@ -36,6 +36,7 @@ public class ZanController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(zanService.addZan(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -50,6 +51,7 @@ public class ZanController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(zanService.deleteZan(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -64,6 +66,7 @@ public class ZanController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		List<Map<String, Object>> result= zanService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
 		System.out.println("获得赞的数量：" +result.size());
 		message.put("isSuccess", true);
@@ -81,6 +84,7 @@ public class ZanController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(zanService.getAllZanUser(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

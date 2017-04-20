@@ -21,6 +21,7 @@ import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.handler.CloudStoreHandler;
 import com.cn.leedane.mapper.FilePathMapper;
@@ -452,8 +453,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 		//执行的方式，现在支持：uploading(向上刷新)，lowloading(向下刷新)，firstloading(第一次刷新)
 		String method = JsonUtil.getStringValue(jo, "method");
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		List<Map<String,Object>> r = new ArrayList<Map<String,Object>>();
 		StringBuffer sql = new StringBuffer();
@@ -481,7 +481,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 		}
 		message.put("isSuccess", true);
 		message.put("message", r);
-		return message;
+		return message.getMap();
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 
-import com.cn.leedane.mapper.RolesMapper;
+import com.cn.leedane.mapper.RoleMapper;
 import com.cn.leedane.model.RoleBean;
 
 /**
@@ -17,11 +17,11 @@ import com.cn.leedane.model.RoleBean;
 public class RoleTest extends BaseTest {
 	
 	@Resource
-	private RolesMapper rolesMapper;
+	private RoleMapper roleMapper;
 	
 	@Test
 	public void addCompany() throws Exception{
-		RoleBean role = rolesMapper.findById(RoleBean.class, 1);
-		rolesMapper.save(role);
+		RoleBean role = roleMapper.findById(RoleBean.class, 1);
+		roleMapper.save(role);
 	}	
 }

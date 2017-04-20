@@ -1,7 +1,6 @@
 package com.cn.leedane.service.impl;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +25,7 @@ import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -94,8 +94,7 @@ public class FinancialOneCategoryServiceImpl implements FinancialOneCategoryServ
 	public Map<String, Object> getAll(JSONObject jo,
 			UserBean user, HttpServletRequest request) {
 		logger.info("FinancialOneCategoryServiceImpl-->getAll():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		boolean result = false;
 		
 		StringBuffer sqlBuffer = new StringBuffer();
@@ -115,6 +114,6 @@ public class FinancialOneCategoryServiceImpl implements FinancialOneCategoryServ
 		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取全部一级分类列表", StringUtil.getSuccessOrNoStr(result)).toString(), "getAll()", StringUtil.changeBooleanToInt(result), 0);
-		return message;
+		return message.getMap();
 	}
 }

@@ -25,9 +25,7 @@ import com.cn.leedane.utils.ResponseMap;
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.fn)
 public class FinancialLocationController extends BaseController{
-
 	protected final Log log = LogFactory.getLog(getClass());
-	
 	
 	//记账位置信息
 	@Autowired
@@ -43,6 +41,7 @@ public class FinancialLocationController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialLocationService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -57,6 +56,7 @@ public class FinancialLocationController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialLocationService.update(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -71,6 +71,7 @@ public class FinancialLocationController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialLocationService.delete(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -85,6 +86,7 @@ public class FinancialLocationController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialLocationService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -99,6 +101,7 @@ public class FinancialLocationController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialLocationService.getAll(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

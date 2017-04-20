@@ -30,6 +30,7 @@ public class MessageController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		/*UserBean user = (UserBean) getSession().get(ConstantsUtil.USER_SESSION);
 		int fromUserID = 1;
 		if(user != null){

@@ -12,9 +12,12 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cn.leedane.controller.RoleController;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.UserTokenBean;
 import com.cn.leedane.redis.util.RedisUtil;
@@ -234,11 +237,13 @@ public class UserHandler {
 				infos.put("birth_day", "");
 			}
 			
+			Subject currentUser = SecurityUtils.getSubject();
+			
 			infos.put("mobile_phone", StringUtil.changeNotNull(user2.getMobilePhone()));
 			//infos.put("pic_path", user2.getPicPath());
 			infos.put("qq", StringUtil.changeNotNull(user2.getQq()));
 			infos.put("sex", StringUtil.changeNotNull(user2.getSex()));
-			infos.put("is_admin", user2.isAdmin());
+			infos.put("is_admin", currentUser.hasRole(RoleController.ADMIN_ROLE_CODE));
 			infos.put("education_background", StringUtil.changeNotNull(user2.getEducationBackground()));
 			infos.put("user_pic_path", getUserPicPath(user2.getId(), "30x30"));
 			infos.put("register_time", user2.getRegisterTime() == null ? "" : DateUtil.DateToString(user2.getRegisterTime(), "yyyy-MM-dd"));

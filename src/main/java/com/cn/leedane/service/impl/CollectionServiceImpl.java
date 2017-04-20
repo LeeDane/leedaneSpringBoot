@@ -2,7 +2,6 @@ package com.cn.leedane.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,12 +13,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CommonHandler;
 import com.cn.leedane.handler.FriendHandler;
 import com.cn.leedane.handler.UserHandler;
@@ -30,6 +24,13 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.CollectionService;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.SqlUtil;
+import com.cn.leedane.utils.StringUtil;
 /**
  * 收藏夹service的实现类
  * @author LeeDane
@@ -63,13 +64,12 @@ public class CollectionServiceImpl extends AdminRoleCheckService implements Coll
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
 		int tableId = JsonUtil.getIntValue(jo, "table_id");
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		if(SqlUtil.getBooleanByList(collectionMapper.exists(CollectionBean.class, tableName, tableId, user.getId()))){
 			message.put("message", "您已收藏，请勿重复操作！");
 			message.put("responseCode", EnumUtil.ResponseCode.添加的记录已经存在.value);
-			return message;
+			return message.getMap();
 		}
 		CollectionBean bean = new CollectionBean();
 		bean.setCreateTime(new Date());
@@ -87,7 +87,7 @@ public class CollectionServiceImpl extends AdminRoleCheckService implements Coll
 		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"收藏表ID为：", tableId, ",表名为：", tableName, "的记录", StringUtil.getSuccessOrNoStr(result)).toString(), "addCollect()", StringUtil.changeBooleanToInt(result), 0);		
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -96,21 +96,15 @@ public class CollectionServiceImpl extends AdminRoleCheckService implements Coll
 		logger.info("CollectionServiceImpl-->deleteCollection():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int cid = JsonUtil.getIntValue(jo, "cid");
 		//int createUserId = JsonUtil.getIntValue(jo, "create_user_id");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		if(cid < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作实例.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+		
+		if(cid < 1)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
 		
 		CollectionBean collectionBean = collectionMapper.findById(CollectionBean.class, cid);
 		//非登录用户不能删除操作
-		if(!checkAdmin(user, collectionBean.getCreateUserId())){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-			return message;
-		}
+		checkAdmin(user, collectionBean.getCreateUserId());
+		
 		boolean result = collectionMapper.deleteById(CollectionBean.class, collectionBean.getId()) > 0;
 
 		if(result){
@@ -122,7 +116,7 @@ public class CollectionServiceImpl extends AdminRoleCheckService implements Coll
 		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除收藏ID为", cid, "的数据", StringUtil.getSuccessOrNoStr(result)).toString(), "deleteCollection()", StringUtil.changeBooleanToInt(result), 0);
-		return message;
+		return message.getMap();
 	}
 
 	@Override

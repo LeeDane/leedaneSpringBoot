@@ -11,6 +11,8 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -64,6 +66,7 @@ public class BlogController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		JSONObject json = getJsonFromMessage(message);
 		
 		//获取登录用户，获取不到用管理员账号
@@ -89,7 +92,10 @@ public class BlogController extends BaseController{
 		
 		//非管理员发布的文章需要审核
 		int status = JsonUtil.getIntValue(json, "status");
-		if(!user.isAdmin() && status == ConstantsUtil.STATUS_NORMAL){
+
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+		if(!currentUser.hasRole(RoleController.ADMIN_ROLE_CODE) && status == ConstantsUtil.STATUS_NORMAL){
 			status = ConstantsUtil.STATUS_AUDIT;
 		}
 		blog.setStatus(status);
@@ -160,7 +166,8 @@ public class BlogController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 				return message.getMap();
-			
+		
+		checkRoleOrPermission(request);
 		message.putAll(blogService.deleteById(getJsonFromMessage(message), request, getUserFromMessage(message)));
 		return message.getMap();
 	}
@@ -239,6 +246,7 @@ public class BlogController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(blogService.getInfo(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -308,6 +316,7 @@ public class BlogController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		JSONObject json = getJsonFromMessage(message);
 		int num = JsonUtil.getIntValue(json, "num"); //获取图片的数量
 		//执行的方式，现在支持：simple(取最新)，hostest(取最热门的)
@@ -346,6 +355,7 @@ public class BlogController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(blogService.addTag(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -360,6 +370,7 @@ public class BlogController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(blogService.draftList(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -374,6 +385,7 @@ public class BlogController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(blogService.edit(blogId, getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -388,6 +400,7 @@ public class BlogController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(blogService.noCheckPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -402,6 +415,7 @@ public class BlogController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(blogService.check(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

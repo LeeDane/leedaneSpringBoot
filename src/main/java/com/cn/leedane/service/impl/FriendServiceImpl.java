@@ -1,8 +1,6 @@
 package com.cn.leedane.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,13 +14,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.FriendHandler;
 import com.cn.leedane.handler.NotificationHandler;
@@ -35,6 +26,14 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.EnumUtil.NotificationType;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.SqlUtil;
+import com.cn.leedane.utils.StringUtil;
 
 /**
  * 好友service实现类
@@ -89,13 +88,12 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 	public Map<String, Object> deleteFriends(JSONObject jo, UserBean user, HttpServletRequest request) {
 		logger.info("FriendServiceImpl-->deleteFriends():jo="+jo.toString());
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		int fid = JsonUtil.getIntValue(jo, "fid");
 		if(fid < 1) {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;			
+			return message.getMap();			
 		}
 				
 		FriendBean friendBean = friendMapper.findById(FriendBean.class, fid);
@@ -121,7 +119,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, subject, "deleteFriends()", ConstantsUtil.STATUS_NORMAL, 0);
 		
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -135,18 +133,17 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			HttpServletRequest request) {
 		logger.info("FriendServiceImpl-->addFriend():jo="+jo.toString());
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if(toUserId == 0) {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;			
+			return message.getMap();			
 		}
 		
 		if(isFriendRecord(user.getId(), toUserId)){
 			message.put("message", "等待对方确认..."); 
 			message.put("isSuccess", true);
-			return message;	
+			return message.getMap();	
 		}
 		
 		UserBean toUser = userService.findById(toUserId);
@@ -157,7 +154,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		if(toUserId == user.getId()){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.不能添加自己为好友.value));
 			message.put("responseCode", EnumUtil.ResponseCode.不能添加自己为好友.value);
-			return message;	
+			return message.getMap();	
 		}
 		FriendBean friendBean = new FriendBean();
 		friendBean.setFromUserId(user.getId());
@@ -177,7 +174,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		if(!(friendMapper.save(friendBean)>0)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.添加好友失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.添加好友失败.value);
-			return message;	
+			return message.getMap();	
 		}
 		//发送通知给相应的用户
 		String content = user.getAccount() +"请求与您成为好友";
@@ -187,7 +184,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		message.put("isSuccess", true);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"请求添加账号："+toUser.getAccount()+"为好友", "addFriend()", ConstantsUtil.STATUS_NORMAL, 0);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -195,30 +192,29 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			HttpServletRequest request) {
 		logger.info("FriendServiceImpl-->addAgree():jo="+jo.toString());
 		int fid = JsonUtil.getIntValue(jo, "fid");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if(fid == 0){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
 			message.put("responseCode", EnumUtil.ResponseCode.缺少请求参数.value);
-			return message;	
+			return message.getMap();	
 		}
 		FriendBean friendBean = friendMapper.findById(FriendBean.class, fid);
 		if(friendBean == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.好友关系不存在.value));
 			message.put("responseCode", EnumUtil.ResponseCode.好友关系不存在.value);
-			return message;		
+			return message.getMap();		
 		}
 		
 		if(friendBean.getStatus() != ConstantsUtil.STATUS_DISABLE){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.好友关系不是待确认状态.value));
 			message.put("responseCode", EnumUtil.ResponseCode.好友关系不是待确认状态.value);
-			return message;	
+			return message.getMap();	
 		}
 		
 		if(friendBean.getStatus() == ConstantsUtil.STATUS_NORMAL){
 			message.put("isSuccess", true);
 			message.put("message", "恭喜，TA已经是好友"); 
-			return message;	
+			return message.getMap();	
 		}
 		
 		friendBean.setStatus(ConstantsUtil.STATUS_NORMAL);
@@ -237,7 +233,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			//message.put("message", "同意好友关系失败，请稍后重试"); 
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-			return message;	
+			return message.getMap();	
 		}
 		
 		//更新redis的朋友关系
@@ -250,7 +246,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 	
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"同意好友关系"+fid, "addAgree()", ConstantsUtil.STATUS_NORMAL, 0);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -263,8 +259,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 	public Map<String, Object> friendsAlreadyPaging(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("FriendServiceImpl-->friendsAlreadyPaging():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
 		int firstId = JsonUtil.getIntValue(jo, "first_id", 0); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
@@ -309,15 +304,14 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			
 		message.put("isSuccess", true);
 		message.put("message", rs);
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
 	public Map<String, Object> friendsNotyetPaging(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("FriendServiceImpl-->friendsNotyetPaging():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
 		int firstId = JsonUtil.getIntValue(jo, "first_id", 0); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
@@ -362,20 +356,14 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			
 		message.put("isSuccess", true);
 		message.put("message", rs);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> requestPaging(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("FriendServiceImpl-->requestPaging():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		if(user == null || user.getId() < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请先登录.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
 		
 		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
 		int firstId = JsonUtil.getIntValue(jo, "first_id", 0); //结束的页数
@@ -418,20 +406,15 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			
 		message.put("isSuccess", true);
 		message.put("message", rs);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> responsePaging(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("FriendServiceImpl-->responsePaging():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		if(user == null || user.getId() < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请先登录.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+		
 		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
 		int firstId = JsonUtil.getIntValue(jo, "first_id", 0); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
@@ -473,21 +456,20 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			
 		message.put("isSuccess", true);
 		message.put("message", rs);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> matchContact(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("FriendServiceImpl-->matchContact():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		String contacts = JsonUtil.getStringValue(jo, "contacts"); //用户本地上传的联系人
 		if(StringUtil.isNull(contacts)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-			return message;
+			return message.getMap();
 		}	
 		//获取所有通讯录用户
 		JSONObject contactsObj = JSONObject.fromObject(contacts);
@@ -505,15 +487,14 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			
 		message.put("isSuccess", true);
 		message.put("message", null);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> friends(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("FriendServiceImpl-->matchContact():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
 		
 		List<Map<String, Object>> rs = getFromToFriends(user.getId());
@@ -527,7 +508,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		}
 		message.put("isSuccess", true);
 		message.put("message", rs);
-		return message;
+		return message.getMap();
 	}
 	
 }

@@ -15,7 +15,6 @@ import com.cn.leedane.model.CartDetailsBean;
 import com.cn.leedane.model.ProductBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.CartDetailsService;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
 /**
  * 购物车清单service的实现类
  * @author LeeDane

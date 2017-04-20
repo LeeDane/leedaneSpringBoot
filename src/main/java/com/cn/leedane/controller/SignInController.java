@@ -6,8 +6,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.exception.ErrorException;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.SignInBean;
 import com.cn.leedane.model.UserBean;
@@ -23,7 +20,6 @@ import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.SignInService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 
@@ -54,6 +50,7 @@ public class SignInController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		int id = JsonUtil.getIntValue(getJsonFromMessage(message), "id", getUserFromMessage(message).getId());
 		message.put("isSuccess", signInService.saveSignIn(getJsonFromMessage(message), userService.findById(id), request));
 		return message.getMap();
@@ -70,6 +67,7 @@ public class SignInController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.put("isSuccess", true);
 		UserBean user = getUserFromMessage(message);
 		int id = JsonUtil.getIntValue(getJsonFromMessage(message), "id", getUserFromMessage(message).getId());
@@ -92,6 +90,7 @@ public class SignInController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		List<Map<String, Object>> result= signInService.getSignInByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
 		System.out.println("获得签到的数量：" +result.size());
 		message.put("isSuccess", true);

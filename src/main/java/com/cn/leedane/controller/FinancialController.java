@@ -37,6 +37,7 @@ public class FinancialController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialService.save(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -51,6 +52,7 @@ public class FinancialController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialService.update(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -65,6 +67,7 @@ public class FinancialController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialService.delete(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -79,6 +82,7 @@ public class FinancialController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialService.synchronous(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -99,6 +103,7 @@ public class FinancialController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialService.force(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -113,6 +118,7 @@ public class FinancialController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialService.getByYear(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -127,6 +133,7 @@ public class FinancialController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialService.getAll(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -141,6 +148,7 @@ public class FinancialController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialService.query(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -154,6 +162,8 @@ public class FinancialController extends BaseController{
     	ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
+		
+		checkRoleOrPermission(request);
 		message.putAll(financialService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }

@@ -1,27 +1,20 @@
 package com.cn.leedane.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CircleOfFriendsHandler;
 import com.cn.leedane.handler.FanHandler;
 import com.cn.leedane.handler.NotificationHandler;
@@ -33,6 +26,13 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.FanService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.EnumUtil.NotificationType;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.StringUtil;
 
 /**
  * 粉丝service实现类
@@ -79,15 +79,11 @@ public class FanServiceImpl implements FanService<FanBean> {
 		
 		logger.info("FanServiceImpl-->getMyAttentionFansLimit():jo="+jo.toString());
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		//暂时不支持查看别人的关注好友列表
-		if(toUserId != user.getId()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-	        return message;
-		}
+		if(toUserId != user.getId())
+			throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
 		
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		StringBuffer sql;
@@ -134,7 +130,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		System.out.println("获取我关注对象列表总计耗时：" +(end - start) +"毫秒");
 		message.put("message", rs);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -148,14 +144,10 @@ public class FanServiceImpl implements FanService<FanBean> {
 		
 		logger.info("FanServiceImpl-->getToAttentionsLimit():jo="+jo.toString());
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
-		if(toUserId < 1 || toUserId == user.getId()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-			return message;
-		}
+		if(toUserId < 1 || toUserId == user.getId())
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 		
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		StringBuffer sql;
@@ -204,7 +196,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		System.out.println("获取TA关注对象列表总计耗时：" +(end - start) +"毫秒");
 		message.put("message", rs);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -217,13 +209,10 @@ public class FanServiceImpl implements FanService<FanBean> {
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		
 		logger.info("FanServiceImpl-->getMyFansLimit():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		if(toUserId != user.getId()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+		if(toUserId != user.getId())
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
+		
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		StringBuffer sql;
 		if("firstloading".equalsIgnoreCase(method)){
@@ -270,7 +259,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		System.out.println("获取我的粉丝列表总计耗时：" +(end - start) +"毫秒");
 		message.put("message", rs);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -284,13 +273,10 @@ public class FanServiceImpl implements FanService<FanBean> {
 		
 		logger.info("FanServiceImpl-->getToFansLimit():jo="+jo.toString());
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		if(toUserId < 1 || toUserId == user.getId()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+		if(toUserId < 1 || toUserId == user.getId())
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
+		
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		StringBuffer sql;
 		if("firstloading".equalsIgnoreCase(method)){
@@ -338,7 +324,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		System.out.println("获取TA的粉丝列表总计耗时：" +(end - start) +"毫秒");
 		message.put("message", rs);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -396,31 +382,27 @@ public class FanServiceImpl implements FanService<FanBean> {
 		logger.info("FanServiceImpl-->addFan():jo="+jo.toString());
 		int toUserId = JsonUtil.getIntValue(jo, "toUserId");
 		String remark = JsonUtil.getStringValue(jo, "remark");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if(toUserId == 0) {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;			
+			return message.getMap();			
 		}
 
 		UserBean toUser = userService.findById(toUserId);
-		if(toUser == null){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-			return message;	
-		}
+		if(toUser == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 		
 		if(toUserId == user.getId()){
 			message.put("message", "不能添加自己为好友"); 
-			return message;	
+			return message.getMap();	
 		}
 		
 		
 		if(cheakIsAddFan(user.getId(), toUserId)){
 			message.put("message", "您已关注过TA，请勿重复操作！");
 			message.put("responseCode", EnumUtil.ResponseCode.添加的记录已经存在.value);
-			return message;	
+			return message.getMap();	
 		}
 		FanBean fanBean = new FanBean();
 		fanBean.setToUserId(toUserId);
@@ -432,7 +414,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		if(!(fanMapper.save(fanBean)> 0)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-			return message;	
+			return message.getMap();	
 		}else{
 			//发送通知给相应的用户
 			String content = user.getAccount() +"关注您";
@@ -448,7 +430,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		message.put("isSuccess", true);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"成为："+toUser.getAccount()+"为粉丝", "addFan()", ConstantsUtil.STATUS_NORMAL, 0);
-		return message;
+		return message.getMap();
 	}
 
 	/**
@@ -465,30 +447,29 @@ public class FanServiceImpl implements FanService<FanBean> {
 	public Map<String, Object> isFan(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("FanServiceImpl-->isFan():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		int toUserId = JsonUtil.getIntValue(jo, "toUserId");
 		
 		if(toUserId == 0) {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;			
+			return message.getMap();			
 		}
 		
 		if(isFanEachOther(jo, user, request)){
 			message.put("message", "已互相关注");
 			message.put("isSuccess", true);
-			return message;
+			return message.getMap();
 		}
 		
 		boolean isFan = fanMapper.executeSQL("select id from "+DataTableType.粉丝.value+" where status=? and create_user_id=? and to_user_id=?", ConstantsUtil.STATUS_NORMAL, user.getId(), toUserId).size() > 0;
 		if(isFan){
 			message.put("message", "已关注");
 			message.put("isSuccess", true);
-			return message;
+			return message.getMap();
 		}else{
 			message.put("message", "关注Ta");
-			return message;
+			return message.getMap();
 			
 		}
 	}

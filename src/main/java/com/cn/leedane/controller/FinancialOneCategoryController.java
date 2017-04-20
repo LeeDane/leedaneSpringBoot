@@ -37,6 +37,7 @@ public class FinancialOneCategoryController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(financialOneCategoryService.getAll(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }

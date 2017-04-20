@@ -1,5 +1,10 @@
 package com.cn.leedane.mapper;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.cn.leedane.model.RoleBean;
 
 /**
@@ -9,5 +14,5 @@ import com.cn.leedane.model.RoleBean;
  * Version 1.0
  */
 public interface RoleMapper extends BaseMapper<RoleBean>{
-	
+	public List<Map<String, Object>> users(@Param("rlid")int rlid);
 }

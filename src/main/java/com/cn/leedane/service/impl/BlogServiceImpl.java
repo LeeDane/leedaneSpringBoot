@@ -37,6 +37,7 @@ import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.JsoupUtil;
 import com.cn.leedane.utils.LuceneUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -82,8 +83,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	@Override
 	public Map<String,Object> addBlog(BlogBean blog, UserBean user){	
 		logger.info("BlogServiceImpl-->addBlog():blog="+blog);
-		Map<String,Object> message = new HashMap<String,Object>();
-		message.put("isSuccess",false);
+		ResponseMap message = new ResponseMap();
 		int result = 0;
 		if(blog.getId() > 0 ){
 			//获取文章
@@ -91,16 +91,13 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			if(oldBean == null){
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
 				message.put("responseCode", EnumUtil.ResponseCode.该博客不存在.value);
-				return message;
+				return message.getMap();
 			}
 			
 			//获取文章的作者
 			int createUserId = oldBean.getCreateUserId();
-			if(!checkAdmin(user, createUserId)){
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-				message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-				return message;
-			}
+			checkAdmin(user, createUserId);
+			
 			result = blogMapper.update(blog);
 		}else {
 			result = blogMapper.save(blog);
@@ -110,11 +107,10 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			message.put("isSuccess",true);
 			message.put("message","文章发布成功");
 		}else{
-			message.put("isSuccess",false);
 			message.put("message","文章发布失败");
 		}
 		
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -130,8 +126,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			HttpServletRequest request) {
 		logger.info("BlogServiceImpl-->shakeSearch():jo="+jo.toString());
 		int blogId = 0; //获取到的博客的ID
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		blogId = blogMapper.shakeSearch(user.getId(), ConstantsUtil.STATUS_NORMAL);
 		if(blogId > 0 ){
@@ -150,7 +145,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "摇一摇搜索，得到文章Id为"+ blogId, StringUtil.getSuccessOrNoStr(blogId > 0)).toString(), "shakeSearch()", StringUtil.changeBooleanToInt(blogId > 0), 0);	
 		
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -158,8 +153,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		//if
 		logger.info("BlogServiceImpl-->getIndexBlog():start="+start+",end="+end+",showType="+showType);
 		List<BlogBean> blogs = this.blogMapper.getMoreBlog(start, end, showType);
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if(blogs.size()>0){
 			message.put("isSuccess",true);
 			message.put("message",blogs);	
@@ -168,7 +162,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
 			message.put("responseCode", EnumUtil.ResponseCode.该博客不存在.value);
 		}
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -247,30 +241,19 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	public Map<String, Object> deleteById(JSONObject jo, HttpServletRequest request, UserBean user){
 		int id = JsonUtil.getIntValue(jo, "b_id");
 		logger.info("BlogServiceImpl-->deleteById():id="+id);
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		if(id < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.该博客不存在.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+		if(id < 1)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
 		
 		//获取该文章
 		BlogBean oldBean = blogMapper.findById(BlogBean.class, id);
-		if(oldBean == null){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.该博客不存在.value);
-			return message;
-		}
+		if(oldBean == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
 		
 		//获取该文章的作者
 		int createUserId = oldBean.getCreateUserId();
 		
-		if(!checkAdmin(user, createUserId)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-			return message;
-		}
+		checkAdmin(user, createUserId);
 		
 		boolean result = this.blogMapper.deleteById(BlogBean.class, id) > 0;
 		if(result){
@@ -284,7 +267,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		}
 		String subject = user.getAccount() + "删除了ID为"+id + "的博客" + StringUtil.getSuccessOrNoStr(result);
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "deleteById()", ConstantsUtil.STATUS_NORMAL, 0);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -304,13 +287,12 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			HttpServletRequest request) {
 		logger.info("BlogServiceImpl-->search():jo="+jo.toString());
 		String searchKey = JsonUtil.getStringValue(jo, "searchKey");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		if(StringUtil.isNull(searchKey)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.检索关键字不能为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.检索关键字不能为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		List<Map<String, Object>> rs = blogMapper.executeSQL("select id, img_url, title, has_img, tag, date_format(create_time,'%Y-%m-%d %H:%i:%s') create_time, digest, froms, source, create_user_id from "+DataTableType.博客.value+" where status=? and (digest like '%"+searchKey+"%' or title like '%"+searchKey+"%' or content like '%"+searchKey+"%') order by create_time desc limit 25", ConstantsUtil.STATUS_NORMAL);
@@ -323,7 +305,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		}
 		message.put("isSuccess", true);
 		message.put("message", rs);
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -332,28 +314,25 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		logger.info("BlogServiceImpl-->addTag():jo="+jo.toString());
 		int bid = JsonUtil.getIntValue(jo, "bid");
 		String tag = JsonUtil.getStringValue(jo, "tag");
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		if(bid < 1 || StringUtil.isNull(tag)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		if(tag.length() > 5){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.标签长度不能超过5位.value));
 			message.put("responseCode", EnumUtil.ResponseCode.标签长度不能超过5位.value);
-			return message;
+			return message.getMap();
 		}
 		
 		BlogBean blogBean = blogMapper.findById(BlogBean.class, bid);
 		
-		if(blogBean == null){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.该博客不存在.value);
-			return message;
-		}
+		if(blogBean == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
+		
 		boolean cut = false;
 		String oldTag = blogBean.getTag();
 		if(StringUtil.isNotNull(oldTag)){
@@ -391,7 +370,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		}
 		
 		message.put("isSuccess", result);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -408,15 +387,11 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	public Map<String, Object> getInfo(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("BlogServiceImpl-->getInfo():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		int blogId = JsonUtil.getIntValue(jo, "blog_id");
 		
-		if(blogId < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.该博客不存在.value);
-			return message;
-		}
+		if(blogId < 1)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
 		
 		//String sql = "select content, read_number from "+DataTableType.博客.value+" where status = ? and id = ?";
 		StringBuffer sql = new StringBuffer();
@@ -437,14 +412,14 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取文章ID为：", blogId, ",的基本信息", StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "getInfo()", ConstantsUtil.STATUS_NORMAL, 0);
 		
-		return message;
+		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> draftList(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("BlogServiceImpl-->draftList():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		Map<String, Object> message = new HashMap<String, Object>();		
+		ResponseMap message = new ResponseMap();		
 		StringBuffer sql = new StringBuffer();
 		sql.append("select b.id, b.img_url, b.title, b.has_img, b.tag, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time");
 		sql.append(" , b.digest, b.froms, b.content, b.can_comment, b.can_transmit, b.origin_link, b.source, b.category");
@@ -458,7 +433,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取草稿列表", StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "draftList()", ConstantsUtil.STATUS_NORMAL, 0);
 		
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -466,13 +441,9 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			HttpServletRequest request) {
 		logger.info("BlogServiceImpl-->edit():blogId=" +blogId +", user=" +user.getAccount());
 		
-		Map<String,Object> message = new HashMap<String,Object>();
-		message.put("isSuccess", false);
-		if(blogId < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.该博客不存在.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+		if(blogId < 1)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
 		
 		//获取该文章
 		StringBuffer sql = new StringBuffer();
@@ -483,19 +454,14 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		
 		List<Map<String, Object>> r = blogMapper.executeSQL(sql.toString(), blogId, ConstantsUtil.STATUS_NORMAL);
 		
-		if(r == null || r.size() != 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.该博客不存在.value);
-			return message;
-		}
+		if(r == null || r.size() != 1)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
 		
 		//获取该文章的作者
 		int createUserId = StringUtil.changeObjectToInt(r.get(0).get("create_user_id"));
-		if(!user.isAdmin() && (createUserId < 1 || createUserId != user.getId())){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-			return message;
-		}
+		
+		//获取当前的Subject  
+		checkAdmin(user, createUserId);
 		
 		message.put("message", r);
 		message.put("isSuccess", true);
@@ -504,20 +470,16 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取编辑博客Id为：", blogId, StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "edit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
-		return message;
+		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> noCheckPaging(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("BlogServiceImpl-->noCheckPaging():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		Map<String,Object> message = new HashMap<String,Object>();
-		message.put("isSuccess", false);
-		if(!user.isAdmin()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+		
+		checkAdmin(user);
 		
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize"); //每页的大小
 		int lastId = JsonUtil.getIntValue(jo, "last_id");
@@ -554,7 +516,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.目前暂不支持的操作方法.value));
 			message.put("responseCode", EnumUtil.ResponseCode.目前暂不支持的操作方法.value);
-			return message;
+			return message.getMap();
 		}
 
 		message.put("isSuccess", true);
@@ -563,41 +525,35 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取未审核文章列表，查询条件是："+jo.toString(), StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "noCheckPaging()", ConstantsUtil.STATUS_NORMAL, 0);	
-		return message;
+		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> check(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("BlogServiceImpl-->check():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		Map<String,Object> message = new HashMap<String,Object>();
-		message.put("isSuccess", false);
-		if(!user.isAdmin()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value);
-			return message;
-		}
+		ResponseMap message = new ResponseMap();
+		
+		//检查是否有管理员账户权限
+		checkAdmin(user);
 		
 		int blogId = JsonUtil.getIntValue(jo, "blog_id"); //文章ID
 		boolean agree = JsonUtil.getBooleanValue(jo, "agree");
 		BlogBean bean = blogMapper.findById(BlogBean.class, blogId);
-		if(bean == null){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.该博客不存在.value);
-			return message;
-		}
+		if(bean == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
 		
 		if(bean.getStatus() != ConstantsUtil.STATUS_AUDIT){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该文章不需要审核.value));
 			message.put("responseCode", EnumUtil.ResponseCode.该文章不需要审核.value);
-			return message;
+			return message.getMap();
 		}
 		
 		String toUserContent = JsonUtil.getStringValue(jo, "reason");
 		if(!agree && StringUtil.isNull(toUserContent)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 		if(agree){
 			bean.setStatus(ConstantsUtil.STATUS_NORMAL);
@@ -621,7 +577,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"审核文章Id为", blogId, StringUtil.getSuccessOrNoStr(result)).toString(), "check()", StringUtil.changeBooleanToInt(result), 0);	
-		return message;
+		return message.getMap();
 	}
 	
 	@Override
@@ -630,12 +586,11 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		/*logger.info("BlogServiceImpl-->getOneBlog():id="+id);
 		return this.blogMapper.getOneBlog(status , id);*/
 		logger.info("BlogServiceImpl-->getOneBlog():blogId=" +blogId);
-		Map<String,Object> message = new HashMap<String,Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		if(blogId < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		List<Map<String, Object>> ls = blogMapper.getOneBlog(ConstantsUtil.STATUS_NORMAL, blogId);
@@ -671,11 +626,11 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("获取博客ID为", blogId, "详情", StringUtil.getSuccessOrNoStr(result)).toString(), "check()", StringUtil.changeBooleanToInt(result), 0);	
-		return message;
+		return message.getMap();
 	}
 
 }

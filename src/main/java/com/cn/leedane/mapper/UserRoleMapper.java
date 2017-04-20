@@ -1,6 +1,7 @@
 package com.cn.leedane.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -17,4 +18,6 @@ public interface UserRoleMapper  extends BaseMapper<UserRoleBean>{
 	
 	public List<RoleBean> getUserRoleBeans(
 				@Param("userId") int userId, @Param("status") int status);
+	
+	public void insertByBatch(List<Map<String, Object>> data);
 }

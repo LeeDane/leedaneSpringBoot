@@ -1,9 +1,6 @@
 package com.cn.leedane.service.impl;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,14 +10,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.FilterUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
@@ -30,6 +19,15 @@ import com.cn.leedane.model.PrivateChatBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.PrivateChatService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.DateUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.EnumUtil.NotificationType;
+import com.cn.leedane.utils.FilterUtil;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.StringUtil;
 
 /**
  * 私信信息列表service实现类
@@ -56,9 +54,8 @@ public class PrivateChatServiceImpl implements PrivateChatService<PrivateChatBea
 	public Map<String, Object> getLimit(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("ChatServiceImpl-->getLimit():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		return message;
+		ResponseMap message = new ResponseMap();
+		return message.getMap();
 	}
 
 
@@ -66,8 +63,7 @@ public class PrivateChatServiceImpl implements PrivateChatService<PrivateChatBea
 	public Map<String, Object> send(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("PrivateChatServiceImpl-->send():jo="+jo.toString());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id"); //发送给对方的用户ID
 		if(toUserId < 1 || user.getId() == toUserId){
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
@@ -76,12 +72,12 @@ public class PrivateChatServiceImpl implements PrivateChatService<PrivateChatBea
 		
 		//进行敏感词过滤和emoji过滤
 		if(FilterUtil.filter(content, message))
-			return message;
+			return message.getMap();
 		
 		if(StringUtil.isNull(content)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.私信内容不能为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.私信内容不能为空.value);
-			return message;
+			return message.getMap();
 		}
 			
 		int type = JsonUtil.getIntValue(jo, "type", 0); //私信类型
@@ -111,7 +107,7 @@ public class PrivateChatServiceImpl implements PrivateChatService<PrivateChatBea
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给用户Id为：", toUserId, "发送私信，内容是：" , content, StringUtil.getSuccessOrNoStr(result)).toString(), "send()", ConstantsUtil.STATUS_NORMAL, 0);
 					
-		return message;
+		return message.getMap();
 	}
 	
 	/**
@@ -120,13 +116,13 @@ public class PrivateChatServiceImpl implements PrivateChatService<PrivateChatBea
 	 * @return
 	 */
 	public static Map<String, Object> privateChatBeanToMap(PrivateChatBean privateChatBean){
-		Map<String, Object> chat = new HashMap<String, Object>();
+		ResponseMap chat = new ResponseMap();
 		chat.put("id", privateChatBean.getId());
 		chat.put("create_user_id", privateChatBean.getCreateUserId());
 		chat.put("to_user_id", privateChatBean.getToUserId());
 		chat.put("create_time", DateUtil.DateToString(privateChatBean.getCreateTime()));
 		chat.put("type", privateChatBean.getType());
 		chat.put("content", privateChatBean.getContent());
-		return chat;
+		return chat.getMap();
 	}
 }

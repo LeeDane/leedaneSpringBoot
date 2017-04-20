@@ -31,6 +31,7 @@ public class RedisController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		String key = getJsonFromMessage(message).getString("key");
 		if(StringUtil.isNull(key)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少参数.value));

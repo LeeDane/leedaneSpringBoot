@@ -210,8 +210,8 @@ public class UserBean extends StatusBean{
 	/**
 	 * 是否是管理员(冗余字段)
 	 */
-	@Column("is_admin")
-	private boolean isAdmin;
+	//@Column("is_admin")
+	//private boolean isAdmin;
 	
 	/**
 	 * 所绑定的微信用户的名称
@@ -466,13 +466,13 @@ public class UserBean extends StatusBean{
 		this.isSolrIndex = isSolrIndex;
 	}
 	
-	public boolean isAdmin() {
+	/*public boolean isAdmin() {
 		return isAdmin;
 	}
 	
 	public void setAdmin(boolean isAdmin) {
 		this.isAdmin = isAdmin;
-	}
+	}*/
 	
 	public String getWechatUserName() {
 		return wechatUserName;

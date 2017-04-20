@@ -288,22 +288,10 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request)){
 			return message.getMap();
 		}
+		
+		checkRoleOrPermission(request);
 		message.putAll(userService.searchUserByUserIdOrAccount(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
-	}
-	
-	/**
-	 * 登录成功后系统的缓存数据
-	 */
-	@Deprecated
-	private void putInSessionAfterLoginSuccess() {
-		//先把session全部清空
-		/*session.clear();
-		//加载全部的好友信息ID和备注信息进入session中
-		List<Map<String, Object>> friends = friendService.getFromToFriends(user.getId());
-		session.put(ConstantsUtil.MY_FRIENDS, friends);
-		session.put(ConstantsUtil.USER_ACCOUNT_SESSION, user.getAccount());
-		session.put(ConstantsUtil.USER_SESSION, user);*/
 	}
 	
 	/**
@@ -321,6 +309,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		JSONObject json = getJsonFromMessage(message);
 		UserBean user = new UserBean();
 		user.setAccount(JsonUtil.getStringValue(json, "account"));
@@ -372,6 +361,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		JSONObject json = getJsonFromMessage(message);
 		//根据账号和密码找到该用户(密码需要再进行MD5加密)
 		UserBean user = userService.loginUser(JsonUtil.getStringValue(json, "account"), JsonUtil.getStringValue(json, "password"));
@@ -409,6 +399,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		JSONObject json = getJsonFromMessage(message);
 		//获得找回密码的类型(0:邮箱,1:手机)
 		if(JsonUtil.getIntValue(json, "type") == 0){
@@ -508,6 +499,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.put("message", userService.getHeadBase64StrById(getJsonFromMessage(message), getUserFromMessage(message), request));
 		message.put("isSuccess", true);
 		return message.getMap();
@@ -523,6 +515,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		String picSize = JsonUtil.getStringValue(getJsonFromMessage(message), "picSize", "30x30");
 		message.put("message", userHandler.getUserPicPath(getUserFromMessage(message).getId(), picSize));
 		message.put("isSuccess", true);
@@ -541,6 +534,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		UserBean user = getUserFromMessage(message);
 		message.put("isSuccess", userService.uploadHeadBase64StrById(getJsonFromMessage(message), user, request));
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"上传头像" + StringUtil.getSuccessOrNoStr(true), "uploadHeadBase64Str", ConstantsUtil.STATUS_NORMAL, 0);
@@ -724,6 +718,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(userService.getPhoneRegisterCode(getJsonFromMessage(message), request));
 		return message.getMap();
 	}
@@ -738,6 +733,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(userService.getPhoneLoginCode(mobilePhone, request));
 		return message.getMap();
 	}
@@ -752,6 +748,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		UserBean user = userService.registerByPhone(getJsonFromMessage(message), request);
 		if(user == null){
 			message.put("message", "用户不存在或者参数不正确");
@@ -795,6 +792,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		UserBean user = userService.loginByPhone(getJsonFromMessage(message), request);
 		if(user == null){
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
@@ -864,6 +862,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(userService.checkAccount(getJsonFromMessage(message), request, getUserFromMessage(message)));
 		return message.getMap();
 	}
@@ -879,6 +878,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		JSONObject json = getJsonFromMessage(message);
 		String FromUserName = JsonUtil.getStringValue(json, "FromUserName");
 		String account = JsonUtil.getStringValue(json, "account");
@@ -926,6 +926,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(userService.getUserInfoData(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -940,6 +941,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(userService.updateUserBase(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -954,6 +956,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(userService.updatePassword(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -968,6 +971,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(userService.scanLogin(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -982,6 +986,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
         if(currentUser.isAuthenticated()){
@@ -1020,6 +1025,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(userService.webSearch(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -1034,6 +1040,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(userService.adminUpdateUserBase(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -1048,6 +1055,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(userService.adminResetPassword(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -1062,6 +1070,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(userService.deleteUser(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -1076,6 +1085,7 @@ public class UserController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(userService.addUser(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -1099,23 +1109,4 @@ public class UserController extends BaseController{
 		printWriter(message, response);
 		return null;
 	}*/
-	
-	/**
-	 * 检查用户的权限
-	 * @param user
-	 * @return
-	 */
-	private boolean checkPemission(UserBean user) {
-		return true;
-	}
-	
-	/**
-	 * 检查用户角色
-	 * @param user
-	 * @return
-	 */
-	private boolean checkRole(UserBean user) {
-		return true;
-	}
-
 }

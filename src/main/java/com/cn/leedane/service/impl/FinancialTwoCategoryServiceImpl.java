@@ -2,7 +2,6 @@ package com.cn.leedane.service.impl;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +20,6 @@ import com.cn.leedane.mapper.FinancialTwoCategoryMapper;
 import com.cn.leedane.model.FinancialTwoLevelCategoryBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.ZanBean;
 import com.cn.leedane.service.FinancialTwoCategoryService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.CollectionUtil;
@@ -29,7 +27,7 @@ import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.FinancialCategoryUtil;
-import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -99,8 +97,7 @@ public class FinancialTwoCategoryServiceImpl implements FinancialTwoCategoryServ
 			UserBean user, HttpServletRequest request) {
 		logger.info("FinancialTwoCategoryServiceImpl-->getOneAndTwoCategorys():json=" +json.toString());
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		List<FinancialTwoLevelCategoryBean> twoLevelCategoryBeans = FinancialCategoryUtil.getTwoLevelCategoryBeans();
 		List<String> categorysList = new ArrayList<String>();
@@ -111,16 +108,14 @@ public class FinancialTwoCategoryServiceImpl implements FinancialTwoCategoryServ
 		}
 		message.put("message", categorysList);
 		message.put("isSuccess", true);
-		return message;
+		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> getAll(JSONObject jo,
 			UserBean user, HttpServletRequest request) {
 		logger.info("FinancialTwoCategoryServiceImpl-->getAll():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
-		
+		ResponseMap message = new ResponseMap();
 		boolean result = false;
 		
 		StringBuffer sqlBuffer = new StringBuffer();
@@ -142,8 +137,6 @@ public class FinancialTwoCategoryServiceImpl implements FinancialTwoCategoryServ
 		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取全部二级分类列表", StringUtil.getSuccessOrNoStr(result)).toString(), "getAll()", StringUtil.changeBooleanToInt(result), 0);
-		return message;
+		return message.getMap();
 	}
-	
-	
 }

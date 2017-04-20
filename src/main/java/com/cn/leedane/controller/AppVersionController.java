@@ -34,6 +34,7 @@ public class AppVersionController extends BaseController{
 	public Map<String, Object> getNewest(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
+		
 		message.putAll(appVersionService.getNewest(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();	
 	}
@@ -46,6 +47,7 @@ public class AppVersionController extends BaseController{
 	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
+		
 		message.putAll(appVersionService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

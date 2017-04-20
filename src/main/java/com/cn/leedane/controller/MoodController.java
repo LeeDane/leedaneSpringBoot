@@ -56,6 +56,7 @@ public class MoodController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		JSONObject jsonObject = getJsonFromMessage(message);
 		int status = JsonUtil.getIntValue(jsonObject, "status", ConstantsUtil.STATUS_NORMAL);
 		message.putAll(moodService.updateMoodStatus(jsonObject, status, request, getUserFromMessage(message)));
@@ -73,6 +74,7 @@ public class MoodController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(moodService.saveMood(getJsonFromMessage(message), getUserFromMessage(message), ConstantsUtil.STATUS_DRAFT, request));
 		return message.getMap();
 	}
@@ -87,6 +89,7 @@ public class MoodController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		JSONObject jsObject = getJsonFromMessage(message);
 		int status = JsonUtil.getIntValue(jsObject, "status", ConstantsUtil.STATUS_NORMAL);
 		
@@ -104,6 +107,7 @@ public class MoodController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(moodService.sendWordAndLink(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -118,6 +122,7 @@ public class MoodController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(moodService.deleteMood(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -133,8 +138,8 @@ public class MoodController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
+		
 		checkRoleOrPermission(request);
-			
 		message.putAll(moodService.getMoodByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -156,6 +161,7 @@ public class MoodController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		JSONObject json = getJsonFromMessage(message);
 		UserBean user = getUserFromMessage(message);
 				
@@ -183,6 +189,7 @@ public class MoodController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(moodService.saveDividedMood(getJsonFromMessage(message), getUserFromMessage(message), ConstantsUtil.STATUS_NORMAL, request));
 		return message.getMap();
 	}
@@ -198,6 +205,7 @@ public class MoodController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		return message.getMap();
 	}
 	
@@ -249,11 +257,12 @@ public class MoodController extends BaseController{
 	@RequestMapping(value = "/count", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getCountByUser(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(moodService.getCountByUser(getJsonFromMessage(message), getUserFromMessage(message), request));
+		if(!checkParams(message, request))
 			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(moodService.getCountByUser(getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
 	}
 	/**
 	 * 获取心情的信息
@@ -262,18 +271,14 @@ public class MoodController extends BaseController{
 	 */
 	@RequestMapping(value = "/detail", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> detail(HttpServletRequest request){
-		try {
-			ResponseMap message = new ResponseMap();
-			if(!checkParams(message, request))
-				return message.getMap();
-			
-			message.putAll(moodService.detail(getJsonFromMessage(message), getUserFromMessage(message), request, "120x120"));
-			//printWriter(message, response);
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
 			return message.getMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+		
+		checkRoleOrPermission(request);
+		message.putAll(moodService.detail(getJsonFromMessage(message), getUserFromMessage(message), request, "120x120"));
+		//printWriter(message, response);
+		return message.getMap();
 	}
 	/**
 	 * 获取心情的图片
@@ -286,6 +291,7 @@ public class MoodController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(moodService.detailImgs(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -300,6 +306,7 @@ public class MoodController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		message.putAll(moodService.getTopicByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

@@ -1,7 +1,6 @@
 package com.cn.leedane.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,19 +12,21 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cn.leedane.mapper.GalleryMapper;
+import com.cn.leedane.model.GalleryBean;
+import com.cn.leedane.model.OperateLogBean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.AdminRoleCheckService;
+import com.cn.leedane.service.GalleryService;
+import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.FileUtil;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
-import com.cn.leedane.mapper.GalleryMapper;
-import com.cn.leedane.model.GalleryBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.GalleryService;
-import com.cn.leedane.service.OperateLogService;
 
 /**
  * 图库service实现类
@@ -34,7 +35,7 @@ import com.cn.leedane.service.OperateLogService;
  * Version 1.0
  */
 @Service("galleryService")
-public class GalleryServiceImpl implements GalleryService<GalleryBean> {
+public class GalleryServiceImpl extends AdminRoleCheckService implements GalleryService<GalleryBean> {
 	Logger logger = Logger.getLogger(getClass());
 	@Autowired
 	private GalleryMapper galleryMapper;
@@ -52,8 +53,7 @@ public class GalleryServiceImpl implements GalleryService<GalleryBean> {
 			HttpServletRequest request) throws Exception {
 		logger.info("GalleryServiceImpl-->add():JSONObject="+jo.toString());
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		int width = JsonUtil.getIntValue(jo, "width", 0); //获取参数中宽度的值,可以为空
 		int height = JsonUtil.getIntValue(jo, "height", 0); //获取参数中高度的值,可以为空
@@ -64,13 +64,13 @@ public class GalleryServiceImpl implements GalleryService<GalleryBean> {
 		if(StringUtil.isNull(path)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 		
 		if(isExist(user, path)){
 			message.put("message", "您已添加过该链接，请勿重复操作！");
 			message.put("responseCode", EnumUtil.ResponseCode.添加的记录已经存在.value);
-			return message;
+			return message.getMap();
 		}
 		
 		//宽高有为0，需要网络获取宽高
@@ -79,7 +79,7 @@ public class GalleryServiceImpl implements GalleryService<GalleryBean> {
 			if(gBean == null){
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 				message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-				return message;
+				return message.getMap();
 			}
 			
 			width = gBean.getWidth();
@@ -91,7 +91,7 @@ public class GalleryServiceImpl implements GalleryService<GalleryBean> {
 		if(length > 1024 * 1024 * 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.图片大于1M无法上传.value));
 			message.put("responseCode", EnumUtil.ResponseCode.图片大于1M无法上传.value);
-			return message;
+			return message.getMap();
 		}
 		
 		GalleryBean bean = new GalleryBean();
@@ -115,7 +115,7 @@ public class GalleryServiceImpl implements GalleryService<GalleryBean> {
 		String subject = user.getAccount() + "操作加入图库，链接是：" + path;
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "addLink", 1 , 0);
 		
-		return message;
+		return message.getMap();
 	}
 
 	@Override
@@ -123,21 +123,18 @@ public class GalleryServiceImpl implements GalleryService<GalleryBean> {
 			HttpServletRequest request) {
 		logger.info("GalleryServiceImpl-->delete():JSONObject="+jo.toString());
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		int galleryId = JsonUtil.getIntValue(jo, "gid"); //获取参数中需要删除的图库的ID
 		if(galleryId == 0){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message;
+			return message.getMap();
 		}
 		GalleryBean galleryBean = galleryMapper.findById(GalleryBean.class, galleryId);
-		if(!user.isAdmin() && (galleryBean == null || galleryBean.getCreateUserId() != user.getId())){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
-			return message;
-		}
+		
+		//检验是否是管理员或者创建者权限
+		checkAdmin(user, galleryBean.getCreateUserId());
 		
 		boolean result = galleryMapper.deleteById(GalleryBean.class, galleryId) > 0;
 		if(result){
@@ -150,7 +147,7 @@ public class GalleryServiceImpl implements GalleryService<GalleryBean> {
 		//保存操作日志
 		String subject = user.getAccount() + "删除图库ID为："+galleryId+"的数据"+StringUtil.getSuccessOrNoStr(result);
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "delete()", StringUtil.changeBooleanToInt(result) , 0);
-		return message;
+		return message.getMap();
 	}
 	
 	@Override

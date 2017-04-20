@@ -120,6 +120,7 @@ public class DownloadController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
+		checkRoleOrPermission(request);
 		String filename = getJsonFromMessage(message).getString("filename");
 		if(StringUtil.isNull(filename)){
 			message.put("message", "文件名称为空");

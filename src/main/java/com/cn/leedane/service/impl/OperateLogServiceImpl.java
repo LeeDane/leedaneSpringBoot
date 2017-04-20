@@ -2,7 +2,6 @@ package com.cn.leedane.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +25,7 @@ import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 /**
  * 操作日志service的实现类
@@ -97,8 +97,7 @@ public class OperateLogServiceImpl implements OperateLogService<OperateLogBean>{
 		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
 		StringBuffer sql = new StringBuffer();
 		
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("isSuccess", false);
+		ResponseMap message = new ResponseMap();
 		
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		//查找该用户所有的积分历史列表(该用户必须是登录用户)
@@ -124,6 +123,6 @@ public class OperateLogServiceImpl implements OperateLogService<OperateLogBean>{
 		saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取登录记录列表").toString(), "getUserLoginLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("isSuccess", true);
-		return message;		
+		return message.getMap();		
 	}
 }
