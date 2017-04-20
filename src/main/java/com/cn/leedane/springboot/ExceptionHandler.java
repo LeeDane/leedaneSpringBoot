@@ -1,6 +1,5 @@
 package com.cn.leedane.springboot;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -9,13 +8,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
 import org.apache.shiro.authc.pam.UnsupportedTokenException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.utils.CommonUtil;
@@ -66,7 +64,13 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 	        message.put("message", /*"服务器异常"*/strintPrintWriter.getString());//将错误信息传递给view  
 		}
 		
-        JSONObject jsonObject = JSONObject.fromObject(message);
+		ModelAndView mav = new ModelAndView();
+		
+		MappingJackson2JsonView view = new MappingJackson2JsonView();
+		view.setAttributesMap(message);
+		mav.setView(view);
+		return mav;
+        /*JSONObject jsonObject = JSONObject.fromObject(message);
 		response.setCharacterEncoding("utf-8");
 		//System.out.println("服务器返回:"+jsonObject.toString());
 		PrintWriter writer = null;
@@ -79,7 +83,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			if(writer != null)
 				writer.close();
 		}
-		return null;
+		return null;*/
 	}  
 	
 	
