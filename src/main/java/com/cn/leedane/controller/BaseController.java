@@ -560,7 +560,7 @@ public class BaseController {
 		if(beans != null && CollectionUtil.isNotEmpty(beans.getLinkManageBean())){
 			String uri = request.getRequestURI();
 			for(LinkManageBean bean: beans.getLinkManageBean()){
-				if(bean.getLink().equals(uri)){
+				if(bean.getLink().equals(uri) || uri.matches(bean.getLink())){
 					String roleOrPermissionCodes = bean.getRoleOrPermissionCodes();
 					if(bean.isRole()){
 						if(StringUtil.isNotNull(roleOrPermissionCodes)){
