@@ -112,7 +112,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		linkManageBean.setRole(role);
 		linkManageBean.setCreateTime(new Date());
 		linkManageBean.setCreateUserId(user.getId());
-		linkManageBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+		linkManageBean.setStatus(JsonUtil.getIntValue(jsonObject, "status", ConstantsUtil.STATUS_NORMAL));
 		boolean result = linkManageMapper.update(linkManageBean) > 0;
 		
 		if(!result){

@@ -8,7 +8,7 @@ $(function(){
 	$("#totalCheckbox").change(function(){
 		if(!$(this).hasClass("checked")){
 			$("tr.each-row").find("input[type='checkbox']").each(function(){
-				$(this).prop("checked", "true");
+				$(this).prop("checked", true);
 			});
 			$(this).addClass("checked");
 		}else{
@@ -51,6 +51,8 @@ function getLinks(){
 				links = data.message;
 				for(var i = 0; i < links.length; i++){
 					$(".table").append(buildRow(links[i], i));
+					if(links[i].status != 1)
+						$(".table").find(".each-row").eq(i).addClass("status-disabled-row");
 				}
 				
 				pageDivUtil(data.total);
@@ -70,6 +72,19 @@ function getLinks(){
  * 添加链接
  */
 function addRole(){
+	$("#add-or-edit-role-or-permission").attr("data-id", "");
+	$("#add-or-edit-role-or-permission").find('input[name="link"]').val("");
+	$("#add-or-edit-role-or-permission").find('input[name="alias"]').val("");
+	$("#add-or-edit-role-or-permission").find('input[name="order"]').val("");
+	$("#add-or-edit-role-or-permission").find('input[name1="status_normal"]').prop("checked", true);
+	$("#add-or-edit-role-or-permission").find('input[name1="status_disabled"]').removeAttr("checked");
+	
+	$("#add-or-edit-role-or-permission").find('input[name1="all_true"]').prop("checked", true);
+	$("#add-or-edit-role-or-permission").find('input[name1="all_false"]').removeAttr("checked");
+	
+	$("#add-or-edit-role-or-permission").find('input[name1="role_true"]').prop("checked", true);
+	$("#add-or-edit-role-or-permission").find('input[name1="role_false"]').removeAttr("checked");
+	
 	$("#add-or-edit-role-or-permission").modal("show");
 }
 
@@ -94,26 +109,26 @@ function editRole(){
 	$("#add-or-edit-role-or-permission").find('input[name="alias"]').val(link.alias);
 	$("#add-or-edit-role-or-permission").find('input[name="order"]').val(link.order_);
 	if(link.status == 1){
-		$("#add-or-edit-role-or-permission").find('input[name1="status_normal"]').attr("checked", "checked");
+		$("#add-or-edit-role-or-permission").find('input[name1="status_normal"]').prop("checked", true);
 		$("#add-or-edit-role-or-permission").find('input[name1="status_disabled"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role-or-permission").find('input[name1="status_disabled"]').attr("checked", "checked");
+		$("#add-or-edit-role-or-permission").find('input[name1="status_disabled"]').prop("checked", true);
 		$("#add-or-edit-role-or-permission").find('input[name1="status_normal"]').removeAttr("checked");
 	}
 	
 	if(link.all_){
-		$("#add-or-edit-role-or-permission").find('input[name1="all_true"]').attr("checked", "checked");
+		$("#add-or-edit-role-or-permission").find('input[name1="all_true"]').prop("checked", true);
 		$("#add-or-edit-role-or-permission").find('input[name1="all_false"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role-or-permission").find('input[name1="all_false"]').attr("checked", "checked");
+		$("#add-or-edit-role-or-permission").find('input[name1="all_false"]').prop("checked", true);
 		$("#add-or-edit-role-or-permission").find('input[name1="all_true"]').removeAttr("checked");
 	}
 	
 	if(link.role){
-		$("#add-or-edit-role-or-permission").find('input[name1="role_true"]').attr("checked", "checked");
+		$("#add-or-edit-role-or-permission").find('input[name1="role_true"]').prop("checked", true);
 		$("#add-or-edit-role-or-permission").find('input[name1="role_false"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role-or-permission").find('input[name1="role_false"]').attr("checked", "checked");
+		$("#add-or-edit-role-or-permission").find('input[name1="role_false"]').prop("checked", true);
 		$("#add-or-edit-role-or-permission").find('input[name1="role_true"]').removeAttr("checked");
 	}
 	$("#add-or-edit-role-or-permission").modal("show");
@@ -132,26 +147,26 @@ function rowEditRole(obj){
 	$("#add-or-edit-role-or-permission").find('input[name="alias"]').val(link.alias);
 	$("#add-or-edit-role-or-permission").find('input[name="order"]').val(link.order_);
 	if(link.status == 1){
-		$("#add-or-edit-role-or-permission").find('input[name1="status_normal"]').attr("checked", "checked");
+		$("#add-or-edit-role-or-permission").find('input[name1="status_normal"]').prop("checked", true);
 		$("#add-or-edit-role-or-permission").find('input[name1="status_disabled"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role-or-permission").find('input[name1="status_disabled"]').attr("checked", "checked");
+		$("#add-or-edit-role-or-permission").find('input[name1="status_disabled"]').prop("checked", true);
 		$("#add-or-edit-role-or-permission").find('input[name1="status_normal"]').removeAttr("checked");
 	}
 	
 	if(link.all_){
-		$("#add-or-edit-role-or-permission").find('input[name1="all_true"]').attr("checked", "checked");
+		$("#add-or-edit-role-or-permission").find('input[name1="all_true"]').prop("checked", true);
 		$("#add-or-edit-role-or-permission").find('input[name1="all_false"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role-or-permission").find('input[name1="all_false"]').attr("checked", "checked");
+		$("#add-or-edit-role-or-permission").find('input[name1="all_false"]').prop("checked", true);
 		$("#add-or-edit-role-or-permission").find('input[name1="all_true"]').removeAttr("checked");
 	}
 	
 	if(link.role){
-		$("#add-or-edit-role-or-permission").find('input[name1="role_true"]').attr("checked", "checked");
+		$("#add-or-edit-role-or-permission").find('input[name1="role_true"]').prop("checked", true);
 		$("#add-or-edit-role-or-permission").find('input[name1="role_false"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role-or-permission").find('input[name1="role_false"]').attr("checked", "checked");
+		$("#add-or-edit-role-or-permission").find('input[name1="role_false"]').prop("checked", true);
 		$("#add-or-edit-role-or-permission").find('input[name1="role_true"]').removeAttr("checked");
 	}
 	$("#add-or-edit-role-or-permission").modal("show");

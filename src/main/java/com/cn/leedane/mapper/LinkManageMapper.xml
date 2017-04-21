@@ -16,7 +16,7 @@
 			else 
 			(select group_concat(p.permission_code) from t_link_role_or_permission lrp inner join t_permission p on lrp.permission_id = p.id where lrp.link_id = lm.id and lrp.status = #{status} and p.status = #{status}) 
 			end) roleOrPermissionCodes, role, order_, all_, date_format(lm.create_time,'%Y-%m-%d %H:%i:%s') create_time
-		from t_link_manage lm
+		from t_link_manage lm where lm.status = #{status}
 	</select>
 	
 	<resultMap type="com.cn.leedane.model.LinkManageBean" id="linkMap">

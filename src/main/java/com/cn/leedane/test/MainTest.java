@@ -98,9 +98,13 @@ public class MainTest {
 		hashtable.put("12", 12);
 		hashtable.put("hehe", "122");
 		System.out.println(hashtable.contains("12"));*/
-		RedisUtil redisUtil = RedisUtil.getInstance();
+		/*RedisUtil redisUtil = RedisUtil.getInstance();
 		redisUtil.delete("*");
-		System.out.println("删除成功");
+		System.out.println("删除成功");*/
+		String link = "/my/6/role/77/";
+		String bean = "/my/[0-9]*/role/[0-9]*";
+		boolean result = link.matches(bean);
+		System.out.println("result="+result);
 	}
 	
 	public static void set(UserBean user){

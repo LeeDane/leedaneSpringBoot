@@ -8,7 +8,7 @@ $(function(){
 	$("#totalCheckbox").change(function(){
 		if(!$(this).hasClass("checked")){
 			$("tr.each-row").find("input[type='checkbox']").each(function(){
-				$(this).prop("checked", "true");
+				$(this).prop("checked", true);
 			});
 			$(this).addClass("checked");
 		}else{
@@ -51,6 +51,8 @@ function getPermissions(){
 				permissions = data.message;
 				for(var i = 0; i < permissions.length; i++){
 					$(".table").append(buildRow(permissions[i], i));
+					if(permissions[i].status != 1)
+						$(".table").find(".each-row").eq(i).addClass("status-disabled-row");
 				}
 				
 				pageDivUtil(data.total);
@@ -70,6 +72,13 @@ function getPermissions(){
  * 添加权限
  */
 function addPermission(){
+	$("#add-or-edit-permission").attr("data-id", "");
+	$("#add-or-edit-permission").find('input[name="code"]').val("");
+	$("#add-or-edit-permission").find('input[name="name"]').val("");
+	$("#add-or-edit-permission").find('input[name="order"]').val("");
+	$("#add-or-edit-permission").find('textarea[name="desc"]').val("");
+	$("#add-or-edit-permission").find('input[name1="status_normal"]').prop("checked", true);
+	$("#add-or-edit-permission").find('input[name1="status_disabled"]').removeAttr("checked");
 	$("#add-or-edit-permission").modal("show");
 }
 
@@ -95,10 +104,10 @@ function editPermission(){
 	$("#add-or-edit-permission").find('input[name="order"]').val(permission.permission_order);
 	$("#add-or-edit-permission").find('textarea[name="desc"]').val(permission.permission_desc);
 	if(permission.status == 1){
-		$("#add-or-edit-permission").find('input[name1="status_normal"]').attr("checked", "checked");
+		$("#add-or-edit-permission").find('input[name1="status_normal"]').prop("checked", true);
 		$("#add-or-edit-permission").find('input[name1="status_disabled"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-permission").find('input[name1="status_disabled"]').attr("checked", "checked");
+		$("#add-or-edit-permission").find('input[name1="status_disabled"]').prop("checked", true);
 		$("#add-or-edit-permission").find('input[name1="status_normal"]').removeAttr("checked");
 	}
 	$("#add-or-edit-permission").modal("show");
@@ -118,10 +127,10 @@ function rowEditPermission(obj){
 	$("#add-or-edit-permission").find('input[name="order"]').val(permission.permission_order);
 	$("#add-or-edit-permission").find('textarea[name="desc"]').val(permission.permission_desc);
 	if(permission.status == 1){
-		$("#add-or-edit-permission").find('input[name1="status_normal"]').attr("checked", "checked");
+		$("#add-or-edit-permission").find('input[name1="status_normal"]').prop("checked", true);
 		$("#add-or-edit-permission").find('input[name1="status_disabled"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-permission").find('input[name1="status_disabled"]').attr("checked", "checked");
+		$("#add-or-edit-permission").find('input[name1="status_disabled"]').prop("checked", true);
 		$("#add-or-edit-permission").find('input[name1="status_normal"]').removeAttr("checked");
 	}
 	$("#add-or-edit-permission").modal("show");

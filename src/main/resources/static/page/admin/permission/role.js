@@ -8,7 +8,7 @@ $(function(){
 	$("#totalCheckbox").change(function(){
 		if(!$(this).hasClass("checked")){
 			$("tr.each-row").find("input[type='checkbox']").each(function(){
-				$(this).prop("checked", "true");
+				$(this).prop("checked", true);
 			});
 			$(this).addClass("checked");
 		}else{
@@ -51,6 +51,8 @@ function getRoles(){
 				roles = data.message;
 				for(var i = 0; i < roles.length; i++){
 					$(".table").append(buildRow(roles[i], i));
+					if(roles[i].status != 1)
+						$(".table").find(".each-row").eq(i).addClass("status-disabled-row");
 				}
 				
 				pageDivUtil(data.total);
@@ -70,6 +72,14 @@ function getRoles(){
  * 添加角色
  */
 function addRole(){
+	$("#add-or-edit-role").attr("data-id", "");
+	$("#add-or-edit-role").find('input[name="code"]').val("");
+	$("#add-or-edit-role").find('input[name="name"]').val("");
+	$("#add-or-edit-role").find('input[name="order"]').val("");
+	$("#add-or-edit-role").find('textarea[name="desc"]').val("");
+	$("#add-or-edit-role").find('input[name1="status_normal"]').prop("checked", true);
+	$("#add-or-edit-role").find('input[name1="status_disabled"]').removeAttr("checked");
+
 	$("#add-or-edit-role").modal("show");
 }
 
@@ -95,10 +105,10 @@ function editRole(){
 	$("#add-or-edit-role").find('input[name="order"]').val(role.role_order);
 	$("#add-or-edit-role").find('textarea[name="desc"]').val(role.role_desc);
 	if(role.status == 1){
-		$("#add-or-edit-role").find('input[name1="status_normal"]').attr("checked", "checked");
+		$("#add-or-edit-role").find('input[name1="status_normal"]').prop("checked", true);
 		$("#add-or-edit-role").find('input[name1="status_disabled"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role").find('input[name1="status_disabled"]').attr("checked", "checked");
+		$("#add-or-edit-role").find('input[name1="status_disabled"]').prop("checked", true);
 		$("#add-or-edit-role").find('input[name1="status_normal"]').removeAttr("checked");
 	}
 	$("#add-or-edit-role").modal("show");
@@ -118,10 +128,10 @@ function rowEditRole(obj){
 	$("#add-or-edit-role").find('input[name="order"]').val(role.role_order);
 	$("#add-or-edit-role").find('textarea[name="desc"]').val(role.role_desc);
 	if(role.status == 1){
-		$("#add-or-edit-role").find('input[name1="status_normal"]').attr("checked", "checked");
+		$("#add-or-edit-role").find('input[name1="status_normal"]').prop("checked", true);
 		$("#add-or-edit-role").find('input[name1="status_disabled"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role").find('input[name1="status_disabled"]').attr("checked", "checked");
+		$("#add-or-edit-role").find('input[name1="status_disabled"]').prop("checked", true);
 		$("#add-or-edit-role").find('input[name1="status_normal"]').removeAttr("checked");
 	}
 	$("#add-or-edit-role").modal("show");

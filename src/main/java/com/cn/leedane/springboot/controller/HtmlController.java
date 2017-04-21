@@ -138,6 +138,8 @@ public class HtmlController extends BaseController{
 	public String my1(@PathVariable(value="uid") int uid, Model model, HttpServletRequest request){
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
+        checkRoleOrPermission(request);
+        
         if(currentUser.isAuthenticated()){
         	Object o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
         	if(o != null){
