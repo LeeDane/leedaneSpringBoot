@@ -561,19 +561,18 @@ public class BaseController {
 			String uri = request.getRequestURI();
 			for(LinkManageBean bean: beans.getLinkManageBean()){
 				if(bean.getLink().equals(uri)){
+					String roleOrPermissionCodes = bean.getRoleOrPermissionCodes();
 					if(bean.isRole()){
-						String roleCodes = bean.getRoleCodes();
-						if(StringUtil.isNotNull(roleCodes)){
-							String[] codes = roleCodes.split(",");
+						if(StringUtil.isNotNull(roleOrPermissionCodes)){
+							String[] codes = roleOrPermissionCodes.split(",");
 							if(bean.isAll())
 								checkAllRoleAuthor(codes);
 							else
 								checkAnyRoleAuthor(codes);
 						}
 					}else{
-						String permissionCodes = bean.getPermissionCodes();
-						if(StringUtil.isNotNull(permissionCodes)){
-							String[] codes = permissionCodes.split(",");
+						if(StringUtil.isNotNull(roleOrPermissionCodes)){
+							String[] codes = roleOrPermissionCodes.split(",");
 							if(bean.isAll())
 								checkAllPermissionAuthor(codes);
 							else

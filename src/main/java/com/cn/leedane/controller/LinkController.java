@@ -4,8 +4,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.annotations.Param;
@@ -15,41 +13,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.RoleBean;
-import com.cn.leedane.service.RoleService;
+import com.cn.leedane.model.LinkManageBean;
+import com.cn.leedane.service.LinkManageService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 /**
- * 角色管理接口controller
+ * 链接管理接口controller
  * @author LeeDane
- * 2017年4月20日 上午9:52:07
+ * 2017年4月20日 下午4:59:32
  * Version 1.0
  */
 @RestController
-@RequestMapping(value = ControllerBaseNameUtil.rl)
-public class RoleController extends BaseController{
+@RequestMapping(value = ControllerBaseNameUtil.ln)
+public class LinkController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
 
 	@Autowired
-	private RoleService<RoleBean> roleService;
-	
-	public static final String ADMIN_ROLE_CODE = "ADMIN_MANAGER";
-	
+	private LinkManageService<LinkManageBean> linkManageService;
+		
 	/**
 	 * 添加权限
 	 * @return
 	 */
-	@RequestMapping(value = "/role", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/link", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> add(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(roleService.save(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(linkManageService.save(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -57,14 +53,14 @@ public class RoleController extends BaseController{
 	 * 修改权限
 	 * @return
 	 */
-	@RequestMapping(value = "/role", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/link", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> update(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(roleService.edit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(linkManageService.edit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -72,14 +68,14 @@ public class RoleController extends BaseController{
 	 * 删除权限
 	 * @return
 	 */
-	@RequestMapping(value = "/role/{rlid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(HttpServletRequest request, @PathVariable("rlid") int rlid){
+	@RequestMapping(value = "/link/{lnid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> delete(HttpServletRequest request, @PathVariable("lnid") int lnid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(roleService.delete(rlid, getUserFromMessage(message), request));
+		message.putAll(linkManageService.delete(lnid, getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -87,14 +83,14 @@ public class RoleController extends BaseController{
 	 * 分页获取权限列表
 	 * @return
 	 */
-	@RequestMapping(value = "/roles", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/links", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(roleService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(linkManageService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -102,47 +98,45 @@ public class RoleController extends BaseController{
 	 * 批量删除权限
 	 * @return
 	 */
-	@RequestMapping(value = "/roles", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deletes(HttpServletRequest request, @Param("rlids") String rlids){
+	@RequestMapping(value = "/links", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> deletes(HttpServletRequest request, @Param("lnids") String lnids){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(roleService.deletes(rlids, getUserFromMessage(message), request));
+		message.putAll(linkManageService.deletes(lnids, getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
 	/**
-	 * 获取全部用户列表
+	 * 获取全部权限或者角色列表
 	 * @return
 	 */
-	@RequestMapping(value = "/role/{rlid}/users", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> roles(HttpServletRequest request, @PathVariable("rlid") int rlid){
+	@RequestMapping(value = "/link/{lnid}/roleOrPermissions", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> roleOrPermissions(HttpServletRequest request, @PathVariable("lnid") int lnid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(roleService.users(rlid, getUserFromMessage(message), request));
+		boolean role = JsonUtil.getBooleanValue(getJsonFromMessage(message), "role");
+		message.putAll(linkManageService.roleOrPermissions(lnid, role, getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
 	/**
-	 * 角色的分配
+	 * 角色、权限的分配
 	 * @return
 	 */
-	@RequestMapping(value = "/role/{rlid}/users/allot", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> allot(HttpServletRequest request, @PathVariable("rlid") int rlid){
+	@RequestMapping(value = "/link/{lnid}/roleOrPermissions/allot", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> allot(HttpServletRequest request, @PathVariable("lnid") int lnid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		JSONObject json = getJsonFromMessage(message);
-		String users = JsonUtil.getStringValue(json, "users");
-		
-		message.putAll(roleService.allot(rlid, users, getUserFromMessage(message), request));
+		message.putAll(linkManageService.allot(lnid, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 }

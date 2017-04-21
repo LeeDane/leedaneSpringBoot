@@ -236,7 +236,7 @@ function showRoleList(obj, pmid){
 					}
 				}
 				$("#role-list").modal("show");
-				$("#role-list").attr("data-id", pmid)
+				$("#role-list").attr("data-id", pmid);
 			}else{
 				ajaxError(data);
 			}

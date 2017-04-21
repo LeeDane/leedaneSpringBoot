@@ -10,7 +10,7 @@
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
 	<select id="roles" resultType="java.util.Map">
-		select r.id, r.role_code, (select 1 from t_role_permission rp where rp.role_id = r.id and rp.permission_id = #{pmid}) has
-		from t_role r 
+		select r.id, r.role_code, (select 1 from t_role_permission rp where rp.role_id = r.id and rp.permission_id = #{pmid} and rp.status=#{status}) has
+		from t_role r where r.status=#{status}
 	</select>
 </mapper>

@@ -99,7 +99,7 @@ public class MainTest {
 		hashtable.put("hehe", "122");
 		System.out.println(hashtable.contains("12"));*/
 		RedisUtil redisUtil = RedisUtil.getInstance();
-		redisUtil.delete(LinkManageHandler.getLinkManageKey());
+		redisUtil.delete("*");
 		System.out.println("删除成功");
 	}
 	

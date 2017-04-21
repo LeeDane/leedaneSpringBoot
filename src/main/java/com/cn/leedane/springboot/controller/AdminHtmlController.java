@@ -120,6 +120,12 @@ public class AdminHtmlController extends BaseController{
 		return loginRoleCheck("/admin/permission/role", true, model, httpSession, request);
 	}
 	
+	/****************   链接管理          ***********************/
+	@RequestMapping(ControllerBaseNameUtil.adpm + "/link")
+	public String pmLink(Model model, HttpSession httpSession, HttpServletRequest request){
+		return loginRoleCheck("/admin/permission/link", true, model, httpSession, request);
+	}
+	
 	
 	/**
 	 * 校验地址，不校验是否登录

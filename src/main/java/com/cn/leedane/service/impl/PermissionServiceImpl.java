@@ -66,7 +66,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		permissionBean.setDesc(JsonUtil.getStringValue(jsonObject, "desc"));
 		permissionBean.setName(JsonUtil.getStringValue(jsonObject, "name"));
 		permissionBean.setOrder(JsonUtil.getIntValue(jsonObject, "order", 1));
-		permissionBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+		permissionBean.setStatus(JsonUtil.getIntValue(jsonObject, "status", ConstantsUtil.STATUS_NORMAL));
 		boolean result = permissionMapper.save(permissionBean) > 0;
 		message.put("isSuccess", result);
 		if(result){
@@ -110,6 +110,8 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		boolean result = permissionMapper.deleteById(PermissionBean.class, pmid) > 0;
 		message.put("isSuccess", result);
 		if(result){
+			//删除权限之间的关系
+			rolePermissionMapper.deleteByField(RolePermissionBean.class, "permission_id", pmid);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}
@@ -200,7 +202,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 			HttpServletRequest request) {
 		logger.info("PermissionServiceImpl-->roles():pmid="+pmid);
 		ResponseMap message = new ResponseMap();
-		List<Map<String, Object>> rs = permissionMapper.roles(pmid);
+		List<Map<String, Object>> rs = permissionMapper.roles(pmid, ConstantsUtil.STATUS_NORMAL);
 				
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取角色列表").toString(), "roles()", ConstantsUtil.STATUS_NORMAL, 0);		
@@ -225,6 +227,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 			roleIds[i] = StringUtil.changeObjectToInt(roleArray[i]);
 		}
 		
+		//删除权限之间的关系
 		rolePermissionMapper.deleteByField(RolePermissionBean.class, "permission_id", pmid);
 		
 		//RolePermissionBean rolePermissionBean;

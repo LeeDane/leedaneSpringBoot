@@ -65,7 +65,7 @@ private Logger logger = Logger.getLogger(getClass());
 		roleBean.setDesc(JsonUtil.getStringValue(jsonObject, "desc"));
 		roleBean.setName(JsonUtil.getStringValue(jsonObject, "name"));
 		roleBean.setOrder(JsonUtil.getIntValue(jsonObject, "order", 1));
-		roleBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+		roleBean.setStatus(JsonUtil.getIntValue(jsonObject, "status", ConstantsUtil.STATUS_NORMAL));
 		boolean result = roleMapper.save(roleBean) > 0;
 		message.put("isSuccess", result);
 		if(result){
@@ -198,7 +198,7 @@ private Logger logger = Logger.getLogger(getClass());
 			HttpServletRequest request) {
 		logger.info("RoleServiceImpl-->users():rlid="+rlid);
 		ResponseMap message = new ResponseMap();
-		List<Map<String, Object>> rs = roleMapper.users(rlid);
+		List<Map<String, Object>> rs = roleMapper.users(rlid, ConstantsUtil.STATUS_NORMAL);
 				
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户列表").toString(), "users()", ConstantsUtil.STATUS_NORMAL, 0);		

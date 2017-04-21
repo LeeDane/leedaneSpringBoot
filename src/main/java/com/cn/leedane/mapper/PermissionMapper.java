@@ -3,6 +3,8 @@ package com.cn.leedane.mapper;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.cn.leedane.model.PermissionBean;
 
 /**
@@ -12,5 +14,5 @@ import com.cn.leedane.model.PermissionBean;
  * version 1.0
  */
 public interface PermissionMapper extends BaseMapper<PermissionBean>{
-	public List<Map<String, Object>> roles(int pmid);
+	public List<Map<String, Object>> roles(@Param("pmid")int pmid, @Param("status") int status);
 }

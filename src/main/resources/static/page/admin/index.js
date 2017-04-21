@@ -48,13 +48,6 @@ var config = [{
 	          items:[
 	            {id:'chart',text:'图表展示',href:'/ad/us/chart'},
 	          ]
-	        },{
-	          text:'角色管理',
-	          items:[
-	            {id:'resource',text:'添加权限',href:'/ad/us/addRole'},
-	            {id:'loader',text:'管理权限',href:'/ad/us/managerRole'},
-	            {id:'resource',text:'用户授权',href:'/ad/us/authorizationRole'}
-	          ]
 	        }]
       },{
           id: 'blog', 
@@ -80,21 +73,21 @@ var config = [{
             }]
          },{
              id: 'permission', 
-             homePage: 'resource',
+             homePage: 'permission',
              menu:[{
                  text:'权限管理',
                  items:[
-                        {id:'resource',text:'权限管理',href:'/ad/pm/permission'}
+                        {id:'permission',text:'权限管理',href:'/ad/pm/permission'}
                  ]
              },{
                  text:'角色管理',
                  items:[
-                        {id:'resource',text:'角色管理',href:'/ad/pm/role'}
+                        {id:'role',text:'角色管理',href:'/ad/pm/role'}
                  ]
              },{
                  text:'链接管理',
                  items:[
-                   {id:'check',text:'链接列表',href:'blog/check.jsp'}
+                   {id:'link',text:'链接管理',href:'/ad/pm/link'}
                  ]
              }]
          },{

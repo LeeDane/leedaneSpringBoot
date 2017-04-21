@@ -341,8 +341,6 @@ CREATE TABLE `t_link_manage` (
   `modify_user_id` int(11) DEFAULT NULL,
   `link` varchar(255) NOT NULL COMMENT '链接',
   `alias` varchar(255) NOT NULL COMMENT '链接的别名',
-  `permission_codes` varchar(255) COMMENT '权限Code集合，多个用,分开',
-  `role_codes` varchar(255) COMMENT '角色Code集合，多个用,分开',
   `role` bit(1) DEFAULT b'1' COMMENT '类型：true表示roleId不能为空，false表示permissionId不能为空',
   `order_` int(4) NOT NULL DEFAULT 1 COMMENT '排序',
   `all_` bit(1) DEFAULT b'1' COMMENT '是否是全部都符合，true是全部都符合，false是任意一个符合，默认是true',
@@ -354,3 +352,33 @@ CREATE TABLE `t_link_manage` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 -- 创建索引
 ALTER TABLE t_link_manage ADD UNIQUE KEY(alias);
+
+-- ----------------------------
+-- Table structure for t_link_permission_or_role
+-- ----------------------------
+DROP TABLE IF EXISTS `t_link_role_or_permission`;
+CREATE TABLE `t_link_role_or_permission` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `role_id` int(11) COMMENT '角色ID',
+  `permission_id` int(11) COMMENT '权限ID',
+  `link_id` int(11) NOT NULL COMMENT '链接ID',
+  `role` bit(1) DEFAULT b'1' NOT NULL COMMENT '是否是角色权限，默认是true，需要填充role_id,否则需要填充permission_id',
+  PRIMARY KEY (`id`),
+  KEY `FK_link_role_or_permission_create_user` (`create_user_id`),
+  KEY `FK_link_role_or_permission_modify_user` (`modify_user_id`),
+  KEY `FK_link_role_or_permission_role_id` (`role_id`),
+  KEY `FK_link_role_or_permission_permission_id` (`permission_id`),
+  KEY `FK_link_role_or_permission_link_id` (`link_id`),
+  CONSTRAINT `FK_link_role_or_permission_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_link_role_or_permission_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_link_role_or_permission_role_id` FOREIGN KEY (`role_id`) REFERENCES `t_role` (`id`),
+  CONSTRAINT `FK_link_role_or_permission_link_id` FOREIGN KEY (`link_id`) REFERENCES `t_link_manage` (`id`),
+  CONSTRAINT `FK_link_role_or_permission_permission_id` FOREIGN KEY (`permission_id`) REFERENCES `t_permission` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+-- 创建索引
+ALTER TABLE `t_link_role_or_permission` ADD INDEX t_link_role_or_permission_index_name ( `permission_id`, `role_id`, `link_id`)

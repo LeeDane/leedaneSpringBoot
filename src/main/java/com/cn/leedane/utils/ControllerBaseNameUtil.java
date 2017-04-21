@@ -238,6 +238,11 @@ public class ControllerBaseNameUtil {
 	public static final String rl = "/rl";
 	
 	/**
+	 * 链接管理
+	 */
+	public static final String ln = "/ln";
+	
+	/**
 	 * 管理员
 	 */
 	public static final String ad = "/ad";

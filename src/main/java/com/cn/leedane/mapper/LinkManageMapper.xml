@@ -10,7 +10,12 @@
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
 	<select id="getAllLinks" parameterType="int" resultMap="linkMap">
-		select id, link, alias, permission_codes, role_codes, role, order_, all_
+		select id, link, alias, status,
+		(case when role then 
+			(select group_concat(r.role_code) from t_link_role_or_permission lrp inner join t_role r on lrp.role_id = r.id where lrp.link_id = lm.id and lrp.status = #{status} and r.status = #{status}) 
+			else 
+			(select group_concat(p.permission_code) from t_link_role_or_permission lrp inner join t_permission p on lrp.permission_id = p.id where lrp.link_id = lm.id and lrp.status = #{status} and p.status = #{status}) 
+			end) roleOrPermissionCodes, role, order_, all_, date_format(lm.create_time,'%Y-%m-%d %H:%i:%s') create_time
 		from t_link_manage lm
 	</select>
 	
@@ -18,10 +23,35 @@
         <id property="id" column="id"/>
         <result property="link" column="link"/>
         <result property="alias" column="alias"/>
-        <result property="permissionCodes" column="permission_codes"/>
-        <result property="roleCodes" column="role_codes"/>
+        <result property="status" column="status"/>
+        <result property="roleOrPermissionCodes" column="roleOrPermissionCodes"/>
         <result property="role" column="role"/>
         <result property="order" column="order_"/>
         <result property="all" column="all_"/>
+        <result property="createTime" column="create_time"/>
    </resultMap>
+   
+   <select id="paging" parameterType="int" resultType="java.util.Map">
+		select lm.id, lm.link, lm.alias, 
+			(case when role then 
+			(select group_concat(r.role_code) from t_link_role_or_permission lrp inner join t_role r on lrp.role_id = r.id where lrp.link_id = lm.id and lrp.status = #{status} and r.status = #{status}) 
+			else 
+			(select group_concat(p.permission_code) from t_link_role_or_permission lrp inner join t_permission p on lrp.permission_id = p.id where lrp.link_id = lm.id and lrp.status = #{status} and p.status = #{status}) 
+			end ) roleOrPermissionCodes, 
+			lm.role, lm.all_, date_format(lm.create_time,'%Y-%m-%d %H:%i:%s') create_time , lm.create_user_id, lm.status, lm.order_
+		from t_link_manage lm 
+		order by lm.order_ desc, lm.id desc limit #{start}, #{pageSize}
+	</select>
+	
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="roles" parameterType="int" resultType="java.util.Map">
+		select r.id, r.role_code code, (select 1 from t_link_role_or_permission lrp where lrp.role_id = r.id and lrp.link_id = #{lnid} and lrp.status=#{status} and r.status=#{status} and lrp.role = true) has
+		from t_role r where r.status=#{status}
+	</select>
+	
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="permissions" parameterType="int" resultType="java.util.Map">
+		select p.id, p.permission_code code, (select 1 from t_link_role_or_permission lrp where lrp.permission_id = p.id and lrp.link_id = #{lnid} and lrp.status=#{status} and p.status=#{status} and lrp.role = false) has
+		from t_permission p where p.status=#{status}
+	</select>
 </mapper>
