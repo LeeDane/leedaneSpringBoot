@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.UUID;
 
-import okio.Buffer;
-
 import com.cn.leedane.enums.FileType;
 import com.cn.leedane.utils.Base64ImageUtil;
 import com.cn.leedane.utils.ConstantsUtil;

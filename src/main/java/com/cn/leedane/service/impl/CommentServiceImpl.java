@@ -78,7 +78,6 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	@Autowired
 	private OperateLogService<OperateLogBean> operateLogService;
 
-	@Transactional("txManager")
 	@Override
 	public Map<String, Object> add(JSONObject jo, UserBean user,
 			HttpServletRequest request){
@@ -156,7 +155,6 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			commentHandler.addComment(tableName, tableId);
 		}
 		message.put("isSuccess", true);
-		int i = 10/0;
 		return message.getMap();
 	}
 	
@@ -546,6 +544,36 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		int currentIndex = JsonUtil.getIntValue(jo, "current", 0); //每页的大小
 		int start = SqlUtil.getPageStart(currentIndex, pageSize);
 		List<Map<String, Object>> rs = commentMapper.getMessageBoards(userId, ConstantsUtil.STATUS_NORMAL, start, pageSize);
+		if(rs !=null && rs.size() > 0){
+			int createUserId = 0;
+			JSONObject friendObject = friendHandler.getFromToFriends(user.getId());
+			
+			//String account = "";
+			int pid = 0;
+			int pCreateUserId = 0;
+			String atUsername = ""; //@用户的名称
+			String resultContent = null;
+			//为名字备注赋值
+			for(int i = 0; i < rs.size(); i++){
+				pid = StringUtil.changeObjectToInt(rs.get(i).get("pid"));
+				if(pid > 0 ){
+					pCreateUserId = getCommentCreateUserId(pid);
+					if(pCreateUserId > 0){
+						atUsername = userHandler.getUserName(pCreateUserId);
+						if(StringUtil.isNotNull(atUsername)){
+							resultContent = StringUtil.changeNotNull((rs.get(i).get("content")));
+							if(resultContent.indexOf("@"+atUsername) > 0 )
+								rs.get(i).put("content", resultContent);
+							else{
+								rs.get(i).put("content", "回复@"+atUsername + " " + resultContent);
+							}
+						}
+					}
+				}
+				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
+				rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId, user, friendObject));
+			}	
+		}
 		
 		message.put("isSuccess", true);
 		message.put("message", rs);

@@ -11,13 +11,11 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.model.MoodBean;
 import com.cn.leedane.model.TimeLineBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.MoodService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.JsonUtil;
 
 /**
  * 我的朋友圈列表
@@ -36,17 +34,6 @@ public class CircleOfFriendsHandler {
 	
 	@Autowired
 	private FanHandler fanHandler;
-	
-	public void setFanHandler(FanHandler fanHandler) {
-		this.fanHandler = fanHandler;
-	}
-	
-	@Autowired
-	private MoodService<MoodBean> moodService;
-	
-	public void setMoodService(MoodService<MoodBean> moodService) {
-		this.moodService = moodService;
-	}
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 

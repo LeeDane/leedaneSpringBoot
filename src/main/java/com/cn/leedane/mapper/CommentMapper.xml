@@ -13,6 +13,6 @@
 		select c.content, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time, c.create_user_id, c.froms, c.pid, c.status 
 		from t_comment c 
 		where c.table_id = #{tableId} and c.table_name = 't_message_board' and c.status=#{status} 
-		order by c.id desc
+		order by c.id desc limit #{start}, #{pageSize}
 	</select>
 </mapper>

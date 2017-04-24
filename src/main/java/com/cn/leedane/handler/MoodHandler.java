@@ -9,15 +9,13 @@ import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.redis.util.RedisUtil;
+import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.StringUtil;
-import com.cn.leedane.model.FilePathBean;
-import com.cn.leedane.model.MoodBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.FilePathService;
-import com.cn.leedane.service.MoodService;
 
 /**
  * 心情处理类
@@ -28,22 +26,10 @@ import com.cn.leedane.service.MoodService;
 @Component
 public class MoodHandler {
 	@Autowired
-	private MoodService<MoodBean> moodService;
-	
-	public void setMoodService(MoodService<MoodBean> moodService) {
-		this.moodService = moodService;
-	}
-	
-	@Autowired
-	private FilePathService<FilePathBean> filePathService;
-	
-	public void setFilePathService(FilePathService<FilePathBean> filePathService) {
-		this.filePathService = filePathService;
-	}
+	private SqlBaseService<IDBean> sqlBaseService;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
-	
-	
+
 	@Autowired
 	private CommentHandler commentHandler;
 	
@@ -55,22 +41,6 @@ public class MoodHandler {
 	
 	@Autowired
 	private UserHandler userHandler;
-	
-	public void setCommentHandler(CommentHandler commentHandler) {
-		this.commentHandler = commentHandler;
-	}
-	
-	public void setTransmitHandler(TransmitHandler transmitHandler) {
-		this.transmitHandler = transmitHandler;
-	}
-	
-	public void setZanHandler(ZanHandler zanHandler) {
-		this.zanHandler = zanHandler;
-	}
-	
-	public void setUserHandler(UserHandler userHandler) {
-		this.userHandler = userHandler;
-	}
 	
 	/**
 	 * 获取心情的详细信息(注意：有照片的情况下，只缓存该照片已经上传到七牛存储服务器的，未上传的情况不做缓存)
@@ -102,7 +72,7 @@ public class MoodHandler {
 			sql.append(" from "+DataTableType.心情.value+" m");
 			sql.append(" where m.id=? ");
 			//sql.append(" and m.status = ?");
-			list = moodService.executeSQL(sql.toString(), moodId/*, ConstantsUtil.STATUS_NORMAL*/);
+			list = sqlBaseService.executeSQL(sql.toString(), moodId/*, ConstantsUtil.STATUS_NORMAL*/);
 			if(list != null && list.size() >0){
 				int createUserId;
 				for(int i = 0; i < list.size(); i++){
@@ -164,7 +134,7 @@ public class MoodHandler {
 			sql.append("select qiniu_path, pic_size, pic_order, width, height, lenght ");
 			sql.append(" from "+DataTableType.文件.value);
 			sql.append(" where status = ? and table_name=? and table_uuid = ? and is_upload_qiniu=? order by pic_order,id");
-			list = moodService.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, tableName, tableUuid, true);
+			list = sqlBaseService.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, tableName, tableUuid, true);
 			if(list != null && list.size() > 0){
 				jsonArray = JSONArray.fromObject(list);
 				redisUtil.addString(moodImgsKey, jsonArray.toString());
@@ -196,11 +166,11 @@ public class MoodHandler {
 			sql.append("select qiniu_path, pic_size, pic_order, width, height, lenght ");
 			sql.append(" from "+DataTableType.文件.value);
 			sql.append(" where status = ? and table_name=? and table_uuid = ? and is_upload_qiniu=? and pic_size =? order by pic_order,id");
-			list = filePathService.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, tableName, tableUuid, true, picSize);
+			list = sqlBaseService.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, tableName, tableUuid, true, picSize);
 			
 			//找指定大小的图片,找原图
 			if(list == null || list.size() == 0 ){
-				list = filePathService.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, tableName, tableUuid, true, "source");	
+				list = sqlBaseService.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, tableName, tableUuid, true, "source");	
 			}
 			
 			if(list != null && list.size() > 0 ){

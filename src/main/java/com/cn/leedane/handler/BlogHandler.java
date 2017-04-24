@@ -9,10 +9,10 @@ import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.model.BlogBean;
+import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.BlogService;
+import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.StringUtil;
@@ -26,12 +26,8 @@ import com.cn.leedane.utils.StringUtil;
 @Component
 public class BlogHandler {
 	@Autowired
-	private BlogService<BlogBean> blogService;
-	
-	public void setBlogService(BlogService<BlogBean> blogService) {
-		this.blogService = blogService;
-	}
-	
+	private SqlBaseService<IDBean> sqlBaseService;
+
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
 	@Autowired
@@ -46,22 +42,6 @@ public class BlogHandler {
 	
 	@Autowired
 	private UserHandler userHandler;
-	
-	public void setCommentHandler(CommentHandler commentHandler) {
-		this.commentHandler = commentHandler;
-	}
-	
-	public void setTransmitHandler(TransmitHandler transmitHandler) {
-		this.transmitHandler = transmitHandler;
-	}
-	
-	public void setZanHandler(ZanHandler zanHandler) {
-		this.zanHandler = zanHandler;
-	}
-	
-	public void setUserHandler(UserHandler userHandler) {
-		this.userHandler = userHandler;
-	}
 	
 	/**
 	 * 获取博客的详细信息
@@ -92,7 +72,7 @@ public class BlogHandler {
 			sql.append(" from "+DataTableType.博客.value+" b");
 			sql.append(" where b.id=? ");
 			sql.append(" and b.status = ?");
-			list = blogService.executeSQL(sql.toString(), blogId, ConstantsUtil.STATUS_NORMAL);
+			list = sqlBaseService.executeSQL(sql.toString(), blogId, ConstantsUtil.STATUS_NORMAL);
 			jsonArray = JSONArray.fromObject(list);
 			redisUtil.addString(blogKey, jsonArray.toString());
 		}else{

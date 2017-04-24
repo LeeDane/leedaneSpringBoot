@@ -19,6 +19,10 @@ import com.cn.leedane.mybatis.SqlProvider;
  */
 public interface BaseMapper<T> {
 	
+	@InsertProvider(type = SqlProvider.class, method = "saveClass")
+    @Options(useGeneratedKeys=true)
+	public int saveClass(Class<?> clazz);
+	
 	@InsertProvider(type = SqlProvider.class, method = "insert")
     @Options(useGeneratedKeys=true)
 	public int save(T bean);

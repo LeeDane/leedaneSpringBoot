@@ -24,13 +24,12 @@ import com.cn.leedane.message.notification.CustomMessage;
 import com.cn.leedane.message.notification.MessageNotification;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.CommentBean;
+import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.MoodBean;
 import com.cn.leedane.model.NotificationBean;
 import com.cn.leedane.model.TransmitBean;
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.CommentService;
-import com.cn.leedane.service.NotificationService;
-import com.cn.leedane.service.UserService;
+import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
@@ -50,53 +49,19 @@ import com.cn.leedane.wechat.util.HttpRequestUtil;
 public class NotificationHandler {
 	
 	@Autowired
-	private NotificationService<NotificationBean> notificationService;
-	
-	public void setNotificationService(
-			NotificationService<NotificationBean> notificationService) {
-		this.notificationService = notificationService;
-	}
-	
-	@Autowired
-	private CommentService<CommentBean> commentService;
-	
-	public void setCommentService(CommentService<CommentBean> commentService) {
-		this.commentService = commentService;
-	}
-	
-	@Autowired
-	private UserService<UserBean> userService;
-	
-	public void setUserService(UserService<UserBean> userService) {
-		this.userService = userService;
-	}
+	private SqlBaseService<IDBean> sqlBaseService;
 	
 	@Autowired
 	private FriendHandler friendHandler;
-	
-	public void setFriendHandler(FriendHandler friendHandler) {
-		this.friendHandler = friendHandler;
-	}
+
 	@Autowired
 	private SystemCache systemCache;
-	
-	public void setSystemCache(SystemCache systemCache) {
-		this.systemCache = systemCache;
-	}
 	
 	@Autowired
 	private UserHandler userHandler;
 	
-	public void setUserHandler(UserHandler userHandler) {
-		this.userHandler = userHandler;
-	}
-	
 	@Autowired
 	private CommentHandler commentHandler;
-	
-	public void setCommentHandler(CommentHandler commentHandler) {
-		this.commentHandler = commentHandler;
-	}
 	
 	/**
 	 * 发送通知
@@ -283,7 +248,7 @@ public class NotificationHandler {
 					robotReply = "你在说什么？没听见";
 				}
 				
-				UserBean robotUser = userService.findById(robotId);
+				UserBean robotUser = (UserBean) sqlBaseService.findById(UserBean.class, robotId);
 				
 				//保存评论记录
 				CommentBean bean = new CommentBean();
@@ -297,7 +262,7 @@ public class NotificationHandler {
 				bean.setTableId(tableId);
 				bean.setTableName(tableName);
 				try {
-					if(commentService.save(bean)){
+					if(sqlBaseService.saveClass(bean.getClass())){
 						//更新评论数
 						commentHandler.addComment(tableName, tableId);
 						String notificationContent = robotName +"回复您："+robotReply;
@@ -369,20 +334,21 @@ public class NotificationHandler {
 		@SuppressWarnings("unchecked")
 		SingleSendNotification(NotificationBean notificationBean){
 			mNotificationBean = notificationBean;
-			if(notificationService == null){
-				notificationService = (NotificationService<NotificationBean>) SpringUtil.getBean("notificationService");
+			if(sqlBaseService == null){
+				sqlBaseService = (SqlBaseService<IDBean>) SpringUtil.getBean("sqlBaseService");
 			}
 		}
 
 		@Override
 		public Boolean call() throws Exception {
-			if(notificationService.save(mNotificationBean)){
+			if(sqlBaseService.saveClass(mNotificationBean.getClass())){
 				MessageNotification messageNotification = new JPushMessageNotificationImpl();
 				//System.out.println("NotificationToUserId:"+mNotificationBean.getToUserId());
 				//发送消息不成功
 				if(!messageNotification.sendToAlias("leedane_user_"+mNotificationBean.getToUserId(), mNotificationBean.getType() +":"+ mNotificationBean.getContent())){
 					mNotificationBean.setPushError(true);
-					return notificationService.update(mNotificationBean);
+					return sqlBaseService.updateSql(mNotificationBean.getClass(), "set is_push_error = ?", true);
+
 				}else{
 					return true;
 				}

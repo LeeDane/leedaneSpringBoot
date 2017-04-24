@@ -3,11 +3,12 @@ package com.cn.leedane.handler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.StringUtil;
-import com.cn.leedane.model.ChatBgUserBean;
+import com.cn.leedane.model.IDBean;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.ChatBgUserService;
+import com.cn.leedane.service.SqlBaseService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.StringUtil;
 
 /**
  * 聊天背景与用户下载关系处理类
@@ -18,23 +19,13 @@ import com.cn.leedane.service.ChatBgUserService;
 @Component
 public class ChatBgUserHandler {
 	@Autowired
-	private ChatBgUserService<ChatBgUserBean> chatBgUserService;
-	
-	public void setChatBgUserService(
-			ChatBgUserService<ChatBgUserBean> chatBgUserService) {
-		this.chatBgUserService = chatBgUserService;
-	}
+	private SqlBaseService<IDBean> sqlBaseService;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
 	@Autowired
 	private UserHandler userHandler;
 	
-	public void setUserHandler(UserHandler userHandler) {
-		this.userHandler = userHandler;
-	}
-	
-
 	/**
 	 * 用户是否已经下载过该聊天背景资源
 	 * @param userId 用户Id
@@ -46,7 +37,7 @@ public class ChatBgUserHandler {
 		boolean result = false;
 		//还没有缓存记录
 		if(!redisUtil.hasKey(chatBgUserKey)){
-			result = chatBgUserService.exists(userId, chatBgTableId);
+			result = sqlBaseService.executeSQL("select id from "+DataTableType.聊天背景与用户.value+" where create_user_id=? and chat_bg_table_id=?", userId, chatBgTableId).size() > 0;			
 			if(result)
 				redisUtil.addString(chatBgUserKey, "true");
 			else

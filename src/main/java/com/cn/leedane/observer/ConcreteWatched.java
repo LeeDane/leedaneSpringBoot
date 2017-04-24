@@ -8,11 +8,11 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.model.FriendBean;
 import com.cn.leedane.model.FriendModel;
+import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.observer.template.NotificationTemplate;
-import com.cn.leedane.service.FriendService;
+import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.utils.StringUtil;
 
@@ -25,11 +25,11 @@ import com.cn.leedane.utils.StringUtil;
 @Component
 public class ConcreteWatched implements Watched{
 
-	private FriendService<FriendBean> friendService;
-	
 	@Resource
-	public void setFriendService(FriendService<FriendBean> friendService) {
-		this.friendService = friendService;
+	private SqlBaseService<IDBean> sqlBaseService;
+	
+	public void setSqlBaseService(SqlBaseService<IDBean> sqlBaseService) {
+		this.sqlBaseService = sqlBaseService;
 	}
 	
 	/**
@@ -44,9 +44,9 @@ public class ConcreteWatched implements Watched{
 		 * 通知的多个用户
 		 */
 		List<FriendModel> friends = new ArrayList<FriendModel>();
-		friendService = (FriendService<FriendBean>) SpringUtil.getBean("friendService");
+		sqlBaseService = (SqlBaseService<IDBean>) SpringUtil.getBean("sqlBaseService");
 		
-		List<Map<String, Object>> friendObject = friendService.getToFromFriends(watchedBean.getId());
+		List<Map<String, Object>> friendObject = sqlBaseService.getToFromFriends(watchedBean.getId());
 		
 		if(friends != null && friendObject.size() > 0){
 			for(Map<String, Object> friend: friendObject){

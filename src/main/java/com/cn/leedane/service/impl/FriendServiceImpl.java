@@ -20,11 +20,13 @@ import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.FriendMapper;
 import com.cn.leedane.model.FriendBean;
+import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.ShowContactsBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
@@ -66,24 +68,10 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 	@Autowired
 	private NotificationHandler notificationHandler;
 	
-	@Override
-	public List<Map<String, Object>> getFromToFriends(int uid) {
-		logger.info("FriendServiceImpl-->getFromToFriends():uid="+uid);
-		String sql = " select to_user_id id, (case when to_user_remark = '' || to_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = to_user_id and u.status = "+ConstantsUtil.STATUS_NORMAL+") else to_user_remark end ) remark from "+DataTableType.好友.value+" where from_user_id =? and status = "+ConstantsUtil.STATUS_NORMAL+" "
-				+" UNION " 
-				+" select from_user_id id, (case when from_user_remark = '' || from_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = from_user_id and u.status = "+ConstantsUtil.STATUS_NORMAL+") else from_user_remark end ) remark from "+DataTableType.好友.value+" where to_user_id = ? and status = "+ConstantsUtil.STATUS_NORMAL;
-		return friendMapper.executeSQL(sql, uid, uid);
-	}
+	@Autowired
+	private SqlBaseService<IDBean> sqlBaseService;
 	
-	@Override
-	public List<Map<String, Object>> getToFromFriends(int uid) {
-		logger.info("FriendServiceImpl-->getToFromFriends():uid="+uid);
-		String sql = " select from_user_id id, (case when to_user_remark = '' || to_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = to_user_id and u.status =?) else to_user_remark end ) remark from "+DataTableType.好友.value+" where to_user_id =? and status =?"
-				+" UNION " 
-				+" select to_user_id id, (case when from_user_remark = '' || from_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = from_user_id and u.status =?) else from_user_remark end ) remark from "+DataTableType.好友.value+" where from_user_id = ? and status=?";
-		return friendMapper.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, uid, ConstantsUtil.STATUS_NORMAL, ConstantsUtil.STATUS_NORMAL, uid, ConstantsUtil.STATUS_NORMAL);
-	}
-
+	
 	@Override
 	public Map<String, Object> deleteFriends(JSONObject jo, UserBean user, HttpServletRequest request) {
 		logger.info("FriendServiceImpl-->deleteFriends():jo="+jo.toString());
@@ -497,7 +485,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		ResponseMap message = new ResponseMap();
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
 		
-		List<Map<String, Object>> rs = getFromToFriends(user.getId());
+		List<Map<String, Object>> rs = sqlBaseService.getFromToFriends(user.getId());
 		if(rs !=null && rs.size() > 0){
 			int fId = 0;
 			//为名字备注赋值

@@ -10,12 +10,12 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.model.FanBean;
+import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.FanService;
+import com.cn.leedane.service.SqlBaseService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
 
 /**
  * 粉丝处理类
@@ -26,22 +26,13 @@ import com.cn.leedane.service.FanService;
 @Component
 public class FanHandler {
 	@Autowired
-	private FanService<FanBean> fanService;
-	
-	public void setFanService(FanService<FanBean> fanService) {
-		this.fanService = fanService;
-	}
+	private SqlBaseService<IDBean> sqlBaseService;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
 	@Autowired
 	private CircleOfFriendsHandler circleOfFriendsHandler;
 	
-	public void setCircleOfFriendsHandler(
-			CircleOfFriendsHandler circleOfFriendsHandler) {
-		this.circleOfFriendsHandler = circleOfFriendsHandler;
-	}
-
 	/**
 	 * 添加关注(即成为别人的粉丝)
 	 * @param user
@@ -55,7 +46,7 @@ public class FanHandler {
 		//关注
 		if(!redisUtil.hasKey(attentionIDKey)){
 			String sql = "select id, to_user_id from "+DataTableType.粉丝.value+" f where status=? and create_user_id=? order by id";
-			List<Map<String, Object>> list = fanService.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, user.getId());
+			List<Map<String, Object>> list = sqlBaseService.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, user.getId());
 			if(list != null && list.size() > 0){
 				for(Map<String, Object> map: list){
 					scoreMembers.put((double)count, String.valueOf(map.get("to_user_id")));
@@ -86,7 +77,7 @@ public class FanHandler {
 		//处理对方的粉丝列表
 		if(!redisUtil.hasKey(fanIDKey)){
 			String sql = "select id, create_user_id from "+DataTableType.粉丝.value+" f where status=? and to_user_id=? order by id";
-			List<Map<String, Object>> list = fanService.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, user.getId());
+			List<Map<String, Object>> list = sqlBaseService.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, user.getId());
 			if(list != null && list.size() > 0){
 				for(Map<String, Object> map: list){
 					scoreMembers.put((double)count, String.valueOf(map.get("to_user_id")));
@@ -125,7 +116,7 @@ public class FanHandler {
 			Map<Double, String> scoreMembers = new HashMap<Double, String>();
 			long count = 1;
 			String sql = "select id, to_user_id from "+DataTableType.粉丝.value+" f where status=? and create_user_id=? order by id";
-			List<Map<String, Object>> list = fanService.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, toUserId);
+			List<Map<String, Object>> list = sqlBaseService.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, toUserId);
 			if(list != null && list.size() > 0){
 				for(Map<String, Object> map: list){
 					scoreMembers.put((double)count, String.valueOf(map.get("to_user_id")));
@@ -243,7 +234,7 @@ public class FanHandler {
 			Map<Double, String> scoreMembers = new HashMap<Double, String>();
 			long count = 1;
 			String sql = "select id, create_user_id from "+DataTableType.粉丝.value+" f where status=? and to_user_id=? order by id";
-			List<Map<String, Object>> list = fanService.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, toUserId);
+			List<Map<String, Object>> list = sqlBaseService.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, toUserId);
 			if(list != null && list.size() > 0){
 				for(Map<String, Object> map: list){
 					scoreMembers.put((double)count, String.valueOf(map.get("create_user_id")));

@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 
 import com.cn.leedane.redis.config.RedisConfig;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -16,8 +15,6 @@ import com.cn.leedane.utils.StringUtil;
 @Component
 public class ChatSquareHandler {
 	private RedisUtil redisUtil = RedisUtil.getInstance();
-	
-	
 
 	/**
 	 * 添加聊天广场的链接到Redis缓存中

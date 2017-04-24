@@ -6,10 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.LinkManageBean;
 import com.cn.leedane.model.LinkManagesBean;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.LinkManageService;
+import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.SerializeUtil;
@@ -23,7 +24,7 @@ import com.cn.leedane.utils.SerializeUtil;
 @Component
 public class LinkManageHandler {
 	@Autowired
-	private LinkManageService<LinkManageBean> linkManageService;
+	private SqlBaseService<IDBean> sqlBaseService;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
@@ -43,7 +44,7 @@ public class LinkManageHandler {
 				e.printStackTrace();
 			}
 		}else{
-			List<LinkManageBean> beans = linkManageService.getAllLinks();
+			List<LinkManageBean> beans = sqlBaseService.getAllLinks();
 			if(CollectionUtil.isNotEmpty(beans)){
 				linkManageBeans = new LinkManagesBean();
 				linkManageBeans.setLinkManageBean(beans);

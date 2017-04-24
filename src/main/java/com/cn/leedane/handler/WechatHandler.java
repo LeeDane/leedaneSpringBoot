@@ -5,12 +5,13 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.redis.util.RedisUtil;
+import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.StringUtil;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.UserService;
 import com.cn.leedane.wechat.bean.WeixinCacheBean;
 import com.cn.leedane.wechat.util.WeixinUtil;
 
@@ -27,11 +28,7 @@ public class WechatHandler {
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
 	@Autowired
-	private UserService<UserBean> userService;
-	
-	public void setUserService(UserService<UserBean> userService) {
-		this.userService = userService;
-	}
+	private SqlBaseService<IDBean> sqlBaseService;
 	
 	/**
 	 * 添加该用户的缓存对象
@@ -58,7 +55,7 @@ public class WechatHandler {
 				return stringToCacheBean(value);
 			}
 		}else{//查找数据库获取key
-			UserBean user = userService.findUserBeanByWeixinName(FromUserName);
+			UserBean user = sqlBaseService.findUserBeanByWeixinName(FromUserName);
 			if(user != null){
 				WeixinCacheBean bean = new WeixinCacheBean();
 				bean.setCurrentType(WeixinUtil.MODEL_MAIN_MENU);

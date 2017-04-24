@@ -8,11 +8,11 @@ import net.sf.json.JSONArray;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.cn.leedane.model.UserBean;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.StringUtil;
-import com.cn.leedane.model.UserBean;
 
 /**
  * 公共的处理类
@@ -25,23 +25,13 @@ public class CommonHandler {
 	@Autowired
 	private MoodHandler moodHandler;
 	
-	public void setMoodHandler(MoodHandler moodHandler) {
-		this.moodHandler = moodHandler;
-	}
-	
 	@Autowired
 	private BlogHandler blogHandler;
-	
-	public void setBlogHandler(BlogHandler blogHandler) {
-		this.blogHandler = blogHandler;
-	}
-	
+
 	@Autowired
 	private FriendHandler friendHandler;
 	
-	public void setFriendHandler(FriendHandler friendHandler) {
-		this.friendHandler = friendHandler;
-	}
+
 	/**
 	 * 通过表名和表ID获取该资源对象的展示内容
 	 * @param tableName
@@ -91,7 +81,6 @@ public class CommonHandler {
 	 * @param user
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
 	public Object getBeanByTableNameAndId(String tableName, int tableId, UserBean user){
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		

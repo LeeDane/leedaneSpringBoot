@@ -1,14 +1,13 @@
 package com.cn.leedane.service;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import net.sf.json.JSONObject;
 
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
@@ -39,24 +38,7 @@ public interface FriendService <T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> addAgree(JSONObject jo, UserBean user, HttpServletRequest request);
-	
-	/**
-	 * 获取我的全部的好友ID和备注
-	 * @param uid
-	 * @return
-	 */
-	//标记该方法不需要事务
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<Map<String, Object>> getFromToFriends(int uid);
-	
-	/**
-	 * 获取全部的好友对我的ID和备注
-	 * @param uid
-	 * @return
-	 */
-	//标记该方法不需要事务
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<Map<String, Object>> getToFromFriends(int uid);
+
 	
 	/**
 	 * 根据关系id删除好友关系信息

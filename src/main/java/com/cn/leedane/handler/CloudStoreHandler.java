@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -18,10 +17,10 @@ import java.util.concurrent.TimeoutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.StringUtil;
-import com.cn.leedane.cache.SystemCache;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Client;
 import com.qiniu.http.Response;
@@ -58,10 +57,6 @@ public class CloudStoreHandler {
    	 */
    	@Autowired
    	private SystemCache systemCache;
-   	
-   	public void setSystemCache(SystemCache systemCache) {
-		this.systemCache = systemCache;
-	}
  
     /**
      * 执行上传操作

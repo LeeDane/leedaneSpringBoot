@@ -10,13 +10,11 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.redis.util.RedisUtil;
+import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.StringUtil;
-import com.cn.leedane.model.CommentBean;
-import com.cn.leedane.model.FriendBean;
-import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.CommentService;
-import com.cn.leedane.service.FriendService;
 
 /**
  * 好友处理类
@@ -26,37 +24,17 @@ import com.cn.leedane.service.FriendService;
  */
 @Component
 public class FriendHandler {
-	@Autowired
-	private CommentService<CommentBean> commentService;
-	
-	public void setCommentService(CommentService<CommentBean> commentService) {
-		this.commentService = commentService;
-	}
 	
 	@Autowired
-	private FriendService<FriendBean> friendService;
+	private SqlBaseService<IDBean> sqlBaseService;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
-	
-	public void setFriendService(FriendService<FriendBean> friendService) {
-		this.friendService = friendService;
-	}
-	
+
 	@Autowired
 	private CircleOfFriendsHandler circleOfFriendsHandler;
 	
-	public void setCircleOfFriendsHandler(
-			CircleOfFriendsHandler circleOfFriendsHandler) {
-		this.circleOfFriendsHandler = circleOfFriendsHandler;
-	}
-	
 	@Autowired
 	private UserHandler userHandler;
-	
-	public void setUserHandler(UserHandler userHandler) {
-		this.userHandler = userHandler;
-	}
-	
 
 	/**
 	 * 获取好友列表的json对象
@@ -68,7 +46,7 @@ public class FriendHandler {
 		JSONObject friendObject = new JSONObject();
 		//评论
 		if(!redisUtil.hasKey(friendKey)){
-			List<Map<String, Object>> friends = friendService.getFromToFriends(getUserId);
+			List<Map<String, Object>> friends = sqlBaseService.getFromToFriends(getUserId);
 			Set<Integer> fids = new HashSet<Integer>();
 			String friendIdKey = getFriendIdsKey(getUserId);
 			fids.add(getUserId);
@@ -135,7 +113,7 @@ public class FriendHandler {
 		Set<Integer> fids = new HashSet<Integer>();
 		//评论
 		if(!redisUtil.hasKey(friendIdKey)){
-			List<Map<String, Object>> friends = friendService.getFromToFriends(userId);
+			List<Map<String, Object>> friends = sqlBaseService.getFromToFriends(userId);
 			String friendKey = getFriendKey(userId);
 			fids.add(userId);
 			if(friends != null && friends.size() > 0){

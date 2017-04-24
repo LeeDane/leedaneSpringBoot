@@ -11,21 +11,12 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.json.JSONObject;
-
-import com.cn.leedane.handler.LinkManageHandler;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.utils.Base64Util;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DES;
 import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.HttpConnectionUtil;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -98,13 +89,10 @@ public class MainTest {
 		hashtable.put("12", 12);
 		hashtable.put("hehe", "122");
 		System.out.println(hashtable.contains("12"));*/
-		/*RedisUtil redisUtil = RedisUtil.getInstance();
+		RedisUtil redisUtil = RedisUtil.getInstance();
 		redisUtil.delete("*");
-		System.out.println("删除成功");*/
-		String link = "/my/6/role/77/";
-		String bean = "/my/[0-9]*/role/[0-9]*";
-		boolean result = link.matches(bean);
-		System.out.println("result="+result);
+		System.out.println("删除成功");
+		
 	}
 	
 	public static void set(UserBean user){

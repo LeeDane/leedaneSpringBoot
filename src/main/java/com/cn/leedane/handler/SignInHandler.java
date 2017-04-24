@@ -3,10 +3,10 @@ package com.cn.leedane.handler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.model.SignInBean;
+import com.cn.leedane.model.IDBean;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.SignInService;
+import com.cn.leedane.service.SqlBaseService;
+import com.cn.leedane.utils.ConstantsUtil;
 
 /**
  * 签到的处理类
@@ -18,14 +18,9 @@ import com.cn.leedane.service.SignInService;
 public class SignInHandler {
 	
 	@Autowired
-	private SignInService<SignInBean> signInService;
+	private SqlBaseService<IDBean> sqlBaseService;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
-	
-
-	public void setSignInService(SignInService<SignInBean> signInService) {
-		this.signInService = signInService;
-	}
 	
 	/**
 	 * 判断当前的用户是否是第一次签到(第一次签到有赠送大积分)
@@ -40,7 +35,7 @@ public class SignInHandler {
 			String first = redisUtil.getString(firstSignInKey);
 			isFirst = Boolean.parseBoolean(first);
 		}else{
-			isFirst = signInService.hasHistorySign(userId);
+			isFirst = sqlBaseService.hasHistorySign(userId);
 		}
 		return isFirst;
 	}

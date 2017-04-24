@@ -21,6 +21,61 @@ public class SqlProvider {
 	
 	private TableFormat tableFormat = new HumpToUnderLineFormat();
 
+	/**
+	 * 保存数据
+	 * @param bean
+	 * @return
+	 */
+	public String saveClass(Class bean) {
+		String tableName = getTableName(bean);
+		Field[] fields = getFields(bean);
+		StringBuilder insertSql = new StringBuilder();
+		List<String> insertParas = new ArrayList<String>();
+		List<String> insertParaNames = new ArrayList<String>();
+		insertSql.append("INSERT INTO ").append(tableName).append("(");
+		try {
+			for (int i = 0; i < fields.length; i++) {
+				Field field = fields[i];
+				//特殊处理serialVersionUID
+				if(field.getName().equalsIgnoreCase("serialVersionUID")){
+					continue;
+				}
+				
+				Column column = field.getAnnotation(Column.class);
+				String columnName = "";
+				if (column != null) {
+					if (!column.required())
+						continue;
+					columnName = column.value();
+				}
+				if (StringUtils.isEmpty(columnName)) {
+					columnName = tableFormat.getColumnName(field.getName());
+				}
+				field.setAccessible(true);
+				Object object = field.get(bean);
+				if (object != null) {
+					insertParaNames.add(columnName);
+					insertParas.add("#{" + field.getName() + "}");
+				}
+			}
+		} catch (Exception e) {
+			new RuntimeException("get insert sql is exceptoin:" + e);
+		}
+		for (int i = 0; i < insertParaNames.size(); i++) {
+			insertSql.append(insertParaNames.get(i));
+			if (i != insertParaNames.size() - 1)
+				insertSql.append(",");
+		}
+		insertSql.append(")").append(" VALUES(");
+		for (int i = 0; i < insertParas.size(); i++) {
+			insertSql.append(insertParas.get(i));
+			if (i != insertParas.size() - 1)
+				insertSql.append(",");
+		}
+		insertSql.append(")");
+		return insertSql.toString();
+	}
+	
 	public String insert(Object bean) {
 		Class<?> beanClass = bean.getClass();
 		String tableName = getTableName(beanClass);
