@@ -141,6 +141,7 @@
 <div class="container mainContainer clearFloat">
 	   <div class="row">
 		   <div class="col-lg-3" style="border: 1px solid #fff;background-color: #fff;">
+		   		<button class="btn btn-sm btn-success pull-right" data-toggle="modal" data-target="#add-mood" onclick="shoqSendMoodDialog();">发布心情</button>
 		   		<div class="row" id="user_img">
 		   			<!-- <img src="images/main_content_img.jpg" width="200px" height="200px" class="img-circle"> -->
 		   		</div>
@@ -283,10 +284,37 @@
 				</div> -->
 	      </div>
 	      <nav class="col-sm-3" id="navbarExample">
-		      	<ul class="nav nav-pills nav-stacked" id="float-month">
+	      		<div class="table-responsive">
+						<table class="table table-striped"  id="message-boards" style="border: 1px solid #fff;background-color: #fff;">
+							<!-- <caption>响应式表格布局</caption> -->
+							<tbody>
+								<tr class="each-row">
+									<td>产品1</td>
+									<td>23/11/2013</td>
+								</tr>
+								<tr class="each-row">
+									<td>产品2</td>
+									<td>10/11/2013</td>
+								</tr>
+								<tr class="each-row">
+									<td>产品3</td>
+									<td>20/10/2013</td>
+								</tr>
+								<tr class="each-row">
+									<td>产品4</td>
+									<td>20/10/2013</td>
+								</tr>
+								<tr>
+									<td colspan="2" style="text-align: center;"><button type="button" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil"></span> 留言板</button></td>
+								</tr>
+							</tbody>
+					</table>
+		    	</div>
+		    	<!-- <ul class="nav nav-pills nav-stacked" id="float-month"> -->
+		      	<ul class="nav nav-stacked" id="float-month">
 					<li>
 						<div class="panel-body text-center">
-							<button class="btn btn-success" data-toggle="modal" data-target="#add-mood" onclick="shoqSendMoodDialog();">发布心情</button>
+							
 						</div>
 					</li>
 				</ul>

@@ -18,6 +18,7 @@ $(function(){
 	
 	loadUserInfo();
 	getMoods();
+	getMessageBoards();//获取留言板列表
 	
 	$(".edit-user-info-btn").on("click", function(){
 		//检验手机号码
@@ -78,6 +79,36 @@ $(function(){
 	});
 });
 
+
+/**
+ * 获取留言板列表
+ */
+function getMessageBoards(){
+	$.ajax({
+		url : "/cm/user/"+ uid+ "/messageBoards?page_size=5&t=" + Math.random(),
+		dataType: 'json', 
+		beforeSend:function(){
+		},
+		success : function(data) {
+			$("#message-boards tr").remove();
+			if(data.isSuccess){
+				for(var i = 0; i < data.message.length; i++){
+					var html = '<tr>'+
+									'<td width="40px"><img src="'+ changeNotNullString(data.message[i].user_pic_path) +'" width="30" height="30" class="img-rounded img-circle"></td>'+
+									'<td>'+ data.message[i].content+'</td>'+
+								'</tr>';
+					$("#message-boards").append(html);
+				}
+			}else{
+				ajaxError(data);
+			}
+			$("#message-boards").append('<tr><td colspan="2" style="text-align: center;"><a type="button" class="btn btn-primary btn-xs" href="/user/'+uid+'/board"><span class="glyphicon glyphicon-pencil"></span> 留言板</a></td></tr>');
+		},
+		error : function(data) {
+			ajaxError(data);
+		}
+	});
+}
 
 /**
  * 获取当前用户的基本信息

@@ -126,7 +126,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(jsonObject, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int currentIndex = JsonUtil.getIntValue(jsonObject, "current", 0); //每页的大小
-		int start = getPageStart(currentIndex, pageSize);
+		int start = SqlUtil.getPageStart(currentIndex, pageSize);
 		StringBuffer sql = new StringBuffer();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		
@@ -154,12 +154,6 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		message.put("isSuccess", true);
 		
 		return message.getMap();
-	}
-	
-	private int getPageStart(int current, int pageSize){
-		pageSize = pageSize > 0? pageSize: ConstantsUtil.DEFAULT_PAGE_SIZE;
-		
-		return current* pageSize;
 	}
 
 	@Override

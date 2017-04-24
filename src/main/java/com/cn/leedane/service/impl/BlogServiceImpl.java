@@ -109,7 +109,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		}else{
 			message.put("message","文章发布失败");
 		}
-		
+		int i = 10/0;
 		return message.getMap();
 	}
 

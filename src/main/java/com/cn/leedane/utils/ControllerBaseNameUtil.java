@@ -183,6 +183,11 @@ public class ControllerBaseNameUtil {
 	public static final String us = "/us";
 	
 	/**
+	 * 留言板
+	 */
+	public static final String board = "/board";
+	
+	/**
 	 * 网络配置
 	 */
 	public static final String wc = "/wc";

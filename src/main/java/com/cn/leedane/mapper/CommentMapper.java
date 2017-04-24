@@ -1,5 +1,10 @@
 package com.cn.leedane.mapper;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.cn.leedane.model.CommentBean;
 
 /**
@@ -18,4 +23,7 @@ public interface CommentMapper extends BaseMapper<CommentBean>{
 	 * @throws Exception
 	 */
 	//public boolean updateSQL(String sql, Object ... obj);
+	
+	public List<Map<String, Object>> getMessageBoards(@Param("tableId") int tableId, @Param("status") int status, 
+			@Param("start")int start, @Param("pageSize") int pageSize);
 }

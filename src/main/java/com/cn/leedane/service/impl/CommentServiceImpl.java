@@ -13,6 +13,7 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CommentHandler;
@@ -77,6 +78,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	@Autowired
 	private OperateLogService<OperateLogBean> operateLogService;
 
+	@Transactional("txManager")
 	@Override
 	public Map<String, Object> add(JSONObject jo, UserBean user,
 			HttpServletRequest request){
@@ -87,6 +89,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		int tableId = JsonUtil.getIntValue(jo, "table_id", 0);
 		String content = JsonUtil.getStringValue(jo, "content");
 		String from = JsonUtil.getStringValue(jo, "froms");
+		boolean check = JsonUtil.getBooleanValue(jo, "check", true);
 		ResponseMap message = new ResponseMap();
 		
 		//进行敏感词过滤和emoji过滤
@@ -100,7 +103,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		}
 		
 		//评论权限校验
-		if(!checkComment(tableName, tableId, message)){
+		if(check && !checkComment(tableName, tableId, message)){
 			return message.getMap();
 		}
 		
@@ -124,7 +127,8 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			if(pid > 0){//说明是回复别人的评论
 				createUserId = getCommentCreateUserId(pid);			
 			}else{ //说明评论的是某一个对象
-				createUserId = SqlUtil.getCreateUserIdByList(commentMapper.getObjectCreateUserId(tableName, tableId));
+				if(check)
+					createUserId = SqlUtil.getCreateUserIdByList(commentMapper.getObjectCreateUserId(tableName, tableId));
 				
 			}
 			if(createUserId > 0 && createUserId != user.getId()){
@@ -152,6 +156,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			commentHandler.addComment(tableName, tableId);
 		}
 		message.put("isSuccess", true);
+		int i = 10/0;
 		return message.getMap();
 	}
 	
@@ -526,5 +531,26 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	@Override
 	public boolean save(CommentBean t) {
 		return commentMapper.save(t) > 0;
+	}
+	
+	@Override
+	public Map<String, Object> getMessageBoards(int userId, JSONObject jo, UserBean user,
+			HttpServletRequest request) {
+		logger.info("CommentServiceImpl-->getMessageBoards():userId="+ userId +",jo="+jo.toString());
+		
+		if(userId < 1)
+			userId = user.getId();
+		
+		ResponseMap message = new ResponseMap();
+		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
+		int currentIndex = JsonUtil.getIntValue(jo, "current", 0); //每页的大小
+		int start = SqlUtil.getPageStart(currentIndex, pageSize);
+		List<Map<String, Object>> rs = commentMapper.getMessageBoards(userId, ConstantsUtil.STATUS_NORMAL, start, pageSize);
+		
+		message.put("isSuccess", true);
+		message.put("message", rs);
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取留言板列表", ",表ID为：", userId, StringUtil.getSuccessOrNoStr(true)).toString(), "getMessageBoards()", 1, 0);
+		return message.getMap();
 	}
 }

@@ -138,4 +138,16 @@ public interface CommentService<T extends IDBean>{
 	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public int getTotal(String tableName, String where);
+	
+	
+	/**
+	 * 获取留言列表
+	 * @param userId
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> getMessageBoards(int userId, JSONObject jo, UserBean user, HttpServletRequest request);
+	
 }

@@ -42,6 +42,18 @@ public class SqlUtil {
 	}
 	
 	/**
+	 * 获取分页的开始索引
+	 * @param current
+	 * @param pageSize
+	 * @return
+	 */
+	public static int getPageStart(int current, int pageSize){
+		pageSize = pageSize > 0? pageSize: ConstantsUtil.DEFAULT_PAGE_SIZE;
+		
+		return current* pageSize;
+	}
+	
+	/**
      * 将一个 Map 对象转化为一个 JavaBean
      * @param type
      * @param map
