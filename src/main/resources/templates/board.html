@@ -9,10 +9,10 @@
 	<style type="text/css">
 		
 		.container{
-			margin-top: 50px;
+			/* margin-top: 50px; */
 		}
 		.row{
-			margin-top: 15px;
+			margin-top: 8px;
 		}
 		.panel-footer button{
 			margin-top: 5px;
@@ -85,7 +85,7 @@ jEmoji.unifiedToHTML(emojiText) -->
 	   <div class="row" id="comment">
 			<div class="col-lg-8 col-lg-offset-2" th:if="${isLogin}" style="text-align: center;">
 				<div class="row">
-					<textarea class="form-control" name="add-comment" style="min-height: 125px;" autofocus ="true"></textarea>
+					<textarea class="form-control" name="add-comment" placeholder="给TA留个言吧！最多250个文字。" style="min-height: 125px;" autofocus ="true"></textarea>
 				</div>
 				<div class="row">
 					<div class="col-lg-12">
@@ -136,6 +136,37 @@ jEmoji.unifiedToHTML(emojiText) -->
 	   <div class="row">
 	   		<div class="col-lg-8 col-lg-offset-2" id="comment-list-id"></div>
 	   </div>
+	   <div class="row">
+	   		<div class="col-lg-8 col-lg-offset-2">
+	   			<nav aria-label="Page navigation">
+  					<ul class="pagination">
+   						 <li>
+      						<a href="#" aria-label="Previous">
+        						<span aria-hidden="true">&laquo;</span>
+      						</a>
+    					</li>
+    					<li><a href="#">1</a></li>
+    					<li><a href="#">2</a></li>
+    					<li><a href="#">3</a></li>
+    					<li><a href="#">4</a></li>
+    					<li><a href="#">5</a></li>
+    					<li>
+      						<a href="#" aria-label="Next">
+        						<span aria-hidden="true">&raquo;</span>
+      						</a>
+    					</li>
+    					<li>
+    						<select class="form-control">
+    							<option name="pageIndex" value="1">1</option>
+    							<option name="pageIndex" value="2">2</option>
+    							<option name="pageIndex" value="3">3</option>
+    						</select>
+    					</li>
+  					</ul>
+				</nav>
+	   		</div>
+		    	
+		</div>
 	</div>
 <script th:inline="javascript">//引用  
 	/*<![CDATA[*/  

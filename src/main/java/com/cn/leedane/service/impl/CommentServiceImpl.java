@@ -574,7 +574,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 				rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId, user, friendObject));
 			}	
 		}
-		
+		message.put("total", SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, "where table_name='t_message_board' and table_id='"+ userId +"' and status="+ ConstantsUtil.STATUS_NORMAL)));
 		message.put("isSuccess", true);
 		message.put("message", rs);
 		//保存操作日志

@@ -1,4 +1,4 @@
-var page_size = 15;
+var pageSize = 15;
 var currentIndex = 0;
 var messageBoards;
 $(function(){
@@ -14,7 +14,7 @@ $(function(){
  * 获取评论请求列表参数
  */
 function getMessageBoardsRequestParams(){
-	return {page_size: page_size, current: currentIndex, t: Math.random()};
+	return {page_size: pageSize, current: currentIndex, t: Math.random()};
 }
 
 /**
@@ -31,10 +31,11 @@ function getMessageBoards(){
 		success : function(data) {
 			layer.close(loadi);
 			if(data.isSuccess){
-					messageBoards = data.message;
-					for(var i = 0; i < messageBoards.length; i++){
-						buildEachCommentRow(i, messageBoards[i]);
-					}
+				messageBoards = data.message;
+				for(var i = 0; i < messageBoards.length; i++){
+					buildEachCommentRow(i, messageBoards[i]);
+				}
+				pageDivUtil(data.total);
 			}else{
 				ajaxError(data);
 			}
@@ -82,7 +83,7 @@ function buildEachCommentRow(index, comment){
 							    			'<div class="col-lg-12">'+
 							    				'<form class="form-signin" role="form">'+
 							    			     '<fieldset>'+
-							    				     '<textarea class="form-control reply-comment-text"> </textarea>'+
+							    				     '<textarea class="form-control reply-comment-text" placeholder="回复TA，最多250个文字。"> </textarea>'+
 							    			     '</fieldset>'+
 							    			 '</form>'+
 							    			'</div>'+
@@ -155,6 +156,42 @@ function doAddComment(params){
 	});
 }
 
-function dd(){
+/**
+ * 生成分页div
+ * @param total
+ */
+function pageDivUtil(total){
+	var html = '<li>'+
+					'<a href="javascript:void(0);" onclick="pre();" aria-label="Previous">'+
+						'<span aria-hidden="true">&laquo;</span>'+
+					'</a>'+
+				'</li>';
+	totalPage = parseInt(Math.ceil(total / pageSize));
+	var start = 0;
+	var end = totalPage > start + 10 ? start + 10: totalPage;
 	
+	var selectHtml = '<li><select class="form-control" onchange="optionChange()">';
+	for(var i = 0; i < totalPage; i++){
+		if(currentIndex == i)
+			selectHtml += '<option name="pageIndex" selected="selected" value="'+ i +'">'+ (i + 1) +'</option>';
+		else
+			selectHtml += '<option name="pageIndex" value="'+ i +'">'+ (i + 1) +'</option>';
+	}
+	
+	for(var i = start; i < end; i++){
+		if(currentIndex == i)
+			html += '<li class="active"><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
+		else
+			html += '<li><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
+	}
+	html += '<li>'+
+				'<a href="javascript:void(0);" onclick="next();" aria-label="Next">'+
+					'<span aria-hidden="true">&raquo;</span>'+
+				'</a>'+
+			'</li>';
+	
+	selectHtml += '</select></li>';
+	
+	html += selectHtml;
+	$(".pagination").html(html);
 }
