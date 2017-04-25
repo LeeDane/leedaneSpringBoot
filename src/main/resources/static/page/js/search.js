@@ -93,14 +93,14 @@ function buildUsers(users){
  * @returns {String}
  */
 function buildUserEach(user){
-	var html = '<div class="col-lg-1 col-sm-1">';
+	var html = '<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" onclick="linkToMy('+ user.id+')">';
 		if(isNotEmpty(user.user_pic_path)){
-			html += '<img class="img-circle" alt="" width="60" height="60" src="'+ user.user_pic_path +'">';
+			html += '<img class="img-circle center-block" alt="" width="40" height="40" src="'+ user.user_pic_path +'">';
 		}else{
-			html += '<img class="img-circle" alt="" width="60" height="60" src="">';
+			html += '<img class="img-circle center-block" alt="" width="40" height="40" src="">';
 		}
 		 			
-			html += '<div class="user-account cut-text" title="'+ user.account+'"><a href="JavaScript:void(0);" onclick="linkToMy('+ user.id+')">'+ user.account+'</a></div>'+
+			html += '<div class="user-account cut-text" title="'+ user.account+'"><a href="JavaScript:void(0);">'+ user.account+'</a></div>'+
 				'</div>';
 	return html;
 }
@@ -122,15 +122,15 @@ function buildBlogs(blogs){
  */
 function buildBlogEach(blog){
 	var html = '<div class="row blog-list-row">'+
-				   	'<div class="col-lg-1" style="text-align: center;margin-top: 10px;">';
+				   	'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;margin-top: 10px;">';
 		   	if(isNotEmpty(blog.imgUrl)){
-		   		html += '<img width="60" height="60" class="img-circle hand" alt="" src="'+ blog.imgUrl +'"  onclick="showSingleImg(this);"/>';
+		   		html += '<img width="40" height="40" class="img-circle hand center-block" alt="" src="'+ blog.imgUrl +'"  onclick="showSingleImg(this);"/>';
 		   	}else{
-		   		html += '<img width="60" height="60" class="img-circle hand" alt="" src=""/>';
+		   		html += '<img class="img-circle hand center-block" alt="" src=""/>';
 		   	}
 						
 			html += '</div>'+
-					'<div class="col-lg-10">'+
+					'<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">'+
 						'<div class="row" style="font-family: \'微软雅黑\'; font-size: 15px; margin-top: 10px;">'+
 							'<div class="col-lg-12">'+
 								'<span class="blog-user-name"><a href="JavaScript:void(0);" onclick="linkToMy('+ blog.createUserId+')" title="'+ changeNotNullString(blog.account) +'">'+ changeNotNullString(blog.account) +'</a></span>   '+
@@ -187,14 +187,14 @@ function buildMoods(moods){
  */
 function buildMoodEach(index, mood){
 	var html = '<div class="row mood-list-row">'+
-			   		'<div class="col-lg-1" style="text-align: center;margin-top: 10px;">';
+			   		'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;margin-top: 10px;">';
    			if(isNotEmpty(mood.user_pic_path)){
-   				html += '<img width="60" height="60" class="img-circle hand" alt="" src="'+ mood.user_pic_path +'"  onclick="showSingleImg(this);"/>';
+   				html += '<img width="40" height="40" class="img-circle hand" alt="" src="'+ mood.user_pic_path +'"  onclick="showSingleImg(this);"/>';
    			}else{
-   				html += '<img width="60" height="60" class="img-circle hand" alt="" src=""/>';
+   				html += '<img width="40" height="40" class="img-circle hand" alt="" src=""/>';
    			}	
 			html += '</div>'+
-					'<div class="col-lg-10">'+
+					'<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">'+
 						'<div class="row" style="font-family: \'微软雅黑\'; font-size: 15px; margin-top: 10px;">'+
 							'<div class="col-lg-12">'+
 								'<span class="mood-user-name"><a href="JavaScript:void(0);" onclick="linkToMy('+ mood.createUserId +')">'+ changeNotNullString(mood.account) +'</a></span>  '+ 

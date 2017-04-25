@@ -282,7 +282,7 @@ function addLink(params){
 	$.ajax({
 		type : "post",
 		data: params,
-		url : getBasePath() +"leedane/gallery/addLink.action",
+		url : "gl/photo",
 		dataType: 'json', 
 		beforeSend:function(){
 		},

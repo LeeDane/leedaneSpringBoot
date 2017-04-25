@@ -59,8 +59,7 @@ public interface SqlBaseService <T extends IDBean>{
 	 * @param id
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
-	public Object findById(Class clazz, int id);
+	public UserBean findById(int id);
 	
 	/**
 	 * 基础的保存实体的方法

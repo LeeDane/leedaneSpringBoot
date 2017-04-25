@@ -248,7 +248,7 @@ public class NotificationHandler {
 					robotReply = "你在说什么？没听见";
 				}
 				
-				UserBean robotUser = (UserBean) sqlBaseService.findById(UserBean.class, robotId);
+				UserBean robotUser = sqlBaseService.findById(robotId);
 				
 				//保存评论记录
 				CommentBean bean = new CommentBean();

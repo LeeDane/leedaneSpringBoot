@@ -75,10 +75,9 @@ public class SqlBaseServiceImpl implements SqlBaseService<IDBean> {
 		return baseMapper.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, uid, ConstantsUtil.STATUS_NORMAL, ConstantsUtil.STATUS_NORMAL, uid, ConstantsUtil.STATUS_NORMAL);
 	}
 	
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object findById(Class clazz, int uid) {
-		return baseMapper.findById(clazz, uid);
+	public UserBean findById(int uid) {
+		return (UserBean) baseMapper.findById(UserBean.class, uid);
 	}
 
 	@SuppressWarnings("rawtypes")

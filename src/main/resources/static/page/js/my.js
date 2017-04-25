@@ -128,7 +128,7 @@ function loadUserInfo(){
 				
 				userinfo = data.userinfo;
 				if(isNotEmpty(userinfo.user_pic_path))
-					$("#user_img").html('<img src="'+ userinfo.user_pic_path +'" width="120px" height="120px" class="img-circle">');
+					$("#user-img").html('<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"><img src="'+ userinfo.user_pic_path +'" width="120px" height="120px" class="img-circle center-block"></div>');
 				
 				var descHtml = '<div class="h3">'+ 
 									userinfo.account + (userinfo.is_admin ? '<span class="badge" style="margin-left:5px;">管理员</span>': '')+
@@ -144,7 +144,7 @@ function loadUserInfo(){
 								'</button>';
 				}
 				
-				$("#user_desc").html(descHtml);
+				$("#user-desc").html(descHtml);
 				
 				if(isLoginUser)
 					isTodaySignIn();//加载是否今天已经签到
@@ -271,21 +271,15 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 	var html = '<div class="list-group" id="'+(ifFlagNew? 'month-'+flagMonth: '')+'">'+
 				    '<div class="list-group-item active">'+
 						'<div class="row">'+
-							'<div class="col-lg-8">'+
-								'<span class="list-group-item-heading">来自：'+ changeNotNullString(mood.froms) +
+							'<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 cut-text">'+
+								'<span class="list-group-item-heading" title="'+ changeNotNullString(mood.froms) +'">来自：'+ changeNotNullString(mood.froms) +
 						        '</span>'+
 							'</div>'+
-							'<div class="col-lg-4">'+
-								'<div class="row">'+
-									'<div class="col-lg-10 col-sm-10">'+
-										'<span class="list-group-item-heading" style="margin-right: 5px;">'+ changeNotNullString(mood.create_time).substring(0, 16) +
-								        '</span>'+
-									'</div>'+
-									'<div class="col-lg-2 col-sm-2">'+
-										'<span class="list-group-item-heading glyphicon glyphicon-chevron-down cursor" onclick="showItemListModal('+ index +')">'+
-								        '</span> '+
-									'</div>'+
-								'</div>'+
+							'<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-right cut-text" style="text-align: right;">'+
+								'<span class="list-group-item-heading" style="margin-right: 5px;">'+ changeNotNullString(mood.create_time).substring(0, 16) +
+						        '</span>'+
+						        '<span class="list-group-item-heading glyphicon glyphicon-chevron-down cursor" onclick="showItemListModal('+ index +')">'+
+						        '</span> '+
 							'</div>'+
 						'</div>'+
 					'</div>'+

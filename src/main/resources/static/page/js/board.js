@@ -1,10 +1,43 @@
-var pageSize = 15;
+var pageSize = 8;
 var currentIndex = 0;
 var messageBoards;
 $(function(){
 	
 	$(".container").on("click", ".reply-other-btn", function(){
 		$(this).closest(".list-group").find(".reply-container").toggle("fast");
+	});
+	
+	$(".container").on("click", ".delete-other-btn", function(){
+		var dataId = $(this).closest(".comment-list").attr("data-id");
+		var createUserId = $(this).closest(".comment-list").attr("create-user-id");
+		if(dataId > 0 && createUserId > 0){
+			layer.confirm('您要删除该评论吗？', {
+				  btn: ['确定','点错了'] //按钮
+			}, function(){
+				var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+				$.ajax({
+					type : "delete",
+					dataType: 'json',  
+					url : "/cm/comment?cid="+ dataId+"&create_user_id="+createUserId,
+					beforeSend:function(){
+					},
+					success : function(data) {
+						layer.close(loadi);
+						if(data.isSuccess){
+							layer.msg(data.message + ",1秒后自动刷新");
+							reloadPage(1000);
+						}else{
+							ajaxError(data);
+						}
+					},
+					error : function(data) {
+						layer.close(loadi);
+						ajaxError(data);
+					}
+				});
+			}, function(){
+			});
+		}
 	});
 	
 	getMessageBoards();
@@ -30,10 +63,15 @@ function getMessageBoards(){
 		},
 		success : function(data) {
 			layer.close(loadi);
+			$("#comment-list-id").empty();
 			if(data.isSuccess){
 				messageBoards = data.message;
+				if(messageBoards.length == 0){
+					$("#comment-list-id").append('空空的，还没有数据');
+					return;
+				}
 				for(var i = 0; i < messageBoards.length; i++){
-					buildEachCommentRow(i, messageBoards[i]);
+					$("#comment-list-id").append(buildEachCommentRow(i, messageBoards[i]));
 				}
 				pageDivUtil(data.total);
 			}else{
@@ -55,50 +93,65 @@ function getMessageBoards(){
  * @param index
  */
 function buildEachCommentRow(index, comment){
-	var html = '<div class="row comment-list comment-list-padding">'+
-			   		'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-3">'+
-						'<img src="'+ changeNotNullString(comment.user_pic_path) +'" width="45" height="45" class="img-rounded">'+
-					'</div>'+
-					'<div class="col-lg-11 col-md-11 col-sm-10 col-xs-9">'+
-				       '<div class="list-group">'+
-				       		'<div class="list-group-item comment-list-item active">'+
-				       			'<a href="JavaScript:void(0);" onclick="linkToMy('+ comment.create_user_id +')" target="_blank" class="marginRight">'+ changeNotNullString(comment.account)+'</a>'+
-				       			'<span class="marginRight publish-time">发表于:'+ changeNotNullString(comment.create_time) +'</span>'+
-				       			'<span class="marginRight publish-time">来自:'+ changeNotNullString(comment.froms) +'</span>'+
-				       		'</div>';
-						html += '<div class="list-group-item comment-list-item">'+
-									'<div class="row">'+
-									'<div class="col-lg-12">'+ changeNotNullString(comment.content) +'</div>'+
-								'</div>';
-							if(isLogin){
-								html += 
-						       			'<div class="row">'+
-						       				'<div class="col-lg-offset-11 col-lg-1 text-align-right">'+
-						       					 '<button class="btn btn-sm btn-primary btn-block reply-other-btn" style="width: 60px;" type="button">回复TA</button>'+
-						       				'</div>'+
-						       			'</div>'+
-						       		'</div>'+
-						       		'<div class="col-lg-12 reply-container" table-id="'+ comment.table_id+'" table-name="'+ comment.table_name +'" style="display: none;">'+
-							    		'<div class="row">'+
-							    			'<div class="col-lg-12">'+
-							    				'<form class="form-signin" role="form">'+
-							    			     '<fieldset>'+
-							    				     '<textarea class="form-control reply-comment-text" placeholder="回复TA，最多250个文字。"> </textarea>'+
-							    			     '</fieldset>'+
-							    			 '</form>'+
-							    			'</div>'+
-							    			'<div class="col-lg-offset-11 col-lg-1 text-align-right" style="margin-top: 10px;">'+
-							    				'<button class="btn btn-sm btn-info btn-block" style="width: 60px;" type="button" onclick="commentItem(this, '+ comment.id +', '+ comment.create_user_id +');">评论</button>'+
-							    			'</div>'+
-							    		'</div>'+
-							    	'</div>';
-							}
-				       		
+		var html = '<div class="row comment-list comment-list-padding" data-id="'+ comment.id +'" create-user-id="'+ comment.create_user_id+'">'+
+			   			'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">'+
+							'<img src="'+ changeNotNullString(comment.user_pic_path) +'" width="40" height="40" class="img-rounded">'+
+						'</div>'+
+						'<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">'+
+					       	'<div class="list-group">'+
+						       		'<div class="list-group-item comment-list-item active">'+
+						       			'<a href="JavaScript:void(0);" onclick="linkToMy('+ comment.create_user_id +')" target="_blank" class="marginRight">'+ changeNotNullString(comment.account)+'</a>'+
+						       			'<span class="marginRight publish-time">发表于:'+ changeNotNullString(comment.create_time) +'</span>'+
+						       			'<span class="marginRight publish-time">来自:'+ changeNotNullString(comment.froms) +'</span>'+
+						       		'</div>';
+							html += '<div class="list-group-item comment-list-item">'+
+										'<div class="row">';
+									if(isNotEmpty(comment.blockquote_content)){
+								    html += '<div class="col-lg-12">'+
+												'<blockquote>'+ comment.blockquote_content;
+													if(isNotEmpty(comment.blockquote_account)){
+												html += '<small><cite>'+ comment.blockquote_account +'</cite>&nbsp;&nbsp;'+ changeNotNullString(comment.blockquote_time) +'</small>';
+													}
+										html +='</blockquote>'+
+											'</div>';
+									}
+									html += '<div class="col-lg-12">'+ changeNotNullString(comment.content) +'</div>'+
+										'</div>'+
+									'</div>';
+								if(isLogin){
+							html += '<div class="list-group-item comment-list-item">'+
+										'<div class="row">'+
+							       				'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right">'+
+							       					 '<button class="btn btn-sm btn-primary pull-right reply-other-btn" style="width: 60px;" type="button">回复TA</button>';
+				       					 if(isLogin && comment.create_user_id == loginUserId){
+				       						 html += '<button class="btn btn-sm btn-primary pull-right delete-other-btn" style="width: 60px; margin-right: 5px;" type="button">删除</button>';
+				       					 }
+							       					 
+							       		html += '</div>'+
+							       		'</div>'+
+							       		'<div class="row">'+
+								       		'<div class="col-lg-12 reply-container" table-id="'+ comment.table_id+'" table-name="'+ comment.table_name +'" style="display: none;">'+
+									    		'<div class="row">'+
+									    			'<div class="col-lg-12">'+
+									    				'<form class="form-signin" role="form">'+
+										    			     '<fieldset>'+
+										    				     '<textarea class="form-control reply-comment-text" placeholder="回复TA，最多250个文字。"> </textarea>'+
+										    			     '</fieldset>'+
+										    			 '</form>'+
+									    			'</div>'+
+									    			'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right" style="margin-top: 10px;">'+
+									    				'<button class="btn btn-sm btn-info pull-right" style="width: 60px;" type="button" onclick="commentItem(this, '+ comment.id +', '+ comment.create_user_id +');">评论</button>'+
+									    			'</div>'+
+									    		'</div>'+
+									    	'</div>'+
+								    	'</div>'+
+								   '</div>';
+								}
 					html += '</div>'+
-				'</div>'+
+					'</div>'+
 			'</div>';
 	
-	$("#comment-list-id").append(html);
+	return html;
 }
 
 
@@ -194,4 +247,43 @@ function pageDivUtil(total){
 	
 	html += selectHtml;
 	$(".pagination").html(html);
+}
+
+/**
+ * 选择改变的监听
+ */
+function optionChange(){
+	var objS = document.getElementsByTagName("select")[0];
+    var index = objS.options[objS.selectedIndex].value;
+    currentIndex = index;
+    getMessageBoards();
+}
+
+/**
+ * 点击向左的按钮
+ */
+function goIndex(index){
+	currentIndex = index;
+	getMessageBoards();
+}
+
+/**
+ * 点击向左的按钮
+ */
+function pre(){
+	currentIndex --;
+	if(currentIndex < 0)
+		currentIndex = 0;
+	getMessageBoards();
+}
+
+
+/**
+ * 点击向右的按钮
+ */
+function next(){
+	currentIndex ++;
+	if(currentIndex > totalPage)
+		currentIndex = totalPage;
+	getMessageBoards();
 }

@@ -88,10 +88,10 @@ function buildEachRow(user, index){
 		html += '<div class="row list-row each-row" index='+ index +' data-id='+user.id+'>'+
 			    	'<div class="col-lg-12">'+
 						 '<div class="row">'+
-					 		'<div class="col-lg-2">'+
-					 			'<img class="img-circle" alt="" width="90%" height="130" src="'+ user.user_pic_path +'">'+
+					 		'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">'+
+					 			'<img class="img-circle" alt="" width="40" height="40" src="'+ user.user_pic_path +'">'+
 					 		'</div>'+
-					 		'<div class="col-lg-10">'+
+					 		'<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">'+
 					 			'<div class="row">'+
 						 			'<div class="col-lg-3">账号：'+ changeNotNullString(user.account) +'</div>'+
 						 			'<div class="col-lg-3">真实姓名：'+ changeNotNullString(user.real_name) +'</div>'+

@@ -44,42 +44,6 @@
 		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
 	</bean>
 
-	<!--
-		4. 事务管理 : DataSourceTransactionManager dataSource:引用上面定义的数据源
-	-->
-	<bean id="txManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource"></property>
-	</bean>
-
-	<!-- 5. 使用声明式事务
-		 transaction-manager：引用上面定义的事务管理器
-	 -->
-	<tx:annotation-driven transaction-manager="txManager" />
-	
-	<tx:advice id="txAdvice" transaction-manager="txManager">
-        <tx:attributes>
-           <!--  事务执行方式 REQUIRED：指定当前方法必需在事务环境中运行，如果当前有事务环境就加入当前正在执行的事务环境，如果当前没有事务，就新建一个事务。这是默认值。 -->
-            
-            <tx:method name="create*" propagation="REQUIRED" />
-            <tx:method name="send*" propagation="REQUIRED" />
-            <tx:method name="publish*" propagation="REQUIRED" />
-            <tx:method name="save*" propagation="REQUIRED"/>
-            <tx:method name="insert*" propagation="REQUIRED"/>
-            <tx:method name="add*" propagation="REQUIRED" />
-            <tx:method name="update*" propagation="REQUIRED" />
-            <tx:method name="remove*" propagation="REQUIRED" />
-            <tx:method name="del*" propagation="REQUIRED" />
-            <tx:method name="reduce*" propagation="REQUIRED" />
-            <tx:method name="import*" propagation="REQUIRED" />
-            
-               <!-- 指定当前方法以非事务方式执行操作，如果当前存在事务，就把当前事务挂起，等我以非事务的状态运行完，再继续原来的事务。 
-                查询定义即可
-                read-only="true"  表示只读 --> 
-            
-            <tx:method name="*" read-only="false" />
-        </tx:attributes>
-    </tx:advice>
 	<!-- 定义 Autowired 自动注入 bean -->
    <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/> 
     <!-- 扫描有注解的文件  base-package 包路径 -->

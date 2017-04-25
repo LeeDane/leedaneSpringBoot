@@ -150,8 +150,7 @@ public class UserHandler {
 				e.printStackTrace();
 			}
 		}
-		UserBean user = (UserBean) sqlBaseService.findById(UserBean.class, userId);
-		
+		UserBean user = sqlBaseService.findById(userId);
 		if(user != null){
 			redisUtil.addSerialize(userInfoKey, SerializationUtils.serialize(user));
 			return user;
@@ -288,6 +287,11 @@ public class UserHandler {
 					if(StringUtil.isNotNull(account))
 						//替换好友称呼的名称
 						infoMap.put("account", account);
+					else{
+						infoMap.put("account", getUserName(createUserId));
+					}
+				}else{
+					infoMap.put("account", getUserName(createUserId));
 				}
 			}else{
 				infoMap.put("account", "本人");

@@ -56,7 +56,6 @@ function getInfo(bid){
 			if(data.isSuccess && data.message.length > 0){
 				var blog = data.message[0];
 				document.title = data.message[0].title;
-				$(".row-content").html(data.message[0].content);
 				$("#b-title").html(changeNotNullString(blog.title));
 				$("#b-account").html(changeNotNullString(blog.account));
 				$("#b-account").attr("onclick", 'linkToMy('+ blog.create_user_id +')');
@@ -87,6 +86,7 @@ function getInfo(bid){
 						}
 					}
 				}
+				$(".row-content").html(data.message[0].content);
 			}else{
 				ajaxError(data);
 			}
@@ -170,52 +170,62 @@ function getComments(bid){
  * @param index
  */
 function buildEachCommentRow(index, comment){
-	var html = '<div class="row comment-list comment-list-padding">'+
-			   		'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-3">'+
-						'<img src="'+ changeNotNullString(comment.user_pic_path) +'" width="100%" height="70px" class="img-rounded">'+
-					'</div>'+
-					'<div class="col-lg-11 col-md-11 col-sm-10 col-xs-9">'+
-				       '<div class="list-group">'+
-				       		'<div class="list-group-item comment-list-item active">'+
-				       			'<a href="JavaScript:void(0);" onclick="linkToMy('+ comment.create_user_id +')" target="_blank" class="marginRight">'+ changeNotNullString(comment.account)+'</a>'+
-				       			'<span class="marginRight publish-time">发表于:'+ changeNotNullString(comment.create_time) +'</span>'+
-				       			'<span class="marginRight publish-time">来自:'+ changeNotNullString(comment.froms) +'</span>'+
-				       		'</div>';
-						html += '<div class="list-group-item comment-list-item">'+
-									'<div class="row">'+
-									'<div class="col-lg-12">'+ changeNotNullString(comment.content) +'</div>'+
-								'</div>';
-							if(isLogin){
-								html += 
-						       			'<div class="row">'+
-						       				'<div class="col-lg-offset-11 col-lg-1 text-align-right">'+
-						       					 '<button class="btn btn-sm btn-primary btn-block reply-other-btn" style="width: 60px;" type="button">回复TA</button>'+
-						       				'</div>'+
-						       			'</div>'+
-						       		'</div>'+
-						       		'<div class="col-lg-12 reply-container" table-id="'+ comment.table_id+'" table-name="'+ comment.table_name +'" style="display: none;">'+
-							    		'<div class="row">'+
-							    			'<div class="col-lg-12">'+
-							    				'<form class="form-signin" role="form">'+
-							    			     '<fieldset>'+
-							    				     '<textarea class="form-control reply-comment-text"> </textarea>'+
-							    			     '</fieldset>'+
-							    			 '</form>'+
-							    			'</div>'+
-							    			'<div class="col-lg-offset-11 col-lg-1 text-align-right" style="margin-top: 10px;">'+
-							    				'<button class="btn btn-sm btn-info btn-block" style="width: 60px;" type="button" onclick="commentItem(this, '+ comment.id +', '+ comment.table_id +');">评论</button>'+
-							    			'</div>'+
-							    		'</div>'+
-							    	'</div>';
-							}
-				       		
+		var html = '<div class="row comment-list comment-list-padding">'+
+			   			'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">'+
+							'<img src="'+ changeNotNullString(comment.user_pic_path) +'" width="40" height="40" class="img-rounded hand center-block">'+
+						'</div>'+
+						'<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">'+
+					       	'<div class="list-group">'+
+						       		'<div class="list-group-item comment-list-item active">'+
+						       			'<a href="JavaScript:void(0);" onclick="linkToMy('+ comment.create_user_id +')" target="_blank" class="marginRight">'+ changeNotNullString(comment.account)+'</a>'+
+						       			'<span class="marginRight publish-time">发表于:'+ changeNotNullString(comment.create_time) +'</span>'+
+						       			'<span class="marginRight publish-time">来自:'+ changeNotNullString(comment.froms) +'</span>'+
+						       		'</div>';
+							html += '<div class="list-group-item comment-list-item">'+
+										'<div class="row">';
+									if(isNotEmpty(comment.blockquote_content)){
+								    html += '<div class="col-lg-12">'+
+											    '<blockquote>'+ comment.blockquote_content;
+												if(isNotEmpty(comment.blockquote_account)){
+											html += '<small><cite>'+ comment.blockquote_account +'</cite>&nbsp;&nbsp;'+ changeNotNullString(comment.blockquote_time) +'</small>';
+												}
+										html +='</blockquote>'+
+											'</div>';
+									}
+									html += '<div class="col-lg-12">'+ changeNotNullString(comment.content) +'</div>'+
+										'</div>'+
+									'</div>';
+								if(isLogin){
+							html += '<div class="list-group-item comment-list-item">'+
+										'<div class="row">'+
+							       				'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right">'+
+							       					 '<button class="btn btn-sm btn-primary btn-block pull-right reply-other-btn" style="width: 60px;" type="button">回复TA</button>'+
+							       				'</div>'+
+							       		'</div>'+
+							       		'<div class="row">'+
+								       		'<div class="col-lg-12 reply-container" table-id="'+ comment.table_id+'" table-name="'+ comment.table_name +'" style="display: none;">'+
+									    		'<div class="row">'+
+									    			'<div class="col-lg-12">'+
+									    				'<form class="form-signin" role="form">'+
+										    			     '<fieldset>'+
+										    				     '<textarea class="form-control reply-comment-text" placeholder="回复TA，最多250个文字。"> </textarea>'+
+										    			     '</fieldset>'+
+										    			 '</form>'+
+									    			'</div>'+
+									    			'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right" style="margin-top: 10px;">'+
+									    				'<button class="btn btn-sm btn-info btn-block pull-right" style="width: 60px;" type="button" onclick="commentItem(this, '+ comment.id +', '+ comment.table_id +');">评论</button>'+
+									    			'</div>'+
+									    		'</div>'+
+									    	'</div>'+
+								    	'</div>'+
+								   '</div>';
+								}
 					html += '</div>'+
-				'</div>'+
+					'</div>'+
 			'</div>';
 	
 	$(".container").append(html);
 }
-
 
 /**
  * 评论别人的评论

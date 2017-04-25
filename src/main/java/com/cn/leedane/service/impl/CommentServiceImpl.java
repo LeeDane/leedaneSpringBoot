@@ -13,7 +13,6 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CommentHandler;
@@ -33,6 +32,7 @@ import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.NotificationService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
@@ -166,7 +166,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	 */
 	private boolean checkComment(String tableName, int tableId, Map<String, Object> message) {
 		
-		List<Map<String, Object>> list = commentMapper.executeSQL("select id, can_comment from "+tableName +" where id = ? limit 0,1", tableId);
+		List<Map<String, Object>> list = commentMapper.executeSQL("select id, can_comment from "+tableName +" where id = ? limit 1", tableId);
 		//检查该实体数据是否数据存在,防止对不存在的对象添加评论
 		if(list == null || list.size() != 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
@@ -281,8 +281,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			int tabId;
 			int pid = 0;
 			int pCreateUserId = 0;
-			String atUsername = ""; //@用户的名称
-			String resultContent = null;
+			String blockquoteAccount = ""; //@用户的名称
 			//为名字备注赋值
 			for(int i = 0; i < rs.size(); i++){
 				if(StringUtil.isNull(tableName) && tableId <1){
@@ -292,7 +291,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 					rs.get(i).put("source", commonHandler.getContentByTableNameAndId(tabName, tabId, user));
 				}else{
 					pid = StringUtil.changeObjectToInt(rs.get(i).get("pid"));
-					if(pid > 0 ){
+					/*if(pid > 0 ){
 						pCreateUserId = getCommentCreateUserId(pid);
 						if(pCreateUserId > 0){
 							atUsername = userHandler.getUserName(pCreateUserId);
@@ -304,6 +303,29 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 									rs.get(i).put("content", "回复@"+atUsername + " " + resultContent);
 								}
 							}
+						}
+					}*/
+					if(pid > 0 ){
+						CommentBean pCommentBean = commentMapper.findById(CommentBean.class, pid);
+						if(pCommentBean != null){
+							pCreateUserId = pCommentBean.getCreateUserId();
+							blockquoteAccount = "";
+							if(pCreateUserId > 0){
+								blockquoteAccount = userHandler.getUserName(pCreateUserId);
+								if(StringUtil.isNotNull(blockquoteAccount)){
+									/*resultContent = StringUtil.changeNotNull((rs.get(i).get("content")));
+									if(resultContent.indexOf("@"+atUsername) > 0 )
+										rs.get(i).put("content", resultContent);
+									else{
+										rs.get(i).put("content", "回复@"+atUsername + " " + resultContent);
+									}*/
+									rs.get(i).put("blockquote_account", blockquoteAccount); //引用的用户名称
+								}
+							}
+							rs.get(i).put("blockquote_content", pCommentBean.getContent()); //引用的用户名称
+							rs.get(i).put("blockquote_time", DateUtil.DateToString(pCommentBean.getCreateTime())); //引用的用户名称
+						}else{
+							rs.get(i).put("blockquote_content", "该评论已经被删除"); //引用的用户名称
 						}
 					}
 				}
@@ -551,23 +573,33 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			//String account = "";
 			int pid = 0;
 			int pCreateUserId = 0;
-			String atUsername = ""; //@用户的名称
-			String resultContent = null;
+			//String atUsername = ""; //@用户的名称
+			//String resultContent = null;
+			String blockquoteAccount; //引用的用户名称
 			//为名字备注赋值
 			for(int i = 0; i < rs.size(); i++){
 				pid = StringUtil.changeObjectToInt(rs.get(i).get("pid"));
 				if(pid > 0 ){
-					pCreateUserId = getCommentCreateUserId(pid);
-					if(pCreateUserId > 0){
-						atUsername = userHandler.getUserName(pCreateUserId);
-						if(StringUtil.isNotNull(atUsername)){
-							resultContent = StringUtil.changeNotNull((rs.get(i).get("content")));
-							if(resultContent.indexOf("@"+atUsername) > 0 )
-								rs.get(i).put("content", resultContent);
-							else{
-								rs.get(i).put("content", "回复@"+atUsername + " " + resultContent);
+					CommentBean pCommentBean = commentMapper.findById(CommentBean.class, pid);
+					if(pCommentBean != null){
+						pCreateUserId = pCommentBean.getCreateUserId();
+						blockquoteAccount = "";
+						if(pCreateUserId > 0){
+							blockquoteAccount = userHandler.getUserName(pCreateUserId);
+							if(StringUtil.isNotNull(blockquoteAccount)){
+								/*resultContent = StringUtil.changeNotNull((rs.get(i).get("content")));
+								if(resultContent.indexOf("@"+atUsername) > 0 )
+									rs.get(i).put("content", resultContent);
+								else{
+									rs.get(i).put("content", "回复@"+atUsername + " " + resultContent);
+								}*/
+								rs.get(i).put("blockquote_account", blockquoteAccount); //引用的用户名称
 							}
 						}
+						rs.get(i).put("blockquote_content", pCommentBean.getContent()); //引用的用户名称
+						rs.get(i).put("blockquote_time", DateUtil.DateToString(pCommentBean.getCreateTime())); //引用的用户名称
+					}else{
+						rs.get(i).put("blockquote_content", "该评论已经被删除"); //引用的用户名称
 					}
 				}
 				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
