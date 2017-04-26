@@ -147,6 +147,8 @@ public class AdminHtmlController extends BaseController{
 	 * @return
 	 */
 	public String loginRoleCheck(String urlParse, boolean mustAdmin, Model model, HttpSession httpSession, HttpServletRequest request){
+		//设置统一的请求模式
+		model.addAttribute("isDebug", false);
 		Object obj = httpSession.getAttribute(UserController.USER_INFO_KEY);
 		UserBean userBean = null;
 		String account = "";

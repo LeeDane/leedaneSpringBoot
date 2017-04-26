@@ -9,22 +9,25 @@
     <meta name="author" content="" />
     <link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
     <title>用户登录</title>
-    <!-- <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    百度JQUERYCDN
-	<script type="text/javascript" src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
-	<script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+    
+    <!-- 正式环境下的cdn引用-->
+	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css}"/>
+	<script th:if="${not isDebug}" type="text/javascript" th:src="@{http://libs.baidu.com/jquery/1.9.1/jquery.min.js}"></script>
+	<script th:if="${not isDebug}" src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script th:if="${not isDebug}" th:src="@{https://cdn.bootcss.com/layer/3.0.1/layer.js}" type="text/javascript"></script>
+	<script th:if="${not isDebug}" th:src="@{https://cdn.bootcss.com/layer/3.0.1/layer.min.js}" type="text/javascript"></script>
 	
-	<link rel="stylesheet" href="page/other/bootstrap-3.3.0/css/bootstrap.min.css" />
-	<!-- 百度JQUERYCDN -->
-	<script type="text/javascript" src="page/other/jquery-1.9.1.min.js"></script>
-	<script src="page/other/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+	<!-- 测试环境下的引用 -->
+	<link rel="stylesheet" th:if="${isDebug}" th:href="@{/page/other/bootstrap-3.3.0/css/bootstrap.min.css}" />
+	<script th:if="${isDebug}" th:src="@{/page/other/jquery-1.9.1.min.js}" type="text/javascript"></script>
+	<script th:if="${isDebug}" th:src="@{/page/other/bootstrap-3.3.0/js/bootstrap.min.js}" type="text/javascript"></script>
+	<script th:if="${isDebug}" th:src="@{/page/other/layui/layui.js}" type="text/javascript"></script>
+	<script th:if="${isDebug}" th:src="@{/page/other/layui/lay/dest/layui.all.js}" type="text/javascript"></script>
 	
-	<script src="page/js/base.js"></script>
-	<script type="text/javascript" src="page/other/jquery.md5.js"></script>
-	<script type="text/javascript" src="page/other/layui/layui.js"></script>
-	<script type="text/javascript" src="page/other/layui/lay/dest/layui.all.js"></script>
-	<!-- <script type="text/javascript" src="page/js/comet4j.js"></script> -->
-	<script type="text/javascript" src="page/js/login.js"></script>
+	<!-- 通用引用 -->
+	<script th:src="@{/page/js/base.js}" type="text/javascript"></script>
+	<script type="text/javascript" th:src="@{/page/other/jquery.md5.js}"></script>
+	<script type="text/javascript" th:src="@{/page/js/login.js}"></script>
     <style type="text/css">
     	body {
 		  padding-top: 40px;
@@ -91,8 +94,6 @@
 		}
     </style>
   </head>
-  
-
   <body>
     <div class="container" id="login-container">
 	      <form class="form-signin" role="form">

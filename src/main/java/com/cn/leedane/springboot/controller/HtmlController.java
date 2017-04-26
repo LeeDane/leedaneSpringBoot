@@ -260,6 +260,8 @@ public class HtmlController extends BaseController{
 	 * @return
 	 */
 	public String loginRoleCheck(String urlParse, boolean mustLogin, Model model, HttpServletRequest request){
+		//设置统一的请求模式
+		model.addAttribute("isDebug", false);
 		Object o = null;
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();

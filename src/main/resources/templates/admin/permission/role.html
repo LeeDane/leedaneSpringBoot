@@ -5,17 +5,28 @@
 	 	<meta charset="utf-8" />
 	   	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	   	<style type="text/css">
-	   		ul{
+	   		#operate-btn-group ul{
+	   			list-style:none; /* 去掉ul前面的符号 */
+	   		}
+	   		
+	   		#operate-btn-group ul li{
+	   			float: left;
+	   			margin-left: 10px!important;
+	   			margin-top: 10px!important;
+	   			padding: 0 !important;
+	   		}
+	   		.pagination ul{
 	   			list-style:none; /* 去掉ul前面的符号 */
 	   			margin: 0px; /* 与外界元素的距离为0 */
     			padding: 0px; /* 与内部元素的距离为0 */
     			width: auto; /* 宽度根据元素内容调整 */
 	   		}
-	   		li{
+	   		.pagination li{
 	   			float: left;
 	   			padding: 20px; 
 	   			margin-left: 10px!important;
 	   			margin-top: 10px!important;
+	   			padding: 0 !important;
 	   		}
 	   		
 	   		.label-primary{
@@ -40,7 +51,7 @@
 		    	<div class="col-lg-12">
 		    		<input type="text" name="searchKey" class="form-control" placeholder="请输入检索关键字" onkeypress="if (event.keyCode == 13) search(this);" />
 		    	</div>
-		    	<div class="col-lg-12">
+		    	<div class="col-lg-12" id="operate-btn-group">
 		    		<ul>
 		    			<li>
 		    				<button type="button" class="btn btn-success btn-sm" onclick="addRole();">
@@ -70,7 +81,7 @@
 									<th>编码</th>
 									<th>排序</th>
 									<th>描述</th>
-									<th style="max-width: 200px;" width="200">角色</th>
+									<th style="max-width: 200px;" width="200">已分配的用户</th>
 									<th width="50">状态</th>
 									<th width="150">时间</th>
 									<th width="140">操作</th>
