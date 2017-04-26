@@ -170,6 +170,25 @@ public class HtmlController extends BaseController{
 		return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();	
 	}
 	
+	@RequestMapping("/user/{uid}/mood/{mid}"+ ControllerBaseNameUtil.dt)
+	public String moodDetail(@PathVariable(value="uid") int uid, @PathVariable(value="mid") int mid, Model model, HttpServletRequest request){
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        checkRoleOrPermission(request);
+        
+        if(currentUser.isAuthenticated()){
+        	Object o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        	if(o != null){
+    			UserBean user = (UserBean)o;
+    			model.addAttribute("uid", uid);
+    			model.addAttribute("mid", mid);
+    			model.addAttribute("isLoginUser", uid == user.getId());
+    			return loginRoleCheck("mood-detail", true, model, request);
+    		}
+        }
+		return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();	
+	}
+	
 	@RequestMapping(ControllerBaseNameUtil.pb)
 	public String publishBlog(Model model, HttpServletRequest request){
 		int blogId = 0;
