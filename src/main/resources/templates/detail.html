@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>文章详情</title>
 	<link rel="stylesheet" th:href="@{/page/other/layui/css/layui.css}" />
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
 	<style type="text/css">
 		
 		.container{
@@ -135,8 +136,8 @@ jEmoji.unifiedToHTML(emojiText) -->
 					<textarea class="form-control" name="add-comment" style="min-height: 125px;" autofocus ="true"></textarea>
 				</div>
 				<div class="row">
-					<div class="col-lg-1 col-lg-offset-11">
-						<button class="btn btn-md btn-primary btn-block" type="button" style="margin-top: 10px;" onclick="addComment(this);">评论</button>
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<button class="btn btn-md btn-primary btn-block pull-right" type="button" style="margin-top: 10px;width: 60px;" onclick="addComment(this);">评论</button>
 					</div>
 				</div>
 			</div>
