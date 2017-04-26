@@ -20,6 +20,39 @@ $(function(){
 		$(this).closest(".list-group").find(".reply-container").toggle("fast");
 	});
 	
+	$(".container").on("click", ".delete-other-btn", function(){
+		var dataId = $(this).closest(".comment-list").attr("data-id");
+		var createUserId = $(this).closest(".comment-list").attr("create-user-id");
+		if(dataId > 0 && createUserId > 0){
+			layer.confirm('您要删除该评论吗？', {
+				  btn: ['确定','点错了'] //按钮
+			}, function(){
+				var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+				$.ajax({
+					type : "delete",
+					dataType: 'json',  
+					url : "/cm/comment?cid="+ dataId+"&create_user_id="+createUserId,
+					beforeSend:function(){
+					},
+					success : function(data) {
+						layer.close(loadi);
+						if(data.isSuccess){
+							layer.msg(data.message + ",1秒后自动刷新");
+							reloadPage(1000);
+						}else{
+							ajaxError(data);
+						}
+					},
+					error : function(data) {
+						layer.close(loadi);
+						ajaxError(data);
+					}
+				});
+			}, function(){
+			});
+		}
+	});
+	
 	$(window).scroll(function (e) {
 		e = e || window.event;
 	    if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件             
@@ -170,7 +203,7 @@ function getComments(bid){
  * @param index
  */
 function buildEachCommentRow(index, comment){
-		var html = '<div class="row comment-list comment-list-padding">'+
+		var html = '<div class="row comment-list comment-list-padding" data-id="'+ comment.id +'" create-user-id="'+ comment.create_user_id +'">'+
 			   			'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">'+
 							'<img src="'+ changeNotNullString(comment.user_pic_path) +'" width="40" height="40" class="img-rounded hand center-block">'+
 						'</div>'+
@@ -199,8 +232,11 @@ function buildEachCommentRow(index, comment){
 							html += '<div class="list-group-item comment-list-item">'+
 										'<div class="row">'+
 							       				'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right">'+
-							       					 '<button class="btn btn-sm btn-primary btn-block pull-right reply-other-btn" style="width: 60px;" type="button">回复TA</button>'+
-							       				'</div>'+
+							       					 '<button class="btn btn-sm btn-primary btn-block pull-right reply-other-btn" style="width: 60px;" type="button">回复TA</button>';
+				       					if(isAdmin || comment.create_user_id == loginUserId){
+				       						 html += '<button class="btn btn-sm btn-primary pull-right delete-other-btn" style="width: 60px; margin-right: 5px;" type="button">删除</button>';
+				       					 }
+										html +=	'</div>'+
 							       		'</div>'+
 							       		'<div class="row">'+
 								       		'<div class="col-lg-12 reply-container" table-id="'+ comment.table_id+'" table-name="'+ comment.table_name +'" style="display: none;">'+

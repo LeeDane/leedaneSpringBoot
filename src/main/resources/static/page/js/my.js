@@ -325,7 +325,7 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 					'<div class="list-group-item list-group-item-operate">'+
 					     '<button type="button" class="btn btn-primary btn-sm" onclick="showCommentOrTransmit(1, '+ index +')">评论('+ mood.comment_number+')</button>'+
 					     '<button type="button" class="btn btn-primary btn-sm" onclick="showCommentOrTransmit(2, '+ index +')">转发('+ mood.transmit_number+')</button>'+
-					     '<button type="button" class="btn btn-primary btn-sm" onclick="goToReadFull('+ mood.id +')">查看详细</button>'+
+					     '<button type="button" class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="goToReadFull('+ mood.id +');">查看详细</button>'+
 					'</div>'+
 				'</div>';
 	return html;
@@ -474,7 +474,7 @@ function goToReadFull(id){
 		layer.msg("该心情不存在，请联系管理员核实");
 		return;
 	}
-	window.open("/dt/"+id, "_blank");
+	window.open("/user/"+uid+"/mood/"+id+"/dt", "_blank");
 }
 
 /**
@@ -945,8 +945,8 @@ function sendMood(){
 		success : function(data) {
 				layer.close(loadi);
 				if(data.isSuccess){
-					layer.msg("评论成功");
-					window.location.reload();
+					layer.msg("心情发表成功，1秒后自动刷新");
+					reloadPage(1000);
 				}else{
 					layer.msg(data.message);
 					layer.close(loadi);
