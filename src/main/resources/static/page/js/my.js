@@ -131,7 +131,7 @@ function loadUserInfo(){
 					$("#user-img").html('<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"><img src="'+ userinfo.user_pic_path +'" width="120px" height="120px" class="img-circle center-block"></div>');
 				
 				var descHtml = '<div class="h3">'+ 
-									userinfo.account + (userinfo.is_admin ? '<span class="badge" style="margin-left:5px;">管理员</span>': '')+
+									userinfo.account + (userinfo.is_admin && uid == loginUserId ? '<span class="badge" style="margin-left:5px;">管理员</span>': '')+
 								'</div>'+
 								'<div class="h4" style="max-height: 38px;overflow-y:auto;">'+ userinfo.personal_introduction+'</div>';
 								
