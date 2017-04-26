@@ -18,6 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.cache.SystemCache;
+import com.cn.leedane.mapper.CommentMapper;
+import com.cn.leedane.mapper.NotificationMapper;
+import com.cn.leedane.mapper.UserMapper;
 import com.cn.leedane.message.JPushMessageNotificationImpl;
 import com.cn.leedane.message.JpushCustomMessage;
 import com.cn.leedane.message.notification.CustomMessage;
@@ -49,7 +52,13 @@ import com.cn.leedane.wechat.util.HttpRequestUtil;
 public class NotificationHandler {
 	
 	@Autowired
-	private SqlBaseService<IDBean> sqlBaseService;
+	private UserMapper userMapper;
+	
+	@Autowired
+	private CommentMapper commentMapper;
+	
+	@Autowired
+	private NotificationMapper notificationMapper;
 	
 	@Autowired
 	private FriendHandler friendHandler;
@@ -248,7 +257,7 @@ public class NotificationHandler {
 					robotReply = "你在说什么？没听见";
 				}
 				
-				UserBean robotUser = sqlBaseService.findById(robotId);
+				UserBean robotUser = userMapper.findById(UserBean.class, robotId);
 				
 				//保存评论记录
 				CommentBean bean = new CommentBean();
@@ -262,7 +271,7 @@ public class NotificationHandler {
 				bean.setTableId(tableId);
 				bean.setTableName(tableName);
 				try {
-					if(sqlBaseService.saveClass(bean.getClass())){
+					if(commentMapper.save(bean) > 0){
 						//更新评论数
 						commentHandler.addComment(tableName, tableId);
 						String notificationContent = robotName +"回复您："+robotReply;
@@ -334,20 +343,20 @@ public class NotificationHandler {
 		@SuppressWarnings("unchecked")
 		SingleSendNotification(NotificationBean notificationBean){
 			mNotificationBean = notificationBean;
-			if(sqlBaseService == null){
-				sqlBaseService = (SqlBaseService<IDBean>) SpringUtil.getBean("sqlBaseService");
+			if(notificationMapper == null){
+				notificationMapper = (NotificationMapper) SpringUtil.getBean("notificationMapper");
 			}
 		}
 
 		@Override
 		public Boolean call() throws Exception {
-			if(sqlBaseService.saveClass(mNotificationBean.getClass())){
+			if(notificationMapper.save(mNotificationBean) > 0){
 				MessageNotification messageNotification = new JPushMessageNotificationImpl();
 				//System.out.println("NotificationToUserId:"+mNotificationBean.getToUserId());
 				//发送消息不成功
 				if(!messageNotification.sendToAlias("leedane_user_"+mNotificationBean.getToUserId(), mNotificationBean.getType() +":"+ mNotificationBean.getContent())){
 					mNotificationBean.setPushError(true);
-					return sqlBaseService.updateSql(mNotificationBean.getClass(), "set is_push_error = ?", true);
+					return notificationMapper.update(mNotificationBean) > 0;
 
 				}else{
 					return true;

@@ -3,9 +3,8 @@ package com.cn.leedane.handler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.model.IDBean;
+import com.cn.leedane.mapper.ChatBgUserMapper;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.StringUtil;
@@ -19,7 +18,7 @@ import com.cn.leedane.utils.StringUtil;
 @Component
 public class ChatBgUserHandler {
 	@Autowired
-	private SqlBaseService<IDBean> sqlBaseService;
+	private ChatBgUserMapper chatBgUserMapper;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
@@ -37,7 +36,7 @@ public class ChatBgUserHandler {
 		boolean result = false;
 		//还没有缓存记录
 		if(!redisUtil.hasKey(chatBgUserKey)){
-			result = sqlBaseService.executeSQL("select id from "+DataTableType.聊天背景与用户.value+" where create_user_id=? and chat_bg_table_id=?", userId, chatBgTableId).size() > 0;			
+			result = chatBgUserMapper.executeSQL("select id from "+DataTableType.聊天背景与用户.value+" where create_user_id=? and chat_bg_table_id=?", userId, chatBgTableId).size() > 0;			
 			if(result)
 				redisUtil.addString(chatBgUserKey, "true");
 			else

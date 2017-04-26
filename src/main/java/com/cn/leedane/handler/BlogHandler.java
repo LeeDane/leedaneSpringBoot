@@ -9,10 +9,9 @@ import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.model.IDBean;
+import com.cn.leedane.mapper.BlogMapper;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.StringUtil;
@@ -26,7 +25,7 @@ import com.cn.leedane.utils.StringUtil;
 @Component
 public class BlogHandler {
 	@Autowired
-	private SqlBaseService<IDBean> sqlBaseService;
+	private BlogMapper blogMapper;
 
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
@@ -72,7 +71,7 @@ public class BlogHandler {
 			sql.append(" from "+DataTableType.博客.value+" b");
 			sql.append(" where b.id=? ");
 			sql.append(" and b.status = ?");
-			list = sqlBaseService.executeSQL(sql.toString(), blogId, ConstantsUtil.STATUS_NORMAL);
+			list = blogMapper.executeSQL(sql.toString(), blogId, ConstantsUtil.STATUS_NORMAL);
 			jsonArray = JSONArray.fromObject(list);
 			redisUtil.addString(blogKey, jsonArray.toString());
 		}else{

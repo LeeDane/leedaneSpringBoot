@@ -9,10 +9,9 @@ import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.model.IDBean;
+import com.cn.leedane.mapper.MoodMapper;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.StringUtil;
@@ -26,7 +25,7 @@ import com.cn.leedane.utils.StringUtil;
 @Component
 public class MoodHandler {
 	@Autowired
-	private SqlBaseService<IDBean> sqlBaseService;
+	private MoodMapper moodMapper;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 
@@ -72,7 +71,7 @@ public class MoodHandler {
 			sql.append(" from "+DataTableType.心情.value+" m");
 			sql.append(" where m.id=? ");
 			//sql.append(" and m.status = ?");
-			list = sqlBaseService.executeSQL(sql.toString(), moodId/*, ConstantsUtil.STATUS_NORMAL*/);
+			list = moodMapper.executeSQL(sql.toString(), moodId/*, ConstantsUtil.STATUS_NORMAL*/);
 			if(list != null && list.size() >0){
 				int createUserId;
 				for(int i = 0; i < list.size(); i++){
@@ -134,7 +133,7 @@ public class MoodHandler {
 			sql.append("select qiniu_path, pic_size, pic_order, width, height, lenght ");
 			sql.append(" from "+DataTableType.文件.value);
 			sql.append(" where status = ? and table_name=? and table_uuid = ? and is_upload_qiniu=? order by pic_order,id");
-			list = sqlBaseService.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, tableName, tableUuid, true);
+			list = moodMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, tableName, tableUuid, true);
 			if(list != null && list.size() > 0){
 				jsonArray = JSONArray.fromObject(list);
 				redisUtil.addString(moodImgsKey, jsonArray.toString());
@@ -166,11 +165,11 @@ public class MoodHandler {
 			sql.append("select qiniu_path, pic_size, pic_order, width, height, lenght ");
 			sql.append(" from "+DataTableType.文件.value);
 			sql.append(" where status = ? and table_name=? and table_uuid = ? and is_upload_qiniu=? and pic_size =? order by pic_order,id");
-			list = sqlBaseService.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, tableName, tableUuid, true, picSize);
+			list = moodMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, tableName, tableUuid, true, picSize);
 			
 			//找指定大小的图片,找原图
 			if(list == null || list.size() == 0 ){
-				list = sqlBaseService.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, tableName, tableUuid, true, "source");	
+				list = moodMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, tableName, tableUuid, true, "source");	
 			}
 			
 			if(list != null && list.size() > 0 ){

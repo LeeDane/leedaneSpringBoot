@@ -7,10 +7,9 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.model.IDBean;
+import com.cn.leedane.mapper.ZanMapper;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.SqlUtil;
@@ -26,7 +25,7 @@ import com.cn.leedane.utils.StringUtil;
 public class ZanHandler {
 	
 	@Autowired
-	private SqlBaseService<IDBean> sqlBaseService;
+	private ZanMapper zanMapper;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 
@@ -104,7 +103,7 @@ public class ZanHandler {
 			redisUtil.addSet(zanUserKey, setToArray(sets));
 		}else{
 			String[] array;
-			List<Map<String, Object>> results = sqlBaseService.executeSQL("select u.id, u.account from "+DataTableType.赞.value+" z inner join "+DataTableType.用户.value+" u on z.create_user_id = u.id where z.table_name=? and z.table_id = ?", tableName, tableId);
+			List<Map<String, Object>> results = zanMapper.executeSQL("select u.id, u.account from "+DataTableType.赞.value+" z inner join "+DataTableType.用户.value+" u on z.create_user_id = u.id where z.table_name=? and z.table_id = ?", tableName, tableId);
 			
 			if(results != null && results.size() > 0){
 				int size = results.size();
@@ -135,7 +134,7 @@ public class ZanHandler {
 		//赞
 		if(!redisUtil.hasKey(zanUserKey)){
 			String[] array;
-			List<Map<String, Object>> results = sqlBaseService.executeSQL("select u.id, u.account from "+DataTableType.赞.value+" z inner join "+DataTableType.用户.value+" u on z.create_user_id = u.id where z.table_name=? and z.table_id = ?", tableName, tableId);
+			List<Map<String, Object>> results = zanMapper.executeSQL("select u.id, u.account from "+DataTableType.赞.value+" z inner join "+DataTableType.用户.value+" u on z.create_user_id = u.id where z.table_name=? and z.table_id = ?", tableName, tableId);
 			
 			if(results != null && results.size() > 0){
 				int size = results.size();
@@ -186,7 +185,7 @@ public class ZanHandler {
 	 */
 	private int getCurrentZanNumber(int tableId, String tableName){
 		//获取数据库中所有赞的数量
-		return SqlUtil.getTotalByList(sqlBaseService.executeSQL("select count(*) ct from "+DataTableType.赞.value+" where table_name=? and table_id = ?", tableName, tableId));
+		return SqlUtil.getTotalByList(zanMapper.executeSQL("select count(*) ct from "+DataTableType.赞.value+" where table_name=? and table_id = ?", tableName, tableId));
 	}
 	
 	
@@ -205,7 +204,7 @@ public class ZanHandler {
 		StringBuffer returnValue = new StringBuffer();
 		//赞用户
 		if(!redisUtil.hasKey(zanUserKey)){
-			List<Map<String, Object>> rs = sqlBaseService.executeSQL("select u.id, u.account from "+DataTableType.赞.value+" z inner join "+DataTableType.用户.value+" u on z.create_user_id = u.id where z.table_name=? and z.table_id = ?", tableName, tableId);
+			List<Map<String, Object>> rs = zanMapper.executeSQL("select u.id, u.account from "+DataTableType.赞.value+" z inner join "+DataTableType.用户.value+" u on z.create_user_id = u.id where z.table_name=? and z.table_id = ?", tableName, tableId);
 			if(rs != null && rs.size()> 0){
 				String[] userArray = new String[rs.size()];
 				for(int i = 0; i < rs.size(); i++){

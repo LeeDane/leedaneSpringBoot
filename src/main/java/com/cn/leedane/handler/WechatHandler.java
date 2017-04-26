@@ -1,14 +1,16 @@
 package com.cn.leedane.handler;
 
+import java.util.List;
+
 import net.sf.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.model.IDBean;
+import com.cn.leedane.mapper.UserMapper;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.SqlBaseService;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.StringUtil;
@@ -28,7 +30,7 @@ public class WechatHandler {
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
 	@Autowired
-	private SqlBaseService<IDBean> sqlBaseService;
+	private UserMapper userMapper;
 	
 	/**
 	 * 添加该用户的缓存对象
@@ -55,17 +57,21 @@ public class WechatHandler {
 				return stringToCacheBean(value);
 			}
 		}else{//查找数据库获取key
-			UserBean user = sqlBaseService.findUserBeanByWeixinName(FromUserName);
-			if(user != null){
-				WeixinCacheBean bean = new WeixinCacheBean();
-				bean.setCurrentType(WeixinUtil.MODEL_MAIN_MENU);
-				bean.setBindLogin(true);
-				bean.setLastBlogId(0);
-				redisUtil.addString(fromUserKey, JSONObject.fromObject(bean).toString());
-				return bean;
+			List<UserBean> users = userMapper.getBeans("select * from t_user where wechat_user_name='"+FromUserName+"' limit 1");
+			if(CollectionUtil.isNotEmpty(users)){
+				UserBean user = users.get(0);
+				if(user != null){
+					WeixinCacheBean bean = new WeixinCacheBean();
+					bean.setCurrentType(WeixinUtil.MODEL_MAIN_MENU);
+					bean.setBindLogin(true);
+					bean.setLastBlogId(0);
+					redisUtil.addString(fromUserKey, JSONObject.fromObject(bean).toString());
+					return bean;
+				}
+				//加个空的字符串表示下次不再查询
+				redisUtil.addString(fromUserKey, "");
 			}
-			//加个空的字符串表示下次不再查询
-			redisUtil.addString(fromUserKey, "");
+			
 		}
 		return null;
 	}

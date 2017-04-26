@@ -18,15 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.controller.RoleController;
-import com.cn.leedane.model.IDBean;
+import com.cn.leedane.mapper.UserMapper;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.UserTokenBean;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.SqlBaseService;
+import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.MD5Util;
 import com.cn.leedane.utils.SerializeUtil;
 import com.cn.leedane.utils.StringUtil;
 
@@ -40,7 +40,7 @@ import com.cn.leedane.utils.StringUtil;
 public class UserHandler {
 
 	@Autowired
-	private SqlBaseService<IDBean> sqlBaseService;
+	private UserMapper userMapper;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
@@ -50,7 +50,7 @@ public class UserHandler {
 	 * @return
 	 */
 	public JSONArray getAllUserDetail(){
-		List<Map<String, Object>> uids = sqlBaseService.executeSQL("select id from "+DataTableType.用户.value);
+		List<Map<String, Object>> uids = userMapper.executeSQL("select id from "+DataTableType.用户.value);
 		JSONArray userInfos = null;
 		if(uids != null && uids.size() > 0){
 			userInfos = new JSONArray();
@@ -91,7 +91,7 @@ public class UserHandler {
 			userPicPath = redisUtil.getString(userPicKey);
 		}else{
 			//查找数据库，找到用户的头像
-			List<Map<String, Object>> list = sqlBaseService.executeSQL("select qiniu_path user_pic_path from "+DataTableType.文件.value+" f where is_upload_qiniu=? and f.table_name = '"+DataTableType.用户.value+"' and f.table_uuid = ? and f.pic_order = 0 "+buildPicSizeSQL("30x30")+" order by id desc limit 1", true, userId);
+			List<Map<String, Object>> list = userMapper.executeSQL("select qiniu_path user_pic_path from "+DataTableType.文件.value+" f where is_upload_qiniu=? and f.table_name = '"+DataTableType.用户.value+"' and f.table_uuid = ? and f.pic_order = 0 "+buildPicSizeSQL("30x30")+" order by id desc limit 1", true, userId);
 			if(list != null && list.size()>0){
 				userPicPath = StringUtil.changeNotNull(list.get(0).get("user_pic_path"));
 				if(StringUtil.isNotNull(userPicPath))
@@ -116,7 +116,7 @@ public class UserHandler {
 			redisUtil.delete(userPicKey);
 		}
 		//查找数据库，找到用户的头像
-		List<Map<String, Object>> list = sqlBaseService.executeSQL("select qiniu_path user_pic_path from "+DataTableType.文件.value+" f where is_upload_qiniu=? and f.table_name = '"+DataTableType.用户.value+"' and f.table_uuid = ? and f.pic_order = 0 "+buildPicSizeSQL("30x30")+" order by id desc limit 1", true, userId);
+		List<Map<String, Object>> list = userMapper.executeSQL("select qiniu_path user_pic_path from "+DataTableType.文件.value+" f where is_upload_qiniu=? and f.table_name = '"+DataTableType.用户.value+"' and f.table_uuid = ? and f.pic_order = 0 "+buildPicSizeSQL("30x30")+" order by id desc limit 1", true, userId);
 		if(list != null && list.size()>0){
 			userPicPath = StringUtil.changeNotNull(list.get(0).get("user_pic_path"));
 			if(StringUtil.isNotNull(userPicPath))
@@ -150,7 +150,7 @@ public class UserHandler {
 				e.printStackTrace();
 			}
 		}
-		UserBean user = sqlBaseService.findById(userId);
+		UserBean user = userMapper.findById(UserBean.class, userId);
 		if(user != null){
 			redisUtil.addSerialize(userInfoKey, SerializationUtils.serialize(user));
 			return user;
@@ -164,7 +164,7 @@ public class UserHandler {
 	 * @return
 	 */
 	public UserBean getUserBean(String username, String pwd){
-		UserBean user = sqlBaseService.loginUser(username, pwd);		
+		UserBean user = userMapper.loginUser(username, MD5Util.compute(pwd));		
 		if(user != null){
 			String userInfoKey = getRedisUserInfoKey(user.getId());
 			redisUtil.addSerialize(userInfoKey, SerializationUtils.serialize(user));
@@ -201,7 +201,7 @@ public class UserHandler {
 		if(redisUtil.hasKey(usernameKey)){
 			userId = Integer.parseInt(redisUtil.getString(usernameKey));
 		}else{
-			List<Map<String, Object>> list = sqlBaseService.executeSQL("select id from "+DataTableType.用户.value+" where status=? and account=? limit 1", ConstantsUtil.STATUS_NORMAL, username);
+			List<Map<String, Object>> list = userMapper.executeSQL("select id from "+DataTableType.用户.value+" where status=? and account=? limit 1", ConstantsUtil.STATUS_NORMAL, username);
 			userId = list != null && list.size() == 1? StringUtil.changeObjectToInt(list.get(0).get("id")) : 0;
 			if(userId > 0 ){
 				redisUtil.addString(usernameKey, String.valueOf(userId));

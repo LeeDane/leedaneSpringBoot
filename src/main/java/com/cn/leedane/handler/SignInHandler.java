@@ -3,10 +3,12 @@ package com.cn.leedane.handler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cn.leedane.mapper.SignInMapper;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.SqlUtil;
 
 /**
  * 签到的处理类
@@ -18,7 +20,7 @@ import com.cn.leedane.utils.ConstantsUtil;
 public class SignInHandler {
 	
 	@Autowired
-	private SqlBaseService<IDBean> sqlBaseService;
+	private SignInMapper signInMapper;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
@@ -35,7 +37,7 @@ public class SignInHandler {
 			String first = redisUtil.getString(firstSignInKey);
 			isFirst = Boolean.parseBoolean(first);
 		}else{
-			isFirst = sqlBaseService.hasHistorySign(userId);
+			isFirst = SqlUtil.getBooleanByList(this.signInMapper.hasHistorySign(userId));
 		}
 		return isFirst;
 	}

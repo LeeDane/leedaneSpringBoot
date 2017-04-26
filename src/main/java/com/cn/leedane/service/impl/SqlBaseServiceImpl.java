@@ -1,24 +1,9 @@
 package com.cn.leedane.service.impl;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.mapper.BaseMapper;
-import com.cn.leedane.mapper.LinkManageMapper;
-import com.cn.leedane.mapper.SignInMapper;
-import com.cn.leedane.mapper.UserMapper;
 import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.LinkManageBean;
-import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.SqlBaseService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.MD5Util;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
 
 /**
  * App版本service实现类
@@ -30,7 +15,7 @@ import com.cn.leedane.utils.StringUtil;
 public class SqlBaseServiceImpl implements SqlBaseService<IDBean> {
 	Logger logger = Logger.getLogger(getClass());
 	
-	@Autowired
+	/*@Autowired
 	private BaseMapper<IDBean> baseMapper;
 	
 	@Autowired
@@ -121,5 +106,5 @@ public class SqlBaseServiceImpl implements SqlBaseService<IDBean> {
 		users = userMapper.getBeans("select * from t_user where wechat_user_name='"+fromUserName+"'");
 
 		return users != null && users.size() > 0 ? users.get(0): null;
-	}
+	}*/
 }

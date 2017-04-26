@@ -3,9 +3,8 @@ package com.cn.leedane.handler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.model.IDBean;
+import com.cn.leedane.mapper.CommentMapper;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.SqlUtil;
@@ -21,7 +20,7 @@ import com.cn.leedane.utils.StringUtil;
 public class CommentHandler {
 	
 	@Autowired
-	private SqlBaseService<IDBean> sqlBaseService;
+	private CommentMapper commentMapper;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
@@ -35,7 +34,7 @@ public class CommentHandler {
 		//还没有添加到redis中
 		if(StringUtil.isNull(redisUtil.getString(key))){
 			//获取数据库中所有评论的数量
-			count = SqlUtil.getTotalByList(sqlBaseService.executeSQL("select count(*) ct from "+DataTableType.评论.value+" where table_name=? and table_id = ?", tableName, tableId));	
+			count = SqlUtil.getTotalByList(commentMapper.executeSQL("select count(*) ct from "+DataTableType.评论.value+" where table_name=? and table_id = ?", tableName, tableId));	
 		}else{
 			count = Integer.parseInt(redisUtil.getString(key)) + 1;
 		}
@@ -69,7 +68,7 @@ public class CommentHandler {
 		int commentNumber;
 		//评论
 		if(!redisUtil.hasKey(commentKey)){
-			commentNumber = sqlBaseService.getTotal(DataTableType.评论.value, "where table_id = "+tableId+" and table_name='"+tableName+"'");
+			commentNumber = SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, "where table_id = "+tableId+" and table_name='"+tableName+"'"));
 			redisUtil.addString(commentKey, String.valueOf(commentNumber));
 		}else{
 			commentNumber = Integer.parseInt(redisUtil.getString(commentKey));
@@ -83,7 +82,7 @@ public class CommentHandler {
 	 * @return
 	 */
 	public int getComments(int userId){
-		return sqlBaseService.getTotalByUser(DataTableType.评论.value, userId);
+		return SqlUtil.getTotalByList(commentMapper.getTotalByUser(DataTableType.评论.value, userId));
 	}
 	
 	/**
@@ -96,7 +95,7 @@ public class CommentHandler {
 		int commentNumber;
 		//评论
 		if(!redisUtil.hasKey(commentKey)){
-			commentNumber = sqlBaseService.getTotal(DataTableType.评论.value, "where table_id = "+tableId+" and table_name='"+tableName+"'");
+			commentNumber = SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, "where table_id = "+tableId+" and table_name='"+tableName+"'"));
 			redisUtil.addString(commentKey, String.valueOf(commentNumber));
 		}else{
 			commentNumber = Integer.parseInt(redisUtil.getString(commentKey));

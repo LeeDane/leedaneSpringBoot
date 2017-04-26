@@ -10,10 +10,10 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.model.IDBean;
+import com.cn.leedane.mapper.FriendMapper;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -26,7 +26,7 @@ import com.cn.leedane.utils.StringUtil;
 public class FriendHandler {
 	
 	@Autowired
-	private SqlBaseService<IDBean> sqlBaseService;
+	private FriendMapper friendMapper;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 
@@ -46,7 +46,11 @@ public class FriendHandler {
 		JSONObject friendObject = new JSONObject();
 		//评论
 		if(!redisUtil.hasKey(friendKey)){
-			List<Map<String, Object>> friends = sqlBaseService.getFromToFriends(getUserId);
+			String sql = " select to_user_id id, (case when to_user_remark = '' || to_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = to_user_id and u.status = "+ConstantsUtil.STATUS_NORMAL+") else to_user_remark end ) remark from "+DataTableType.好友.value+" where from_user_id =? and status = "+ConstantsUtil.STATUS_NORMAL+" "
+					+" UNION " 
+					+" select from_user_id id, (case when from_user_remark = '' || from_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = from_user_id and u.status = "+ConstantsUtil.STATUS_NORMAL+") else from_user_remark end ) remark from "+DataTableType.好友.value+" where to_user_id = ? and status = "+ConstantsUtil.STATUS_NORMAL;
+	
+			List<Map<String, Object>> friends = friendMapper.executeSQL(sql, getUserId, getUserId);
 			Set<Integer> fids = new HashSet<Integer>();
 			String friendIdKey = getFriendIdsKey(getUserId);
 			fids.add(getUserId);
@@ -113,7 +117,11 @@ public class FriendHandler {
 		Set<Integer> fids = new HashSet<Integer>();
 		//评论
 		if(!redisUtil.hasKey(friendIdKey)){
-			List<Map<String, Object>> friends = sqlBaseService.getFromToFriends(userId);
+			String sql = " select to_user_id id, (case when to_user_remark = '' || to_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = to_user_id and u.status = "+ConstantsUtil.STATUS_NORMAL+") else to_user_remark end ) remark from "+DataTableType.好友.value+" where from_user_id =? and status = "+ConstantsUtil.STATUS_NORMAL+" "
+					+" UNION " 
+					+" select from_user_id id, (case when from_user_remark = '' || from_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = from_user_id and u.status = "+ConstantsUtil.STATUS_NORMAL+") else from_user_remark end ) remark from "+DataTableType.好友.value+" where to_user_id = ? and status = "+ConstantsUtil.STATUS_NORMAL;
+	
+			List<Map<String, Object>> friends = friendMapper.executeSQL(sql, userId, userId);
 			String friendKey = getFriendKey(userId);
 			fids.add(userId);
 			if(friends != null && friends.size() > 0){

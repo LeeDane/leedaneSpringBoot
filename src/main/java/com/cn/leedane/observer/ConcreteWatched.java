@@ -8,12 +8,14 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import com.cn.leedane.mapper.FriendMapper;
 import com.cn.leedane.model.FriendModel;
-import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.observer.template.NotificationTemplate;
-import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.springboot.SpringUtil;
+import com.cn.leedane.utils.CollectionUtil;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -26,10 +28,10 @@ import com.cn.leedane.utils.StringUtil;
 public class ConcreteWatched implements Watched{
 
 	@Resource
-	private SqlBaseService<IDBean> sqlBaseService;
+	private FriendMapper friendMapper;
 	
-	public void setSqlBaseService(SqlBaseService<IDBean> sqlBaseService) {
-		this.sqlBaseService = sqlBaseService;
+	public void setFriendMapper(FriendMapper friendMapper) {
+		this.friendMapper = friendMapper;
 	}
 	
 	/**
@@ -37,18 +39,20 @@ public class ConcreteWatched implements Watched{
 	 */
 	private List<Watcher> mWatchers = new ArrayList<Watcher>();
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void notifyWatchers(UserBean watchedBean, NotificationTemplate template) {	
 		/**
 		 * 通知的多个用户
 		 */
 		List<FriendModel> friends = new ArrayList<FriendModel>();
-		sqlBaseService = (SqlBaseService<IDBean>) SpringUtil.getBean("sqlBaseService");
+		friendMapper = (FriendMapper) SpringUtil.getBean("friendMapper");
 		
-		List<Map<String, Object>> friendObject = sqlBaseService.getToFromFriends(watchedBean.getId());
+		String sql = " select from_user_id id, (case when to_user_remark = '' || to_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = to_user_id and u.status =?) else to_user_remark end ) remark from "+DataTableType.好友.value+" where to_user_id =? and status =?"
+				+" UNION " 
+				+" select to_user_id id, (case when from_user_remark = '' || from_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = from_user_id and u.status =?) else from_user_remark end ) remark from "+DataTableType.好友.value+" where from_user_id = ? and status=?";
+		List<Map<String, Object>> friendObject = friendMapper.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, watchedBean.getId(), ConstantsUtil.STATUS_NORMAL, ConstantsUtil.STATUS_NORMAL, watchedBean.getId(), ConstantsUtil.STATUS_NORMAL);
 		
-		if(friends != null && friendObject.size() > 0){
+		if(CollectionUtil.isNotEmpty(friendObject)){
 			for(Map<String, Object> friend: friendObject){
 				friends.add(new FriendModel(StringUtil.changeObjectToInt(friend.get("id")), StringUtil.changeNotNull(friend.get("remark"))));		
 			}

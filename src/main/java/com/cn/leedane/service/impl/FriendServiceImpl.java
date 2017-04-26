@@ -484,8 +484,11 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		logger.info("FriendServiceImpl-->matchContact():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
-		
-		List<Map<String, Object>> rs = sqlBaseService.getFromToFriends(user.getId());
+		String sql = " select to_user_id id, (case when to_user_remark = '' || to_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = to_user_id and u.status = "+ConstantsUtil.STATUS_NORMAL+") else to_user_remark end ) remark from "+DataTableType.好友.value+" where from_user_id =? and status = "+ConstantsUtil.STATUS_NORMAL+" "
+				+" UNION " 
+				+" select from_user_id id, (case when from_user_remark = '' || from_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = from_user_id and u.status = "+ConstantsUtil.STATUS_NORMAL+") else from_user_remark end ) remark from "+DataTableType.好友.value+" where to_user_id = ? and status = "+ConstantsUtil.STATUS_NORMAL;
+
+		List<Map<String, Object>> rs = friendMapper.executeSQL(sql, user.getId(), user.getId());
 		if(rs !=null && rs.size() > 0){
 			int fId = 0;
 			//为名字备注赋值
