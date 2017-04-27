@@ -89,6 +89,8 @@ public class BlogController extends BaseController{
 		blog.setContent(content);
 		blog.setTag(JsonUtil.getStringValue(json, "tag"));
 		blog.setFroms(JsonUtil.getStringValue(json, "froms"));
+		blog.setOriginLink(JsonUtil.getStringValue(json, "origin_link"));
+		blog.setSource(JsonUtil.getStringValue(json, "source"));
 		
 		//非管理员发布的文章需要审核
 		int status = JsonUtil.getIntValue(json, "status");
@@ -315,10 +317,8 @@ public class BlogController extends BaseController{
 	@RequestMapping(value="/carouselImgs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getCarouselImgs(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		if(!checkParams(message, request))
-			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkParams(message, request);
 		JSONObject json = getJsonFromMessage(message);
 		int num = JsonUtil.getIntValue(json, "num"); //获取图片的数量
 		//执行的方式，现在支持：simple(取最新)，hostest(取最热门的)
