@@ -145,6 +145,21 @@ public class MoodController extends BaseController{
 	}
 	
 	/**
+	 * 分页获取符合条件的心情
+	 * @return
+	 */
+	@RequestMapping(value = "/moods/paging", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> getMoodsPaging(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(moodService.getMoodsPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
 	 * 模拟断点续传发送base64字符串
 	 * 目的：某些图片文件过大，一次性传会因为网络等复杂因素发生意外导致不成功，下次再传又要重新发送，很消耗客户端的流量
 	 * 实现：客户端分批上传文件，一部分上传成功，返回true，客户端自己记录上传的路径，服务器端负责将未完成的base64位的字符串

@@ -24,4 +24,22 @@
 	<select id="shakeSearch" resultType="Integer">
 		select id from t_mood where status = #{status} and create_user_id != #{createUserId} order by rand() limit 1
 	</select>
+	
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="getMoodPaging" resultType="java.util.Map">
+		select m.id, m.status, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img, m.can_comment, m.can_transmit,
+			m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account
+		from t_mood m inner join t_user u on u.id = m.create_user_id 
+		where 
+		<choose>
+		    <when test="login_user_id == to_user_id">
+		        (m.status = #{status_normal} or m.status = #{status_self}) 
+		    </when>
+		    <otherwise>
+		        m.status = #{status_normal} 
+		    </otherwise>
+		</choose>
+		and m.create_user_id = #{to_user_id}
+		order by m.id desc limit #{start},#{page_size}
+	</select>
 </mapper>

@@ -81,6 +81,18 @@ public interface MoodService <T extends IDBean>{
 	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getMoodByLimit(JSONObject jo, UserBean user, HttpServletRequest request);
+	
+	
+	/**
+	 * 获取登录用户的心情分页列表
+	 * @param jo 格式{"uid":1, "pageSize":5, "last_id": 1, "first_id":1, "method":"lowloading"}(uploading, firstloading)
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	//标记该方法不需要事务
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public Map<String, Object> getMoodsPaging(JSONObject jo, UserBean user, HttpServletRequest request);
 
 	
 	/**

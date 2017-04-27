@@ -1,15 +1,12 @@
 var userinfo;
-var last_id = 0;
-var first_id = 0;
-var method = 'firstloading';
 var moods = [];
 var isLoad = false;
-
+var currentIndex = 0;
+var pageSize = 8;
+var totalPage = 0;
 //浏览器可视区域页面的高度
 var winH = $(window).height(); 
-
 var monthArray = new Array();
-var canLoadData = true;
 $(function(){
 	$(".navbar-nav .nav-main-li").each(function(){
 		$(this).removeClass("active");
@@ -32,28 +29,7 @@ $(function(){
 		var json = serializeArrayToJsonObject($(".myForm").serializeArray());
 		editUserinfo(json);
 	});
-	
-	$(window).scroll(function (e) {
-		e = e || window.event;
-	    if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件             
-	        if (e.wheelDelta > 0) { //当滑轮向上滚动时
-	            return;
-	        }
-	    } else if (e.detail) {  //Firefox滑轮事件
-	        if (e.detail> 0) { //当滑轮向上滚动时
-	            return;
-	        }
-	    }
-	    var pageH = $(document.body).height(); //页面总高度 
-	    var scrollT = $(window).scrollTop(); //滚动条top 
-	    var height = (pageH-winH-scrollT)/winH;
-	    if(!isLoad && height < 0.20 && canLoadData){
-	    	isLoad = true;
-	    	method = 'lowloading';
-	    	getMoods();
-	    }
-	});
-	
+		
 	$('#comment-or-transmit-item').on('scroll',function(){
 		var groups = $("#comment-or-transmit-item").find(".list-group");
 		var totalH = 0;
@@ -168,65 +144,44 @@ function loadUserInfo(){
 function getMoods(){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
-		url : "/md/moods" +getMoodRequestParams(),
+		url : "/md/moods/paging?"+ jsonToGetRequestParams(getMoodRequestParams()),
 		dataType: 'json', 
 		beforeSend:function(){
 		},
 		success : function(data) {
 			layer.close(loadi);
+			$("#mood-container").empty();
 			if(data != null && data.isSuccess){
 				//if(method == 'firstloading')
 					//$("#float-month").empty();
 					//$("#mood-container").empty();
 				
 				if(data.message.length == 0){
-					canLoadData = false;
-					layer.msg("无更多数据");
+					$("#mood-container").append("空空的，还没有数据");
 					return;
 				}
 				
-				if(method == 'firstloading'){
-					moods = data.message;
-					for(var i = 0; i < moods.length; i++){
-						
-						var ifFlagNew = false;
-						var flagMonth = moods[i].create_time.substring(0, 7);
-						if(!isInMonthArray(flagMonth)){
-							ifFlagNew = true
-							monthArray.push(flagMonth);
-							$("#float-month").append('<li  class="active"><a href="#mood-'+flagMonth+'">'+ flagMonth +'</a></li>');
-						}
-						
-						//添加每一行到心情容器
-						$("#mood-container").append(buildMoodRow(i, moods[i], ifFlagNew, flagMonth));
-						if(i == 0)
-							first_id = moods[i].id;
-						if(i == moods.length -1)
-							last_id = moods[i].id;
-						
-						
+				moods = data.message;
+				for(var i = 0; i < moods.length; i++){
+					
+					var ifFlagNew = false;
+					var flagMonth = moods[i].create_time.substring(0, 7);
+					if(!isInMonthArray(flagMonth)){
+						ifFlagNew = true
+						monthArray.push(flagMonth);
+						$("#float-month").append('<li  class="active"><a href="#mood-'+flagMonth+'">'+ flagMonth +'</a></li>');
 					}
-				}else{
-					var currentIndex = moods.length;
-					for(var i = 0; i < data.message.length; i++){
-						moods.push(data.message[i]);
-						
-						var ifFlagNew = false;
-						var flagMonth = data.message[i].create_time.substring(0, 7);
-						if(!isInMonthArray(flagMonth)){
-							monthArray.push(flagMonth);
-							ifFlagNew = true;
-							$("#float-month").append('<li  class="active"><a href="#mood-'+flagMonth+'">'+ flagMonth +'</a></li>');
-						}
-						
-						$("#mood-container").append(buildMoodRow(currentIndex + i, data.message[i], ifFlagNew, flagMonth));
-							
-						if(i == data.message.length -1)
-							last_id = data.message[i].id;
-						
-						
-					}
+					
+					//添加每一行到心情容器
+					$("#mood-container").append(buildMoodRow(i, moods[i], ifFlagNew, flagMonth));
+					if(i == 0)
+						first_id = moods[i].id;
+					if(i == moods.length -1)
+						last_id = moods[i].id;
+					
+					
 				}
+				pageDivUtil(data.total);
 				console.log(monthArray);
 				resetSideHeight();
 			}else{
@@ -241,6 +196,85 @@ function getMoods(){
 			ajaxError(data);
 		}
 	});
+}
+
+/**
+ * 生成分页div
+ * @param total
+ */
+function pageDivUtil(total){
+	var html = '<li>'+
+					'<a href="javascript:void(0);" onclick="pre();" aria-label="Previous">'+
+						'<span aria-hidden="true">&laquo;</span>'+
+					'</a>'+
+				'</li>';
+	totalPage = parseInt(Math.ceil(total / pageSize));
+	var start = 0;
+	var end = totalPage > start + 6 ? start + 6: totalPage;
+	
+	var selectHtml = '<li><select class="form-control" onchange="optionChange()">';
+	for(var i = 0; i < totalPage; i++){
+		if(currentIndex == i)
+			selectHtml += '<option name="pageIndex" selected="selected" value="'+ i +'">'+ (i + 1) +'</option>';
+		else
+			selectHtml += '<option name="pageIndex" value="'+ i +'">'+ (i + 1) +'</option>';
+	}
+	
+	for(var i = start; i < end; i++){
+		if(currentIndex == i)
+			html += '<li class="active"><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
+		else
+			html += '<li><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
+	}
+	html += '<li>'+
+				'<a href="javascript:void(0);" onclick="next();" aria-label="Next">'+
+					'<span aria-hidden="true">&raquo;</span>'+
+				'</a>'+ 
+			'</li>';
+	
+	selectHtml += '</select>共计：' +total +'条记录</li>';
+	
+	html += selectHtml;
+	$(".pagination").html(html);
+}
+
+/**
+ * 选择改变的监听
+ */
+function optionChange(){
+	var objS = document.getElementsByTagName("select")[0];
+    var index = objS.options[objS.selectedIndex].value;
+    currentIndex = index;
+    getMoods();
+}
+
+/**
+ * 点击向左的按钮
+ */
+function goIndex(index){
+	currentIndex = index;
+	getMoods();
+}
+
+/**
+ * 点击向左的按钮
+ */
+function pre(){
+	currentIndex --;
+	if(currentIndex < 0)
+		currentIndex = 0;
+	getMoods();
+}
+
+
+/**
+ * 点击向右的按钮
+ */
+function next(){
+	currentIndex ++;
+	if(currentIndex > totalPage)
+		currentIndex = totalPage;
+	getMoods();
 }
 
 function isInMonthArray(str){
@@ -335,11 +369,8 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
  * 获取心情请求列表
  */
 function getMoodRequestParams(){
-	var pageSize = 15;
-	if(method != 'firstloading')
-		pageSize = 5;
 	//return {pageSize: pageSize, last_id: last_id, first_id: first_id, method: method, toUserId: uid, t: Math.random()};
-	return "?page_size="+ pageSize +"&last_id="+ last_id +"&first_id="+ first_id+"&method="+ method+"&to_user_id="+ uid +"&t="+Math.random();
+	return {page_size: pageSize, current: currentIndex, total: totalPage, to_user_id: uid, t: Math.random()};
 }
 /**
  * 页面展示的用户基本信息

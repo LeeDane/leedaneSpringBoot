@@ -133,6 +133,19 @@
 		.list-group-item.active:focus{
 			z-index: 0 !important; 
 		}
+		.pagination ul{
+   			list-style:none; /* 去掉ul前面的符号 */
+   			margin: 0px; /* 与外界元素的距离为0 */
+   			padding: 0px; /* 与内部元素的距离为0 */
+   			width: auto; /* 宽度根据元素内容调整 */
+   		}
+   		.pagination li{
+   			float: left;
+   			padding: 20px; 
+   			margin-left: 10px!important;
+   			margin-top: 10px!important;
+   			padding: 0 !important;
+   		}
 	</style>
 </head>
 <body data-spy="scroll" data-target="#myScrollspy" data-offset="90">
@@ -158,8 +171,17 @@
 		   		<div class="row" id="user_info">
 		   		</div>
 		   </div>
-	      <div class="col-lg-6 scrollspy-example" id="mood-container" data-spy="scroll" data-target="#navbarExample" data-offset="50">
-	      
+	      <div class="col-lg-6">
+	      		<div class="row">
+	      			<div class="col-lg-12 scrollspy-example" id="mood-container" data-spy="scroll" data-target="#navbarExample" data-offset="50">
+	      			
+	      			</div>
+	      			<div>
+				    	<nav aria-label="Page navigation">
+		  					<ul class="pagination"></ul>
+						</nav>
+				    </div>
+	      		</div>
 		      	<!-- <div class="list-group">
 				    <div class="list-group-item active">
 				    	<div class="row">

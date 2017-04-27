@@ -1,5 +1,8 @@
 package com.cn.leedane.mapper;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -37,5 +40,13 @@ public interface MoodMapper extends BaseMapper<MoodBean>{
 	 * @return
 	 */
 	public int shakeSearch(@Param("createUserId")int createUserId, @Param("status")int status);
+	
+	public List<Map<String, Object>> getMoodPaging(
+			@Param("login_user_id")int loginUserId,
+			@Param("to_user_id")int to_user_id,
+			@Param("start")int start,
+			@Param("page_size")int pageSize,
+			@Param("status_normal")int statusNormal,
+			@Param("status_self")int statusSelf);
 
 }

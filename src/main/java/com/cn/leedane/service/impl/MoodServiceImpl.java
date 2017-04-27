@@ -278,7 +278,6 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	public Map<String, Object> getMoodByLimit(JSONObject jo,
 			UserBean user, HttpServletRequest request){
 		logger.info("MoodServiceImpl-->getMoodByLimit():jo=" +jo.toString());
-		long start = System.currentTimeMillis();
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id", user.getId()); //
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -339,9 +338,49 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户id为"+toUserId+"个人中心", "getMoodByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
-		
-		long end = System.currentTimeMillis();
-		logger.info("获取心情列表总计耗时：" +(end - start) +"毫秒, 总数是："+rs.size());
+		message.put("message", rs);
+		message.put("isSuccess", true);
+		return message.getMap();
+	}
+	
+	@Override
+	public Map<String, Object> getMoodsPaging(JSONObject jo,
+			UserBean user, HttpServletRequest request){
+		logger.info("MoodServiceImpl-->getMoodPaging():jo=" +jo.toString());
+		int toUserId = JsonUtil.getIntValue(jo, "to_user_id", user.getId()); //
+		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
+		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
+		int currentIndex = JsonUtil.getIntValue(jo, "current", 0); //当前的索引页
+		int total = JsonUtil.getIntValue(jo, "total", 0); //当前的索引页
+		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
+		String picSize = ConstantsUtil.DEFAULT_PIC_SIZE; //JsonUtil.getStringValue(jo, "pic_size"); //图像的规格(大小)		
+		ResponseMap message = new ResponseMap();
+		rs = moodMapper.getMoodPaging(user.getId(), toUserId, start, pageSize, ConstantsUtil.STATUS_NORMAL, ConstantsUtil.STATUS_SELF);
+		if(rs !=null && rs.size() > 0){
+			boolean hasImg ;
+			String uuid;
+			int moodId;
+			//为名字备注赋值
+			for(int i = 0; i < rs.size(); i++){
+				hasImg = StringUtil.changeObjectToBoolean(rs.get(i).get("has_img"));
+				uuid = StringUtil.changeNotNull(rs.get(i).get("uuid"));
+				moodId = StringUtil.changeObjectToInt(rs.get(i).get("id"));
+				
+				rs.get(i).put("zan_users", zanHandler.getZanUser(moodId, DataTableType.心情.value, user, 6));
+				rs.get(i).put("comment_number", commentHandler.getCommentNumber(moodId, DataTableType.心情.value));
+				rs.get(i).put("transmit_number", transmitHandler.getTransmitNumber(moodId, DataTableType.心情.value));
+				rs.get(i).put("zan_number", zanHandler.getZanNumber(moodId, DataTableType.心情.value));
+				
+				
+				//有图片的获取图片的路径
+				if(hasImg && !StringUtil.isNull(uuid)){
+					rs.get(i).put("imgs", moodHandler.getMoodImg(DataTableType.心情.value, uuid, picSize));
+				}
+			}	
+		}
+		message.put("total", SqlUtil.getTotalByList(moodMapper.getTotal(DataTableType.心情.value, " m where create_user_id="+ toUserId +" and "+ getMoodStatusSQL(toUserId, user))));
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户id为"+toUserId+"个人中心", "getMoodPaging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("isSuccess", true);
 		return message.getMap();
