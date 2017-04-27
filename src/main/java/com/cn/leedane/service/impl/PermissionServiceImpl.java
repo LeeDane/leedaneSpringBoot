@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
 
-import org.apache.ibatis.type.JdbcType;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -125,8 +124,9 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		logger.info("PermissionServiceImpl-->paging():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(jsonObject, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int currentIndex = JsonUtil.getIntValue(jsonObject, "current", 0); //每页的大小
-		int start = SqlUtil.getPageStart(currentIndex, pageSize);
+		int currentIndex = JsonUtil.getIntValue(jsonObject, "current", 0); //当前的索引页
+		int total = JsonUtil.getIntValue(jsonObject, "total", 0); //当前的索引页
+		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
 		StringBuffer sql = new StringBuffer();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		

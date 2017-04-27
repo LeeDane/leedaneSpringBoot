@@ -151,8 +151,9 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		logger.info("LinkManageServiceImpl-->paging():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(jsonObject, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int currentIndex = JsonUtil.getIntValue(jsonObject, "current", 0); //每页的大小
-		int start = getPageStart(currentIndex, pageSize);
+		int currentIndex = JsonUtil.getIntValue(jsonObject, "current", 0); //当前的索引
+		int total = JsonUtil.getIntValue(jsonObject, "total", 0); //总数
+		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
 		List<Map<String, Object>> rs = linkManageMapper.paging(start, pageSize, ConstantsUtil.STATUS_NORMAL);
 
 		if(rs !=null && rs.size() > 0){
@@ -172,12 +173,6 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		message.put("isSuccess", true);
 		
 		return message.getMap();
-	}
-	
-	private int getPageStart(int current, int pageSize){
-		pageSize = pageSize > 0? pageSize: ConstantsUtil.DEFAULT_PAGE_SIZE;
-		
-		return current* pageSize;
 	}
 
 	@Override

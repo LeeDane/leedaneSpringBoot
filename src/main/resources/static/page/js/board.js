@@ -1,6 +1,7 @@
 var pageSize = 8;
 var currentIndex = 0;
 var messageBoards;
+var totalPage = 0;
 $(function(){
 	
 	$(".container").on("click", ".reply-other-btn", function(){
@@ -47,7 +48,7 @@ $(function(){
  * 获取评论请求列表参数
  */
 function getMessageBoardsRequestParams(){
-	return {page_size: pageSize, current: currentIndex, t: Math.random()};
+	return {page_size: pageSize, current: currentIndex, total: totalPage, t: Math.random()};
 }
 
 /**

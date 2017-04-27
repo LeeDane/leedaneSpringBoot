@@ -569,7 +569,8 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int currentIndex = JsonUtil.getIntValue(jo, "current", 0); //每页的大小
-		int start = SqlUtil.getPageStart(currentIndex, pageSize);
+		int total = JsonUtil.getIntValue(jo, "total", 0); //每页的大小
+		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
 		List<Map<String, Object>> rs = commentMapper.getMessageBoards(userId, ConstantsUtil.STATUS_NORMAL, start, pageSize);
 		if(rs !=null && rs.size() > 0){
 			int createUserId = 0;

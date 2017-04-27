@@ -162,7 +162,7 @@ document.onkeydown=function(event){
 }
  
 function initWebsocket(){
-	websocket = new WebSocket("ws://127.0.0.1:8088/scanLogin");
+	websocket = new WebSocket("ws://leedanetf.tunnel.qydev.com/scanLogin");
 
 	//连接发生错误的回调方法
 	websocket.onerror = function(){

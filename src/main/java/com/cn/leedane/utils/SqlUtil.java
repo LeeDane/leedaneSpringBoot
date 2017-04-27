@@ -45,10 +45,14 @@ public class SqlUtil {
 	 * 获取分页的开始索引
 	 * @param current
 	 * @param pageSize
+	 * @param total
 	 * @return
 	 */
-	public static int getPageStart(int current, int pageSize){
+	public static int getPageStart(int current, int pageSize, int total){
 		pageSize = pageSize > 0? pageSize: ConstantsUtil.DEFAULT_PAGE_SIZE;
+		//if(total > 0 && total % pageSize == 0)
+			//current = current - 1;
+			
 		
 		return current* pageSize;
 	}

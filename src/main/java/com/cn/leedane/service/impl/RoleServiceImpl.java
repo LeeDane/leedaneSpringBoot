@@ -122,8 +122,9 @@ private Logger logger = Logger.getLogger(getClass());
 		logger.info("RoleServiceImpl-->paging():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(jsonObject, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int currentIndex = JsonUtil.getIntValue(jsonObject, "current", 0); //每页的大小
-		int start = getPageStart(currentIndex, pageSize);
+		int currentIndex = JsonUtil.getIntValue(jsonObject, "current", 0); //当前的索引
+		int total = JsonUtil.getIntValue(jsonObject, "total", 0); //总数
+		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
 		StringBuffer sql = new StringBuffer();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		
@@ -152,12 +153,6 @@ private Logger logger = Logger.getLogger(getClass());
 		return message.getMap();
 	}
 	
-	private int getPageStart(int current, int pageSize){
-		pageSize = pageSize > 0? pageSize: ConstantsUtil.DEFAULT_PAGE_SIZE;
-		
-		return current* pageSize;
-	}
-
 	@Override
 	public Map<String, Object> deletes(String rlids, UserBean user,
 			HttpServletRequest request) {

@@ -330,7 +330,15 @@ function ajaxError(data){
 	}else if(json['responseCode'] && json.responseCode == 403){
 		linkTo403(json.message);
 	}else{
-		layer.msg(json.message);
+		if(json['message'])
+			layer.msg(json.message);
+		else{
+			if(json['responseCode'])
+				layer.msg("服务器处理异常，异常编码是："+json.responseCode);
+			else
+				layer.msg("服务器处理异常"+json.responseCode);
+		}
+			
 	}
 }
 

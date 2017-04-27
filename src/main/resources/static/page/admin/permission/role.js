@@ -396,7 +396,7 @@ function addOrEditCommit(obj){
  * 获取请求列表
  */
 function getQueryPagingParams(){
-	return {page_size: pageSize, current: currentIndex, t: Math.random()};
+	return {page_size: pageSize, current: currentIndex, total: totalPage, t: Math.random()};
 }
 
 function buildRow(role, index){
