@@ -109,7 +109,6 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		}else{
 			message.put("message","文章发布失败");
 		}
-		int i = 10/0;
 		return message.getMap();
 	}
 
@@ -449,6 +448,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		StringBuffer sql = new StringBuffer();
 		sql.append("select b.id, b.img_url, b.title, b.has_img, b.tag, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time");
 		sql.append(" , b.digest, b.froms, b.content, b.can_comment, b.can_transmit, b.origin_link, b.source, b.category, b.create_user_id");
+		sql.append(" , b.is_recommend");
 		sql.append(" from "+DataTableType.博客.value+" b ");
 		sql.append(" where id = ? and status=?");
 		

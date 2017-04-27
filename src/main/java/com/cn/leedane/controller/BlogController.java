@@ -149,6 +149,8 @@ public class BlogController extends BaseController{
 			digest = JsonUtil.getStringValue(json, "digest");
 		}
 		
+		blog.setRecommend(JsonUtil.getBooleanValue(json, "is_recommend"));
+		
 		blog.setDigest(digest);
 		if(JsonUtil.getIntValue(json, "bid") > 0){
 			blog.setId(JsonUtil.getIntValue(json, "bid"));
@@ -327,15 +329,17 @@ public class BlogController extends BaseController{
 		System.out.println("执行的方式是："+method +",获取的数量:"+num);
 		//普通获取，取最新的图片信息，按照create_time倒序排列
 		if(method.equalsIgnoreCase("simple")){
-			sql = "select id,img_url,title from "+DataTableType.博客.value+" where status = " + ConstantsUtil.STATUS_NORMAL + " and img_url != '' order by create_time desc,id desc limit 0,?";
+			sql = "select id, img_url, title, digest from "+DataTableType.博客.value+" where status = " + ConstantsUtil.STATUS_NORMAL + " and img_url != '' order by create_time desc,id desc limit 0,?";
 			r = blogService.executeSQL(sql, num);
 			
 		//按照热度，取最热门的图片信息，按照id倒序排序
 		}else if(method.equalsIgnoreCase("hostest")){
-			sql = "select id,img_url,title from "+DataTableType.博客.value+" where status = " + ConstantsUtil.STATUS_NORMAL + "  and img_url != '' and NOW() < DATE_ADD(create_time,INTERVAL 7 DAY) order by (comment_number*0.45 + transmit_number*0.25 + share_number*0.2 + zan_number*0.1 + read_number*0.1) desc,id desc limit 0,?";
+			sql = "select id, img_url, title, digest from "+DataTableType.博客.value+" where status = " + ConstantsUtil.STATUS_NORMAL + "  and img_url != '' and NOW() < DATE_ADD(create_time,INTERVAL 7 DAY) order by (comment_number*0.45 + transmit_number*0.25 + share_number*0.2 + zan_number*0.1 + read_number*0.1) desc,id desc limit 0,?";
 			r = blogService.executeSQL(sql, num);	
+		}else if(method.equalsIgnoreCase("recommend")){
+			sql = "select id, img_url, title, digest from "+DataTableType.博客.value+" where status=?  and img_url != '' and is_recommend=? order by id desc limit 0,?";
+			r = blogService.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, true, num);	
 		}else{
-			message.put("isSuccess", false);
 			message.put("message", "目前暂不支持的操作方法");
 			return message.getMap();
 		}

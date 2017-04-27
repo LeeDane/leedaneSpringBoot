@@ -40,6 +40,7 @@ $(function(){
 	    }
 	}); 
 	getMainContentData();
+	getCarouselImgs();//获取推荐的轮播图信息
 });
 
 /*function getLogin(){
@@ -99,7 +100,9 @@ function getWebBackgroud(){
 		});
 }
 
-//获取内容数据
+/**
+ * 获取内容数据
+ */
 function getMainContentData(){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
@@ -111,7 +114,7 @@ function getMainContentData(){
 			layer.close(loadi);
 			if(data != null && data.isSuccess){
 				if(method == 'firstloading')
-					$(".container").empty();
+					$(".container").find(".row-list").remove();
 				
 				if(data.message.length == 0){
 					canLoadData = false;
@@ -160,10 +163,10 @@ function getMainContentData(){
 		}
 	});
 }
-
+ 
 //构建有图的情况下的html
 function buildHasImgRow(index, blog){
-	var html ='<div class="row row_'+index+'">'+
+	var html ='<div class="row row-list row_'+index+'">'+
 			      '<div class="col-lg-3 col-padding-eight">'+
 			      	  	'<img width="100%" height="324" class="img-rounded" alt="" src="'+ blog.img_url +'" onClick="showImg('+ index +');">'+
 			      '</div>'+
@@ -220,12 +223,12 @@ function buildHasImgRow(index, blog){
 											'</div>';
 								}
 								
-						html +='<button type="button" class="btn btn-primary btn-default ">'+
-									  			'<span class="glyphicon glyphicon-phone"></span> '+ blog.froms +
-												'</button>'+
-								'<button type="button" class="btn btn-primary btn-default" href="javascript:void(0);" onclick="my('+ blog.create_user_id + ');">'+
+						html += '<button type="button" class="btn btn-primary btn-default" href="javascript:void(0);" onclick="my('+ blog.create_user_id + ');">'+
 									  			'<span class="glyphicon glyphicon-user"></span> '+ blog.account +
 												'</button>'+
+								'<button type="button" class="btn btn-primary btn-default" onclick="goToReadFull('+ blog.id+')">'+
+									  	'<span class="glyphicon glyphicon-phone"></span> 查看全文'+
+								'</button>'+
 								/*'<button type="button" class="btn btn-primary" onclick="goToReadFull('+ blog.id+')">阅读全文</button>'+*/
 							'</div>'+
 						'</div>'+
@@ -236,7 +239,7 @@ function buildHasImgRow(index, blog){
 
 //构建无图的情况下的html
 function buildNotHasImgRow(index, blog){
-	var html = '<div class="row row_'+index+'">'+
+	var html = '<div class="row row-list row_'+index+'">'+
 			      '<div class="col-lg-12 col-padding-eight">'+
 		      	  	'<div class="panel panel-info">'+
 						'<div class="panel-heading">'+
@@ -310,6 +313,45 @@ function getMainContentRequestParams(){
 		pageSize = 5;
 	return {pageSize: pageSize, last_id: last_id, first_id: first_id, method: method, t: Math.random()};
 	//return "?page_size="+ pageSize +"&last_id="+ last_id +"&first_id="+ first_id+"&method="+ method+"&t="+Math.random();
+}
+
+/**
+ * 获取轮播图数据
+ */
+function getCarouselImgs(){
+	$.ajax({
+		url : "/bg/carouselImgs?num=5&method=recommend&t="+Math.random(),
+		beforeSend:function(){
+		},
+		success : function(data) {
+			$("#main-container .carousel-indicators").empty();
+			$("#main-container .carousel-inner").empty();
+			if(data != null && data.isSuccess){
+				if(data.message.length >0){
+					for(var i = 0; i < data.message.length; i++){
+						var html = '<li data-target="#carousel-example-generic" data-slide-to="0" '+(i == 0 ? 'class="active"': '')+'></li>';
+						$("#main-container .carousel-indicators").append(html);
+						var inner = '<div class="item '+(i == 0 ? 'active': '')+'">'+
+						              	'<img class="carousel-img" src="'+ changeNotNullString(data.message[i].img_url) +'" alt="'+ changeNotNullString(data.message[i].title) +'"/>'+
+					              		'<div class="carousel-caption">'+
+					              			'<h1>'+ changeNotNullString(data.message[i].title) +'</h1>'+
+					              			'<p>'+ changeNotNullString(data.message[i].digest) +'</p>'+
+					              		'</div>'+
+						            '</div>';
+						$("#main-container .carousel-inner").append(inner);
+					}
+				}else{
+					$("#carousel-example-generic").remove();
+				}
+			}else{
+				$("#carousel-example-generic").remove();
+				ajaxError(data);
+			}
+		},
+		error : function(data) {
+			ajaxError(data);
+		}
+	});
 }
 
 //展示图片的链接

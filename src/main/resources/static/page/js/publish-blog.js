@@ -46,6 +46,7 @@ $(function(){
 			$(".is-original-row").addClass("hidden");
 		}
 	}); 
+	
 });
 
 /**
@@ -300,8 +301,9 @@ function clearTag(obj){
   		}
   		jsonParams.source = source;
   	}
-  	
-  	
+  	//是否推荐
+  	var recommend = $('[name="is_recommend"]').is(':checked');
+  	jsonParams.is_recommend = recommend;
   	//获取摘要
   	var digest = $('[name="digest"]').val();
   	jsonParams.has_digest = isEmpty(digest);
@@ -486,12 +488,14 @@ function clearTag(obj){
   
   	//是否原创
   	var isOriginal = isEmpty(blog.origin_link);
-  	$('[name="is_original"]').attr('checked', isOriginal);
+  	$('[name="is_original"]').prop('checked', isOriginal);
   	if(!isOriginal){
   		$(".is-original-row").removeClass("hidden");
   		$('[name="origin_link"]').val(changeNotNullString(blog.origin_link));
   		$('[name="source"]').val(changeNotNullString(blog.source));
   	}
+  	//是否推荐
+  	$('[name="is_recommend"]').prop('checked', blog.is_recommend);
   	
   	//摘要
   	$('[name="digest"]').val(blog.digest);
