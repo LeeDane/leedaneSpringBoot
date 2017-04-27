@@ -114,6 +114,7 @@
         <ul class="nav navbar-nav">
             <li class="nav-blog nav-main-li"><a href="/index.html" th:href="@{/index}">博客</a></li>
             <li class="nav-photo nav-main-li" th:if="${isLogin}"><a href="/photo.html" th:href="@{/pt}">相册</a></li>
+            <li class="nav-photo nav-main-li" th:if="${isLogin}"><a href="/photo.html" th:href="@{/pt}"><span class="badge pull-right">10</span>消息</a></li>
             <li class="nav-my nav-main-li" th:if="${isLogin}"><a href="/my.html" th:href="@{/my}">个人中心</a></li>
             <li class="nav-financial nav-main-li" th:if="${isLogin}"><a href="/financial.html" th:href="@{/fn}">记账</a></li>
             <li class="dropdown">

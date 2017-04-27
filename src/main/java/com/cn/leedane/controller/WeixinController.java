@@ -55,6 +55,10 @@ public class WeixinController extends BaseController{
 	@Autowired
 	private WechatHandler wechatHandler;
 	
+	@RequestMapping(value="/execute", method=RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public String executePost(HttpServletRequest request, HttpServletResponse response){
+		return execute(request, response);
+	}
 	@RequestMapping(value="/execute", method=RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public String execute(HttpServletRequest request, HttpServletResponse response){
 		PrintWriter out = null;

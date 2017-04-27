@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
 	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="viewport" id="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<title>文章详情</title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
 	<style type="text/css">
@@ -87,10 +87,10 @@ jEmoji.unifiedToHTML(emojiText) -->
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-12">
-				<div class="inline" style="margin-bottom: -3px;">
-					<span class="original">原</span>
+				<div class="inline" id="isOriginal" style="margin-bottom: -3px;">
+					
 				</div>
-				<div class="inline" style="margin-bottom: -3px;">
+				<div class="inline" id="isRecommed" style="margin-bottom: -3px;">
 					<span class="original">荐</span>
 				</div>
 				<div class="h3 inline" id="b-title"></div>

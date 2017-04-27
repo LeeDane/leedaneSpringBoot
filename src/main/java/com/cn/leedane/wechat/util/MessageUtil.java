@@ -105,7 +105,7 @@ public class MessageUtil {
 					news.setTitle(StringUtil.changeNotNull(bean.get("title")));
 					news.setDescription(StringUtil.changeNotNull(bean.get("title")));
 					news.setPicUrl(StringUtil.changeNotNull(bean.get("img_url")));
-					news.setUrl(basePath +"page/detail.jsp?bid="+StringUtil.changeNotNull(bean.get("id")));
+					news.setUrl(basePath +"dt/"+StringUtil.changeObjectToInt(bean.get("id")));
 					
 					newsList.add(news);
 				}
@@ -116,7 +116,7 @@ public class MessageUtil {
 					news.setTitle(StringUtil.changeNotNull(beans.get(i).get("title")));
 					news.setDescription(StringUtil.changeNotNull(beans.get(i).get("title")));
 					news.setPicUrl(StringUtil.changeNotNull(beans.get(i).get("img_url")));
-					news.setUrl(basePath +"page/detail.jsp?bid="+StringUtil.changeNotNull(beans.get(i).get("id")));
+					news.setUrl(basePath +"dt/"+StringUtil.changeObjectToInt(beans.get(i).get("id")));
 					newsList.add(news);
 				}
 			}	
@@ -148,7 +148,7 @@ public class MessageUtil {
 		news.setTitle("请先绑定leedane网站账号");
 		news.setDescription("点击进入绑定登录，绑定成功后支持更多的操作，给您更好的体验。");
 		news.setPicUrl("http://imgsrc.baidu.com/forum/pic/item/8cf76c63f6246b60d4f7bfafebf81a4c530fa26a.jpg");
-		news.setUrl(basePath +"page/front/bindWechat.jsp?FromUserName="+FromUserName+"&currentType="+currentType);
+		news.setUrl(basePath +"bw?FromUserName="+FromUserName+"&currentType="+currentType);
 		
 		newsList.add(news);
 			

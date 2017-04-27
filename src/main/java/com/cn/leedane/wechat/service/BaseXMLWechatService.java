@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.dom4j.DocumentException;
 import org.springframework.stereotype.Service;
 
+import com.cn.leedane.utils.ConstantsUtil;
+
 @Service
 public abstract class BaseXMLWechatService {
 	
@@ -125,8 +127,9 @@ public abstract class BaseXMLWechatService {
 	}
 
 	public String getBasePath() {
-		 this.basePath = request.getScheme()+"://"+request.getServerName()
+		 /*this.basePath = request.getScheme()+"://"+request.getServerName()
 				+":"+request.getServerPort()+request.getContextPath()+"/"; 
-		 return basePath;
+		 return basePath;*/
+		return ConstantsUtil.SYSTEM_SERVER_URL;
 	}
 }

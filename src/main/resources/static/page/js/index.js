@@ -502,7 +502,7 @@ function deleteBlog(id, index){
  /**
   * 执行举报操作
   */
- function doReport(obj){
+ /*function doReport(obj){
 	 var blogId = $("#report-modal-body").attr("blog-id");
 	 if(typeof(blogId) == 'undefined' || parseInt(blogId) < 1){
 		 layer.msg("无法获取文章");
@@ -545,7 +545,7 @@ function deleteBlog(id, index){
 		});
 	}, function(){
 	});
- }
+ }*/
  
 /**
  * 链接到个人中心

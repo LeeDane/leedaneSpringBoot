@@ -487,7 +487,7 @@ function clearTag(obj){
   	}
   
   	//是否原创
-  	var isOriginal = isEmpty(blog.origin_link);
+  	var isOriginal = isEmpty(blog.origin_link) && isEmpty(blog.source);
   	$('[name="is_original"]').prop('checked', isOriginal);
   	if(!isOriginal){
   		$(".is-original-row").removeClass("hidden");

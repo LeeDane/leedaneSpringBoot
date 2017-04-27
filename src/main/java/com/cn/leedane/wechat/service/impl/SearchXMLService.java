@@ -109,7 +109,7 @@ public class SearchXMLService extends BaseXMLWechatService {
 		if(blogs != null && blogs.size() >0){
 			for(Map<String, Object> map: blogs){
 				searchBean = new SearchBean();
-				searchBean.setClickUrl(getBasePath() +"page/front/fullText.jsp?blog_id="+StringUtil.changeObjectToInt(map.get("id")));
+				searchBean.setClickUrl(getBasePath() +"dt/"+StringUtil.changeObjectToInt(map.get("id")));
 				searchBean.setCreateTime(DateUtil.DateToString(DateUtil.stringToDate(StringUtil.changeNotNull(map.get("create_time"))), "yyyyMMddHHmmss"));
 				searchBean.setDescription(StringUtil.changeNotNull(map.get("account"))+":"+StringUtil.changeNotNull(map.get("digest")));
 				searchBean.setPicUrl(StringUtil.changeNotNull(map.get("img_url")));
@@ -129,7 +129,7 @@ public class SearchXMLService extends BaseXMLWechatService {
 		if(Moods != null && Moods.size() >0){
 			for(Map<String, Object> map: Moods){
 				searchBean = new SearchBean();
-				searchBean.setClickUrl(getBasePath() +"page/front/fullText.jsp?blog_id="+StringUtil.changeObjectToInt(map.get("id")));
+				searchBean.setClickUrl(getBasePath() +"dt/"+StringUtil.changeObjectToInt(map.get("id")));
 				searchBean.setCreateTime(DateUtil.DateToString(DateUtil.stringToDate(StringUtil.changeNotNull(map.get("create_time"))), "yyyyMMddHHmmss"));
 				searchBean.setDescription(StringUtil.changeNotNull(map.get("account"))+":"+StringUtil.changeNotNull(map.get("content")));
 				//获取图片
