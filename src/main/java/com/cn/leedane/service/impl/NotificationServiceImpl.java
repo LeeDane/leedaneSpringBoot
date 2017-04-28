@@ -23,11 +23,13 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.NotificationService;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
 /**
  * 通知service的实现类
@@ -116,6 +118,41 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		message.put("message", rs);
 		return message.getMap();
 	}
+	
+	@Override
+	public Map<String, Object> paging(String type,
+			int pageSize, int current, int total,
+			UserBean user, HttpServletRequest request) {
+		logger.info("NotificationServiceImpl-->paging():type=" +type + ", current="+ current +", total="+ total + ", user=" +user.getAccount());
+		if(pageSize < 1)
+			pageSize = ConstantsUtil.DEFAULT_PAGE_SIZE;
+		
+		ResponseMap message = new ResponseMap();
+		List<Map<String, Object>> rs = notificationMapper.paging(user.getId(), type, ConstantsUtil.STATUS_NORMAL, SqlUtil.getPageStart(current, pageSize, total), pageSize);
+		
+		if(CollectionUtil.isNotEmpty(rs)){
+			int fromUserId = 0;
+			String tableName = null;
+			int tableId = 0;
+			//为名字备注赋值
+			for(int i = 0; i < rs.size(); i++){
+				//在非获取指定表下的评论列表的情况下的前面35个字符
+				tableName = StringUtil.changeNotNull((rs.get(i).get("table_name")));
+				tableId = StringUtil.changeObjectToInt(rs.get(i).get("table_id"));
+				rs.get(i).putAll(commonHandler.getSourceByTableNameAndId(tableName, tableId, user));
+			
+				fromUserId = StringUtil.changeObjectToInt(rs.get(i).get("from_user_id"));
+				rs.get(i).putAll(userHandler.getBaseUserInfo(fromUserId));
+			}
+			message.put("total", SqlUtil.getTotalByList(notificationMapper.getTotal(DataTableType.通知.value, "where to_user_id = " + user.getId() +" and status = "+ConstantsUtil.STATUS_NORMAL+" and type ='"+ type +"'")));
+		}
+		
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"分页获取收到的通知列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
+		message.put("isSuccess", true);
+		message.put("message", rs);
+		return message.getMap();
+	}
 
 	@Override
 	public Map<String, Object> sendBroadcast(JSONObject jo, UserBean user,
@@ -139,12 +176,11 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 	}
 	
 	@Override
-	public Map<String, Object> deleteNotification(JSONObject jo, UserBean user,
+	public Map<String, Object> deleteNotification(int nid, UserBean user,
 			HttpServletRequest request) {
-		logger.info("NotificationServiceImpl-->deleteNotification():jsonObject=" +jo.toString() +", user=" +user.getAccount());
+		logger.info("NotificationServiceImpl-->deleteNotification():nid=" +nid +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
-		int nid = JsonUtil.getIntValue(jo, "nid");
 		if(nid < 1)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 			
@@ -166,6 +202,63 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"刪除通知Id为：", nid , StringUtil.getSuccessOrNoStr(result)).toString(), "deleteNotification()", StringUtil.changeBooleanToInt(result), 0);
+		message.put("isSuccess", result);
+		return message.getMap();
+	}
+	
+	@Override
+	public Map<String, Object> updateRead(JSONObject jo, UserBean user,
+			HttpServletRequest request) {
+		logger.info("NotificationServiceImpl-->updateRead():jo=" +jo.toString() +", user=" +user.getAccount());
+		ResponseMap message = new ResponseMap();
+		
+		int nid = JsonUtil.getIntValue(jo, "nid");
+		boolean read = JsonUtil.getBooleanValue(jo, "read", false);
+		if(nid < 1)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
+			
+		NotificationBean notificationBean = notificationMapper.findById(NotificationBean.class, nid);
+		if(notificationBean == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除的通知不存在.value));
+		
+		checkAdmin(user, notificationBean.getToUserId());
+		
+		boolean result = false;
+		notificationBean.setRead(read);
+		result = notificationMapper.update(notificationBean) > 0;
+		if(result){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.修改成功.value);
+		}else{
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改失败.value));
+			message.put("responseCode", EnumUtil.ResponseCode.修改失败.value);
+		}
+		
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改通知Id为：", nid , "的状态已读为：" , read, StringUtil.getSuccessOrNoStr(result)).toString(), "updateRead()", StringUtil.changeBooleanToInt(result), 0);
+		message.put("isSuccess", result);
+		return message.getMap();
+	}
+	
+	@Override
+	public Map<String, Object> updateAllRead(JSONObject jo, UserBean user,
+			HttpServletRequest request) {
+		logger.info("NotificationServiceImpl-->updateAllRead():jo=" +jo.toString() +", user=" +user.getAccount());
+		ResponseMap message = new ResponseMap();
+		
+		String type = JsonUtil.getStringValue(jo, "type");
+		boolean read = JsonUtil.getBooleanValue(jo, "read", false);
+		if(StringUtil.isNull(type)){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value));
+			message.put("responseCode", EnumUtil.ResponseCode.参数不存在或为空.value);
+			return message.getMap();
+		}
+			
+		boolean result = notificationMapper.updateAllRead(type, read) > 0;
+		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
+		message.put("responseCode", EnumUtil.ResponseCode.修改成功.value);
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改通知类型为：", type , "的状态全部已读为：" , read, StringUtil.getSuccessOrNoStr(result)).toString(), "updateAllRead()", StringUtil.changeBooleanToInt(result), 0);
 		message.put("isSuccess", result);
 		return message.getMap();
 	}

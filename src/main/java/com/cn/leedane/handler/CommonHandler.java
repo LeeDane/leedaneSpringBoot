@@ -1,6 +1,7 @@
 package com.cn.leedane.handler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,9 @@ public class CommonHandler {
 
 	@Autowired
 	private FriendHandler friendHandler;
+	
+	@Autowired
+	private UserHandler userHandler;
 	
 
 	/**
@@ -64,14 +68,67 @@ public class CommonHandler {
 		}
 		//对原始的内容进行35个长度的截取
 		if(StringUtil.isNotNull(content)){
-			int length = content.length() > 35 ? 35 : content.length() ;
+			int oldLength = content.length();
+			int length = oldLength > 35 ? 35 : oldLength ;
 			content = (StringUtil.isNotNull(account) ? (account + ":"): "")+ content.substring(0, length);//展示的源文的前面35个字符
+			//对截取的添加......表示
+			if(oldLength > (length + StringUtil.changeNotNull(account).length()))
+				content += "......";
 		}else{
 			content = ConstantsUtil.SOURCE_DELETE_TIP;
 		}
 		
 		//System.out.println("tableName:"+tableName+",tableId:"+tableId+",content:"+content);
 		return content;
+	}
+	
+	/**
+	 * 通过表名和表ID获取该资源对象的展示内容, 创建人id,创建人账号名称， 创建时间
+	 * @param tableName
+	 * @param tableId
+	 * @param user 当前登录的用户
+	 * @param account 当前这个资源的作者的称呼
+	 * @return
+	 */
+	public Map<String, Object> getSourceByTableNameAndId(String tableName, int tableId, UserBean user){
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		//只支持心情和博客获取源
+		if(DataTableType.心情.value.equalsIgnoreCase(tableName)){
+			list = moodHandler.getMoodDetail(tableId, user, true);
+		}else if(DataTableType.博客.value.equalsIgnoreCase(tableName)){
+			list = blogHandler.getBlogDetail(tableId, user, true);
+		}else{
+			return result;
+		}
+		String content = ConstantsUtil.SOURCE_DELETE_TIP;
+		if(StringUtil.isNull(tableName) || tableId < 1){
+			return result;
+		}
+		
+		
+		if(list != null && list.size() ==1 && list.get(0) != null){
+			Map<String, Object> data = list.get(0);
+			content = getContent(data);
+			result.put("source_user_id", StringUtil.changeObjectToInt(data.get("create_user_id")));
+			result.put("source_account", StringUtil.changeNotNull(data.get("account")));
+			result.put("source_create_time", StringUtil.changeNotNull(data.get("create_time")));
+		}
+		//对原始的内容进行35个长度的截取
+		if(StringUtil.isNotNull(content)){
+			int oldLength = content.length();
+			int length = oldLength > 35 ? 35 : oldLength ;
+			content = content.substring(0, length);//展示的源文的前面35个字符
+			//对截取的添加......表示
+			if(oldLength > length)
+				content += "......";
+		}else{
+			content = ConstantsUtil.SOURCE_DELETE_TIP;
+		}
+		result.put("source", content);
+		//System.out.println("tableName:"+tableName+",tableId:"+tableId+",content:"+content);
+		return result;
 	}
 	
 	/**

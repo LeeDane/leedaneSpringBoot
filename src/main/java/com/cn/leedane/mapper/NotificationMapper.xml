@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.NotificationMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="paging" resultType="java.util.Map">
+		select n.id, n.from_user_id, n.to_user_id, n.content, n.type, n.extra, n.create_time, n.table_name, n.table_id, n.is_push_error, n.is_read 
+		from t_notification n where n.to_user_id = #{toUserId} and n.status = #{status} and n.type=#{type} 
+		order by n.id desc limit #{start}, #{pageSize}
+	</select>
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<update id="updateAllRead" parameterType="java.util.List">
+        UPDATE t_notification SET is_read = #{read} WHERE type = #{type}
+    </update>
+</mapper>

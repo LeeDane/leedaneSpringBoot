@@ -22,6 +22,7 @@ import com.cn.leedane.model.RolePermissionBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.PermissionService;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
@@ -136,17 +137,14 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		sql.append(" order by p.permission_order desc,p.id desc limit ?,?");
 		rs = permissionMapper.executeSQL(sql.toString(), start, pageSize);
 
-		if(rs !=null && rs.size() > 0){
+		if(CollectionUtil.isNotEmpty(rs)){
 			int createUserId = 0;			
 			for(int i = 0; i < rs.size(); i++){
 				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
 				rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId));
-			}	
+			}
+			message.put("total", SqlUtil.getTotalByList(permissionMapper.getTotal(DataTableType.权限.value, null)));
 		}
-		
-		message.put("total", SqlUtil.getTotalByList(permissionMapper.getTotal(DataTableType.权限.value, null)));
-		//message.put("current", SqlUtil.getTotalByList(permissionMapper.getTotal(DataTableType.权限.value, null)));
-		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取权限列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
 		message.put("message", rs);

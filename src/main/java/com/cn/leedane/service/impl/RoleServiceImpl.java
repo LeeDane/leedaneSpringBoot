@@ -22,6 +22,7 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.UserRoleBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.RoleService;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
@@ -134,15 +135,16 @@ private Logger logger = Logger.getLogger(getClass());
 		sql.append(" order by r.role_order desc,r.id desc limit ?,?");
 		rs = roleMapper.executeSQL(sql.toString(), start, pageSize);
 
-		if(rs !=null && rs.size() > 0){
+		if(CollectionUtil.isNotEmpty(rs)){
 			int createUserId = 0;			
 			for(int i = 0; i < rs.size(); i++){
 				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
 				rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId));
-			}	
+			}
+			message.put("total", SqlUtil.getTotalByList(roleMapper.getTotal(DataTableType.角色.value, null)));
 		}
 		
-		message.put("total", SqlUtil.getTotalByList(roleMapper.getTotal(DataTableType.角色.value, null)));
+		
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取角色列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		

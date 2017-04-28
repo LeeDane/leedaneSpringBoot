@@ -21,11 +21,11 @@ import com.cn.leedane.mapper.LinkRoleOrPermissionMapper;
 import com.cn.leedane.model.LinkManageBean;
 import com.cn.leedane.model.LinkRoleOrPermissionBean;
 import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.RoleBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.LinkManageService;
 import com.cn.leedane.service.LinkRoleOrPermissionService;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
@@ -156,15 +156,14 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
 		List<Map<String, Object>> rs = linkManageMapper.paging(start, pageSize, ConstantsUtil.STATUS_NORMAL);
 
-		if(rs !=null && rs.size() > 0){
+		if(CollectionUtil.isNotEmpty(rs)){
 			int createUserId = 0;			
 			for(int i = 0; i < rs.size(); i++){
 				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
 				rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId));
-			}	
+			}
+			message.put("total", SqlUtil.getTotalByList(linkManageMapper.getTotal(DataTableType.链接管理.value, null)));
 		}
-		
-		message.put("total", SqlUtil.getTotalByList(linkManageMapper.getTotal(DataTableType.链接管理.value, null)));
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取链接管理列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		

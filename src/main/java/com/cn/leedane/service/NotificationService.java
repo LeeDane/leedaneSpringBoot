@@ -47,6 +47,18 @@ public interface NotificationService<T extends IDBean>{
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getLimit(JSONObject jo, UserBean user,
 			HttpServletRequest request);
+	/**
+	 * 分页获取通知列表
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	//标记该方法不需要事务
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public Map<String, Object> paging(String type,
+			int pageSize, int current, int total,
+			UserBean userFromMessage, HttpServletRequest request);
 	
 	/**
 	 * 发送广播
@@ -61,11 +73,28 @@ public interface NotificationService<T extends IDBean>{
 	
 	/**
 	 * 删除通知
+	 * @param nid
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> deleteNotification(int nid, UserBean user, HttpServletRequest request);
+	
+	/**
+	 * 更新通知为已读状态
 	 * @param jo
 	 * @param user
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deleteNotification(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> updateRead(JSONObject jo, UserBean user, HttpServletRequest request);
+	/**
+	 * 全部更新通知为已读状态
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> updateAllRead(JSONObject jo, UserBean user, HttpServletRequest request);
 	
 }

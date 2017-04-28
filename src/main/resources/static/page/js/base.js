@@ -185,6 +185,21 @@ function linkToMy(id){
 }
 
 /**
+ * 跳转到我的表名和表ID对应的详情
+ * @param tableName
+ * @param tableId
+ * @param createUserId
+ */
+function linkToTable(tableName, tableId, createUserId){
+	if(tableName == "t_blog"){
+		goToReadFull(tableId);
+	}else if(tableName == "t_mood"){
+		goToReadMoodFull(tableId, createUserId);
+	}
+	return;
+}
+
+/**
  * 跳转到搜索
  */
 function linkToSearch(searchKey){
@@ -204,6 +219,18 @@ function goToReadFull(id){
 	window.open("dt/"+id, "_blank");
 }
 
+/**
+ * 跳转到心情详细阅读
+ * @param mid
+ * @param createUserId
+ */
+function goToReadMoodFull(mid, createUserId){
+	if(isEmpty(mid)){
+		layer.msg("该心情不存在，请联系管理员核实");
+		return;
+	}
+	window.open("/user/"+createUserId+"/mood/"+mid+"/dt", "_blank");
+}
 
 /**
  * 添加cookie

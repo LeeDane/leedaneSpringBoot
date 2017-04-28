@@ -85,7 +85,10 @@ public class HtmlController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(ControllerBaseNameUtil.msg)
-	public String message(Model model, HttpServletRequest request){
+	public String message(Model model, @RequestParam(value = "tab", required = false) String tab, HttpServletRequest request){
+		if(StringUtil.isNotNull(tab))
+			model.addAttribute("tabName", tab);
+			
 		return loginRoleCheck("message", true, model, request);
 	}
 	

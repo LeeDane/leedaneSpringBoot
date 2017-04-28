@@ -359,7 +359,7 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 					'<div class="list-group-item list-group-item-operate">'+
 					     '<button type="button" class="btn btn-primary btn-sm" onclick="showCommentOrTransmit(1, '+ index +')">评论('+ mood.comment_number+')</button>'+
 					     '<button type="button" class="btn btn-primary btn-sm" onclick="showCommentOrTransmit(2, '+ index +')">转发('+ mood.transmit_number+')</button>'+
-					     '<button type="button" class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="goToReadFull('+ mood.id +');">查看详细</button>'+
+					     '<button type="button" class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="goToReadMoodFull('+ mood.id +', '+ uid +');">查看详细</button>'+
 					'</div>'+
 				'</div>';
 	return html;
@@ -497,25 +497,13 @@ function editUserinfo(params){
 }
 
 /**
- * 跳转到心情详细阅读
- * @param id
- */
-function goToReadFull(id){
-	if(isEmpty(id)){
-		layer.msg("该心情不存在，请联系管理员核实");
-		return;
-	}
-	window.open("/user/"+uid+"/mood/"+id+"/dt", "_blank");
-}
-
-/**
  * 展示选项列表modal
  * @param index
  */
 function showItemListModal(index){
 	$("#operate-item-list").modal("show");
 	var mood = moods[index];
-	var html = '<li class="list-group-item cursor" onclick="goToReadFull('+ mood.id +');">查看</li>'+
+	var html = '<li class="list-group-item cursor" onclick="goToReadMoodFull('+ mood.id +', '+ uid +');">查看</li>'+
 			    '<li class="list-group-item cursor" onclick="addZan('+ mood.id +')">赞</li>'+
 			    '<li class="list-group-item cursor">翻译</li>'+
 			    '<li class="list-group-item cursor" onclick="copyToClipBoard(\''+ mood.content +'\');">复制文字</li>';

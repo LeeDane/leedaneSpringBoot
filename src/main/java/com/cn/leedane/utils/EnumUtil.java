@@ -55,7 +55,7 @@ public class EnumUtil {
 	 * Version 1.0
 	 */
 	public enum NotificationType {
-		全部("全部"),艾特我("@我"), 评论("评论"),转发("转发"),赞过我("赞过我"),私信("私信"),通知("通知");
+		全部("全部"),艾特我("@我"), 评论("评论"),转发("转发"),赞过我("赞过我"),私信("私信"),通知("通知"),留言("留言");
 	
 		private NotificationType(String value) {
 			this.value = value;
@@ -76,7 +76,7 @@ public class EnumUtil {
 		聊天("t_chat"), 聊天背景("t_chat_bg"), 聊天背景与用户("t_chat_bg_user"), 私信("t_private_chat"),文件("t_file_path"), 
 		粉丝("t_fan"), 收藏("t_collection"),关注("t_attention"), 好友("t_friend"), 图库("t_gallery"), 操作日志("t_operate_log"),
 		举报("t_report"), 积分("t_score"), 签到("t_sign_in"), 上传("t_upload"), 权限("t_permission"), 角色权限("t_role_permission"),
-		角色("t_role"), 用户角色("t_user_role"), 链接管理("t_link_manage");
+		角色("t_role"), 用户角色("t_user_role"), 链接管理("t_link_manage"), 留言("t_message_board");
 	
 		private DataTableType(String value) {
 			this.value = value;

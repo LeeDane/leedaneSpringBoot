@@ -1,5 +1,10 @@
 package com.cn.leedane.mapper;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.cn.leedane.model.NotificationBean;
 
 /**
@@ -10,4 +15,19 @@ import com.cn.leedane.model.NotificationBean;
  */
 public interface NotificationMapper extends BaseMapper<NotificationBean>{
 
+	/**
+	 * 分页获取通知
+	 * @param pmid
+	 * @param status
+	 * @return
+	 */
+	public List<Map<String, Object>> paging(@Param("toUserId") int toUserId, @Param("type") String type, @Param("status") int status, 
+			@Param("start")int start, @Param("pageSize") int pageSize);
+	
+	/**
+	 * 更新该类型的全部为已读
+	 * @param type
+	 * @return
+	 */
+	public int updateAllRead(@Param("type") String type, @Param("read") boolean read);
 }

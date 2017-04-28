@@ -131,7 +131,11 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 				
 			}
 			if(createUserId > 0 && createUserId != user.getId()){
-				notificationHandler.sendNotificationById(false, user, createUserId, content, NotificationType.评论, tableName, tableId, bean);
+				if(StringUtil.isNotNull(tableName) && DataTableType.留言.value.equals(tableName)){
+					notificationHandler.sendNotificationById(false, user, createUserId, content, NotificationType.留言, tableName, tableId, bean);
+				}else{
+					notificationHandler.sendNotificationById(false, user, createUserId, content, NotificationType.评论, tableName, tableId, bean);
+				}
 			}
 			//当一个人既有评论也有@时候，@不做处理
 			//有@人通知相关人员
@@ -575,12 +579,8 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		if(rs !=null && rs.size() > 0){
 			int createUserId = 0;
 			JSONObject friendObject = friendHandler.getFromToFriends(user.getId());
-			
-			//String account = "";
 			int pid = 0;
 			int pCreateUserId = 0;
-			//String atUsername = ""; //@用户的名称
-			//String resultContent = null;
 			String blockquoteAccount; //引用的用户名称
 			//为名字备注赋值
 			for(int i = 0; i < rs.size(); i++){
@@ -593,30 +593,25 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 						if(pCreateUserId > 0){
 							blockquoteAccount = userHandler.getUserName(pCreateUserId);
 							if(StringUtil.isNotNull(blockquoteAccount)){
-								/*resultContent = StringUtil.changeNotNull((rs.get(i).get("content")));
-								if(resultContent.indexOf("@"+atUsername) > 0 )
-									rs.get(i).put("content", resultContent);
-								else{
-									rs.get(i).put("content", "回复@"+atUsername + " " + resultContent);
-								}*/
 								rs.get(i).put("blockquote_account", blockquoteAccount); //引用的用户名称
 							}
 						}
-						rs.get(i).put("blockquote_content", pCommentBean.getContent()); //引用的用户名称
-						rs.get(i).put("blockquote_time", DateUtil.DateToString(pCommentBean.getCreateTime())); //引用的用户名称
+						rs.get(i).put("blockquote_content", pCommentBean.getContent()); //引用的内容
+						rs.get(i).put("blockquote_time", DateUtil.DateToString(pCommentBean.getCreateTime())); //引用的时间
 					}else{
 						rs.get(i).put("blockquote_content", "该评论已经被删除"); //引用的用户名称
 					}
 				}
 				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
 				rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId, user, friendObject));
-			}	
+			}
+			message.put("total", SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, "where table_name='"+ DataTableType.留言.value +"' and table_id='"+ userId +"' and status="+ ConstantsUtil.STATUS_NORMAL)));
 		}
-		message.put("total", SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, "where table_name='t_message_board' and table_id='"+ userId +"' and status="+ ConstantsUtil.STATUS_NORMAL)));
+		
 		message.put("isSuccess", true);
 		message.put("message", rs);
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取留言板列表", ",表ID为：", userId, StringUtil.getSuccessOrNoStr(true)).toString(), "getMessageBoards()", 1, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"分页获取留言板列表", ",表ID为：", userId, StringUtil.getSuccessOrNoStr(true)).toString(), "getMessageBoards()", 1, 0);
 		return message.getMap();
 	}
 }
