@@ -23,6 +23,8 @@ public class CustomAuthenticationToken extends UsernamePasswordToken{
 	private int userId;
 	
 	private UserBean user;
+	
+	private String FromUserName; //微信绑定的时候专用的变量
 
 	/**
 	 * 
@@ -59,5 +61,13 @@ public class CustomAuthenticationToken extends UsernamePasswordToken{
 
 	public void setUser(UserBean user) {
 		this.user = user;
+	}
+
+	public String getFromUserName() {
+		return FromUserName;
+	}
+
+	public void setFromUserName(String fromUserName) {
+		FromUserName = fromUserName;
 	}
 }

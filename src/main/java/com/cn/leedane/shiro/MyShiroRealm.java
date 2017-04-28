@@ -163,6 +163,8 @@ public class MyShiroRealm extends AuthorizingRealm{
 	       	}
 	       	
 	       	throw new UnsupportedTokenException(); //抛出不支持的token异常	
+        }if(customAuthenticationToken.getPlatformType() == PlatformType.微信公众平台版){
+	       		return new SimpleAuthenticationInfo(user.getId(), customAuthenticationToken.getPassword(), getName());
         }else{
         	return new SimpleAuthenticationInfo(user.getId(), customAuthenticationToken.getPassword(), getName());
         }

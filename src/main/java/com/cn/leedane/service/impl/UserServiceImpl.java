@@ -632,7 +632,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		//先对已经绑定的记录进行解绑
 		wechatUnBind(FromUserName);
 		
-		UserBean userBean = loginUser(account, MD5Util.compute(password));
+		UserBean userBean = loginUserNoComputePSW(account, MD5Util.compute(password));
 		//先登录用户
 		if(userBean != null && userBean.getStatus() == ConstantsUtil.STATUS_NORMAL){
 			userBean.setWechatUserName(FromUserName);

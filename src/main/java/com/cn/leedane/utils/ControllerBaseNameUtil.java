@@ -211,6 +211,10 @@ public class ControllerBaseNameUtil {
 	 * 图册
 	 */
 	public static final String pt = "/pt";
+	/**
+	 * 消息
+	 */
+	public static final String msg = "/msg";
 	
 	/**
 	 * 详情
@@ -221,6 +225,10 @@ public class ControllerBaseNameUtil {
 	 * 登录
 	 */
 	public static final String lg = "/lg";
+	/**
+	 * 绑定微信
+	 */
+	public static final String bw = "/bw";
 	
 	/**
 	 * 个人中心

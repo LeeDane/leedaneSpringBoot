@@ -389,7 +389,8 @@ public class EnumUtil {
 		未知账户(3090),
 		账户已锁定(3091),
 		用户名或密码错误次数过多(3092),
-		密码不正确(3093)
+		密码不正确(3093),
+		恭喜您成功绑定当前微信(3094)
 		;
 		
 		private ResponseCode(int value) {
@@ -489,7 +490,8 @@ public class EnumUtil {
      */
     public enum PlatformType{
         网页版("web"),
-        安卓版("android");
+        安卓版("android"),
+        微信公众平台版("wechat");
         PlatformType(String value) {
             this.value = value;
         }

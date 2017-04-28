@@ -864,48 +864,52 @@ public class UserController extends BaseController{
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value="/wechat/bing", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> bingWechat(HttpServletRequest request){
+	@RequestMapping(value="/wechat/bind", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> bindWechat(HttpServletRequest request,
+			@RequestParam("account") String account,
+			@RequestParam("password") String password,
+			@RequestParam("FromUserName") String FromUserName,
+			@RequestParam(value = "currentType", required=false) String currentType){
 		ResponseMap message = new ResponseMap();
-		if(!checkParams(message, request))
-			return message.getMap();
+		if(StringUtil.isNull(currentType))
+			currentType = WeixinUtil.MODEL_MAIN_MENU;
 		
-		checkRoleOrPermission(request);
-		JSONObject json = getJsonFromMessage(message);
-		String FromUserName = JsonUtil.getStringValue(json, "FromUserName");
-		String account = JsonUtil.getStringValue(json, "account");
-		String password = JsonUtil.getStringValue(json, "password");
-		if(StringUtil.isNull(FromUserName) || StringUtil.isNull(account) || StringUtil.isNull(password)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message.getMap();
-		}
-		
+		CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken();
+		authenticationToken.setUsername(account);
+		authenticationToken.setPassword(password.toCharArray());
+		//这里只负责获取用户，不做校验，校验交给shiro的realm里面去做
 		//执行绑定
 		UserBean user = userService.bindByWeChat(FromUserName, account, password);
-		if (user != null) {
-			WeixinCacheBean cacheBean = new WeixinCacheBean();
-			String currentType = JsonUtil.getStringValue(json, "currentType", WeixinUtil.MODEL_MAIN_MENU);
+        authenticationToken.setUser(user);
+        authenticationToken.setRememberMe(true);
+        authenticationToken.setFromUserName(FromUserName);
+        //获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();  
+        logger.info("对用户[" + account + "]进行微信绑定验证..验证开始");  
+        currentUser.login(authenticationToken);
+        logger.info("对用户[" + account + "]进行微信绑定验证..验证通过"); 
+        //验证是否登录成功  
+        if(currentUser.isAuthenticated()){  
+            logger.info("用户[" + account + "]微信绑定认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)");
+            WeixinCacheBean cacheBean = new WeixinCacheBean();
 			cacheBean.setBindLogin(true);
 			cacheBean.setCurrentType(currentType);
 			cacheBean.setLastBlogId(0);
-			
 			wechatHandler.addCache(FromUserName, cacheBean);
+			UserSolrHandler.getInstance().updateBean(user);	
 			
-			UserSolrHandler.getInstance().updateBean(user);
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
+            currentUser.getSession().setAttribute(USER_INFO_KEY, user);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您成功绑定当前微信.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			message.put("isSuccess", true);
-			
+			message.put("isSuccess", true);		
 			// 保存用户绑定日志信息
 			String subject = user.getAccount()+"绑定账号微信账号"+ FromUserName +"成功";
-			this.operateLogService.saveOperateLog(user, request, new Date(), subject, "bingWechat", 1, 0);
-			return message.getMap();
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.账号或密码不匹配.value));
-			message.put("responseCode", EnumUtil.ResponseCode.账号或密码不匹配.value);
-			return message.getMap();
-		}
+			operateLogService.saveOperateLog(user, request, new Date(), subject, "bingWechat", 1, 0);
+        }else{
+        	message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.密码不正确.value));
+			message.put("responseCode", EnumUtil.ResponseCode.密码不正确.value);
+        }
+		return message.getMap();
 	}
 	
 	/**

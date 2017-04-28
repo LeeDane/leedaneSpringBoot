@@ -21,6 +21,7 @@ import org.springframework.web.filter.DelegatingFilterProxy;
 
 import com.cn.leedane.shiro.MShiroFilterFactoryBean;
 import com.cn.leedane.shiro.MyShiroRealm;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
 
 /**
  * Shiro 配置
@@ -145,6 +146,7 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("/websocket", "anon");//anon 不拦截聊天广场链接
         filterChainDefinitionMap.put("/scanLogin", "anon");//anon 不拦截扫码登陆链接
         filterChainDefinitionMap.put("/content", "anon");//anon 不拦截app博客详情链接
+        filterChainDefinitionMap.put(ControllerBaseNameUtil.bw, "anon");//anon 不拦截微信绑定详情链接
         // authc：该过滤器下的页面必须验证后才能访问，它是Shiro内置的一个拦截器org.apache.shiro.web.filter.authc.FormAuthenticationFilter
         filterChainDefinitionMap.put("/*", "authc");// 拦截全部的链接
         // anon：它对应的过滤器里面是空的,什么都没做

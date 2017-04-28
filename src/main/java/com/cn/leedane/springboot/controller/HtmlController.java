@@ -78,6 +78,17 @@ public class HtmlController extends BaseController{
 		return loginRoleCheck("photo", true, model, request);
 	}
 	
+	/**
+	 * 消息管理
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(ControllerBaseNameUtil.msg)
+	public String message(Model model, HttpServletRequest request){
+		return loginRoleCheck("message", true, model, request);
+	}
+	
 	@RequestMapping(ControllerBaseNameUtil.fn)
 	public String financial(Model model, HttpServletRequest request){
 		return loginRoleCheck("financial", true, model, request);
@@ -115,6 +126,18 @@ public class HtmlController extends BaseController{
 	        }
 		}
 		return loginRoleCheck("login", model, request);
+	}
+	
+	//绑定微信
+	@RequestMapping(ControllerBaseNameUtil.bw)
+	public String bindWechat(Model model, 
+			@RequestParam(value="FromUserName") String FromUserName,
+			@RequestParam(value="currentType") String currentType,
+			HttpServletRequest request){
+		model.addAttribute("FromUserName", FromUserName);
+		model.addAttribute("currentType", currentType);
+		return loginRoleCheck("bind-wechat", model, request);
+		
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.my)
