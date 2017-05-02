@@ -42,8 +42,8 @@ public class JsonUtil {
 		try{
 			in2 =new BufferedReader(new InputStreamReader(inS));		
 			while((value=in2.readLine())!=null){//一行一行读
-				value = value.replaceAll("%(?![0-9a-fA-F]{2})", "%25");  
-				value = value.replaceAll("\\+", "%2B"); 
+				//value = value.replaceAll("%(?![0-9a-fA-F]{2})", "%25");  
+				//value = value.replaceAll("\\+", "%2B"); 
 				value = URLDecoder.decode(value, "UTF-8");
 				System.out.println(value);
 				json = JSONObject.fromObject(value);
