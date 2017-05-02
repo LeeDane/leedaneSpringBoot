@@ -11,8 +11,8 @@ var ue = UE.getEditor('editor', {
               'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
               'directionalityltr', 'directionalityrtl', 'indent', '|',
               'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
-              'link', 'unlink', 'anchor', '|', /*'imagenone', 'imageleft', 'imageright', 'imagecenter', '|', 
-              'simpleupload', */'insertimage','emotion', 'scrawl'/*, 'insertvideo' , 'music' MP3*/, 'attachment', 'map', /* 'gmap', 谷歌地图 */ 'insertframe', 'insertcode'/* , 'webapp' 百度应用 */, 'pagebreak', 'template', 'background', '|',
+              'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|', 
+              'simpleupload', 'insertimage','emotion', 'scrawl'/*, 'insertvideo' , 'music' MP3*/, 'attachment', 'map', /* 'gmap', 谷歌地图 */ 'insertframe', 'insertcode'/* , 'webapp' 百度应用 */, 'pagebreak', 'template', 'background', '|',
               'horizontal', 'date', 'time', 'spechars', /*'snapscreen', */'wordimage', '|',
               'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
               'print', 'preview', 'searchreplace', 'drafts'/* , 'help' 帮助 */

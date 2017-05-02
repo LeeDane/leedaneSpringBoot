@@ -156,7 +156,8 @@
 	   		<div class="col-lg-12">
 	   			<div class="checkbox">
 					<label>
-						<input type="checkbox" checked="checked" name="is_recommend" title="是否推荐"/>是否推荐
+						<input type="checkbox" th:if="${isAdmin}" checked="checked" name="is_recommend" title="是否推荐"/>
+						<input type="checkbox" th:if="${not isAdmin}" disabled = "disabled" name="is_recommend" title="是否推荐"/>是否推荐
 					</label>
 				</div>
 	   		</div>
