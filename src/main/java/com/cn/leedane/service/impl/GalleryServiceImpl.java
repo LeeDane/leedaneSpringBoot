@@ -190,12 +190,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		}
 		
 		//保存操作日志
-		try {
-			operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取用户ID为"+uid +"的用户的图库列表", "getGalleryByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
-		}
+		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取用户ID为"+uid +"的用户的图库列表", "getGalleryByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
 		System.out.println("获取图库列表总计耗时：" +(end - start) +"毫秒");
