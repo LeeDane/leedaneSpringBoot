@@ -146,6 +146,8 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("/websocket", "anon");//anon 不拦截聊天广场链接
         filterChainDefinitionMap.put("/scanLogin", "anon");//anon 不拦截扫码登陆链接
         filterChainDefinitionMap.put("/content", "anon");//anon 不拦截app博客详情链接
+        filterChainDefinitionMap.put("/shop/", "anon");//anon 不拦截商城首页链接
+        filterChainDefinitionMap.put("/shop/index", "anon");//anon 不拦截商城首页链接
         filterChainDefinitionMap.put(ControllerBaseNameUtil.bw, "anon");//anon 不拦截微信绑定详情链接
         // authc：该过滤器下的页面必须验证后才能访问，它是Shiro内置的一个拦截器org.apache.shiro.web.filter.authc.FormAuthenticationFilter
         filterChainDefinitionMap.put("/*", "authc");// 拦截全部的链接

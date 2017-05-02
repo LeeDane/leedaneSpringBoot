@@ -211,6 +211,7 @@ public class ControllerBaseNameUtil {
 	 * 图册
 	 */
 	public static final String pt = "/pt";
+	
 	/**
 	 * 消息
 	 */
@@ -284,5 +285,11 @@ public class ControllerBaseNameUtil {
 	 * 管理员->角色管理
 	 */
 	public static final String adrl = "/ad/rl";
+	
+	/**********************    商城       **********************/
+	/**
+	 * 商城统一入口根路径
+	 */
+	public static final String shop = "/shop";
     
 }

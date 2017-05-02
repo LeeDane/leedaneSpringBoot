@@ -13,7 +13,7 @@
 		select ur.id, rp.permission_id pid,
 			(select r.role_code from t_role r where r.id = ur.role_id and r.status = #{status}) rcode, 
 			(select p.permission_code from t_permission p where p.id = rp.permission_id and rp.status = #{status}) pcode
-		from t_user_role ur inner JOIN t_role_permission rp on rp.role_id = ur.role_id 
+		from t_user_role ur LEFT JOIN t_role_permission rp on rp.role_id = ur.role_id 
 		where ur.user_id = #{userId} and ur.status = #{status} 
 	</select>
 	

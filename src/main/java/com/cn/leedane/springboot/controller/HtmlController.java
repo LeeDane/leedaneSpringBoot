@@ -78,6 +78,10 @@ public class HtmlController extends BaseController{
 		return loginRoleCheck("photo", true, model, request);
 	}
 	
+	@RequestMapping("/test")
+	public String test(Model model, HttpServletRequest request){
+		return loginRoleCheck("test", false, model, request);
+	}
 	/**
 	 * 消息管理
 	 * @param model
