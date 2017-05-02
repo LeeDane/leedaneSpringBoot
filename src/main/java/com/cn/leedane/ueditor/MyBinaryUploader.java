@@ -10,25 +10,16 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.baidu.ueditor.PathFormat;
 import com.baidu.ueditor.define.BaseState;
 import com.baidu.ueditor.define.FileType;
 import com.baidu.ueditor.define.State;
-import com.baidu.ueditor.upload.StorageManager;
 import com.cn.leedane.handler.CloudStoreHandler;
-import com.cn.leedane.model.ServerFileBean;
-import com.cn.leedane.rabbitmq.SendMessage;
-import com.cn.leedane.rabbitmq.send.DeleteServerFileSend;
-import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.StringUtil;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 /**
  * 重写百度富文本编辑器的BinaryUploader类
@@ -37,36 +28,23 @@ import com.sun.org.apache.bcel.internal.generic.NEW;
  * Version 1.0
  */
 public class MyBinaryUploader {
-	public static final State save(HttpServletRequest request, Map<String, Object> conf){
-		FileItemStream fileStream = null;
-		boolean isAjaxUpload = request.getHeader("X_Requested_With") != null;
+	public static final State save(MultipartFile file, HttpServletRequest request, Map<String, Object> conf){
 		if (!ServletFileUpload.isMultipartContent(request)) {
 			return new BaseState(false, 5);
 		}
 		
-		ServletFileUpload upload = new ServletFileUpload(
-				new DiskFileItemFactory());
-
-		if (isAjaxUpload) {
-			upload.setHeaderEncoding("UTF-8");
-		}
-		try{
-			FileItemIterator iterator = upload.getItemIterator(request);
-
-			while (iterator.hasNext()) {
-				fileStream = iterator.next();
-				
-				if (!fileStream.isFormField())
-					break;
-				fileStream = null;
-			}
-
-			if (fileStream == null) {
+		InputStream is;
+		try {
+			//上面的file是按文件名接收的
+			String originFileName = file.getOriginalFilename();
+			is = file.getInputStream();//按此可以得到流
+			if (is == null) {
 				return new BaseState(false, 7);
 			}
- 
+			
+			//也可以直接对file进行操作搜索			
 			String savePath = (String)conf.get("savePath");
-			String originFileName = fileStream.getName();
+			
 			String suffix = FileType.getSuffixByFilename(originFileName);
 
 			originFileName = originFileName.substring(0, 
@@ -75,43 +53,30 @@ public class MyBinaryUploader {
 
 			long maxSize = ((Long)conf.get("maxSize")).longValue();
 
-			if (!validType(suffix, (String[])conf.get("allowFiles"))) {
+			if (!MyBinaryUploader.validType(suffix, (String[])conf.get("allowFiles"))) {
 				return new BaseState(false, 8);
 			}
 			
 			savePath = PathFormat.parse(savePath, originFileName);
 			
-			StringBuffer rootPath = new StringBuffer();
-			rootPath.append(UeditorFolder.getInstance().getFileFolder());
-			rootPath.append(File.separator);
-			rootPath.append("ueditor_");
-			rootPath.append(DateUtil.DateToString(new Date(), "yyyyMMdd"));
-			rootPath.append("_");
-			rootPath.append(StringUtil.getFileName(savePath));
+			StringBuffer rootPathBuffer = new StringBuffer();
+			rootPathBuffer.append(UeditorFolder.getInstance().getFileFolder());
+			rootPathBuffer.append(File.separator);
+			rootPathBuffer.append("ueditor_");
+			rootPathBuffer.append(DateUtil.DateToString(new Date(), "yyyyMMdd"));
+			rootPathBuffer.append("_");
+			rootPathBuffer.append(StringUtil.getFileName(savePath));
 			
-			final String physicalPath = rootPath.toString();
-
-			InputStream is = fileStream.openStream();
-			State storageState = StorageManager.saveFileByInputStream(is, 
+			final String physicalPath = rootPathBuffer.toString();
+			State storageState = MyStorageManager.saveFileByInputStream(is, 
 					physicalPath, maxSize);
+			//关闭流
 			is.close();
 			
 			//上传到七牛云存储服务器上
 			String qiniuUrl = null;
 			if (storageState.isSuccess()) {
 				qiniuUrl = CloudStoreHandler.uploadFile(null, new File(physicalPath));
-				/*new Thread(new Runnable() {
-					
-					@Override
-					public void run() {
-						ServerFileBean bean = new ServerFileBean();
-						bean.setPath(physicalPath);
-						DeleteServerFileSend send = new DeleteServerFileSend(bean);
-						SendMessage sendMessage = new SendMessage(send);
-						sendMessage.sendMsg();
-						
-					}
-				}).start();*/
 			}
 
 			if (storageState.isSuccess() && StringUtil.isLink(qiniuUrl)) {
@@ -119,18 +84,15 @@ public class MyBinaryUploader {
 				storageState.putInfo("type", suffix);
 				storageState.putInfo("original", originFileName + suffix);
 			}
-
 			return storageState;
-		} catch (FileUploadException e) {
-			return new BaseState(false, 6);
-		} catch (IOException localIOException) {
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 		return new BaseState(false, 4);
 	}
 
-	private static boolean validType(String type, String[] allowTypes) {
-		List list = Arrays.asList(allowTypes);
-		
+	public static boolean validType(String type, String[] allowTypes) {
+		List<String> list = Arrays.asList(allowTypes);
 		return list.contains(type);
 	}
 }

@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -261,5 +262,13 @@ public class StartUpApplication implements TransactionManagementConfigurer{
 	public PlatformTransactionManager annotationDrivenTransactionManager() {
 		return new DataSourceTransactionManager(dataSource());
 	}
+    
+    @Bean
+    public PropertySourcesPlaceholderConfigurer createPropertySourcesPlaceholderConfigurer() {
+        ClassPathResource resource = new ClassPathResource("leedane.properties");
+        PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer = new PropertySourcesPlaceholderConfigurer();
+        propertyPlaceholderConfigurer.setLocation(resource);
+        return propertyPlaceholderConfigurer;
+    }
 
 }

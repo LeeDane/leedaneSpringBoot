@@ -6,7 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
 
-import com.baidu.ueditor.ConfigManager;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.baidu.ueditor.define.ActionMap;
 import com.baidu.ueditor.define.BaseState;
 import com.baidu.ueditor.define.State;
@@ -23,21 +24,27 @@ import com.cn.leedane.utils.EnumUtil;
 public class MyActionEnter {
 	private HttpServletRequest request = null;
 	
-	private String rootPath = null;
-	private String contextPath = null;
 	 
 	private String actionType = null;
 	
-	private ConfigManager configManager = null;
+	private MyConfigManager configManager = null;
 	
 	private boolean isLogin;
 	
-	public MyActionEnter(HttpServletRequest request, String rootPath){
+	private MultipartFile file;
+	
+	public MyActionEnter(HttpServletRequest request, MultipartFile file, String rootPath, String configJspPath){
 		this.request = request;
-		this.rootPath = rootPath;
 		this.actionType = request.getParameter("action");
-		this.contextPath = request.getContextPath();
-		this.configManager = ConfigManager.getInstance(this.rootPath, this.contextPath, request.getRequestURI());
+		this.file = file;
+		this.configManager = MyConfigManager.getInstance(rootPath, configJspPath);
+		isLogin = request.getSession().getAttribute(UserController.USER_INFO_KEY) != null;
+	}
+	
+	public MyActionEnter(HttpServletRequest request, String rootPath, String configJspPath){
+		this.request = request;
+		this.actionType = request.getParameter("action");
+		this.configManager = MyConfigManager.getInstance(rootPath, configJspPath);
 		isLogin = request.getSession().getAttribute(UserController.USER_INFO_KEY) != null;
 	}
 	 
@@ -67,16 +74,16 @@ public class MyActionEnter {
 
 		State state = null;
 		int actionCode = ActionMap.getType(this.actionType);
-		Map conf = null;
+		Map<String, Object> conf = null;
 		switch (actionCode){
 			case 0:
 				return this.configManager.getAllConfig().toString();
 			case 1:
 			case 2:
 			case 3:
-			case 4:
+			case 4: //文件上传，自己模拟百度editor集中把业务处理在这里
 				conf = this.configManager.getConfig(actionCode);
-				state = new MyUploader(this.request, conf).doExec();
+				state = new MyUploader(file, this.request, conf).doExec();
 				break;
 			case 5:
 				conf = this.configManager.getConfig(actionCode);
