@@ -146,7 +146,9 @@ public class UserHandler {
 		if(redisUtil.hasKey(userInfoKey)){
 			try {
 				return (UserBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(userInfoKey.getBytes()), UserBean.class);
-			} catch (ClassNotFoundException | IOException e) {
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}catch (IOException e) {
 				e.printStackTrace();
 			}
 		}

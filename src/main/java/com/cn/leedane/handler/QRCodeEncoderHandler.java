@@ -77,7 +77,7 @@ public class QRCodeEncoderHandler {
     /** 
      * @param args the command line arguments 
      */  
-    public static void main(String[] args) {  
+    /*public static void main(String[] args) {  
         String imgPath = "D:/Michael_QRCode.png";  
   
         String content = "http://127.0.0.1:8080/leedaneMVC/page/login.jsp?ref=http://127.0.0.1:8080/leedaneMVC/page/index.jsp";  
@@ -86,5 +86,5 @@ public class QRCodeEncoderHandler {
         handler.encoderQRCode(content, imgPath);  
   
         System.out.println("encoder QRcode success");  
-    }  
+    }  */
 }

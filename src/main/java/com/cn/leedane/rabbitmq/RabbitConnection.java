@@ -23,7 +23,9 @@ public class RabbitConnection {
 		try {
 			// 创建一个连接
 			connection = factory.newConnection();
-		} catch (IOException | TimeoutException e) {
+		} catch (IOException e) {
+			e.printStackTrace();
+		}catch (TimeoutException e) {
 			e.printStackTrace();
 		}
 	}

@@ -59,7 +59,9 @@ public class RolePermissionHandler {
 							}
 						}
 					}
-				} catch (ClassNotFoundException | IOException e) {
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}catch (IOException e) {
 					e.printStackTrace();
 				}
 			}else{//redis没有的处理

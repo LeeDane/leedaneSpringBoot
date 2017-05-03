@@ -31,10 +31,10 @@ public class SolrTest extends BaseTest{
 	@Resource
 	private BlogMapper blogMapper;
 	
-	public static void main(String[] args) {
+	//public static void main(String[] args) {
 		//query();
 		//index();
-	}
+	//}
 	
 	@Test
 	public void index() {
@@ -82,7 +82,9 @@ public class SolrTest extends BaseTest{
 		try {
 			server.deleteById(ids);
 			server.commit();
-		} catch (SolrServerException | IOException e) {
+		} catch (SolrServerException e) {
+			e.printStackTrace();
+		}catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

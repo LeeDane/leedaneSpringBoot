@@ -107,7 +107,7 @@ public class CloudStoreHandler {
 					returnFilePaths.add(filePathBeans.get(i));
 				}
 				Thread.sleep(500);//暂停0.5秒
-			} catch (InterruptedException | ExecutionException |TimeoutException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				futures.get(i).cancel(true);
 				errors.add(StringUtil.changeNotNull(filePathBeans.get(i).get("path")));

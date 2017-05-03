@@ -36,10 +36,10 @@ public class SystemUtil {
 		return list;
 	}
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		List<String>  list = getSystemEnvironmentInfo();
 		for(String s: list){
 			System.out.println(s);
 		}
-	}
+	}*/
 }

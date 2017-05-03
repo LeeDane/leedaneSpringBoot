@@ -74,7 +74,7 @@ public class FinancialCategoryUtil {
      */
     @SuppressWarnings("unchecked")
 	public static List<FinancialOneLevelCategoryBean> initOneGategoryData(){
-        oneLevelCategoryBeans = new ArrayList<>();
+        oneLevelCategoryBeans = new ArrayList<FinancialOneLevelCategoryBean>();
 
         Date date = new Date();
 

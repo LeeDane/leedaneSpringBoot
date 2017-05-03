@@ -26,7 +26,7 @@ import com.cn.leedane.service.impl.ChatServiceImpl;
  */
 public class JPushTest extends BaseTest{
 
-	public static void main(String[] args) {
+	//public static void main(String[] args) {
 		/*JPushClient jpushClient = new JPushClient(ConstantsUtil.JPUSH_MASTER_SECRET, ConstantsUtil.JPUSH_APPKEY, 10);
 		
 		// For push, all you need do is to build PushPayload object.
@@ -56,7 +56,7 @@ public class JPushTest extends BaseTest{
 		
 		JpushCustomMessage message= new JpushCustomMessage();
 		System.out.println(message.sendToAlias("leedane_user_1", "我是测试号", "toUserId", "2"));*/
-	}
+	//}
 	
 	@Resource
 	private UserService<UserBean> userService;

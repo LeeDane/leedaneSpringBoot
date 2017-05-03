@@ -89,7 +89,7 @@ public class Base64Util{
             codes['/'] = 63;
     }
 
-    public static void main(String[] args) throws Exception
+    /*public static void main(String[] args) throws Exception
     {
     	Map<String, Object> map = new HashMap<String, Object>();
     	map.put("name", "lee1");
@@ -103,5 +103,5 @@ public class Base64Util{
 
       String strOut2 = new String(Base64Util.decode(strOut.toCharArray()));
       System.out.println(strOut2);
-    }
+    }*/
 }

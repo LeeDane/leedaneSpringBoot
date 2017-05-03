@@ -74,7 +74,7 @@ public class MyShiroRealm extends AuthorizingRealm{
         logger.info("##################执行Shiro权限认证##################");
         System.out.println("##################执行Shiro权限认证##################");
         //获取当前登录输入的用户名，等价于(String) principalCollection.fromRealm(getName()).iterator().next();
-        int userid = (int)super.getAvailablePrincipal(principalCollection); 
+        int userid = StringUtil.changeObjectToInt(super.getAvailablePrincipal(principalCollection)); 
         //到数据库查是否有此对象
         List<RoleBean> roleBeans = rolePermissionService.getUserRoleBeans(userid);// 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
         if(CollectionUtil.isNotEmpty(roleBeans)){

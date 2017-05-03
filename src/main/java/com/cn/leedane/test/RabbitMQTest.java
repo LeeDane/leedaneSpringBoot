@@ -8,7 +8,7 @@ import com.cn.leedane.rabbitmq.SendAndRecieveObject;
 import com.cn.leedane.rabbitmq.SendMessage;
 
 public class RabbitMQTest {
-	public static void main(String[] args) {
+	//public static void main(String[] args) {
 		/*SendAndRecieveObject object = new SendAndRecieveObject();
 		object.setCreateTime(new Date());
 		object.setFromUserID("12344");
@@ -35,6 +35,6 @@ public class RabbitMQTest {
 			e.printStackTrace();
 		}*/
 		
-	}
+	//}
 
 }

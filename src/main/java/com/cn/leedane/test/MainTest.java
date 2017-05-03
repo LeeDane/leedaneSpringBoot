@@ -27,7 +27,7 @@ import com.cn.leedane.utils.StringUtil;
  */
 public class MainTest {
 
-	public static void main(String[] args) throws IOException {
+	//public static void main(String[] args) throws IOException {
 		//int distance = 112456399 + 11;
 		//System.out.println(((distance/1000) > 0 ? ((distance/1000000) > 0 ? (distance/1000000)+ "千公里": (distance/1000) + "公里"): "") +  ((distance%1000) > 0 ? (distance%1000) +"米": ""));
 		/*System.out.println(DateUtil.DateToString(new Date(), "yyyyMM"));
@@ -89,11 +89,11 @@ public class MainTest {
 		hashtable.put("12", 12);
 		hashtable.put("hehe", "122");
 		System.out.println(hashtable.contains("12"));*/
-		RedisUtil redisUtil = RedisUtil.getInstance();
+		/*RedisUtil redisUtil = RedisUtil.getInstance();
 		redisUtil.delete("*");
-		System.out.println("删除成功");
+		System.out.println("删除成功");*/
 		
-	}
+	//}
 	
 	public static void set(UserBean user){
 		UserBean user1 = new UserBean();

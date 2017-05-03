@@ -236,7 +236,7 @@ public class JsonUtil {
 		long v = getLongValue(object, key);
 		return v == 0 ? defaultValue: v;
 	}
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		
 		try {
 			
@@ -244,7 +244,7 @@ public class JsonUtil {
 			e.printStackTrace();
 		}
 		
-	}
+	}*/
 	
 	public class Message1{
 		public Message1(){

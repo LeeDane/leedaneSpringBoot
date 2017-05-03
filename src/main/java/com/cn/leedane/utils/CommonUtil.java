@@ -211,7 +211,7 @@ public class CommonUtil {
 	 * 测试
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		InputStream in = CommonUtil.getResourceAsStream("leedane.properties");  
 		 // 创建Properties实例
        Properties prop = new Properties();
@@ -226,5 +226,5 @@ public class CommonUtil {
      while(it.hasNext()) {
     	 System.out.println(it.next());
      }
-	}
+	}*/
 }

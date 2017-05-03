@@ -168,7 +168,7 @@ public class DesUtils {
 	   * main方法
 	   * @param args
 	   */
-	  public static void main(String[] args) {
+	  /*public static void main(String[] args) {
 	    try {
 	      String test = "{name: \"leedane\", value: \"测试\", total: 123}";
 	      test = "http://leedanetf.tunnel.qydev.com/leedaneMVC/page/download.jsp?leedaneapp=OWEzMGRhZTI5NzlmZTQ3NjIzYzBkMDBjYzFiNjBhMjVlYWY5Y2QzOTU4MzQyMzZlNjdmZjk5MDZlNWNkNDcwMQ==";
@@ -181,7 +181,7 @@ public class DesUtils {
 	      System.out.println("解密后的字符：" + des1.decrypt(test));
 	      
 	      //System.out.println("解密后的字符：" + des.decrypt("202cb962ac59075b964b07152d234b70"));
-	      Map<String, Object> infoMap = new HashMap<>();
+	      Map<String, Object> infoMap = new HashMap<String, Object>();
           infoMap.put("account", 26);
           infoMap.put("id", "dane");
           String newString = des.encrypt(JSONObject.fromObject(infoMap).toString());
@@ -192,5 +192,5 @@ public class DesUtils {
 	    catch (Exception e) {
 	      e.printStackTrace();
 	    }
-	  }
+	  }*/
 }

@@ -230,22 +230,22 @@ public class Wangyi implements Runnable{
 		return id;
 	}
 	
-	public static void main(String[] args) {
-		/*JinriToutiao toutiao = new JinriToutiao("http://toutiao.com/a4578138399/","","");
+	/*public static void main(String[] args) {
+		JinriToutiao toutiao = new JinriToutiao("http://toutiao.com/a4578138399/","","");
 
 		try {
 			toutiao.execute();
 			System.out.println(toutiao.score());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}*/
+		}
 		
 		String url = "http://bbs.163.com";
 		Pattern p=Pattern.compile("http://[0-9a-zA-Z]*.163.com");
 		Matcher m=p.matcher(url);
 		boolean result=m.find();
 		System.out.println(result);
-	}
+	}*/
 	
 
 	/**

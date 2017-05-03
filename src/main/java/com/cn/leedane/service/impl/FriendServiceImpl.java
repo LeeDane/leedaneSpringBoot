@@ -254,7 +254,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		
 		StringBuffer sql = new StringBuffer();
-		List<Map<String, Object>> rs = new ArrayList<>();
+		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
 	
 		if("firstloading".equalsIgnoreCase(method)){
 			sql.append("select id, to_user_id fid, '' introduce, date_format(modify_time,'%Y-%m-%d %H:%i:%s') create_time, status, (case when to_user_remark = '' || to_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = to_user_id and u.status =?) else to_user_remark end ) remark from "+DataTableType.好友.value+" where from_user_id =? and status =?");
@@ -306,7 +306,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		
 		StringBuffer sql = new StringBuffer();
-		List<Map<String, Object>> rs = new ArrayList<>();
+		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
 	
 		if("firstloading".equalsIgnoreCase(method)){
 			sql.append("select id, "+ 4 +" status, to_user_id fid, add_introduce introduce, date_format((case when modify_time is null then create_time else modify_time end),'%Y-%m-%d %H:%i:%s') create_time, (case when to_user_remark = '' || to_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = to_user_id and u.status =?) else to_user_remark end ) remark from "+DataTableType.好友.value+" where from_user_id =? and status =?");
@@ -359,7 +359,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		
 		StringBuffer sql = new StringBuffer();
-		List<Map<String, Object>> rs = new ArrayList<>();
+		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
 	
 		if("firstloading".equalsIgnoreCase(method)){
 			sql.append("select id, to_user_id fid, status, date_format(create_time,'%Y-%m-%d %H:%i:%s') create_time, (case when to_user_remark = '' || to_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = to_user_id and u.status =?) else to_user_remark end ) remark");
@@ -409,7 +409,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		
 		StringBuffer sql = new StringBuffer();
-		List<Map<String, Object>> rs = new ArrayList<>();
+		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
 	
 		if("firstloading".equalsIgnoreCase(method)){
 			sql.append("select id, to_user_id fid, status, date_format(create_time,'%Y-%m-%d %H:%i:%s') create_time, (case when to_user_remark = '' || to_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = to_user_id and u.status =?) else to_user_remark end ) remark");

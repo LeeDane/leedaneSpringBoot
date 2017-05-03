@@ -25,16 +25,16 @@ import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingExcepti
  */
 public class QiniuTest extends BaseTest{
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		String accessKey = "aMgOWQCqz6CPIzjKbfLbQDbD0Jf9CD0P7DBA060W";
 		String secretKey = "4TlTuQqE5s8r1bn3M82-3EQmNw22KzV6oIRBL3Pr";
 		String bucketName = "leedane";
 		try {
 			test(accessKey, secretKey, bucketName);
-		} catch (Base64DecodingException | IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	public static void test(String accessKey, String secretKey, String bucketName) throws IOException, Base64DecodingException{
 		UploadManager uploadManager = new UploadManager();

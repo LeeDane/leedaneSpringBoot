@@ -82,7 +82,7 @@ public class ConcreteWatcher implements Watcher{
 					System.out.println("发送给"+ friends.get(i).getId()+"的通知失败");
 					errorList.add(friends.get(i));
 				}
-			} catch (InterruptedException | ExecutionException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				result = false;
 				futures.get(i).cancel(true);

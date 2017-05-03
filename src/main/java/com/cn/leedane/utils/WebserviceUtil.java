@@ -117,7 +117,7 @@ public class WebserviceUtil {
 		return service;
 	}
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		WebserviceUtil util = new WebserviceUtil("http://192.168.12.200:8093/services/EngineAPIWebService");
 		String xmlString = "<?xml version='1.0' encoding='UTF-8'?>"+
 								"<business>"+
@@ -135,5 +135,5 @@ public class WebserviceUtil {
 		
 		System.out.println(util.call("execute", new Object[]{xmlString}));
 		//System.out.println(getTime("2015-08-11 18:23:22","yyyyMMddHHmmss"));
-	}
+	}*/
 }

@@ -43,7 +43,7 @@ public class MShiroFilterFactoryBean extends ShiroFilterFactoryBean{
 
     public MShiroFilterFactoryBean() {
         super();
-        ignoreExt = new HashSet<>();
+        ignoreExt = new HashSet<String>();
         ignoreExt.add(".jpg");
         ignoreExt.add(".png");
         ignoreExt.add(".gif");

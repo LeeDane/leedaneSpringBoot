@@ -605,7 +605,7 @@ public class DateUtil {
 		return "";
 	}
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		try {
 			int i = leftMinutes(stringToDate("2016-11-03 18:59:00"), new Date());
 			System.out.println(i);
@@ -615,5 +615,5 @@ public class DateUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 }

@@ -218,7 +218,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		boolean showUserInfo = JsonUtil.getBooleanValue(jo, "showUserInfo");
 		StringBuffer sql = new StringBuffer();
-		List<Map<String, Object>> rs = new ArrayList<>();
+		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
 	
 		//查找该用户所有的转发
 		if(StringUtil.isNull(tableName) && toUserId > 0){		
@@ -376,7 +376,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		 //{\"table_name\":\"t_mood\", \"table_id\":123
 		//, \"first_id\": 2, \"last_id\":2, \"method\":\"firstloading\"}
 		ResponseMap message = new ResponseMap();
-		List<Map<String, Object>> rs = new ArrayList<>();
+		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
 		int cid = JsonUtil.getIntValue(jo, "cid");
 		if(cid < 1){
 			message.put("message", "评论ID为空");

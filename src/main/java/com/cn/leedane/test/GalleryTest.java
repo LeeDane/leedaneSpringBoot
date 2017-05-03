@@ -197,7 +197,7 @@ public class GalleryTest extends BaseTest {
 					str = "{'path':'"+url+"', 'desc':'测试添加的网络图片'}";
 					JSONObject jo = JSONObject.fromObject(str);
 					message = galleryService.addLink(jo, user, null);
-					if((boolean) message.get("isSuccess")){
+					if(StringUtil.changeObjectToBoolean(message.get("isSuccess"))){
 						//System.out.println("加入图库成功："+url);
 					}else{
 						System.out.println("加入图库失败，失败原因："+message.get("message")+"------>"+url);
@@ -296,7 +296,7 @@ public class GalleryTest extends BaseTest {
 				str = "{'path':'"+url+"', 'desc':'测试添加的网络图片'}";
 				JSONObject jo = JSONObject.fromObject(str);
 				message = galleryService.addLink(jo, user, null);
-				if((boolean) message.get("isSuccess")){
+				if(StringUtil.changeObjectToBoolean(message.get("isSuccess"))){
 					//System.out.println("加入图库成功："+url);
 				}else{
 					System.out.println("加入图库失败，失败原因："+message.get("message")+"------>"+url);

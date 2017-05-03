@@ -281,10 +281,10 @@ public class LuceneTest extends BaseTest{
 		long endTime = System.currentTimeMillis();
 		System.out.println("执行程序总计耗时："+ (endTime - startTime) + "毫秒");
 	}
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		String s = "枯树柴禾燃起的希望作者.html";
 		int i = s.lastIndexOf(".");
 		System.out.println(i);
 		
-	}
+	}*/
 }

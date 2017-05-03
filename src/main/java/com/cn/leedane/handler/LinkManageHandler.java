@@ -39,7 +39,7 @@ public class LinkManageHandler {
 		if(redisUtil.hasKey(key)){
 			try {
 				return (LinkManagesBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), LinkManagesBean.class);
-			} catch (ClassNotFoundException | IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}else{

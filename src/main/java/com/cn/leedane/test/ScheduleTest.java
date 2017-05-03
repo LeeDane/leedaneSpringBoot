@@ -11,10 +11,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class ScheduleTest{
 	
-	@SuppressWarnings("resource")
+	/*@SuppressWarnings("resource")
 	public static void main(String[] args) {
 		@SuppressWarnings("unused")
 		AbstractApplicationContext context = new ClassPathXmlApplicationContext("spring-quartz.xml");
-	}
+	}*/
 
 }

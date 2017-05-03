@@ -11,7 +11,7 @@ import com.cn.leedane.utils.Base64ImageUtil;
  */
 public class ImageTest {
 
-	public static void main(String[] args) {
+	//public static void main(String[] args) {
 		
 		/*String oldPath = "F:\\";
 		String oldFileName = "aa.jpg";
@@ -25,15 +25,15 @@ public class ImageTest {
 		imageUtil.setHighQuality(true);
 		System.out.println(imageUtil.ConverBigImageToSmallImage());*/
 		
-		String filePath = "G://mx4image.jpg";
+		/*String filePath = "G://mx4image.jpg";
 		try {
 			Base64ImageUtil.convertImageToBase64(filePath, null);
 			System.out.println("处理完成");
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		//ImageUtil.convertBase64ToImage("F://qq1.png", ImageUtil.convertImageToBase64(filePath));
 
-	}
+	//}
 
 }

@@ -567,10 +567,13 @@ public class StringUtil {
 		MagicMatch match = null;
 		try {
 			match = Magic.getMagicMatch(new File(filePath), true);
-		} catch (MagicParseException | MagicMatchNotFoundException
-				| MagicException e) {
+		} catch (MagicParseException e) {
 			//e.printStackTrace();
-		}    
+		}catch (MagicMatchNotFoundException e) {
+			//e.printStackTrace();
+		} catch (MagicException e) {
+			//e.printStackTrace();
+		}   
 	    if(match == null)
 	    	return "text/plain";
 	    return match.getMimeType();
@@ -677,13 +680,13 @@ public class StringUtil {
 	}
 	
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		//System.out.println(StringUtil.changeNotNullAndUtf8("赵本山代表作被指\"丑化\"农民 丢弃农村传统底蕴"));
 		//System.out.println(StringUtil.isNumeric("-5.00"));
 		//System.out.println(StringUtisl.isIntNumeric("5"));
-		/*for(int i=0; i < 1000; i++){
+		for(int i=0; i < 1000; i++){
 			System.out.println(build6ValidationCode());
-		}*/
+		}
 		//System.out.println(getMime("G://新建 Microsoft Office Excel 2007 工作簿.xls"));
 		String text = ",哈哈";
 		if(StringUtil.isNotNull(text)){
@@ -698,5 +701,5 @@ public class StringUtil {
 		}
 		
 		System.out.println("结果：" + text);
-	}
+	}*/
 }

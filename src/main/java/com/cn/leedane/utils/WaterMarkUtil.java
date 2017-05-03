@@ -122,7 +122,7 @@ public class WaterMarkUtil {
         }   
     }   
     
-    public static void main(String[]args) throws Exception{
+    /*public static void main(String[]args) throws Exception{
         
         //1.jpg是你的 主图片的路径
         InputStream is = new FileInputStream("G://head.jpg");
@@ -189,5 +189,5 @@ public class WaterMarkUtil {
         System.out.println ("合成结束。。。。。。。。");
         
         
-    }    
+    }  */  
 } 

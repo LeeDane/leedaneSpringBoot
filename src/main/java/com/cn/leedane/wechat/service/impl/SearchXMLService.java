@@ -265,12 +265,12 @@ public class SearchXMLService extends BaseXMLWechatService {
 		
 	}
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		SearchXMLService service = new SearchXMLService();
 		service.Content = "他";
 		service.FromUserName = "FromUserName";
 		service.ToUserName = "ToUserName";
 		System.out.println(service.execute());
-	}
+	}*/
 	
 }

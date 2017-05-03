@@ -90,7 +90,9 @@ public static MoodSolrHandler handler;
             server.optimize();
 			server.commit();
 			return true;
-		} catch (IOException | SolrServerException e) {
+		} catch (IOException e) {
+			e.printStackTrace();
+		}catch (SolrServerException e) {
 			e.printStackTrace();
 		}  
 		return false;
@@ -104,7 +106,9 @@ public static MoodSolrHandler handler;
             server.optimize();
 			server.commit();
 			return true;
-		} catch (SolrServerException | IOException e) {
+		} catch (SolrServerException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}  
 		return false;
@@ -129,9 +133,11 @@ public static MoodSolrHandler handler;
             server.optimize();
 			server.commit();
 			return true;
-		} catch (SolrServerException | IOException e) {
+		} catch (SolrServerException e) {
 			e.printStackTrace();
-		}  
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
 		return false;
 	}
 
@@ -143,9 +149,11 @@ public static MoodSolrHandler handler;
             server.optimize();
 			server.commit();
 			return true;
-		} catch (SolrServerException | IOException e) {
+		} catch (SolrServerException e) {
 			e.printStackTrace();
-		}  
+		}catch (IOException e) {
+			e.printStackTrace();
+		} 
 		return false;
 	}
 	

@@ -179,7 +179,7 @@ public class SanwenNet extends BaseCrawlBean{
 		return null;
 	}
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		
 		
 		ExecutorService threadPool = Executors.newFixedThreadPool(5);
@@ -196,7 +196,7 @@ public class SanwenNet extends BaseCrawlBean{
 			
 		threadPool.execute(sanwen);
 
-	}
+	}*/
 
 	@Override
 	public void run() {

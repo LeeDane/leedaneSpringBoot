@@ -25,11 +25,11 @@ public class RelativeDateFormat {
     private static final String ONE_MONTH_AGO = "月前";
     private static final String ONE_YEAR_AGO = "年前";
 
-    public static void main(String[] args) throws ParseException {
+    /*public static void main(String[] args) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:m:s");
         Date date = format.parse("2016-1-14 18:30:00");
         System.out.println(format(date));
-    }
+    }*/
 
     public static String format(Date date) {
         long delta = new Date().getTime() - date.getTime();

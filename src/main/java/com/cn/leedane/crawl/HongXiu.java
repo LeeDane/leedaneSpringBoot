@@ -148,7 +148,7 @@ public class HongXiu implements Runnable{
 		return id;
 	}
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		
 		ExecutorService threadPool = Executors.newFixedThreadPool(5);
 		HongXiu hongxiu = new HongXiu("http://article.hongxiu.com","","");
@@ -164,7 +164,7 @@ public class HongXiu implements Runnable{
 		
 		threadPool.execute(hongxiu);
 		
-	}
+	}*/
 	
 	/**
 	 * 获得一定深度的<a href="">

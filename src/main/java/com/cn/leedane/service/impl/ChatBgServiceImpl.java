@@ -81,7 +81,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		
 		StringBuffer sql = new StringBuffer();
-		List<Map<String, Object>> rs = new ArrayList<>();
+		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
 	
 		if("firstloading".equalsIgnoreCase(method)){
 			sql = new StringBuffer();

@@ -30,8 +30,8 @@ public class RandomUtil {
 		return getRandomByRange(0, end);
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		for(int i = 0; i < 100; i++)
 			System.out.println(RandomUtil.getRandomByRange(0, 5));
-	}
+	}*/
 }

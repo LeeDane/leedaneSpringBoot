@@ -429,11 +429,33 @@
 
     <!-- Package as an executable jar -->
     <build>
+    	<finalName>leedaneSpringBoot</finalName>  
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                
+                <configuration>
+		            <source>1.7</source>
+		            <target>1.7</target>
+		            <webResources>     
+						<resource>     
+							<directory>lib/</directory>
+                        <targetPath>WEB-INF/lib</targetPath> 
+							 <filtering>true</filtering>    
+							 <includes>    
+								<include>**/*.jar</include>   
+							 </includes>
+						</resource>  
+					 </webResources>
+		        </configuration>
             </plugin>
-        </plugins>
+        </plugins> 
     </build>
+    <repositories>  
+        <repository>  
+            <id>spring-milestone</id>  
+            <url>http://repo.spring.io/libs-release</url>  
+        </repository>  
+    </repositories>
 </project>

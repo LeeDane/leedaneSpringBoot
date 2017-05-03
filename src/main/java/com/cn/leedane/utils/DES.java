@@ -20,23 +20,23 @@ public class DES {
     public static final String CIPHER_ALGORITHM_ECB = "DES/ECB/PKCS5Padding";    
     public static final String CIPHER_ALGORITHM_CBC = "DES/CBC/PKCS5Padding";    
         
-    public static void main(String[] args) throws Exception {    
-        /*  
+    /*public static void main(String[] args) throws Exception {    
+          
          * 使用 ECB mode  
          * 密钥生成器 生成密钥  
          * ECB mode cannot use IV  
-         */    
+             
         byte[] key = generateKey();     
         byte[] encrypt = encrypt("effrdd".getBytes(), key);
         System.out.println("加密后："+new String(encrypt, "UTF8"));
         System.out.println("解密后：" +new String(decrypt(encrypt, key)));    
             
             
-        /*  
+          
          * 使用CBC mode  
          * 使用密钥工厂生成密钥，加密 解密  
          * iv: DES in CBC mode and RSA ciphers with OAEP encoding operation.  
-         */    
+             
         DESKeySpec dks = new DESKeySpec(key);    
         SecretKeyFactory factory = SecretKeyFactory.getInstance(KEY_ALGORITHM);    
         SecretKey secretKey = factory.generateSecret(dks);    
@@ -48,7 +48,7 @@ public class DES {
         byte[] dec = cipher.doFinal(enc); // 解密    
         //System.out.println(new String(dec));   
         System.out.println("解密后1：" +new String(dec));    
-    }    
+    }  */  
         
     static byte[] getIV() {    
         String iv = "asdfivh7"; //IV length: must be 8 bytes long    

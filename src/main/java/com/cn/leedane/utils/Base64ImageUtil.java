@@ -498,7 +498,7 @@ public class Base64ImageUtil {
 		}
 	}*/
 
-	public static void main(String[] args) throws Exception {
+	/*public static void main(String[] args) throws Exception {
 		
 		String path = "D://dd.jpg";
 		String base64Str = convertImageToBase64(path, null);
@@ -507,5 +507,5 @@ public class Base64ImageUtil {
 		System.out.println(base64Str);
 		long end = System.currentTimeMillis();
 		//System.out.println(paths+"总计耗时:" + (end - start)+"毫秒");		
-	}
+	}*/
 }

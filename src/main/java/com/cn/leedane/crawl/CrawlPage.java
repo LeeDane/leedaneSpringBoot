@@ -84,9 +84,9 @@ public class CrawlPage {
 	
 	}
 
-	public static void main(String[] args) throws IOException {
+	/*public static void main(String[] args) throws IOException {
 		//CrawlPage.CrawlOSC();
 		CrawlPage.CrawlSanwen();
 	}
-	
+	*/
 }

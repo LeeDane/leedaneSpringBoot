@@ -66,7 +66,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		
 		StringBuffer sql = new StringBuffer();
-		List<Map<String, Object>> rs = new ArrayList<>();
+		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
 		
 		if(method.equalsIgnoreCase("uploading") && firstId < 1){
 			message.put("isSuccess", true);
@@ -211,7 +211,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 		logger.info("ChatServiceImpl-->noReadList():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		
-		List<Map<String, Object>> rs = new ArrayList<>();
+		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
 		StringBuffer sql = new StringBuffer();
 		sql.append("select c.id, c.is_read, c.create_user_id, c.create_user_name, c.to_user_id , date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time, c.type, c.content");
 		sql.append(" from "+DataTableType.聊天.value+" c where c.to_user_id =? and c.is_read = ? and c.status=?");
