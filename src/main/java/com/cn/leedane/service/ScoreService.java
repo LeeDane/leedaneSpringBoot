@@ -3,10 +3,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import net.sf.json.JSONObject;
 
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.ScoreBean;
@@ -17,7 +17,7 @@ import com.cn.leedane.model.UserBean;
  * 2016年7月12日 上午11:35:07
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface ScoreService<T extends IDBean>{
 	
 	/**
@@ -32,7 +32,6 @@ public interface ScoreService<T extends IDBean>{
 	 * @param userId
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public int getTotalScore(int userId);
 
@@ -43,7 +42,6 @@ public interface ScoreService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getLimit(JSONObject jo, UserBean user, HttpServletRequest request);
 	
@@ -54,7 +52,6 @@ public interface ScoreService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getTotalScore(JSONObject jo, UserBean user, HttpServletRequest request);
 	

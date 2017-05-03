@@ -262,7 +262,30 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		message.put("isSuccess", result);
 		return message.getMap();
 	}
-
+	
+	@Override
+	public Map<String, Object> noReadNumber(JSONObject jo, UserBean user,
+			HttpServletRequest request) {
+		logger.info("NotificationServiceImpl-->noReadNumber():jo=" +jo.toString() +", user=" +user.getAccount());
+		ResponseMap message = new ResponseMap();
+		
+		String type = JsonUtil.getStringValue(jo, "type");
+		boolean read = JsonUtil.getBooleanValue(jo, "read", false);
+		if(StringUtil.isNull(type)){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value));
+			message.put("responseCode", EnumUtil.ResponseCode.参数不存在或为空.value);
+			return message.getMap();
+		}
+			
+		boolean result = notificationMapper.updateAllRead(type, read) > 0;
+		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
+		message.put("responseCode", EnumUtil.ResponseCode.修改成功.value);
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改通知类型为：", type , "的状态全部已读为：" , read, StringUtil.getSuccessOrNoStr(result)).toString(), "noReadNumber()", StringUtil.changeBooleanToInt(result), 0);
+		message.put("isSuccess", result);
+		return message.getMap();
+	}
+	
 	@Override
 	public boolean update(NotificationBean t) {
 		return notificationMapper.update(t) > 0;

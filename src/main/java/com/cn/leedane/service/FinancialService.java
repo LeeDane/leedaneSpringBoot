@@ -6,10 +6,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import net.sf.json.JSONObject;
 
 import com.cn.leedane.model.FinancialBean;
 import com.cn.leedane.model.IDBean;
@@ -21,7 +21,7 @@ import com.cn.leedane.model.UserBean;
  * 2016年7月22日 上午8:31:34
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface FinancialService<T extends IDBean>{
 	
 	/**
@@ -81,7 +81,6 @@ public interface FinancialService<T extends IDBean>{
 	 * @param request
 	 * @return 返回该年所有的记账记录
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getByYear(JSONObject jsonObject, UserBean user, HttpServletRequest request);
 	
@@ -92,7 +91,6 @@ public interface FinancialService<T extends IDBean>{
 	 * @param request
 	 * @return 返回该用户所有的记账记录
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getAll(JSONObject jsonObject, UserBean user, HttpServletRequest request);
 	
@@ -104,7 +102,6 @@ public interface FinancialService<T extends IDBean>{
 	 * @param endTime
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<FinancialBean> getByTimeRange(int createUserId, int status, Date startTime, Date endTime);
 
@@ -115,7 +112,6 @@ public interface FinancialService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> query(JSONObject json, UserBean user, HttpServletRequest request);
 
@@ -127,7 +123,6 @@ public interface FinancialService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> paging(JSONObject json, UserBean user,HttpServletRequest request);
 }

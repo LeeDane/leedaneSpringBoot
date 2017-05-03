@@ -4,10 +4,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import net.sf.json.JSONObject;
 
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
@@ -18,7 +18,7 @@ import com.cn.leedane.model.UserBean;
  * 2016年7月12日 上午11:31:09
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface ChatBgService <T extends IDBean>{
 	
 	
@@ -29,7 +29,6 @@ public interface ChatBgService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> paging(JSONObject jo, UserBean user, HttpServletRequest request);
 

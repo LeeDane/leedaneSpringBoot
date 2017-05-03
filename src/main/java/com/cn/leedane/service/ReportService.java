@@ -4,10 +4,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import net.sf.json.JSONObject;
 
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
@@ -17,7 +17,7 @@ import com.cn.leedane.model.UserBean;
  * 2016年7月12日 上午11:34:48
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface ReportService<T extends IDBean>{
 
 	/**
@@ -56,7 +56,6 @@ public interface ReportService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<Map<String, Object>> getLimit(JSONObject jo, UserBean user,
 			HttpServletRequest request);

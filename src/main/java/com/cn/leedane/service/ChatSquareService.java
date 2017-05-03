@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 2017年2月10日 下午4:10:18
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface ChatSquareService<ChatSquareBean>{
 
 	/**
@@ -34,7 +34,6 @@ public interface ChatSquareService<ChatSquareBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getActiveUser(Date date, int top) ;
 
@@ -46,7 +45,6 @@ public interface ChatSquareService<ChatSquareBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getLimit(JSONObject jo, HttpServletRequest request);
 }

@@ -8,7 +8,7 @@ import com.cn.leedane.model.IDBean;
  * 2016年7月12日 上午11:30:56
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface CartService<T extends IDBean>{
 
 	public void addCart();

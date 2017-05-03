@@ -123,4 +123,19 @@ public class NotificationController extends BaseController{
 		message.putAll(notificationService.updateAllRead(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
+	
+	/**
+	 * 获取登录用户未读取消息的数量
+	 * @return
+	 */
+	@RequestMapping(value = "/notification/noread/number", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> noReadNumber(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(notificationService.noReadNumber(getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
 }

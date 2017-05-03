@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.model.UserBean;
@@ -17,7 +18,7 @@ import com.cn.leedane.utils.ResponseMap;
  * 2017年3月24日 下午1:43:39
  * version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface UserTokenService<T extends UserTokenBean>{
 	
 	/**
@@ -27,6 +28,7 @@ public interface UserTokenService<T extends UserTokenBean>{
 	 * @param request
 	 * @return
 	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<UserTokenBean> getUserToken(UserBean user, String token, HttpServletRequest request);
 	
 	/**

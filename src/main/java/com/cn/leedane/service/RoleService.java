@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
 
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.model.IDBean;
@@ -17,7 +18,7 @@ import com.cn.leedane.model.UserBean;
  * 2016年7月12日 上午11:34:59
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface RoleService <T extends IDBean>{
 	/**
 	 * 添加角色
@@ -53,6 +54,7 @@ public interface RoleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> paging(JSONObject jsonObject, UserBean user, HttpServletRequest request);
 	
 	/**
@@ -71,6 +73,7 @@ public interface RoleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> users(int rlid, UserBean user, HttpServletRequest request);
 
 	/**

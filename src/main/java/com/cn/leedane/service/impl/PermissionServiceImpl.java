@@ -16,10 +16,12 @@ import org.springframework.stereotype.Service;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.PermissionMapper;
 import com.cn.leedane.mapper.RolePermissionMapper;
+import com.cn.leedane.model.CommentBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.PermissionBean;
 import com.cn.leedane.model.RolePermissionBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.CommentService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.PermissionService;
 import com.cn.leedane.utils.CollectionUtil;
@@ -53,12 +55,16 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 	
 	@Autowired
 	private UserHandler userHandler;
+	
+	@Autowired
+	private CommentService<CommentBean> commentService;
 
 	@Override
 	public Map<String, Object> save(JSONObject jsonObject, UserBean user,
 			HttpServletRequest request) {
 		logger.info("PermissionServiceImpl-->save():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
+		commentService.getCommentsByLimit(jsonObject, user, request);
 		PermissionBean permissionBean = new PermissionBean();
 		permissionBean.setCode(JsonUtil.getStringValue(jsonObject, "code"));
 		permissionBean.setCreateTime(new Date());
@@ -73,7 +79,6 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}
-		
 		return message.getMap();
 	}
 
@@ -97,7 +102,6 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}
-		
 		return message.getMap();
 	}
 
@@ -150,7 +154,6 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);
-		
 		return message.getMap();
 	}
 

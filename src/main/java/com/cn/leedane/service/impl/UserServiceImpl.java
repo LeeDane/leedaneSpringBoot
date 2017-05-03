@@ -1568,17 +1568,4 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		return message.getMap();
 	}
 
-	@Override
-	public boolean insertData() {
-		UserBean bean = new UserBean();
-		bean.setAccount("测试发发 发");
-		bean.setPassword("jgjgjfff");
-		int ir = userMapper.save(bean);
-		System.out.println("返回数据："+ ir);
-		//int i = 10 / 0;
-		return false;
-	}
-
-	
-
 }

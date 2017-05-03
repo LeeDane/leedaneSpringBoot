@@ -13,7 +13,7 @@ import com.cn.leedane.model.UserBean;
  * 2016年7月12日 上午11:35:23
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface TemporaryBase64Service<T extends IDBean>{
 	
 	/**

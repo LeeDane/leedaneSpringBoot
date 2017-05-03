@@ -4,10 +4,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import net.sf.json.JSONObject;
 
 import com.cn.leedane.model.CommentBean;
 import com.cn.leedane.model.IDBean;
@@ -18,7 +18,7 @@ import com.cn.leedane.model.UserBean;
  * 2016年7月12日 上午11:32:11
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface CommentService<T extends IDBean>{
 
 	/**
@@ -26,7 +26,6 @@ public interface CommentService<T extends IDBean>{
 	 * @param userId
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public int getTotalComments(int userId);
 	
@@ -59,7 +58,6 @@ public interface CommentService<T extends IDBean>{
 	 * @return
 	 * @throws Exception
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getCommentsByLimit(JSONObject jo, UserBean user, HttpServletRequest request);
 	
@@ -73,7 +71,6 @@ public interface CommentService<T extends IDBean>{
 	 * @return
 	 * @throws Exception
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getOneCommentItemsByLimit(JSONObject jo, UserBean user, HttpServletRequest request);
 
@@ -86,7 +83,6 @@ public interface CommentService<T extends IDBean>{
 	 * @return
 	 * @throws Exception
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getCountByObject(JSONObject jo, UserBean user, HttpServletRequest request);
 
@@ -98,7 +94,6 @@ public interface CommentService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getCountByUser(JSONObject jo, UserBean user, HttpServletRequest request);
 
@@ -135,7 +130,6 @@ public interface CommentService<T extends IDBean>{
 	 * @param where where后面语句，参数需直接填写在字符串中
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public int getTotal(String tableName, String where);
 	
@@ -148,6 +142,7 @@ public interface CommentService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getMessageBoards(int userId, JSONObject jo, UserBean user, HttpServletRequest request);
 	
 }

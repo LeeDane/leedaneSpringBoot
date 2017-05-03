@@ -5,10 +5,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import net.sf.json.JSONObject;
 
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
@@ -19,7 +19,7 @@ import com.cn.leedane.model.UserBean;
  * 2016年7月12日 上午11:33:00
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface FanService <T extends IDBean>{
 	
 	/**
@@ -39,7 +39,6 @@ public interface FanService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getMyAttentionsLimit(JSONObject jo, UserBean user, HttpServletRequest request);
 	
@@ -52,7 +51,6 @@ public interface FanService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getToAttentionsLimit(JSONObject jo, UserBean user, HttpServletRequest request);
 	
@@ -64,7 +62,6 @@ public interface FanService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getMyFansLimit(JSONObject jo, UserBean user, HttpServletRequest request);
 	
@@ -76,7 +73,6 @@ public interface FanService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getToFansLimit(JSONObject jo, UserBean user, HttpServletRequest request);
 	
@@ -96,7 +92,6 @@ public interface FanService <T extends IDBean>{
 	 * @param to_user_id  对方用户的id
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public boolean isFanEachOther(JSONObject jo, UserBean user, HttpServletRequest request);
 	/**
@@ -105,7 +100,6 @@ public interface FanService <T extends IDBean>{
 	 * @param to_user_id  对方用户的id
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> isFan(JSONObject jo, UserBean user, HttpServletRequest request);
 	

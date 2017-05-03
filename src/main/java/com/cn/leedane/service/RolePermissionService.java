@@ -2,6 +2,7 @@ package com.cn.leedane.service;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.model.IDBean;
@@ -13,7 +14,7 @@ import com.cn.leedane.model.RoleBean;
  * 2017年4月10日 上午10:29:18
  * version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface RolePermissionService<T extends IDBean>{
 	
 	/**
@@ -21,5 +22,6 @@ public interface RolePermissionService<T extends IDBean>{
 	 * @param user
 	 * @return
 	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<RoleBean> getUserRoleBeans(int userid);
 }

@@ -205,7 +205,6 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			UserBean user, HttpServletRequest request){
 		logger.info("CommentServiceImpl-->getCommentByLimit():jsonObject=" +jo.toString());
 		ResponseMap message = new ResponseMap();
-		
 		if(user == null)
 			user = OptionUtil.adminUser;
 		 //{\"uid\":2,\"table_name\":\"t_mood\", \"table_id\":123,\"pageSize\":5

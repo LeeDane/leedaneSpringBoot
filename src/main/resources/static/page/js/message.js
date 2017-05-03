@@ -4,6 +4,11 @@ var messages;
 var totalPage = 0;
 var type; //通知类型
 $(function(){
+	$(".navbar-nav .nav-main-li").each(function(){
+		$(this).removeClass("active");
+	});
+	$(".nav-msg").addClass("active");
+	
 	if(isNotEmpty(tabName)){
 		$("#notification-tabs").find("li").each(function(index){
 			if($(this).find("a").text() == tabName){

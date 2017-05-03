@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
 
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.model.UserBean;
@@ -17,7 +18,7 @@ import com.cn.leedane.model.UserBean;
  * 2017年4月10日 下午4:49:16
  * version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface LinkManageService<LinkManageBean>{
 	
 	/**
@@ -25,6 +26,7 @@ public interface LinkManageService<LinkManageBean>{
 	 * @param user
 	 * @return
 	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<LinkManageBean> getAllLinks();
 	
 	/**
@@ -61,6 +63,7 @@ public interface LinkManageService<LinkManageBean>{
 	 * @param request
 	 * @return
 	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> paging(JSONObject jsonObject, UserBean user, HttpServletRequest request);
 	
 	/**
@@ -80,6 +83,7 @@ public interface LinkManageService<LinkManageBean>{
 	 * @param request
 	 * @return
 	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> roleOrPermissions(int lnid, boolean role, UserBean user, HttpServletRequest request);
 
 	/**

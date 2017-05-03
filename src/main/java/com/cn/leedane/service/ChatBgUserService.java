@@ -11,7 +11,7 @@ import com.cn.leedane.model.IDBean;
  * 2016年7月12日 上午11:31:22
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface ChatBgUserService <T extends IDBean>{
 	
 	/**
@@ -20,7 +20,6 @@ public interface ChatBgUserService <T extends IDBean>{
 	 * @param chatBgTableId
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public boolean exists(int userId, int chatBgTableId);
 }

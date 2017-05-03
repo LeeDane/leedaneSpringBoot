@@ -18,7 +18,7 @@ import com.cn.leedane.model.UserBean;
  * 2016年7月12日 上午11:33:20
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface FriendService <T extends IDBean>{
 	
 	/**
@@ -55,7 +55,6 @@ public interface FriendService <T extends IDBean>{
 	 * @param to_user_id  对方用户的id
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public boolean isFriend(int id, int to_user_id);
 	
@@ -65,7 +64,6 @@ public interface FriendService <T extends IDBean>{
 	 * @param to_user_id  对方用户的id
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public boolean isFriendRecord(int id, int to_user_id);
 
@@ -76,7 +74,6 @@ public interface FriendService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> friendsAlreadyPaging(JSONObject jo, UserBean user, HttpServletRequest request);
 	
@@ -87,7 +84,6 @@ public interface FriendService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> friendsNotyetPaging(JSONObject jo, UserBean user, HttpServletRequest request);
 	
@@ -98,7 +94,6 @@ public interface FriendService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> requestPaging(JSONObject jo, UserBean user, HttpServletRequest request);
 	
@@ -109,7 +104,6 @@ public interface FriendService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> responsePaging(JSONObject jo, UserBean user, HttpServletRequest request);
 
@@ -129,7 +123,6 @@ public interface FriendService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> friends(JSONObject jo, UserBean user, HttpServletRequest request);
 }

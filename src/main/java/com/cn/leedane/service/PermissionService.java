@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
 
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.model.IDBean;
@@ -17,7 +18,7 @@ import com.cn.leedane.model.UserBean;
  * 2017年4月17日 下午2:24:08
  * version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface PermissionService <T extends IDBean>{
 	
 	/**
@@ -54,6 +55,7 @@ public interface PermissionService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> paging(JSONObject jsonObject, UserBean user, HttpServletRequest request);
 	
 	/**
@@ -72,6 +74,7 @@ public interface PermissionService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> roles(int pmid, UserBean user, HttpServletRequest request);
 
 	/**

@@ -3,10 +3,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import net.sf.json.JSONObject;
 
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.NotificationBean;
@@ -17,7 +17,7 @@ import com.cn.leedane.model.UserBean;
  * 2016年7月12日 上午11:34:00
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface NotificationService<T extends IDBean>{
 	
 	/**
@@ -43,7 +43,6 @@ public interface NotificationService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getLimit(JSONObject jo, UserBean user,
 			HttpServletRequest request);
@@ -54,7 +53,6 @@ public interface NotificationService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> paging(String type,
 			int pageSize, int current, int total,
@@ -96,5 +94,14 @@ public interface NotificationService<T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> updateAllRead(JSONObject jo, UserBean user, HttpServletRequest request);
+	
+	/**
+	 * 获取登录用户未读取消息的数量
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> noReadNumber(JSONObject jo, UserBean user, HttpServletRequest request);
 	
 }

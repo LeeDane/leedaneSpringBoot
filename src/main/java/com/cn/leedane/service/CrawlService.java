@@ -14,7 +14,7 @@ import com.cn.leedane.model.IDBean;
  * 2016年7月12日 上午11:32:47
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface CrawlService <T extends IDBean>{
 	
 	/**
@@ -23,7 +23,6 @@ public interface CrawlService <T extends IDBean>{
 	 * @param source 来源，空表示全部
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<CrawlBean> findAllNotCrawl(int limit, String source);
 	
@@ -32,7 +31,6 @@ public interface CrawlService <T extends IDBean>{
 	 * @param limit 现在的数量,等于0表示全部
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<CrawlBean> findAllHotNotCrawl(int limit);
 	

@@ -5,10 +5,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import net.sf.json.JSONObject;
 
 import com.cn.leedane.model.FinancialTwoLevelCategoryBean;
 import com.cn.leedane.model.IDBean;
@@ -20,7 +20,7 @@ import com.cn.leedane.model.UserBean;
  * 2016年12月8日 下午9:28:06
  * Version 1.0
  */
-@Transactional("txManager")
+@Transactional
 public interface FinancialTwoCategoryService<T extends IDBean>{
 	
 	/**
@@ -28,7 +28,6 @@ public interface FinancialTwoCategoryService<T extends IDBean>{
 	 * @param userId
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<FinancialTwoLevelCategoryBean> getAllDefault(int userId);
 	
@@ -37,7 +36,6 @@ public interface FinancialTwoCategoryService<T extends IDBean>{
 	 * @param userId
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getAll(JSONObject json, UserBean user, HttpServletRequest request);
 
@@ -55,7 +53,6 @@ public interface FinancialTwoCategoryService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	//标记该方法不需要事务
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getOneAndTwoCategorys(JSONObject json, UserBean user, HttpServletRequest request);
 }

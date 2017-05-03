@@ -115,7 +115,7 @@
             <li class="nav-blog nav-main-li"><a th:href="@{/index}">博客</a></li>
             <li class="nav-shop nav-main-li"><a th:href="@{/shop/}">leedane商城</a></li>
             <li class="nav-photo nav-main-li" th:if="${isLogin}"><a th:href="@{/pt}">相册</a></li>
-            <li class="nav-photo nav-main-li" th:if="${isLogin}"><a th:href="@{/msg}"><span class="badge pull-right">10</span>消息</a></li>
+            <li class="nav-msg nav-main-li" th:if="${isLogin}"><a th:href="@{/msg}"><span class="badge pull-right">10</span>消息</a></li>
             <li class="nav-my nav-main-li" th:if="${isLogin}"><a th:href="@{/my}">中心</a></li>
             <li class="nav-financial nav-main-li" th:if="${isLogin}"><a th:href="@{/fn}">记账</a></li>
             <li class="dropdown">
