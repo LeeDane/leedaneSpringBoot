@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cn.leedane.handler.RolePermissionHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.RoleMapper;
 import com.cn.leedane.mapper.UserRoleMapper;
@@ -53,6 +54,9 @@ private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
 	private UserHandler userHandler;
+	
+	@Autowired
+	private RolePermissionHandler rolePermissionHandler;
 
 	@Override
 	public Map<String, Object> save(JSONObject jsonObject, UserBean user,
@@ -107,6 +111,15 @@ private Logger logger = Logger.getLogger(getClass());
 		logger.info("RoleServiceImpl-->delete():rlid="+ rlid);
 		ResponseMap message = new ResponseMap();
 				
+		//删除权限之间的关系
+		List<Map<String, Object>> uids = userRoleMapper.getUsersByRoleId(rlid);
+		if(CollectionUtil.isNotEmpty(uids)){
+			for(Map<String, Object> uid: uids)
+				//清空权限相关的缓存
+				rolePermissionHandler.deleteByUser(StringUtil.changeObjectToInt(uid.get("user_id")));
+		}
+		userRoleMapper.deleteByField(UserRoleBean.class, "role_id", rlid);
+		
 		boolean result = roleMapper.deleteById(RoleBean.class, rlid) > 0;
 		message.put("isSuccess", result);
 		if(result){
@@ -144,8 +157,6 @@ private Logger logger = Logger.getLogger(getClass());
 			message.put("total", SqlUtil.getTotalByList(roleMapper.getTotal(DataTableType.角色.value, null)));
 		}
 		
-		
-		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取角色列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
 		message.put("message", rs);
@@ -174,7 +185,13 @@ private Logger logger = Logger.getLogger(getClass());
 			else
 				sql.append("role_id = "+ ids[i] +" or ");
 		}
-		
+		//清空用户的角色权限缓存redis
+		List<Map<String, Object>> uids = userRoleMapper.getUsersByRoleIds(ids);
+		if(CollectionUtil.isNotEmpty(uids)){
+			for(Map<String, Object> uid: uids)
+				//清空权限相关的缓存
+				rolePermissionHandler.deleteByUser(StringUtil.changeObjectToInt(uid.get("user_id")));
+		}
 		 userRoleMapper.deleteByField(UserRoleBean.class, "role_id", rlidArray);
 		 
 		 boolean result = roleMapper.deleteByIds(RoleBean.class, ids) == rlidArray.length;
@@ -219,7 +236,14 @@ private Logger logger = Logger.getLogger(getClass());
 		for(int i = 0; i < userArray.length; i++){
 			userIds[i] = StringUtil.changeObjectToInt(userArray[i]);
 		}
-		
+
+		//删除权限之间的关系
+		List<Map<String, Object>> uids = userRoleMapper.getUsersByRoleId(rlid);
+		if(CollectionUtil.isNotEmpty(uids)){
+			for(Map<String, Object> uid: uids)
+				//清空权限相关的缓存
+				rolePermissionHandler.deleteByUser(StringUtil.changeObjectToInt(uid.get("user_id")));
+		}
 		userRoleMapper.deleteByField(UserRoleBean.class, "role_id", rlid);
 		
 		Date createTime = DateUtil.getCurrentTime();
@@ -233,12 +257,9 @@ private Logger logger = Logger.getLogger(getClass());
 			data.add(map);
 		}
 		
-		//删除所有的
-		
 		if(StringUtil.isNotNull(users)){
 			userRoleMapper.insertByBatch(data);
 		}
-		
 				
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给角色ID为"+ rlid +",分配用户ids"+users).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, 0);		

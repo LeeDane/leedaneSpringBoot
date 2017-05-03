@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.exception.OperateException;
+import com.cn.leedane.exception.RE404Exception;
+import com.cn.leedane.handler.RolePermissionHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.LinkManageMapper;
 import com.cn.leedane.mapper.LinkRoleOrPermissionMapper;
@@ -60,7 +62,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 	private UserHandler userHandler;
 	
 	@Autowired
-	private LinkRoleOrPermissionService<LinkRoleOrPermissionBean> linkRoleOrPermissionService;
+	private RolePermissionHandler rolePermissionHandler;
 	
 	@Override
 	public List<LinkManageBean> getAllLinks() {
@@ -101,8 +103,13 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 			HttpServletRequest request) {
 		logger.info("LinkManageServiceImpl-->edit():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
+		int lnid = JsonUtil.getIntValue(jsonObject, "id");
+		LinkManageBean oldLinkManageBean = linkManageMapper.findById(LinkManageBean.class, lnid);
+		if(oldLinkManageBean == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
+		
 		LinkManageBean linkManageBean = new LinkManageBean();
-		linkManageBean.setId(JsonUtil.getIntValue(jsonObject, "id"));
+		linkManageBean.setId(lnid);
 		linkManageBean.setAlias(JsonUtil.getStringValue(jsonObject, "alias"));
 		linkManageBean.setAll(JsonUtil.getBooleanValue(jsonObject, "all", true));
 		linkManageBean.setLink(JsonUtil.getStringValue(jsonObject, "link"));
@@ -120,7 +127,15 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		}
 		
 		//删除所有的角色或者权限
+		//清空权限相关的缓存
+		List<Map<String, Object>> uids = linkRoleOrPermissionMapper.getUsersByLinkId(lnid);
+		if(CollectionUtil.isNotEmpty(uids)){
+			for(Map<String, Object> uid: uids)
+				//清空权限相关的缓存
+				rolePermissionHandler.deleteByUser(StringUtil.changeObjectToInt(uid.get("user_id")));
+		}
 		linkRoleOrPermissionMapper.deleteByField(LinkRoleOrPermissionBean.class, "link_id", linkManageBean.getId());
+		
 		message.put("isSuccess", result);
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -137,6 +152,12 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		message.put("isSuccess", result);
 		if(result){
 			//删除所有的角色或者权限
+			List<Map<String, Object>> uids = linkRoleOrPermissionMapper.getUsersByLinkId(lnid);
+			if(CollectionUtil.isNotEmpty(uids)){
+				for(Map<String, Object> uid: uids)
+					//清空权限相关的缓存
+					rolePermissionHandler.deleteByUser(StringUtil.changeObjectToInt(uid.get("user_id")));
+			}
 			linkRoleOrPermissionMapper.deleteByField(LinkRoleOrPermissionBean.class, "link_id", lnid);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -193,15 +214,18 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 			else
 				sql.append("role_id = "+ ids[i] +" or ");
 		}
-		 
+		//删除所有的角色或者权限
+		List<Map<String, Object>> uids = linkRoleOrPermissionMapper.getUsersByLinkIds(ids);
+		if(CollectionUtil.isNotEmpty(uids)){
+			for(Map<String, Object> uid: uids)
+				//清空权限相关的缓存
+				rolePermissionHandler.deleteByUser(StringUtil.changeObjectToInt(uid.get("user_id")));
+		}
+		linkRoleOrPermissionMapper.deleteByField(LinkRoleOrPermissionBean.class, "link_id", lnidArray);
+		
 		boolean result = linkManageMapper.deleteByIds(LinkManageBean.class, ids) == lnidArray.length;
 		message.put("isSuccess", result);
 		if(result){
-			//清空用户的角色redis
-			
-			//删除所有的角色或者权限
-			linkRoleOrPermissionMapper.deleteByField(LinkRoleOrPermissionBean.class, "link_id", lnidArray);
-			
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}
@@ -247,6 +271,12 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		}
 		
 		//删除所有的角色或者权限
+		List<Map<String, Object>> uids = linkRoleOrPermissionMapper.getUsersByLinkId(lnid);
+		if(CollectionUtil.isNotEmpty(uids)){
+			for(Map<String, Object> uid: uids)
+				//清空权限相关的缓存
+				rolePermissionHandler.deleteByUser(StringUtil.changeObjectToInt(uid.get("user_id")));
+		}
 		linkRoleOrPermissionMapper.deleteByField(LinkRoleOrPermissionBean.class, "link_id", lnid);
 		
 		Date createTime = DateUtil.getCurrentTime();

@@ -47,6 +47,11 @@ public class LinkManageHandler {
 			if(CollectionUtil.isNotEmpty(beans)){
 				linkManageBeans = new LinkManagesBean();
 				linkManageBeans.setLinkManageBean(beans);
+				try {
+					redisUtil.addSerialize(key, SerializeUtil.serializeObject(linkManageBeans));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return linkManageBeans;

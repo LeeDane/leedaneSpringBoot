@@ -3,6 +3,8 @@ package com.cn.leedane.mapper;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.cn.leedane.model.RolePermissionBean;
 
 /**
@@ -12,5 +14,23 @@ import com.cn.leedane.model.RolePermissionBean;
  * version 1.0
  */
 public interface RolePermissionMapper extends BaseMapper<RolePermissionBean>{
+	/**
+	 * 批量添加
+	 * @param data
+	 */
 	public void insertByBatch(List<Map<String, Object>> data);
+	
+	/**
+	 * 根据权限id获取其对应分配的用户id
+	 * @param pmid
+	 * @return
+	 */
+	public List<Map<String, Object>> getUsersByPermissionId(@Param("pmid")int pmid);
+	
+	/**
+	 * 根据权限ids获取其对应分配的用户id
+	 * @param pmids
+	 * @return
+	 */
+	public List<Map<String, Object>> getUsersByPermissionIds(@Param("pmids")int[] pmids);
 }

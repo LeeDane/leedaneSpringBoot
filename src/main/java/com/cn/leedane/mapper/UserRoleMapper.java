@@ -19,5 +19,23 @@ public interface UserRoleMapper  extends BaseMapper<UserRoleBean>{
 	public List<RoleBean> getUserRoleBeans(
 				@Param("userId") int userId, @Param("status") int status);
 	
+	/**
+	 * 批量添加
+	 * @param data
+	 */
 	public void insertByBatch(List<Map<String, Object>> data);
+	
+	/**
+	 * 根据角色id获取其对应分配的用户id
+	 * @param pmid
+	 * @return
+	 */
+	public List<Map<String, Object>> getUsersByRoleId(@Param("rlid")int rlid);
+	
+	/**
+	 * 根据角色ids获取其对应分配的用户id
+	 * @param pmids
+	 * @return
+	 */
+	public List<Map<String, Object>> getUsersByRoleIds(@Param("rlids")int[] rlids);
 }

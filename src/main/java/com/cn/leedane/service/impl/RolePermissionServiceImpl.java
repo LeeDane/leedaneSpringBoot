@@ -6,13 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.mapper.UserRoleMapper;
-import com.cn.leedane.model.OperateLogBean;
+import com.cn.leedane.handler.RolePermissionHandler;
 import com.cn.leedane.model.RoleBean;
 import com.cn.leedane.model.UserRoleBean;
-import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.RolePermissionService;
-import com.cn.leedane.utils.ConstantsUtil;
 
 /**
  * 用户角色service实现类
@@ -26,17 +23,13 @@ import com.cn.leedane.utils.ConstantsUtil;
 public class RolePermissionServiceImpl implements RolePermissionService<UserRoleBean> {
 	
 	Logger logger = Logger.getLogger(getClass());
-	
-	@Autowired
-	private UserRoleMapper userRoleMapper;
-	
-	@Autowired
-	private OperateLogService<OperateLogBean> operateLogService;
 
+	@Autowired
+	private RolePermissionHandler rolePermissionHandler;
 
 	@Override
 	public List<RoleBean> getUserRoleBeans(int userid) {
 		logger.info("UserRoleServiceImpl-->getUserRoleBeans():userid="+userid);
-		return userRoleMapper.getUserRoleBeans(userid, ConstantsUtil.STATUS_NORMAL);
+		return rolePermissionHandler.getUserRoleBeans(userid);
 	}
 }

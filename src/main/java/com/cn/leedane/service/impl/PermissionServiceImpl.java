@@ -13,15 +13,14 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cn.leedane.handler.RolePermissionHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.PermissionMapper;
 import com.cn.leedane.mapper.RolePermissionMapper;
-import com.cn.leedane.model.CommentBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.PermissionBean;
 import com.cn.leedane.model.RolePermissionBean;
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.CommentService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.PermissionService;
 import com.cn.leedane.utils.CollectionUtil;
@@ -57,14 +56,14 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 	private UserHandler userHandler;
 	
 	@Autowired
-	private CommentService<CommentBean> commentService;
-
+	private RolePermissionHandler rolePermissionHandler;
+	
 	@Override
 	public Map<String, Object> save(JSONObject jsonObject, UserBean user,
 			HttpServletRequest request) {
 		logger.info("PermissionServiceImpl-->save():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
-		commentService.getCommentsByLimit(jsonObject, user, request);
+		//commentService.getCommentsByLimit(jsonObject, user, request);
 		PermissionBean permissionBean = new PermissionBean();
 		permissionBean.setCode(JsonUtil.getStringValue(jsonObject, "code"));
 		permissionBean.setCreateTime(new Date());
@@ -110,12 +109,19 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 			HttpServletRequest request) {
 		logger.info("PermissionServiceImpl-->delete():pmid="+ pmid);
 		ResponseMap message = new ResponseMap();
-				
+		
+		//删除权限之间的关系
+		List<Map<String, Object>> uids = rolePermissionMapper.getUsersByPermissionId(pmid);
+		if(CollectionUtil.isNotEmpty(uids)){
+			for(Map<String, Object> uid: uids)
+				//清空权限相关的缓存
+				rolePermissionHandler.deleteByUser(StringUtil.changeObjectToInt(uid.get("user_id")));
+		}
+		rolePermissionMapper.deleteByField(RolePermissionBean.class, "permission_id", pmid);
+		
 		boolean result = permissionMapper.deleteById(PermissionBean.class, pmid) > 0;
 		message.put("isSuccess", result);
 		if(result){
-			//删除权限之间的关系
-			rolePermissionMapper.deleteByField(RolePermissionBean.class, "permission_id", pmid);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}
@@ -177,16 +183,21 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 				sql.append("permission_id = "+ ids[i] +" or ");
 		}
 		
-		 rolePermissionMapper.deleteByField(RolePermissionBean.class, "permission_id", pmidArray);
+		//清空用户的权限redis
+		List<Map<String, Object>> uids = rolePermissionMapper.getUsersByPermissionIds(ids);
+		if(CollectionUtil.isNotEmpty(uids)){
+			for(Map<String, Object> uid: uids)
+				//清空权限相关的缓存
+				rolePermissionHandler.deleteByUser(StringUtil.changeObjectToInt(uid.get("user_id")));
+		}
+		rolePermissionMapper.deleteByField(RolePermissionBean.class, "permission_id", pmidArray);
 		 
-		 boolean result = permissionMapper.deleteByIds(PermissionBean.class, ids) == pmidArray.length;
-			message.put("isSuccess", result);
-			if(result){
-				//清空用户的权限redis
-				
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
-				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			}
+	 	boolean result = permissionMapper.deleteByIds(PermissionBean.class, ids) == pmidArray.length;
+		message.put("isSuccess", result);
+		if(result){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		}
 		
 		
 		return message.getMap();
@@ -223,6 +234,12 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		}
 		
 		//删除权限之间的关系
+		List<Map<String, Object>> uids = rolePermissionMapper.getUsersByPermissionId(pmid);
+		if(CollectionUtil.isNotEmpty(uids)){
+			for(Map<String, Object> uid: uids)
+				//清空权限相关的缓存
+				rolePermissionHandler.deleteByUser(StringUtil.changeObjectToInt(uid.get("user_id")));
+		}
 		rolePermissionMapper.deleteByField(RolePermissionBean.class, "permission_id", pmid);
 		
 		//RolePermissionBean rolePermissionBean;

@@ -16,4 +16,20 @@
             (1, #{item.role_id, jdbcType=INTEGER}, #{item.permission_id,jdbcType=INTEGER}, #{item.create_user_id,jdbcType=INTEGER},#{item.create_time,jdbcType=DATE})
         </foreach>
     </insert>
+    
+    <!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="getUsersByPermissionId" resultType="java.util.Map">
+		select ur.user_id
+		from t_user_role ur inner join t_role_permission rp on ur.role_id = rp.role_id where rp.permission_id = #{pmid}
+	</select>
+	
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="getUsersByPermissionIds" resultType="java.util.Map">
+		select ur.user_id
+		from t_user_role ur inner join t_role_permission rp on ur.role_id = rp.role_id where rp.permission_id in 
+		<foreach collection="pmids" item="pmid" index="index"
+            open="(" close=")" separator=",">
+            #{pmid}
+        </foreach>
+	</select>
 </mapper>

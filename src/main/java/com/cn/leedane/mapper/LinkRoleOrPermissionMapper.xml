@@ -16,4 +16,38 @@
             (1, #{item.role_id, jdbcType=INTEGER}, #{item.permission_id,jdbcType=INTEGER}, #{item.link_id,jdbcType=INTEGER}, #{item.role,jdbcType=BOOLEAN}, #{item.create_user_id,jdbcType=INTEGER},#{item.create_time,jdbcType=DATE})
         </foreach>
     </insert>
+    
+     <!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="getUsersByLinkId" resultType="java.util.Map">
+		select ur.user_id from t_user_role ur where ur.role_id in (select r.id from t_role r INNER JOIN t_link_role_or_permission lrop on r.id = lrop.role_id where lrop.role = true and lrop.link_id = #{lnid})
+		UNION 
+		select ur.user_id from t_user_role ur where ur.role_id in (select rp.role_id from t_role_permission rp INNER JOIN t_link_role_or_permission lrop on rp.permission_id = lrop.permission_id where lrop.role = false and lrop.link_id = #{lnid})
+	</select>
+	
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="getUsersByLinkIds" resultType="java.util.Map">
+		select ur.user_id 
+		from t_user_role ur 
+		where ur.role_id in (
+			select r.id 
+			from t_role r INNER JOIN t_link_role_or_permission lrop on r.id = lrop.role_id 
+			where lrop.role = true and lrop.link_id in 
+				<foreach collection="lnids" item="lnid" index="index"
+	            	open="(" close=")" separator=",">
+	            	#{lnid}
+	        	</foreach>
+			) 
+		UNION 
+		select ur.user_id 
+		from t_user_role ur 
+		where ur.role_id in (
+			select rp.role_id 
+			from t_role_permission rp INNER JOIN t_link_role_or_permission lrop on rp.permission_id = lrop.permission_id 
+			where lrop.role = false and lrop.link_id in  
+				<foreach collection="lnids" item="lnid" index="index"
+	            	open="(" close=")" separator=",">
+	            	#{lnid}
+	        	</foreach>
+		) 
+	</select>
 </mapper>
