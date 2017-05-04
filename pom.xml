@@ -177,93 +177,6 @@
 		    <artifactId>freemarker</artifactId>
 		    <version>2.3.19</version>
 		</dependency> -->
-		
-		
-        
-        <!-- comet4j -->
-        <dependency>
-	     	<groupId>com.leedane.comet4j</groupId>
-	     	<artifactId>comet4j</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\comet4j-tomcat7.jar</systemPath>
-	  	</dependency>
-	  	
-	  	<!-- jpush -->
-	  	<dependency>
-	     	<groupId>com.leedane.jpush</groupId>
-	     	<artifactId>jpush</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\jpush-client-3.2.7.jar</systemPath>
-	  	</dependency>
-	  	
-	  	<!-- zxing -->
-	  	<dependency>
-	     	<groupId>com.leedane.zxing</groupId>
-	     	<artifactId>core</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\zxing_core_3.2.0.jar</systemPath>
-	  	</dependency>
-	  	<dependency>
-	     	<groupId>com.leedane.zxing</groupId>
-	     	<artifactId>javase</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\zxing-javase.jar</systemPath>
-	  	</dependency>
-	  	
-	  	<!-- Ehcache -->
-		<dependency>
-		    <groupId>com.leedane.ehcache</groupId>
-	     	<artifactId>core</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\ehcache-core-2.4.3.jar</systemPath>
-		</dependency>
-	  	
-	  	<!-- axis -->
-	  	<dependency>
-	     	<groupId>com.leedane.other</groupId>
-	     	<artifactId>axis</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\axis.jar</systemPath>
-	  	</dependency>
-	  	<dependency>
-		    <groupId>com.leedane.other</groupId>
-	     	<artifactId>jaxrpc</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\jaxrpc.jar</systemPath>
-		</dependency>
-		
-		<!-- email -->
-	  	<dependency>
-	     	<groupId>com.leedane.other</groupId>
-	     	<artifactId>smtp</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\smtp.jar</systemPath>
-	  	</dependency>
-	  	<dependency>
-	     	<groupId>com.leedane.other</groupId>
-	     	<artifactId>mailapi</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\mailapi.jar</systemPath>
-	  	</dependency>
-	  	
-	  	<!-- taobao -->
-	  	<dependency>
-	     	<groupId>com.leedane.other</groupId>
-	     	<artifactId>taobao</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\taobao-sdk-java-auto_1452788057542-20160126.jar</systemPath>
-	  	</dependency>
-	  	
 	  	<!-- okHttp https://mvnrepository.com/artifact/com.squareup.okhttp/okhttp -->
 		<dependency>
 		    <groupId>com.squareup.okhttp</groupId>
@@ -284,13 +197,6 @@
 		    <artifactId>lucene-queryparser</artifactId>
 		    <version>4.10.2</version>
 		</dependency>
-		<dependency>
-	     	<groupId>com.leedane.other</groupId>
-	     	<artifactId>IKAnalyzer</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\IKAnalyzer2012_FF.jar</systemPath>
-	  	</dependency>
 	  	
 	  	<!-- Jsoup https://mvnrepository.com/artifact/org.jsoup/jsoup -->
 		<dependency>
@@ -305,15 +211,6 @@
 		    <artifactId>fastjson</artifactId>
 		    <version>1.2.25</version>
 		</dependency>
-	  	
-	  	<!--  jmimemagic -->
-	  	<dependency>
-	     	<groupId>com.leedane.other</groupId>
-	     	<artifactId>jmimemagic</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\jmimemagic-0.1.2.jar</systemPath>
-	  	</dependency>
 	  	
 	  	<!-- rabbitmq 跟服务器一样同一个版本 https://mvnrepository.com/artifact/com.rabbitmq/amqp-client -->
 		<dependency>
@@ -350,24 +247,6 @@
 		    <version>2.2.1</version>
 		</dependency>
 	  	
-	  	<!-- Qrcode -->
-	  	<dependency>
-	     	<groupId>com.leedane.other</groupId>
-	     	<artifactId>Qrcode</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\Qrcode_swetake.jar</systemPath>
-	  	</dependency>
-	  	
-	  	<!-- ueditor-1.1.1.jar -->
-	  	<dependency>
-	     	<groupId>com.leedane.other</groupId>
-	     	<artifactId>ueditor</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\ueditor-1.1.1.jar</systemPath>
-	  	</dependency>
-	  	
 	  	<!-- https://mvnrepository.com/artifact/org.json/json -->
 		<dependency>
 		    <groupId>org.json</groupId>
@@ -381,15 +260,6 @@
 		    <artifactId>commons-fileupload</artifactId>
 		    <version>1.3.1</version>
 		</dependency>
-	  	
-	  	<!-- commons-codec -->
-	  	<dependency>
-	     	<groupId>com.leedane.other</groupId>
-	     	<artifactId>commons-codec</artifactId>
-	     	<scope>system</scope>
-	     	<version>1.0</version>
-	     	<systemPath>${basedir}\src\lib\commons-codec-1.9.jar</systemPath>
-	  	</dependency>
 	  	
 	  	<!-- shiro -->
 	  	<dependency>
@@ -409,7 +279,93 @@
 		    <artifactId>shiro-ehcache</artifactId>  
 		    <version>${shiro.version}</version>  
 		</dependency>
-
+		
+		
+		<!-- ****************************************** local-jar ****************************************** -->
+		<!-- axis -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>axis</artifactId>
+	     	<version>9.9.9</version>
+	  	</dependency>
+	  	<!-- commons-codec -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>commons-codec</artifactId>
+	     	<version>1.9</version>
+	  	</dependency>
+	  	<!-- Ehcache -->
+		<dependency>
+		    <groupId>com.leedane.other</groupId>
+	     	<artifactId>ehcache</artifactId>
+	     	<version>2.4.3</version>
+		</dependency>
+		<!-- IKAnalyzer -->
+		<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>IKAnalyzer</artifactId>
+	     	<version>9.9.9</version>
+	  	</dependency>
+	  	<!-- jaxrpc -->
+	  	<dependency>
+		    <groupId>com.leedane.other</groupId>
+	     	<artifactId>jaxrpc</artifactId>
+	     	<version>9.9.9</version>
+		</dependency>
+		<!--  jmimemagic -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>jmimemagic</artifactId>
+	     	<version>0.1.2</version>
+	  	</dependency>
+	  	<!-- jpush -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>jpush</artifactId>
+	     	<version>3.2.7</version>
+	  	</dependency>
+	  	<!-- mailapi -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>mailapi</artifactId>
+	     	<version>9.9.9</version>
+	  	</dependency>
+	  	<!-- Qrcode -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>Qrcode-swetake</artifactId>
+	     	<version>9.9.9</version>
+	  	</dependency>
+	  	<!-- email -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>smtp</artifactId>
+	     	<version>9.9.9</version>
+	  	</dependency>
+	  	<!-- taobao -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>taobao</artifactId>
+	     	<version>9.9.9</version>
+	  	</dependency>
+	  	<!-- ueditor.jar -->
+	  	<dependency>
+	     	<groupId>com.leedane.other</groupId>
+	     	<artifactId>ueditor</artifactId>
+	     	<version>1.1.1</version>
+	  	</dependency>
+	  	<!-- zxing -->
+	  	<dependency>
+	     	<groupId>com.leedane.other.zxing</groupId>
+	     	<artifactId>core</artifactId>
+	     	<version>3.2.0</version>
+	  	</dependency>
+	  	<dependency>
+	     	<groupId>com.leedane.other.zxing</groupId>
+	     	<artifactId>javase</artifactId>
+	     	<version>9.9.9</version>
+	  	</dependency>
+	  	
 		<!-- <dependency>
 		    <groupId>org.apache.shiro</groupId>
 		    <artifactId>shiro-ehcache</artifactId>
