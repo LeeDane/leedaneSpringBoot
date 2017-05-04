@@ -64,7 +64,7 @@ import com.cn.leedane.handler.ZanHandler;
 @ComponentScan("com.cn.leedane")
 //标注启动了缓存
 @EnableCaching
-public class StartUpApplication implements TransactionManagementConfigurer{
+public class StartUpApplication /*implements TransactionManagementConfigurer*/{
 
 	@Bean(name = "dataSource")
 	@Qualifier(value = "dataSource")
@@ -257,11 +257,11 @@ public class StartUpApplication implements TransactionManagementConfigurer{
 	}
 
 	// 创建事务管理器1
-    @Bean(name = "txManager")
+   /* @Bean(name = "txManager")
 	@Override
 	public PlatformTransactionManager annotationDrivenTransactionManager() {
 		return new DataSourceTransactionManager(dataSource());
-	}
+	}*/
     
     @Bean
     public PropertySourcesPlaceholderConfigurer createPropertySourcesPlaceholderConfigurer() {
