@@ -412,7 +412,7 @@ function attention(id, index){
  * @param id
  * @param index
  */
-function collect(id, index){
+function collection(id, index){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
 		type : "post",

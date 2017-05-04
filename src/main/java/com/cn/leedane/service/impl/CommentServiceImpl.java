@@ -136,6 +136,12 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 				}else{
 					notificationHandler.sendNotificationById(false, user, createUserId, content, NotificationType.评论, tableName, tableId, bean);
 				}
+			}else{
+				//对留言，将消息发送给对应的用户
+				if(StringUtil.isNotNull(tableName) && DataTableType.留言.value.equals(tableName) && tableId > 0 && tableId != user.getId()){
+					notificationHandler.sendNotificationById(false, user, tableId, content, NotificationType.留言, tableName, tableId, bean);
+				}
+				
 			}
 			//当一个人既有评论也有@时候，@不做处理
 			//有@人通知相关人员
