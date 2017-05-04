@@ -26,7 +26,7 @@ public class AdminRoleCheckService {
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
 		//后台只有管理员权限才能操作
-		if(!currentUser.hasRole(RoleController.ADMIN_ROLE_CODE) && (createUserId > 0 && createUserId == user.getId())){
+		if(!currentUser.hasRole(RoleController.ADMIN_ROLE_CODE) && (createUserId > 0 && createUserId != user.getId())){
 			throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
 		}	
 	}
