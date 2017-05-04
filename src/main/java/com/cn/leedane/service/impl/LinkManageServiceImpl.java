@@ -2,8 +2,10 @@ package com.cn.leedane.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,7 +27,6 @@ import com.cn.leedane.model.LinkRoleOrPermissionBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.LinkManageService;
-import com.cn.leedane.service.LinkRoleOrPermissionService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
@@ -77,9 +78,9 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		ResponseMap message = new ResponseMap();
 		LinkManageBean linkManageBean = new LinkManageBean();
 		linkManageBean.setAlias(JsonUtil.getStringValue(jsonObject, "alias"));
-		linkManageBean.setAll(JsonUtil.getBooleanValue(jsonObject, "all", true));
+		linkManageBean.setAll_(JsonUtil.getBooleanValue(jsonObject, "all", true));
 		linkManageBean.setLink(JsonUtil.getStringValue(jsonObject, "link"));
-		linkManageBean.setOrder(JsonUtil.getIntValue(jsonObject, "order", 1));
+		linkManageBean.setOrder_(JsonUtil.getIntValue(jsonObject, "order", 1));
 		
 		boolean role = JsonUtil.getBooleanValue(jsonObject, "role", false);
 		linkManageBean.setRole(role);
@@ -111,9 +112,9 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		LinkManageBean linkManageBean = new LinkManageBean();
 		linkManageBean.setId(lnid);
 		linkManageBean.setAlias(JsonUtil.getStringValue(jsonObject, "alias"));
-		linkManageBean.setAll(JsonUtil.getBooleanValue(jsonObject, "all", true));
+		linkManageBean.setAll_(JsonUtil.getBooleanValue(jsonObject, "all", true));
 		linkManageBean.setLink(JsonUtil.getStringValue(jsonObject, "link"));
-		linkManageBean.setOrder(JsonUtil.getIntValue(jsonObject, "order", 1));
+		linkManageBean.setOrder_(JsonUtil.getIntValue(jsonObject, "order", 1));
 		
 		boolean role = JsonUtil.getBooleanValue(jsonObject, "role", false);
 		linkManageBean.setRole(role);
@@ -162,7 +163,6 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}
-		
 		return message.getMap();
 	}
 
@@ -270,12 +270,12 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 			roleOrPermissionIds[i] = StringUtil.changeObjectToInt(roleOrPermissionArray[i]);
 		}
 		
-		//删除所有的角色或者权限
+		//获取链接的所有用户ID
+		Set<Integer> clearIds = new HashSet<Integer>();
 		List<Map<String, Object>> uids = linkRoleOrPermissionMapper.getUsersByLinkId(lnid);
 		if(CollectionUtil.isNotEmpty(uids)){
 			for(Map<String, Object> uid: uids)
-				//清空权限相关的缓存
-				rolePermissionHandler.deleteByUser(StringUtil.changeObjectToInt(uid.get("user_id")));
+				clearIds.add(StringUtil.changeObjectToInt(uid.get("user_id")));
 		}
 		linkRoleOrPermissionMapper.deleteByField(LinkRoleOrPermissionBean.class, "link_id", lnid);
 		
@@ -296,18 +296,28 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		}
 		
 		//删除所有的
-		
 		if(StringUtil.isNotNull(roleOrPermissions)){
 			linkRoleOrPermissionMapper.insertByBatch(data);
 		}
 		
+		//再次获取链接的所有用户ID
+		List<Map<String, Object>> uidsAfter = linkRoleOrPermissionMapper.getUsersByLinkId(lnid);
+		if(CollectionUtil.isNotEmpty(uidsAfter)){
+			for(Map<String, Object> uid: uidsAfter)
+				clearIds.add(StringUtil.changeObjectToInt(uid.get("user_id")));
+		}
+		
+		//清空角色权限相关的缓存
+		if(clearIds.size() > 0){
+			for(Integer clearId: clearIds)
+				rolePermissionHandler.deleteByUser(clearId);
+		}
 				
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给链接ID为"+ lnid +",分配角色获取权限ids"+roleOrPermissions).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, 0);		
 		message.put("message", "操作成功");
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);
-		
 		return message.getMap();
 	}
 }

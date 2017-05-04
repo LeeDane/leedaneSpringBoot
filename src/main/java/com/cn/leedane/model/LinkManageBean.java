@@ -1,6 +1,7 @@
 package com.cn.leedane.model;
 
 import org.apache.solr.client.solrj.beans.Field;
+import org.springframework.beans.factory.annotation.Required;
 
 import com.cn.leedane.mybatis.table.annotation.Column;
 
@@ -24,6 +25,7 @@ public class LinkManageBean extends RecordTimeBean{
 	@Field
     private String alias; // 别名，不能为空且唯一
     
+	@Column(required = false)
     private String roleOrPermissionCodes;//权限Code集合，多个用,分开
     
     @Column("role")
@@ -32,11 +34,11 @@ public class LinkManageBean extends RecordTimeBean{
     
     @Column("order_")
 	@Field
-    private int order; //排序
+    private int order_; //排序
     
     @Column("all_")
 	@Field
-    private boolean all; //是否是全部都符合，true是全部都符合，false是任意一个符合，默认是true
+    private boolean all_; //是否是全部都符合，true是全部都符合，false是任意一个符合，默认是true
 
 	public String getLink() {
 		return link;
@@ -70,19 +72,19 @@ public class LinkManageBean extends RecordTimeBean{
 		this.role = role;
 	}
 
-	public boolean isAll() {
-		return all;
+	public int getOrder_() {
+		return order_;
 	}
 
-	public void setAll(boolean all) {
-		this.all = all;
+	public void setOrder_(int order_) {
+		this.order_ = order_;
 	}
 
-	public int getOrder() {
-		return order;
+	public boolean isAll_() {
+		return all_;
 	}
 
-	public void setOrder(int order) {
-		this.order = order;
+	public void setAll_(boolean all_) {
+		this.all_ = all_;
 	}
 }

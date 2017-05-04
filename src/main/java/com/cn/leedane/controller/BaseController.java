@@ -556,7 +556,7 @@ public class BaseController {
 					if(bean.isRole()){
 						if(StringUtil.isNotNull(roleOrPermissionCodes)){
 							String[] codes = roleOrPermissionCodes.split(",");
-							if(bean.isAll())
+							if(bean.isAll_())
 								checkAllRoleAuthor(codes);
 							else
 								checkAnyRoleAuthor(codes);
@@ -564,7 +564,7 @@ public class BaseController {
 					}else{
 						if(StringUtil.isNotNull(roleOrPermissionCodes)){
 							String[] codes = roleOrPermissionCodes.split(",");
-							if(bean.isAll())
+							if(bean.isAll_())
 								checkAllPermissionAuthor(codes);
 							else
 								checkAnyPermissionAuthor(codes);

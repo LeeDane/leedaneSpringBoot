@@ -2,8 +2,10 @@ package com.cn.leedane.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -237,12 +239,12 @@ private Logger logger = Logger.getLogger(getClass());
 			userIds[i] = StringUtil.changeObjectToInt(userArray[i]);
 		}
 
-		//删除权限之间的关系
+		//获取角色的所有用户ID
+		Set<Integer> clearIds = new HashSet<Integer>();
 		List<Map<String, Object>> uids = userRoleMapper.getUsersByRoleId(rlid);
 		if(CollectionUtil.isNotEmpty(uids)){
 			for(Map<String, Object> uid: uids)
-				//清空权限相关的缓存
-				rolePermissionHandler.deleteByUser(StringUtil.changeObjectToInt(uid.get("user_id")));
+				clearIds.add(StringUtil.changeObjectToInt(uid.get("user_id")));
 		}
 		userRoleMapper.deleteByField(UserRoleBean.class, "role_id", rlid);
 		
@@ -260,7 +262,20 @@ private Logger logger = Logger.getLogger(getClass());
 		if(StringUtil.isNotNull(users)){
 			userRoleMapper.insertByBatch(data);
 		}
-				
+		
+		//再次获取角色的所有用户ID
+		List<Map<String, Object>> uidsAfter = userRoleMapper.getUsersByRoleId(rlid);
+		if(CollectionUtil.isNotEmpty(uidsAfter)){
+			for(Map<String, Object> uid: uidsAfter)
+				clearIds.add(StringUtil.changeObjectToInt(uid.get("user_id")));
+		}
+			
+		//清空角色权限相关的缓存
+		if(clearIds.size() > 0){
+			for(Integer clearId: clearIds)
+				rolePermissionHandler.deleteByUser(clearId);
+		}
+		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给角色ID为"+ rlid +",分配用户ids"+users).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, 0);		
 		message.put("message", "操作成功");
