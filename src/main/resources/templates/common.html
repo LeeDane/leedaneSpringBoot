@@ -115,7 +115,7 @@
             <li class="nav-blog nav-main-li"><a th:href="@{/index}">博客</a></li>
             <li class="nav-shop nav-main-li"><a th:href="@{/shop/}">商城</a></li>
             <li class="nav-photo nav-main-li" th:if="${isLogin}"><a th:href="@{/pt}">相册</a></li>
-            <li class="nav-msg nav-main-li" th:if="${isLogin}"><a th:href="@{/msg}"><span class="badge pull-right">10</span>消息</a></li>
+            <li class="nav-msg nav-main-li" th:if="${isLogin}"><a th:href="@{/msg}"><span class="badge pull-right">0</span>消息</a></li>
             <li class="nav-my nav-main-li" th:if="${isLogin}"><a th:href="@{/my}">中心</a></li>
             <li class="nav-financial nav-main-li" th:if="${isLogin}"><a th:href="@{/fn}">记账</a></li>
             <li class="dropdown">
@@ -170,13 +170,50 @@
 		    }, 500);
 		});
 		
+		if(isLogin){
+			getNoReadNumber();
+			
+		}
+		
 	});
 	
 	/**
-	*获得全局的项目主路径
+	* 获取未读信息列表
 	*/
-	function getBasePath(){
-		//return document.getElementById("basePath").value;
+	function getNoReadNumber(){
+		$.ajax({
+			dataType: 'json',
+			url : "/nf/notification/noread/number",
+			beforeSend:function(){
+			},
+			success : function(data) {
+				if(data.isSuccess){
+					var currentMsg = $(".nav-msg").hasClass("active");
+					/*<![CDATA[*/
+					for(var i = 0 ; i < data.message.length; i++){
+						if(data.message[i]['type'] == '全部'){
+							$(".nav-msg").find(".badge").text(data.message[i].number);
+							if(!currentMsg)
+								break;
+						}else{
+							if(currentMsg){
+								var lis = $("#notification-tabs").find("li");
+								for(var j = 0; j < lis.length; j++){
+									if(lis.eq(j).attr("data-value") == data.message[i]['type']){
+										lis.eq(j).find("a").text(data.message[i]['type'] +'(' + data.message[i]['number'] +')');
+									}
+								}
+							}
+						}
+					}
+					/*]]>*/  
+				}				
+			},
+			error : function(data) {
+				//刷新当前页面
+				ajaxError(data);
+			}
+		});
 	}
 	
 	//退出登录

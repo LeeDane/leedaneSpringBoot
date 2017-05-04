@@ -11,7 +11,7 @@ $(function(){
 	
 	if(isNotEmpty(tabName)){
 		$("#notification-tabs").find("li").each(function(index){
-			if($(this).find("a").text() == tabName){
+			if($(this).attr("data-value") == tabName){
 				type = tabName;
 				$(this).addClass("active");
 				return true;
@@ -24,7 +24,7 @@ $(function(){
 	if(isEmpty(type)){
 		var li0 = $("#notification-tabs").find("li").eq(0);
 		li0.addClass("active");
-		type = li0.find("a").text();
+		type = li0.attr("data-value");
 	}
 	
 	if(isEmpty(type)){
@@ -36,7 +36,7 @@ $(function(){
 	$("#notification-tabs").find("li").on("click", function(index){
 		$("#notification-tabs").find("li").removeClass("active");
 		$(this).addClass("active");
-		type = $(this).find("a").text();
+		type = $(this).attr("data-value");
 
 		currentIndex = 0;
 		getMessages();

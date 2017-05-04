@@ -30,4 +30,14 @@ public interface NotificationMapper extends BaseMapper<NotificationBean>{
 	 * @return
 	 */
 	public int updateAllRead(@Param("type") String type, @Param("read") boolean read);
+	
+	/**
+	 * 获取消息列表
+	 * @param toUserId
+	 * @param read true表示已读， false表示未读
+	 * @param status
+	 * @return
+	 */
+	public List<Map<String, Object>> noReadNumber(@Param("toUserId") int toUserId, @Param("read") boolean read, @Param("status") int status);
+	
 }

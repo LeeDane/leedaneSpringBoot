@@ -18,4 +18,10 @@
 	<update id="updateAllRead" parameterType="java.util.List">
         UPDATE t_notification SET is_read = #{read} WHERE type = #{type}
     </update>
+    
+    <select id="noReadNumber" resultType="java.util.Map">
+		select n.type, count(n.id) number 
+		from t_notification n 
+		where n.to_user_id = #{toUserId} and n.status = #{status} and n.is_read = #{read} GROUP BY n.type
+	</select>
 </mapper>
