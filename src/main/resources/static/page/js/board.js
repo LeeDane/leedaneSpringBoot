@@ -231,7 +231,7 @@ function pageDivUtil(total){
 		else
 			selectHtml += '<option name="pageIndex" value="'+ i +'">'+ (i + 1) +'</option>';
 	}
-	
+	selectHtml += '</select></li>';
 	for(var i = start; i < end; i++){
 		if(currentIndex == i)
 			html += '<li class="active"><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
@@ -244,7 +244,7 @@ function pageDivUtil(total){
 				'</a>'+
 			'</li>';
 	
-	selectHtml += '</select></li>';
+	selectHtml += '<li><a href="javascript:void(0);">共计：' +total +'条记录</a></li>';
 	
 	html += selectHtml;
 	$(".pagination").html(html);

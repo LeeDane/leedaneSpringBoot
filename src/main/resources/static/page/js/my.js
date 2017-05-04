@@ -71,7 +71,7 @@ function getMessageBoards(){
 				for(var i = 0; i < data.message.length; i++){
 					var html = '<tr>'+
 									'<td width="40px"><img src="'+ changeNotNullString(data.message[i].user_pic_path) +'" width="30" height="30" class="img-rounded img-circle"></td>'+
-									'<td>'+ data.message[i].content+'</td>'+
+									'<td class="cut-text" style="word-break:break-all;" title="'+ data.message[i].content+'">'+ data.message[i].content+'</td>'+
 								'</tr>';
 					$("#message-boards").append(html);
 				}
@@ -219,7 +219,7 @@ function pageDivUtil(total){
 		else
 			selectHtml += '<option name="pageIndex" value="'+ i +'">'+ (i + 1) +'</option>';
 	}
-	
+	selectHtml += '</select></li>';
 	for(var i = start; i < end; i++){
 		if(currentIndex == i)
 			html += '<li class="active"><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
@@ -232,7 +232,7 @@ function pageDivUtil(total){
 				'</a>'+ 
 			'</li>';
 	
-	selectHtml += '</select>共计：' +total +'条记录</li>';
+	selectHtml += '<li><a href="javascript:void(0);">共计：' +total +'条记录</a></li>';
 	
 	html += selectHtml;
 	$(".pagination").html(html);

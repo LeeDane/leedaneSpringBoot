@@ -1,7 +1,6 @@
 package com.cn.leedane.model;
 
 import org.apache.solr.client.solrj.beans.Field;
-import org.springframework.beans.factory.annotation.Required;
 
 import com.cn.leedane.mybatis.table.annotation.Column;
 

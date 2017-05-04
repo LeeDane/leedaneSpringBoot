@@ -174,7 +174,7 @@ function buildHasImgRow(index, blog){
 						'<div class="panel panel-info has-img-panel-info">'+
 							'<div class="panel-heading">'+
 								'<div class="page-header">'+
-								    '<h1 class="hand" onclick="goToReadFull('+ blog.id+')">'+ blog.title +
+								    '<h1 class="hand cut-text" onclick="goToReadFull('+ blog.id+')">'+ blog.title +
 								        '<small>'+
 								        	
 										'</small>'+
@@ -244,7 +244,7 @@ function buildNotHasImgRow(index, blog){
 		      	  	'<div class="panel panel-info">'+
 						'<div class="panel-heading">'+
 							'<div class="page-header">'+
-							    '<h1 class="hand" onclick="goToReadFull('+ blog.id+')">'+ blog.title +
+							    '<h1 class="hand cut-text" onclick="goToReadFull('+ blog.id+')">'+ blog.title +
 							        '<small>'+
 							        	
 									'</small>'+

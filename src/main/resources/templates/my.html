@@ -158,7 +158,7 @@
 <div class="container mainContainer clearFloat">
 	   <div class="row">
 		   <div class="col-lg-3" style="border: 1px solid #fff;background-color: #fff;">
-		   		<button class="btn btn-sm btn-success pull-right" data-toggle="modal" data-target="#add-mood" onclick="shoqSendMoodDialog();">发布心情</button>
+		   		<button th:if="${isLoginUser}" class="btn btn-sm btn-success pull-right" data-toggle="modal" data-target="#add-mood" onclick="shoqSendMoodDialog();">发布心情</button>
 		   		<div class="row" id="user-img">
 		   			<!-- <img src="images/main_content_img.jpg" width="200px" height="200px" class="img-circle"> -->
 		   		</div>
@@ -311,7 +311,7 @@
 	      </div>
 	      <nav class="col-sm-3" id="navbarExample">
 	      		<div class="table-responsive">
-						<table class="table table-striped"  id="message-boards" style="border: 1px solid #fff;background-color: #fff;">
+						<table class="table table-striped"  id="message-boards" style="border: 1px solid #fff; table-layout:fixed; background-color: #fff;">
 							<!-- <caption>响应式表格布局</caption> -->
 							<tbody>
 								<tr class="each-row">

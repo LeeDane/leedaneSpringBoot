@@ -193,6 +193,7 @@ public class HtmlController extends BaseController{
         	if(o != null){
     			UserBean user = (UserBean)o;
     			model.addAttribute("uid", uid);
+    			model.addAttribute("uaccount", userHandler.getUserName(uid));
     			model.addAttribute("isLoginUser", uid == user.getId());
     			return loginRoleCheck("board", true, model, request);
     		}

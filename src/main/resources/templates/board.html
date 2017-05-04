@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>留言板</title>
+	<title th:text="${uaccount}+'的留言板'"></title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
 	<style type="text/css">
 		
@@ -102,7 +102,7 @@ jEmoji.unifiedToHTML(emojiText) -->
 	   <div class="row" id="comment">
 			<div class="col-lg-8 col-lg-offset-2" th:if="${isLogin}" style="text-align: center;">
 				<div class="row">
-					<textarea class="form-control" name="add-comment" placeholder="给TA留个言吧！最多250个文字。" style="min-height: 125px;" autofocus ="true"></textarea>
+					<textarea class="form-control" name="add-comment" th:placeholder="'给'+${uaccount}+'留个言吧！最多250个文字。'" placeholder="" style="min-height: 125px;" autofocus ="true"></textarea>
 				</div>
 				<div class="row">
 					<div class="col-lg-12">
