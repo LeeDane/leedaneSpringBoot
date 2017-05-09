@@ -157,6 +157,7 @@ public class HtmlController extends BaseController{
         	if(o != null){
         		UserBean user = (UserBean)o;
     			model.addAttribute("uid", user.getId());
+    			model.addAttribute("uaccount", userHandler.getUserName(user.getId()));
     			model.addAttribute("isLoginUser", true);
     			return loginRoleCheck("my", true, model, request);
     		}
@@ -175,6 +176,7 @@ public class HtmlController extends BaseController{
         	if(o != null){
     			UserBean user = (UserBean)o;
     			model.addAttribute("uid", uid);
+    			model.addAttribute("uaccount", userHandler.getUserName(uid));
     			model.addAttribute("isLoginUser", uid == user.getId());
     			return loginRoleCheck("my", true, model, request);
     		}

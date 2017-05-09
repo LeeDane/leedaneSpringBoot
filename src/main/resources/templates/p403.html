@@ -6,10 +6,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
 	<title>403页面</title>
-	
+	<style type="text/css">
+		.container{
+			margin-top: 60px;
+		}
+	</style>
 </head>
 <body>
 	<div th:include="common :: hello">what?</div>
-	403页，您没有相关操作权限！
+	<div class="container">
+		403页，您没有相关操作权限！
+	</div>
 </body>
 </html>
