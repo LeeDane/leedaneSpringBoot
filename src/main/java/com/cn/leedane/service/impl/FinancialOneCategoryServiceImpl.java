@@ -105,13 +105,17 @@ public class FinancialOneCategoryServiceImpl implements FinancialOneCategoryServ
 		
 		List<Map<String, Object>> r = financialOneCategoryMapper.executeSQL(sqlBuffer.toString(), ConstantsUtil.STATUS_NORMAL, user.getId());
 		result = r.size() > 0;
-		if(result){
-			message.put("message", r);
-			message.put("isSuccess", true);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.获取不到一级分类列表.value));
-			message.put("responseCode", EnumUtil.ResponseCode.获取不到一级分类列表.value);
+		if(!result){
+			sqlBuffer = new StringBuffer();
+			sqlBuffer.append("SELECT id, category_value, icon_name,");
+			sqlBuffer.append(" model, budget, category_order, is_default, is_system, create_user_id, date_format(create_time,'%Y-%m-%d %H:%i:%s') create_time ");
+			sqlBuffer.append(" FROM t_financial_one_category");
+			sqlBuffer.append(" where status = ? and is_system = ? ");
+			
+			r = financialOneCategoryMapper.executeSQL(sqlBuffer.toString(), ConstantsUtil.STATUS_NORMAL, true);
 		}
+		message.put("message", r);
+		message.put("isSuccess", true);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取全部一级分类列表", StringUtil.getSuccessOrNoStr(result)).toString(), "getAll()", StringUtil.changeBooleanToInt(result), 0);
 		return message.getMap();
