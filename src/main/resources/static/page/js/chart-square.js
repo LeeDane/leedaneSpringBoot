@@ -43,8 +43,7 @@ $(function(){
         		    time: 1000 //1s后自动关闭
         		    });
         	}, function(){
-        		//登录
-        		goToLogin();
+        		linkToLogin();
         	});
     	}else{
     		init();

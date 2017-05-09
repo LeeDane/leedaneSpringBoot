@@ -182,7 +182,7 @@ public class HtmlController extends BaseController{
 		return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();	
 	}
 	
-	@RequestMapping("/user/{uid}"+ ControllerBaseNameUtil.board)
+	@RequestMapping("user/{uid}/"+ ControllerBaseNameUtil.board)
 	public String board(@PathVariable(value="uid") int uid, Model model, HttpServletRequest request){
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
@@ -201,7 +201,7 @@ public class HtmlController extends BaseController{
 		return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();	
 	}
 	
-	@RequestMapping("/user/{uid}/mood/{mid}"+ ControllerBaseNameUtil.dt)
+	@RequestMapping("user/{uid}/mood/{mid}/"+ ControllerBaseNameUtil.dt)
 	public String moodDetail(@PathVariable(value="uid") int uid, @PathVariable(value="mid") int mid, Model model, HttpServletRequest request){
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
@@ -255,12 +255,12 @@ public class HtmlController extends BaseController{
 		return loginRoleCheck("chat-square", model, request);
 	}
 	
-	@RequestMapping("/403")
+	@RequestMapping("403")
 	public String unauthorizedRole(Model model, HttpServletRequest request){
-		return loginRoleCheck("403", model, request);
+		return loginRoleCheck("p403", model, request);
 	}
 	
-	@RequestMapping("/404")
+	@RequestMapping("404")
 	public String nonexistence(Model model, HttpServletRequest request){
 		String errorMessage = request.getParameter("errorMessage");
 		if(StringUtil.isNotNull(errorMessage)){
@@ -268,7 +268,7 @@ public class HtmlController extends BaseController{
 			model.addAttribute("errorMessage", errorMessage);
 		}
 		
-		return loginRoleCheck("404", model, request);
+		return loginRoleCheck("p404", model, request);
 	}
 	
 	/**

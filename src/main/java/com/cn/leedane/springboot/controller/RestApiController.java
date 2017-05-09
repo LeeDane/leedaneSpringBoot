@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
  * 2017年3月13日 下午12:23:13
  * Version 1.0
  */
-@RestController
+//@RestController
 public class RestApiController {
-	
+	/*
 	@RequestMapping("/{ggg}")
 	public String test(@PathVariable int ggg){
 		return "hehe ="+ ggg + "===>";
-	}
+	}*/
 
 	
 	/** 
