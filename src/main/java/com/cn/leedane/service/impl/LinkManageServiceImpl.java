@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.exception.OperateException;
 import com.cn.leedane.exception.RE404Exception;
+import com.cn.leedane.handler.LinkManageHandler;
 import com.cn.leedane.handler.RolePermissionHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.LinkManageMapper;
@@ -65,12 +66,15 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 	@Autowired
 	private RolePermissionHandler rolePermissionHandler;
 	
-	@Override
+	@Autowired
+	private LinkManageHandler linkManageHandler;
+	
+	/*@Override
 	public List<LinkManageBean> getAllLinks() {
 		logger.info("LinkManageServiceImpl-->getAllLinks()");
 		return linkManageMapper.getAllLinks(ConstantsUtil.STATUS_NORMAL);
 	}
-	
+	*/
 	@Override
 	public Map<String, Object> save(JSONObject jsonObject, UserBean user,
 			HttpServletRequest request) {
@@ -92,7 +96,8 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		if(!result){
 			throw new OperateException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
 		}
-		
+		//清空缓存的全部链接
+		linkManageHandler.deleteAllLinkManagesCache();
 		message.put("isSuccess", result);
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -126,7 +131,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		if(!result){
 			throw new OperateException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
 		}
-		
+				
 		//删除所有的角色或者权限
 		//清空权限相关的缓存
 		List<Map<String, Object>> uids = linkRoleOrPermissionMapper.getUsersByLinkId(lnid);
@@ -214,6 +219,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 			else
 				sql.append("role_id = "+ ids[i] +" or ");
 		}
+				
 		//删除所有的角色或者权限
 		List<Map<String, Object>> uids = linkRoleOrPermissionMapper.getUsersByLinkIds(ids);
 		if(CollectionUtil.isNotEmpty(uids)){

@@ -29,6 +29,9 @@ public class RolePermissionHandler {
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
+	@Autowired
+	private LinkManageHandler linkManageHandler;
+	
 	/**
 	 * 获取用户的权限列表
 	 * @param userId
@@ -93,6 +96,7 @@ public class RolePermissionHandler {
 		String key = getRolePermissionKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
+		linkManageHandler.deleteAllLinkManagesCache();
 		return true;
 	}
 

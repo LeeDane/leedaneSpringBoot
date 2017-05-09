@@ -26,8 +26,8 @@ public interface LinkManageService<LinkManageBean>{
 	 * @param user
 	 * @return
 	 */
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<LinkManageBean> getAllLinks();
+	//@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	//public List<LinkManageBean> getAllLinks();
 	
 	/**
 	 * 添加链接

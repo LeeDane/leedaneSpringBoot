@@ -58,6 +58,17 @@ public class LinkManageHandler {
 	}
 	
 	/**
+	 * 删除所有的链接缓存
+	 * @return
+	 */
+	public boolean deleteAllLinkManagesCache(){
+		String key = getLinkManageKey();
+		if(!redisUtil.hasKey(key))
+			return true;
+		return redisUtil.delete(key);
+	}
+	
+	/**
 	 * 获取心情在redis的key
 	 * @param blogId
 	 * @return

@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cn.leedane.handler.LinkManageHandler;
 import com.cn.leedane.handler.RolePermissionHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.PermissionMapper;
@@ -60,6 +61,9 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 	@Autowired
 	private RolePermissionHandler rolePermissionHandler;
 	
+	@Autowired
+	private LinkManageHandler linkManageHandler;
+	
 	@Override
 	public Map<String, Object> save(JSONObject jsonObject, UserBean user,
 			HttpServletRequest request) {
@@ -80,6 +84,8 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}
+		//清空缓存的全部链接
+		linkManageHandler.deleteAllLinkManagesCache();
 		return message.getMap();
 	}
 
@@ -103,6 +109,8 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}
+		//清空缓存的全部链接
+		linkManageHandler.deleteAllLinkManagesCache();
 		return message.getMap();
 	}
 
