@@ -3,7 +3,6 @@ package com.cn.leedane.springboot.controller;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -18,6 +17,7 @@ import com.cn.leedane.controller.UserController;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.CommonUtil;
+import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.ResponseCode;
@@ -74,7 +74,7 @@ public class ShopHtmlController extends BaseController{
 	 */
 	public String loginRoleCheck(String urlParse, boolean mustLogin, Model model, HttpServletRequest request){
 		//设置统一的请求模式
-		model.addAttribute("isDebug", false);
+		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
 		Object o = null;
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();

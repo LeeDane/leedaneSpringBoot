@@ -18,6 +18,7 @@ import com.cn.leedane.controller.UserController;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.CommonUtil;
+import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.ResponseCode;
@@ -148,7 +149,7 @@ public class AdminHtmlController extends BaseController{
 	 */
 	public String loginRoleCheck(String urlParse, boolean mustAdmin, Model model, HttpSession httpSession, HttpServletRequest request){
 		//设置统一的请求模式
-		model.addAttribute("isDebug", false);
+		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
 		Object obj = httpSession.getAttribute(UserController.USER_INFO_KEY);
 		UserBean userBean = null;
 		String account = "";

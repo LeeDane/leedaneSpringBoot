@@ -257,11 +257,15 @@ public class HtmlController extends BaseController{
 	
 	@RequestMapping("403")
 	public String unauthorizedRole(Model model, HttpServletRequest request){
+		//设置统一的请求模式
+		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
 		return loginRoleCheck("p403", model, request);
 	}
 	
 	@RequestMapping("404")
 	public String nonexistence(Model model, HttpServletRequest request){
+		//设置统一的请求模式
+		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
 		String errorMessage = request.getParameter("errorMessage");
 		if(StringUtil.isNotNull(errorMessage)){
 			model.addAttribute("error", true);
@@ -292,7 +296,7 @@ public class HtmlController extends BaseController{
 	 */
 	public String loginRoleCheck(String urlParse, boolean mustLogin, Model model, HttpServletRequest request){
 		//设置统一的请求模式
-		model.addAttribute("isDebug", false);
+		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
 		Object o = null;
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
