@@ -49,7 +49,7 @@ public class AdminHtmlController extends BaseController{
 	@RequestMapping(ControllerBaseNameUtil.ad +"/")
 	public String index1(Model model, HttpSession httpSession, HttpServletRequest request){
 		//首页不需要验证是否登录
-		return loginRoleCheck("/admin/index", model, httpSession, request);
+		return loginRoleCheck("admin/index", model, httpSession, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.ad + "/index")
@@ -59,71 +59,71 @@ public class AdminHtmlController extends BaseController{
 	
 	@RequestMapping(ControllerBaseNameUtil.adwc + "/welcome")
 	public String wcWelcome(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("/admin/welcome/welcome", true, model, httpSession, request);
+		return loginRoleCheck("admin/welcome/welcome", true, model, httpSession, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adwc + "/loginHistory")
 	public String wcLoginHistory(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("/admin/welcome/loginHistory", true, model, httpSession, request);
+		return loginRoleCheck("admin/welcome/loginHistory", true, model, httpSession, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adwc + "/about")
 	public String wcAbout(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("/admin/welcome/about", false, model, httpSession, request);
+		return loginRoleCheck("admin/welcome/about", false, model, httpSession, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adwc + "/contact")
 	public String wcContact(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("/admin/welcome/contact", false, model, httpSession, request);
+		return loginRoleCheck("admin/welcome/contact", false, model, httpSession, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adwc + "/download")
 	public String wcDownload(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("/admin/welcome/download", false, model, httpSession, request);
+		return loginRoleCheck("admin/welcome/download", false, model, httpSession, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adus + "/search")
 	public String usSearch(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("/admin/user/search", true, model, httpSession, request);
+		return loginRoleCheck("admin/user/search", true, model, httpSession, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adus + "/new")
 	public String usNew(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("/admin/user/new", true, model, httpSession, request);
+		return loginRoleCheck("admin/user/new", true, model, httpSession, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adus + "/black")
 	public String usBlack(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("/admin/user/black", true, model, httpSession, request);
+		return loginRoleCheck("admin/user/black", true, model, httpSession, request);
 	}
 	
 	
 	@RequestMapping(ControllerBaseNameUtil.adbg + "/check")
 	public String bgCheck(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("/admin/blog/check", true, model, httpSession, request);
+		return loginRoleCheck("admin/blog/check", true, model, httpSession, request);
 	}
 	
 	/****************    权限管理          ***********************/
 	@RequestMapping(ControllerBaseNameUtil.adpm + "/permission")
 	public String pmPermission(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("/admin/permission/permission", true, model, httpSession, request);
+		return loginRoleCheck("admin/permission/permission", true, model, httpSession, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adpm + "/impowerPermission")
 	public String pmImpowerPermission(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("/admin/permission/impowerRole", true, model, httpSession, request);
+		return loginRoleCheck("admin/permission/impowerRole", true, model, httpSession, request);
 	}
 	
 	/****************    角色管理          ***********************/
 	@RequestMapping(ControllerBaseNameUtil.adpm + "/role")
 	public String pmRole(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("/admin/permission/role", true, model, httpSession, request);
+		return loginRoleCheck("admin/permission/role", true, model, httpSession, request);
 	}
 	
 	/****************   链接管理          ***********************/
 	@RequestMapping(ControllerBaseNameUtil.adpm + "/link")
 	public String pmLink(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("/admin/permission/link", true, model, httpSession, request);
+		return loginRoleCheck("admin/permission/link", true, model, httpSession, request);
 	}
 	
 	

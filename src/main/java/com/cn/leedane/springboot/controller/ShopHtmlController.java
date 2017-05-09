@@ -45,7 +45,7 @@ public class ShopHtmlController extends BaseController{
 	@RequestMapping("/")
 	public String index1(Model model, HttpServletRequest request){
 		//首页不需要验证是否登录
-		return loginRoleCheck("/shop/index", model, request);
+		return loginRoleCheck("shop/index", model, request);
 	}
 	
 	@RequestMapping("/index")

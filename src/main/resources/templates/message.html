@@ -112,7 +112,7 @@
 
 	<div class="container">
 		<div class="row">
-				<p>我的通知/消息</p>
+				<p><div th:utext="'&lt;span class=\'hand\' style=\'color: red;\' onclick=\'linkToMy('+ ${loginUserId} +');\' &gt;《' + ${account}+'》&lt;/span&gt; 的通知/消息'"></div></p>
 				<ul class="nav nav-tabs nav-justified" id="notification-tabs">
 					<li class="active" data-value="@我"><a href="javascript:void(0);">@我</a></li>
 					<li data-value="评论"><a href="javascript:void(0);">评论</a></li>

@@ -53,7 +53,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         
 		if(exception instanceof org.apache.shiro.authz.UnauthorizedException){//没有授权异常
 			if(isPageRequest)
-				return new ModelAndView("/403");
+				return new ModelAndView("/p403");
 			 message.put("message", EnumUtil.getResponseValue(ResponseCode.没有操作权限.value));
 			 message.put("responseCode", ResponseCode.没有操作权限.value);
 		}else if(exception instanceof UnsupportedTokenException){//不支持token异常
@@ -64,7 +64,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			
 		}else if(exception instanceof RE404Exception){//404异常
 			if(isPageRequest)
-				return new ModelAndView("/404");
+				return new ModelAndView("/p404");
 			
 			message.put("message", exception.getMessage());
 			message.put("responseCode", ResponseCode.资源不存在.value);

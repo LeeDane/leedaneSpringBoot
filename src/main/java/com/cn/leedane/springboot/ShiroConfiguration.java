@@ -142,7 +142,8 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("/lg", "anon");//anon 不拦截文登录链接
         filterChainDefinitionMap.put("/s", "anon");//anon 不拦截搜索详情链接
         filterChainDefinitionMap.put("/cs", "anon");//anon 不拦截聊天广场链接
-        filterChainDefinitionMap.put("/403", "anon");//anon 不拦截403链接
+        filterChainDefinitionMap.put("/p403", "anon");//anon 不拦截403链接
+        filterChainDefinitionMap.put("/p404", "anon");//anon 不拦截404链接
         filterChainDefinitionMap.put("/websocket", "anon");//anon 不拦截聊天广场链接
         filterChainDefinitionMap.put("/scanLogin", "anon");//anon 不拦截扫码登陆链接
         filterChainDefinitionMap.put("/content", "anon");//anon 不拦截app博客详情链接
@@ -183,7 +184,7 @@ public class ShiroConfiguration {
         shiroFilterFactoryBean.setLoginUrl("/lg");
         // 登录成功后要跳转的连接
         shiroFilterFactoryBean.setSuccessUrl("/my");
-        shiroFilterFactoryBean.setUnauthorizedUrl("/403");
+        shiroFilterFactoryBean.setUnauthorizedUrl("/p403");
 
         loadShiroFilterChain(shiroFilterFactoryBean);
         return shiroFilterFactoryBean;
