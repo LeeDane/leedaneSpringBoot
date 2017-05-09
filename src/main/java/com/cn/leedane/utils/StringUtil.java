@@ -674,8 +674,12 @@ public class StringUtil {
 	 */
 	public static String parseJSONToString(String source){
 		StringBuffer b = new StringBuffer(source);
-		b.deleteCharAt(0);
-		b.deleteCharAt(b.length() -1);
+		if(source.startsWith("\"")){
+			b.deleteCharAt(0);
+		}
+		if(source.endsWith("\"")){
+			b.deleteCharAt(b.length() -1);
+		}
 		return b.toString();
 	}
 	
