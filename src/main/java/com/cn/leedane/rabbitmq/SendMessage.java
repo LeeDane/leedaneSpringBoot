@@ -1,12 +1,15 @@
 package com.cn.leedane.rabbitmq;
 
+import org.apache.log4j.Logger;
+
 import com.cn.leedane.rabbitmq.send.ISend;
 import com.cn.leedane.utils.SerializeUtil;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.MessageProperties;
 
 public class SendMessage {
-
+	private Logger logger = Logger.getLogger(getClass());
+	
 	private ISend send;
 
 	public SendMessage(ISend send){
@@ -29,13 +32,13 @@ public class SendMessage {
 			 */
 			channel.queueDeclare(send.getQueueName(), durable, false,
 					false, null);
-			System.out.println(getClass().getName() +channel.queueDeclare().getMessageCount());
+			logger.info(getClass().getName() +channel.queueDeclare().getMessageCount());
 			// 发送的消息
 			//String message = object.getFromUserID() + "@@"+ object.getToUserID() + "@@" +object.getMsg()+"@@"+DateUtil.DateToString(object.getCreateTime());
 			// 往队列中发出一条消息(MessageProperties.PERSISTENT_TEXT_PLAIN指定消息的持久化)
 			channel.basicPublish("", send.getQueueName(),
 					MessageProperties.PERSISTENT_TEXT_PLAIN, SerializeUtil.serializeObject(send.getQueueObject()));
-			//System.out.println(object.getFromUserID()+"给"+object.getToUserID()+ "发送的消息:" + message + "'");
+			//logger.info(object.getFromUserID()+"给"+object.getToUserID()+ "发送的消息:" + message + "'");
 			
 			channel.close();
 			//RabbitConnection.getInstance().close();

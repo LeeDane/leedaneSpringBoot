@@ -13,17 +13,16 @@ import javax.websocket.server.ServerEndpoint;
 
 import net.sf.json.JSONObject;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.controller.UserController;
-import com.cn.leedane.model.UserBean;
 import com.cn.leedane.utils.StringUtil;
 
 @ServerEndpoint(value = "/scanLogin")
 @Component
 public class ScanLoginWebSocket {
+	private Logger logger = Logger.getLogger(getClass());
+	
     //concurrent包的线程安全Set，用来存放每个客户端对应的scanLoginWebSocket对象。
     public static ConcurrentHashMap<String, ScanLoginWebSocket> scanLoginSocket = new ConcurrentHashMap<String, ScanLoginWebSocket>();
 
@@ -63,7 +62,7 @@ public class ScanLoginWebSocket {
      * @param message 客户端发送过来的消息*/
     @OnMessage
     public void onMessage(String message, Session session) {
-        System.out.println("来自客户端的消息:" + message);
+    	logger.info("来自客户端的消息:" + message);
     }
 
     /**
@@ -73,7 +72,7 @@ public class ScanLoginWebSocket {
      */
     @OnError
     public void onError(Session session, Throwable error) {
-        System.out.println("发生错误");
+    	logger.error("发生错误");
         error.printStackTrace();
     }
 

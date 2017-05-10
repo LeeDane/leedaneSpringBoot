@@ -123,7 +123,7 @@ public class UserTest extends BaseTest {
 			UserBean user = userService.findById(6);
 			
 			boolean sucess = userService.uploadHeadBase64StrById(jo, user, null);
-			System.out.println("sucess:"+sucess);
+			logger.info("sucess:"+sucess);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -139,7 +139,7 @@ public class UserTest extends BaseTest {
 			UserBean user = userService.findById(1);
 			
 			String base64Str = userService.getHeadBase64StrById(jo, user, null);
-			System.out.println("base64Str:"+base64Str);
+			logger.info("base64Str:"+base64Str);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

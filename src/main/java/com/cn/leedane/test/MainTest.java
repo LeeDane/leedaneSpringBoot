@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.DateUtil;
@@ -26,14 +28,15 @@ import com.cn.leedane.utils.StringUtil;
  * Version 1.0
  */
 public class MainTest {
-
+	private static Logger logger = Logger.getLogger(MainTest.class);
+	
 	//public static void main(String[] args) throws IOException {
 		//int distance = 112456399 + 11;
-		//System.out.println(((distance/1000) > 0 ? ((distance/1000000) > 0 ? (distance/1000000)+ "千公里": (distance/1000) + "公里"): "") +  ((distance%1000) > 0 ? (distance%1000) +"米": ""));
-		/*System.out.println(DateUtil.DateToString(new Date(), "yyyyMM"));
-		System.out.println(DateUtil.DateToString(new Date(), "yyyy年MM月"));
-		System.out.println(DateUtil.DateToString(new Date(), "MM月dd日"));
-		System.out.println(DateUtil.DateToString(new Date(), "dd日HH时"));*/
+		//logger.info(((distance/1000) > 0 ? ((distance/1000000) > 0 ? (distance/1000000)+ "千公里": (distance/1000) + "公里"): "") +  ((distance%1000) > 0 ? (distance%1000) +"米": ""));
+		/*logger.info(DateUtil.DateToString(new Date(), "yyyyMM"));
+		logger.info(DateUtil.DateToString(new Date(), "yyyy年MM月"));
+		logger.info(DateUtil.DateToString(new Date(), "MM月dd日"));
+		logger.info(DateUtil.DateToString(new Date(), "dd日HH时"));*/
 		
 		/*String timeString = "Thu Sep 03 23:51:25 CST 2015";
 		String ssString = DateUtil.formatLocaleTime(timeString, DateUtil.DEFAULT_DATE_FORMAT);
@@ -46,7 +49,7 @@ public class MainTest {
 			m.setValue("ss");
 		}
 		
-		System.out.println(ssString);*/
+		logger.info(ssString);*/
 		
 		/*ChatSquareHandler chatSquareHandler = (ChatSquareHandler) SpringUtil.getBean("chatSquareHandler");
 		chatSquareHandler.addChat("1UNION8788888");*/
@@ -54,8 +57,8 @@ public class MainTest {
 		/*RedisUtil util = RedisUtil.getInstance();
 		//util.clearAll();
 		util.expire("aaa", null, 10);
-		System.out.println(util.hasKey("aaa"));
-		System.out.println(util.keys(null));*/
+		logger.info(util.hasKey("aaa"));
+		logger.info(util.keys(null));*/
 		
 		//创建一个URL的实例
 		//使用URL读取网页内容
@@ -69,10 +72,10 @@ public class MainTest {
 		//SqlSessionTemplate sqlSessionTemplate = (SqlSessionTemplate) SpringUtil.getBean("sqlSessionTemplate");
 		//Object o = sqlSessionTemplate.selectOne("select id from t_user");
 		//sqlSessionTemplate
-		//System.out.println("sqlSessionTemplate object="+ o);
+		//logger.info("sqlSessionTemplate object="+ o);
 		/*UserService<UserBean> userService = (UserService<UserBean>) SpringUtil.getBean("userService");
 		UserBean user = userService.findById(1);
-		System.out.println(user.getAccount());*/
+		logger.info(user.getAccount());*/
 		//UserBean user = new UserBean();
 		//user.setAccount("dane");
 		
@@ -80,18 +83,18 @@ public class MainTest {
 		user1.setAccount("dane");*/
 		/*UserBean user1 = user;
 		
-		System.out.println(user.equals(user1));
+		logger.info(user.equals(user1));
 		HashMap<String, Object> obj1 = new HashMap<String, Object>();
 		obj1.put(null, null);
 		obj1.put("hehe", "dd");
-		System.out.println(obj1.containsValue("12"));
+		logger.info(obj1.containsValue("12"));
 		Hashtable<String, Object> hashtable = new Hashtable<String, Object>();
 		hashtable.put("12", 12);
 		hashtable.put("hehe", "122");
-		System.out.println(hashtable.contains("12"));*/
+		logger.info(hashtable.contains("12"));*/
 		/*RedisUtil redisUtil = RedisUtil.getInstance();
 		redisUtil.delete("*");
-		System.out.println("删除成功");*/
+		logger.info("删除成功");*/
 		
 	//}
 	
@@ -100,7 +103,7 @@ public class MainTest {
 		user1.setAccount("leedane");
 		user = user1;
 		int i = 0;
-		System.out.println(i);
+		logger.info(i);
 	}
 	
 	public static InputStream getGetOrDeleteRequestInputStream(String method, String serverPath, int requestTimeOut, int responseTimeOut) throws IOException {
@@ -154,14 +157,14 @@ public class MainTest {
 	private static void testIntAndInteger() {
 		int i = 10;
 		Integer i1 = 10;
-		System.out.println(i == i1);
+		logger.info(i == i1);
 		Integer i2 = new Integer(10);
-		System.out.println(i1 == i2);
+		logger.info(i1 == i2);
 		Integer i3 = new Integer(10);
-		System.out.println(i3 == i2);
+		logger.info(i3 == i2);
 		Integer i4 = 12;
 		Integer i5 = 12;
-		System.out.println(i4 == i5);
+		logger.info(i4 == i5);
 	}
 	public static void testStream() throws Exception{
 		//创建一个URL实例
@@ -171,7 +174,7 @@ public class MainTest {
 				BufferedReader br =new BufferedReader(isr);//为字符输入流添加缓冲，提高读取效率
 				String data = br.readLine();//读取数据
 				while((data = br.readLine()) != null){
-					System.out.println(data);//输出数据
+					logger.info(data);//输出数据
 				}
 				br.close();
 				isr.close();
@@ -203,7 +206,7 @@ public class MainTest {
 		                //从输出通道中将数据写入缓冲区  
 		                fcout.write(buffer);  
 		            }  
-		            System.out.println("总共耗时:"+(System.currentTimeMillis()-start)+"ms");  
+		            logger.info("总共耗时:"+(System.currentTimeMillis()-start)+"ms");  
 		        } finally {  
 		            if(fin!=null) fin.close();  
 		            if(fos != null) fos.close();  
@@ -213,7 +216,7 @@ public class MainTest {
 	private static void testImages() {
 		Date d1 = DateUtil.stringToDate("2016-11-04 10:53:35");
 		Date d2 = DateUtil.stringToDate("2016-11-04 10:48:01");
-		System.out.println(DateUtil.leftMinutes(d1, d2));
+		logger.info(DateUtil.leftMinutes(d1, d2));
 		
 	}
 

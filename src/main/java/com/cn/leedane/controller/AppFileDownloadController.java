@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +28,8 @@ import com.cn.leedane.utils.StringUtil;
 @Controller
 @RequestMapping(value = ControllerBaseNameUtil.adl)
 public class AppFileDownloadController extends BaseController{
-
+	private Logger logger = Logger.getLogger(getClass());
+	
 	/**
      * 上传filePath表的service
      */
@@ -46,7 +48,7 @@ public class AppFileDownloadController extends BaseController{
         try {
         	
         	int uid = StringUtil.parseInt(request.getParameter("uid"), 0);
-            System.out.println("用户ID为："+uid);
+        	logger.info("用户ID为："+uid);
             UserBean user = userService.findById(uid);
             if(user == null){
             	response.setStatus(ResponseCode.请先登录.value);
@@ -106,15 +108,15 @@ public class AppFileDownloadController extends BaseController{
                   
             raFile.close();  
             os.close(); 
-            System.out.println("下载完成");
+            logger.info("下载完成");
             return null;
         } catch (Exception e) {
-            System.out.println("下载文件发生异常,错误原因 : " + e.toString());
+        	logger.error("下载文件发生异常,错误原因 : " + e.toString());
         }
         
         long endTime = System.currentTimeMillis();
         response.setStatus(ResponseCode.服务器处理异常.value);
-        System.out.println("下载总计耗时："+ (endTime - startTime) +"毫秒");
+        logger.info("下载总计耗时："+ (endTime - startTime) +"毫秒");
         printWriter(message, response, startTime);
 		return null;
     }
@@ -133,7 +135,7 @@ public class AppFileDownloadController extends BaseController{
     	int uid = StringUtil.parseInt(request.getParameter("uid"), 0);
     	
     	UserBean user = userService.findById(uid);
-        System.out.println("用户ID为："+uid);
+    	logger.info("用户ID为："+uid);
         
         if(user == null){
         	message.put("message", EnumUtil.getResponseValue(ResponseCode.请先登录.value));

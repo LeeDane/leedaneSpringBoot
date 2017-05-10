@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,7 +28,8 @@ import com.cn.leedane.utils.StringUtil;
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.bd)
 public class BatchDealController extends BaseController{
-
+	private Logger logger = Logger.getLogger(getClass());
+	
 	@Autowired
 	private SignInService<SignInBean> signInService;
 	
@@ -72,7 +74,7 @@ public class BatchDealController extends BaseController{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			System.out.println("i="+i);
+			logger.info("i="+i);
 		}
 		return message.getMap();
 	}
@@ -96,7 +98,7 @@ public class BatchDealController extends BaseController{
 				}
 			}
 		}else{
-			System.out.println("没有要上传的文件");
+			logger.info("没有要上传的文件");
 		}
 		return message.getMap();
 	}

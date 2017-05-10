@@ -174,7 +174,7 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 		}
 
 		logger.info("SignInServiceImpl-->getSignInByLimit():jo=" +jo.toString());
-		System.out.println("获取签到历史记录：开始时间："+DateUtil.DateToString(startDate, "yyyy-MM-dd") +",结束时间：" +DateUtil.DateToString(endDate, "yyyy-MM-dd"));
+		logger.info("获取签到历史记录：开始时间："+DateUtil.DateToString(startDate, "yyyy-MM-dd") +",结束时间：" +DateUtil.DateToString(endDate, "yyyy-MM-dd"));
 		StringBuffer sql = new StringBuffer();
 		sql.append("select s.id, s.pid, s.score, s.create_user_id");
 		sql.append(" , date_format(s.create_time,'%Y-%m-%d %H:%i:%s') create_time, s.continuous");
@@ -186,7 +186,7 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看签到列表", "getSignInByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		long end = System.currentTimeMillis();
-		System.out.println("获取签到列表总计耗时：" +(end - start) +"毫秒");
+		logger.info("获取签到列表总计耗时：" +(end - start) +"毫秒");
 		return rs;
 	}	
 	

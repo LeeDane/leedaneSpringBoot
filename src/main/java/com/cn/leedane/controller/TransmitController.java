@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,7 +22,7 @@ import com.cn.leedane.utils.ResponseMap;
 @RequestMapping(value = ControllerBaseNameUtil.ts)
 public class TransmitController extends BaseController{
 
-	protected final Log log = LogFactory.getLog(getClass());
+	private Logger logger = Logger.getLogger(getClass());
 	//转发service
 	@Autowired
 	private TransmitService<TransmitBean> transmitService;
@@ -66,7 +67,7 @@ public class TransmitController extends BaseController{
 		checkParams(message, request);
 		
 		List<Map<String, Object>> result= transmitService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
-		System.out.println("获得转发的数量：" +result.size());
+		logger.info("获得转发的数量：" +result.size());
 		message.put("isSuccess", true);
 		message.put("message", result);
 		return message.getMap();

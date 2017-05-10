@@ -40,12 +40,12 @@ public class CommentTest extends BaseTest {
 		
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
-			System.out.println("isSuccess:" +commentService.add(jo, user, null));
+			logger.info("isSuccess:" +commentService.add(jo, user, null));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		long end = System.currentTimeMillis();
-		System.out.println("最终总耗时：" +(end - start) +"毫秒");
+		logger.info("最终总耗时：" +(end - start) +"毫秒");
 	}
 	
 	@Test
@@ -56,11 +56,11 @@ public class CommentTest extends BaseTest {
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
 			List<Map<String, Object>> ls = commentService.getCommentsByLimit(jo, user, null);
-			System.out.println("总数"+ls.size());
+			logger.info("总数"+ls.size());
 			for(Map<String, Object> map: ls){
-				System.out.println("id:" +map.get("id"));
-				System.out.println("content:" +map.get("content"));
-				System.out.println("count:" +map.get("count"));
+				logger.info("id:" +map.get("id"));
+				logger.info("content:" +map.get("content"));
+				logger.info("count:" +map.get("count"));
 			}
 			
 		} catch (Exception e) {
@@ -76,10 +76,10 @@ public class CommentTest extends BaseTest {
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
 			List<Map<String, Object>> ls = commentService.getOneCommentItemsByLimit(jo, user, null);
-			System.out.println("总数"+ls.size());
+			logger.info("总数"+ls.size());
 			for(Map<String, Object> map: ls){
-				System.out.println("id:" +map.get("id"));
-				System.out.println("content:" +map.get("content"));
+				logger.info("id:" +map.get("id"));
+				logger.info("content:" +map.get("content"));
 			}
 			
 		} catch (Exception e) {
@@ -95,7 +95,7 @@ public class CommentTest extends BaseTest {
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
 			int count = commentService.getCountByObject(jo, user, null);
-			System.out.println("总数"+count);
+			logger.info("总数"+count);
 			
 		} catch (Exception e) {
 			e.printStackTrace();

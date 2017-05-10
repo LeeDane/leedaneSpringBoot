@@ -44,7 +44,7 @@ public class SignInTest extends BaseTest {
 	 */
 	@Test
 	public void isSignIn(){
-		System.out.println(signInService.isSign(1, DateUtil.DateToString(new Date(), "yyyy-MM-dd")));
+		logger.info(signInService.isSign(1, DateUtil.DateToString(new Date(), "yyyy-MM-dd")));
 	}
 	
 	/**
@@ -86,7 +86,7 @@ public class SignInTest extends BaseTest {
 		if(user != null)
 			bean.setCreateUserId(user.getId());
 		bean.setStatus(1);		
-		//System.out.println("签到："+signInService.saveSignIn(jo, user, request)(bean,1));
+		//logger.info("签到："+signInService.saveSignIn(jo, user, request)(bean,1));
 	}
 	
 
@@ -95,7 +95,7 @@ public class SignInTest extends BaseTest {
 	 */
 	@Test
 	public void getNewestRecore(){
-		System.out.println(signInService.getNewestRecore(1).toString());
+		logger.info(signInService.getNewestRecore(1).toString());
 	}
 	
 	@Test
@@ -106,7 +106,7 @@ public class SignInTest extends BaseTest {
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
 			boolean isSave = signInService.saveSignIn(jo, user, null);
-			System.out.println("isSave:" +isSave);
+			logger.info("isSave:" +isSave);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -119,7 +119,7 @@ public class SignInTest extends BaseTest {
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
 			List<Map<String, Object>> list = signInService.getSignInByLimit(jo, user, null);
-			System.out.println("list数量:" +list.size());
+			logger.info("list数量:" +list.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

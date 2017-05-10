@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.sf.json.JSONArray;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,8 @@ import com.cn.leedane.utils.StringUtil;
  */
 @Component
 public class MoodHandler {
+	private Logger logger = Logger.getLogger(getClass());
+	
 	@Autowired
 	private MoodMapper moodMapper;
 	
@@ -192,7 +195,7 @@ public class MoodHandler {
 			}
 			return path;
 		}else{
-			System.out.println("moodImgKey:"+moodImgKey);
+			logger.info("moodImgKey:"+moodImgKey);
 			return redisUtil.getString(moodImgKey);
 		}
 	}

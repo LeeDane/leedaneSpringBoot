@@ -1,5 +1,7 @@
 package com.cn.leedane.utils;
 
+import org.apache.log4j.Logger;
+
 import com.cn.leedane.mapper.FinancialMapper;
 import com.cn.leedane.springboot.SpringUtil;
 
@@ -10,7 +12,8 @@ import com.cn.leedane.springboot.SpringUtil;
  * Version 1.0
  */
 public class FinancialWebImeiUtil {
-
+	private Logger logger = Logger.getLogger(getClass());
+	
 	public static final String DEFAULT_IMEI = "201601010156651";
 	
 	private static FinancialWebImeiUtil imeiUtil;
@@ -20,7 +23,7 @@ public class FinancialWebImeiUtil {
 	private FinancialWebImeiUtil(){
 		FinancialMapper financialMapper = (FinancialMapper) SpringUtil.getBean("financialMapper");
 		imei_local_id = 1 + SqlUtil.getTotalByList(financialMapper.executeSQL("select local_id ct from t_financial where imei=?", DEFAULT_IMEI));
-		System.out.println("加载imei_local_id完成，初始化值为："+ imei_local_id);
+		logger.info("加载imei_local_id完成，初始化值为："+ imei_local_id);
 	}
 	
 	public static synchronized FinancialWebImeiUtil getInstance(){

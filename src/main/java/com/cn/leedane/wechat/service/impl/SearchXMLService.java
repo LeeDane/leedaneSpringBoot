@@ -270,7 +270,7 @@ public class SearchXMLService extends BaseXMLWechatService {
 		service.Content = "他";
 		service.FromUserName = "FromUserName";
 		service.ToUserName = "ToUserName";
-		System.out.println(service.execute());
+		logger.info(service.execute());
 	}*/
 	
 }

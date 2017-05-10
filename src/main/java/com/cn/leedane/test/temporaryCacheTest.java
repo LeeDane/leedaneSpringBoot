@@ -13,7 +13,7 @@ public class temporaryCacheTest extends BaseTest {
 	@Test
 	public void addCache(){
 		temporaryCache.addCache("lee", "Dane");
-		System.out.println(temporaryCache.getCache("lee"));
+		logger.info(temporaryCache.getCache("lee"));
 		
 	}
 }

@@ -154,8 +154,6 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取朋友圈列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 				
 		return message.getMap();*/
-		
-		long start = System.currentTimeMillis();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -196,7 +194,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 		}
 		if(rs !=null && rs.size() > 0){
 			JSONObject friendObject = friendHandler.getFromToFriends(user.getId());
-			System.out.println("friendObject："+friendObject.toString());
+			logger.info("friendObject："+friendObject.toString());
 			int createUserId = 0;
 			boolean hasImg ;
 			String uuid;
@@ -226,7 +224,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 				
 				//有图片的获取图片的路径
 				if(hasImg && !StringUtil.isNull(uuid)){
-					//System.out.println("图片地："+moodHandler.getMoodImg(DataTableType.心情.value, uuid, picSize));
+					//logger.info("图片地："+moodHandler.getMoodImg(DataTableType.心情.value, uuid, picSize));
 					rs.get(i).put("imgs", moodHandler.getMoodImg(DataTableType.心情.value, uuid, picSize));
 				}
 			}	
@@ -234,8 +232,6 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取朋友圈列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 				
-		long end = System.currentTimeMillis();
-		System.out.println("获取好友圈列表总计耗时：" +(end - start) +"毫秒");
 		message.put("message", rs);
 		message.put("isSuccess", true);
 		return message.getMap();

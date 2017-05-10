@@ -28,8 +28,8 @@ public class DES {
              
         byte[] key = generateKey();     
         byte[] encrypt = encrypt("effrdd".getBytes(), key);
-        System.out.println("加密后："+new String(encrypt, "UTF8"));
-        System.out.println("解密后：" +new String(decrypt(encrypt, key)));    
+        logger.info("加密后："+new String(encrypt, "UTF8"));
+        logger.info("解密后：" +new String(decrypt(encrypt, key)));    
             
             
           
@@ -43,11 +43,11 @@ public class DES {
         Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM_CBC);    
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(getIV()));    
         byte[] enc = cipher.doFinal("ggggg".getBytes()); //加密    
-        System.out.println("加密后1："+new String(enc, "gb2312"));   
+        logger.info("加密后1："+new String(enc, "gb2312"));   
         cipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(getIV()));    
         byte[] dec = cipher.doFinal(enc); // 解密    
-        //System.out.println(new String(dec));   
-        System.out.println("解密后1：" +new String(dec));    
+        //logger.info(new String(dec));   
+        logger.info("解密后1：" +new String(dec));    
     }  */  
         
     static byte[] getIV() {    

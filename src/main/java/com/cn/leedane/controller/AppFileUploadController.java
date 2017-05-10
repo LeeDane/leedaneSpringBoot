@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,8 @@ import com.cn.leedane.utils.StringUtil;
 @Controller
 @RequestMapping(value = ControllerBaseNameUtil.aul)
 public class AppFileUploadController extends BaseController{
+	
+	private Logger logger = Logger.getLogger(getClass());
 
 	/**
      * 上传filePath表的service
@@ -66,7 +69,7 @@ public class AppFileUploadController extends BaseController{
             
             //暂时解决乱码问题
             tableUuid = new String (tableUuid.getBytes("iso-8859-1"), "UTF-8");
-            System.out.println("用户ID为："+uid+",fileName:"+fileName+",tableName:"+tableName+",order:"+order+",tableUuid:"+tableUuid);
+            logger.info("用户ID为："+uid+",fileName:"+fileName+",tableName:"+tableName+",order:"+order+",tableUuid:"+tableUuid);
             
             //编码，注意app要保证编号的正确性和顺序，到时合并的时候将按照大小进行合并
             int serialNumber = StringUtil.parseInt(request.getParameter("serialNumber"), 0);
@@ -149,7 +152,7 @@ public class AppFileUploadController extends BaseController{
         	   return message.getMap();
            }
         } catch (Exception e) {
-            System.out.println("上传文件发生异常,错误原因 : " + e.getMessage());
+        	logger.error("上传文件发生异常,错误原因 : " + e.getMessage());
         }
         
         message.put("message", EnumUtil.getResponseValue(ResponseCode.服务器处理异常.value));

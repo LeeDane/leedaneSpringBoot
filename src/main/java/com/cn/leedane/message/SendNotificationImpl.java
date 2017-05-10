@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.cn.leedane.exception.ErrorException;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.StringUtil;
@@ -23,6 +25,7 @@ import com.taobao.api.response.AlibabaAliqinFcSmsNumSendResponse;
  * Version 1.0
  */
 public class SendNotificationImpl implements ISendNotification{
+	private Logger logger = Logger.getLogger(getClass());
 	
 	protected static final String URL = "http://gw.api.taobao.com/router/rest";
     //正式环境需要设置为:http://gw.api.taobao.com/router/rest
@@ -72,7 +75,7 @@ public class SendNotificationImpl implements ISendNotification{
 			e.printStackTrace();
 		}
 		RedisUtil.getInstance().addMap("register_"+mobilePhone, map);
-		System.out.println(sendAliDaYu("注册验证", "{\"code\":\""+validationCode+"\",\"product\":\""+notification.getToUser().getAccount()+"\"}", mobilePhone, "SMS_4961018"));
+		logger.info(sendAliDaYu("注册验证", "{\"code\":\""+validationCode+"\",\"product\":\""+notification.getToUser().getAccount()+"\"}", mobilePhone, "SMS_4961018"));
 	}
 	
 	/**
@@ -92,7 +95,7 @@ public class SendNotificationImpl implements ISendNotification{
 			e.printStackTrace();
 		}
 		RedisUtil.getInstance().addMap("login_"+mobilePhone, map);
-		System.out.println(sendAliDaYu("登录验证", "{\"code\":\""+validationCode+"\",\"product\":\"\"}", mobilePhone, "SMS_4961020"));
+		logger.info(sendAliDaYu("登录验证", "{\"code\":\""+validationCode+"\",\"product\":\"\"}", mobilePhone, "SMS_4961020"));
 	}
 	/**
 	 * 修改密码验证码(1个小时过期)
@@ -111,7 +114,7 @@ public class SendNotificationImpl implements ISendNotification{
 			e.printStackTrace();
 		}
 		RedisUtil.getInstance().addMap("updatepsw_"+mobilePhone, map);
-		System.out.println(sendAliDaYu("变更验证", "{\"code\":\""+validationCode+"\",\"product\":\""+notification.getToUser().getAccount()+"\"}", mobilePhone, "SMS_4961016"));
+		logger.info(sendAliDaYu("变更验证", "{\"code\":\""+validationCode+"\",\"product\":\""+notification.getToUser().getAccount()+"\"}", mobilePhone, "SMS_4961016"));
 	}
 	
 	/**
@@ -131,7 +134,7 @@ public class SendNotificationImpl implements ISendNotification{
 			e.printStackTrace();
 		}
 		RedisUtil.getInstance().addMap("updateinfo_"+mobilePhone, map);
-		System.out.println(sendAliDaYu("变更验证", "{\"code\":\""+validationCode+"\",\"product\":\""+notification.getToUser().getAccount()+"\"}", mobilePhone, "SMS_4961015"));
+		logger.info(sendAliDaYu("变更验证", "{\"code\":\""+validationCode+"\",\"product\":\""+notification.getToUser().getAccount()+"\"}", mobilePhone, "SMS_4961015"));
 	}
 	/**
 	 * 登录异常验证码(1个小时过期)
@@ -150,7 +153,7 @@ public class SendNotificationImpl implements ISendNotification{
 			e.printStackTrace();
 		}
 		RedisUtil.getInstance().addMap("loginerror_"+mobilePhone, map);
-		System.out.println(sendAliDaYu("登录验证", "{\"code\":\""+validationCode+"\",\"product\":\""+notification.getToUser().getAccount()+"\"}", mobilePhone, "SMS_4961019"));
+		logger.info(sendAliDaYu("登录验证", "{\"code\":\""+validationCode+"\",\"product\":\""+notification.getToUser().getAccount()+"\"}", mobilePhone, "SMS_4961019"));
 	}
 	
 	/**
@@ -170,7 +173,7 @@ public class SendNotificationImpl implements ISendNotification{
 			e.printStackTrace();
 		}
 		RedisUtil.getInstance().addMap("identity_"+mobilePhone, map);
-		System.out.println(sendAliDaYu("身份验证", "{\"code\":\""+validationCode+"\",\"product\":\""+notification.getToUser().getAccount()+"\"}", mobilePhone, "SMS_4961021"));
+		logger.info(sendAliDaYu("身份验证", "{\"code\":\""+validationCode+"\",\"product\":\""+notification.getToUser().getAccount()+"\"}", mobilePhone, "SMS_4961021"));
 	}
 	/**
 	 * 活动确认验证码(1个小时过期)
@@ -190,7 +193,7 @@ public class SendNotificationImpl implements ISendNotification{
 		}
 		RedisUtil.getInstance().addMap("activity_"+mobilePhone, map);
 		String item = "测试活动";
-		System.out.println(sendAliDaYu("活动验证", "{\"code\":\""+validationCode+"\",\"product\":\""+notification.getToUser().getAccount()+"\",\"item\":\""+item+"\"}", mobilePhone, "SMS_4961017"));
+		logger.info(sendAliDaYu("活动验证", "{\"code\":\""+validationCode+"\",\"product\":\""+notification.getToUser().getAccount()+"\",\"item\":\""+item+"\"}", mobilePhone, "SMS_4961017"));
 	}
 	/**
 	 * 发送到阿里大鱼的请求

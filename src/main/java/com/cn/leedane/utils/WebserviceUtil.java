@@ -133,7 +133,7 @@ public class WebserviceUtil {
 									"</sendData>"+
 								"</business>";
 		
-		System.out.println(util.call("execute", new Object[]{xmlString}));
-		//System.out.println(getTime("2015-08-11 18:23:22","yyyyMMddHHmmss"));
+		logger.info(util.call("execute", new Object[]{xmlString}));
+		//logger.info(getTime("2015-08-11 18:23:22","yyyyMMddHHmmss"));
 	}*/
 }

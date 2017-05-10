@@ -20,6 +20,7 @@ import java.util.Set;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Ehcache;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.ehcache.EhCacheCache;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
@@ -48,7 +49,8 @@ import com.cn.leedane.utils.sensitiveWord.SensitiveWordInit;
  */
 @Component
 public class InitCacheData {
-
+	private Logger logger = Logger.getLogger(getClass());
+	
 	@Autowired
 	private SystemCache systemCache;
 	
@@ -168,9 +170,9 @@ public class InitCacheData {
 	 */
 	private void checdRidesOpen() {
 		if(RedisUtil.getInstance().isPing()){
-			System.out.println("Redis服务已经启动");
+			logger.warn("Redis服务已经启动");
 		}else{
-			System.out.println("Redis服务还未启动");
+			logger.error("Redis服务还未启动");
 		}
 	}
 
@@ -194,7 +196,7 @@ public class InitCacheData {
 		    }
 		    systemCache.addCache("leedaneProperties", properties);
 		    long end = System.currentTimeMillis();  
-			System.out.println("加载leedane.properties中的数据进缓存中结束，共计耗时："+(end - begin) +"ms"); 
+		    logger.warn("加载leedane.properties中的数据进缓存中结束，共计耗时："+(end - begin) +"ms"); 
 		} catch (IOException e) {
 			//e.printStackTrace();
 			System.err.println("加载leedane.properties属性配置文件出错");
@@ -220,7 +222,7 @@ public class InitCacheData {
 			systemCache.addCache("filterUrls", urls);
 			bufferedReader.close();
 			long end = System.currentTimeMillis();  
-			System.out.println("加载filter-url.txt中的数据进缓存中结束，共计耗时："+(end - begin) +"ms"); 
+			logger.warn("加载filter-url.txt中的数据进缓存中结束，共计耗时："+(end - begin) +"ms"); 
 		} catch (Exception e) {
 			//e.printStackTrace();
 		}finally{
@@ -243,7 +245,7 @@ public class InitCacheData {
 		EhCacheCacheManager ehCacheCacheManager = (EhCacheCacheManager) SpringUtil.getBean("ehCacheCacheManager");
 		EhCacheCache cache = (EhCacheCache) ehCacheCacheManager.getCache("systemEhCache");
 		cache.put("ttt", "hhh");
-		System.out.println(cache.get("ttt").get());
+		logger.info(cache.get("ttt").get());
 		SystemCache.setSystemEhCache(cache);
 	}
 
@@ -271,18 +273,18 @@ public class InitCacheData {
 				systemCache.addCache(option.getOptionKey(), option.getOptionValue());
 			}  
 			long end = System.currentTimeMillis();  
-			System.out.println("加载选项表数据进缓存中结束，共计耗时："+(end - begin) +"ms");  
+			logger.warn("加载选项表数据进缓存中结束，共计耗时："+(end - begin) +"ms");  
 			
-			//System.out.println("---->"+systemCache.getCache("page-size"));
+			//logger.info("---->"+systemCache.getCache("page-size"));
 		} catch (Exception ex) {  
-			System.out.println("初始化读取T_OPTION表出现异常");
+			logger.error("初始化读取T_OPTION表出现异常");
 			ex.printStackTrace();
 		} finally { 
 			if(conn != null){
 				try {
 					conn.close();
 				} catch (SQLException e) {
-					System.out.println("初始化缓存关闭connection连接出现异常");
+					logger.error("初始化缓存关闭connection连接出现异常");
 				}  
 			}
 		} 

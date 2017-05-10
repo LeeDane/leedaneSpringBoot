@@ -14,6 +14,8 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import com.cn.leedane.exception.ErrorException;
 
 import net.sf.jmimemagic.Magic;
@@ -31,7 +33,7 @@ import net.sf.json.JSONObject;
  * Version 1.0
  */
 public class StringUtil {
-
+	private static Logger logger = Logger.getLogger(StringUtil.class);
 	/**
 	 * 要是null，就将null转成""
 	 * @param origin
@@ -308,7 +310,7 @@ public class StringUtil {
 		try {
 			return Integer.parseInt(String.valueOf(obj));
 		} catch (Exception e) {
-			System.out.println(obj +"转换成int失败");
+			logger.error(obj +"转换成int失败");
 			return 0;
 		}
 	}
@@ -331,7 +333,7 @@ public class StringUtil {
         try {
             return Long.parseLong(String.valueOf(obj));
         } catch (Exception e) {
-        	System.out.println(obj +"转换成long失败");
+        	logger.error(obj +"转换成long失败");
             return 0;
         }
     }
@@ -344,7 +346,7 @@ public class StringUtil {
 		try {
 			return Boolean.parseBoolean(String.valueOf(obj));
 		} catch (Exception e) {
-			System.out.println(obj +"转换成boolean失败");
+			logger.error(obj +"转换成boolean失败");
 			return false;
 		}
 	}
@@ -396,7 +398,7 @@ public class StringUtil {
 		try {
 			result = Integer.parseInt(origin);
 		} catch (Exception e) {
-			System.out.println("字符串转化整形数字失败，返回-1");
+			logger.error("字符串转化整形数字失败，返回-1");
 		}
 		return result;
 	}
@@ -413,7 +415,7 @@ public class StringUtil {
 		try {
 			defaultValue = Integer.parseInt(origin);
 		} catch (Exception e) {
-			System.out.println(origin+"字符串转化整形数字失败，返回默认值"+ defaultValue);
+			logger.error(origin+"字符串转化整形数字失败，返回默认值"+ defaultValue);
 		}
 		return defaultValue;
 	}
@@ -630,7 +632,7 @@ public class StringUtil {
 	 * @return
 	 */
 	public static String getYoudaoFanyiContent(String returnMsg) {
-		System.out.println("有道翻译返回的信息:"+returnMsg);
+		logger.info("有道翻译返回的信息:"+returnMsg);
 		StringBuffer buffer = new StringBuffer();
 		if(isNotNull(returnMsg)){
 			JSONObject json = JSONObject.fromObject(returnMsg);
@@ -685,13 +687,13 @@ public class StringUtil {
 	
 	
 	/*public static void main(String[] args) {
-		//System.out.println(StringUtil.changeNotNullAndUtf8("赵本山代表作被指\"丑化\"农民 丢弃农村传统底蕴"));
-		//System.out.println(StringUtil.isNumeric("-5.00"));
-		//System.out.println(StringUtisl.isIntNumeric("5"));
+		//logger.info(StringUtil.changeNotNullAndUtf8("赵本山代表作被指\"丑化\"农民 丢弃农村传统底蕴"));
+		//logger.info(StringUtil.isNumeric("-5.00"));
+		//logger.info(StringUtisl.isIntNumeric("5"));
 		for(int i=0; i < 1000; i++){
-			System.out.println(build6ValidationCode());
+			logger.info(build6ValidationCode());
 		}
-		//System.out.println(getMime("G://新建 Microsoft Office Excel 2007 工作簿.xls"));
+		//logger.info(getMime("G://新建 Microsoft Office Excel 2007 工作簿.xls"));
 		String text = ",哈哈";
 		if(StringUtil.isNotNull(text)){
 			while(text.length()> 0){
@@ -704,6 +706,6 @@ public class StringUtil {
 			
 		}
 		
-		System.out.println("结果：" + text);
+		logger.info("结果：" + text);
 	}*/
 }

@@ -72,7 +72,6 @@ public class MyShiroRealm extends AuthorizingRealm{
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         logger.info("##################执行Shiro权限认证##################");
-        System.out.println("##################执行Shiro权限认证##################");
         //获取当前登录输入的用户名，等价于(String) principalCollection.fromRealm(getName()).iterator().next();
         int userid = StringUtil.changeObjectToInt(super.getAvailablePrincipal(principalCollection)); 
         //到数据库查是否有此对象

@@ -99,9 +99,9 @@ public class Base64Util{
       //加密成base64
       //String strSrc = "{\"name\": \"lee\", \"age\": 32}";
       String strOut = new String(Base64Util.encode(str.getBytes()));
-      System.out.println(strOut);
+      logger.info(strOut);
 
       String strOut2 = new String(Base64Util.decode(strOut.toCharArray()));
-      System.out.println(strOut2);
+      logger.info(strOut2);
     }*/
 }

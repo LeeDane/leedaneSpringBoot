@@ -9,8 +9,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +38,7 @@ import com.cn.leedane.wechat.util.WeixinUtil;
 @RequestMapping(value = ControllerBaseNameUtil.wx)
 public class WeixinController extends BaseController{
 
-	protected final Log log = LogFactory.getLog(getClass());
+	private Logger logger = Logger.getLogger(getClass());
 	/**
 	 * get请求方法名称
 	 */
@@ -81,12 +80,12 @@ public class WeixinController extends BaseController{
 				out.print(echostr);
 		}else{
 			/*if(wechatHandler == null){
-				System.out.println("需要通过springUtil方式获取wechatHandler对象");
+				logger.info("需要通过springUtil方式获取wechatHandler对象");
 				wechatHandler = (WechatHandler) SpringUtil.getBean("wechatHandler");
 			}
 			
 			if(userService == null){
-				System.out.println("需要通过springUtil方式获取wechatHandler对象");
+				logger.info("需要通过springUtil方式获取wechatHandler对象");
 				userService = (UserService<UserBean>) SpringUtil.getBean("userService");
 			}*/
 			Map<String, String> map = new HashMap<String, String>();
@@ -112,7 +111,7 @@ public class WeixinController extends BaseController{
 					cacheBean =new WeixinCacheBean();
 				}
 				
-				System.out.println("用户发送的："+Content);
+				logger.info("用户发送的："+Content);
 				
 				String returnMsg = "请输入‘主菜单’，进入主菜单状态；\n\r 输入‘翻译’，进入翻译模式；\n\r 输入‘聊天’，进入聊天模式；\n\r 输入‘查询’，进入官网查询模式；\n\r 输入‘心情’，进入发布心情模式；\n\r 输入‘最新博客’，获取最新的博客；\n\r 输入‘新版app’，获取最新的android app链接；\n\r输入‘退出’，退出绑定。";
 				//处理用户请求的内容，判断需要调用哪个接口
@@ -215,7 +214,7 @@ public class WeixinController extends BaseController{
 				if(!returnMsg.startsWith("<xml>")){
 					returnMsg = MessageUtil.sendText(ToUserName, FromUserName, returnMsg);
 				}
-				System.out.println(returnMsg +"----" +returnMsg);
+				logger.info(returnMsg +"----" +returnMsg);
 				out.print(returnMsg);
 				return null;
 			}catch(Exception e){

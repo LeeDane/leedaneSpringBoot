@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,6 +23,8 @@ import com.cn.leedane.exception.ErrorException;
  * Version 1.0
  */
 public class Wangyi implements Runnable{
+	
+	private Logger logger = Logger.getLogger(getClass());
 	
 	//今日头条的首页url
 	public static final String HOME_URL = "http://news.163.com/";
@@ -111,7 +114,7 @@ public class Wangyi implements Runnable{
 		fot.write("</body></html>".getBytes("utf-8"));
 		fot.close();
 		endTime = System.currentTimeMillis();
-		System.out.println("文件"+ title +"保存成html成功！共计耗时："+(endTime - startTime) + "毫秒");
+		logger.info("文件"+ title +"保存成html成功！共计耗时："+(endTime - startTime) + "毫秒");
 
 	}
 	
@@ -136,7 +139,7 @@ public class Wangyi implements Runnable{
 		fot.write(homeHtml.html().getBytes("utf-8"));
 		//fot.write("</body></html>".getBytes("utf-8"));
 		fot.close();
-		System.out.println("文件F://toutiao/163.html保存成html成功！");
+		logger.info("文件F://toutiao/163.html保存成html成功！");
 
 				
 		List<String> urls = new ArrayList<String>();
@@ -235,7 +238,7 @@ public class Wangyi implements Runnable{
 
 		try {
 			toutiao.execute();
-			System.out.println(toutiao.score());
+			logger.info(toutiao.score());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -244,7 +247,7 @@ public class Wangyi implements Runnable{
 		Pattern p=Pattern.compile("http://[0-9a-zA-Z]*.163.com");
 		Matcher m=p.matcher(url);
 		boolean result=m.find();
-		System.out.println(result);
+		logger.info(result);
 	}*/
 	
 

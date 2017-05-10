@@ -12,6 +12,7 @@ import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +41,8 @@ import com.cn.leedane.service.UserService;
 @Component("sanwenNetNovelBean")
 public class SanwenNetNovelBean {
 
+	private Logger logger = Logger.getLogger(getClass());
+	
 	@Autowired
 	private CrawlMapper crawlMapper;
 	
@@ -57,7 +60,7 @@ public class SanwenNetNovelBean {
 	 * 执行爬取方法
 	 */
 	public void crawl() throws Exception{
-		//System.out.println(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Sanwen:crawl()");
+		//logger.info(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Sanwen:crawl()");
 		try {
 			SanwenNetNovel sanwenNet = new SanwenNetNovel();
 			sanwenNet.setUrl("http://www.sanwen.net/novel/");
@@ -68,11 +71,11 @@ public class SanwenNetNovelBean {
 				crawlBean.setUrl(homeUrl.trim());
 				crawlBean.setSource("散文网短篇小说");
 				crawlBean.setCreateTime(new Date());
-				System.out.println(crawlMapper.save(crawlBean));
+				logger.info(crawlMapper.save(crawlBean));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("抓取散文网短篇小说信息出现异常：Crawl()");
+			logger.error("抓取散文网短篇小说信息出现异常：Crawl()");
 		}
 	}
 	
@@ -80,7 +83,7 @@ public class SanwenNetNovelBean {
 	 * 执行处理方法
 	 */
 	public void deal() throws Exception{
-		System.out.println(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Sanwen:deal()");
+		logger.info(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Sanwen:deal()");
 		
 		//获得用户
 		UserBean user = userService.findById(1);
@@ -103,10 +106,10 @@ public class SanwenNetNovelBean {
 			}
 			
 			for(String url: errors){
-				System.out.println("处理散文网短篇小说信息出现异常的链接是："+url);
+				logger.error("处理散文网短篇小说信息出现异常的链接是："+url);
 			}
 		}
-		System.out.println("处理散文网短篇小说信息结束......");
+		logger.info("处理散文网短篇小说信息结束......");
 	}
 	
 	/**

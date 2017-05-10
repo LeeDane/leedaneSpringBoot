@@ -1,16 +1,15 @@
 package com.cn.leedane.utils;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
 
 /**
  * 系统中相同部分的工具类
@@ -19,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  * Version 1.0
  */
 public class CommonUtil {
+	private static Logger logger = Logger.getLogger(CommonUtil.class);
 	
 	private CommonUtil(){
 		
@@ -61,7 +61,7 @@ public class CommonUtil {
 	        prop.load(in);
 			return prop.getProperty(key);
 		} catch (Exception e) {
-			System.out.println("不能读取属性文件. " + "请确保" + propertiesPath +"的文件存在");
+			logger.error("不能读取属性文件. " + "请确保" + propertiesPath +"的文件存在");
 			System.exit(1);
 			
 		}
@@ -90,7 +90,7 @@ public class CommonUtil {
 		try {
 			return rb.getString(key);
 		} catch (Exception e) {
-			System.out.println("不能读取属性文件. " + "请确保" + propertiesName +"的.properties文件存在");
+			logger.error("不能读取属性文件. " + "请确保" + propertiesName +"的.properties文件存在");
 			System.exit(1);
 			
 		}
@@ -224,7 +224,7 @@ public class CommonUtil {
      Set<Object> set = prop.keySet();
      Iterator<Object> it = set.iterator();
      while(it.hasNext()) {
-    	 System.out.println(it.next());
+    	 logger.info(it.next());
      }
 	}*/
 }

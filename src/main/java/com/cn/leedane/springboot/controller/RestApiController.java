@@ -36,7 +36,6 @@ public class RestApiController {
     /*@RequestMapping(value = "/login", method = RequestMethod.POST)  
     public Map<String, Object> loginByPost(@RequestParam(value = "account", required = true) String name,  
     		@RequestParam(value = "pwd", required = true) String pwd, @RequestBody(required = true)String dd) {  
-        System.out.println("hello post"); 
         Map<String, Object> mp = new HashMap<String, Object>();
         mp.put("account", name);
         mp.put("pwd", pwd);

@@ -1,5 +1,7 @@
 package com.cn.leedane.utils;
 
+import org.apache.log4j.Logger;
+
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.MoodBean;
 import com.cn.leedane.model.TimeLineBean;
@@ -11,7 +13,7 @@ import com.cn.leedane.model.TimeLineBean;
  * Version 1.0
  */
 public class TimeLineBeanUtil {
-
+	private static Logger logger = Logger.getLogger(TimeLineBeanUtil.class);
 	
 	public TimeLineBean toTimeLineBean(BlogBean bean){
 		TimeLineBean timeLineBean = new TimeLineBean();
@@ -26,8 +28,8 @@ public class TimeLineBeanUtil {
 	}
 	
 	/*public static void main(String[] args) {
-		System.out.println(test());
-		System.out.println("hello");
+		logger.info(test());
+		logger.info("hello");
 	}*/
 	
 	public static String test(){
@@ -37,9 +39,9 @@ public class TimeLineBeanUtil {
 			@Override
 			public void run() {
 				for(int i = 0; i < 50000; i++){
-					System.out.println("i:"+i);
+					logger.info("i:"+i);
 				}
-				System.out.println("world");
+				logger.info("world");
 			}
 		}).start();
 		

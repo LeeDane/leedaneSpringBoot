@@ -1,9 +1,5 @@
 package com.cn.leedane.test;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.Test;
 
 import com.cn.leedane.redis.util.RedisUtil;
@@ -19,8 +15,8 @@ public class RedisTest extends BaseTest {
 	@Test
 	public void addSet() throws Exception{
 		RedisUtil redisUtil = new RedisUtil();
-		System.out.println(redisUtil.addString("mood_1", "hello mood 1"));
-		System.out.println(redisUtil.getString("mood_1"));
+		logger.info(redisUtil.addString("mood_1", "hello mood 1"));
+		logger.info(redisUtil.getString("mood_1"));
 		redisUtil.clearAll();
 	}
 	
@@ -29,20 +25,20 @@ public class RedisTest extends BaseTest {
 		RedisUtil redisUtil = RedisUtil.getInstance();
 		//redisUtil.addString("comment_t_mood_1104", "12");
 		/*if(redisUtil.hasKey("mood_2")){
-			System.out.println("已经存在key：mood_2");
+			logger.info("已经存在key：mood_2");
 		}else{
-			System.out.println("还没有存在key：mood_2");
+			logger.info("还没有存在key：mood_2");
 		}*/
 		/*redisUtil.addString("comment_t_mood_1103", "0");
 		redisUtil.addString("comment_t_mood_1104", "0");
 		redisUtil.addString("comment_t_mood_1099", "0");*/
-		/*System.out.println(redisUtil.addString("mood_2", "hello mood 3"));
-		System.out.println(redisUtil.getString("mood_2"));
+		/*logger.info(redisUtil.addString("mood_2", "hello mood 3"));
+		logger.info(redisUtil.getString("mood_2"));
 		
 		if(redisUtil.hasKey("mood_2")){
-			System.out.println("已经存在key：mood_2");
+			logger.info("已经存在key：mood_2");
 		}else{
-			System.out.println("还没有存在key：mood_2");
+			logger.info("还没有存在key：mood_2");
 		}*/
 		//redisUtil.delete("mood_img_t_mood_leedane4fa288ac-6664-469e-a1ce-a1070fce82de_30x30");
 		/*for(int i = 1080; i < 1200; i++){
@@ -52,7 +48,7 @@ public class RedisTest extends BaseTest {
 			redisUtil.delete(ConstantsUtil.ZAN_USER_REDIS +"t_mood_" +i);
 			//redisUtil.delete(ConstantsUtil.MOOD_REDIS +i);
 		}*/
-		//System.out.println(redisUtil.getString("comment_t_mood_1102"));
+		//logger.info(redisUtil.getString("comment_t_mood_1102"));
 		//redisUtil.delete("mood_t_mood_Andy90f776d9-be7e-4c79-8ea6-eed50b2b29e3");
 		//Map<String>
 		//redisUtil.addMap("test_user_1", map)
@@ -74,7 +70,7 @@ public class RedisTest extends BaseTest {
 		
 		Set<String> set = redisUtil.getLimit(1, "setAAA", 2, 5);
 		for(String s: set){
-			System.out.println(s);
+			logger.info(s);
 		}*/
 		redisUtil.clearAll();
 	}

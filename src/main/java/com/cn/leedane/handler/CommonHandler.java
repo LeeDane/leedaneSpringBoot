@@ -7,6 +7,7 @@ import java.util.Map;
 
 import net.sf.json.JSONArray;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.cn.leedane.model.UserBean;
@@ -22,7 +23,6 @@ import com.cn.leedane.utils.StringUtil;
  * Version 1.0
  */
 public class CommonHandler {
-	
 	@Autowired
 	private MoodHandler moodHandler;
 	
@@ -78,7 +78,7 @@ public class CommonHandler {
 			content = ConstantsUtil.SOURCE_DELETE_TIP;
 		}
 		
-		//System.out.println("tableName:"+tableName+",tableId:"+tableId+",content:"+content);
+		//logger.info("tableName:"+tableName+",tableId:"+tableId+",content:"+content);
 		return content;
 	}
 	
@@ -127,7 +127,7 @@ public class CommonHandler {
 			content = ConstantsUtil.SOURCE_DELETE_TIP;
 		}
 		result.put("source", content);
-		//System.out.println("tableName:"+tableName+",tableId:"+tableId+",content:"+content);
+		//logger.info("tableName:"+tableName+",tableId:"+tableId+",content:"+content);
 		return result;
 	}
 	

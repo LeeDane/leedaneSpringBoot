@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.log4j.Logger;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.SimpleFSDirectory;
@@ -63,7 +64,8 @@ import com.cn.leedane.handler.ZanHandler;
 //标注启动了缓存
 @EnableCaching
 public class StartUpApplication /*implements TransactionManagementConfigurer*/{
-
+	private static Logger logger = Logger.getLogger(StartUpApplication.class);
+	
 	@Bean(name = "dataSource")
 	@Qualifier(value = "dataSource")
 	@Primary
@@ -246,7 +248,7 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
 	}
     
 	public static void main(String[] args) {
-		System.out.println( "项目开始启动。。。" );
+		logger.warn( "项目开始启动。。。" );
         //SpringApplication.run("classpath:spring-common.xml", args);
         SpringApplication.run(StartUpApplication.class, args);
         

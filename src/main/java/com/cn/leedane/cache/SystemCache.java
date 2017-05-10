@@ -57,13 +57,13 @@ public class SystemCache implements com.cn.leedane.cache.ICache{
 		//将节点加载进缓存中
 		systemEhCache.put(key, value);
 		
-		/*System.out.println("end cache......");
+		/*logger.info("end cache......");
 		
-		System.out.println(cache.get("LeeDane").getObjectValue());
-		System.out.println(cache.getKeys());
+		logger.info(cache.get("LeeDane").getObjectValue());
+		logger.info(cache.getKeys());
 		cache.removeAll();
-		System.out.println("全部移除。。。。");
-		System.out.println(cache.getKeys());*/
+		logger.info("全部移除。。。。");
+		logger.info(cache.getKeys());*/
 	}
 	
 	/**

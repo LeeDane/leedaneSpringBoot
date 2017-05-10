@@ -894,7 +894,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看话题"+topic, "getTopicByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
-		System.out.println("获取话题列表总计耗时：" +(end - start) +"毫秒，总数是："+rs.size());
+		logger.info("获取话题列表总计耗时：" +(end - start) +"毫秒，总数是："+rs.size());
 		message.put("message", rs);
 		message.put("isSuccess", true);
 		return message.getMap();

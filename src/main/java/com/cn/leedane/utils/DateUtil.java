@@ -608,9 +608,9 @@ public class DateUtil {
 	/*public static void main(String[] args) {
 		try {
 			int i = leftMinutes(stringToDate("2016-11-03 18:59:00"), new Date());
-			System.out.println(i);
+			logger.info(i);
 			Date date = getOverdueTime(new Date(), "7天");
-			System.out.println(DateToString(date));
+			logger.info(DateToString(date));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

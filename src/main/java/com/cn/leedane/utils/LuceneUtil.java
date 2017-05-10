@@ -5,6 +5,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
@@ -35,6 +36,7 @@ import com.cn.leedane.springboot.SpringUtil;
  */
 
 public class LuceneUtil {
+	private Logger logger = Logger.getLogger(getClass());
 	
 	private static LuceneUtil mLuceneUtil;
 
@@ -155,19 +157,19 @@ public class LuceneUtil {
 		//int size = totalHits > num ? num : totalHits;
 		ScoreDoc[] scoreDocs = topDocs.scoreDocs; //scoreDocs的大小是等于totalHits的
 		for(ScoreDoc scoreDoc: scoreDocs){
-			//System.out.println("RRRRRRRRRRRRRRRRR"+scoreDocs.length);
+			//logger.info("RRRRRRRRRRRRRRRRR"+scoreDocs.length);
 			Document targetDoc = searcher.doc(scoreDoc.doc);
-			System.out.println("文档的docID是：" + scoreDoc.doc);
+			logger.info("文档的docID是：" + scoreDoc.doc);
 			if(targetDoc != null){
 				for(String f: fields){
 					System.out.print("结果是："+targetDoc.get(f) + "---------------->");
 				}
 				
 			}
-			System.out.println("\n\r");
+			logger.info("\n\r");
 		}
 		
-		System.out.println("****************************************************************");
+		logger.info("****************************************************************");
 		
 		/*for (int i = 0; i < size; i++){ 
 			Document targetDoc = searcher.doc(scoreDocs[i].doc); 
@@ -175,7 +177,7 @@ public class LuceneUtil {
 				String name = field.name();
 				for(String fid: fields){
 					if(name!= null && name.equals(fid)){
-						System.out.println(fid+ "--->" + field.stringValue()); 
+						logger.info(fid+ "--->" + field.stringValue()); 
 					}
 				}
 			}		
@@ -220,19 +222,19 @@ public class LuceneUtil {
 		//int size = totalHits > num ? num : totalHits;
 		ScoreDoc[] scoreDocs = topDocs.scoreDocs; //scoreDocs的大小是等于totalHits的
 		for(ScoreDoc scoreDoc: scoreDocs){
-			//System.out.println("RRRRRRRRRRRRRRRRR"+scoreDocs.length);
+			//logger.info("RRRRRRRRRRRRRRRRR"+scoreDocs.length);
 			Document targetDoc = searcher.doc(scoreDoc.doc);
-			System.out.println("文档的docID是：" + scoreDoc.doc + "  --->积分" +scoreDoc.score);
+			logger.info("文档的docID是：" + scoreDoc.doc + "  --->积分" +scoreDoc.score);
 			if(targetDoc != null){
 				for(String f: fields){
 					System.out.print("结果是："+targetDoc.get(f) + "---------------->");
 				}
 				
 			}
-			System.out.println("\n\r");
+			logger.info("\n\r");
 		}
 		
-		System.out.println("****************************************************************");
+		logger.info("****************************************************************");
 		
 		/*for (int i = 0; i < size; i++){ 
 			Document targetDoc = searcher.doc(scoreDocs[i].doc); 
@@ -240,7 +242,7 @@ public class LuceneUtil {
 				String name = field.name();
 				for(String fid: fields){
 					if(name!= null && name.equals(fid)){
-						System.out.println(fid+ "--->" + field.stringValue()); 
+						logger.info(fid+ "--->" + field.stringValue()); 
 					}
 				}
 			}		
@@ -422,7 +424,7 @@ public class LuceneUtil {
 		}
 	}
 	public void setDirectory(SimpleFSDirectory directory) {
-		System.out.println("set directory");
+		logger.info("set directory");
 		this.directory = directory;
 	}
 	

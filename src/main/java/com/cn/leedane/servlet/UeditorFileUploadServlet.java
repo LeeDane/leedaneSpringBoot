@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import net.sf.json.JSONObject;
 
 /**
@@ -18,6 +20,9 @@ import net.sf.json.JSONObject;
  * Version 1.0
  */
 public class UeditorFileUploadServlet extends HttpServlet{
+	
+	private Logger logger = Logger.getLogger(getClass());
+	
 	/**
 	 * 
 	 */
@@ -35,7 +40,7 @@ public class UeditorFileUploadServlet extends HttpServlet{
 	
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	        
-		System.out.println("请求UeditorFileUploadServlet");
+		logger.info("请求UeditorFileUploadServlet");
 	}
 	
 	public void destroy() {
@@ -56,7 +61,7 @@ public class UeditorFileUploadServlet extends HttpServlet{
 		
 		JSONObject jsonObject = JSONObject.fromObject(message);
 		response.setCharacterEncoding("utf-8");
-		//System.out.println("服务器返回:"+jsonObject.toString());
+		//logger.info("服务器返回:"+jsonObject.toString());
 		PrintWriter writer = null;
 		try {
 			writer = response.getWriter();

@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -18,6 +20,7 @@ import com.cn.leedane.wechat.util.WeixinUtil;
  *
  */
 public class ChatXMLService extends BaseXMLWechatService{
+	private Logger logger = Logger.getLogger(getClass());
 	
 	public ChatXMLService(HttpServletRequest request, Map<String, String> map) {
 		super(request, map);
@@ -33,7 +36,7 @@ public class ChatXMLService extends BaseXMLWechatService{
 				e.printStackTrace();
 			}
 		}
-		System.out.println("图灵机器人返回的信息:"+r);
+		logger.info("图灵机器人返回的信息:"+r);
 		JSONObject json = JSONObject.fromObject(r);
 		return buildMessage(MsgType,ToUserName,FromUserName, json);
 		

@@ -198,13 +198,13 @@ public class GalleryTest extends BaseTest {
 					JSONObject jo = JSONObject.fromObject(str);
 					message = galleryService.addLink(jo, user, null);
 					if(StringUtil.changeObjectToBoolean(message.get("isSuccess"))){
-						//System.out.println("加入图库成功："+url);
+						//logger.info("加入图库成功："+url);
 					}else{
-						System.out.println("加入图库失败，失败原因："+message.get("message")+"------>"+url);
+						logger.error("加入图库失败，失败原因："+message.get("message")+"------>"+url);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					System.out.println("加入图库失败，失败原因报错------>"+url);
+					logger.error("加入图库失败，失败原因报错------>"+url);
 					continue;
 				}
 				Thread.sleep(500);
@@ -297,13 +297,13 @@ public class GalleryTest extends BaseTest {
 				JSONObject jo = JSONObject.fromObject(str);
 				message = galleryService.addLink(jo, user, null);
 				if(StringUtil.changeObjectToBoolean(message.get("isSuccess"))){
-					//System.out.println("加入图库成功："+url);
+					//logger.info("加入图库成功："+url);
 				}else{
-					System.out.println("加入图库失败，失败原因："+message.get("message")+"------>"+url);
+					logger.error("加入图库失败，失败原因："+message.get("message")+"------>"+url);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.out.println("加入图库失败，失败原因报错------>"+url);
+				logger.error("加入图库失败，失败原因报错------>"+url);
 				continue;
 			}
 			Thread.sleep(500);
@@ -319,9 +319,9 @@ public class GalleryTest extends BaseTest {
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
 			List<Map<String, Object>> ls = galleryService.getGalleryByLimit(jo, user, null);
-			System.out.println("总数:" +ls.size());
+			logger.info("总数:" +ls.size());
 			for(Map<String, Object> m: ls){
-				System.out.println("ID:" +m.get("id"));
+				logger.info("ID:" +m.get("id"));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

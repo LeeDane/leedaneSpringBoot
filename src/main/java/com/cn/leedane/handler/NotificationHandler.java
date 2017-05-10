@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
 
 import net.sf.json.JSONObject;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -50,6 +51,8 @@ import com.cn.leedane.wechat.util.HttpRequestUtil;
  */
 @Component
 public class NotificationHandler {
+	
+	private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
 	private UserMapper userMapper;
@@ -182,7 +185,7 @@ public class NotificationHandler {
 	 */
 	public void sendCustomMessageById(UserBean user, int toUserId, Map<String, Object> chatMap){
 		if(user.getId() == toUserId){
-			System.out.println("自己不能给自己发信息");
+			logger.error("自己不能给自己发信息");
 			return;
 		}
 		
@@ -247,7 +250,7 @@ public class NotificationHandler {
 						e.printStackTrace();
 					}
 				}
-				System.out.println("图灵机器人返回的信息:"+r);
+				logger.info("图灵机器人返回的信息:"+r);
 				JSONObject json = JSONObject.fromObject(r);
 				int code = json.getInt("code");	
 				if(code == 100000){
@@ -277,7 +280,7 @@ public class NotificationHandler {
 						String notificationContent = robotName +"回复您："+robotReply;
 						sendNotificationById(true, robotUser, user.getId(), notificationContent, NotificationType.艾特我, tableName, tableId, objectBean);
 					}else{
-						System.out.println("失败");
+						logger.error("失败");
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -352,7 +355,7 @@ public class NotificationHandler {
 		public Boolean call() throws Exception {
 			if(notificationMapper.save(mNotificationBean) > 0){
 				MessageNotification messageNotification = new JPushMessageNotificationImpl();
-				//System.out.println("NotificationToUserId:"+mNotificationBean.getToUserId());
+				//logger.info("NotificationToUserId:"+mNotificationBean.getToUserId());
 				//发送消息不成功
 				if(!messageNotification.sendToAlias("leedane_user_"+mNotificationBean.getToUserId(), mNotificationBean.getType() +":"+ mNotificationBean.getContent())){
 					mNotificationBean.setPushError(true);

@@ -35,9 +35,9 @@ public class ChatTest extends BaseTest {
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
 			Map<String, Object> ls = chatService.send(jo, user, null);
-			System.out.println("总数:" +ls.size());
+			logger.info("总数:" +ls.size());
 			for(Entry<String, Object> entry :ls.entrySet()){
-				System.out.println(entry.getKey() +":" +entry.getValue());
+				logger.info(entry.getKey() +":" +entry.getValue());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

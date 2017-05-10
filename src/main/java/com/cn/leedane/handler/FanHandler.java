@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,8 @@ import com.cn.leedane.utils.EnumUtil.DataTableType;
  */
 @Component
 public class FanHandler {
+	private Logger logger = Logger.getLogger(getClass());
+	
 	@Autowired
 	private FanMapper fanMapper;
 	
@@ -38,7 +41,7 @@ public class FanHandler {
 	 * @param toUser
 	 */
 	public void addAttention(UserBean user, UserBean toUser){
-		System.out.println("addAttention");
+		logger.info("addAttention");
 		String attentionIDKey = getAttentionIdsKey(user.getId());
 		Map<Double, String> scoreMembers = new HashMap<Double, String>();
 		long count = 1;
@@ -68,7 +71,7 @@ public class FanHandler {
 	 * @param toUser
 	 */
 	public void addFan(UserBean user, UserBean toUser){
-		System.out.println("addFan");
+		logger.info("addFan");
 		Map<Double, String> scoreMembers = new HashMap<Double, String>();
 		long count = 1;
 		String fanIDKey = getFanIdsKey(user.getId());
@@ -148,7 +151,7 @@ public class FanHandler {
 			Set<String> set = getMyAttentions(userId);
 			if(set !=  null && set.size() >0){
 				if(!set.contains(String.valueOf(toUserId))){
-					System.out.println("竟然在关注列表中没有数据");
+					logger.error("竟然在关注列表中没有数据");
 					return;
 				}
 					
@@ -186,7 +189,7 @@ public class FanHandler {
 		//处理对方的粉丝列表
 		if(set !=  null && set.size() >0){
 			if(!set.contains(String.valueOf(userId))){
-				System.out.println("竟然在粉丝列表中没有数据");
+				logger.error("竟然在粉丝列表中没有数据");
 				return;
 			}
 				

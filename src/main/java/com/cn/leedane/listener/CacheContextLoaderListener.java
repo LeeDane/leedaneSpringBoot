@@ -18,6 +18,7 @@ import java.util.Set;
 
 import javax.servlet.ServletContextEvent;
 
+import org.apache.log4j.Logger;
 import org.springframework.web.context.ContextLoaderListener;
 
 import com.cn.leedane.cache.SystemCache;
@@ -36,7 +37,7 @@ import com.cn.leedane.utils.FinancialWebImeiUtil;
 import com.cn.leedane.utils.OptionUtil;
 import com.cn.leedane.utils.sensitiveWord.SensitiveWordInit;
 public class CacheContextLoaderListener extends ContextLoaderListener{
-
+	private Logger logger = Logger.getLogger(getClass());
 	/**
 	 * 系统的缓存对象
 	 */
@@ -158,9 +159,9 @@ public class CacheContextLoaderListener extends ContextLoaderListener{
 	 */
 	private void checdRidesOpen() {
 		if(RedisUtil.getInstance().isPing()){
-			System.out.println("Redis服务已经启动");
+			logger.warn("Redis服务已经启动");
 		}else{
-			System.out.println("Redis服务还未启动");
+			logger.error("Redis服务还未启动");
 		}
 	}
 
@@ -184,10 +185,10 @@ public class CacheContextLoaderListener extends ContextLoaderListener{
 		    }
 		    systemCache.addCache("leedaneProperties", properties);
 		    long end = System.currentTimeMillis();  
-			System.out.println("加载leedane.properties中的数据进缓存中结束，共计耗时："+(end - begin) +"ms"); 
+		    logger.warn("加载leedane.properties中的数据进缓存中结束，共计耗时："+(end - begin) +"ms"); 
 		} catch (IOException e) {
 			//e.printStackTrace();
-			System.err.println("加载leedane.properties属性配置文件出错");
+			logger.error("加载leedane.properties属性配置文件出错");
 		}
 	}
 
@@ -210,7 +211,7 @@ public class CacheContextLoaderListener extends ContextLoaderListener{
 			systemCache.addCache("filterUrls", urls);
 			bufferedReader.close();
 			long end = System.currentTimeMillis();  
-			System.out.println("加载filter-url.txt中的数据进缓存中结束，共计耗时："+(end - begin) +"ms"); 
+			logger.warn("加载filter-url.txt中的数据进缓存中结束，共计耗时："+(end - begin) +"ms"); 
 		} catch (Exception e) {
 			//e.printStackTrace();
 		}finally{
@@ -219,7 +220,7 @@ public class CacheContextLoaderListener extends ContextLoaderListener{
 					reader.close();
 				} catch (IOException e) {
 					e.printStackTrace();
-					System.err.println("加载filter-url.txt过滤的地址文件出错");
+					logger.error("加载filter-url.txt过滤的地址文件出错");
 				}
 			}
 		}
@@ -256,18 +257,18 @@ public class CacheContextLoaderListener extends ContextLoaderListener{
 				systemCache.addCache(option.getOptionKey(), option.getOptionValue());
 			}  
 			long end = System.currentTimeMillis();  
-			System.out.println("加载选项表数据进缓存中结束，共计耗时："+(end - begin) +"ms");  
+			logger.warn("加载选项表数据进缓存中结束，共计耗时："+(end - begin) +"ms");  
 			
-			//System.out.println("---->"+systemCache.getCache("page-size"));
+			//logger.info("---->"+systemCache.getCache("page-size"));
 		} catch (Exception ex) {  
-			System.out.println("初始化读取T_OPTION表出现异常");
+			logger.error("初始化读取T_OPTION表出现异常");
 			ex.printStackTrace();
 		} finally { 
 			if(conn != null){
 				try {
 					conn.close();
 				} catch (SQLException e) {
-					System.out.println("初始化缓存关闭connection连接出现异常");
+					logger.error("初始化缓存关闭connection连接出现异常");
 				}  
 			}
 		} 

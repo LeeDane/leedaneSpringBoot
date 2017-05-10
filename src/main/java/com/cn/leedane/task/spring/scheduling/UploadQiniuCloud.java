@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ import com.cn.leedane.utils.StringUtil;
  */
 @Component("uploadQiniuCloud")
 public class UploadQiniuCloud {
+	private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
 	private FilePathMapper filePathMapper; 
@@ -62,14 +64,14 @@ public class UploadQiniuCloud {
 				}else{
 					//uploadManager = null;
 					//System.gc();
-					System.out.println("没有要上传到七牛云存储服务器的文件");
+					logger.warn("没有要上传到七牛云存储服务器的文件");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
 		}else{
-			System.out.println("filePathService为空");
+			logger.warn("filePathService为空");
 		}		
 	}	
 }

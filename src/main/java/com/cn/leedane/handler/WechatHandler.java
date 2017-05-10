@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.sf.json.JSONObject;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,7 @@ import com.cn.leedane.wechat.util.WeixinUtil;
 @Component
 public class WechatHandler {
 	
-	
+	private Logger logger = Logger.getLogger(getClass());
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
 	@Autowired
@@ -53,7 +54,7 @@ public class WechatHandler {
 		if(redisUtil.hasKey(fromUserKey)){
 			String value = redisUtil.getString(fromUserKey);
 			if(StringUtil.isNotNull(value)){
-				System.out.println("WeixinCacheBean:"+value);
+				logger.info("WeixinCacheBean:"+value);
 				return stringToCacheBean(value);
 			}
 		}else{//查找数据库获取key

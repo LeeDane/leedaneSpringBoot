@@ -5,8 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,7 +22,8 @@ import com.cn.leedane.utils.ResponseMap;
 @RequestMapping(value = ControllerBaseNameUtil.cl)
 public class CollectionController extends BaseController{
 
-	protected final Log log = LogFactory.getLog(getClass());
+	private Logger logger = Logger.getLogger(getClass());
+	
 	//收藏夹service
 	@Autowired
 	private CollectionService<CollectionBean> collectionService;
@@ -78,7 +78,7 @@ public class CollectionController extends BaseController{
 		}
 		
 		List<Map<String, Object>> result= collectionService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
-		System.out.println("获得收藏的数量：" +result.size());
+		logger.info("获得收藏的数量：" +result.size());
 		message.put("isSuccess", true);
 		message.put("message", result);
 		return message.getMap();

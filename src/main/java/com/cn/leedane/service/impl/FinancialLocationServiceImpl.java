@@ -155,7 +155,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 				
 		message.put("isSuccess", true);
 		message.put("message", rs);
-		System.out.println("获得记账位置的数量：" +rs.size());
+		logger.info("获得记账位置的数量：" +rs.size());
 		return message.getMap();
 	}
 
@@ -207,7 +207,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 				
 		message.put("isSuccess", true);
 		message.put("message", rs);
-		System.out.println("获得记账位置的数量：" +rs.size());
+		logger.info("获得记账位置的数量：" +rs.size());
 		return message.getMap();
 	}
 	

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,14 +18,14 @@ import org.jsoup.select.Elements;
  * Version 1.0
  */
 public class CrawlPage {
-	
+	private static Logger logger = Logger.getLogger(CrawlPage.class);
 	public static void CrawlOSC() throws IOException{
 		/*Connection.Response res = Jsoup.connect("https://www.oschina.net/action/user/hash_login").data("email", "825711424@qq.com","pwd","0d81b75e92e7a2757381e1b2e892be514ff0b3f4","save_login","1").method(Method.POST).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31").timeout(12000).execute();
 		//Document doc = Jsoup.parse(res.body());//转换为Dom树
 		//这儿的SESSIONID需要根据要登录的目标网站设置的session Cookie名字而定
 		String oscid = res.cookie("oscid"); 
 		
-		System.out.println("oscid:" + oscid);*/
+		logger.info("oscid:" + oscid);*/
 		/*String oscid = "2F";*/
 		Document objectDoc = Jsoup.connect("http://www.oschina.net/")
 			    //.cookie("oscid", oscid)
@@ -31,7 +33,7 @@ public class CrawlPage {
 			    .get();
 		List<Element> ems = objectDoc.select("#NewCodeList ul a");
 		for(Element em : ems){
-			System.out.println("Element:" + em.attr("href"));
+			logger.info("Element:" + em.attr("href"));
 		}
 	
 	}
@@ -42,7 +44,7 @@ public class CrawlPage {
 		//这儿的SESSIONID需要根据要登录的目标网站设置的session Cookie名字而定
 		String oscid = res.cookie("oscid"); 
 		
-		System.out.println("oscid:" + oscid);*/
+		logger.info("oscid:" + oscid);*/
 		/*String oscid = "2F";*/
 		
 		
@@ -79,7 +81,7 @@ public class CrawlPage {
 			fot.write("</body></html>".getBytes("utf-8"));
 			fot.close();
 			long endTime = System.currentTimeMillis();
-			System.out.println("将文件保存成html成功！共计耗时："+(endTime - startTime) + "毫秒");
+			logger.info("将文件保存成html成功！共计耗时："+(endTime - startTime) + "毫秒");
 		
 	
 	}

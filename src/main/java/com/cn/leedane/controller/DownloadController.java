@@ -10,8 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,7 +26,7 @@ import com.cn.leedane.utils.StringUtil;
 @RequestMapping(value = ControllerBaseNameUtil.dl)
 public class DownloadController extends BaseController{
 
-	protected final Log log = LogFactory.getLog(getClass());
+	private Logger logger = Logger.getLogger(getClass());
 	
 	private int start; //开始的位置
 	private int end;  //结束的位置
@@ -101,7 +100,7 @@ public class DownloadController extends BaseController{
 	              
 	        raFile.close();  
 	        os.close(); 
-	        System.out.println("下载完成");
+	        logger.info("下载完成");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -128,7 +127,7 @@ public class DownloadController extends BaseController{
 		}
 		
 		String suffixs = StringUtil.getSuffixs(filename);	
-		System.out.println("suffixs:"+suffixs);
+		logger.info("suffixs:"+suffixs);
 		filename = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER + "file//" + filename;
 		try {
 			message.put("message", Base64ImageUtil.convertImageToBase64(filename, suffixs));

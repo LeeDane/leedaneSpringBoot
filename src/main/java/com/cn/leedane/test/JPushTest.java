@@ -35,18 +35,18 @@ public class JPushTest extends BaseTest{
         try {
             PushResult result = jpushClient.sendPush(payload);
             //jpushClient.sendIosNotificationWithRegistrationID(alert, extras, registrationID)
-            System.out.println("Got result - " + result);
+            logger.info("Got result - " + result);
 
         } catch (APIConnectionException e) {
             // Connection error, should retry later
-        	System.out.println("Connection error, should retry later");
+        	logger.error("Connection error, should retry later");
 
         } catch (APIRequestException e) {
             // Should review the error, and fix the request
-        	System.out.println("Should review the error, and fix the request");
-            System.out.println("HTTP Status: " + e.getStatus());
-            System.out.println("Error Code: " + e.getErrorCode());
-            System.out.println("Error Message: " + e.getErrorMessage());
+        	logger.error("Should review the error, and fix the request");
+            logger.error("HTTP Status: " + e.getStatus());
+            logger.error("Error Code: " + e.getErrorCode());
+            logger.error("Error Message: " + e.getErrorMessage());
         }*/
 		/*MessageNotification messageNotification = new JPushMessageNotificationImpl();
 		messageNotification.sendToAlias("leedane_user_"+1, "你好。。 server3");*/
@@ -55,7 +55,7 @@ public class JPushTest extends BaseTest{
 		
 		
 		JpushCustomMessage message= new JpushCustomMessage();
-		System.out.println(message.sendToAlias("leedane_user_1", "我是测试号", "toUserId", "2"));*/
+		logger.info(message.sendToAlias("leedane_user_1", "我是测试号", "toUserId", "2"));*/
 	//}
 	
 	@Resource
@@ -67,7 +67,7 @@ public class JPushTest extends BaseTest{
 	@Test
 	public void notification() {
 		MessageNotification message= new JPushMessageNotificationImpl();
-		System.out.println(message.sendToAlias("leedane_user_"+1, "hello leedane"));
+		logger.info(message.sendToAlias("leedane_user_"+1, "hello leedane"));
 	}
 	
 	/**
@@ -91,7 +91,7 @@ public class JPushTest extends BaseTest{
 		
 		Map<String, Object> chatMap = null;
 		JpushCustomMessage message= new JpushCustomMessage();
-		System.out.println(message.sendToAlias("leedane_user_1", JSONObject.fromObject(chatMap).toString(), "toUserId", "1"));
+		logger.info(message.sendToAlias("leedane_user_1", JSONObject.fromObject(chatMap).toString(), "toUserId", "1"));
 		
 		
 	}

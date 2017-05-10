@@ -20,7 +20,7 @@ public class WeixinTest extends BaseTest {
 	@Test
 	public void getMediaId() throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException, IOException{
 		String accessToken =  HttpRequestUtil.getAccessTokenFromWeixin();	
-		System.out.println("access_token:--->" + accessToken);
-		System.out.println(WeixinUtil.upload("F:/13.jpg", "rcalM3eO_-RNsaeHUfmuLcRG6mq8hGxG3NbRxZUlulvJZ5GWYzC_eaT0zaKhNDjTC4OFYmfwSj7pJFgtFenBqXfEdiRXYfLtu2LK3H_UvQE", "image"));
+		logger.info("access_token:--->" + accessToken);
+		logger.info(WeixinUtil.upload("F:/13.jpg", "rcalM3eO_-RNsaeHUfmuLcRG6mq8hGxG3NbRxZUlulvJZ5GWYzC_eaT0zaKhNDjTC4OFYmfwSj7pJFgtFenBqXfEdiRXYfLtu2LK3H_UvQE", "image"));
 	}
 }

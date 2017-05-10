@@ -92,7 +92,7 @@ public class CartTest extends BaseTest {
 	public void loadCart(){
 		List<CartBean> beans = cartMapper.getBeans("select * from t_cart");
 		for(CartBean bean: beans){
-			System.out.println(bean.getDetails().get(0).getName());
+			logger.info(bean.getDetails().get(0).getName());
 		}
 		
 	}

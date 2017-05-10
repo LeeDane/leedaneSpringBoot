@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import net.sf.json.JSONObject;
 
 /**
@@ -15,6 +18,7 @@ import net.sf.json.JSONObject;
  * Version 1.0
  */
 public class JsonUtil {
+	private Logger logger = Logger.getLogger(getClass());
 	
 	private static JsonUtil mJsonUtil = null;
 	
@@ -45,7 +49,7 @@ public class JsonUtil {
 				//value = value.replaceAll("%(?![0-9a-fA-F]{2})", "%25");  
 				//value = value.replaceAll("\\+", "%2B"); 
 				value = URLDecoder.decode(value, "UTF-8");
-				System.out.println(value);
+				logger.info(value);
 				json = JSONObject.fromObject(value);
 			}
 		}catch(Exception e){

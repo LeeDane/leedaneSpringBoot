@@ -6,10 +6,9 @@ import javax.annotation.Resource;
 
 import net.sf.json.JSONObject;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 
-import com.cn.leedane.utils.Base64ImageUtil;
-import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.mapper.MoodMapper;
 import com.cn.leedane.model.MoodBean;
 import com.cn.leedane.model.OperateLogBean;
@@ -22,6 +21,8 @@ import com.cn.leedane.observer.template.UpdateMoodTemplate;
 import com.cn.leedane.service.MoodService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserService;
+import com.cn.leedane.utils.Base64ImageUtil;
+import com.cn.leedane.utils.ConstantsUtil;
 
 /**
  * 心情相关的测试类
@@ -30,6 +31,8 @@ import com.cn.leedane.service.UserService;
  * Version 1.0
  */
 public class MoodTest extends BaseTest {
+	private Logger logger = Logger.getLogger(getClass());
+	
 	@Resource
 	private OperateLogService<OperateLogBean> operateLogService;
 	
@@ -52,10 +55,10 @@ public class MoodTest extends BaseTest {
 		moodBean.setContent("hahaee");
 		moodBean.setLatitude(0.00);
 		moodBean.setLongitude(0.00);
-		System.out.println("数量："+moodMapper.save(moodBean));
+		logger.info("数量："+moodMapper.save(moodBean));
 		
 		long end = System.currentTimeMillis();
-		System.out.println("最终总耗时：" +(end - start) +"毫秒");
+		logger.info("最终总耗时：" +(end - start) +"毫秒");
 	}
 
 	@Test
@@ -72,7 +75,7 @@ public class MoodTest extends BaseTest {
 			moodService.saveMood(jsonObject, user, ConstantsUtil.STATUS_NORMAL, null);
 		}
 		long end = System.currentTimeMillis();
-		System.out.println("最终总耗时：" +(end - start) +"毫秒");
+		logger.info("最终总耗时：" +(end - start) +"毫秒");
 	}
 	
 	@Test
@@ -92,9 +95,9 @@ public class MoodTest extends BaseTest {
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
 			Map<String, Object> ls = moodService.getMoodByLimit(jo, user, null);
-			System.out.println("总数:" +ls.size());
+			logger.info("总数:" +ls.size());
 			for(Entry<String, Object> entry :ls.entrySet()){
-				System.out.println(entry.getKey() +":" +entry.getValue());
+				logger.info(entry.getKey() +":" +entry.getValue());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -109,7 +112,7 @@ public class MoodTest extends BaseTest {
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
 			Map<String, Object> message = moodService.updateMoodStatus(jo, 1, null, user);
-			System.out.println("isUpdate:" +message);
+			logger.info("isUpdate:" +message);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -51,18 +51,18 @@ public class FilePathTest extends BaseTest {
 					    filePathBean.setUploadQiniu(ConstantsUtil.STATUS_NORMAL);
 					    filePathBean.setQiniuPath(ConstantsUtil.QINIU_SERVER_URL + filePathBean.getPath());
 					    filePathMapper.update(filePathBean);
-					    System.out.println("上传七牛云存储服务器成功,文件本地路径：" + filePathBean.getPath());
+					    logger.info("上传七牛云存储服务器成功,文件本地路径：" + filePathBean.getPath());
 					}catch (Exception e) {
 						e.printStackTrace();
-						System.out.println("上传七牛云存储服务器失败,文件本地路径：" + filePathBean.getPath());
+						logger.info("上传七牛云存储服务器失败,文件本地路径：" + filePathBean.getPath());
 						continue;
 					}
 				}
 			}else{
-				System.out.println("没有要上传到七牛云存储服务器的文件");
+				logger.warn("没有要上传到七牛云存储服务器的文件");
 			}
 		}else{
-			System.out.println("filePathService为空");
+			logger.error("filePathService为空");
 		}
 		
 	}

@@ -3,6 +3,8 @@ package com.cn.leedane.utils;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.cn.leedane.utils.sensitiveWord.SensitivewordFilter;
 
 /**
@@ -12,7 +14,7 @@ import com.cn.leedane.utils.sensitiveWord.SensitivewordFilter;
  * Version 1.0
  */
 public class FilterUtil {
-
+	private static Logger logger = Logger.getLogger(FilterUtil.class);
 	/**
 	 * 过滤
 	 * @param content
@@ -28,7 +30,7 @@ public class FilterUtil {
 			message.put("message", "有敏感词"+set.size()+"个："+set.toString());
 			message.put("responseCode", EnumUtil.ResponseCode.系统检测到有敏感词.value);
 			long endTime = System.currentTimeMillis();
-			System.out.println("总共消耗时间为：" + (endTime - beginTime));
+			logger.info("总共消耗时间为：" + (endTime - beginTime));
 			return true;
 		}
 		
@@ -50,7 +52,7 @@ public class FilterUtil {
 		Set<String> set = filter.getSensitiveWord(content, 1);
 		if(set.size() > 0){
 			long endTime = System.currentTimeMillis();
-			System.out.println("总共消耗时间为：" + (endTime - beginTime));
+			logger.info("总共消耗时间为：" + (endTime - beginTime));
 			return true;
 		}
 		

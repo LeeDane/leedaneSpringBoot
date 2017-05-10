@@ -4,23 +4,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import org.apache.log4j.Logger;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.cn.leedane.exception.ErrorException;
-import com.cn.leedane.utils.Base64ImageUtil;
-import com.cn.leedane.utils.HttpUtil;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -30,6 +22,7 @@ import com.cn.leedane.utils.StringUtil;
  * Version 1.0
  */
 public class SanwenNet extends BaseCrawlBean{
+	private Logger logger = Logger.getLogger(getClass());
 	
 	private String title; //文章的标题
 	
@@ -64,7 +57,7 @@ public class SanwenNet extends BaseCrawlBean{
 				title = "G:/sanwen/"+html.select("#article .title>h1").html().replaceAll("&gt;", "").replaceAll("&lt;", "").replaceAll("　", "").replaceAll("/", "-").replaceAll("\"", "'").replaceAll("\\?", "").replaceAll("？", "").replaceAll(" ", "").replaceAll(":", "-").trim() + ".html";
 			}
 
-			//System.out.println("需要保存的文件路径是："+title+",原来的url是："+ this.url);
+			//logger.info("需要保存的文件路径是："+title+",原来的url是："+ this.url);
 			File file = new File(title);
 				
 			if(!file.exists()){
@@ -79,7 +72,7 @@ public class SanwenNet extends BaseCrawlBean{
 			fot.close();
 			
 			endTime = System.currentTimeMillis();
-			System.out.println("文件"+ title +"保存成html成功！共计耗时："+(endTime - startTime) + "毫秒");
+			logger.info("文件"+ title +"保存成html成功！共计耗时："+(endTime - startTime) + "毫秒");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {

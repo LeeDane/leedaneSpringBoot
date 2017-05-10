@@ -5,8 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +20,7 @@ import com.cn.leedane.utils.ResponseMap;
 @RequestMapping(value = ControllerBaseNameUtil.rp)
 public class ReportController extends BaseController{
 
-	protected final Log log = LogFactory.getLog(getClass());
+	private Logger logger = Logger.getLogger(getClass());
 
 	//举报service
 	@Autowired
@@ -69,7 +68,7 @@ public class ReportController extends BaseController{
 		
 		checkRoleOrPermission(request);
 		List<Map<String, Object>> result= reportService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
-		System.out.println("获得举报的数量：" +result.size());
+		logger.info("获得举报的数量：" +result.size());
 		message.put("isSuccess", true);
 		message.put("message", result);
 		return message.getMap();

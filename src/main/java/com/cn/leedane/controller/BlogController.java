@@ -9,8 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.jsoup.Jsoup;
@@ -39,8 +38,7 @@ import com.cn.leedane.utils.StringUtil;
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.bg)
 public class BlogController extends BaseController{
-
-	protected final Log log = LogFactory.getLog(BlogController.class);
+	private Logger logger = Logger.getLogger(getClass());
 	
 	/**
 	 * 系统级别的缓存对象
@@ -132,13 +130,13 @@ public class BlogController extends BaseController{
 			//将base64位的图片保存在数据在本地
 			/*String path = "F:/upload";
 			File file = new File(path);
-			System.out.println("==="+path);
+			logger.info("==="+path);
 			if(!file.exists()){
 				file.mkdir();
 			}
 			String account = user != null ? user.getAccount() : "admin";
 			String filePath = path + "/" + account +"_"+System.currentTimeMillis()+ (int)Math.random()*1000 +".png";
-			System.out.println(ImageUtil.convertBase64ToImage(filePath, imgUrl));*/
+			logger.info(ImageUtil.convertBase64ToImage(filePath, imgUrl));*/
 			
 		}
 		
@@ -198,7 +196,7 @@ public class BlogController extends BaseController{
 		String method = JsonUtil.getStringValue(json, "method");*/
 		List<Map<String,Object>> r = new ArrayList<Map<String,Object>>();
 		StringBuffer sql = new StringBuffer();
-		System.out.println("执行的方式是："+method +",pageSize:"+pageSize+",lastId:"+lastId+",firstId:"+firstId);
+		logger.info("执行的方式是："+method +",pageSize:"+pageSize+",lastId:"+lastId+",firstId:"+firstId);
 		//下刷新
 		if(method.equalsIgnoreCase("lowloading")){
 			sql.append("select b.id, b.img_url, b.title, b.has_img, b.tag, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time");
@@ -228,10 +226,10 @@ public class BlogController extends BaseController{
 			return message;
 		}
 		
-		System.out.println("数量："+r.size());
+		logger.info("数量："+r.size());
 		if(r.size() == 5){
-			System.out.println("开始ID:"+r.get(0).get("id"));
-			System.out.println("结束ID:"+r.get(4).get("id"));
+			logger.info("开始ID:"+r.get(0).get("id"));
+			logger.info("结束ID:"+r.get(4).get("id"));
 		}
 		message.put("isSuccess", true);
 		message.put("message", r);
@@ -326,7 +324,7 @@ public class BlogController extends BaseController{
 		
 		List<Map<String,Object>> r = new ArrayList<Map<String,Object>>();
 		String sql = "";
-		System.out.println("执行的方式是："+method +",获取的数量:"+num);
+		logger.info("执行的方式是："+method +",获取的数量:"+num);
 		//普通获取，取最新的图片信息，按照create_time倒序排列
 		if(method.equalsIgnoreCase("simple")){
 			sql = "select id, img_url, title, digest from "+DataTableType.博客.value+" where status = " + ConstantsUtil.STATUS_NORMAL + " and img_url != '' order by create_time desc,id desc limit 0,?";

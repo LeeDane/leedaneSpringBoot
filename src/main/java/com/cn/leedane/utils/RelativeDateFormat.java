@@ -28,7 +28,7 @@ public class RelativeDateFormat {
     /*public static void main(String[] args) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:m:s");
         Date date = format.parse("2016-1-14 18:30:00");
-        System.out.println(format(date));
+        logger.info(format(date));
     }*/
 
     public static String format(Date date) {

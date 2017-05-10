@@ -3,9 +3,8 @@ package com.cn.leedane.crawl;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,7 +19,7 @@ import com.cn.leedane.exception.ErrorException;
  * Version 1.0
  */
 public class HongXiu implements Runnable{
-	
+	private Logger logger = Logger.getLogger(getClass());
 	//超时时间限制
 	public static final int TIME_OUT = 12000;
 	
@@ -103,7 +102,7 @@ public class HongXiu implements Runnable{
 		fot.write("</body></html>".getBytes("utf-8"));
 		fot.close();
 		endTime = System.currentTimeMillis();
-		System.out.println("文件"+ title +"保存成html成功！共计耗时："+(endTime - startTime) + "毫秒");
+		logger.info("文件"+ title +"保存成html成功！共计耗时："+(endTime - startTime) + "毫秒");
 		this.getListsHref();
 	}
 	
@@ -157,7 +156,7 @@ public class HongXiu implements Runnable{
 			//hongxiu.getListsHref(null);
 			hongxiu.execute();
 			hongxiu.getListsHref();
-			//System.out.println(hongxiu.score());
+			//logger.info(hongxiu.score());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

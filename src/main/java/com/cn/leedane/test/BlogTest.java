@@ -55,7 +55,7 @@ public class BlogTest extends BaseTest {
 	@Test
 	public void loadByOneBlog() {
 		BlogBean bean = blogMapper.findById(BlogBean.class, 3);
-		System.out.println(bean);
+		logger.info(bean);
 	}
 	
 	
@@ -70,7 +70,7 @@ public class BlogTest extends BaseTest {
 		int count = 0;
 		if(idList.size() > 0){
 			count = StringUtil.changeObjectToInt(idList.size());
-			System.out.println("一共" + count+ "条数据");
+			logger.info("一共" + count+ "条数据");
 		}
 		
 		for(int i = 0; i < count; i++){
@@ -82,7 +82,7 @@ public class BlogTest extends BaseTest {
 					blogMapper.update(bean);
 				}
 				
-				System.out.println("blog" + bean.getId() + "操作完成");
+				logger.info("blog" + bean.getId() + "操作完成");
 			}catch(Exception e){
 				e.printStackTrace();
 				continue;
@@ -98,7 +98,7 @@ public class BlogTest extends BaseTest {
 	public void deleteSameBlog(){
 		int index = 0;
 		deleteOne(index);
-		System.out.println("处理完成啦");
+		logger.info("处理完成啦");
 	}
 	
 	public void deleteOne(int index){
@@ -130,7 +130,7 @@ public class BlogTest extends BaseTest {
 		blogSql.append(" from "+DataTableType.博客.value+" b inner join "+DataTableType.用户.value+" u on b.create_user_id = u.id ");
 		blogSql.append(" where b.status = ? and ((b.content like '%"+search+"%') or (b.title like '%"+search+"%')) limit 10");
 		List<Map<String, Object>> blogs = blogMapper.executeSQL(blogSql.toString(), ConstantsUtil.STATUS_NORMAL);
-		System.out.println(blogs.size());
+		logger.info(blogs.size());
 	}
 	
 }

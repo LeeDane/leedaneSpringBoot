@@ -65,7 +65,7 @@ public class BaseController {
 		
 		JSONObject jsonObject = JSONObject.fromObject(message);
 		response.setCharacterEncoding("utf-8");
-		System.out.println("服务器返回:"+jsonObject.toString());
+		logger.info("服务器返回:"+jsonObject.toString());
 		PrintWriter writer = null;
 		try {
 			writer = response.getWriter();
@@ -98,7 +98,7 @@ public class BaseController {
 		
 		JSONObject jsonObject = JSONObject.fromObject(message);
 		response.setCharacterEncoding("utf-8");
-		System.out.println("服务器返回:"+jsonObject.toString());
+		logger.info("服务器返回:"+jsonObject.toString());
 		PrintWriter writer = null;
 		try {
 			writer = response.getWriter();
@@ -328,7 +328,7 @@ public class BaseController {
 			}
 		}
 		if(json != null)
-			System.out.println("请求参数:"+json.toString());
+			logger.info("请求参数:"+json.toString());
 		//if(json != null && !json.isEmpty()){
 			//从请求ID获取用户信息
 			/*if(user == null){

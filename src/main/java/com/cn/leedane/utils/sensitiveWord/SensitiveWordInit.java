@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 /**
  * 初始化敏感词库，将敏感词加入到HashMap中，构建DFA算法模型
  * @author LeeDane
@@ -16,6 +18,8 @@ import java.util.Set;
  * Version 1.0
  */
 public class SensitiveWordInit {
+	private Logger logger = Logger.getLogger(getClass());
+	
 	private String ENCODING = "GBK";    //字符编码
 	private static HashMap<String, String> sensitiveWordMap;
 	
@@ -39,7 +43,7 @@ public class SensitiveWordInit {
 			Set<String> keyWordSet = readSensitiveWordFile();
 			//将敏感词库加入到HashMap中
 			addSensitiveWordToHashMap(keyWordSet);
-			System.out.println("共加载敏感词库："+sensitiveWordMap.size() +"条");
+			logger.info("共加载敏感词库："+sensitiveWordMap.size() +"条");
 			//spring获取application，然后application.setAttribute("sensitiveWordMap",sensitiveWordMap);
 		} catch (Exception e) {
 			e.printStackTrace();

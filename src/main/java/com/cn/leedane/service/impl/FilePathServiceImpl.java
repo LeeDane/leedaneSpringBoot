@@ -306,10 +306,9 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
-		System.out.println("zhingingddddddddd");
 		//执行文件的上传到云存储服务器操作
 		if(filePaths.size() > 0){
-			System.out.println("zhinging");
+			logger.info("zhinging");
 			int fid = 0;
 			for(int i = 0; i <filePaths.size(); i++){
 				fid = cloudStoreHandler.executeSingleUpload(filePaths.get(i));
@@ -372,7 +371,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 		//先把filePath从temporary文件夹下面移动到File文件夹下面
 		File file = new File(filePath);
 		if(!file.exists()){
-			System.out.println("源文件："+filePath+"不存在，直接返回保存失败");
+			logger.error("源文件："+filePath+"不存在，直接返回保存失败");
 			return result;
 		}
 		
@@ -457,7 +456,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 		
 		List<Map<String,Object>> r = new ArrayList<Map<String,Object>>();
 		StringBuffer sql = new StringBuffer();
-		System.out.println("执行的方式是："+method +",pageSize:"+pageSize+",lastId:"+lastId+",firstId:"+firstId);
+		logger.info("执行的方式是："+method +",pageSize:"+pageSize+",lastId:"+lastId+",firstId:"+firstId);
 		//下刷新
 		if(method.equalsIgnoreCase("lowloading")){
 			sql.append("select f.id, f.path, f.is_upload_qiniu, f.table_name, f.table_uuid, date_format(f.create_time,'%Y-%m-%d %H:%i:%s') create_time");

@@ -26,7 +26,7 @@ import com.cn.leedane.utils.StringUtil;
  */
 @Component("deleteTemporaryFiles")
 public class DeleteTemporaryFiles extends BaseScheduling{
-	Logger logger = Logger.getLogger(getClass());
+	private Logger logger = Logger.getLogger(getClass());
 	
 	//保存无法删除成功的文件路径
 	Set<String> noDeletePaths = new HashSet<String>();
@@ -51,7 +51,7 @@ public class DeleteTemporaryFiles extends BaseScheduling{
 			List<String> filePaths = Arrays.asList(files);
 			List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
 			SingleDeleteTask deleteTask;
-			System.out.println("总文件数量：" +filePaths.size());
+			logger.info("总文件数量：" +filePaths.size());
 			//派发5个线程执行
 			ExecutorService threadpool = Executors.newFixedThreadPool(5);
 			for(String filePath: filePaths){
@@ -88,7 +88,6 @@ public class DeleteTemporaryFiles extends BaseScheduling{
 		
 		logger.info(logMessage.toString());
 		long end = System.currentTimeMillis();
-		System.out.println("执行删除临时文件夹下面的文件总计耗时：" + (end - start) +"毫秒");
 		logger.info("执行删除临时文件夹下面的文件总计耗时：" + (end - start) +"毫秒");
 	}
 	

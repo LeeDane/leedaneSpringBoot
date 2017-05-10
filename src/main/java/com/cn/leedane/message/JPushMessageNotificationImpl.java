@@ -2,6 +2,8 @@ package com.cn.leedane.message;
 
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.common.resp.APIConnectionException;
 import cn.jpush.api.common.resp.APIRequestException;
@@ -11,14 +13,16 @@ import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.notification.Notification;
 
-import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.message.notification.MessageNotification;
+import com.cn.leedane.utils.ConstantsUtil;
 
 public class JPushMessageNotificationImpl implements MessageNotification {
 
 	/*private JPushClient jpushClient = new JPushClient(
 			ConstantsUtil.JPUSH_MASTER_SECRET, ConstantsUtil.JPUSH_APPKEY, 10);
 	private PushPayload payload = null;*/
+	
+	private Logger logger = Logger.getLogger(getClass());
 
 	@Override
 	public boolean sendToAlias(String alias, String content) {
@@ -31,19 +35,19 @@ public class JPushMessageNotificationImpl implements MessageNotification {
 			PushResult result = jpushClient.sendPush(payload);
 			// jpushClient.sendIosNotificationWithRegistrationID(alert, extras,
 			// registrationID)
-			System.out.println("Got result - " + result);
+			logger.info("Got result - " + result);
 			return result.getResponseCode() == 200;
 
 		} catch (APIConnectionException e) {
 			// Connection error, should retry later
-			System.out.println("Connection error, should retry later");
+			logger.error("Connection error, should retry later");
 
 		} catch (APIRequestException e) {
 			// Should review the error, and fix the request
-			System.out.println("Should review the error, and fix the request");
-			System.out.println("HTTP Status: " + e.getStatus());
-			System.out.println("Error Code: " + e.getErrorCode());
-			System.out.println("Error Message: " + e.getErrorMessage());
+			logger.error("Should review the error, and fix the request");
+			logger.error("HTTP Status: " + e.getStatus());
+			logger.error("Error Code: " + e.getErrorCode());
+			logger.error("Error Message: " + e.getErrorMessage());
 		}
 		return false;
 	}
@@ -61,17 +65,17 @@ public class JPushMessageNotificationImpl implements MessageNotification {
 		PushPayload payload = buildPushAllUser(content);
 		try {
 			PushResult result = jpushClient.sendPush(payload);
-			System.out.println("Got result - " + result);
+			logger.info("Got result - " + result);
 			return result.getResponseCode() == 200;
 
 		} catch (APIConnectionException e) {
-			System.out.println("Connection error, should retry later");
+			logger.error("Connection error, should retry later");
 
 		} catch (APIRequestException e) {
-			System.out.println("Should review the error, and fix the request");
-			System.out.println("HTTP Status: " + e.getStatus());
-			System.out.println("Error Code: " + e.getErrorCode());
-			System.out.println("Error Message: " + e.getErrorMessage());
+			logger.error("Should review the error, and fix the request");
+			logger.error("HTTP Status: " + e.getStatus());
+			logger.error("Error Code: " + e.getErrorCode());
+			logger.error("Error Message: " + e.getErrorMessage());
 		}
 		return false;
 	}
@@ -115,19 +119,19 @@ public class JPushMessageNotificationImpl implements MessageNotification {
 			PushResult result = jpushClient.sendPush(payload);
 			// jpushClient.sendIosNotificationWithRegistrationID(alert, extras,
 			// registrationID)
-			System.out.println("Got result - " + result);
+			logger.info("Got result - " + result);
 			return result.getResponseCode() == 200;
 
 		} catch (APIConnectionException e) {
 			// Connection error, should retry later
-			System.out.println("Connection error, should retry later");
+			logger.error("Connection error, should retry later");
 
 		} catch (APIRequestException e) {
 			// Should review the error, and fix the request
-			System.out.println("Should review the error, and fix the request");
-			System.out.println("HTTP Status: " + e.getStatus());
-			System.out.println("Error Code: " + e.getErrorCode());
-			System.out.println("Error Message: " + e.getErrorMessage());
+			logger.error("Should review the error, and fix the request");
+			logger.error("HTTP Status: " + e.getStatus());
+			logger.error("Error Code: " + e.getErrorCode());
+			logger.error("Error Message: " + e.getErrorMessage());
 		}
 		return false;
 	}

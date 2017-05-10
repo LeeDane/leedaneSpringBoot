@@ -1,5 +1,7 @@
 package com.cn.leedane.rabbitmq.recieve;
 
+import org.apache.log4j.Logger;
+
 import com.alibaba.fastjson.JSON;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.model.FinancialReport;
@@ -15,7 +17,8 @@ import com.cn.leedane.utils.EnumUtil.NotificationType;
  */
 public class FinancialMonthReportRecieve implements IRecieve{
 
-
+	private Logger logger = Logger.getLogger(getClass());
+	
 	public final static String QUEUE_NAME = "financial_month_rabbitmq";
 	@Override
 	public String getQueueName() {
@@ -38,9 +41,10 @@ public class FinancialMonthReportRecieve implements IRecieve{
 			NotificationHandler notificationHandler = (NotificationHandler) SpringUtil.getBean("notificationHandler");
 			UserBean userBean = financialReport.getUser();
 			notificationHandler.sendNotificationById(true, userBean, userBean.getId(), financialReport.getDesc(), NotificationType.通知, "t_financial_report", 1, financialReport);	
-			System.out.println(JSON.toJSON(financialReport));
+			logger.info(JSON.toJSON(financialReport));
 			success = true;
 		}catch(Exception e){
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		}
 		return success;

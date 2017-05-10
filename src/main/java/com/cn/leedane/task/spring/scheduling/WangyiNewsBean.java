@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,7 @@ import com.cn.leedane.service.UserService;
  */
 @Component("wangyiNewsBean")
 public class WangyiNewsBean {
+	private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
 	private CrawlMapper crawlMapper;
@@ -51,7 +53,7 @@ public class WangyiNewsBean {
 	 */
 	public void crawl() throws Exception{
 		
-		//System.out.println(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Wangyi:carwl()");
+		//logger.info(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Wangyi:carwl()");
 		try {
 			//ExecutorService threadPool = Executors.newFixedThreadPool(5);
 			WangyiNews wangyi = new WangyiNews();
@@ -65,11 +67,11 @@ public class WangyiNewsBean {
 				crawlBean.setSource("网易新闻");
 				crawlBean.setCreateTime(new Date());
 				//crawlBean.setScore(wangyi.score());
-				System.out.println(crawlMapper.save(crawlBean));
+				logger.info(crawlMapper.save(crawlBean));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("抓取网易新闻信息出现异常：Crawl()");
+			logger.error("抓取网易新闻信息出现异常：Crawl()");
 		}
 	}
 	
@@ -77,7 +79,7 @@ public class WangyiNewsBean {
 	 * 执行处理方法
 	 */
 	public void deal() throws Exception{
-		//System.out.println(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Wangyi:deal()");
+		//logger.info(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Wangyi:deal()");
 		try {
 			//获得用户
 			UserBean user = userService.findById(1);
@@ -90,7 +92,7 @@ public class WangyiNewsBean {
 					try{
 						wangyi.execute();
 					}catch(IOException e){
-						System.out.println("处理网易新闻信息出现异常：deal()+url="+bean.getUrl() +e.toString());
+						logger.error("处理网易新闻信息出现异常：deal()+url="+bean.getUrl() +e.toString());
 						continue;
 					}
 					
@@ -144,7 +146,7 @@ public class WangyiNewsBean {
 			}
 		} catch (Exception e) {
 			//e.printStackTrace();
-			System.out.println("处理网易新闻信息出现异常：deal()");
+			logger.error("处理网易新闻信息出现异常：deal()");
 		}
 	}
 }

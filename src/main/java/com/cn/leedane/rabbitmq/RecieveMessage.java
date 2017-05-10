@@ -1,12 +1,15 @@
 package com.cn.leedane.rabbitmq;
 
+import org.apache.log4j.Logger;
+
 import com.cn.leedane.rabbitmq.recieve.IRecieve;
 import com.cn.leedane.utils.SerializeUtil;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.QueueingConsumer;
 
 public class RecieveMessage {
-
+	private Logger logger = Logger.getLogger(getClass());
+	
 	private IRecieve recieve;
 	public RecieveMessage(IRecieve recieve) {
 		this.recieve = recieve;
@@ -23,7 +26,7 @@ public class RecieveMessage {
 		Channel channel = RabbitConnection.getInstance().getConnection().createChannel();
 		//声明队列，主要为了防止消息接收者先运行此程序，队列还不存在时创建队列。
 		//channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-		System.out.println("queueName:"+recieve.getQueueName()+"正在等待消息");
+		logger.info("queueName:"+recieve.getQueueName()+"正在等待消息");
 		//创建队列消费者
 		QueueingConsumer consumer = new QueueingConsumer(channel);
 		//指定消费队列
@@ -46,7 +49,7 @@ public class RecieveMessage {
 			Object o = SerializeUtil.deserializeObject(delivery.getBody(), recieve.getClass());
 			if(o != null){
 				if(recieve.excute(o) && !recieve.errorDestroy()){
-					//System.out.println("日志执行成功");
+					//logger.info("日志执行成功");
 					//确认消息，已经收到  
 					channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 				}else{

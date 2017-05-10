@@ -7,7 +7,11 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
+
+import org.apache.log4j.Logger;
+
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
@@ -19,7 +23,7 @@ import com.sun.image.codec.jpeg.JPEGImageEncoder;
  * Version 1.0
  */
 public class ImageUtil {
-	
+	private static Logger logger = Logger.getLogger(ImageUtil.class);
 	//记录开始的时间
 	private long startTime; 
 	
@@ -190,7 +194,7 @@ public class ImageUtil {
 			
 			out.flush();
 		}catch(IOException e){
-			System.out.println("图片压缩出现异常");
+			logger.error("图片压缩出现异常");
 		}finally{
 			try {
 				if(out != null)
@@ -201,7 +205,7 @@ public class ImageUtil {
 		}
 	
 		endTime = System.currentTimeMillis();
-		System.out.println("处理"+ oldFileName +"需要花费的时间："+(endTime - startTime) + "毫秒");
+		logger.info("处理"+ oldFileName +"需要花费的时间："+(endTime - startTime) + "毫秒");
 		return true;
 	}
 	
@@ -227,7 +231,7 @@ public class ImageUtil {
 			if(supportSuffix.equalsIgnoreCase(suffix)) return true;
 		}
 		
-		System.out.println("该文件不是目前系统支持的类型");
+		logger.warn("该文件不是目前系统支持的类型");
 		return false;
 	}
 

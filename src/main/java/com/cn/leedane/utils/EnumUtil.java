@@ -442,7 +442,7 @@ public class EnumUtil {
 	}
 	
 	/*public static void main(String[] args) {
-		System.out.println(getResponseValue(1001));
+		logger.info(getResponseValue(1001));
 	}*/
 	
 	/**

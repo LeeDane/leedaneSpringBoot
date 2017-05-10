@@ -8,6 +8,7 @@ import java.util.Set;
 
 import net.sf.json.JSONObject;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,7 @@ import com.cn.leedane.utils.JsonUtil;
  */
 @Component
 public class CircleOfFriendsHandler {
+	private Logger logger = Logger.getLogger(getClass());
 	
 	/**
 	 * 没有数据的时候添加的记录的标记
@@ -144,7 +146,7 @@ public class CircleOfFriendsHandler {
 				redisUtil.zadd(timeLineKey, scoreMembers);
 			}
 		}else{
-			System.out.println("该用户还没有缓存时间线信息");
+			logger.info("该用户还没有缓存时间线信息");
 			scoreMembers.put((double)count, JSONObject.fromObject(timeLineBean).toString());
 			redisUtil.zadd(timeLineKey, scoreMembers);
 		}
@@ -175,7 +177,7 @@ public class CircleOfFriendsHandler {
 				}
 			}
 		}else{
-			System.out.println("我的时间线还没有在redis中缓存,现在给它加入一个空的test");
+			logger.info("我的时间线还没有在redis中缓存,现在给它加入一个空的test");
 		}
 		
 		return timeLineBeans;

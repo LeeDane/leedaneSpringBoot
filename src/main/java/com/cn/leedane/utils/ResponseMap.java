@@ -2,6 +2,8 @@ package com.cn.leedane.utils;
 
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 import net.sf.json.JSONObject;
 
 /**
@@ -16,7 +18,8 @@ import net.sf.json.JSONObject;
  * Version 1.0
  */
 public class ResponseMap extends HashMap<String, Object>{
-
+	private Logger logger = Logger.getLogger(getClass());
+	
 	/**
 	 * 
 	 */
@@ -40,7 +43,7 @@ public class ResponseMap extends HashMap<String, Object>{
 			long end = System.currentTimeMillis();
 			this.put("consumeTime", (end - start) +"ms");
 		}
-		System.out.println("服务器返回:"+ JSONObject.fromObject(this).toString());
+		logger.info("服务器返回:"+ JSONObject.fromObject(this).toString());
 		return this;
 	}
 

@@ -12,6 +12,7 @@ import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +38,8 @@ import com.cn.leedane.service.UserService;
  */
 @Component("sanwenNetBean")
 public class SanwenNetBean {
-
+	private Logger logger = Logger.getLogger(getClass());
+	
 	@Autowired
 	private CrawlService<CrawlBean> crawlService;
 	
@@ -55,7 +57,7 @@ public class SanwenNetBean {
 	 * 执行爬取方法
 	 */
 	public void crawl() throws Exception{
-		//System.out.println(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Sanwen:crawl()");
+		//logger.info(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Sanwen:crawl()");
 		try {
 			SanwenNet sanwenNet = new SanwenNet();
 			sanwenNet.setUrl("http://www.sanwen.net/");
@@ -66,11 +68,11 @@ public class SanwenNetBean {
 				crawlBean.setUrl(homeUrl.trim());
 				crawlBean.setSource("散文网");
 				crawlBean.setCreateTime(new Date());
-				System.out.println(crawlService.save(crawlBean));
+				logger.info(crawlService.save(crawlBean));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("抓取散文网信息出现异常：Crawl()");
+			logger.error("抓取散文网信息出现异常：Crawl()");
 		}
 	}
 	
@@ -78,7 +80,7 @@ public class SanwenNetBean {
 	 * 执行处理方法
 	 */
 	public void deal() throws Exception{
-		System.out.println(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Sanwen:deal()");
+		logger.info(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Sanwen:deal()");
 		
 		//获得用户
 		UserBean user = userService.findById(1);
@@ -101,10 +103,10 @@ public class SanwenNetBean {
 			}
 			
 			for(String url: errors){
-				System.out.println("处理散文网信息出现异常的链接是："+url);
+				logger.error("处理散文网信息出现异常的链接是："+url);
 			}
 		}
-		System.out.println("处理散文网信息结束......");
+		logger.info("处理散文网信息结束......");
 	}
 	
 	/**

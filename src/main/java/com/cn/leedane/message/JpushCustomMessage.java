@@ -2,6 +2,8 @@ package com.cn.leedane.message;
 
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.common.resp.APIConnectionException;
 import cn.jpush.api.common.resp.APIRequestException;
@@ -21,7 +23,8 @@ import com.cn.leedane.message.notification.CustomMessage;
  * Version 1.0
  */
 public class JpushCustomMessage implements CustomMessage{
-
+	private Logger logger = Logger.getLogger(getClass());
+	
 	@Override
 	public boolean sendToRegistrationIDs(Set<String> registrationIds, String content, String key, String value) {
 		return false;
@@ -38,13 +41,13 @@ public class JpushCustomMessage implements CustomMessage{
 			return result.getResponseCode() == 200;
 
 		} catch (APIConnectionException e) {
-			System.out.println("Connection error, should retry later");
+			logger.error("Connection error, should retry later");
 
 		} catch (APIRequestException e) {
-			System.out.println("Should review the error, and fix the request");
-			System.out.println("HTTP Status: " + e.getStatus());
-			System.out.println("Error Code: " + e.getErrorCode());
-			System.out.println("Error Message: " + e.getErrorMessage());
+			logger.error("Should review the error, and fix the request");
+			logger.error("HTTP Status: " + e.getStatus());
+			logger.error("Error Code: " + e.getErrorCode());
+			logger.error("Error Message: " + e.getErrorMessage());
 		}
 		return false;
 	}

@@ -3,10 +3,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import org.apache.log4j.Logger;
 
 import com.cn.leedane.model.FriendModel;
 import com.cn.leedane.model.NotificationBean;
@@ -23,6 +24,8 @@ import com.cn.leedane.utils.DateUtil;
  * Version 1.0
  */
 public class ConcreteWatcher implements Watcher{
+	
+	private Logger logger = Logger.getLogger(getClass());
 	
 	private NotificationService<NotificationBean> notificationService;
 	/**
@@ -47,7 +50,7 @@ public class ConcreteWatcher implements Watcher{
 		String content;
 		SingleSendNotification notification;
 		for (int i = 0; i < size; i++) {
-			System.out.println(friends.get(i).getId()+",你的关注的人"+friends.get(i).getRemark()+"更新了信息");
+			logger.info(friends.get(i).getId()+",你的关注的人"+friends.get(i).getRemark()+"更新了信息");
 			notificationBean = new NotificationBean();
 			notificationBean.setFromUserId(watchedBean.getId());
 			content = template.getNotifitionContent();
@@ -79,7 +82,7 @@ public class ConcreteWatcher implements Watcher{
 			try {
 				Boolean b = futures.get(i).get();
 				if(b != true){
-					System.out.println("发送给"+ friends.get(i).getId()+"的通知失败");
+					logger.info("发送给"+ friends.get(i).getId()+"的通知失败");
 					errorList.add(friends.get(i));
 				}
 			} catch (Exception e) {

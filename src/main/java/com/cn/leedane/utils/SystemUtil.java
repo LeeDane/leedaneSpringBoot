@@ -39,7 +39,7 @@ public class SystemUtil {
 	/*public static void main(String[] args) {
 		List<String>  list = getSystemEnvironmentInfo();
 		for(String s: list){
-			System.out.println(s);
+			logger.info(s);
 		}
 	}*/
 }

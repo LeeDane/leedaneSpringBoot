@@ -5,6 +5,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import com.cn.leedane.utils.StringUtil;
  */
 @Controller
 public class AdminHtmlController extends BaseController{
+	private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
 	private UserService<UserBean> userService;
@@ -155,7 +157,7 @@ public class AdminHtmlController extends BaseController{
 		String account = "";
 		boolean isLogin = false;
 		if(obj != null){
-			System.out.println("obj不为空");
+			logger.warn("obj不为空");
 			isLogin = !isLogin;
 			userBean = (UserBean)obj;
 
@@ -173,7 +175,7 @@ public class AdminHtmlController extends BaseController{
 				return "redirect:/lg?errorcode=" +EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value +"&t="+ UUID.randomUUID().toString() +"&ref="+ CommonUtil.getFullPath(request);
 			}
 		}else{
-			System.out.println("obj为空");
+			logger.warn("obj为空");
 			model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
 			return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();
 		}

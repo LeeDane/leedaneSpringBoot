@@ -1,5 +1,7 @@
 package com.cn.leedane.utils;
 
+import org.apache.log4j.Logger;
+
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.UserService;
@@ -14,14 +16,14 @@ import com.cn.leedane.springboot.SpringUtil;
 public class OptionUtil {
 	
 	public static UserBean adminUser = null;
-	
+	private static Logger logger = Logger.getLogger(OptionUtil.class);
 	static{
 		SystemCache systemCache = (SystemCache) SpringUtil.getBean("systemCache");
 		//获取选项表中的管理员ID
 		Object admin = systemCache.getCache("admin-id");
 		int adminId = 1;
 		if(admin == null){
-			System.out.println("系统管理员账号ID为空,已启动ID为1的用户做为默认管理员账号");
+			logger.info("系统管理员账号ID为空,已启动ID为1的用户做为默认管理员账号");
 		}else {
 			adminId = StringUtil.changeObjectToInt(admin);
 		}

@@ -40,7 +40,7 @@ import com.cn.leedane.utils.StringUtil;
  */
 @Component("financialMonth")
 public class FinancialMonth extends BaseScheduling{
-	Logger logger = Logger.getLogger(getClass());
+	private static Logger logger = Logger.getLogger(FinancialMonth.class);
 	
 	@Autowired
 	private UserService<UserBean> userService;
@@ -65,7 +65,7 @@ public class FinancialMonth extends BaseScheduling{
 			
 			for(int i = 0; i < futures.size(); i++){
 				if(futures.get(i).get()){
-					System.out.println(users.get(i).getAccount() + "的周报发送失败");
+					logger.error(users.get(i).getAccount() + "的周报发送失败");
 				}
 			}
 		}
@@ -102,9 +102,7 @@ class SingleTask implements Callable<Boolean>{
 			Date endTime = DateUtil.getLastMonthEnd();
 			List<FinancialBean> financialBeans = financialService.getByTimeRange(mUser.getId(), 
 					ConstantsUtil.STATUS_NORMAL, startTime, endTime);
-			
-			System.out.println("financialBeans 数量"+financialBeans.size());
-			
+						
 			FinancialReport report = new FinancialReport();
 			report.setCreateTime(new Date());
 			report.setCreateUserId(mUser.getId()); 

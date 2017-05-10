@@ -7,13 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +37,8 @@ import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingExcepti
  */
 @Component
 public class CloudStoreHandler {
+	private static Logger logger = Logger.getLogger(CloudStoreHandler.class);
+	
 	public final static String ACCESSKEY = "aMgOWQCqz6CPIzjKbfLbQDbD0Jf9CD0P7DBA060W";
 	public final static String SECRETKEY = "4TlTuQqE5s8r1bn3M82-3EQmNw22KzV6oIRBL3Pr";
 	public final static String BUCKETNAME = "leedane";
@@ -64,13 +65,13 @@ public class CloudStoreHandler {
      * @return 执行成功的List<Map<String, Object>>
      */
     public List<Map<String, Object>> executeUpload(List<Map<String, Object>> filePathBeans){
-    	System.out.println("开始执行上传操作...............");
+    	logger.info("开始执行上传操作...............");
     	List<Map<String, Object>> returnFilePaths = new ArrayList<Map<String,Object>>();
-    	System.out.println("..............."+filePathBeans.size());
+    	logger.info("..............."+filePathBeans.size());
     	if(filePathBeans == null || filePathBeans.size() < 1)
     		return returnFilePaths;
     	
-    	System.out.println("...............");
+    	logger.info("...............");
     	//派发2个线程
 		ExecutorService threadpool = Executors.newFixedThreadPool(filePathBeans.size() > 5 ? 5: filePathBeans.size());
 		List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
@@ -79,7 +80,7 @@ public class CloudStoreHandler {
 		for(Map<String, Object> filePathBean: filePathBeans){	
 			fileFullPath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file" +File.separator +StringUtil.changeNotNull(filePathBean.get("path"));
 			if(!StringUtil.isNull(fileFullPath)){
-				System.out.println("fileFullPath:"+fileFullPath);
+				logger.info("fileFullPath:"+fileFullPath);
 				File file = new File(fileFullPath);
 				if(file.exists()){
 					if(file.length() >= 1024 *1024 * 4){//对于大于4M的文件，生成多个临时文件分开上传
@@ -114,9 +115,9 @@ public class CloudStoreHandler {
 				continue;
 			}
 		}
-		System.out.println("上传任务执行结束...............");
+		logger.info("上传任务执行结束...............");
 		for(String path: errors){
-			System.out.println("上传到七牛云存储服务器失败的文件："+path);
+			logger.info("上传到七牛云存储服务器失败的文件："+path);
 		}
 		
 		return returnFilePaths;
@@ -128,7 +129,7 @@ public class CloudStoreHandler {
      * @return
      */
     public static String uploadFile(UserBean user, File file){
-    	System.out.println("Single开始执行上传操作...............");
+    	logger.info("Single开始执行上传操作...............");
     	String path = file.getName();
     	if(StringUtil.isNull(path))
     		return null;
@@ -143,25 +144,25 @@ public class CloudStoreHandler {
 		    	UploadManager uploadManager1 = new UploadManager();
 		    	Response r = uploadManager1.put(file, path, token1);
 				if(r.isOK() && r.statusCode == 200){
-					System.out.println("Single上传任务执行结束...............");
+					logger.info("Single上传任务执行结束...............");
 					return ConstantsUtil.QINIU_SERVER_URL + path;
 				}else{
-					System.out.println("上传失败，返回的信息是--->"+r.bodyString());
+					logger.info("上传失败，返回的信息是--->"+r.bodyString());
 				}
 			} catch (QiniuException e) {
 				try {
 					Response r = e.response;
 					// 请求失败时打印的异常的信息
-					System.out.println(r.toString());
+					logger.error(r.toString());
 					//响应的文本信息
-				    System.out.println(r.bodyString());
+					logger.error(r.bodyString());
 				} catch (QiniuException e1) {
 				}
 			}
 		}else{
 			
 		}
-		System.out.println("Single上传任务执行结束...............");
+		logger.info("Single上传任务执行结束...............");
 		return null;
     }
     
@@ -170,7 +171,7 @@ public class CloudStoreHandler {
      * @param filePathBeans
      */
     public int executeSingleUpload(Map<String, Object> filePathBean){
-    	System.out.println("Single开始执行上传操作...............");
+    	logger.info("Single开始执行上传操作...............");
     	int id = 0;
     	if(filePathBean == null || filePathBean.isEmpty())
     		return id;
@@ -188,20 +189,20 @@ public class CloudStoreHandler {
 				if(r.isOK() && r.statusCode == 200){
 					return StringUtil.changeObjectToInt(filePathBean.get("id"));
 				}else{
-					System.out.println("上传失败，返回的信息是--->"+r.bodyString());
+					logger.error("上传失败，返回的信息是--->"+r.bodyString());
 				}
 			} catch (QiniuException e) {
 				try {
 					Response r = e.response;
 					// 请求失败时打印的异常的信息
-					System.out.println(r.toString());
+					logger.error(r.toString());
 					//响应的文本信息
-				    System.out.println(r.bodyString());
+					logger.error(r.bodyString());
 				} catch (QiniuException e1) {
 				}
 			}
 		}
-		System.out.println("Single上传任务执行结束...............");
+		logger.info("Single上传任务执行结束...............");
 		return id;
     }
     
@@ -235,12 +236,12 @@ public class CloudStoreHandler {
 			Response r = new UploadManager().put(getDataOrFile(fullPath), filePath, token, null, StringUtil.getMime(fullPath), false);
 			/*if(r.isOK() && r.statusCode == 200){
 				
-			    //System.out.println("r.toString():" +r.toString());
-			    //System.out.println("r.bodyString():" +r.bodyString());
+			    //logger.info("r.toString():" +r.toString());
+			    //logger.info("r.bodyString():" +r.bodyString());
 			    //更新状态标记为已经上传
 				if(bean.containsKey("id")){
 					moodService.updateUploadQiniu(StringUtil.changeObjectToInt(bean.get("id")), ConstantsUtil.QINIU_SERVER_URL + filePath);
-				    System.out.println("小文件上传七牛云存储服务器成功,文件本地路径：" + filePath);
+				    logger.info("小文件上传七牛云存储服务器成功,文件本地路径：" + filePath);
 				}
 			}*/
 			return r.isOK() && r.statusCode == 200;
@@ -268,10 +269,10 @@ public class CloudStoreHandler {
             	if(bean.containsKey("id")){
 				    //更新状态标记为已经上传
 				    filePathService.updateUploadQiniu(StringUtil.changeObjectToInt(bean.get("id")), ConstantsUtil.QINIU_SERVER_URL + filePath);
-				    System.out.println("大文件上传七牛云存储服务器成功,文件本地路径：" + filePath);
+				    logger.info("大文件上传七牛云存储服务器成功,文件本地路径：" + filePath);
             	}
 			}*/
-            System.out.println("大文件上传完成");
+            logger.info("大文件上传完成");
 			return r.isOK() && r.statusCode == 200;
 		}
 		

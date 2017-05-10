@@ -13,6 +13,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,7 +39,7 @@ import com.cn.leedane.utils.StringUtil;
 @RequestMapping(value = ControllerBaseNameUtil.fp)
 public class FilePathController extends BaseController{
 
-	protected final Log log = LogFactory.getLog(getClass());
+	private Logger logger = Logger.getLogger(getClass());
 
 	//上传filePath表的service
 	@Autowired
@@ -60,7 +61,7 @@ public class FilePathController extends BaseController{
 		
 		checkRoleOrPermission(request);
 		List<Map<String, Object>> result= filePathService.getUserImageByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
-		System.out.println("获得文件路径的数量：" +result.size());
+		logger.info("获得文件路径的数量：" +result.size());
 		message.put("isSuccess", true);
 		message.put("message", result);
 		return message.getMap();
@@ -161,7 +162,7 @@ public class FilePathController extends BaseController{
     	String tableUuid = JsonUtil.getStringValue(json, "uuid"); //客户端生成的唯一性uuid标识符
     	String tableName = JsonUtil.getStringValue(json, "tableName");  //客户端生成的唯一性uuid标识符
     	if(tableName.equalsIgnoreCase(DataTableType.用户.value)){
-    		System.out.println("更新用户的头像的缓存数据");
+    		logger.info("更新用户的头像的缓存数据");
     		userHandler.updateUserPicPath(user.getId(), "30x30");
     	}
     	int order = JsonUtil.getIntValue(json, "order", 0); //多张图片时候的图片的位置，必须，为空默认是0	
@@ -169,7 +170,7 @@ public class FilePathController extends BaseController{
         message.put("isSuccess", true);
         
         if(list != null && list.size() >0){   	
-        	System.out.println("删除的文件的数量："+list.size());
+        	logger.info("删除的文件的数量："+list.size());
         	UploadBean upload;
         	for(Map<String, Object> map: list){
     			upload = new UploadBean();
@@ -185,9 +186,9 @@ public class FilePathController extends BaseController{
         	message.put("isSuccess", true);
     		return message.getMap();
         }else{
-        	System.out.println("删除的文件的数量为0");
+        	logger.error("删除的文件的数量为0");
         }
-        System.out.println("删除断点片段文件发生异常");
+        logger.error("删除断点片段文件发生异常");
         
         message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);

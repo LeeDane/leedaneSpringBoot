@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -22,7 +23,8 @@ import com.cn.leedane.wechat.bean.TextMessage;
 import com.thoughtworks.xstream.XStream;
 
 public class MessageUtil {
-
+	private static Logger logger = Logger.getLogger(MessageUtil.class);
+	
 	public static Map<String,String> xmlToMap(HttpServletRequest request) throws DocumentException, IOException{
 		Map<String,String> map = new HashMap<String, String>();
 		SAXReader reader = new SAXReader();
@@ -72,7 +74,7 @@ public class MessageUtil {
 	 * @param Content
 	 */
 	public static String sendText(String ToUserName,String FromUserName,String Content) {
-		System.out.println("Content:"+Content);
+		logger.info("Content:"+Content);
 		//构建发送给客户端的xml格式数据
 		TextMessage textMessage = new TextMessage();
 		textMessage.setFromUserName(ToUserName);

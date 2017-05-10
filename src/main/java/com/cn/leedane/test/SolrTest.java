@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.BinaryRequestWriter;
@@ -13,11 +14,9 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrInputDocument;
 import org.junit.Test;
 
 import com.cn.leedane.mapper.BlogMapper;
-import com.cn.leedane.model.BlogBean;
 
 /**
  * solr相关的测试类
@@ -27,7 +26,8 @@ import com.cn.leedane.model.BlogBean;
  * Version 1.0
  */
 public class SolrTest extends BaseTest{
-
+	private static Logger logger = Logger.getLogger(SolrTest.class);
+	
 	@Resource
 	private BlogMapper blogMapper;
 	
@@ -136,16 +136,16 @@ public class SolrTest extends BaseTest{
 		try {
 			response = server.query( query );
 			// 搜索得到的结果数
-		    System.out.println("Find:" + response.getResults().getNumFound());
+			logger.info("Find:" + response.getResults().getNumFound());
 		    // 输出结果
 		    int iRow = 1;
 		    for (SolrDocument doc : response.getResults()) {
-		      System.out.println("----------" + iRow + "------------");
-		      //System.out.println("id: " + doc.getFieldValue("id").toString());
-		      System.out.println("name: " + doc.getFieldValue("name").toString());
-		      /*System.out.println("price: "
+		    	logger.info("----------" + iRow + "------------");
+		      //logger.info("id: " + doc.getFieldValue("id").toString());
+		    	logger.info("name: " + doc.getFieldValue("name").toString());
+		      /*logger.info("price: "
 		          + doc.getFieldValue("price").toString());
-		      System.out.println("score: " + doc.getFieldValue("score"));*/
+		      logger.info("score: " + doc.getFieldValue("score"));*/
 		      iRow++;
 		    }
 		} catch (SolrServerException e) {
@@ -153,7 +153,7 @@ public class SolrTest extends BaseTest{
 		}  
 		
 		long end = System.currentTimeMillis();
-		System.out.println("总计耗时："+(end -start)+"毫秒");
+		logger.info("总计耗时："+(end -start)+"毫秒");
 	}
 
 }

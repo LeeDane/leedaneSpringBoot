@@ -1,7 +1,4 @@
 package com.cn.leedane.test;
-import java.io.IOException;
-
-import com.cn.leedane.utils.Base64ImageUtil;
 
 /**
  * 图像相关的测试类
@@ -23,12 +20,12 @@ public class ImageTest {
 		//imageUtil.setProportionPer(0.01f);
 		//imageUtil.setImageType(BufferedImage.TYPE_INT_RGB);
 		imageUtil.setHighQuality(true);
-		System.out.println(imageUtil.ConverBigImageToSmallImage());*/
+		logger.info(imageUtil.ConverBigImageToSmallImage());*/
 		
 		/*String filePath = "G://mx4image.jpg";
 		try {
 			Base64ImageUtil.convertImageToBase64(filePath, null);
-			System.out.println("处理完成");
+			logger.info("处理完成");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}*/

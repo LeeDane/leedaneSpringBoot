@@ -79,7 +79,7 @@ public class OperateLogServiceImpl implements OperateLogService<OperateLogBean>{
 				operateLogBean.setOperateType(operateType);
 				ISend send = new LogSend(operateLogBean);
 				SendMessage sendMessage = new SendMessage(send);
-				//System.out.println("发送日志");
+				//logger.info("发送日志");
 				sendMessage.sendMsg();//发送日志到消息队列
 				
 			}

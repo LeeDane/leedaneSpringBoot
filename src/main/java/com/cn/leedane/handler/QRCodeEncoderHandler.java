@@ -7,6 +7,8 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import org.apache.log4j.Logger;
+
 import com.swetake.util.Qrcode;
 
 /**
@@ -16,6 +18,9 @@ import com.swetake.util.Qrcode;
  * Version 1.0
  */
 public class QRCodeEncoderHandler {
+	
+	private Logger logger = Logger.getLogger(getClass());
+	
 	/** 
      * 生成二维码(QRCode)图片 
      * @param content 
@@ -29,7 +34,7 @@ public class QRCodeEncoderHandler {
             qrcodeHandler.setQrcodeEncodeMode('B');  
             qrcodeHandler.setQrcodeVersion(7);  
   
-            System.out.println(content);  
+            logger.info(content);  
             byte[] contentBytes = content.getBytes("gb2312");  
   
             BufferedImage bufImg = new BufferedImage(140, 140,  
@@ -85,6 +90,6 @@ public class QRCodeEncoderHandler {
         QRCodeEncoderHandler handler = new QRCodeEncoderHandler();  
         handler.encoderQRCode(content, imgPath);  
   
-        System.out.println("encoder QRcode success");  
+        logger.info("encoder QRcode success");  
     }  */
 }

@@ -3,6 +3,7 @@ package com.cn.leedane.lucene.solr;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.BinaryRequestWriter;
@@ -20,6 +21,8 @@ import com.cn.leedane.model.UserBean;
  * Version 1.0
  */
 public class UserSolrHandler extends BaseSolrHandler<UserBean> {
+	private Logger logger = Logger.getLogger(getClass());
+	
 	public static UserSolrHandler handler;
 	
 	public static HttpSolrServer server;
@@ -126,7 +129,7 @@ public class UserSolrHandler extends BaseSolrHandler<UserBean> {
 	 */
 	@Override
 	public QueryResponse query(SolrQuery query) throws SolrServerException{
-		System.out.println(query.toString()); 
+		logger.info(query.toString()); 
 		/*HttpClient client = server.getHttpClient();
 		
 		// 实例化HTTP方法  
@@ -145,7 +148,7 @@ public class UserSolrHandler extends BaseSolrHandler<UserBean> {
                 sb.append(line + NL);  
             }  
             in.close();  
-            System.out.println("返回结果：" +sb.toString()); 
+            logger.info("返回结果：" +sb.toString()); 
 		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
 		} finally{

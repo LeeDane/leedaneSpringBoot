@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.mapper.FriendMapper;
@@ -26,7 +27,8 @@ import com.cn.leedane.utils.StringUtil;
  */
 @Component
 public class ConcreteWatched implements Watched{
-
+	private Logger logger = Logger.getLogger(getClass());
+	
 	@Resource
 	private FriendMapper friendMapper;
 	
@@ -61,7 +63,7 @@ public class ConcreteWatched implements Watched{
 				watcher.updateMood(friends, watchedBean, template);
 			}
 		}else{
-			System.out.println(watchedBean.getAccount() +"还没有好友");
+			logger.warn(watchedBean.getAccount() +"还没有好友");
 		}
 	}
 	@Override

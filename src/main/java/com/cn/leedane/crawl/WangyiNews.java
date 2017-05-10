@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -22,6 +23,7 @@ import com.cn.leedane.utils.StringUtil;
  * Version 1.0
  */
 public class WangyiNews extends BaseCrawlBean{
+	private Logger logger = Logger.getLogger(getClass());
 	
 	public WangyiNews(String url, String title, String id) {
 		super(url, title, id);
@@ -74,9 +76,9 @@ public class WangyiNews extends BaseCrawlBean{
 		}
 		endTime = System.currentTimeMillis();
 		if(!title.contains(".html")){
-			System.out.println("sssssssss");
+			logger.info("sssssssss");
 		}
-		System.out.println("文件"+ title +"保存成html成功！共计耗时："+(endTime - startTime) + "毫秒");
+		logger.info("文件"+ title +"保存成html成功！共计耗时："+(endTime - startTime) + "毫秒");
 
 	}
 	

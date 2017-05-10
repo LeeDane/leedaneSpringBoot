@@ -15,6 +15,8 @@ import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
+import org.apache.log4j.Logger;
+
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageDecoder;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
@@ -25,7 +27,8 @@ import com.sun.image.codec.jpeg.JPEGImageEncoder;
  * Version 1.0
  */
 public class WaterMarkUtil {   
-  
+	private static Logger logger = Logger.getLogger(WaterMarkUtil.class);
+	
     /**  
      * @param args  
      */  
@@ -109,7 +112,7 @@ public class WaterMarkUtil {
             // 生成图片   
             ImageIO.write(buffImg, "JPG", os);   
   
-            System.out.println("图片完成添加Icon印章。。。。。。");   
+            logger.info("图片完成添加Icon印章。。。。。。");   
         } catch (Exception e) {   
             e.printStackTrace();   
         } finally {   
@@ -148,7 +151,7 @@ public class WaterMarkUtil {
         
         int width = buffImg.getWidth();   
         int height = buffImg.getHeight();  
-        System.out.println(width +":"+ height);
+        logger.info(width +":"+ height);
         int x = 0,y = 0;
         if(width > 80){
         	x = width - 80;
@@ -186,7 +189,7 @@ public class WaterMarkUtil {
         is.close();
         os.close();
         
-        System.out.println ("合成结束。。。。。。。。");
+        logger.info ("合成结束。。。。。。。。");
         
         
     }  */  

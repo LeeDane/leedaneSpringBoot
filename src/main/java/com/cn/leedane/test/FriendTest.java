@@ -26,7 +26,7 @@ public class FriendTest extends BaseTest {
 	@Test
 	public void deleteFriends(){
 		/*boolean delete = friendService.deleteFriends(3, 4, 2);
-		System.out.println("detete:" +delete);*/
+		logger.info("detete:" +delete);*/
 	}
 	
 	@Test

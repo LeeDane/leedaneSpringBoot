@@ -217,7 +217,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 		boolean result = false;
 		//还没有缓存记录
 		if(!redisUtil.hasKey(chatBgUserKey)){
-			System.out.println("没有缓存");
+			logger.warn("没有缓存");
 			boolean e = SqlUtil.getBooleanByList(chatBgUserMapper.hasDownload(user.getId(), cid));
 			if(!e){//还没有下载记录
 				redisUtil.addString(chatBgUserKey, "true");
@@ -242,9 +242,9 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 			}
 		}else{
 			String val = redisUtil.getString(chatBgUserKey);
-			System.out.println("已经缓存："+val);
+			logger.info("已经缓存："+val);
 			if(StringUtil.isNotNull(val)){
-				System.out.println("缓存："+StringUtil.changeObjectToBoolean(val));
+				logger.info("缓存："+StringUtil.changeObjectToBoolean(val));
 				if(!StringUtil.changeObjectToBoolean(val)){
 					redisUtil.addString(chatBgUserKey, "true");
 					//保存下载记录

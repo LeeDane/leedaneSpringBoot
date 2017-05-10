@@ -75,7 +75,7 @@ public class CrawlTest extends BaseTest {
 			crawlBean.setUrl(homeUrl.trim());
 			crawlBean.setSource("网易新闻");
 			crawlBean.setCreateTime(new Date());
-			System.out.println(crawlMapper.save(crawlBean));
+			logger.info(crawlMapper.save(crawlBean));
 		}
 	}
 	
@@ -215,11 +215,11 @@ public class CrawlTest extends BaseTest {
 				crawlBean.setSource("散文网");
 				crawlBean.setCreateTime(new Date());
 				//crawlBean.setScore(wangyi.score());
-				System.out.println(crawlMapper.save(crawlBean));
+				logger.info(crawlMapper.save(crawlBean));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("抓取散文网信息出现异常：Crawl()");
+			logger.error("抓取散文网信息出现异常：Crawl()");
 		}
 	}
 	
@@ -296,7 +296,7 @@ public class CrawlTest extends BaseTest {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("处理散文网信息出现异常：deal()");
+			logger.error("处理散文网信息出现异常：deal()");
 		}
 	}
 	/*public static void main(String[] args) {
@@ -305,9 +305,9 @@ public class CrawlTest extends BaseTest {
 		Pattern p=Pattern.compile("http://www.sanwen.net/subject/[0-9]+");
 		Matcher m=p.matcher(u);
 		if(m.find()){
-			System.out.println("true");
+			logger.info("true");
 		}else
-			System.out.println("false");
+			logger.info("false");
 	}*/
 	
 		

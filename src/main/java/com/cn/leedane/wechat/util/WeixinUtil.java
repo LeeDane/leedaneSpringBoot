@@ -14,12 +14,14 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
+import org.apache.log4j.Logger;
+
 import net.sf.json.JSONObject;
 
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.springboot.SpringUtil;
 public class WeixinUtil {
-	
+	private static Logger logger = Logger.getLogger(WeixinUtil.class);
 	/**
 	 * 微信的请求或者响应类型：text
 	 */
@@ -192,7 +194,7 @@ public class WeixinUtil {
 		}
 
 		JSONObject jsonObj = JSONObject.fromObject(result);
-		System.out.println(jsonObj);
+		logger.info(jsonObj);
 		String typeName = "media_id";
 		if(!WeixinUtil.TYPE_IMAGE.equals(type)){
 			typeName = type + "_media_id";

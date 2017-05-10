@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.log4j.Logger;
+
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.StringUtil;
 import com.qiniu.TempFile;
@@ -24,7 +26,7 @@ import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingExcepti
  * Version 1.0
  */
 public class QiniuTest extends BaseTest{
-
+	private static Logger logger = Logger.getLogger(QiniuTest.class);
 	/*public static void main(String[] args) {
 		String accessKey = "aMgOWQCqz6CPIzjKbfLbQDbD0Jf9CD0P7DBA060W";
 		String secretKey = "4TlTuQqE5s8r1bn3M82-3EQmNw22KzV6oIRBL3Pr";
@@ -44,7 +46,7 @@ public class QiniuTest extends BaseTest{
 	   
 	    Response r = uploadManager.put(getDataOrFile(), "1_82378545124366_20160119184016_myJava.pdf", token, null, StringUtil.getMime(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file//1_82378545124366_20160119184016_myJava.pdf"), false);
 	    MyRet ret = r.jsonToObject(MyRet.class);
-	    System.out.println(ret.fname);
+	    logger.info(ret.fname);
 	}
 	
 	private static byte[] getDataOrFile() throws IOException, Base64DecodingException {
@@ -113,8 +115,8 @@ public class QiniuTest extends BaseTest{
 	  public void upload() throws QiniuException{
 
 	   Response res = uploadManager.put("G:\\head.jpg", "fhre.jpg", getUpToken());
-	   System.out.println(getUpToken());
-	   System.out.println(res.bodyString());
+	   logger.info(getUpToken());
+	   logger.info(res.bodyString());
 
 	  }
 
@@ -132,11 +134,11 @@ public class QiniuTest extends BaseTest{
 	                new StringMap().put("returnBody", returnBody));
 
 	        try {
-	        	System.out.println("开始...");
+	        	logger.info("开始...");
 	            ResumeUploader up = new ResumeUploader(new Client(), token, expectKey, f, null, null, null, null);
 	            Response r = up.upload();
 	            MyRet ret = r.jsonToObject(MyRet.class);
-	            System.out.println("Key:"+ret.key+",name:"+ret.fname);
+	            logger.info("Key:"+ret.key+",name:"+ret.fname);
 	        } catch (QiniuException e) {
 	            e.printStackTrace();
 	        }

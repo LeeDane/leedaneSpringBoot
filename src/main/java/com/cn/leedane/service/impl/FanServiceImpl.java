@@ -127,7 +127,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取所关注的对象的列表", "getMyAttentionFansLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
-		System.out.println("获取我关注对象列表总计耗时：" +(end - start) +"毫秒");
+		logger.info("获取我关注对象列表总计耗时：" +(end - start) +"毫秒");
 		message.put("message", rs);
 		message.put("isSuccess", true);
 		return message.getMap();
@@ -180,7 +180,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 			int createUserId = 0;
 			for(int i = 0; i < rs.size(); i++){
 				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("user_id"));
-				System.out.println("user_id:"+createUserId);
+				logger.info("user_id:"+createUserId);
 				if(createUserId> 0){
 					rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId));
 				}
@@ -193,7 +193,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取ID为"+toUserId+"的用户所关注的对象的列表", "getToAttentionsLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
-		System.out.println("获取TA关注对象列表总计耗时：" +(end - start) +"毫秒");
+		logger.info("获取TA关注对象列表总计耗时：" +(end - start) +"毫秒");
 		message.put("message", rs);
 		message.put("isSuccess", true);
 		return message.getMap();
@@ -244,7 +244,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 			int createUserId = 0;
 			for(int i = 0; i < rs.size(); i++){
 				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("user_id"));
-				System.out.println("user_id:"+createUserId);
+				logger.info("user_id:"+createUserId);
 				if(createUserId> 0){
 					rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId));
 				}
@@ -256,7 +256,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取粉丝列表", "getMyFansLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
-		System.out.println("获取我的粉丝列表总计耗时：" +(end - start) +"毫秒");
+		logger.info("获取我的粉丝列表总计耗时：" +(end - start) +"毫秒");
 		message.put("message", rs);
 		message.put("isSuccess", true);
 		return message.getMap();
@@ -308,7 +308,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 			int createUserId = 0;
 			for(int i = 0; i < rs.size(); i++){
 				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("user_id"));
-				System.out.println("user_id:"+createUserId);
+				logger.info("user_id:"+createUserId);
 				if(createUserId> 0){
 					rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId));
 				}
@@ -321,7 +321,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取用户ID为："+toUserId+"的粉丝列表", "getToFansLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
-		System.out.println("获取TA的粉丝列表总计耗时：" +(end - start) +"毫秒");
+		logger.info("获取TA的粉丝列表总计耗时：" +(end - start) +"毫秒");
 		message.put("message", rs);
 		message.put("isSuccess", true);
 		return message.getMap();

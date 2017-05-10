@@ -193,7 +193,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取用户ID为"+uid +"的用户的图库列表", "getGalleryByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
-		System.out.println("获取图库列表总计耗时：" +(end - start) +"毫秒");
+		logger.info("获取图库列表总计耗时：" +(end - start) +"毫秒");
 		return rs;
 	}
 

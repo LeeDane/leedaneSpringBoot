@@ -62,7 +62,7 @@ public class OperateLogTest extends BaseTest {
 	
 	@Test
 	public void getlimits(){
-		System.out.println(operateLogMapper.getlimits(DataTableType.操作日志.value, " order by id desc ", 5, 1));
+		logger.info(operateLogMapper.getlimits(DataTableType.操作日志.value, " order by id desc ", 5, 1));
 	}
 	
 	

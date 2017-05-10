@@ -17,6 +17,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -56,7 +57,7 @@ import com.cn.leedane.utils.StringUtil;
 @RequestMapping(value = ControllerBaseNameUtil.s)
 public class SearchController extends BaseController{
 
-	protected final Log log = LogFactory.getLog(getClass());
+	private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
 	private MoodService<MoodBean> moodService;
@@ -170,17 +171,17 @@ public class SearchController extends BaseController{
 					Map<String, Map<String, List<String>>>  highlightings = response2.getHighlighting();
 					Map<String, List<String>> msMap = highlightings.get(String.valueOf(tempId));
 				}*/
-	            /*System.out.println("id = " +solrDocument.getFieldValue("id"));
-	            System.out.println("account = " +solrDocument.getFieldValue("account"));
-	            System.out.println("personalIntroduction = " +solrDocument.getFieldValue("personalIntroduction"));*/
+	            /*logger.info("id = " +solrDocument.getFieldValue("id"));
+	            logger.info("account = " +solrDocument.getFieldValue("account"));
+	            logger.info("personalIntroduction = " +solrDocument.getFieldValue("personalIntroduction"));*/
 	            
 	            ds.add(map);
 	        }
 	        docsMap.put(String.valueOf(tempId), ds);
 			//搜索得到的结果数
-		    System.out.println("Find:" + documentList.getNumFound());
+	        logger.info("Find:" + documentList.getNumFound());
 		}
-		//System.out.println("data="+com.alibaba.fastjson.JSONArray.toJSONString(rs));
+		//logger.info("data="+com.alibaba.fastjson.JSONArray.toJSONString(rs));
 		
 		//UserBean userBean = userService.findById(1);
 		//UserSolrHandler.getInstance().addBean(userBean);

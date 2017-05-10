@@ -16,6 +16,7 @@ import javax.websocket.server.ServerEndpoint;
 
 import net.sf.json.JSONObject;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.handler.UserHandler;
@@ -34,6 +35,8 @@ import com.cn.leedane.utils.StringUtil;
 @ServerEndpoint(value = "/websocket")
 @Component
 public class ChatWebSocket {
+	private Logger logger = Logger.getLogger(getClass());
+	
     //静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
     private static int onlineCount = 0;
 
@@ -59,12 +62,12 @@ public class ChatWebSocket {
         	chatSocketSet.add(this); 
         	//加入set中
             addOnlineCount();           //在线数加1
-            System.out.println("有新连接加入！当前在线人数为" + getOnlineCount());
+            logger.info("有新连接加入！当前在线人数为" + getOnlineCount());
         }
         /*try {
             sendMessage("hello");
         } catch (IOException e) {
-            System.out.println("IO异常");
+            logger.error("IO异常");
         }*/
     }
 
@@ -75,7 +78,7 @@ public class ChatWebSocket {
     public void onClose() {
     	if(chatSocketSet.remove(this)){//从set中删除
     		subOnlineCount();           //在线数减1
-            System.out.println("有一连接关闭！当前在线人数为" + getOnlineCount());
+    		logger.info("有一连接关闭！当前在线人数为" + getOnlineCount());
     	}else{
     		scanLoginSocketSet.remove(this);  //从set中删除
     	}
@@ -87,7 +90,7 @@ public class ChatWebSocket {
      * @param message 客户端发送过来的消息*/
     @OnMessage
     public void onMessage(String message, Session session) {
-        System.out.println("来自客户端的消息:" + message);
+    	logger.info("来自客户端的消息:" + message);
         try {
             JSONObject jsonObject = JSONObject.fromObject(message);
         	jsonObject.put("time", DateUtil.DateToString(new Date()));
@@ -273,7 +276,7 @@ public class ChatWebSocket {
      */
     @OnError
     public void onError(Session session, Throwable error) {
-        System.out.println("发生错误");
+    	logger.info("发生错误");
         error.printStackTrace();
     }
 

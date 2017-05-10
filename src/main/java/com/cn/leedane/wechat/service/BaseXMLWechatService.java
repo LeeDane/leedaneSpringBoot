@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ public abstract class BaseXMLWechatService {
 	
 	HttpServletRequest request;
 	Map<String,String> map;
+	private Logger logger = Logger.getLogger(getClass());
 	
 	/**
 	 * 项目的基本路径
@@ -75,7 +77,7 @@ public abstract class BaseXMLWechatService {
 		ToUserName = map.get("ToUserName");
 		MsgType = map.get("MsgType");
 		Content = map.get("Content");
-		System.out.println("FromUserName:"+FromUserName+",ToUserName:"+ToUserName);
+		logger.info("FromUserName:"+FromUserName+",ToUserName:"+ToUserName);
 	}
 	
 	/**

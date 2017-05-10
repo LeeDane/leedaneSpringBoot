@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -22,6 +24,7 @@ import com.cn.leedane.utils.StringUtil;
  * Version 1.0
  */
 public class RedisUtil{
+	private Logger logger = Logger.getLogger(getClass());
 	
 	private static RedisUtil redisUtil;
 	
@@ -779,7 +782,7 @@ public class RedisUtil{
 				return true;
 			}
 		} catch (Exception e) {
-			System.out.println("Redis服务ping不通");
+			logger.error("Redis服务ping不通");
 		}finally{
 			RedisUtil.returnResource(jedis);
 		}
