@@ -51,6 +51,7 @@ public class LinkManageHandler {
 					redisUtil.addSerialize(key, SerializeUtil.serializeObject(linkManageBeans));
 				} catch (IOException e) {
 					e.printStackTrace();
+					System.out.println("错误啦！");
 				}
 			}
 		}

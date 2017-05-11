@@ -20,13 +20,21 @@ public class SpringUtil implements ApplicationContextAware {
 		/*if(applicationContext == null)
 			//对main方法使用的时候加载所有的spring配置文件
 			applicationContext = new ClassPathXmlApplicationContext("classpath*:config/spring-*.xml");*/
-		return applicationContext.getBean(beanName);
+		return getApplicationContext().getBean(beanName);
 	}
 
 	@Override
 	public void setApplicationContext(ApplicationContext context)
 			throws BeansException {
-		applicationContext = context;
+		if(SpringUtil.applicationContext == null) {
+            SpringUtil.applicationContext = context;
+        }
 	}
+	
+	//获取applicationContext
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
 	
 }

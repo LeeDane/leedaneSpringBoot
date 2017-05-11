@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -283,6 +284,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		
 		//清空角色权限相关的缓存
 		if(clearIds.size() > 0){
+			logger.info("将清空以下用户的角色权限相关的缓存----->"+StringUtils.join(clearIds.toArray(), ","));
 			for(Integer clearId: clearIds)
 				rolePermissionHandler.deleteByUser(clearId);
 		}
