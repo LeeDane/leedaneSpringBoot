@@ -17,9 +17,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Ehcache;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.ehcache.EhCacheCache;
@@ -34,6 +31,7 @@ import com.cn.leedane.rabbitmq.recieve.EmailRecieve;
 import com.cn.leedane.rabbitmq.recieve.FinancialMonthReportRecieve;
 import com.cn.leedane.rabbitmq.recieve.IRecieve;
 import com.cn.leedane.rabbitmq.recieve.LogRecieve;
+import com.cn.leedane.rabbitmq.recieve.VisitorRecieve;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.CommonUtil;
 import com.cn.leedane.utils.FinancialCategoryUtil;
@@ -98,6 +96,14 @@ public class InitCacheData {
 			}
 		}).start();
 		
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				startRabbitMqVisitorListener(); //异步启动rabbitmq访客队列的监听
+			}
+		}).start();
+		
 		SensitiveWordInit.getInstance(); //加载敏感词库
 		
 		FinancialCategoryUtil.getInstance();
@@ -113,6 +119,21 @@ public class InitCacheData {
 		try {
 			//记账月报队列的监听
 			IRecieve recieve = new FinancialMonthReportRecieve();
+			RecieveMessage recieveMessage = new RecieveMessage(recieve);
+			recieveMessage.getMsg();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	/**
+	 * 启动rabbitmq访客队列的监听
+	 */
+	private void startRabbitMqVisitorListener() {
+		
+		try {
+			//记账月报队列的监听
+			IRecieve recieve = new VisitorRecieve();
 			RecieveMessage recieveMessage = new RecieveMessage(recieve);
 			recieveMessage.getMsg();
 		} catch (Exception e) {

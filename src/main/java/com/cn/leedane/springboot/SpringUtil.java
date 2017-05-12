@@ -3,7 +3,7 @@ package com.cn.leedane.springboot;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
  * spring相关工具类
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * 2016年7月12日 上午10:31:30
  * Version 1.0
  */
-@Configuration
+@Component
 public class SpringUtil implements ApplicationContextAware {
 
 	private static ApplicationContext applicationContext;

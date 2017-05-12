@@ -16,6 +16,7 @@ $(function(){
 	loadUserInfo();
 	getMoods();
 	getMessageBoards();//获取留言板列表
+	getVisitors(); //获取访客列表
 	
 	$(".edit-user-info-btn").on("click", function(){
 		//检验手机号码
@@ -69,9 +70,10 @@ function getMessageBoards(){
 			$("#message-boards tr").remove();
 			if(data.isSuccess){
 				for(var i = 0; i < data.message.length; i++){
-					var html = '<tr>'+
-									'<td width="40px"><img src="'+ changeNotNullString(data.message[i].user_pic_path) +'" width="30" height="30" class="img-rounded img-circle"></td>'+
-									'<td class="cut-text" style="word-break:break-all;" title="'+ data.message[i].content+'">'+ data.message[i].content+'</td>'+
+					var board = data.message[i];
+					var html = '<tr onclick="linkToMy('+ board.create_user_id+');">'+
+									'<td width="40px"><img src="'+ changeNotNullString(board.user_pic_path) +'" width="30" height="30" class="img-rounded img-circle"></td>'+
+									'<td class="cut-text" style="word-break:break-all;" title="'+ board.content+'">'+ board.content+'</td>'+
 								'</tr>';
 					$("#message-boards").append(html);
 				}
@@ -79,6 +81,47 @@ function getMessageBoards(){
 				ajaxError(data);
 			}
 			$("#message-boards").append('<tr><td colspan="2" style="text-align: center;"><a type="button" class="btn btn-primary btn-xs" href="/user/'+uid+'/board"><span class="glyphicon glyphicon-pencil"></span> 留言板</a></td></tr>');
+		},
+		error : function(data) {
+			ajaxError(data);
+		}
+	});
+}
+
+/**
+ * 获取访客列表
+ */
+function getVisitors(){
+	$.ajax({
+		url : "/vt/user/"+ uid+ "/visitors?table_name=t_mood&table_id="+uid+"&page_size=5&t=" + Math.random(),
+		dataType: 'json', 
+		beforeSend:function(){
+		},
+		success : function(data) {
+			$("#visitors-list li").remove();
+			if(data.isSuccess){
+				if(data.message.length == 0){
+					$("#visitors-list").append('<li class="list-group-item">暂无访客数据</li>');
+					return;
+				}
+					
+				for(var i = 0; i < data.message.length; i++){
+					var visitor = data.message[i];
+					var liHtml = '<li class="list-group-item" onclick="linkToMy('+ visitor.create_user_id+');">';
+					if(visitor.is_friend){
+						liHtml += '<span class="badge">好友</span>';
+					}
+					if(visitor.is_fan){
+						liHtml += '<span class="badge">粉丝</span>';
+					}
+					 	liHtml +='<img alt="" width="40" height="40" src="'+changeNotNullString(visitor.user_pic_path)+'"/><span>&nbsp;&nbsp;&nbsp;&nbsp;'+ changeNotNullString(visitor.account) +'&nbsp;('+ visitor.create_time +')</span>';
+										
+						liHtml += '</li>';
+					$("#visitors-list").append(liHtml);
+				}
+			}else{
+				ajaxError(data);
+			}
 		},
 		error : function(data) {
 			ajaxError(data);
@@ -164,16 +207,16 @@ function getMoods(){
 				moods = data.message;
 				for(var i = 0; i < moods.length; i++){
 					
-					var ifFlagNew = false;
-					var flagMonth = moods[i].create_time.substring(0, 7);
+					//var ifFlagNew = false;
+					/*var flagMonth = moods[i].create_time.substring(0, 7);
 					if(!isInMonthArray(flagMonth)){
 						ifFlagNew = true
 						monthArray.push(flagMonth);
 						$("#float-month").append('<li  class="active"><a href="#mood-'+flagMonth+'">'+ flagMonth +'</a></li>');
-					}
+					}*/
 					
 					//添加每一行到心情容器
-					$("#mood-container").append(buildMoodRow(i, moods[i], ifFlagNew, flagMonth));
+					$("#mood-container").append(buildMoodRow(i, moods[i]/*, ifFlagNew, flagMonth*/));
 					if(i == 0)
 						first_id = moods[i].id;
 					if(i == moods.length -1)

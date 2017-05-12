@@ -28,11 +28,13 @@ import com.cn.leedane.controller.RoleController;
 import com.cn.leedane.controller.UserController;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.VisitorBean;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.AddReadSend;
 import com.cn.leedane.rabbitmq.send.ISend;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.UserService;
+import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.utils.CommonUtil;
 import com.cn.leedane.utils.ConstantsUtil;
@@ -55,6 +57,9 @@ public class HtmlController extends BaseController{
 	
 	@Autowired
 	private UserService<UserBean> userService;
+	
+	@Autowired
+	private VisitorService<VisitorBean> visitorService;
 	
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面
@@ -178,6 +183,9 @@ public class HtmlController extends BaseController{
     			model.addAttribute("uid", uid);
     			model.addAttribute("uaccount", userHandler.getUserName(uid));
     			model.addAttribute("isLoginUser", uid == user.getId());
+    			//保存访客记录
+    			if(uid != user.getId())
+    				visitorService.saveVisitor(user, "web网页端", uid, "t_mood", uid, ConstantsUtil.STATUS_NORMAL);
     			return loginRoleCheck("my", true, model, request);
     		}
         }

@@ -73,6 +73,11 @@ public class ControllerBaseNameUtil {
 	public static final String cm = "cm";
 	
 	/**
+	 * 访客
+	 */
+	public static final String vt = "vt";
+	
+	/**
 	 * 下载
 	 */
 	public static final String dl = "dl";

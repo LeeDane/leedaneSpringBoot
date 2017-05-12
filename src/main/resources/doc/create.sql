@@ -382,3 +382,28 @@ CREATE TABLE `t_link_role_or_permission` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 -- 创建索引
 ALTER TABLE `t_link_role_or_permission` ADD INDEX t_link_role_or_permission_index_name ( `permission_id`, `role_id`, `link_id`)
+
+-- ----------------------------
+-- Table structure for t_visitor
+-- ----------------------------
+DROP TABLE IF EXISTS `t_visitor`;
+CREATE TABLE `t_visitor` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `froms` varchar(255) COMMENT '来源',
+  `user_id` int(11) NOT NULL COMMENT '访问的用户ID',
+  `table_name` varchar(255) NOT NULL COMMENT '对应业务表的名称',
+  `table_id` int(11) NOT NULL COMMENT '对应业务表的ID',
+  PRIMARY KEY (`id`),
+  KEY `FK_visitor_create_user` (`create_user_id`),
+  KEY `FK_visitor_modify_user` (`modify_user_id`),
+  KEY `FK_visitor_user_id` (`user_id`),
+  CONSTRAINT `FK_visitor_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_visitor_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_visitor_user_id` FOREIGN KEY (`user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
