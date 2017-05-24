@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * Version 1.0
  */
 @Component
-public class SpringUtil implements ApplicationContextAware {
+public class SpringUtil{
 
 	private static ApplicationContext applicationContext;
 
@@ -23,18 +23,21 @@ public class SpringUtil implements ApplicationContextAware {
 		return getApplicationContext().getBean(beanName);
 	}
 
-	@Override
+	/*@Override
 	public void setApplicationContext(ApplicationContext context)
 			throws BeansException {
 		if(SpringUtil.applicationContext == null) {
             SpringUtil.applicationContext = context;
         }
-	}
+	}*/
 	
 	//获取applicationContext
     public static ApplicationContext getApplicationContext() {
         return applicationContext;
     }
 
-	
+  //获取applicationContext
+    public static void setApplicationContext2(ApplicationContext application) {
+        applicationContext = application;
+    }
 }
