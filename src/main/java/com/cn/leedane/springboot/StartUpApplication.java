@@ -3,6 +3,7 @@ package com.cn.leedane.springboot;
 import java.io.File;
 import java.io.IOException;
 
+import javax.servlet.MultipartConfigElement;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -19,9 +20,11 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
@@ -30,6 +33,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.multipart.MultipartResolver;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import com.cn.leedane.cache.SystemCache;
@@ -246,12 +250,24 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
 	public ExceptionHandler getExceptionHandler(){
 		return new ExceptionHandler();
 	}
-    
+	
+	@Bean  
+    public MultipartConfigElement multipartConfigElement() {  
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+        //// 设置文件大小限制 ,超了，页面会抛出异常信息，这时候就需要进行异常信息的处理了;
+        factory.setMaxFileSize("2MB"); //KB,MB
+        /// 设置总上传数据总大小
+        factory.setMaxRequestSize("10MB");  
+        //Sets the directory location where files will be stored.
+        //factory.setLocation("路径地址");
+        return factory.createMultipartConfig();  
+    } 
 	public static void main(String[] args) {
 		logger.warn( "项目开始启动。。。" );
         //SpringApplication.run("classpath:spring-common.xml", args);
-        SpringApplication.run(StartUpApplication.class, args);
-        
+		ApplicationContext ctx = (ApplicationContext)SpringApplication.run(StartUpApplication.class, args);
+		SpringUtil.setApplicationContext2(ctx);
+	
         InitCacheData initCacheData = new InitCacheData();
         initCacheData.init();
 	}
