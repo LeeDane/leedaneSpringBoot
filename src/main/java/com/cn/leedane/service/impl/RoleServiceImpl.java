@@ -1,4 +1,5 @@
 package com.cn.leedane.service.impl;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -262,7 +263,7 @@ private Logger logger = Logger.getLogger(getClass());
 			map.put("user_id", userId);
 			map.put("role_id", rlid);
 			map.put("create_user_id", user.getId());
-			map.put("create_time", createTime);
+			map.put("create_time", new Timestamp(createTime.getTime()));
 			data.add(map);
 		}
 		

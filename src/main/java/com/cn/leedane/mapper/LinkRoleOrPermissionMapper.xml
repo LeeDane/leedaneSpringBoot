@@ -13,7 +13,7 @@
         insert into t_link_role_or_permission (status, role_id, permission_id, link_id, role, create_user_id, create_time)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (1, #{item.role_id, jdbcType=INTEGER}, #{item.permission_id,jdbcType=INTEGER}, #{item.link_id,jdbcType=INTEGER}, #{item.role,jdbcType=BOOLEAN}, #{item.create_user_id,jdbcType=INTEGER},#{item.create_time,jdbcType=DATE})
+            (1, #{item.role_id, jdbcType=INTEGER}, #{item.permission_id,jdbcType=INTEGER}, #{item.link_id,jdbcType=INTEGER}, #{item.role,jdbcType=BOOLEAN}, #{item.create_user_id,jdbcType=INTEGER},#{item.create_time,jdbcType=TIMESTAMP})
         </foreach>
     </insert>
     

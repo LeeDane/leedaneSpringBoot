@@ -1,4 +1,5 @@
 package com.cn.leedane.service.impl;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -298,7 +299,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 			map.put("link_id", lnid);
 			map.put("role", role);
 			map.put("create_user_id", user.getId());
-			map.put("create_time", createTime);
+			map.put("create_time", new Timestamp(createTime.getTime()));
 			data.add(map);
 		}
 		

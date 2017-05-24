@@ -13,7 +13,7 @@
         insert into t_role_permission (status, role_id, permission_id, create_user_id, create_time)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (1, #{item.role_id, jdbcType=INTEGER}, #{item.permission_id,jdbcType=INTEGER}, #{item.create_user_id,jdbcType=INTEGER},#{item.create_time,jdbcType=DATE})
+            (1, #{item.role_id, jdbcType=INTEGER}, #{item.permission_id,jdbcType=INTEGER}, #{item.create_user_id,jdbcType=INTEGER},#{item.create_time,jdbcType=TIMESTAMP})
         </foreach>
     </insert>
     
