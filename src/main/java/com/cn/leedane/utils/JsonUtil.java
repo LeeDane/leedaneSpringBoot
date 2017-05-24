@@ -185,6 +185,19 @@ public class JsonUtil {
 	 * @param key  键名称
 	 * @return
 	 */
+	public static Float getFloatValue(JSONObject object, String key){
+		if(JsonUtil.hasKey(object, key)){
+			return Float.parseFloat(String.valueOf(object.get(key)));
+		}
+		return 0f;
+	}
+	
+	/**
+	 * 从json对象中获取key对应的值，没有该key返回0
+	 * @param object json对象
+	 * @param key  键名称
+	 * @return
+	 */
 	public static long getLongValue(JSONObject object, String key){
 		if(JsonUtil.hasKey(object, key)){
 			String s = String.valueOf(object.get(key));

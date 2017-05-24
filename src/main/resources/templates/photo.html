@@ -51,8 +51,7 @@
 </head>
 <body>
 <div th:include="common :: hello">what?</div>
-<script src="page/js/photo.js"></script>
-
+<script th:src="@{/page/js/photo.js}" type="text/javascript"></script>
 <div class="container">
 	   <div class="row">
 	   		<div class="col-lg-3 col-sm-12 right-col">

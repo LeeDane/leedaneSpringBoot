@@ -407,3 +407,27 @@ CREATE TABLE `t_visitor` (
   CONSTRAINT `FK_visitor_user_id` FOREIGN KEY (`user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+-- ----------------------------
+-- Table structure for t_material
+-- ----------------------------
+DROP TABLE IF EXISTS `t_material`;
+CREATE TABLE `t_material` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `path` varchar(255) COMMENT '本地路径',
+  `qiniu_path` varchar(255) COMMENT '七牛路径',
+  `width` int(11) NOT NULL DEFAULT '0' COMMENT '宽度',
+  `height` int(11) NOT NULL DEFAULT '0' COMMENT '高度',
+  `length` bigint(20) NOT NULL DEFAULT '0' COMMENT '文件大小',
+  `material_desc` varchar(255) COMMENT '描述信息',
+  `material_type` varchar(5) COMMENT '类型， 文件/图像',
+  PRIMARY KEY (`id`),
+  KEY `FK_material_create_user` (`create_user_id`),
+  KEY `FK_material_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_material_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_material_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

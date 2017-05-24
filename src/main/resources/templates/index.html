@@ -80,8 +80,8 @@
 </head>
 <body>
 <div th:include="common :: hello">what?</div>
-<script src="page/js/index.js"></script>
-<script type="text/javascript" src="page/other/jquery.md5.js"></script>
+<script th:src="@{/page/js/index.js}" type="text/javascript"></script>
+<script th:src="@{/page/other/jquery.md5.js}" type="text/javascript"></script>
 <div class="main clearFloat">
 	<div class="main_bg"></div>
 	<div class="container" id="main-container">

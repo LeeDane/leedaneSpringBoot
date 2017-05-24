@@ -265,6 +265,29 @@ public class HtmlController extends BaseController{
 		return loginRoleCheck("chat-square", model, request);
 	}
 	
+	@RequestMapping(ControllerBaseNameUtil.mt)
+	public String materialIndex(Model model, HttpServletRequest request){
+		return loginRoleCheck("material/index", true, model, request);
+	}
+	
+	/**
+	 * 素材添加图片
+	 * @param model
+	 * @param type  类型，值可以是iframe或者其他
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(ControllerBaseNameUtil.mt +"/add-photo")
+	public String materialAddPhoto(Model model, @RequestParam(value="type", required=false) String type, HttpServletRequest request){
+		boolean iframe = false;
+		if(StringUtil.isNotNull(type) && "iframe".equals(type))
+			iframe = true;
+		
+		model.addAttribute("iframe", iframe);
+		
+		return loginRoleCheck("material/add-photo", true, model, request);
+	}
+	
 	@RequestMapping("403")
 	public String unauthorizedRole(Model model, HttpServletRequest request){
 		//设置统一的请求模式

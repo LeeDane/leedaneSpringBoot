@@ -131,6 +131,7 @@
                     <li><a th:href="@{/cs}">聊天室</a></li>
                     <li><a th:href="@{/dl}">app下载</a></li>
                		<li th:if="${isAdmin}"><a th:href="@{/ad/index}">系统后台</a></li>
+               		<li th:if="${isLogin}"><a th:href="@{/mt}">素材管理</a></li>
                 	<li th:if="${isLogin}"><a href="javascript:void(0);" onclick="logout()">退出</a></li>
                 	<li th:if="${not isLogin}"><a th:href="@{/lg}">登录</a></li>
                 </ul>

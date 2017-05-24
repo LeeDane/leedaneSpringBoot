@@ -113,6 +113,11 @@ public class ControllerBaseNameUtil {
 	public static final String gl = "gl";
 	
 	/**
+	 * 素材
+	 */
+	public static final String mt = "mt";
+	
+	/**
 	 * 消息
 	 */
 	public static final String ms = "ms";
@@ -296,5 +301,10 @@ public class ControllerBaseNameUtil {
 	 * 商城统一入口根路径
 	 */
 	public static final String shop = "shop";
+	
+	/**
+	 * 网页文件上传
+	 */
+	public static final String wul = "wul";
     
 }
