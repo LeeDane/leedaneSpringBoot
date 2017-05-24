@@ -1,5 +1,7 @@
 package com.cn.leedane.ueditor;
 
+import java.io.File;
+
 import com.cn.leedane.utils.ConstantsUtil;
 
 /**
@@ -29,6 +31,8 @@ public class UeditorFolder {
 		StringBuffer rootPath = new StringBuffer();
 		rootPath.append(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER);
 		rootPath.append(com.cn.leedane.enums.FileType.UEDITOR.value);
+		rootPath.append(File.separator);
+		rootPath.append(com.cn.leedane.enums.FileType.IMAGE.value);
 		return rootPath.toString();
 	}
 }
