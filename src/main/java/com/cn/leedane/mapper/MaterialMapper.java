@@ -27,4 +27,20 @@ public interface MaterialMapper extends BaseMapper<MaterialBean>{
 	 * @return
 	 */
 	public List<Map<String, Object>> isExist(@Param("userId")int userId, @Param("path")String path);
+	
+	/**
+	 * 分页获取素材列表
+	 * @param createUserId
+	 * @param start
+	 * @param pageSize
+	 * @param type
+	 * @param status
+	 * @return
+	 */
+	public List<Map<String, Object>> getMaterialByLimit(
+			@Param("createUserId")int createUserId, 
+			@Param("start")int start, 
+			@Param("pageSize")int pageSize, 
+			@Param("type")String type, 
+			@Param("status") int status);
 }

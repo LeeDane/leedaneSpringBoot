@@ -1,13 +1,12 @@
 package com.cn.leedane.controller;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.cn.leedane.handler.CloudStoreHandler;
 import com.cn.leedane.model.FilePathBean;
@@ -33,6 +33,7 @@ import com.cn.leedane.model.UploadBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.FilePathService;
 import com.cn.leedane.service.UploadService;
+import com.cn.leedane.upload.Progress;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.DateUtil;
@@ -58,27 +59,44 @@ public class WebFileUploadController extends BaseController{
   	private UploadService<UploadBean> uploadService;
   	
     /**
-     * 上传文件（建议断点上传每次的文件不要超过1M）
+     * 多个文件（建议断点上传每次的文件不要超过1M）
      * @return
      */
-	@RequestMapping(value = "/upload")
-    public Map<String, Object> upload(HttpServletRequest request, HttpServletResponse response, @RequestParam(value="file") MultipartFile file) {
+	@RequestMapping(value = "/uploads")
+	@ResponseBody
+    public Map<String, Object> uploads(HttpServletRequest request, HttpServletResponse response, 
+    		@RequestParam(value="myfile", required = false) CommonsMultipartFile[] multipartFiles) {
+		
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request)){
 			return message.getMap();
 		}
 		
+		UserBean user = getUserFromMessage(message);
         try {
-        	UserBean user = null;
-        	Subject currentUser = SecurityUtils.getSubject();
-            if(currentUser.isAuthenticated()){
-           	 	user = (UserBean)currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-            }
-            
-            if(user == null)
+            if(multipartFiles == null || user == null)
            	 	throw new UnsupportedTokenException();
-            
-        	saveFile(user, currentUser, request, message, file);
+                        
+            //保存全部的七牛链接
+            List<String> qiniuLinks = new ArrayList<String>();
+            for(CommonsMultipartFile multipartFile: multipartFiles){
+            	if(multipartFile == null)
+            		throw new NullPointerException("multipartFile为空");
+            	
+            	//saveFile(user, currentUser, request, message, file);
+                File tempFile = new File(getRootPath(user, multipartFile));
+                multipartFile.transferTo(tempFile);
+                
+                //把上传好的七牛云存储路径放到session中
+                qiniuLinks.add(CloudStoreHandler.uploadFile(null, tempFile));
+                
+                //删除缓存文件
+                if(tempFile != null)
+                	tempFile.delete();
+            }
+            message.put("message", qiniuLinks);
+       		message.put("responseCode", ResponseCode.请求返回成功码.value);
+       		message.put("isSuccess", true);
         	return message.getMap();
         } catch (Exception e) {
         	logger.error("上传文件发生异常,错误原因 : " + e.getMessage());
@@ -115,10 +133,11 @@ public class WebFileUploadController extends BaseController{
 
         //开始上传
         File targetFile = new File(getRootPath(getUserFromMessage(message), file));
+        
         //保存  
         try {  
             if(!targetFile.exists()){  
-                targetFile.mkdirs();  
+                targetFile.createNewFile();  
                 InputStream is = file.getInputStream();
                 ImageCutUtil.cut(is, targetFile, (int)x,(int)y,(int)w,(int)h);  
                 is.close();
@@ -144,13 +163,14 @@ public class WebFileUploadController extends BaseController{
     }
 	
 	/**
-     * 多文件上传
-     * 注意app要保证编号的正确性和顺序，到时合并的时候将按照大小进行合并
+     * 单个文件上传
      * @return
      */
-	@RequestMapping(value = "/uploads")
+	@RequestMapping(value = "/upload")
 	@ResponseBody
-    public Map<String, Object> uploads(HttpServletRequest request, HttpServletResponse response, @RequestParam(value="fileFields") MultipartFile[] files) {
+	@Deprecated  //暂时不使用
+    public Map<String, Object> upload(HttpServletRequest request, HttpServletResponse response, @RequestParam(value="myfile") CommonsMultipartFile multipartFile) {
+		
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request)){
 			return message.getMap();
@@ -160,12 +180,18 @@ public class WebFileUploadController extends BaseController{
         	UserBean user = null;
         	Subject currentUser = SecurityUtils.getSubject();
             if(currentUser.isAuthenticated()){
-           	 user = (UserBean)currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+           	 	user = (UserBean)currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
             }
             
             if(user == null)
            	 	throw new UnsupportedTokenException();
-        	saveFiles(user, currentUser, request, message, files);
+            
+            if(multipartFile == null)
+        		throw new NullPointerException("multipartFile为空");
+        	//saveFile(user, currentUser, request, message, file);
+            File tempFile = new File(getRootPath(user, multipartFile));
+            multipartFile.transferTo(tempFile);
+            
         	return message.getMap();
         } catch (Exception e) {
         	logger.error("上传文件发生异常,错误原因 : " + e.getMessage());
@@ -178,19 +204,19 @@ public class WebFileUploadController extends BaseController{
 	/**
 	 * 获取进度条的进度
 	 * @param request
-	 * @param uuid 标记当前上传记录的唯一uuid
 	 * @return
 	 */
-	@RequestMapping(value = "/getProgress/{uuid}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> getProgress(HttpServletRequest request, @PathVariable(value="uuid") String uuid) {
+	@RequestMapping(value = "/getProgress", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    public Map<String, Object> getProgress(HttpServletRequest request) {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
         try {
         	Subject currentUser = SecurityUtils.getSubject();
+        	Progress status = (Progress) currentUser.getSession().getAttribute("status");
         	//从session中获取进度
-            message.put("message", currentUser.getSession().getAttribute(uuid));
+            message.put("message", status);
             message.put("responseCode", ResponseCode.请求返回成功码.value);
             message.put("isSuccess", true);
             return message.getMap();
@@ -206,11 +232,11 @@ public class WebFileUploadController extends BaseController{
 	/**
 	 * 获取进度条的进度
 	 * @param request
-	 * @param uuid 标记当前上传记录的唯一uuid
+	 * @param itemId
 	 * @return
 	 */
-	@RequestMapping(value = "/getQiNiuPath/{uuid}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> getQiNiuPath(HttpServletRequest request, @PathVariable(value="uuid") String uuid) {
+	@RequestMapping(value = "/getQiNiuPath/{item}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    public Map<String, Object> getQiNiuPath(HttpServletRequest request, @PathVariable(value="item") String item) {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -218,12 +244,11 @@ public class WebFileUploadController extends BaseController{
         try {
         	Subject currentUser = SecurityUtils.getSubject();
         	//从session中获取进度
-            message.put("message", currentUser.getSession().getAttribute("qiniu-"+ uuid));
+            message.put("message", currentUser.getSession().getAttribute("qiniu-"+ item));
             message.put("responseCode", ResponseCode.请求返回成功码.value);
             message.put("isSuccess", true);
             //把session缓存的信息清掉
-            currentUser.getSession().removeAttribute("qiniu-"+ uuid);
-            currentUser.getSession().removeAttribute(uuid);
+            currentUser.getSession().removeAttribute("qiniu-"+ item);
             return message.getMap();
         } catch (Exception e) {
         	logger.error("上传文件发生异常,错误原因 : " + e.getMessage());
@@ -232,88 +257,7 @@ public class WebFileUploadController extends BaseController{
    		message.put("responseCode", ResponseCode.服务器处理异常.value);
 		return message.getMap();
     }
-	/***
-	 * 保存单个文件
-	 * @param user
-	 * @param request
-	 * @param responseMap
-	 * @param file
-	 * @throws IllegalStateException
-	 * @throws IOException
-	 */
-    private void saveFile(final UserBean user, final Subject currentUser, HttpServletRequest request, ResponseMap responseMap, final MultipartFile file) throws IllegalStateException, IOException {  
-    	// 判断文件是否为空  
-        if (!file.isEmpty()) { 
-            // 文件保存路径  
-        	//给客户端生成新的标记uuid，便于获取进度
-            final String fileUuid = UUID.randomUUID().toString();
-            
-        	new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					
-					try {
-			    		File tempFile = new File(getRootPath(user, file));
-			    		
-			            // 转存文件  
-			    		InputStream input;
-						input = file.getInputStream();
-						 FileOutputStream fos = new FileOutputStream(tempFile);  
-					      
-				            int size = 0;  
-				            byte[] buffer = new byte[1024 * 1]; //每次处理10k
-				            long total = file.getSize();
-				            long already = 0;
-				            while ((size = input.read(buffer,0, 1024 *1)) != -1) {  
-				                fos.write(buffer, 0, size); 
-				                already += size;
-				                double db = already * 1.00d / total * 100;
-				                BigDecimal b = new BigDecimal(db);
-				                double f1 = b.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
-				                
-				                //把当前的进度放到session中
-				                //由于还有上传的环节，不能直接返回100
-				                if(f1 > 98)
-				                	f1 = 98;
-				                currentUser.getSession().setAttribute(fileUuid, f1);
-				                //if(already > 18* 1024)
-				                	//size = 10 / 0;
-				                
-				                /*try {
-				                	//模拟休息1秒钟
-									Thread.sleep(100);
-								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}*/
-				            }  
-				            fos.close();  
-				            input.close();
-				            //把上传好的七牛云存储路径放到session中
-			                currentUser.getSession().setAttribute("qiniu-"+fileUuid, CloudStoreHandler.uploadFile(null, tempFile));
-			                
-			                //上传到七牛之后才设置成100
-			                currentUser.getSession().setAttribute(fileUuid, 100);
-				            //删除临时文件
-			                if (tempFile != null)
-			                	tempFile.delete();
-			                
-					} catch (Exception e) {
-						e.printStackTrace();
-						//把当前的进度放到session中
-		                currentUser.getSession().setAttribute(fileUuid, 9999);
-					}
-				}
-			}).start();
-    		
-            
-            responseMap.put("message", fileUuid);
-            responseMap.put("responseCode", ResponseCode.请求返回成功码.value);
-            responseMap.put("isSuccess", true);
-        }
-    } 
-    
+	
     /**
      * 获取文件的在本地的临时路径
      * @param user
@@ -330,25 +274,5 @@ public class WebFileUploadController extends BaseController{
 		rootPath.append(newFileName);
 		return rootPath.toString();
     }
-    
-    /**
-     * 保存多个文件
-     * @param user
-     * @param request
-     * @param responseMap
-     * @param files
-     * @throws IllegalStateException
-     * @throws IOException
-     */
-    private void saveFiles(UserBean user, Subject currentUser, HttpServletRequest request, ResponseMap responseMap, @RequestParam("files") MultipartFile[] files) throws IllegalStateException, IOException {  
-        //判断file数组不能为空并且长度大于0  
-        if(files!=null&&files.length>0){  
-            //循环获取file数组中得文件  
-            for(int i = 0;i<files.length;i++){  
-                MultipartFile file = files[i];  
-                //保存文件  
-                saveFile(user, currentUser, request, responseMap, file);
-            }  
-        }
-    }  
+  
 }

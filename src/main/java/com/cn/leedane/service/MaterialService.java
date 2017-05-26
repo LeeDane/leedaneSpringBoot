@@ -61,7 +61,7 @@ public interface MaterialService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<Map<String, Object>> getMaterialByLimit(JSONObject jo,
+	public Map<String, Object> getMaterialByLimit(JSONObject jo,
 			UserBean user, HttpServletRequest request);
 	
 }

@@ -34,7 +34,7 @@ $(function(){
  */
 function addImage(){
 	$("#form-id-"+ fileIndex).remove();
-	$("body").append('<form id="form-id-'+ fileIndex +'" style="display: none;"><input id="add-file-'+ fileIndex +'" type="file" name="file" onchange="haveImageInut(this);"/></form>');
+	$("body").append('<form id="form-id-'+ fileIndex +'" style="display: none;"><input id="add-file-'+ fileIndex +'" type="file" name="file" onchange="haveImageInut(this);" accept="image/gif,image/png,image/jpg,image/bmp,image/psd,image/jpeg"/></form>');
 	$('#add-file-'+ fileIndex +'').click();
 }
 /**

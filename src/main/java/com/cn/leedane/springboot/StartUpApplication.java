@@ -3,7 +3,7 @@ package com.cn.leedane.springboot;
 import java.io.File;
 import java.io.IOException;
 
-import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -19,8 +19,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
@@ -30,10 +30,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.MultipartFilter;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import com.cn.leedane.cache.SystemCache;
@@ -60,7 +62,7 @@ import com.cn.leedane.handler.ZanHandler;
  * 2017年3月13日 上午11:35:00
  * Version 1.0
  */
-@EnableAutoConfiguration
+@EnableAutoConfiguration(exclude={MultipartAutoConfiguration.class})
 @SpringBootApplication  //全局controller控制
 @MapperScan("com.cn.leedane.mapper")
 @EnableTransactionManagement
@@ -251,22 +253,33 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
 		return new ExceptionHandler();
 	}
 	
-	@Bean  
-    public MultipartConfigElement multipartConfigElement() {  
-        MultipartConfigFactory factory = new MultipartConfigFactory();
-        //// 设置文件大小限制 ,超了，页面会抛出异常信息，这时候就需要进行异常信息的处理了;
-        factory.setMaxFileSize("2MB"); //KB,MB
-        /// 设置总上传数据总大小
-        factory.setMaxRequestSize("10MB");  
-        //Sets the directory location where files will be stored.
-        //factory.setLocation("路径地址");
-        return factory.createMultipartConfig();  
-    } 
+	//显示声明CommonsMultipartResolver为mutipartResolver
+    @Bean(name = "multipartResolver")
+    public MultipartResolver multipartResolver(ServletContext servletContext){
+    	CustomMultipartResolver resolver = new CustomMultipartResolver(servletContext);
+        resolver.setDefaultEncoding("UTF-8");
+        resolver.setResolveLazily(true);//resolveLazily属性启用是为了推迟文件解析，以在在UploadAction中捕获文件大小异常
+        resolver.setMaxInMemorySize(1*1024); //1M
+        resolver.setMaxUploadSize(3000*1024*1024);//上传文件大小 20M 20*1024*1024
+        return resolver;
+    }
+    
+    @Bean
+    @Order(0)
+    public MultipartFilter multipartFilter() {
+    	MultipartFilter multipartFilter = new MultipartFilter();
+    	multipartFilter.setMultipartResolverBeanName("multipartResolver");
+    	return multipartFilter;
+    }
 	public static void main(String[] args) {
 		logger.warn( "项目开始启动。。。" );
         //SpringApplication.run("classpath:spring-common.xml", args);
 		ApplicationContext ctx = (ApplicationContext)SpringApplication.run(StartUpApplication.class, args);
 		SpringUtil.setApplicationContext2(ctx);
+		
+		 /*ConfigurableApplicationContext context = (ConfigurableApplicationContext)ctx;  
+	        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory)context.getBeanFactory(); 
+	        beanFactory.removeBeanDefinition("multipartResolver");*/
 	
         InitCacheData initCacheData = new InitCacheData();
         initCacheData.init();

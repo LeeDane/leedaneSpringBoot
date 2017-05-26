@@ -25,4 +25,12 @@
 	<select id="isExist" resultType="java.util.Map">
 		select id from t_material where path = #{path} and create_user_id = #{userId}
 	</select>
+	
+	<select id="getMaterialByLimit" resultType="java.util.Map">
+		select mt.id, mt.path, mt.qiniu_path, mt.width, mt.height, mt.length, mt.material_desc
+			, date_format(mt.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		from t_material mt 
+		where mt.create_user_id = #{createUserId} and mt.status = #{status} and mt.material_type = #{type}
+		order by mt.id desc limit #{start}, #{pageSize}
+	</select>
 </mapper>

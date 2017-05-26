@@ -149,6 +149,11 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.账号或密码不匹配.value));
 			message.put("responseCode", ResponseCode.账号或密码不匹配.value);
 			
+		}else if(exception instanceof NullPointerException){//空指针异常
+			logger.error("系统报错，空指针异常！！！");
+			message.put("message", "空指针异常，错误信息是"+ exception.getMessage());
+			message.put("responseCode", ResponseCode.空指针异常.value);
+			
 		}else{
 			StringPrintWriter strintPrintWriter = new StringPrintWriter();  
 	        exception.printStackTrace(strintPrintWriter);

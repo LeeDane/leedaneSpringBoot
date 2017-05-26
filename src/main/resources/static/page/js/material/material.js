@@ -1,23 +1,48 @@
-var pageSize = 8;
+var pageSize = 9;
 var currentIndex = 0;
 var materials;
 var totalPage = 0;
 var fileIndex = 0; //未上传文件的索引
 var isUploading = false;//标记当前是否在上传
+var $progressBar;
+var $formUpload;
+var $uploadImgModal;
+var $materialListContainer;
+var materialListImgHight;
 $(function(){
-	
+	$materialListContainer = $("#material-row-container");
+	$uploadImgModal = $("#upload-img-modal");
+	var containerWidth = $materialListContainer.width();
 	//动态计算模态框的宽度，适配手机
 	if($(window).width() > (1100 + 30)){//浏览器当前窗口可视区域宽度
-		$("#upload-img-modal").find(".modal-dialog").css("width", 1100);
+		$uploadImgModal.find(".modal-dialog").css("width", 1100);
+		var materialListImgWidth = Math.floor((containerWidth / 3));
+		materialListImgHight = materialListImgWidth - 30;
 	}else{
 		//为什么这里减去30是因为弹出的模态框离窗口有边距
-		$("#upload-img-modal").find(".modal-dialog").css("width", $(window).width() -30);
+		$uploadImgModal.find(".modal-dialog").css("width", $(window).width() -30);
+		materialListImgHight = $(window).width() - 30;
 	}
+	
+	$(document).on("click", "div.thumbnail", function(event){
+		var $obj = $(this);
+		if($obj.hasClass("click-select")){
+			$obj.removeClass("click-select");
+			$obj.find(".thumbnail-top").remove();
+		}else{
+			$obj.addClass("click-select");
+			$obj.append('<div class="thumbnail-top"></div>');
+		}
+	});
+	$progressBar = $(".progress-bar");
+	$progressBar.closest(".progress").hide();
+	$formUpload = $("#form-upload");
+	$formUpload.hide();
 	//alert($(document).width());//浏览器当前窗口文档对象宽度
 	//alert($(document.body).width());//浏览器当前窗口文档body的宽度
 	//alert($(document.body).outerWidth(true));//浏览器当前窗口文档body的总宽度 包括border padding margin
 	
-	//getMaterials();
+	getMaterials();
 });
 
 /**
@@ -31,7 +56,7 @@ function getMaterials(){
 		url : "/mt/materials?"+ jsonToGetRequestParams(params),
 		dataType: 'json',
 		beforeSend:function(){
-			$("#material-list-content").empty();
+			$materialListContainer.empty();
 			$(".pagination").empty();
 		},
 		success : function(data) {
@@ -39,11 +64,11 @@ function getMaterials(){
 			if(data.isSuccess){
 				materials = data.message;
 				if(materials.length == 0){
-					$("#material-list-content").append('空空的，还没有数据');
+					$materialListContainer.append('空空的，还没有数据');
 					return;
 				}
 				for(var i = 0; i < materials.length; i++){
-					$("#material-list-content").append(buildEachMaterialRow(i, materials[i]));
+					$materialListContainer.append(buildEachMaterialRow(i, materials[i]));
 				}
 				pageDivUtil(data.total);
 			}else{
@@ -65,15 +90,16 @@ function getMaterials(){
 function addFile(){
 	fileIndex ++;
 	$("#add-file").remove();
-	$("body").append('<form id="form-id-'+ fileIndex +'" style="display: none;"><input id="add-file-'+ fileIndex +'" type="file" name="file" onchange="haveFileInut(this);"/></form>');
+	$formUpload.append('<input id="add-file-'+ fileIndex +'" type="file" name="myfile" onchange="haveFileInut(this);"/>');
+	$('#add-file-'+ fileIndex +'').data("index", fileIndex);
 	$('#add-file-'+ fileIndex +'').click();
 }
 /**
  * 添加单个图片
  */
 function addImage(){
-	$('#upload-img-modal').modal({backdrop: 'static', keyboard: false});
-	$("#upload-img-modal").modal('show');
+	$uploadImgModal.modal({backdrop: 'static', keyboard: false});
+	$uploadImgModal.modal('show');
 }
 
 /**
@@ -91,14 +117,9 @@ function haveFileInut(obj){
 	
 	$("#upload-material-table").append('<tr class="each-row" id="add-file-row-'+ fileIndex +'">'+ 
 											'<td>'+ fileFullName +'</td>'+ 
-											'<td onclick="addDesc(this);" onkeydown="saveDesc(event, this);"></td>'+ 
-											'<td><div class="progress progress-striped">'+ 
-												    '<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">'+ 
-												    	'<span class="tip-text">已完成0%</span>'+ 
-												    '</div>'+ 
-												'</div>'+ 
-											'</td>'+ 
-											'<td><a class="uploadFile" href="javascript:void(0);" onclick="uploadFile(this);" style="margin-left: 10px;">上传</a><a href="javascript:void(0);" onclick="deleteFile(this);" style="margin-left: 10px;">移除</a></td>'+ 
+											'<td onclick="addDesc(this);" onkeydown="saveDesc(event, this);"></td>'+
+											'<td class="file-status">未上传</td>'+ 
+											'<td><a href="javascript:void(0);" onclick="deleteFile(this);" style="margin-left: 10px;">移除</a></td>'+ 
 										'</tr>');
 	$("#add-file-row-"+ fileIndex).data("path", fileFullName);//把值保存在内存中
 	$("#add-file-row-"+fileIndex).data("index", fileIndex);
@@ -109,68 +130,78 @@ function haveFileInut(obj){
 var uuid;
 var task;
 var preAddFileIndex = 1;
+
 /**
- * 单个上传文件
- * @param obj
+ * 全部上传
  */
-function uploadFile(obj){
-	//判断是否上传成功(成功直接返回)
-	if($(obj).closest("tr").hasClass("complete")){
-		return;
-	}
+function uploadFiles(){
 	
 	if(isUploading){
 		layer.msg("当前有任务在上传，请稍等。。。");
 		return;
 	}
 	
-	isUploading = true;
+	if($formUpload.find("input").length < 1){
+		layer.msg("请先添加文件");
+		return;
+	}
 	
-	preAddFileIndex = $(obj).closest("tr").data("index");
-	$("#add-file-row-"+ preAddFileIndex).find(".progress-bar").css("width", "0%");
-	$("#add-file-row-"+ preAddFileIndex).find(".tip-text").text("已完成0%");
-	//var file = $("#add-file-"+ fileIndex)[0];
-	//var form = $("#form-id-"+ fileIndex).closest("form");
-	//form.submit();
-	//var formData = new FormData($("#form-id-"+ fileIndex).closest("form")); //这个获取的form无法解析
-	var formData = new FormData(document.getElementById("form-id-"+ preAddFileIndex));//表单id
-	//formData.append("file", document.getElementById("form-id-"+ fileIndex));
-	  // XMLHttpRequest 对象
-    /*var xhr = new XMLHttpRequest();
-    xhr.open("post", '/wul/upload', true);
-    xhr.onload = function() {
-        // ShowSuccess("上传完成");
-        alert("上传完成");
-        $("#batchUploadBtn").attr('disabled', false);
-        $("#batchUploadBtn").val("上传");
-        $("#progressBar").parent().removeClass("active");
-        $("#progressBar").parent().hide();
-        //$('#myModal').modal('hide');
-    };
-    xhr.upload.addEventListener("progress", progressFunction, false);
-    xhr.send(formData);*/
-	$.ajax({
-	    url: '/wul/upload',
-	    type: 'POST',
-	    cache: false,
-	    data: formData,
-	    processData: false,
-	    contentType: false,
-	    dataType: 'json', 
-	}).success(function(data) {
-		if(data != null && data.isSuccess){
-			//开始启动请求去获取进度条
-			//定时50毫秒去查询进度
-			uuid = data.message;
-			task = setInterval("getProgress()","50");
-		}else{
-			isUploading = false;
-			ajaxError(data);
-		}
-	}).error(function(res) {
-		isUploading = false;
-		ajaxError(data);
+	$progressBar.closest(".progress").show();
+	//加载层-风格4
+	layer.msg('正在上传，请勿关闭窗口。', {
+	  icon: 16
+	  ,shade: 0.5, //弹出层背景的透明度
+	  time: -1 //禁止手动关闭窗口
 	});
+	
+	showProgressStyle(0);
+	isUploading = true;
+	var formData = new FormData(document.getElementById("form-upload"));//表单id
+	task = setInterval("getProgress()","100");
+	try{
+		$.ajax({
+		    url: '/wul/uploads',
+		    type: 'POST',
+		    cache: false,
+		    data: formData,
+		    processData: false,
+		    contentType: false,
+		    dataType: 'json', 
+		}).success(function(data) {
+			isUploading = false;
+			clearInterval(task);
+			layer.closeAll();
+			if(data == null || data.isSuccess){
+				var qiniuLinks = data.message;
+				for(var i = 0; i < qiniuLinks.length; i++){
+					var index = $formUpload.find("input").eq(i).data("index");
+					if(index){
+						var $row = $("#add-file-row-"+ index);
+						$row.addClass("complete");
+						$row.find(".file-status").text("已上传");
+						//$row.find(".uploadFile").remove();
+						$row.data("qiniu_path", qiniuLinks[i]);
+					}
+				}
+				$formUpload.empty(); //把任务form清空
+				$progressBar.closest(".progress").hide();
+			}else{
+				layer.msg(data.message);
+			}
+		}).error(function(data) {
+			isUploading = false;
+			clearInterval(task);
+			if(data.isSuccess){
+				layer.msg(data.message);
+			}
+			else{
+				layer.msg("上传出现异常！");
+			}
+		});
+	}catch(err){
+		ajaxError(err);
+	}
+	
 }
 
 /**
@@ -192,29 +223,20 @@ function deleteFile(obj){
  */
 function getProgress(){
 	$.ajax({
-		url : "/wul/getProgress/"+uuid,
+		url : "/wul/getProgress",
 		dataType: 'json', 
 		beforeSend:function(){
 		},
 		success : function(data) {
 			if(data != null && data.isSuccess){
-				var pro = data.message;
+				var status = data.message;
+				var pro = Math.round(status.bytesRead / status.contentLength *100 );
 				if(pro == 100){
-					getQiNiuFilePath(uuid);//获取七牛的文件路径
 					clearInterval(task);
 				}
-				
-				if(pro == 9999){//上传失败代码
-					clearInterval(task);
-					//$("#add-file-row-"+ preAddFileIndex).find(".progress-bar").css("width", "0%");
-					$("#add-file-row-"+ preAddFileIndex).find(".uploadFile").text("重试");
-					isUploading = false;
-					return;
-				}
-				$("#add-file-row-"+ preAddFileIndex).find(".progress-bar").css("width", pro +"%");
-				$("#add-file-row-"+ preAddFileIndex).find(".tip-text").text("已完成"+ pro +"%");
-				
-				console.log("当前的进度是："+ pro)
+				//var items = status.items;
+				showProgressStyle(pro);
+				console.log("当前的进度是："+ pro);
 			}
 		},
 		error : function(data) {
@@ -225,30 +247,12 @@ function getProgress(){
 }
 
 /**
- * 获取文件在七牛云存储的路径
- * @param uuid
+ * 控制进度的展示
+ * @param progress 进度
  */
-function getQiNiuFilePath(uuid){
-	$.ajax({
-		url : "/wul/getQiNiuPath/"+uuid,
-		dataType: 'json', 
-		beforeSend:function(){
-		},
-		success : function(data) {
-			if(data != null && data.isSuccess){
-				$("#add-file-row-"+ preAddFileIndex).addClass("complete");
-				$("#add-file-row-"+ preAddFileIndex).find(".uploadFile").remove();
-				$("#add-file-row-"+ preAddFileIndex).data("qiniu_path", data.message);
-			}else{
-				$("#add-file-row-"+ preAddFileIndex).find(".uploadFile").text("重试");
-			}
-			isUploading = false;
-		},
-		error : function(data) {
-			ajaxError(data);
-			isUploading = false;
-		}
-	});
+function showProgressStyle(progress){
+	$progressBar.css("width", progress + "%");
+	$progressBar.find(".p-show").text(progress +"% 已上传完成");
 }
 
 
@@ -262,11 +266,11 @@ function addDesc(obj){
 	if($(obj).find("input") && $(obj).find("input").length > 0){
 		desc = $(obj).find("input").val();
 	}else{
-		desc = $tr.data("desc");
+		desc = $tr.data("material_desc");
 	}
 	
 	$(obj).text('');
-	$(obj).append('<input type="text" placeholder="回车保存描述"/>');
+	$(obj).append('<input type="text" class="form-control" placeholder="回车保存描述"/>');
 	$(obj).find("input").focus();
 	if(isNotEmpty(desc))
 		$(obj).find("input").val(desc);
@@ -282,7 +286,7 @@ function saveDesc(event, obj){
     	var text = $(obj).find("input").val();
     	$(obj).find("input").remove();
     	$(obj).text(text);
-    	$(obj).closest("tr").data("desc", text);
+    	$(obj).closest("tr").data("material_desc", text);
    }
 }
 
@@ -293,50 +297,69 @@ function saveDesc(event, obj){
  * @returns {String}
  */
 function buildEachMaterialRow(index, material){
-		var html = '<div class="row notification-list notification-list-padding" data-id="'+ message.id +'">'+
-			   			'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">'+
-							'<img src="'+ changeNotNullString(message.user_pic_path) +'" width="40" height="40" class="img-rounded">'+
-						'</div>'+
-						'<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">'+
-					       	'<div class="list-group">'+
-						       		'<div class="list-group-item notification-list-item active">'+
-						       			'<a href="JavaScript:void(0);" onclick="linkToMy('+ message.from_user_id +')" target="_blank" class="marginRight">'+ changeNotNullString(message.account)+'</a>'+
-						       			'<span class="marginRight publish-time">发表于:'+ changeNotNullString(message.create_time) +'</span>'+
-						       		'</div>';
-							html += '<div class="list-group-item notification-list-item">'+
-										'<div class="row">';
-									if(isNotEmpty(message.source)){
-								    html += '<div class="col-lg-12 '+ (isNotEmpty(message.source_account) && isNotEmpty(message.source_user_id) ? 'hand" onclick="linkToTable(\''+ message.table_name +'\', '+ message.table_id +', '+ message.source_user_id +')"' :'"') +'>'+
-												'<blockquote>'+ message.source;
-													if(isNotEmpty(message.source_account)){
-												html += '<small><cite>'+ message.source_account +'</cite>&nbsp;&nbsp;'+ changeNotNullString(message.create_time) +'</small>';
-													}
-										html +='</blockquote>'+
-											'</div>';
-									}
-									html += '<div class="col-lg-12">'+ changeNotNullString(message.content) +'</div>'+
-										'</div>'+
-									'</div>';
-								if(isLogin){
-							html += '<div class="list-group-item notification-list-item">'+
-										'<div class="row">'+
-							       				'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right">';
-										if(!message.is_read){
-											html += '<button class="btn btn-sm btn-primary pull-right tag-read-btn" style="width: 80px;" type="button">标为已读</button>';
-										}
-				       					 if(isAdmin && message.to_user_id == loginUserId){
-				       						 html += '<button class="btn btn-sm btn-primary pull-right delete-other-btn" style="width: 60px; margin-right: 5px;" type="button">删除</button>';
-				       					 }
-							       					 
-							       		html += '</div>'+
-							       		'</div>'+
-								   '</div>';
-								}
-					html += '</div>'+
-					'</div>'+
-			'</div>';
+		var html = '<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">'+
+						'<div class="thumbnail">'+
+						      '<img width="100%" style="height: '+materialListImgHight+'px;" src="'+ material.qiniu_path +'" alt="...">'+
+						      '<div class="caption">'+
+						        	'<div class="cut-text">'+ changeNotNullString(material.create_time) +'</div>';
+			        	if(isEmpty(material.material_desc)){
+			        		html += '<h5 class="cut-text">暂无描述</h5>';   	
+			        	}else{
+			        		html += '<h5 class="cut-text" title="'+ material.material_desc  +'">'+ material.material_desc +'</h5>';
+			        	}
+						
+			        		html += '<p><a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button" onclick="editMaterial(event, '+material.id+');">编辑</a> <a href="javascript:void(0);" class="btn btn-default btn-sm" role="button" onclick="deleteMaterial(event, '+material.id+');">删除</a></p>'+
+							'</div>'+
+					    '</div>'+
+				   '</div>';
 	
 	return html;
+}
+
+/**
+ * 删除素材
+ * @param event
+ * @param materialId
+ */
+function deleteMaterial(event, materialId){
+	event.stopPropagation();//阻止冒泡 
+	if(materialId > 0){
+		layer.confirm('您要删除该素材吗？', {
+			  btn: ['确定','点错了'] //按钮
+		}, function(){
+			var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+			$.ajax({
+				type : "delete",
+				dataType: 'json',  
+				url : "/mt/material/"+ materialId,
+				beforeSend:function(){
+				},
+				success : function(data) {
+					layer.close(loadi);
+					if(data.isSuccess){
+						layer.msg(data.message + ",1秒后自动刷新");
+						reloadPage(1000);
+					}else{
+						ajaxError(data);
+					}
+				},
+				error : function(data) {
+					layer.close(loadi);
+					ajaxError(data);
+				}
+			});
+		}, function(){
+		});
+	}
+}
+
+/**
+ * 编辑素材
+ * @param event
+ * @param materialId
+ */
+function editMaterial(event, materialId){
+	event.stopPropagation();//阻止冒泡 
 }
 
 /**
@@ -386,7 +409,7 @@ function optionChange(){
 	var objS = document.getElementsByTagName("select")[0];
     var index = objS.options[objS.selectedIndex].value;
     currentIndex = index;
-    getMessages();
+    getMaterials();
 }
 
 /**
@@ -394,7 +417,7 @@ function optionChange(){
  */
 function goIndex(index){
 	currentIndex = index;
-	getMessages();
+	getMaterials();
 }
 
 /**
@@ -404,7 +427,7 @@ function pre(){
 	currentIndex --;
 	if(currentIndex < 0)
 		currentIndex = 0;
-	getMessages();
+	getMaterials();
 }
 
 
@@ -415,7 +438,7 @@ function next(){
 	currentIndex ++;
 	if(currentIndex > totalPage)
 		currentIndex = totalPage;
-	getMessages();
+	getMaterials();
 }
 
 /**
@@ -449,13 +472,8 @@ function getData(){
 			var qiniuPath = data.message;//获取新的链接
 			$("#upload-material-table").append('<tr class="complete each-row" id="add-file-row-'+ fileIndex +'">'+ 
 					'<td>'+ fileName +'</td>'+ 
-					'<td onclick="addDesc(this);" onkeydown="saveDesc(event, this);"></td>'+ 
-					'<td><div class="progress progress-striped">'+ 
-						    '<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">'+ 
-						        '<span class="tip-text">已完成100%</span>'+ 
-						    '</div>'+ 
-						'</div>'+ 
-					'</td>'+ 
+					'<td onclick="addDesc(this);" onkeydown="saveDesc(event, this);"></td>'+
+					'<td class="file-status">已上传</td>'+ 
 					'<td><a href="javascript:void(0);" onclick="deleteFile(this);" style="margin-left: 10px;">移除</a></td>'+ 
 				'</tr>');
 			$("#add-file-row-"+ fileIndex).data("path", fileName);//把值保存在内存中
@@ -481,7 +499,7 @@ function submitFiles(){
 		layer.msg("请先上传文件！");
 		return;
 	}
-	
+
 	var materials = new Array();
 	var flag = false; //标记是否符合要求
 	$trs.each(function(index){

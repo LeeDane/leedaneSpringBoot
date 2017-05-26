@@ -13,6 +13,47 @@
 		.container{
 			margin-top: 60px;
 		}
+		.material-content{
+				border: 1px solid #ddd;
+				border-top:none !important;
+		}
+		.nav-tabs{
+			border-bottom: 0 !important;
+		}
+		.material-content{
+			margin-right: 0 !important;
+			margin-left: 0 !important;
+			margin-top: 0 !important;
+		}
+		
+		.pagination ul{
+   			list-style:none; /* 去掉ul前面的符号 */
+   			margin: 0px; /* 与外界元素的距离为0 */
+   			padding: 0px; /* 与内部元素的距离为0 */
+   			width: auto; /* 宽度根据元素内容调整 */
+   		}
+   		.pagination li{
+   			float: left;
+   			padding: 20px; 
+   			margin-left: 10px!important;
+   			margin-top: 10px!important;
+   			padding: 0 !important;
+   		}
+   		.click-select{
+   			border: 1px dashed red !important;
+   		}
+   		.thumbnail{
+   			position: relative;
+   		}
+   		.thumbnail-top{
+   			border-top: 30px solid red;
+    		border-left: 30px solid transparent; 
+   			width: 10px;
+   			height: 10px;
+   			position: absolute;
+   			top: 0;
+   			right: 0;
+   		}
 	</style>
 </head>
 <body>
@@ -21,12 +62,26 @@
 <div class="container clearFloat" id="main-container">
 	<div class="row">
 		<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12">
+			<div class="progress progress-striped active">
+				<div class="progress-bar progress-bar-success" role="progressbar"
+					 aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+					 style="width: 0%;">
+					<span class="p-show">0% 已上传完成</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12">
   			<div class="row" id="operate-btn-group" style="margin: 10px;">
 	  			<button type="button" class="btn btn-success btn-sm" onclick="addFile();">
 			  		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 选择文件
 				</button>
 				<button type="button" class="btn btn-info btn-sm" onclick="addImage();">
 			  		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 选择图片
+				</button>
+				<button type="button" class="btn btn-primary btn-sm" onclick="uploadFiles();">
+			  		<span class="glyphicon glyphicon-circle-arrow-up" aria-hidden="true"></span> 全部上传
 				</button>
 	  			<button type="button" class="btn btn-warning btn-sm" onclick="submitFiles();">
 			  		<span class="glyphicon glyphicon-upload" aria-hidden="true"></span> 提交素材
@@ -40,31 +95,25 @@
 					<tr>
 						<th width="200">名称</th>
 						<th width="200">描述</th>
-						<th width="200">进度</th>
+						<th width="100">状态</th>
 						<th width="100" style="text-align: center;">操作</th>
 					</tr>
 				</thead>
-				<tbody>
-					<!-- <tr>
-						<td>Tanmay</td>
-						<td>Bangalore</td>
-						<td><a href="javascript:void(0);" onclick="uploadFile(this);" style="margin-left: 10px;">上传</a><a href="javascript:void(0);" onclick="deleteFile(this);" style="margin-left: 10px;">删除</a></td>
-					</tr>
-					<tr>
-						<td>Sachin</td>
-						<td>Mumbai</td>
-						<td><a href="javascript:void(0);" onclick="uploadFile(this);" style="margin-left: 10px;">上传</a><a href="javascript:void(0);" onclick="deleteFile(this);" style="margin-left: 10px;">删除</a></td>
-					</tr>
-					<tr>
-						<td>Uma</td>
-						<td>Pune</td>
-						<td><a href="javascript:void(0);" onclick="uploadFile(this);" style="margin-left: 10px;">上传</a><a href="javascript:void(0);" onclick="deleteFile(this);" style="margin-left: 10px;">删除</a></td>
-					</tr> -->
-				</tbody>
 			</table>
 		</div>
 		<!-- 素材的列表展示 -->
 		<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12" id="material-list-content">
+			<div class="row" style="margin: 0px;">
+				<ul class="nav nav-tabs nav-justified" id="material-tabs">
+					<li class="active" data-value="普通"><a href="javascript:void(0);">普通</a></li>
+					<li data-value="头像"><a href="javascript:void(0);">头像</a></li>
+				</ul>
+				<div class="material-content row">
+					<div class="row" id="material-row-container" style="margin-top: 10px;">
+						
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12">
    			<nav aria-label="Page navigation">
@@ -100,5 +149,9 @@
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal -->
 </div>
+
+<form id="form-upload" enctype="multipart/form-data" method="post">
+
+</form>
 </body>
 </html>

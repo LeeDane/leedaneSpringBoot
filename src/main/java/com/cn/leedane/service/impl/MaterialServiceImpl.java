@@ -1,7 +1,5 @@
 package com.cn.leedane.service.impl;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cn.leedane.mapper.MaterialMapper;
-import com.cn.leedane.model.GalleryBean;
 import com.cn.leedane.model.MaterialBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
@@ -26,7 +23,6 @@ import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.Base64ImageUtil;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
@@ -107,9 +103,11 @@ public class MaterialServiceImpl extends AdminRoleCheckService implements Materi
 		//检验是否是管理员或者创建者权限
 		checkAdmin(user, materialBean.getCreateUserId());
 		
-		boolean result = materialMapper.deleteById(GalleryBean.class, materialId) > 0;
+		boolean result = materialMapper.deleteById(MaterialBean.class, materialId) > 0;
 		if(result){
 			message.put("isSuccess", true);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库删除数据失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库删除数据失败.value);
@@ -122,52 +120,24 @@ public class MaterialServiceImpl extends AdminRoleCheckService implements Materi
 	}
 	
 	@Override
-	public List<Map<String, Object>> getMaterialByLimit(JSONObject jo,
+	public Map<String, Object> getMaterialByLimit(JSONObject jo,
 			UserBean user, HttpServletRequest request) {	
 		logger.info("MaterialServiceImpl-->getMaterialByLimit():JSONObject="+jo.toString());
-		
-		long start = System.currentTimeMillis();
-		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
-		int uid = JsonUtil.getIntValue(jo, "uid", user.getId()); //操作的用户的id
-		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
-		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
-		
-		StringBuffer sql = new StringBuffer();
-		if("firstloading".equalsIgnoreCase(method)){
-			sql.append("select g.id, g.path, g.width, g.height, g.length, g.create_user_id, date_format(g.create_time,'%Y-%m-%d %H:%i:%s') create_time");
-			sql.append(" , g.gallery_desc, u.account");
-			sql.append(" from "+DataTableType.素材.value+" g inner join "+DataTableType.用户.value+" u on u.id = g.create_user_id where g.status = ? ");
-			sql.append(" and g.create_user_id = ?");
-			sql.append(" order by g.id desc limit 0,?");
-			rs = materialMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, uid, pageSize);
-		//下刷新
-		}else if("lowloading".equalsIgnoreCase(method)){
-			sql.append("select g.id, g.path, g.width, g.height, g.length, g.create_user_id, date_format(g.create_time,'%Y-%m-%d %H:%i:%s') create_time");
-			sql.append(" , g.gallery_desc, u.account");
-			sql.append(" from "+DataTableType.素材.value+" g inner join "+DataTableType.用户.value+" u on u.id = g.create_user_id where g.status = ? ");
-			sql.append(" and g.create_user_id = ?");
-			sql.append(" and g.id < ? order by g.id desc limit 0,? ");
-			rs = materialMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, uid, lastId, pageSize);
-		//上刷新
-		}else if("uploading".equalsIgnoreCase(method)){
-			sql.append("select g.id, g.path, g.width, g.height, g.length, g.create_user_id, date_format(g.create_time,'%Y-%m-%d %H:%i:%s') create_time");
-			sql.append(" , g.gallery_desc, u.account");
-			sql.append(" from "+DataTableType.素材.value+" g inner join "+DataTableType.用户.value+" u on u.id = g.create_user_id where g.status = ? ");
-			sql.append(" and g.create_user_id = ?");
-			sql.append(" and g.id > ? limit 0,?  ");
-			rs = materialMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, uid, firstId, pageSize);
-		}
-		
+		ResponseMap message = new ResponseMap();
+		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
+		int currentIndex = JsonUtil.getIntValue(jo, "current", 0); //当前的索引
+		int total = JsonUtil.getIntValue(jo, "total", 0); //总数
+		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
+		String type = JsonUtil.getStringValue(jo, "type", "图像"); //类型，是图像还是文件
+		List<Map<String, Object>> rs = materialMapper.getMaterialByLimit(user.getId(), start, pageSize, type, ConstantsUtil.STATUS_NORMAL);
+		if(CollectionUtil.isNotEmpty(rs))
+			message.put("total", SqlUtil.getTotalByList(materialMapper.executeSQL("select count(*) ct from "+DataTableType.素材.value+" where material_type=? and status = ?", type, ConstantsUtil.STATUS_NORMAL)));
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取用户ID为"+uid +"的用户的素材列表", "getGalleryByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取素材列表").toString(), "getMaterialByLimit()", ConstantsUtil.STATUS_NORMAL, 0);		
+		message.put("message", rs);
+		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		message.put("isSuccess", true);
 		
-		long end = System.currentTimeMillis();
-		logger.info("获取素材列表总计耗时：" +(end - start) +"毫秒");
-		return rs;
+		return message.getMap();
 	}
-
-	
-	
 }

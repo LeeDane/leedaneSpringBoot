@@ -1,5 +1,9 @@
 package com.cn.leedane.model;
 
+import org.apache.solr.client.solrj.beans.Field;
+
+import com.cn.leedane.mybatis.table.annotation.Column;
+
 /**
  * 素材实体bean
  * @author LeeDane
@@ -20,6 +24,8 @@ public class MaterialBean extends RecordTimeBean{
 	/**
 	 * 七牛云路径
 	 */
+	@Column("qiniu_path")
+	@Field
 	private String qiniuPath;
 	
 	/**
@@ -40,12 +46,16 @@ public class MaterialBean extends RecordTimeBean{
 	/**
 	 * 描述信息
 	 */
+	@Column("material_desc")
+	@Field
 	private String materialDesc;
 	
 	/**
 	 * 素材类型。 1是文件, 2是图像
 	 */
-	private int type;
+	@Column("material_type")
+	@Field
+	private String type;
 
 	public String getPath() {
 		return path;
@@ -87,11 +97,11 @@ public class MaterialBean extends RecordTimeBean{
 		this.materialDesc = materialDesc;
 	}
 
-	public int getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(int type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 

@@ -1,16 +1,13 @@
 package com.cn.leedane.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.model.MaterialBean;
@@ -26,8 +23,6 @@ import com.cn.leedane.utils.ResponseMap;
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.mt)
 public class MaterialController extends BaseController{
-
-	private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
 	private MaterialService<MaterialBean> materialService;
@@ -56,20 +51,13 @@ public class MaterialController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/materials", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"}) 
-	public Map<String, Object> paging(@RequestParam(value="pageSize", required = false) int pageSize,
-			@RequestParam(value="last_id", required = false) int lastId,
-			@RequestParam(value="first_id", required = false) int firstId,
-			@RequestParam(value="method", required = true) String method,
-			HttpServletRequest request){
+	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		checkRoleOrPermission(request);
 		
-		List<Map<String, Object>> result= materialService.getMaterialByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
-		logger.info("获得素材的数量：" +result.size());
-		message.put("isSuccess", true);
-		message.put("message", result);
+		message.putAll(materialService.getMaterialByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	

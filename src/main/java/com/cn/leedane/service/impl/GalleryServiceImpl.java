@@ -139,6 +139,8 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		boolean result = galleryMapper.deleteById(GalleryBean.class, galleryId) > 0;
 		if(result){
 			message.put("isSuccess", true);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库删除数据失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库删除数据失败.value);
