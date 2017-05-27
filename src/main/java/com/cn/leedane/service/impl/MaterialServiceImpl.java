@@ -131,7 +131,7 @@ public class MaterialServiceImpl extends AdminRoleCheckService implements Materi
 		String type = JsonUtil.getStringValue(jo, "type", "图像"); //类型，是图像还是文件
 		List<Map<String, Object>> rs = materialMapper.getMaterialByLimit(user.getId(), start, pageSize, type, ConstantsUtil.STATUS_NORMAL);
 		if(CollectionUtil.isNotEmpty(rs))
-			message.put("total", SqlUtil.getTotalByList(materialMapper.executeSQL("select count(*) ct from "+DataTableType.素材.value+" where material_type=? and status = ?", type, ConstantsUtil.STATUS_NORMAL)));
+			message.put("total", SqlUtil.getTotalByList(materialMapper.executeSQL("select count(*) ct from "+DataTableType.素材.value+" where material_type=? and status = ? and create_user_id = ?", type, ConstantsUtil.STATUS_NORMAL, user.getId())));
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取素材列表").toString(), "getMaterialByLimit()", ConstantsUtil.STATUS_NORMAL, 0);		
 		message.put("message", rs);
