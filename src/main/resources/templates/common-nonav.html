@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html th:fragment="hello">
+<head>
+	<meta charset="utf-8" />
+	
+	<!-- 正式环境下的cdn引用-->
+	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css}"/>
+	<script th:if="${not isDebug}" type="text/javascript" th:src="@{http://libs.baidu.com/jquery/1.9.1/jquery.min.js}"></script>
+	<script th:if="${not isDebug}" src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script th:if="${not isDebug}" th:src="@{https://cdn.bootcss.com/layer/3.0.1/layer.js}" type="text/javascript"></script>
+	<script th:if="${not isDebug}" th:src="@{https://cdn.bootcss.com/layer/3.0.1/layer.min.js}" type="text/javascript"></script>
+	<!-- 通用引用 -->
+	<script th:if="${not isDebug}" th:src="@{http://7xnv8i.com1.z0.glb.clouddn.com/base.js}" type="text/javascript"></script>
+	
+	<!-- 测试环境下的引用 -->
+	<link rel="stylesheet" th:if="${isDebug}" th:href="@{/page/other/bootstrap-3.3.0/css/bootstrap.min.css}" />
+	<script th:if="${isDebug}" th:src="@{/page/other/jquery-1.9.1.min.js}" type="text/javascript"></script>
+	<script th:if="${isDebug}" th:src="@{/page/other/bootstrap-3.3.0/js/bootstrap.min.js}" type="text/javascript"></script>
+	<script th:if="${isDebug}" th:src="@{/page/other/layui/layui.js}" type="text/javascript"></script>
+	<script th:if="${isDebug}" th:src="@{/page/other/layui/lay/dest/layui.all.js}" type="text/javascript"></script>
+	<!-- 通用引用 -->
+	<script th:if="${isDebug}" th:src="@{/page/js/base.js}" type="text/javascript"></script>
+	<style type="text/css">
+		::-webkit-scrollbar {
+			  width: 5px;
+		} /* 这是针对缺省样式 (必须的) */
+		::-webkit-scrollbar-track {
+		  background-color: #f5f5f5;
+		} /* 滚动条的滑轨背景颜色 */
+	
+		::-webkit-scrollbar-thumb {
+			  background-color: rgba(0, 0, 0, 0.2); 
+		} /* 滑块颜色 */
+	
+		/* ::-webkit-scrollbar-button {
+			  background-color: #7c2929;
+		} */ /* 滑轨两头的监听按钮颜色 */
+	
+		::-webkit-scrollbar-corner {
+			  background-color: black;
+		} /* 横向滚动条和纵向滚动条相交处尖角的颜色 */
+		
+		.container{
+			padding-bottom: 10px;
+		}
+		.side-open{
+			width: 25px;
+			height: 20px;
+			margin-top: 15px;
+			margin-right: 10px;
+		}
+		.left-sider-bg{
+			width: 100%;
+			height: 100%;
+			background-color: #999;
+			position: absolute;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			z-index: 1500;
+			opacity:0.5;
+			filter:alpha(opacity=50); 
+		}
+		.left-sider{
+			position: absolute;
+			left: -200px;
+			top: 0;
+			width: 200px;
+			height: 100%;
+			z-index: 2000;
+			
+		}
+		.side-open{
+			margin-right: 10px;
+			margin-top: 15px;
+		}
+		
+		.hand{
+			cursor: pointer;
+		}
+		.cut-text{
+			display: block;
+			white-space: nowrap; 
+			overflow: hidden; 
+			text-overflow: ellipsis;
+		}
+		.cut-text2{
+			overflow:hidden; 
+
+			text-overflow:ellipsis;
+			
+			display:-webkit-box; 
+			
+			-webkit-box-orient:vertical;
+			
+			-webkit-line-clamp:2; 
+
+		}
+		.color-red{
+			color: red;
+		}
+		
+		.color-blue{
+			color: #428bca;
+		}
+		
+		body {
+			  font-family: "Helvetica Neue",Helvetica,"Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+		}
+	</style>
+</head>
+<script th:inline="javascript">
+	var isLogin;
+	var isAdmin;
+	var loginUserId;
+	jQuery(function(){
+		isLogin = /*[[${isLogin}]]*/;//取值  
+		isAdmin = /*[[${isAdmin}]]*/;//取值  
+		loginUserId = /*[[${loginUserId}]]*/;//取值  
+		console.log($("body").height());
+		$(".left-sider-bg").hide();
+		
+	});
+</script>
+</html>
