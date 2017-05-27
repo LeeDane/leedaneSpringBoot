@@ -277,15 +277,33 @@ public class HtmlController extends BaseController{
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(ControllerBaseNameUtil.mt +"/add-photo")
-	public String materialAddPhoto(Model model, @RequestParam(value="type", required=false) String type, HttpServletRequest request){
+	@RequestMapping(ControllerBaseNameUtil.mt +"/add")
+	public String materialAdd(Model model, @RequestParam(value="type", required=false) String type, HttpServletRequest request){
 		boolean iframe = false;
 		if(StringUtil.isNotNull(type) && "iframe".equals(type))
 			iframe = true;
 		
 		model.addAttribute("iframe", iframe);
 		
-		return loginRoleCheck("material/add-photo", true, model, request);
+		return loginRoleCheck("material/add", true, model, request);
+	}
+	
+	/**
+	 * 素材选择图片
+	 * @param model
+	 * @param type  类型，值可以是iframe或者其他
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(ControllerBaseNameUtil.mt +"/select")
+	public String materialSelect(Model model, @RequestParam(value="type", required=false) String type, HttpServletRequest request){
+		boolean iframe = false;
+		if(StringUtil.isNotNull(type) && "iframe".equals(type))
+			iframe = true;
+		
+		model.addAttribute("iframe", iframe);
+		
+		return loginRoleCheck("material/select", true, model, request);
 	}
 	
 	@RequestMapping("403")

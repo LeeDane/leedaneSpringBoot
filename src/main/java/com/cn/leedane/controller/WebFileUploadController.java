@@ -111,7 +111,7 @@ public class WebFileUploadController extends BaseController{
      * @return
      */
 	@RequestMapping(value = "/upload/imgage")
-    public Map<String, Object> imgage(HttpServletRequest request, HttpServletResponse response, @RequestParam(value="file") MultipartFile file) {
+    public Map<String, Object> imgage(HttpServletRequest request, HttpServletResponse response, @RequestParam(value="file") CommonsMultipartFile file) {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request)){
 			return message.getMap();

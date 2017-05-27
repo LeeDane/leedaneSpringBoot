@@ -445,15 +445,24 @@ function next(){
  * 获取子页面的getdata()
  */
 function getData(){
+	var data;
 	var formData;
+	var fileName;
+	var fileSize;
 	try{
-		formData = document.getElementById("add-photo-iframe").contentWindow.getData();
+		data = document.getElementById("add-photo-iframe").contentWindow.getData();
+		formData = data.formData;
+		fileName = data.fileName;
+		fileSize = data.fileSize;
+		if(isEmpty(fileName)|| (fileSize && fileSize < 1)){
+			layer.msg("该文件不符合规范，请重新选择");
+			return;
+		}
 	}catch(err){
 		//在这里处理错误
 		layer.msg("请选择图片："+err.message);
 		return;
 	 }
-	
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
 	    url: '/wul/upload/imgage',
@@ -464,26 +473,30 @@ function getData(){
 	    contentType: false,
 	    dataType: 'json', 
 	}).success(function(data) {
-		layer.close(loadi);//关闭
+		try{
+			layer.close(loadi);//关闭
+			if(data != null && data.isSuccess){
+				fileIndex++; //新增1
+				var qiniuPath = data.message;//获取新的链接
+				$("#upload-material-table").append('<tr class="complete each-row" id="add-file-row-'+ fileIndex +'">'+ 
+						'<td>'+ fileName +'</td>'+ 
+						'<td onclick="addDesc(this);" onkeydown="saveDesc(event, this);"></td>'+
+						'<td class="file-status">已上传</td>'+ 
+						'<td><a href="javascript:void(0);" onclick="deleteFile(this);" style="margin-left: 10px;">移除</a></td>'+ 
+					'</tr>');
+				$("#add-file-row-"+ fileIndex).data("path", fileName);//把值保存在内存中
+				$("#add-file-row-"+ fileIndex).data("qiniu_path", qiniuPath);//把值保存在内存中
+				$("#add-file-row-"+ fileIndex).data("index", fileIndex);//把值保存在内存中
+				$("#add-file-row-"+ fileIndex).data("length", fileSize);//把值保存在内存中
+				$('#upload-img-modal').modal('hide');
+			}else
+				ajaxError(data);
+		}catch(e){
+			layer.msg(e);
+		}
 		
-		if(data != null && data.isSuccess){
-			fileIndex++; //新增1
-			var fileName = formData.get("file-name");
-			var qiniuPath = data.message;//获取新的链接
-			$("#upload-material-table").append('<tr class="complete each-row" id="add-file-row-'+ fileIndex +'">'+ 
-					'<td>'+ fileName +'</td>'+ 
-					'<td onclick="addDesc(this);" onkeydown="saveDesc(event, this);"></td>'+
-					'<td class="file-status">已上传</td>'+ 
-					'<td><a href="javascript:void(0);" onclick="deleteFile(this);" style="margin-left: 10px;">移除</a></td>'+ 
-				'</tr>');
-			$("#add-file-row-"+ fileIndex).data("path", fileName);//把值保存在内存中
-			$("#add-file-row-"+ fileIndex).data("qiniu_path", qiniuPath);//把值保存在内存中
-			$("#add-file-row-"+ fileIndex).data("index", fileIndex);//把值保存在内存中
-			$("#add-file-row-"+ fileIndex).data("length", formData.get("file-size"));//把值保存在内存中
-			$('#upload-img-modal').modal('hide');
-		}else
-			ajaxError(data);
 	}).error(function(res) {
+		alert(123);
 		layer.close(loadi);
 		layer.msg(res);
 	});
