@@ -9,6 +9,7 @@ var $formUpload;
 var $uploadImgModal;
 var $materialListContainer;
 var materialListImgHight;
+var type;
 $(function(){
 	$materialListContainer = $("#material-row-container");
 	$uploadImgModal = $("#upload-img-modal");
@@ -24,7 +25,8 @@ $(function(){
 		materialListImgHight = $(window).width() - 30;
 	}
 	
-	$(document).on("click", "div.thumbnail", function(event){
+	/*$(document).on("click", "div.thumbnail", function(event){
+		event.stopPropagation();//阻止冒泡 
 		var $obj = $(this);
 		if($obj.hasClass("click-select")){
 			$obj.removeClass("click-select");
@@ -33,7 +35,7 @@ $(function(){
 			$obj.addClass("click-select");
 			$obj.append('<div class="thumbnail-top"></div>');
 		}
-	});
+	});*/
 	$progressBar = $(".progress-bar");
 	$progressBar.closest(".progress").hide();
 	$formUpload = $("#form-upload");
@@ -42,7 +44,30 @@ $(function(){
 	//alert($(document.body).width());//浏览器当前窗口文档body的宽度
 	//alert($(document.body).outerWidth(true));//浏览器当前窗口文档body的总宽度 包括border padding margin
 	
+	if(isNotEmpty(tabName)){
+		$("#material-tabs").find("li").each(function(index){
+			if($(this).attr("data-value") == tabName){
+				type = tabName;
+				$(this).addClass("active");
+			}else{
+				$(this).removeClass("active");
+			}
+		});
+	}else{
+		 $("#material-tabs").find("li").eq(0).addClass("active");
+		 type = $("#material-tabs").find("li").eq(0).attr("data-value")
+	}
 	getMaterials();
+	
+	//获取通知类型
+	$("#material-tabs").find("li").on("click", function(index){
+		$("#material-tabs").find("li").removeClass("active");
+		$(this).addClass("active");
+		type = $(this).attr("data-value");
+		currentIndex = 0;
+		getMaterials();
+	});
+	
 });
 
 /**
@@ -51,7 +76,7 @@ $(function(){
  */
 function getMaterials(){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
-	var params = {page_size: pageSize, current: currentIndex, total: totalPage, t: Math.random()};
+	var params = {page_size: pageSize, current: currentIndex, total: totalPage, type: type, t: Math.random()};
 	$.ajax({
 		url : "/mt/materials?"+ jsonToGetRequestParams(params),
 		dataType: 'json',
@@ -64,11 +89,15 @@ function getMaterials(){
 			if(data.isSuccess){
 				materials = data.message;
 				if(materials.length == 0){
-					$materialListContainer.append('空空的，还没有数据');
+					$materialListContainer.append('<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">空空的，还没有数据</div>');
 					return;
 				}
 				for(var i = 0; i < materials.length; i++){
-					$materialListContainer.append(buildEachMaterialRow(i, materials[i]));
+					if(type == "图像"){
+						$materialListContainer.append(buildEachMaterialImgRow(i, materials[i]));
+					}else{
+						$materialListContainer.append(buildEachMaterialFileRow(i, materials[i]));
+					}
 				}
 				pageDivUtil(data.total);
 			}else{
@@ -291,15 +320,15 @@ function saveDesc(event, obj){
 }
 
 /**
- * 构建每一行消息html
+ * 构建每一行图像html
  * @param index
  * @param material
  * @returns {String}
  */
-function buildEachMaterialRow(index, material){
+function buildEachMaterialImgRow(index, material){
 		var html = '<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">'+
 						'<div class="thumbnail">'+
-						      '<img width="100%" style="height: '+materialListImgHight+'px;" src="'+ material.qiniu_path +'" alt="...">'+
+						      '<img width="100%" style="height: '+materialListImgHight+'px;" src="'+ material.qiniu_path +'" alt="..." />'+
 						      '<div class="caption">'+
 						        	'<div class="cut-text">'+ changeNotNullString(material.create_time) +'</div>';
 			        	if(isEmpty(material.material_desc)){
@@ -313,6 +342,42 @@ function buildEachMaterialRow(index, material){
 					    '</div>'+
 				   '</div>';
 	
+	return html;
+}
+
+/**
+ * 获取文件名称
+ */
+function getFileName(filePath){
+	//获取文件名，不带后缀
+	var file_name=filePath.replace(/(.*\/)*([^.]+).*/ig,"$2");
+	//获取文件后缀
+	var FileExt=filePath.replace(/.+\./,"");
+	return file_name + '.' +FileExt;
+}
+
+/**
+ * 构建每一行文件html
+ * @param index
+ * @param material
+ */
+function buildEachMaterialFileRow(index, material){
+	var html = '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">'+
+					'<div class="thumbnail">'+
+					      '<div class="cut-text" style="margin-left: 10px; margin-right: 10px;">文件路径：<a href="'+ material.qiniu_path +'" title="'+ material.qiniu_path +'">'+ getFileName(material.qiniu_path) +'</a></div>'+
+					      '<div class="caption">'+
+					        	'<div class="cut-text">时间：'+ changeNotNullString(material.create_time) + '&nbsp;&nbsp;&nbsp;&nbsp; 文件大小：'+ parseFloat(material.length/ 1024/ 1024).toFixed(2) +'M</div>';
+					if(isEmpty(material.material_desc)){
+						html += '<h5 class="cut-text">暂无描述</h5>';   	
+					}else{
+						html += '<h5 class="cut-text" title="'+ material.material_desc  +'">'+ material.material_desc +'</h5>';
+					}
+					
+						html += '<p><a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button" onclick="editMaterial(event, '+material.id+');">编辑</a> <a href="javascript:void(0);" class="btn btn-default btn-sm" role="button" onclick="deleteMaterial(event, '+material.id+');">删除</a></p>'+
+						'</div>'+
+				    '</div>'+
+				'</div>';
+
 	return html;
 }
 
@@ -360,6 +425,7 @@ function deleteMaterial(event, materialId){
  */
 function editMaterial(event, materialId){
 	event.stopPropagation();//阻止冒泡 
+	layer.msg("暂时不开发");
 }
 
 /**

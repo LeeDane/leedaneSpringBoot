@@ -10,7 +10,7 @@
 		.clearFloat{
 			clear: both;
 		}
-		.container{
+		#main-container{
 			margin-top: 60px;
 		}
 		.material-content{
@@ -105,12 +105,21 @@
 		<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12" id="material-list-content">
 			<div class="row" style="margin: 0px;">
 				<ul class="nav nav-tabs nav-justified" id="material-tabs">
-					<li class="active" data-value="普通"><a href="javascript:void(0);">普通</a></li>
-					<li data-value="头像"><a href="javascript:void(0);">头像</a></li>
+					<li class="active" data-value="图像"><a href="javascript:void(0);">图像</a></li>
+					<li data-value="文件"><a href="javascript:void(0);">文件</a></li>
 				</ul>
 				<div class="material-content row">
 					<div class="row" id="material-row-container" style="margin-top: 10px;">
-						
+						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+								<div class="thumbnail">
+									<div class="cut-text2" title="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_2017ffffggrrrrttrtreeghhhjjiio0526220211-54f1b4c5bdf4adb8.jpg" >http://7xnv8i.com1.z0.glb.clouddn.com/leedane_2017ffffggrrrrttrtreeghhhjjiio0526220211-54f1b4c5bdf4adb8.jpg</div>
+									<div class="caption">
+										<div class="cut-text">2017-05-26 22:02:13</div>
+										<h5 class="cut-text">暂无描述</h5>
+										<p><a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button" onclick="editMaterial(event, 38);">编辑</a> <a href="javascript:void(0);" class="btn btn-default btn-sm" role="button" onclick="deleteMaterial(event, 38);">删除</a></p>
+									</div>
+								</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -153,5 +162,8 @@
 <form id="form-upload" enctype="multipart/form-data" method="post">
 
 </form>
+<script th:inline="javascript">//引用
+	var tabName = /*[[${tabName}]]*/;//取值
+</script> 
 </body>
 </html>
