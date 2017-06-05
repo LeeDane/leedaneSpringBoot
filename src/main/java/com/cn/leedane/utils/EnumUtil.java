@@ -22,6 +22,7 @@ import com.cn.leedane.model.TransmitBean;
 import com.cn.leedane.model.UploadBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.ZanBean;
+import com.cn.leedane.model.circle.CircleBean;
 
 /**
  * 枚举工具类
@@ -110,7 +111,7 @@ public class EnumUtil {
 		用户(UserBean.class),通知(NotificationBean.class), 聊天(ChatBean.class), 聊天背景(ChatBgBean.class), 聊天背景与用户(ChatBgUserBean.class), 
 		私信(PrivateChatBean.class),文件(FilePathBean.class), 粉丝(FanBean.class), 收藏(CollectionBean.class),关注(AttentionBean.class),
 		好友(FriendBean.class), 图库(GalleryBean.class), 操作日志(OperateLogBean.class),举报(ReportBean.class), 积分(ScoreBean.class), 
-		签到(SignInBean.class), 上传(UploadBean.class);
+		签到(SignInBean.class), 上传(UploadBean.class), 圈子(CircleBean.class);
 	
 		private BeanClassType(Class<?> value) {
 			this.value = value;
@@ -392,7 +393,8 @@ public class EnumUtil {
 		密码不正确(3093),
 		恭喜您成功绑定当前微信(3094),
 		文件上传成功(3095), 
-		空指针异常(3096)
+		空指针异常(3096),
+		圈子名称不能为空(3097)
 		;
 		
 		private ResponseCode(int value) {

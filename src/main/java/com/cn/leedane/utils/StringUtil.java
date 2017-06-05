@@ -316,6 +316,34 @@ public class StringUtil {
 	}
 	
 	/**
+	 * 将对象转化成float类型
+	 * @param obj  整形的对象
+	 * @return
+	 */
+	public static float changeObjectToFloat(Object obj) {
+		try {
+			return Float.parseFloat(String.valueOf(obj));
+		} catch (Exception e) {
+			logger.error(obj +"转换成long失败");
+			return 0f;
+		}
+	}
+	
+	/**
+	 * 将对象转化成Double类型
+	 * @param obj  整形的对象
+	 * @return
+	 */
+	public static double changeObjectToDouble(Object obj) {
+		try {
+			return Double.parseDouble(String.valueOf(obj));
+		} catch (Exception e) {
+			logger.error(obj +"转换成Double失败");
+			return 0d;
+		}
+	}
+	
+	/**
 	 * 将boolean转成1或者0
 	 * @param result
 	 * @return

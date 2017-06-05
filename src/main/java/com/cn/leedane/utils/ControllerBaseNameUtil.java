@@ -302,9 +302,16 @@ public class ControllerBaseNameUtil {
 	 */
 	public static final String shop = "shop";
 	
+	/**********************    上传       **********************/
+	
 	/**
 	 * 网页文件上传
 	 */
 	public static final String wul = "wul";
-    
+	
+	/**********************    圈子      **********************/
+	/**
+	 * 圈子统一入口根路径
+	 */
+	public static final String cc = "cc";
 }

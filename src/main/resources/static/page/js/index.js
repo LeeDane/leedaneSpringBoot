@@ -12,7 +12,7 @@ $(function(){
 	//layer.msg($('.main_bg').offset().top)
 	//getLogin();
 	//getScore();
-	
+	$("[data-toggle='tooltip']").tooltip();
 	$(".navbar-nav .nav-main-li").each(function(){
 		$(this).removeClass("active");
 	});
@@ -226,7 +226,7 @@ function buildHasImgRow(index, blog){
 						html += '<button type="button" class="btn btn-primary btn-default" href="javascript:void(0);" onclick="my('+ blog.create_user_id + ');">'+
 									  			'<span class="glyphicon glyphicon-user"></span> '+ blog.account +
 												'</button>'+
-								'<button type="button" class="btn btn-primary btn-default" onclick="goToReadFull('+ blog.id+')">'+
+								'<button data-toggle="tooltip" title="查看文章的详细信息" onMouseOver="$(this).tooltip(\'show\')" type="button" class="btn btn-primary btn-default" onclick="goToReadFull('+ blog.id+')">'+
 									  	'<span class="glyphicon glyphicon-phone"></span> 查看全文'+
 								'</button>'+
 								/*'<button type="button" class="btn btn-primary" onclick="goToReadFull('+ blog.id+')">阅读全文</button>'+*/
@@ -295,7 +295,7 @@ function buildNotHasImgRow(index, blog){
 					html +='<button type="button" class="btn btn-primary btn-default" href="javascript:void(0);" onclick="my('+ blog.create_user_id + ');">'+
 								  			'<span class="glyphicon glyphicon-user"></span> '+ blog.account +
 											'</button>'+
-							'<button type="button" class="btn btn-primary btn-default" onclick="goToReadFull('+ blog.id+')">'+
+							'<button data-toggle="tooltip" title="查看文章的详细信息" onMouseOver="$(this).tooltip(\'show\')" type="button" class="btn btn-primary btn-default" onclick="goToReadFull('+ blog.id+')">'+
 							  	'<span class="glyphicon glyphicon-phone"></span> 查看全文'+
 							 '</button>'+
 							/*'<button type="button" class="btn btn-primary" onclick="goToReadFull('+ blog.id+')">阅读全文</button>'+*/

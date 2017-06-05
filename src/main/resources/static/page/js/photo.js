@@ -14,16 +14,6 @@ var canLoadData = true;
 var winH = $(window).height(); 
 var isLoad = false;
 $(function(){
-	$("img").bind("click", function(event){
-		if(event.type == "mouseover"){
-			//鼠标悬浮
-			alert("over");
-		}else if(event.type == "mouseout"){
-			//鼠标离开
-			alert("out");
-		}
-		alert("out");
-	});
 	$(window).scroll(function (e) {
 		e = e || window.event;
         if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件             

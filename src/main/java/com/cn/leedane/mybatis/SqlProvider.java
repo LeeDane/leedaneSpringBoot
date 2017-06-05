@@ -473,7 +473,7 @@ public class SqlProvider {
 	 * @param clazz
 	 * @return Field数组
 	 */
-	private Field[] getFields(Class<?> beanClass) {
+	public Field[] getFields(Class<?> beanClass) {
 		ArrayList<Field> fieldList = new ArrayList<Field>();
 		Field[] dFields = beanClass.getDeclaredFields();
 		if (null != dFields && dFields.length > 0) {

@@ -115,10 +115,8 @@
         <ul class="nav navbar-nav">
             <li class="nav-blog nav-main-li"><a th:href="@{/index}">博客</a></li>
             <li class="nav-shop nav-main-li"><a th:href="@{/shop/}">商城</a></li>
-            <li class="nav-photo nav-main-li" th:if="${isLogin}"><a th:href="@{/pt}">相册</a></li>
             <li class="nav-msg nav-main-li" th:if="${isLogin}"><a th:href="@{/msg}"><span class="badge pull-right">0</span>消息</a></li>
-            <li class="nav-my nav-main-li" th:if="${isLogin}"><a th:href="@{/my}">中心</a></li>
-            <li class="nav-financial nav-main-li" th:if="${isLogin}"><a th:href="@{/fn}">记账</a></li>
+            <li class="nav-circle nav-main-li"><a th:href="@{/cc}">圈子</a></li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 			<span th:if="${isLogin}" th:text="${account}"></span>
@@ -126,14 +124,17 @@
                     	 <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                	<li th:if="${isLogin}"><a th:href="@{/pb}">记一博</a></li>
-                    <li><a href="#">关于我</a></li>
-                    <li><a th:href="@{/cs}">聊天室</a></li>
-                    <li><a th:href="@{/dl}">app下载</a></li>
-               		<li th:if="${isAdmin}"><a th:href="@{/ad/index}">系统后台</a></li>
-               		<li th:if="${isLogin}"><a th:href="@{/mt}">素材管理</a></li>
-                	<li th:if="${isLogin}"><a href="javascript:void(0);" onclick="logout()">退出</a></li>
-                	<li th:if="${not isLogin}"><a th:href="@{/lg}">登录</a></li>
+                	<li th:if="${isLogin}"><a th:href="@{/pb}"><span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;&nbsp;&nbsp;记一博</a></li>
+               		<li th:if="${isAdmin}"><a th:href="@{/ad/index}"><span class="glyphicon glyphicon-wrench"></span>&nbsp;&nbsp;&nbsp;&nbsp;系统后台</a></li>
+               		<li class="nav-my nav-main-li" th:if="${isLogin}"><a th:href="@{/my}"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;&nbsp;&nbsp;中心</a></li>
+               		<li class="nav-financial nav-main-li" th:if="${isLogin}"><a th:href="@{/fn}"><span class="glyphicon glyphicon-jpyglyphicon glyphicon-jpy"></span>&nbsp;&nbsp;&nbsp;&nbsp;记账</a></li>
+               		<li class="nav-photo nav-main-li" th:if="${isLogin}"><a th:href="@{/pt}"><span class="glyphicon glyphicon-picture"></span>&nbsp;&nbsp;&nbsp;&nbsp;相册</a></li>
+               		<li th:if="${isLogin}"><a th:href="@{/mt}"><span class="glyphicon glyphicon-th"></span>&nbsp;&nbsp;&nbsp;&nbsp;素材管理</a></li>
+               		<li><a th:href="@{/cs}"><span class="glyphicon glyphicon-transfer"></span>&nbsp;&nbsp;&nbsp;&nbsp;聊天室</a></li>
+               		<li><a th:href="@{/dl}"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;&nbsp;&nbsp;&nbsp;app下载</a></li>
+               		<li><a href="#"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;&nbsp;&nbsp;关于我</a></li>
+                	<li th:if="${isLogin}"><a href="javascript:void(0);" onclick="logout()"><span class="glyphicon glyphicon-bell"></span>&nbsp;&nbsp;&nbsp;&nbsp;退出</a></li>
+                	<li th:if="${not isLogin}"><a th:href="@{/lg}"><span class="glyphicon glyphicon-bell"></span>&nbsp;&nbsp;&nbsp;&nbsp;登录</a></li>
                 </ul>
             </li>
             <li>
