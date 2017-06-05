@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 
 import com.cn.leedane.handler.LinkManageHandler;
@@ -28,9 +30,11 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.utils.CollectionUtil;
+import com.cn.leedane.utils.CommonUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.PlatformType;
+import com.cn.leedane.utils.EnumUtil.ResponseCode;
 import com.cn.leedane.utils.HttpUtil;
 import com.cn.leedane.utils.StringUtil;
 
@@ -415,7 +419,7 @@ public class BaseController {
 	public UserBean appAuthCheck(HttpServletRequest request, Map<String, Object> message, boolean result){
 		//拿到token码
 		String token = request.getHeader("token");
-		int useridq = StringUtil.changeObjectToInt(request.getHeader("userid"));
+		//int useridq = StringUtil.changeObjectToInt(request.getHeader("userid"));
 		UserBean user = null;
 		//校验token
 		if(StringUtil.isNotNull(token)){
@@ -573,5 +577,53 @@ public class BaseController {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 校验地址，不校验是否登录
+	 * @param urlParse
+	 * @param model
+	 * @param httpSession
+	 * @return
+	 */
+	protected String loginRoleCheck(String urlParse, Model model, HttpServletRequest request){
+		return loginRoleCheck(urlParse, false, model, request);
+	}
+	
+	/**
+	 * 校验地址，校验是否登录
+	 * @param urlParse
+	 * @param mustLogin 为true表示必须登录，不然就跳转到登录页面
+	 * @param model
+	 * @param httpSession
+	 * @return
+	 */
+	protected String loginRoleCheck(String urlParse, boolean mustLogin, Model model, HttpServletRequest request){
+		//设置统一的请求模式
+		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
+		Object o = null;
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        if(currentUser.isAuthenticated()){
+        	o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        }
+		
+		boolean isLogin = false;
+		boolean isAdmin = false;
+		if(o != null){
+			isLogin = true;
+			UserBean user = (UserBean)o;
+			isAdmin = currentUser.hasRole(RoleController.ADMIN_ROLE_CODE);
+			model.addAttribute("account", user.getAccount());
+			model.addAttribute("loginUserId", user.getId());
+		}
+		model.addAttribute("isLogin",  isLogin);
+		model.addAttribute("isAdmin", isAdmin);
+		if(mustLogin && !isLogin){
+			model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
+			return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();
+		}
+		
+		return StringUtil.isNotNull(urlParse) ? urlParse : "404";
 	}
 }
