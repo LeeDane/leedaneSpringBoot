@@ -327,55 +327,6 @@ public class HtmlController extends BaseController{
 	}
 	
 	/**
-	 * 校验地址，不校验是否登录
-	 * @param urlParse
-	 * @param model
-	 * @param httpSession
-	 * @return
-	 */
-	public String loginRoleCheck(String urlParse, Model model, HttpServletRequest request){
-		return loginRoleCheck(urlParse, false, model, request);
-	}
-	
-	/**
-	 * 校验地址，校验是否登录
-	 * @param urlParse
-	 * @param mustLogin 为true表示必须登录，不然就跳转到登录页面
-	 * @param model
-	 * @param httpSession
-	 * @return
-	 */
-	public String loginRoleCheck(String urlParse, boolean mustLogin, Model model, HttpServletRequest request){
-		//设置统一的请求模式
-		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
-		Object o = null;
-		//获取当前的Subject  
-        Subject currentUser = SecurityUtils.getSubject();
-        if(currentUser.isAuthenticated()){
-        	o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-        }
-		
-		boolean isLogin = false;
-		boolean isAdmin = false;
-		if(o != null){
-			isLogin = true;
-			UserBean user = (UserBean)o;
-			isAdmin = currentUser.hasRole(RoleController.ADMIN_ROLE_CODE);
-			model.addAttribute("account", user.getAccount());
-			model.addAttribute("loginUserId", user.getId());
-		}
-		model.addAttribute("isLogin",  isLogin);
-		model.addAttribute("isAdmin", isAdmin);
-		if(mustLogin && !isLogin){
-			model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
-			return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();
-		}
-		
-		return StringUtil.isNotNull(urlParse) ? urlParse : "404";
-	}
-
-	
-	/**
 	 * 获取博客的内容
 	 * @return
 	 */
