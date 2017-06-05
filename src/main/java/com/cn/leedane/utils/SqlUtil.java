@@ -2,14 +2,23 @@ package com.cn.leedane.utils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.cn.leedane.model.FinancialBean;
+import com.cn.leedane.model.circle.CircleBean;
+import com.cn.leedane.mybatis.SqlProvider;
+import com.cn.leedane.mybatis.table.TableFormat;
 import com.cn.leedane.mybatis.table.annotation.Column;
+import com.cn.leedane.mybatis.table.impl.HumpToUnderLineFormat;
 
 /**
  * sql工具类
@@ -66,4 +75,135 @@ public class SqlUtil {
     public static List convertMapsToBeans(Class<?> clazz, List<Map<String, Object>> maps) {
        return JSONArray.parseArray(JSONArray.toJSONString(maps), clazz);
     }
+    
+    /**
+     * 组装更新的实体bean(class没有实例化的情况)
+     * @param params
+     * @param clazz
+     * @return
+     */
+    public Object getUpdateBean(JSONObject params, Class<?> clazz){
+    	
+		SqlProvider provider = new SqlProvider();
+		TableFormat tableFormat = new HumpToUnderLineFormat();
+		
+		Field[] fields = provider.getFields(clazz);
+		try {
+			Object obj = clazz.newInstance();
+			for (int i = 0; i < fields.length; i++) {
+				Field field = fields[i];
+				//特殊处理serialVersionUID
+				if(field.getName().equalsIgnoreCase("serialVersionUID") 
+						|| field.getName().equalsIgnoreCase("id")
+						|| field.getName().equalsIgnoreCase("create_user_id")
+						|| field.getName().equalsIgnoreCase("create_time")){
+					continue;
+				}
+				Column column = field.getAnnotation(Column.class);
+				String columnName = "";
+				//判断是否获取的是注解的信息，是的话在实体后面添加上注解，便于还原回实体
+				boolean getAnnotation = false; 
+				if (column != null) {
+					if (!column.required())
+						continue;
+					columnName = column.value().toUpperCase();
+					getAnnotation = true;
+				}
+				
+				if (StringUtils.isEmpty(columnName)) {
+					columnName = tableFormat.getColumnName(field.getName());
+				}
+				if(params.has(columnName.toLowerCase())){
+					field.setAccessible(true);
+					Class<?> typeClass = field.getType();
+					if(typeClass == int.class || typeClass == Integer.class){
+						field.set(obj, StringUtil.changeObjectToInt(params.get(columnName.toLowerCase())));
+					}else if(typeClass == String.class){
+						field.set(obj, StringUtil.changeNotNull((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == long.class || typeClass == Long.class){
+						field.set(obj, StringUtil.changeObjectToLong((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == float.class || typeClass == Float.class){
+						field.set(obj, StringUtil.changeObjectToFloat((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == double.class || typeClass == Double.class){
+						field.set(obj, StringUtil.changeObjectToDouble((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == boolean.class || typeClass == Boolean.class){
+						field.set(obj, StringUtil.changeObjectToBoolean((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == Date.class){
+						field.set(obj, DateUtil.stringToDate(StringUtil.changeNotNull((params.get(columnName.toLowerCase())))));
+					}else{
+						new RuntimeException("无法创建实体bean,原因是未知的字段类型！");	
+					}
+				}
+			}
+			return obj;
+		} catch (Exception e) {
+			new RuntimeException("get select sql is exceptoin:" + e);
+		}
+		return null;
+	}
+    
+    /**
+     * 组装更新的实体bean(class必须是实例化的情况下才使用)
+     * @param params
+     * @param obj
+     * @return
+     */
+    public Object getUpdateBean(JSONObject params, Object obj){
+    	
+		SqlProvider provider = new SqlProvider();
+		TableFormat tableFormat = new HumpToUnderLineFormat();
+		Class<?> beanClass = obj.getClass();
+		Field[] fields = provider.getFields(beanClass);
+		try {
+			for (int i = 0; i < fields.length; i++) {
+				Field field = fields[i];
+				//特殊处理serialVersionUID
+				if(field.getName().equalsIgnoreCase("serialVersionUID") 
+						|| field.getName().equalsIgnoreCase("id")
+						|| field.getName().equalsIgnoreCase("create_user_id")
+						|| field.getName().equalsIgnoreCase("create_time")){
+					continue;
+				}
+				Column column = field.getAnnotation(Column.class);
+				String columnName = "";
+				//判断是否获取的是注解的信息，是的话在实体后面添加上注解，便于还原回实体
+				boolean getAnnotation = false; 
+				if (column != null) {
+					if (!column.required())
+						continue;
+					columnName = column.value().toUpperCase();
+					getAnnotation = true;
+				}
+				
+				if (StringUtils.isEmpty(columnName)) {
+					columnName = tableFormat.getColumnName(field.getName());
+				}
+				if(params.has(columnName.toLowerCase())){
+					field.setAccessible(true);
+					Class<?> typeClass = field.getType();
+					if(typeClass == int.class || typeClass == Integer.class){
+						field.set(obj, StringUtil.changeObjectToInt(params.get(columnName.toLowerCase())));
+					}else if(typeClass == String.class){
+						field.set(obj, StringUtil.changeNotNull((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == long.class || typeClass == Long.class){
+						field.set(obj, StringUtil.changeObjectToLong((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == float.class || typeClass == Float.class){
+						field.set(obj, StringUtil.changeObjectToFloat((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == double.class || typeClass == Double.class){
+						field.set(obj, StringUtil.changeObjectToDouble((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == boolean.class || typeClass == Boolean.class){
+						field.set(obj, StringUtil.changeObjectToBoolean((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == Date.class){
+						field.set(obj, DateUtil.stringToDate(StringUtil.changeNotNull((params.get(columnName.toLowerCase())))));
+					}else{
+						new RuntimeException("无法创建实体bean,原因是未知的字段类型！");	
+					}
+				}
+			}
+			return obj;
+		} catch (Exception e) {
+			new RuntimeException("get select sql is exceptoin:" + e);
+		}
+		return null;
+	}
 }
