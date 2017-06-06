@@ -174,11 +174,11 @@ function buildHasImgRow(index, blog){
 						'<div class="panel panel-info has-img-panel-info">'+
 							'<div class="panel-heading">'+
 								'<div class="page-header">'+
-								    '<h1 class="hand cut-text" onclick="goToReadFull('+ blog.id+')">'+ blog.title +
+								    '<h2 class="hand cut-text" onclick="goToReadFull('+ blog.id+')">'+ blog.title +
 								        '<small>'+
 								        	
 										'</small>'+
-								    '</h1>'+
+								    '</h2>'+
 								    '<ol class="breadcrumb">'+
 								    	'<li>'+ changeNotNullString(blog.category) +'</li>'+
 										'<li class="active">'+ blog.create_time +'</li>'+
@@ -244,11 +244,11 @@ function buildNotHasImgRow(index, blog){
 		      	  	'<div class="panel panel-info">'+
 						'<div class="panel-heading">'+
 							'<div class="page-header">'+
-							    '<h1 class="hand cut-text" onclick="goToReadFull('+ blog.id+')">'+ blog.title +
+							    '<h2 class="hand cut-text" onclick="goToReadFull('+ blog.id+')">'+ blog.title +
 							        '<small>'+
 							        	
 									'</small>'+
-							    '</h1>'+
+							    '</h2>'+
 							    '<ol class="breadcrumb">'+
 							    	'<li>' +changeNotNullString(blog.category)+ '</li>'+
 									'<li class="active">'+ blog.create_time +'</li>'+
@@ -332,7 +332,7 @@ function getCarouselImgs(){
 						var html = '<li data-target="#carousel-example-generic" data-slide-to="0" '+(i == 0 ? 'class="active"': '')+'></li>';
 						$("#main-container .carousel-indicators").append(html);
 						var inner = '<div class="item '+(i == 0 ? 'active': '')+'">'+
-						              	'<img class="carousel-img" src="'+ changeNotNullString(data.message[i].img_url) +'" alt="'+ changeNotNullString(data.message[i].title) +'"/>'+
+						              	'<img onclick="goToReadFull('+ data.message[i].id +')" class="carousel-img hand" src="'+ changeNotNullString(data.message[i].img_url) +'" alt="'+ changeNotNullString(data.message[i].title) +'"/>'+
 					              		'<div class="carousel-caption">'+
 					              			'<h1>'+ changeNotNullString(data.message[i].title) +'</h1>'+
 					              			'<p>'+ changeNotNullString(data.message[i].digest) +'</p>'+

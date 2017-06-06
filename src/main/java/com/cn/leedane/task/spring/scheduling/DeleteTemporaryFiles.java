@@ -13,28 +13,27 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
+import org.quartz.SchedulerException;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.StringUtil;
 
 /**
- * 删除临时文件夹下面文件
+ * 删除临时文件夹下面文件任务
  * @author LeeDane
- * 2016年7月12日 下午3:24:20
- * Version 1.0
+ * 2017年6月6日 上午10:53:54
+ * version 1.0
  */
 @Component("deleteTemporaryFiles")
-public class DeleteTemporaryFiles extends BaseScheduling{
+public class DeleteTemporaryFiles implements BaseScheduling{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	//保存无法删除成功的文件路径
 	Set<String> noDeletePaths = new HashSet<String>();
 	
-	
 	@Override
-	public void execute() throws Exception {
-		super.execute();
+	public void execute() throws SchedulerException {
 
 		long start = System.currentTimeMillis();
 		String folder = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER + "temporary";	

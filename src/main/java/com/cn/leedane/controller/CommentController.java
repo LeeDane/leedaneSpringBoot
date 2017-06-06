@@ -1,5 +1,7 @@
 package com.cn.leedane.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cn.leedane.lucene.solr.BlogSolrHandler;
 import com.cn.leedane.model.CommentBean;
 import com.cn.leedane.service.CommentService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
@@ -50,6 +53,29 @@ public class CommentController extends BaseController{
 	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
+		
+		List<String> list = new ArrayList<>();
+		list.add("9149");
+		list.add("9148");
+		list.add("9147");
+		list.add("9138");
+		list.add("9136");
+		list.add("9151");
+		list.add("9152");
+		list.add("9153");
+		list.add("9157");
+		list.add("9159");
+		list.add("9160");
+		list.add("9162");
+		list.add("9164");
+		list.add("9171");
+		list.add("9177");
+		list.add("9180");
+		list.add("9181");
+		list.add("9224");
+		list.add("9225");
+		list.add("9228");
+		BlogSolrHandler.getInstance().deleteBeans(list);
 		
 		message.putAll(commentService.getCommentsByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();

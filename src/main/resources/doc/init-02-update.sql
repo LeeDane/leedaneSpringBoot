@@ -12,3 +12,5 @@ alter table t_user add constraint user_account_unique UNIQUE(account);
 
 /*为用户表添加用户手机号码唯一性*/
 alter table t_user add constraint user_phone_unique UNIQUE(mobile_phone);
+
+/*为文章表添加source和origin_link唯一约束*/

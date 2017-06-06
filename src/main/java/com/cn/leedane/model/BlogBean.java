@@ -2,6 +2,8 @@ package com.cn.leedane.model;
 
 import org.apache.solr.client.solrj.beans.Field;
 
+import com.cn.leedane.mybatis.table.annotation.Column;
+
 
 /**
  * Blog实体类
@@ -56,18 +58,21 @@ public class BlogBean extends RecordTimeBean{
 	/**
 	 * 是否有图片
 	 */
+	@Column("has_img")
 	private boolean hasImg;
 	
 	/**
 	 * 图片的地址
 	 */
 	@Field
+	@Column("img_url")
 	private String imgUrl;
 	
 	/**
 	 * 原文的链接
 	 */
 	@Field
+	@Column("origin_link")
 	private String originLink;
 	
 	/**
@@ -80,70 +85,81 @@ public class BlogBean extends RecordTimeBean{
      * 是否可以评论(默认可以评论)
      */
 	@Field
+	@Column("can_comment")
     private boolean canComment;
     
     /**
      * 是否可以转发(默认可以转发)
      */
 	@Field
+	@Column("can_transmit")
     private boolean canTransmit;
 	
 	/**
 	 * 该条博客是否被索引了
 	 */
+	@Column("is_index")
 	private boolean isIndex;
 	
 	/**
 	 * 该条博客是否被solr索引了(冗余字段)
 	 */
+	@Column("is_solr_index")
 	private boolean isSolrIndex;
 		
 
 	/**
 	 * 是否被阅读
 	 */
-	
+	@Column("is_read")
 	private boolean isRead; 
 	
 	/**
 	 * 阅读次数
 	 */
 	@Field
+	@Column("read_number")
 	private int readNumber; 
 	
 	/**
 	 * 统计赞的数量
 	 */
 	@Field
+	@Column("zan_number")
 	private int zanNumber;   
 	
 	/**
 	 * 统计评论的数量
 	 */
 	@Field
+	@Column("comment_number")
 	private int commentNumber; 
 	
 	/**
 	 * 统计转发的数量
 	 */
 	@Field
+	@Column("transmit_number")
 	private int transmitNumber ;
 	
 	/**
 	 * 统计分享的数量
 	 */
 	@Field
+	@Column("share_number")
 	private int shareNumber;
 	
 	/**
 	 * 是否立即发布
 	 */
+	@Column("is_publish_now")
 	private boolean isPublishNow;
 	
 	/**
 	 * 是否推荐
 	 */
 	@Field
+	@Column("is_recommend")
 	private boolean isRecommend;
 	
 	/**

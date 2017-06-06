@@ -6,11 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,20 +35,20 @@ import com.cn.leedane.utils.EnumUtil.EmailType;
 import com.cn.leedane.utils.StringUtil;
 
 /**
- * 处理记账周报
+ * 处理记账月报任务
  * @author LeeDane
- * 2016年11月2日 上午9:45:57
- * Version 1.0
+ * 2017年6月6日 上午10:53:42
+ * version 1.0
  */
 @Component("financialMonth")
-public class FinancialMonth extends BaseScheduling{
+public class FinancialMonth implements BaseScheduling{
 	private static Logger logger = Logger.getLogger(FinancialMonth.class);
 	
 	@Autowired
 	private UserService<UserBean> userService;
 	
-	
-	public void execute() throws Exception {
+	@Override
+	public void execute() throws SchedulerException {
 		
 		long start = System.currentTimeMillis();
 		
@@ -64,8 +66,14 @@ public class FinancialMonth extends BaseScheduling{
 			threadpool.shutdown();
 			
 			for(int i = 0; i < futures.size(); i++){
-				if(futures.get(i).get()){
-					logger.error(users.get(i).getAccount() + "的周报发送失败");
+				try {
+					if(futures.get(i).get()){
+						logger.error(users.get(i).getAccount() + "的周报发送失败");
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					e.printStackTrace();
 				}
 			}
 		}

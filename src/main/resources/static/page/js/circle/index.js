@@ -7,5 +7,6 @@ $(function(){
 	});
 	$(".nav-circle").addClass("active");
 	
+	$(".tooltip").css("display", "block");
 });
 

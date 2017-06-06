@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.cn.leedane.model.GalleryBean;
-import com.cn.leedane.model.UserBean;
 /**
  * 图库mapper接口类
  * @author LeeDane

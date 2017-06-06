@@ -2,9 +2,10 @@ var links;
 var currentIndex = 0;
 var pageSize = 8;
 var totalPage = 0;
+var $addOrEditModal;
 //浏览器可视区域页面的高度
 $(function(){
-	
+	$addOrEditModal = $("#add-or-edit-role-or-permission");
 	$("#totalCheckbox").change(function(){
 		if(!$(this).hasClass("checked")){
 			$("tr.each-row").find("input[type='checkbox']").each(function(){
@@ -72,20 +73,20 @@ function getLinks(){
  * 添加链接
  */
 function addRole(){
-	$("#add-or-edit-role-or-permission").attr("data-id", "");
-	$("#add-or-edit-role-or-permission").find('input[name="link"]').val("");
-	$("#add-or-edit-role-or-permission").find('input[name="alias"]').val("");
-	$("#add-or-edit-role-or-permission").find('input[name="order"]').val("");
-	$("#add-or-edit-role-or-permission").find('input[name1="status_normal"]').prop("checked", true);
-	$("#add-or-edit-role-or-permission").find('input[name1="status_disabled"]').removeAttr("checked");
+	$addOrEditModal.attr("data-id", "");
+	$addOrEditModal.find('input[name="link"]').val("");
+	$addOrEditModal.find('input[name="alias"]').val("");
+	$addOrEditModal.find('input[name="order"]').val("");
+	$addOrEditModal.find('input[name1="status_normal"]').prop("checked", true);
+	$addOrEditModal.find('input[name1="status_disabled"]').removeAttr("checked");
 	
-	$("#add-or-edit-role-or-permission").find('input[name1="all_true"]').prop("checked", true);
-	$("#add-or-edit-role-or-permission").find('input[name1="all_false"]').removeAttr("checked");
+	$addOrEditModal.find('input[name1="all_true"]').prop("checked", true);
+	$addOrEditModal.find('input[name1="all_false"]').removeAttr("checked");
 	
-	$("#add-or-edit-role-or-permission").find('input[name1="role_true"]').prop("checked", true);
-	$("#add-or-edit-role-or-permission").find('input[name1="role_false"]').removeAttr("checked");
+	$addOrEditModal.find('input[name1="role_true"]').prop("checked", true);
+	$addOrEditModal.find('input[name1="role_false"]').removeAttr("checked");
 	
-	$("#add-or-edit-role-or-permission").modal("show");
+	$addOrEditModal.modal("show");
 }
 
 /**
@@ -104,34 +105,34 @@ function editRole(){
 	}
 	
 	var link = links[$(checkboxs[0]).closest("tr").attr("index")];
-	$("#add-or-edit-role-or-permission").attr("data-id", link.id);
-	$("#add-or-edit-role-or-permission").find('input[name="link"]').val(link.link);
-	$("#add-or-edit-role-or-permission").find('input[name="alias"]').val(link.alias);
-	$("#add-or-edit-role-or-permission").find('input[name="order"]').val(link.order_);
+	$addOrEditModal.attr("data-id", link.id);
+	$addOrEditModal.find('input[name="link"]').val(link.link);
+	$addOrEditModal.find('input[name="alias"]').val(link.alias);
+	$addOrEditModal.find('input[name="order"]').val(link.order_);
 	if(link.status == 1){
-		$("#add-or-edit-role-or-permission").find('input[name1="status_normal"]').prop("checked", true);
-		$("#add-or-edit-role-or-permission").find('input[name1="status_disabled"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="status_normal"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="status_disabled"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role-or-permission").find('input[name1="status_disabled"]').prop("checked", true);
-		$("#add-or-edit-role-or-permission").find('input[name1="status_normal"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="status_disabled"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="status_normal"]').removeAttr("checked");
 	}
 	
 	if(link.all_){
-		$("#add-or-edit-role-or-permission").find('input[name1="all_true"]').prop("checked", true);
-		$("#add-or-edit-role-or-permission").find('input[name1="all_false"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="all_true"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="all_false"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role-or-permission").find('input[name1="all_false"]').prop("checked", true);
-		$("#add-or-edit-role-or-permission").find('input[name1="all_true"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="all_false"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="all_true"]').removeAttr("checked");
 	}
 	
 	if(link.role){
-		$("#add-or-edit-role-or-permission").find('input[name1="role_true"]').prop("checked", true);
-		$("#add-or-edit-role-or-permission").find('input[name1="role_false"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="role_true"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="role_false"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role-or-permission").find('input[name1="role_false"]').prop("checked", true);
-		$("#add-or-edit-role-or-permission").find('input[name1="role_true"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="role_false"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="role_true"]').removeAttr("checked");
 	}
-	$("#add-or-edit-role-or-permission").modal("show");
+	$addOrEditModal.modal("show");
 }
 
 /**
@@ -142,34 +143,34 @@ function rowEditRole(obj){
 	var index = tr.attr("index");
 	
 	var link = links[index];
-	$("#add-or-edit-role-or-permission").attr("data-id", link.id);
-	$("#add-or-edit-role-or-permission").find('input[name="link"]').val(link.link);
-	$("#add-or-edit-role-or-permission").find('input[name="alias"]').val(link.alias);
-	$("#add-or-edit-role-or-permission").find('input[name="order"]').val(link.order_);
+	$addOrEditModal.attr("data-id", link.id);
+	$addOrEditModal.find('input[name="link"]').val(link.link);
+	$addOrEditModal.find('input[name="alias"]').val(link.alias);
+	$addOrEditModal.find('input[name="order"]').val(link.order_);
 	if(link.status == 1){
-		$("#add-or-edit-role-or-permission").find('input[name1="status_normal"]').prop("checked", true);
-		$("#add-or-edit-role-or-permission").find('input[name1="status_disabled"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="status_normal"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="status_disabled"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role-or-permission").find('input[name1="status_disabled"]').prop("checked", true);
-		$("#add-or-edit-role-or-permission").find('input[name1="status_normal"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="status_disabled"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="status_normal"]').removeAttr("checked");
 	}
 	
 	if(link.all_){
-		$("#add-or-edit-role-or-permission").find('input[name1="all_true"]').prop("checked", true);
-		$("#add-or-edit-role-or-permission").find('input[name1="all_false"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="all_true"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="all_false"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role-or-permission").find('input[name1="all_false"]').prop("checked", true);
-		$("#add-or-edit-role-or-permission").find('input[name1="all_true"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="all_false"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="all_true"]').removeAttr("checked");
 	}
 	
 	if(link.role){
-		$("#add-or-edit-role-or-permission").find('input[name1="role_true"]').prop("checked", true);
-		$("#add-or-edit-role-or-permission").find('input[name1="role_false"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="role_true"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="role_false"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-role-or-permission").find('input[name1="role_false"]').prop("checked", true);
-		$("#add-or-edit-role-or-permission").find('input[name1="role_true"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="role_false"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="role_true"]').removeAttr("checked");
 	}
-	$("#add-or-edit-role-or-permission").modal("show");
+	$addOrEditModal.modal("show");
 }
 
 /**

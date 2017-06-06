@@ -91,6 +91,15 @@ var config = [{
                  ]
              }]
          },{
+             id: 'setting', 
+             homePage: 'job',
+             menu:[{
+                 text:'任务调度',
+                 items:[
+                        {id:'job',text:'任务管理',href:'/ad/st/job'}
+                 ]
+             }]
+         },{
 	        id:'form',
 	        menu:[{
 	            text:'表单页面',

@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.cn.leedane.utils.FileUtil;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -230,7 +231,17 @@ public class WangyiNews extends BaseCrawlBean{
 	}
 
 	public String getTitle() {
-		return html.select(".ep-content #h1title").text();
+		String title = html.select(".ep-content #h1title").text();
+		if(StringUtil.isNull(title)){
+			title = html.select("#epContentLeft h1").html();
+		}
+		/*try {
+			FileUtil.textToFile(new File("D:\\aaa.txt"), html.toString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		return title;
 	}
 
 	public void setTitle(String title) {

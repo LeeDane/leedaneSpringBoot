@@ -13,6 +13,7 @@ import java.util.concurrent.Future;
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
+import org.quartz.SchedulerException;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.lucene.solr.BlogSolrHandler;
@@ -30,19 +31,19 @@ import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.StringUtil;
 
 /**
- * 定时加入solr索引
+ * 定时加入solr索引任务
  * @author LeeDane
- * 2016年7月12日 下午3:25:16
- * Version 1.0
+ * 2017年6月6日 上午10:53:08
+ * version 1.0
  */
 @Component("solrIndex")
-public class SolrIndex extends BaseScheduling{
+public class SolrIndex implements BaseScheduling{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	/**
 	 * 每次最多获取的数量
 	 */
-	public static final int MAX_SIZE = 1000;
+	public static final int MAX_SIZE = 10;
 	
 	@Resource
 	private BlogMapper blogMapper;
@@ -58,9 +59,10 @@ public class SolrIndex extends BaseScheduling{
 	}
 
 	@Override
-	public void execute() throws Exception {
-		super.execute();
+	public void execute() throws SchedulerException {
 		logger.info("SolrIndex-->execute():定时任务开始执行博客、说说，用户加入solr索引中，当前服务器时间:"+DateUtil.DateToString(new Date()));
+		
+		
 		List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
 		SingleIndexTask SingleIndexTask;
 		//派发5个线程执行
@@ -102,9 +104,8 @@ public class SolrIndex extends BaseScheduling{
 				futures.get(i).cancel(true);
 			}
 		}
-		
-		
-		
+		logger.info("本次所有要加入索引的任务已经处理完成");
+			
 	}
 	
 	/**
@@ -112,9 +113,11 @@ public class SolrIndex extends BaseScheduling{
 	 * @return
 	 */
 	private List<BlogBean> getNoIndexBlogList(){
-		List<Map<String, Object>> list = blogMapper.executeSQL("select b.id, b.title, b.content, b.digest from "+DataTableType.博客.value+" b where b.status=? and b.is_solr_index = ? order by b.id desc limit 0,?", ConstantsUtil.STATUS_NORMAL, false, MAX_SIZE);
+		List<Map<String, Object>> list = blogMapper.executeSQL("select b.id, b.title, b.content, b.digest from "+DataTableType.博客.value+" b where b.status=? and b.is_solr_index = ? order by b.id desc limit 0,?", ConstantsUtil.STATUS_NORMAL, false, 20);
 		List<BlogBean> blogs = new ArrayList<BlogBean>();
+		
 		if(list != null && list.size()> 0){
+			logger.info("获取未加入索引的文章总数:"+ list.size());
 			BlogBean blogBean;
 			for(Map<String, Object> map: list){
 				blogBean = new BlogBean();

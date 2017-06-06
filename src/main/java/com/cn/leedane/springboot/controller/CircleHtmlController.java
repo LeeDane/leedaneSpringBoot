@@ -8,7 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cn.leedane.controller.BaseController;
+import com.cn.leedane.model.JobManageBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.JobManageService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 
@@ -24,6 +26,9 @@ public class CircleHtmlController extends BaseController{
 	
 	@Autowired
 	private UserService<UserBean> userService;
+	
+	@Autowired
+	private JobManageService<JobManageBean> jobManageService;
 	
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面

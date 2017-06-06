@@ -6,12 +6,12 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.PrintWriter;
 import java.util.UUID;
 
 import com.cn.leedane.handler.CloudStoreHandler;
@@ -308,4 +308,15 @@ public class FileUtil {
 
     }
 
+	/**
+	 * 将文本写入本地
+	 * @param file
+	 * @param text
+	 * @throws IOException 
+	 */
+	public static void textToFile(File file, String text) throws IOException{
+		PrintWriter pw = new PrintWriter( new FileWriter(file) );
+        pw.print(text);
+        pw.close();
+	}
 }

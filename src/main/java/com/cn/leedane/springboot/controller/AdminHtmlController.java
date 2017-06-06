@@ -129,6 +129,11 @@ public class AdminHtmlController extends BaseController{
 		return loginRoleCheck("admin/permission/link", true, model, httpSession, request);
 	}
 	
+	/****************   系统设置--->任务管理          ***********************/
+	@RequestMapping(ControllerBaseNameUtil.adst + "/job")
+	public String stJob(Model model, HttpSession httpSession, HttpServletRequest request){
+		return loginRoleCheck("admin/setting/job", true, model, httpSession, request);
+	}
 	
 	/**
 	 * 校验地址，不校验是否登录
@@ -157,7 +162,7 @@ public class AdminHtmlController extends BaseController{
 		String account = "";
 		boolean isLogin = false;
 		if(obj != null){
-			logger.warn("obj不为空");
+			logger.info("obj不为空");
 			isLogin = !isLogin;
 			userBean = (UserBean)obj;
 
@@ -175,7 +180,7 @@ public class AdminHtmlController extends BaseController{
 				return "redirect:/lg?errorcode=" +EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value +"&t="+ UUID.randomUUID().toString() +"&ref="+ CommonUtil.getFullPath(request);
 			}
 		}else{
-			logger.warn("obj为空");
+			logger.info("obj为空");
 			model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
 			return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();
 		}

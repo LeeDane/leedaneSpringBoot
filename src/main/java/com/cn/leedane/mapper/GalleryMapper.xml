@@ -10,6 +10,6 @@
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
 	<select id="isExist" resultType="java.util.Map">
-		select id from t_gallery where path = #{path} and create_user_id = #{userId}
+		select id from t_gallery where path = #{path} and create_user_id = #{userId} limit 1
 	</select>
 </mapper>

@@ -2,9 +2,10 @@ var permissions;
 var currentIndex = 0;
 var pageSize = 8;
 var totalPage = 0;
+var $addOrEditModal;
 //浏览器可视区域页面的高度
 $(function(){
-	
+	$addOrEditModal = $("#add-or-edit-permission");
 	$("#totalCheckbox").change(function(){
 		if(!$(this).hasClass("checked")){
 			$("tr.each-row").find("input[type='checkbox']").each(function(){
@@ -72,14 +73,14 @@ function getPermissions(){
  * 添加权限
  */
 function addPermission(){
-	$("#add-or-edit-permission").attr("data-id", "");
-	$("#add-or-edit-permission").find('input[name="code"]').val("");
-	$("#add-or-edit-permission").find('input[name="name"]').val("");
-	$("#add-or-edit-permission").find('input[name="order"]').val("");
-	$("#add-or-edit-permission").find('textarea[name="desc"]').val("");
-	$("#add-or-edit-permission").find('input[name1="status_normal"]').prop("checked", true);
-	$("#add-or-edit-permission").find('input[name1="status_disabled"]').removeAttr("checked");
-	$("#add-or-edit-permission").modal("show");
+	$addOrEditModal.attr("data-id", "");
+	$addOrEditModal.find('input[name="code"]').val("");
+	$addOrEditModal.find('input[name="name"]').val("");
+	$addOrEditModal.find('input[name="order"]').val("");
+	$addOrEditModal.find('textarea[name="desc"]').val("");
+	$addOrEditModal.find('input[name1="status_normal"]').prop("checked", true);
+	$addOrEditModal.find('input[name1="status_disabled"]').removeAttr("checked");
+	$addOrEditModal.modal("show");
 }
 
 /**
@@ -98,19 +99,19 @@ function editPermission(){
 	}
 	
 	var permission = permissions[$(checkboxs[0]).closest("tr").attr("index")];
-	$("#add-or-edit-permission").attr("data-id", permission.id);
-	$("#add-or-edit-permission").find('input[name="code"]').val(permission.permission_code);
-	$("#add-or-edit-permission").find('input[name="name"]').val(permission.permission_name);
-	$("#add-or-edit-permission").find('input[name="order"]').val(permission.permission_order);
-	$("#add-or-edit-permission").find('textarea[name="desc"]').val(permission.permission_desc);
+	$addOrEditModal.attr("data-id", permission.id);
+	$addOrEditModal.find('input[name="code"]').val(permission.permission_code);
+	$addOrEditModal.find('input[name="name"]').val(permission.permission_name);
+	$addOrEditModal.find('input[name="order"]').val(permission.permission_order);
+	$addOrEditModal.find('textarea[name="desc"]').val(permission.permission_desc);
 	if(permission.status == 1){
-		$("#add-or-edit-permission").find('input[name1="status_normal"]').prop("checked", true);
-		$("#add-or-edit-permission").find('input[name1="status_disabled"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="status_normal"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="status_disabled"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-permission").find('input[name1="status_disabled"]').prop("checked", true);
-		$("#add-or-edit-permission").find('input[name1="status_normal"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="status_disabled"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="status_normal"]').removeAttr("checked");
 	}
-	$("#add-or-edit-permission").modal("show");
+	$addOrEditModal.modal("show");
 }
 
 /**
@@ -121,19 +122,19 @@ function rowEditPermission(obj){
 	var index = tr.attr("index");
 	
 	var permission = permissions[index];
-	$("#add-or-edit-permission").attr("data-id", permission.id);
-	$("#add-or-edit-permission").find('input[name="code"]').val(permission.permission_code);
-	$("#add-or-edit-permission").find('input[name="name"]').val(permission.permission_name);
-	$("#add-or-edit-permission").find('input[name="order"]').val(permission.permission_order);
-	$("#add-or-edit-permission").find('textarea[name="desc"]').val(permission.permission_desc);
+	$addOrEditModal.attr("data-id", permission.id);
+	$addOrEditModal.find('input[name="code"]').val(permission.permission_code);
+	$addOrEditModal.find('input[name="name"]').val(permission.permission_name);
+	$addOrEditModal.find('input[name="order"]').val(permission.permission_order);
+	$addOrEditModal.find('textarea[name="desc"]').val(permission.permission_desc);
 	if(permission.status == 1){
-		$("#add-or-edit-permission").find('input[name1="status_normal"]').prop("checked", true);
-		$("#add-or-edit-permission").find('input[name1="status_disabled"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="status_normal"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="status_disabled"]').removeAttr("checked");
 	}else{
-		$("#add-or-edit-permission").find('input[name1="status_disabled"]').prop("checked", true);
-		$("#add-or-edit-permission").find('input[name1="status_normal"]').removeAttr("checked");
+		$addOrEditModal.find('input[name1="status_disabled"]').prop("checked", true);
+		$addOrEditModal.find('input[name1="status_normal"]').removeAttr("checked");
 	}
-	$("#add-or-edit-permission").modal("show");
+	$addOrEditModal.modal("show");
 }
 
 /**

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,13 +17,13 @@ import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.StringUtil;
 
 /**
- * 上传文件到七牛云存储服务器
+ * 上传文件到七牛云存储服务器任务
  * @author LeeDane
- * 2016年7月12日 下午3:25:39
- * Version 1.0
+ * 2017年6月6日 上午10:52:28
+ * version 1.0
  */
 @Component("uploadQiniuCloud")
-public class UploadQiniuCloud {
+public class UploadQiniuCloud implements BaseScheduling{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
@@ -35,7 +36,8 @@ public class UploadQiniuCloud {
 		this.cloudStoreHandler = cloudStoreHandler;
 	}
 	
-	public void upload() {
+	@Override
+	public void execute() throws SchedulerException{
 		if(filePathMapper != null){
 			try {
 				/*Object object = systemCache.getCache("leedaneProperties"); 

@@ -431,3 +431,28 @@ CREATE TABLE `t_material` (
   CONSTRAINT `FK_material_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_material_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_job_manage
+-- ----------------------------
+DROP TABLE IF EXISTS `t_job_manage`;
+CREATE TABLE `t_job_manage` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `job_name` varchar(25) NOT NULL COMMENT '任务名称',
+  `job_group` varchar(25) NOT NULL COMMENT '任务分组',
+  `expression` varchar(255) NOT NULL COMMENT '任务运行时间表达式 ',
+  `class_name` varchar(25) NOT NULL COMMENT '任务实体类名称 ',
+  `job_desc` varchar(255) COMMENT '任务描述 ',
+  `job_order` int(5) NOT NULL DEFAULT '0' COMMENT '排序顺序，默认是0' ,
+  PRIMARY KEY (`id`),
+  KEY `FK_job_manage_create_user` (`create_user_id`),
+  KEY `FK_job_manage_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_job_manage_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_job_manage_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_job_manage add constraint job_manage_unique UNIQUE(job_name, job_group);

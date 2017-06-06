@@ -2,6 +2,7 @@ package com.cn.leedane.springboot;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
@@ -14,6 +15,10 @@ import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -278,6 +283,31 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
     	multipartFilter.setMultipartResolverBeanName("multipartResolver");
     	return multipartFilter;
     }
+    
+    @Bean  
+    public Scheduler scheduler() throws IOException, SchedulerException {  
+        SchedulerFactory schedulerFactory = new StdSchedulerFactory(quartzProperties());  
+        Scheduler scheduler = schedulerFactory.getScheduler();  
+        scheduler.start();  
+        return scheduler;  
+    } 
+    /** 
+     * 设置quartz属性 
+     * @throws IOException 
+     * 2016年10月8日下午2:39:05 
+     */  
+    public Properties quartzProperties() throws IOException {  
+        Properties prop = new Properties();  
+        prop.put("quartz.scheduler.instanceName", "ServerScheduler");  
+        prop.put("org.quartz.scheduler.instanceId", "AUTO");  
+        prop.put("org.quartz.scheduler.skipUpdateCheck", "true");  
+        prop.put("org.quartz.scheduler.instanceId", "NON_CLUSTERED");  
+        prop.put("org.quartz.scheduler.jobFactory.class", "org.quartz.simpl.SimpleJobFactory"); 
+        prop.put("org.quartz.threadPool.class", "org.quartz.simpl.SimpleThreadPool");  
+        prop.put("org.quartz.threadPool.threadCount", "5");  
+        return prop;  
+    }  
+    
 	public static void main(String[] args) {
 		logger.warn( "项目开始启动。。。" );
         //SpringApplication.run("classpath:spring-common.xml", args);

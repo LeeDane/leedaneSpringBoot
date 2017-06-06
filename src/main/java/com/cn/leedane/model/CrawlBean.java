@@ -11,7 +11,7 @@ import com.cn.leedane.mybatis.table.annotation.Column;
  * Version 1.0
  */
 //@Table(name="T_CRAWL")
-public class CrawlBean extends IDBean{
+public class CrawlBean extends RecordTimeBean{
 
 	/**
 	 * create time 2015年6月24日 上午9:38:50
@@ -30,12 +30,6 @@ public class CrawlBean extends IDBean{
 	private boolean isCrawl; 
 	
 	/*以下是对抓取数据的保存字段*/
-	
-	/**
-	 * 创建时间
-	 */
-	@Column("create_time")
-	private Date createTime;
 	
 	/**
 	 * 来源
@@ -70,14 +64,7 @@ public class CrawlBean extends IDBean{
 	public void setCrawl(boolean isCrawl) {
 		this.isCrawl = isCrawl;
 	}
-	
-	//@Column(name="create_time")
-	public Date getCreateTime() {
-		return createTime;
-	}
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
+
 	public String getSource() {
 		return source;
 	}

@@ -31,6 +31,7 @@ import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.OptionUtil;
 import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
 
@@ -74,6 +75,7 @@ public class CrawlTest extends BaseTest {
 			CrawlBean crawlBean = new CrawlBean();
 			crawlBean.setUrl(homeUrl.trim());
 			crawlBean.setSource("网易新闻");
+			crawlBean.setCreateUserId(OptionUtil.adminUser.getId());
 			crawlBean.setCreateTime(new Date());
 			logger.info(crawlMapper.save(crawlBean));
 		}
@@ -213,6 +215,7 @@ public class CrawlTest extends BaseTest {
 				//crawlBean.setCrawl(isCrawl);
 				crawlBean.setUrl(homeUrl.trim());
 				crawlBean.setSource("散文网");
+				crawlBean.setCreateUserId(OptionUtil.adminUser.getId());
 				crawlBean.setCreateTime(new Date());
 				//crawlBean.setScore(wangyi.score());
 				logger.info(crawlMapper.save(crawlBean));

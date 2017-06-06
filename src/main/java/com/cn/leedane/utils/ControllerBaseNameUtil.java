@@ -267,6 +267,11 @@ public class ControllerBaseNameUtil {
 	public static final String ln = "ln";
 	
 	/**
+	 * 任务管理
+	 */
+	public static final String jm = "jm";
+	
+	/**
 	 * 管理员
 	 */
 	public static final String ad = "ad";
@@ -301,6 +306,11 @@ public class ControllerBaseNameUtil {
 	 * 商城统一入口根路径
 	 */
 	public static final String shop = "shop";
+	
+	/**
+	 * 管理员->系统设置
+	 */
+	public static final String adst = "ad/st";
 	
 	/**********************    上传       **********************/
 	

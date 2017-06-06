@@ -1,11 +1,11 @@
-var roles;
+var jobs;
 var currentIndex = 0;
 var pageSize = 8;
 var totalPage = 0;
 var $addOrEditModal;
 //浏览器可视区域页面的高度
 $(function(){
-	$addOrEditModal = $("#add-or-edit-role");
+	$addOrEditModal = $("#add-or-edit-job");
 	$("#totalCheckbox").change(function(){
 		if(!$(this).hasClass("checked")){
 			$("tr.each-row").find("input[type='checkbox']").each(function(){
@@ -20,21 +20,18 @@ $(function(){
 		}
 			
 	});
-	$("tr.each-row").find("input[type='checkbox']").on("click", function(){
-		alert("ddd");
-	});
 	
 	//默认查询操作
-	getRoles();
+	getJobs();
 });
 
 /**
 * 查询
 */
-function getRoles(){
+function getJobs(){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
-		url : "/rl/roles?"+ jsonToGetRequestParams(getQueryPagingParams()),
+		url : "/jm/jobs?"+ jsonToGetRequestParams(getQueryPagingParams()),
 		dataType: 'json', 
 		beforeSend:function(){
 		
@@ -49,10 +46,10 @@ function getRoles(){
 					return;
 				}
 				
-				roles = data.message;
-				for(var i = 0; i < roles.length; i++){
-					$(".table").append(buildRow(roles[i], i));
-					if(roles[i].status != 1)
+				jobs = data.message;
+				for(var i = 0; i < jobs.length; i++){
+					$(".table").append(buildRow(jobs[i], i));
+					if(jobs[i].status != 1)
 						$(".table").find(".each-row").eq(i).addClass("status-disabled-row");
 				}
 				
@@ -70,42 +67,45 @@ function getRoles(){
 }
 
 /**
- * 添加角色
+ * 添加任务
  */
-function addRole(){
+function addJob(){
 	$addOrEditModal.attr("data-id", "");
-	$addOrEditModal.find('input[name="code"]').val("");
-	$addOrEditModal.find('input[name="name"]').val("");
-	$addOrEditModal.find('input[name="order"]').val("");
-	$addOrEditModal.find('textarea[name="desc"]').val("");
+	$addOrEditModal.find('input[name="job_group"]').val("");
+	$addOrEditModal.find('input[name="expression"]').val("");
+	$addOrEditModal.find('input[name="class_name"]').val("");
+	$addOrEditModal.find('input[name="job_name"]').val("");
+	$addOrEditModal.find('input[name="job_order"]').val("");
+	$addOrEditModal.find('textarea[name="job_desc"]').val("");
 	$addOrEditModal.find('input[name1="status_normal"]').prop("checked", true);
 	$addOrEditModal.find('input[name1="status_disabled"]').removeAttr("checked");
-
 	$addOrEditModal.modal("show");
 }
 
 /**
- * 修改角色
+ * 修改任务
  */
-function editRole(){
+function editJob(){
 	var checkboxs = $("tr.each-row").find('input[type="checkbox"]:checked');
 	
 	if(!checkboxs || checkboxs.length == 0){
-		layer.msg("请选择您要编辑的角色");
+		layer.msg("请选择您要编辑的任务");
 		return;
 	}
 	if(checkboxs && checkboxs.length > 1 ){
-		layer.msg("一次只能编辑一个角色");
+		layer.msg("一次只能编辑一个任务");
 		return;
 	}
 	
-	var role = roles[$(checkboxs[0]).closest("tr").attr("index")];
-	$addOrEditModal.attr("data-id", role.id);
-	$addOrEditModal.find('input[name="code"]').val(role.role_code);
-	$addOrEditModal.find('input[name="name"]').val(role.role_name);
-	$addOrEditModal.find('input[name="order"]').val(role.role_order);
-	$addOrEditModal.find('textarea[name="desc"]').val(role.role_desc);
-	if(role.status == 1){
+	var job = jobs[$(checkboxs[0]).closest("tr").attr("index")];
+	$addOrEditModal.attr("data-id", job.id);
+	$addOrEditModal.find('input[name="job_group"]').val(job.job_group);
+	$addOrEditModal.find('input[name="expression"]').val(job.expression);
+	$addOrEditModal.find('input[name="class_name"]').val(job.class_name);
+	$addOrEditModal.find('input[name="job_name"]').val(job.job_name);
+	$addOrEditModal.find('input[name="job_order"]').val(job.job_order);
+	$addOrEditModal.find('textarea[name="job_desc"]').val(job.job_desc);
+	if(job.status == 1){
 		$addOrEditModal.find('input[name1="status_normal"]').prop("checked", true);
 		$addOrEditModal.find('input[name1="status_disabled"]').removeAttr("checked");
 	}else{
@@ -116,19 +116,21 @@ function editRole(){
 }
 
 /**
- * 修改角色
+ * 修改任务
  */
-function rowEditRole(obj){
+function rowEditJob(obj){
 	var tr = $(obj).closest("tr.each-row");
 	var index = tr.attr("index");
 	
-	var role = roles[index];
-	$addOrEditModal.attr("data-id", role.id);
-	$addOrEditModal.find('input[name="code"]').val(role.role_code);
-	$addOrEditModal.find('input[name="name"]').val(role.role_name);
-	$addOrEditModal.find('input[name="order"]').val(role.role_order);
-	$addOrEditModal.find('textarea[name="desc"]').val(role.role_desc);
-	if(role.status == 1){
+	var job = jobs[index];
+	$addOrEditModal.attr("data-id", job.id);
+	$addOrEditModal.find('input[name="job_group"]').val(job.job_group);
+	$addOrEditModal.find('input[name="expression"]').val(job.expression);
+	$addOrEditModal.find('input[name="class_name"]').val(job.class_name);
+	$addOrEditModal.find('input[name="job_name"]').val(job.job_name);
+	$addOrEditModal.find('input[name="job_order"]').val(job.job_order);
+	$addOrEditModal.find('textarea[name="job_desc"]').val(job.job_desc);
+	if(job.status == 1){
 		$addOrEditModal.find('input[name1="status_normal"]').prop("checked", true);
 		$addOrEditModal.find('input[name1="status_disabled"]').removeAttr("checked");
 	}else{
@@ -139,19 +141,19 @@ function rowEditRole(obj){
 }
 
 /**
- * 删除单个角色
+ * 删除单个任务
  */
-function rowDeleteRole(obj){
+function rowDeleteJob(obj){
 	var tr = $(obj).closest("tr.each-row");
 	var dataId = tr.attr("data-id");
 	
-	layer.confirm('您要删除这1条角色记录吗？', {
+	layer.confirm('您要删除这1条任务记录吗？', {
 		  btn: ['确定','点错了'] //按钮
 	}, function(){
 		var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 		$.ajax({
 			type: "delete",
-			url : "/rl/role/" + dataId,
+			url : "/jm/job/" + dataId,
 			dataType: 'json', 
 			beforeSend:function(){
 			},
@@ -175,30 +177,30 @@ function rowDeleteRole(obj){
 }
 
 /**
- * 删除多个角色
+ * 删除多个任务
  */
-function deletesRole(){
+function deletesJob(){
 	var checkboxs = $("tr.each-row").find('input[type="checkbox"]:checked');
 	
 	if(!checkboxs || checkboxs.length == 0){
-		layer.msg("请选择您要删除的角色");
+		layer.msg("请选择您要删除的任务");
 		return;
 	}
 	
-	layer.confirm('您要删除这'+ checkboxs.length +'条角色记录吗？', {
+	layer.confirm('您要删除这'+ checkboxs.length +'条任务记录吗？', {
 		  btn: ['确定','点错了'] //按钮
 	}, function(){
-		var rlids = "";
+		var pmids = "";
 		for(var i = 0; i < checkboxs.length; i++){
-			rlids += $(checkboxs[i]).closest("tr.each-row").attr("data-id") +",";
+			pmids += $(checkboxs[i]).closest("tr.each-row").attr("data-id") +",";
 		}
 		
-		rlids = deleteLastStr(rlids);
+		pmids = deleteLastStr(pmids);
 		
 		var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 		$.ajax({
 			type: "delete",
-			url : "/rl/roles?rlids=" + rlids,
+			url : "/jm/jobs?pmids=" + pmids,
 			dataType: 'json', 
 			beforeSend:function(){
 			},
@@ -221,122 +223,6 @@ function deletesRole(){
 	
 }
 
-/**
- * 展示角色列表
- * @param obj
- * @param rlid
- */
-function showUserList(obj, rlid){
-	//获取所有的角色列表
-	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
-	$.ajax({
-		url : "/rl/role/"+ rlid +"/users",
-		dataType: 'json', 
-		beforeSend:function(){
-			$("#alreadyUsers").html("");
-			$("#notUsers").html("");
-		},
-		success : function(data) {
-			layer.close(loadi);
-			if(data.isSuccess){
-				for(var i = 0 ; i < data.message.length; i++){
-					if(isEmpty(data.message[i].has)){
-						buildNotUsersHtml(data.message[i]);
-					}else{
-						buildAlreadyUsersHtml(data.message[i]);
-					}
-				}
-				$("#role-list").modal("show");
-				$("#role-list").attr("data-id", rlid);
-			}else{
-				ajaxError(data);
-			}
-		},
-		error : function(data) {
-			layer.close(loadi);
-			ajaxError(data);
-		}
-	});
-	
-}
-
-/**
- * 添加没有分配角色的html
- * @param user
- */
-function buildNotUsersHtml(user){
-	var html = '<span class="label label-info" data-id="'+ user.id +'" onclick="notClick(this);">'+ user.account +'</span>';
-	$("#notUsers").append(html);
-}
-
-/**
- * 添加已经分配角色的html
- * @param user
- */
-function buildAlreadyUsersHtml(user){
-	var html = '<span class="label label-primary" data-id="'+ user.id +'" onclick="alreadyClick(this);">'+ user.account +'</span>';
-	$("#alreadyUsers").append(html);
-}
-
-/**
- * 将已经分配的取消，加入待分配列表
- * @param obj
- */
-function notClick(obj){
-	var user = {};
-	user.id = $(obj).attr("data-id");
-	user.account = $(obj).text();
-	$(obj).remove();
-	buildAlreadyUsersHtml(user);
-}
-
-/**
- * 将已经分配的取消，加入待分配列表
- * @param obj
- */
-function alreadyClick(obj){
-	var user = {};
-	user.id = $(obj).attr("data-id");
-	user.account = $(obj).text();
-	$(obj).remove();
-	buildNotUsersHtml(user);
-}
-
-/**
- * 分配角色操作
- * @param obj
- */
-function role(obj){
-	var modal = $(obj).closest(".modal");
-	var rlid = modal.attr("data-id");
-	var alreadyUsers = modal.find("#alreadyUsers span");
-	var userIds = "";
-	alreadyUsers.each(function(){
-		userIds += $(this).attr("data-id") +",";
-	});
-	
-	userIds = deleteLastStr(userIds);
-	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
-	$.ajax({
-		url : "/rl/role/"+ rlid +"/users/allot?users="+ userIds,
-		dataType: 'json', 
-		beforeSend:function(){
-		},
-		success : function(data) {
-			layer.close(loadi);
-			if(data.isSuccess){
-				layer.msg(data.message + ",1秒后自动刷新");
-				reloadPage(1000);
-			}else{
-				ajaxError(data);
-			}
-		},
-		error : function(data) {
-			layer.close(loadi);
-			ajaxError(data);
-		}
-	});
-}
 
 /**
  * 添加获取编辑的提交操作
@@ -371,7 +257,7 @@ function addOrEditCommit(obj){
 		$.ajax({
 			type : isEmpty(dataId) ? "post" : "put",
 			data : params,
-			url : "/rl/role",
+			url : "/jm/job",
 			dataType: 'json', 
 			beforeSend:function(){
 			},
@@ -400,26 +286,24 @@ function getQueryPagingParams(){
 	return {page_size: pageSize, current: currentIndex, total: totalPage, t: Math.random()};
 }
 
-function buildRow(role, index){
-	var html = '<tr class="each-row" data-id="'+ role.id+'" index="'+ index +'">'+
+/**
+ * 构建每一行的html
+ * @param job
+ * @param index
+ * @returns {String}
+ */
+function buildRow(job, index){
+	var html = '<tr class="each-row" data-id="'+ job.id+'" index="'+ index +'">'+
 					'<td><input type="checkbox" /></td>'+
-					'<td>'+ changeNotNullString(role.role_name) +'</td>'+
-					'<td>'+ role.role_code+'</td>'+
-					'<td>'+ changeNotNullString(role.role_order) +'</td>'+
-					'<td>'+ changeNotNullString(role.role_desc) +'</td>';
-		if(isNotEmpty(role.users)){
-			var users = role.users.split(",");
-			html += '<td>';
-			for(var rl = 0; rl < users.length; rl++)
-				html += '<span class="label label-primary">'+ users[rl] +'</span>';
-			
-			html += '</td>';
-		}else{
-			html += '<td></td>';
-		}
-		html += '<td>'+ (role.status == 1? '正常': '禁用')+'</td>'+
-					'<td>'+ role.create_time+'</td>'+
-					'<td><a href="javascript:void(0);" onclick="showUserList(this, '+ role.id +');" style="margin-left: 10px;">分配</a><a href="javascript:void(0);" onclick="rowEditRole(this);" style="margin-left: 10px;">编辑</a><a href="javascript:void(0);" onclick="rowDeleteRole(this);" style="margin-left: 10px;">删除</a></td>'+
+					'<td>'+ changeNotNullString(job.job_name) +'</td>'+
+					'<td>'+ job.job_group+'</td>'+
+					'<td>'+ job.expression+'</td>'+
+					'<td>'+ job.class_name+'</td>'+
+					'<td>'+ changeNotNullString(job.job_order) +'</td>'+
+					'<td>'+ changeNotNullString(job.job_desc) +'</td>'+
+					'<td>'+ (job.status == 1? '正常': '禁用')+'</td>'+
+					'<td>'+ job.create_time+'</td>'+
+					'<td><a href="javascript:void(0);" onclick="rowEditJob(this);" style="margin-left: 10px;">编辑</a><a href="javascript:void(0);" onclick="rowDeleteJob(this);" style="margin-left: 10px;">删除</a></td>'+
 				'</tr>';
 	return html;
 }
@@ -470,7 +354,7 @@ function optionChange(){
 	var objS = document.getElementsByTagName("select")[0];
     var index = objS.options[objS.selectedIndex].value;
     currentIndex = index;
-    getRoles();
+    getJobs();
 }
 
 /**
@@ -478,7 +362,7 @@ function optionChange(){
  */
 function goIndex(index){
 	currentIndex = index;
-	getRoles();
+	getJobs();
 }
 
 /**
@@ -488,7 +372,7 @@ function pre(){
 	currentIndex --;
 	if(currentIndex < 0)
 		currentIndex = 0;
-	getRoles();
+	getJobs();
 }
 
 
@@ -499,5 +383,5 @@ function next(){
 	currentIndex ++;
 	if(currentIndex > totalPage)
 		currentIndex = totalPage;
-	getRoles();
+	getJobs();
 }

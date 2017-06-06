@@ -121,9 +121,11 @@ function getInfo(bid){
 				}
 				if(isEmpty(blog.origin_link) && isEmpty(blog.source)){
 					$("#isOriginal").html('<span class="original">原</span>');
+				}else{
+					$("#isOriginal").html('<span class="original red">爬</span>');
 				}
 				
-				if(blog.is_recommed){
+				if(blog.is_recommend){
 					$("#isRecommed").html('<span class="original red">荐</span>');
 				}
 				$(".row-content").html(data.message[0].content);

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -13,100 +14,83 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cn.leedane.crawl.SanwenNet;
+import com.cn.leedane.handler.UserHandler;
+import com.cn.leedane.mapper.BlogMapper;
+import com.cn.leedane.mapper.CrawlMapper;
+import com.cn.leedane.model.BlogBean;
+import com.cn.leedane.model.CrawlBean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsoupUtil;
+import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
-import com.cn.leedane.crawl.SanwenNet;
-import com.cn.leedane.mapper.BlogMapper;
-import com.cn.leedane.model.BlogBean;
-import com.cn.leedane.model.CrawlBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.CrawlService;
-import com.cn.leedane.service.UserService;
 
 /**
- * 散文网爬虫Bean
+ * 散文网短篇小说爬虫处理数据任务
  * @author LeeDane
- * 2016年7月12日 下午3:24:30
- * Version 1.0
+ * 2017年6月6日 上午10:53:15
+ * version 1.0
  */
-@Component("sanwenNetBean")
-public class SanwenNetBean {
+@Component("sanwenNetNovelDeal")
+public class SanwenNetNovelDeal implements BaseScheduling{
+
 	private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
-	private CrawlService<CrawlBean> crawlService;
+	private CrawlMapper crawlMapper;
 	
 	@Autowired
 	private BlogMapper blogMapper;
 	
 	@Autowired
-	private UserService<UserBean> userService;
-	
-	public void setUserService(UserService<UserBean> userService) {
-		this.userService = userService;
-	}
+	private UserHandler userHandler;
 
-	/**
-	 * 执行爬取方法
-	 */
-	public void crawl() throws Exception{
-		//logger.info(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Sanwen:crawl()");
-		try {
-			SanwenNet sanwenNet = new SanwenNet();
-			sanwenNet.setUrl("http://www.sanwen.net/");
-			sanwenNet.execute();
-			List<String> homeUrls = sanwenNet.getHomeListsHref();
-			for(String homeUrl : homeUrls){
-				CrawlBean crawlBean = new CrawlBean();
-				crawlBean.setUrl(homeUrl.trim());
-				crawlBean.setSource("散文网");
-				crawlBean.setCreateTime(new Date());
-				logger.info(crawlService.save(crawlBean));
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			logger.error("抓取散文网信息出现异常：Crawl()");
-		}
-	}
-	
 	/**
 	 * 执行处理方法
 	 */
-	public void deal() throws Exception{
-		logger.info(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Sanwen:deal()");
+	@Override
+	public void execute() throws SchedulerException {
+		//logger.info(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Sanwen:deal()");
 		
-		//获得用户
-		UserBean user = userService.findById(1);
-		List<CrawlBean> beans = crawlService.findAllNotCrawl(0, EnumUtil.WebCrawlType.散文网.value);
+		@SuppressWarnings("unchecked")
+		List<CrawlBean> beans = SqlUtil.convertMapsToBeans(CrawlBean.class, crawlMapper.findAllNotCrawl(0, EnumUtil.WebCrawlType.散文网短篇小说.value));
 		if(beans != null && beans.size()> 0){
 			List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
 			ExecutorService threadpool = Executors.newFixedThreadPool(beans.size() >2 ? 3: beans.size());
 			SingleDealTask dealTask;
 			for(CrawlBean bean: beans){
-				dealTask = new SingleDealTask(bean, user);
+				dealTask = new SingleDealTask(bean);
 				futures.add(threadpool.submit(dealTask));
 			}
 			
 			threadpool.shutdown();
 			List<String> errors = new ArrayList<String>();
 			for(int i = 0; i < futures.size(); i++){
-				if(futures.get(i) !=null && !futures.get(i).get()){
-					errors.add(beans.get(i).getUrl());
+				try {
+					if(!futures.get(i).get()){
+						errors.add(beans.get(i).getUrl());
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					e.printStackTrace();
 				}
 			}
 			
 			for(String url: errors){
-				logger.error("处理散文网信息出现异常的链接是："+url);
+				logger.error("处理散文网短篇小说信息出现异常的链接是："+url);
 			}
 		}
-		logger.info("处理散文网信息结束......");
+		logger.info("处理散文网短篇小说信息结束......");
 	}
 	
 	/**
@@ -117,10 +101,8 @@ public class SanwenNetBean {
 	 */
 	class SingleDealTask implements Callable<Boolean>{
 		private CrawlBean mCrawlBean;
-		private UserBean mUser;
-		public SingleDealTask(CrawlBean crawlBean, UserBean user){
+		public SingleDealTask(CrawlBean crawlBean){
 			this.mCrawlBean = crawlBean;
-			this.mUser = user;
 		}
 
 		@Override
@@ -132,6 +114,16 @@ public class SanwenNetBean {
 				if(m.find()){
 					SanwenNet sanwenNet = new SanwenNet(url,"","");
 					sanwenNet.execute();
+					
+					try{
+						sanwenNet.execute();
+					}catch(IOException e){
+						logger.error("处理散文小说信息出现异常：deal()+url="+url +e.toString());
+						mCrawlBean.setCrawl(true);
+						//将抓取标记为已经抓取
+						crawlMapper.update(mCrawlBean);
+						return false;
+					}
 					
 					String content = sanwenNet.getContent("#article .content",".adcontent");
 					String title = sanwenNet.getTitle().trim();
@@ -146,10 +138,11 @@ public class SanwenNetBean {
 						BlogBean blog = new BlogBean();
 						blog.setTitle(title);
 						blog.setContent(content);
-						blog.setCreateUserId(mUser.getId());
+						blog.setCreateUserId(mCrawlBean.getCreateUserId());
 						blog.setCreateTime(new Date());
-						blog.setSource(EnumUtil.WebCrawlType.散文网.value);
+						blog.setSource(EnumUtil.WebCrawlType.散文网短篇小说.value);
 						blog.setFroms("爬虫抓取");
+						blog.setCategory("我的日常");
 						blog.setStatus(ConstantsUtil.STATUS_NORMAL);
 						blog.setDigest(JsoupUtil.getInstance().getDigest(content, 0, 120));
 						blog.setCanComment(true);
@@ -162,7 +155,7 @@ public class SanwenNetBean {
 							
 							//对base64位的src属性处理
 							if(!StringUtil.isLink(mainImgUrl)){
-								mainImgUrl = JsoupUtil.getInstance().base64ToLink(mainImgUrl, mUser.getAccount());
+								mainImgUrl = JsoupUtil.getInstance().base64ToLink(mainImgUrl, userHandler.getUserName(mCrawlBean.getCreateUserId()));
 							}
 							
 							blog.setImgUrl(mainImgUrl);
@@ -175,7 +168,7 @@ public class SanwenNetBean {
 						if(result){
 							mCrawlBean.setCrawl(true);
 							//将抓取标记为已经抓取
-							crawlService.update(mCrawlBean);
+							crawlMapper.update(mCrawlBean);
 						}
 					}
 					
@@ -183,10 +176,10 @@ public class SanwenNetBean {
 				}else{
 					mCrawlBean.setCrawl(true);
 					//将抓取标记为已经抓取
-					crawlService.update(mCrawlBean);
+					crawlMapper.update(mCrawlBean);
 				}
 			}
-			return null;
+			return false;
 		}
 		
 	}

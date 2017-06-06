@@ -50,11 +50,11 @@ public static BlogSolrHandler handler;
 			synchronized(BaseSolrHandler.class){
 				server = new HttpSolrServer(BaseSolrHandler.BASE_SOLR_URL +this.corename());
 			    server.setMaxRetries(5); // defaults to 0. > 1 not recommended.
-			    server.setConnectionTimeout(30000); // 5 seconds to establish TCP
+			    server.setConnectionTimeout(60*000); // 5 seconds to establish TCP
 			    //正常情况下，以下参数无须设置
 			    //使用老版本solrj操作新版本的solr时，因为两个版本的javabin incompatible,所以需要设置Parser
 			    server.setParser(new XMLResponseParser());
-			    server.setSoTimeout(60000); // socket read timeout
+			    server.setSoTimeout(60*000); // socket read timeout
 			    server.setDefaultMaxConnectionsPerHost(100);
 			    server.setMaxTotalConnections(100);
 			    server.setFollowRedirects(false); // defaults to false

@@ -77,6 +77,66 @@ public class SqlUtil {
     }
     
     /**
+     * 组装实体bean(class没有实例化的情况)
+     * @param params
+     * @param clazz
+     * @return
+     */
+    public Object getBean(JSONObject params, Class<?> clazz){
+    	
+		SqlProvider provider = new SqlProvider();
+		TableFormat tableFormat = new HumpToUnderLineFormat();
+		
+		Field[] fields = provider.getFields(clazz);
+		try {
+			Object obj = clazz.newInstance();
+			for (int i = 0; i < fields.length; i++) {
+				Field field = fields[i];
+				//特殊处理serialVersionUID
+				if("serialVersionUID".equalsIgnoreCase(field.getName())){
+					continue;
+				}
+				Column column = field.getAnnotation(Column.class);
+				String columnName = "";
+				if (column != null) {
+					if (!column.required())
+						continue;
+					columnName = column.value().toUpperCase();
+				}
+				
+				if (StringUtils.isEmpty(columnName)) {
+					columnName = tableFormat.getColumnName(field.getName());
+				}
+				if(params.has(columnName.toLowerCase())){
+					field.setAccessible(true);
+					Class<?> typeClass = field.getType();
+					if(typeClass == int.class || typeClass == Integer.class){
+						field.set(obj, StringUtil.changeObjectToInt(params.get(columnName.toLowerCase())));
+					}else if(typeClass == String.class){
+						field.set(obj, StringUtil.changeNotNull((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == long.class || typeClass == Long.class){
+						field.set(obj, StringUtil.changeObjectToLong((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == float.class || typeClass == Float.class){
+						field.set(obj, StringUtil.changeObjectToFloat((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == double.class || typeClass == Double.class){
+						field.set(obj, StringUtil.changeObjectToDouble((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == boolean.class || typeClass == Boolean.class){
+						field.set(obj, StringUtil.changeObjectToBoolean((params.get(columnName.toLowerCase()))));
+					}else if(typeClass == Date.class){
+						field.set(obj, DateUtil.stringToDate(StringUtil.changeNotNull((params.get(columnName.toLowerCase())))));
+					}else{
+						new RuntimeException("无法创建实体bean,原因是未知的字段类型！");	
+					}
+				}
+			}
+			return obj;
+		} catch (Exception e) {
+			new RuntimeException("get select sql is exceptoin:" + e);
+		}
+		return null;
+	}
+    
+    /**
      * 组装更新的实体bean(class没有实例化的情况)
      * @param params
      * @param clazz

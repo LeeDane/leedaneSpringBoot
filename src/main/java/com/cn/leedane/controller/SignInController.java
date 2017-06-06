@@ -50,8 +50,7 @@ public class SignInController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		int id = JsonUtil.getIntValue(getJsonFromMessage(message), "id", getUserFromMessage(message).getId());
-		message.put("isSuccess", signInService.saveSignIn(getJsonFromMessage(message), userService.findById(id), request));
+		message.put("isSuccess", signInService.saveSignIn(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
