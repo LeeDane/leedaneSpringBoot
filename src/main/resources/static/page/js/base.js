@@ -399,3 +399,13 @@ function jsonToGetRequestParams(json){
 	
 	return params;
 }
+
+/**
+ * 这个方法做了一些操作、然后调用回调函数   
+ * @param fn function对象
+ * @param args 请求的参数,注意，这里必须是数组
+ * @returns
+ */
+function doCallback(fn,args){    
+    return fn.apply(this, args);  
+} 

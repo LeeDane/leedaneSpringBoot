@@ -155,6 +155,7 @@
 <body data-spy="scroll" data-target="#myScrollspy" data-offset="90">
 <div th:include="common :: hello">what?</div>
 <script th:src="@{/page/js/my.js}"></script>
+<script th:src="@{/page/js/select-material.js}"></script>
 <div class="container mainContainer clearFloat">
 	   <div class="row">
 		   <div class="col-lg-3" style="border: 1px solid #fff;background-color: #fff;">
@@ -483,9 +484,11 @@
 				<div class="input-group">
 			      <input type="text" id="push-mood-text" class="form-control" placeholder="请说点什么吧" />
 			      <span class="input-group-btn">
+			      	<button class="btn btn-default" type="button" onclick="createSelectMaterialModal(this, 3, 1, 'afterSelect');">选择素材</button>
 			        <button class="btn btn-default" type="button" onclick="sendMood();">发送</button>
 			      </span>
 			    </div><!-- /input-group -->
+			    <div class="select-links"></div>
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal -->

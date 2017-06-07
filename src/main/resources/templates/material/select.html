@@ -52,6 +52,9 @@
    			top: 0;
    			right: 0;
    		}
+   		#select-list{
+   			background-color: #f5f5f5;
+   		}
 	</style>
 </head>
 <body>
@@ -71,18 +74,19 @@
 	<div class="container">
 		<div class="row">
 			<div id="select-list" style="padding-bottom: 10px; position: fixed; z-index: 1111;">
-				<div>已选择的文件(最多选择3个) <a href="/mt" class="btn btn-primary btn-sm" role="button">素材管理中心</a></div>
+				<div>已选择的文件(最多选择<span th:utext="${select}"></span>个)</div>
 				<!-- <div class="col-lg-12 cut-text"><span class="badge" style="background-color: red; margin-right: 3px;">x</span><a href="#">http:www.baidu.comhttp:www.baidu.comhttp:www.baidu.comMailbox</a></div>
 				<div class="col-lg-12 cut-text"><span class="badge" style="background-color: red; margin-right: 3px;">x</span><a href="#">http:www.baidu.comhttp:www.baidu.comhttp:www.baidu.comMailbox</a></div>
 				<div class="col-lg-12 cut-text"><span class="badge" style="background-color: red; margin-right: 3px;">x</span><a href="#">http:www.baidu.comhttp:www.baidu.comhttp:www.baidu.comMailbox</a></div> -->
 			</div>
 			<ul class="nav nav-tabs nav-justified" id="material-tabs">
-				<li class="active" data-value="图像"><a href="javascript:void(0);">图像</a></li>
-				<li data-value="文件"><a href="javascript:void(0);">文件</a></li>
+				
+				<li th:if="${selectType == 0 or selectType == 1}" class="active" data-value="图像"><a href="javascript:void(0);">图像</a></li>
+				<li th:if="${selectType == 0 or selectType == 2}" data-value="文件"><a href="javascript:void(0);">文件</a></li>
 			</ul>
 			<div class="material-content row">
-					<div class="row" id="material-row-container" style="margin-top: 10px;">
-						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="row" id="material-row-container" style="margin-top: 10px; width: 100%;">
+						<div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
 								<div class="thumbnail">
 									<div class="cut-text2" title="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_2017ffffggrrrrttrtreeghhhjjiio0526220211-54f1b4c5bdf4adb8.jpg" >http://7xnv8i.com1.z0.glb.clouddn.com/leedane_2017ffffggrrrrttrtreeghhhjjiio0526220211-54f1b4c5bdf4adb8.jpg</div>
 									<div class="caption">
@@ -102,5 +106,8 @@
 </body>
 <script th:inline="javascript">//引用
 	var tabName = /*[[${tabName}]]*/;//取值
+	var select = /*[[${select}]]*/;//取值  
+	var modalWidth = /*[[${width}]]*/;//取值 
+	var selectType = /*[[${selectType}]]*/;//取值 
 </script> 
 </html>

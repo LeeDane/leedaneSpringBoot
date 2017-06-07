@@ -15,7 +15,8 @@ $(function(){
 		materialListImgHight = materialListImgWidth - 30;
 	}else{
 		//为什么这里减去30是因为弹出的模态框离窗口有边距
-		materialListImgHight = $(window).width() - 30;
+		materialListImgHight = Math.floor((modalWidth / 3)) - 30;
+		console.log("高度是："+ materialListImgHight);
 	}
 
 	if(isNotEmpty(tabName)){
@@ -42,7 +43,6 @@ $(function(){
 		//清空已经选择的数据
 		selectObjs = {};
 		$("#select-list").find(".has-select-file").remove();
-		resetContrainHeight();
 		getMaterials();
 	});
 	
@@ -64,8 +64,8 @@ $(function(){
 			 $("#select-file-"+ material.id).remove();
 		}else{
 			//添加
-			if(size > 2){
-				layer.msg("抱歉，最多只能选择3条数据！");
+			if(size > (select - 1)){
+				layer.msg("抱歉，最多只能选择"+ select +"条数据！");
 				return;
 			}
 			selectObjs[material.id] = material.qiniu_path;
@@ -78,8 +78,6 @@ $(function(){
 			resetContrainHeight();
 		}
 	});
-	
-	resetContrainHeight();
 });
 
 /**
@@ -87,7 +85,7 @@ $(function(){
  */
 function resetContrainHeight(){
 	var height = $("#select-list").height();
-	$("#material-tabs").css("margin-top", height +"px");
+	$("#material-tabs").css("margin-top", (height + 20) +"px");
 }
 
 /**
@@ -112,6 +110,11 @@ function getMaterials(){
 					$materialListContainer.append('<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">空空的，还没有数据</div>');
 					return;
 				}
+				
+				//判断是否已经被选择
+				var selects = $("#select-list").find(".has-select-file");
+				var matchSelect = selects.length > 0;
+				
 				for(var i = 0; i < materials.length; i++){
 					if(type == "图像"){
 						$materialListContainer.append(buildEachMaterialImgRow(i, materials[i]));
@@ -119,6 +122,19 @@ function getMaterials(){
 						$materialListContainer.append(buildEachMaterialFileRow(i, materials[i]));
 					}
 					$("#material-row-"+ i).data("material", materials[i]);
+				}
+				resetContrainHeight();
+				for(var i = 0; i < materials.length; i++){
+					if(matchSelect){
+						for(var sl in selectObjs){
+							//匹配到了
+							if(parseInt(sl) == materials[i].id){
+								$("#material-row-"+ i).find("div.thumbnail").addClass("click-select");
+								$("#material-row-"+ i).find("div.thumbnail").append('<div class="thumbnail-top"></div>');
+								break;
+							}
+						}
+					}
 				}
 				pageDivUtil(data.total);
 			}else{
@@ -141,7 +157,7 @@ function getMaterials(){
  * @returns {String}
  */
 function buildEachMaterialImgRow(index, material){
-		var html = '<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" id="material-row-'+ index +'">'+
+		var html = '<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" id="material-row-'+ index +'">'+
 						'<div class="thumbnail">'+
 						      '<img width="100%" style="height: '+materialListImgHight+'px;" src="'+ material.qiniu_path +'" alt="..." />'+
 						      '<div class="caption">'+
@@ -271,4 +287,11 @@ function next(){
 	if(currentIndex > totalPage)
 		currentIndex = totalPage;
 	getMaterials();
+}
+
+/**
+ * 父窗口调用获取选择的图片
+ */
+function getSelectData(){
+	return selectObjs;
 }

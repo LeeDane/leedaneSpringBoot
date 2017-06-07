@@ -993,14 +993,14 @@ function sendMood(){
 	}
 	
 	var loadi = layer.load('努力加载中…');
-	var params = {table_name: 't_mood', table_id: ct_id, content: text, froms: 'web网页端'};
+	var params = {table_name: 't_mood', table_id: ct_id, content: text, links: $(".select-links").text(),froms: 'web网页端'};
 	if(ct_click_index >= 0){
 		params.pid = cts[ct_click_index].id;
 	}
 	$.ajax({
 		type : "post",
 		data: params,
-		url : "/md/sendWord",
+		url : "/md/wordAndLink",
 		dataType: 'json', 
 		beforeSend:function(){
 		},
@@ -1019,6 +1019,14 @@ function sendMood(){
 			layer.msg("网络请求失败");
 		}
 	});
+}
+
+/**
+ * 选择素材之后的回调函数
+ */
+function afterSelect(links){
+	$(".select-links").empty();
+	$(".select-links").text(links);
 }
 
 function testClick(obj){

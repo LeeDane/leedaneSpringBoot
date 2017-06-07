@@ -296,12 +296,29 @@ public class HtmlController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(ControllerBaseNameUtil.mt +"/select")
-	public String materialSelect(Model model, @RequestParam(value="type", required=false) String type, HttpServletRequest request){
+	public String materialSelect(Model model, 
+			@RequestParam(value="type", required=false) String type, 
+			@RequestParam(value="width", required=false) Integer width,  //窗体的宽度
+			@RequestParam(value="select", required=false) Integer select, //最多选择的数量
+			@RequestParam(value="selectType", required=false) Integer selectType, //选择的类型，0表示全部， 1表示图片， 2表示文件
+			HttpServletRequest request){
 		boolean iframe = false;
 		if(StringUtil.isNotNull(type) && "iframe".equals(type))
 			iframe = true;
 		
+		if(width < 1)
+			width = 100;
+		
+		if(select < 1)
+			select = 3;
+		
+		if(selectType < 1)
+			selectType = 0;
+		
 		model.addAttribute("iframe", iframe);
+		model.addAttribute("width", width);
+		model.addAttribute("select", select);
+		model.addAttribute("selectType", selectType);
 		
 		return loginRoleCheck("material/select", true, model, request);
 	}
