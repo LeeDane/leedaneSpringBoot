@@ -82,74 +82,56 @@ public class WangyiNewsDeal implements BaseScheduling{
 						wangyi.execute();
 					}catch(IOException e){
 						logger.error("处理网易新闻信息出现异常：deal()+url="+bean.getUrl() +e.toString());
-						bean.setCrawl(true);
-						//bean.setScore(wangyi.score());
-						//将抓取标记为已经抓取
-						crawlMapper.update(bean);
-						continue;
 					}
 					
-					if( wangyi != null && wangyi.getContent() != null && !wangyi.getContent().trim().equals("")&& wangyi.getTitle() != null && !wangyi.getTitle().trim().equals("")){
-						
+					if( wangyi != null && StringUtil.isNotNull(wangyi.getContent()) && StringUtil.isNotNull(wangyi.getTitle())){
 						//判断是否已经存在相同的信息
 						List<Map<String, Object>> existsBlogs = blogMapper.executeSQL("select id from "+DataTableType.博客.value+" where origin_link != '' and origin_link = ? ", bean.getUrl());
-						if(existsBlogs!= null && existsBlogs.size() > 0){
-							bean.setCrawl(true);
-							//bean.setScore(wangyi.score());
-							//将抓取标记为已经抓取
-							crawlMapper.update(bean);
-							continue;
-						}
-						BlogBean blog = new BlogBean();
-						blog.setTitle(wangyi.getTitle().trim());
-						blog.setContent(wangyi.getContent());
-						blog.setCreateUserId(bean.getCreateUserId());
-						blog.setCreateTime(new Date());
-						blog.setSource(EnumUtil.WebCrawlType.网易新闻.value);
-						blog.setFroms("爬虫抓取");
-						blog.setCategory("我的日常");
-						blog.setStatus(ConstantsUtil.STATUS_NORMAL);
-						blog.setDigest(JsoupUtil.getInstance().getDigest(wangyi.getContent(), 0, 120));
-						blog.setCanComment(true);
-						blog.setCanTransmit(true);
-						String mainImgUrl = wangyi.getMainImg();
-						if(StringUtil.isNotNull(mainImgUrl)){
-							blog.setHasImg(true);
-							
-							//对base64位的src属性处理
-							if(!StringUtil.isLink(mainImgUrl)){
-								mainImgUrl = JsoupUtil.getInstance().base64ToLink(mainImgUrl, userHandler.getUserName(bean.getCreateUserId()));
+						if(CollectionUtil.isEmpty(existsBlogs)){
+							BlogBean blog = new BlogBean();
+							blog.setTitle(wangyi.getTitle().trim());
+							blog.setContent(wangyi.getContent());
+							blog.setCreateUserId(bean.getCreateUserId());
+							blog.setCreateTime(new Date());
+							blog.setSource(EnumUtil.WebCrawlType.网易新闻.value);
+							blog.setFroms("爬虫抓取");
+							blog.setCategory("我的日常");
+							blog.setStatus(ConstantsUtil.STATUS_NORMAL);
+							blog.setDigest(JsoupUtil.getInstance().getDigest(wangyi.getContent(), 0, 120));
+							blog.setCanComment(true);
+							blog.setCanTransmit(true);
+							String mainImgUrl = wangyi.getMainImg();
+							if(StringUtil.isNotNull(mainImgUrl)){
+								blog.setHasImg(true);
+								
+								//对base64位的src属性处理
+								if(!StringUtil.isLink(mainImgUrl)){
+									mainImgUrl = JsoupUtil.getInstance().base64ToLink(mainImgUrl, userHandler.getUserName(bean.getCreateUserId()));
+								}
+								blog.setImgUrl(mainImgUrl);
+								
 							}
-							blog.setImgUrl(mainImgUrl);
+							blog.setOriginLink(bean.getUrl());
+							//保存进博客表中
+							boolean result = blogMapper.save(blog) > 0 ;
 							
+							//抓取成功
+							if(result){
+								//异步修改solr索引
+								new ThreadUtil().singleTask(new BlogSolrAddThread(blog));
+							}
 						}
-						blog.setOriginLink(bean.getUrl());
-						//保存进博客表中
-						boolean result = blogMapper.save(blog) > 0 ;
 						
-						//抓取成功
-						if(result){
-							//异步修改solr索引
-							new ThreadUtil().singleTask(new BlogSolrAddThread(blog));
-							
-							//BlogSolrHandler.getInstance().addBean(blog);
-							bean.setCrawl(true);
-							//bean.setScore(wangyi.score());
-							//将抓取标记为已经抓取
-							crawlMapper.update(bean);
-						}
 					}
-				
-				//不符合条件的也修改标记为已抓取
-				}else{
-					bean.setCrawl(true);
-					//bean.setScore(wangyi.score());
-					//将抓取标记为已经抓取
-					crawlMapper.update(bean);
 				}
-			}
+				
+				//不管处理是否成功都标记为已抓取
+				bean.setCrawl(true);
+				//bean.setScore(wangyi.score());
+				//将抓取标记为已经抓取
+				crawlMapper.update(bean);
+			}//for循环到此结束
 		} catch (Exception e) {
-			//e.printStackTrace();
 			logger.error("处理网易新闻信息出现异常：deal()"+ e.getMessage());
 		}
 	}

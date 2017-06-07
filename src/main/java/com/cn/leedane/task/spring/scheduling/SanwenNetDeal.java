@@ -26,6 +26,8 @@ import com.cn.leedane.mapper.BlogMapper;
 import com.cn.leedane.mapper.CrawlMapper;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.CrawlBean;
+import com.cn.leedane.thread.ThreadUtil;
+import com.cn.leedane.thread.single.BlogSolrAddThread;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
@@ -148,58 +150,60 @@ public class SanwenNetDeal implements BaseScheduling{
 					String content = sanwenNet.getContent("#article .content",".adcontent");
 					String title = sanwenNet.getTitle().trim();
 					
-					if(!StringUtil.isNull(content) && !StringUtil.isNull(title)){
+					if(StringUtil.isNotNull(content) && StringUtil.isNotNull(title)){
 						//判断是否已经存在相同的信息
 						List<Map<String, Object>> existsBlogs = blogMapper.executeSQL("select id from "+DataTableType.博客.value+" where origin_link = ? ", url);
-						if(existsBlogs!= null && existsBlogs.size() > 0){
-							return true;
-						}
-						
-						BlogBean blog = new BlogBean();
-						blog.setTitle(title);
-						blog.setContent(content);
-						blog.setCreateUserId(mCrawlBean.getCreateUserId());
-						blog.setCreateTime(new Date());
-						blog.setSource(EnumUtil.WebCrawlType.散文网.value);
-						blog.setFroms("爬虫抓取");
-						blog.setCategory("我的日常");
-						blog.setStatus(ConstantsUtil.STATUS_NORMAL);
-						blog.setDigest(JsoupUtil.getInstance().getDigest(content, 0, 120));
-						blog.setCanComment(true);
-						blog.setCanTransmit(true);
-						
-						//获取主图
-						String mainImgUrl = sanwenNet.getMainImg("#article .content img", 0);
-						if( mainImgUrl != null && !mainImgUrl.equals("")){
-							blog.setHasImg(true);
+						if(CollectionUtil.isEmpty(existsBlogs)){
+							BlogBean blog = new BlogBean();
+							blog.setTitle(title);
+							blog.setContent(content);
+							blog.setCreateUserId(mCrawlBean.getCreateUserId());
+							blog.setCreateTime(new Date());
+							blog.setSource(EnumUtil.WebCrawlType.散文网.value);
+							blog.setFroms("爬虫抓取");
+							blog.setCategory("我的日常");
+							blog.setStatus(ConstantsUtil.STATUS_NORMAL);
+							blog.setDigest(JsoupUtil.getInstance().getDigest(content, 0, 120));
+							blog.setCanComment(true);
+							blog.setCanTransmit(true);
 							
-							//对base64位的src属性处理
-							if(!StringUtil.isLink(mainImgUrl)){
-								mainImgUrl = JsoupUtil.getInstance().base64ToLink(mainImgUrl, userHandler.getUserName(mCrawlBean.getCreateUserId()));
+							//获取主图
+							String mainImgUrl = sanwenNet.getMainImg("#article .content img", 0);
+							if( mainImgUrl != null && !mainImgUrl.equals("")){
+								blog.setHasImg(true);
+								
+								//对base64位的src属性处理
+								if(!StringUtil.isLink(mainImgUrl)){
+									mainImgUrl = JsoupUtil.getInstance().base64ToLink(mainImgUrl, userHandler.getUserName(mCrawlBean.getCreateUserId()));
+								}
+								
+								blog.setImgUrl(mainImgUrl);
 							}
+							blog.setOriginLink(url);
+							//把抓取到的数据添加进博客表中
+							boolean result = blogMapper.save(blog) > 0;
 							
-							blog.setImgUrl(mainImgUrl);
+							//保存成功之后
+							if(result){
+								//异步修改solr索引
+								new ThreadUtil().singleTask(new BlogSolrAddThread(blog));
+								mCrawlBean.setCrawl(true);
+								//将抓取标记为已经抓取
+								crawlMapper.update(mCrawlBean);
+								return true;
+							}
 						}
-						blog.setOriginLink(url);
-						//把抓取到的数据添加进博客表中
-						boolean result = blogMapper.save(blog) > 0;
 						
-						//保存成功之后
-						if(result){
-							mCrawlBean.setCrawl(true);
-							//将抓取标记为已经抓取
-							crawlMapper.update(mCrawlBean);
-						}
+						
 					}
 					
 				//不合符抓取条件的记录也标记为已经抓取
-				}else{
-					mCrawlBean.setCrawl(true);
-					//将抓取标记为已经抓取
-					crawlMapper.update(mCrawlBean);
 				}
+				mCrawlBean.setCrawl(true);
+				//将抓取标记为已经抓取
+				crawlMapper.update(mCrawlBean);
 			}
-			return null;
+			return false;
 		}
 		
 	}
