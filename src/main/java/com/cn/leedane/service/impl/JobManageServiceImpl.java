@@ -147,7 +147,7 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
         boolean result = jobManageMapper.update(jobManageBean) > 0;
         if(result){
         	
-        	TriggerKey triggerKey = TriggerKey.triggerKey(jobManageBean.getJobName(), jobManageBean.getJobGroup());
+        	TriggerKey triggerKey = TriggerKey.triggerKey(oldJobManageBean.getJobName(), oldJobManageBean.getJobGroup());
             //获取trigger，即在spring配置文件中定义的 bean id="myTrigger"
             CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
         	

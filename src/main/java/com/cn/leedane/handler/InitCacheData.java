@@ -1,14 +1,9 @@
-package com.cn.leedane.springboot;
+package com.cn.leedane.handler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,14 +12,26 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import net.sf.json.JSONObject;
+
 import org.apache.log4j.Logger;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.CronTrigger;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.ehcache.EhCacheCache;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.cache.SystemCache;
+import com.cn.leedane.mapper.BaseMapper;
+import com.cn.leedane.model.JobManageBean;
 import com.cn.leedane.model.OptionBean;
+import com.cn.leedane.model.RecordTimeBean;
 import com.cn.leedane.rabbitmq.RecieveMessage;
 import com.cn.leedane.rabbitmq.recieve.DeleteServerFileRecieve;
 import com.cn.leedane.rabbitmq.recieve.EmailRecieve;
@@ -33,10 +40,15 @@ import com.cn.leedane.rabbitmq.recieve.IRecieve;
 import com.cn.leedane.rabbitmq.recieve.LogRecieve;
 import com.cn.leedane.rabbitmq.recieve.VisitorRecieve;
 import com.cn.leedane.redis.util.RedisUtil;
+import com.cn.leedane.springboot.SpringUtil;
+import com.cn.leedane.task.spring.QuartzJobFactory;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.CommonUtil;
 import com.cn.leedane.utils.FinancialCategoryUtil;
 import com.cn.leedane.utils.FinancialWebImeiUtil;
 import com.cn.leedane.utils.OptionUtil;
+import com.cn.leedane.utils.SqlUtil;
+import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.utils.sensitiveWord.SensitiveWordInit;
 
 /**
@@ -52,13 +64,18 @@ public class InitCacheData {
 	@Autowired
 	private SystemCache systemCache;
 	
+	@Autowired
+	private BaseMapper<RecordTimeBean> baseMapper;
+	
+	@Autowired
+	private Scheduler scheduler;
+	
 	public void init(){
-		if(systemCache == null)
-			systemCache = (SystemCache) SpringUtil.getBean("systemCache");
 
 		checdRidesOpen();//检查redis服务器有没有打开
 		initCache();
 		loadOptionTable(); //加载选项表中的数据
+		startJob(); //加载定时任务
 		new OptionUtil();//加载选项到内存中
 		
 		loadFilterUrls(); //加载过滤的url地址
@@ -265,8 +282,6 @@ public class InitCacheData {
 		systemCache = (SystemCache) SpringUtil.getBean("systemCache");		
 		EhCacheCacheManager ehCacheCacheManager = (EhCacheCacheManager) SpringUtil.getBean("ehCacheCacheManager");
 		EhCacheCache cache = (EhCacheCache) ehCacheCacheManager.getCache("systemEhCache");
-		cache.put("ttt", "hhh");
-		logger.info(cache.get("ttt").get());
 		SystemCache.setSystemEhCache(cache);
 	}
 
@@ -274,25 +289,17 @@ public class InitCacheData {
 	 * 加载选项表中的键和值
 	 */
 	private void loadOptionTable(){
-		Connection conn = null;
 		try {
-			String dbDriver = CommonUtil.getProperties("appConfig.properties", "jdbc.driver");
-			String dbURL = CommonUtil.getProperties("appConfig.properties", "jdbc.url");
-			String user = CommonUtil.getProperties("appConfig.properties", "jdbc.username");
-			String pass = CommonUtil.getProperties("appConfig.properties", "jdbc.password");
-			 
-			Class.forName(dbDriver);  
-			conn = DriverManager.getConnection(dbURL, user, pass);  
-			long begin = System.currentTimeMillis();  
-			Statement s = conn.createStatement();  
-			String sql = "select option_key, option_value from t_option where STATUS = 1";  
-			ResultSet querySet = s.executeQuery(sql);  
-			while(querySet.next()) {  
-				OptionBean option = new OptionBean();  
-				option.setOptionKey(querySet.getString(1));
-				option.setOptionValue(querySet.getString(2));
-				systemCache.addCache(option.getOptionKey(), option.getOptionValue());
-			}  
+			long begin = System.currentTimeMillis();
+			List<Map<String, Object>> results = baseMapper.executeSQL("select option_key, option_value from t_option where STATUS = 1");
+			if(CollectionUtil.isNotEmpty(results)){
+				for(Map<String, Object> result: results){
+					OptionBean option = new OptionBean();  
+					option.setOptionKey(StringUtil.changeNotNull(result.get("option_key")));
+					option.setOptionValue(StringUtil.changeNotNull(result.get("option_value")));
+					systemCache.addCache(option.getOptionKey(), option.getOptionValue());
+				}
+			}
 			long end = System.currentTimeMillis();  
 			logger.warn("加载选项表数据进缓存中结束，共计耗时："+(end - begin) +"ms");  
 			
@@ -300,14 +307,56 @@ public class InitCacheData {
 		} catch (Exception ex) {  
 			logger.error("初始化读取T_OPTION表出现异常");
 			ex.printStackTrace();
-		} finally { 
-			if(conn != null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					logger.error("初始化缓存关闭connection连接出现异常");
-				}  
-			}
 		} 
+	}
+	
+	/**
+	 * 加载定时任务到任务队列中
+	 */
+	private void startJob(){
+		try {
+			long begin = System.currentTimeMillis();
+			List<Map<String, Object>> results = baseMapper.executeSQL("SELECT * FROM t_job_manage where STATUS = 1");
+			if(CollectionUtil.isNotEmpty(results)){
+				for(Map<String, Object> result: results){
+					JSONObject json = JSONObject.fromObject(result);
+					json.remove("create_time");//暂时不处理创建日期
+					json.remove("modify_time");//暂时不处理修改日期
+					SqlUtil sqlUtil = new SqlUtil();
+					JobManageBean jobManageBean = (JobManageBean) sqlUtil.getBean(json, JobManageBean.class);
+					if(jobManageBean != null){
+						TriggerKey triggerKey = TriggerKey.triggerKey(jobManageBean.getJobName(), jobManageBean.getJobGroup());
+			            //获取trigger，即在spring配置文件中定义的 bean id="myTrigger"
+			            CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
+			         
+			            //存在，删掉
+			            if (trigger != null) {
+			                scheduler.deleteJob(trigger.getJobKey());
+			            }
+			            
+			            //按新的trigger重新设置job执行
+			            JobDetail jobDetail = JobBuilder.newJob(QuartzJobFactory.class)
+			                    .withIdentity(jobManageBean.getJobName(), jobManageBean.getJobGroup()).build();
+			            jobDetail.getJobDataMap().put("scheduleJob", jobManageBean);
+			     
+			            //表达式调度构建器
+			            CronScheduleBuilder scheduleBuilder1 = CronScheduleBuilder.cronSchedule(jobManageBean
+			                .getCronExpression());
+			     
+			            //按新的cronExpression表达式构建一个新的trigger
+			            trigger = TriggerBuilder.newTrigger().withIdentity(jobManageBean.getJobName(), jobManageBean.getJobGroup()).withSchedule(scheduleBuilder1).build();
+			            scheduler.scheduleJob(jobDetail, trigger);
+					}
+					
+				}
+			}
+			long end = System.currentTimeMillis();  
+			logger.warn("加载定时任务表数据进缓存中结束，共计耗时："+(end - begin) +"ms");  
+			
+			//logger.info("---->"+systemCache.getCache("page-size"));
+		} catch (Exception ex) {  
+			logger.error("初始化读取T_JOB_MANAGE表出现异常");
+			ex.printStackTrace();
+		}
 	}
 }

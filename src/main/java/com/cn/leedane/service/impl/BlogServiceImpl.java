@@ -21,7 +21,6 @@ import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.TransmitHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.ZanHandler;
-import com.cn.leedane.lucene.solr.BlogSolrHandler;
 import com.cn.leedane.mapper.BlogMapper;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.OperateLogBean;
@@ -29,6 +28,10 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.thread.ThreadUtil;
+import com.cn.leedane.thread.single.BlogSolrAddThread;
+import com.cn.leedane.thread.single.BlogSolrDeleteThread;
+import com.cn.leedane.thread.single.BlogSolrUpdateThread;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
@@ -103,7 +106,8 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			result = blogMapper.save(blog);
 		}
 		if(result > 0){
-			BlogSolrHandler.getInstance().addBean(blog);
+			new ThreadUtil().singleTask(new BlogSolrAddThread(blog));
+			
 			message.put("isSuccess",true);
 			message.put("message","文章发布成功");
 		}else{
@@ -256,7 +260,9 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		
 		boolean result = this.blogMapper.deleteById(BlogBean.class, id) > 0;
 		if(result){
-			BlogSolrHandler.getInstance().deleteBean(String.valueOf(id));
+			//异步删除solr
+			new ThreadUtil().singleTask(new BlogSolrDeleteThread(String.valueOf(id)));
+			
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -360,7 +366,9 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			if(cut){
 				message.put("message", "添加成功，标签数量超过3个，已自动删掉第一个");
 			}else{
-				BlogSolrHandler.getInstance().updateBean(blogBean);
+				//异步修改solr索引
+				new ThreadUtil().singleTask(new BlogSolrUpdateThread(blogBean));
+				
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.标签添加成功.value));
 			}
 		}else{
@@ -466,6 +474,8 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		message.put("message", r);
 		message.put("isSuccess", true);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		//异步修改solr索引
+		//new ThreadUtil().task(new BlogSolrUpdateThread(blogBean));
 		//BlogSolrHandler.getInstance().updateBean(blogBean);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取编辑博客Id为：", blogId, StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "edit()", ConstantsUtil.STATUS_NORMAL, 0);

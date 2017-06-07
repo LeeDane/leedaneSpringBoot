@@ -77,4 +77,10 @@ public abstract class BaseSolrHandler <T extends IDBean>{
 	 */
 	protected abstract boolean updateBeans(List<T> beans);
 	
+	/**
+	 * 对该对象的solr进行优化
+	 * @return
+	 */
+	protected abstract boolean optimize();
+	
 }

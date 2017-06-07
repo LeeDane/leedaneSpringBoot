@@ -1,7 +1,5 @@
 package com.cn.leedane.model;
 
-import java.util.Date;
-
 import com.cn.leedane.mybatis.table.annotation.Column;
 
 /**

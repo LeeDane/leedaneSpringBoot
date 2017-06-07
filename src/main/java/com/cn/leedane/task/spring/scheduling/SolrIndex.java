@@ -21,10 +21,10 @@ import com.cn.leedane.lucene.solr.MoodSolrHandler;
 import com.cn.leedane.lucene.solr.UserSolrHandler;
 import com.cn.leedane.mapper.BlogMapper;
 import com.cn.leedane.mapper.MoodMapper;
+import com.cn.leedane.mapper.UserMapper;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.MoodBean;
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
@@ -43,7 +43,7 @@ public class SolrIndex implements BaseScheduling{
 	/**
 	 * 每次最多获取的数量
 	 */
-	public static final int MAX_SIZE = 10;
+	public static final int MAX_SIZE = 20;
 	
 	@Resource
 	private BlogMapper blogMapper;
@@ -52,11 +52,7 @@ public class SolrIndex implements BaseScheduling{
 	private MoodMapper moodMapper;
 	
 	@Resource
-	private UserService<UserBean> userService;
-	
-	public void setUserService(UserService<UserBean> userService) {
-		this.userService = userService;
-	}
+	private UserMapper userMapper;
 
 	@Override
 	public void execute() throws SchedulerException {
@@ -155,7 +151,7 @@ public class SolrIndex implements BaseScheduling{
 	 * @return
 	 */
 	private List<UserBean> getNoIndexUserList(){
-		List<Map<String, Object>> list = userService.executeSQL("select u.id, u.account, u.china_name, u.real_name, u.mobile_phone, u.id_card, u.email from "+DataTableType.用户.value+" u where u.status=? and u.is_solr_index=? order by u.id desc limit 0,?", ConstantsUtil.STATUS_NORMAL, false, MAX_SIZE);
+		List<Map<String, Object>> list = userMapper.executeSQL("select u.id, u.account, u.china_name, u.real_name, u.mobile_phone, u.id_card, u.email from "+DataTableType.用户.value+" u where u.status=? and u.is_solr_index=? order by u.id desc limit 0,?", ConstantsUtil.STATUS_NORMAL, false, MAX_SIZE);
 		List<UserBean> users = new ArrayList<UserBean>();
 		if(list != null && list.size()> 0){
 			UserBean userBean;
@@ -178,24 +174,9 @@ public class SolrIndex implements BaseScheduling{
 	class SingleIndexTask implements Callable<Boolean>{
 		private Object obj;
 		private int tempId;
-		private String corename;
 		public SingleIndexTask(int tempId, Object obj) {
 			this.obj = obj;
 			this.tempId = tempId;
-			switch (tempId) {
-				case 1:
-					corename = "blog";
-					break;
-				case 2:
-					corename = "mood";
-					break;
-				case 3:
-					corename = "user";
-					break;
-			default:
-				break;
-			}
-			
 		}
 
 		@Override
@@ -219,11 +200,11 @@ public class SolrIndex implements BaseScheduling{
 				}
 			}else if(tempId ==3){
 				UserBean user = (UserBean) obj;
-				UserBean updateUser = userService.findById(user.getId());
+				UserBean updateUser = userMapper.findById(UserBean.class, user.getId());
 				result = UserSolrHandler.getInstance().addBean(updateUser);
 				if(result){
 					updateUser.setSolrIndex(true);
-					userService.update(updateUser);
+					userMapper.update(updateUser);
 				}
 			}
 			return result;

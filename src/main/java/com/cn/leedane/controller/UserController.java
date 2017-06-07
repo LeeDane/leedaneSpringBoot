@@ -24,7 +24,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.WechatHandler;
-import com.cn.leedane.lucene.solr.UserSolrHandler;
 import com.cn.leedane.model.FriendBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
@@ -33,6 +32,9 @@ import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserTokenService;
 import com.cn.leedane.shiro.CustomAuthenticationToken;
+import com.cn.leedane.thread.ThreadUtil;
+import com.cn.leedane.thread.single.UserSolrAddThread;
+import com.cn.leedane.thread.single.UserSolrUpdateThread;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.DateUtil;
@@ -367,7 +369,10 @@ public class UserController extends BaseController{
 				if(isUpdate){
 					//发送邮件
 					userService.sendEmail(user);
-					UserSolrHandler.getInstance().updateBean(user);
+					
+					//异步修改用户solr索引
+					new ThreadUtil().singleTask(new UserSolrUpdateThread(user));
+					//UserSolrHandler.getInstance().updateBean(user);
 				}
 					
 				message.put("isSuccess", true);
@@ -753,7 +758,11 @@ public class UserController extends BaseController{
 				message.put("message", "请先登录邮箱完成注册...");
 				return message.getMap();
 			}else{
-				UserSolrHandler.getInstance().addBean(user);
+				
+				//异步添加用户solr索引
+				new ThreadUtil().singleTask(new UserSolrAddThread(user));
+				//UserSolrHandler.getInstance().addBean(user);
+				
 				message.put("userinfo", userHandler.getUserInfo(user, true));
 				message.put("isSuccess", true);
 				message.put("message", "登录成功，正在为您跳转...");
@@ -896,7 +905,10 @@ public class UserController extends BaseController{
 			cacheBean.setCurrentType(currentType);
 			cacheBean.setLastBlogId(0);
 			wechatHandler.addCache(FromUserName, cacheBean);
-			UserSolrHandler.getInstance().updateBean(user);	
+			
+			//异步修改用户solr索引
+			new ThreadUtil().singleTask(new UserSolrUpdateThread(user));
+			//UserSolrHandler.getInstance().updateBean(user);	
 			
             currentUser.getSession().setAttribute(USER_INFO_KEY, user);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您成功绑定当前微信.value));

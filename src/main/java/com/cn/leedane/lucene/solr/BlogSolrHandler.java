@@ -89,9 +89,6 @@ public static BlogSolrHandler handler;
 	public boolean addBean(BlogBean bean){
 		try {
 			server.addBean(bean);
-			 //对索引进行优化
-            server.optimize();
-            
 			server.commit();
 			return true;
 		} catch (IOException e) {
@@ -106,8 +103,6 @@ public static BlogSolrHandler handler;
 	public boolean addBeans(List<BlogBean> beans){
 		try {
 			server.addBeans(beans);
-			//对索引进行优化
-            server.optimize();
 			server.commit();
 			return true;
 		} catch (SolrServerException e) {
@@ -133,8 +128,6 @@ public static BlogSolrHandler handler;
 	public boolean deleteBean(String id){
 		try {
 			server.deleteById(id);
-			//对索引进行优化
-            server.optimize();
 			server.commit();
 			return true;
 		} catch (SolrServerException e) {
@@ -149,8 +142,6 @@ public static BlogSolrHandler handler;
 	public boolean deleteBeans(List<String> ids){
 		try {
 			server.deleteById(ids);
-			//对索引进行优化
-            server.optimize();
 			server.commit();
 			return true;
 		} catch (SolrServerException e) {
@@ -169,5 +160,19 @@ public static BlogSolrHandler handler;
 	@Override
 	public boolean updateBeans(List<BlogBean> beans) {
 		return addBeans(beans);
+	}
+	
+	@Override
+	public boolean optimize() {
+		try {
+			//对索引进行优化
+            server.optimize();
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}catch (SolrServerException e) {
+			e.printStackTrace();
+		}  
+		return false;
 	}
 }

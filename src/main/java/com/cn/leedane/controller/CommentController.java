@@ -19,6 +19,7 @@ import com.cn.leedane.model.CommentBean;
 import com.cn.leedane.service.CommentService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.StringUtil;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.cm)
@@ -53,29 +54,14 @@ public class CommentController extends BaseController{
 	public Map<String, Object> paging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
-		
-		List<String> list = new ArrayList<>();
-		list.add("9149");
-		list.add("9148");
-		list.add("9147");
-		list.add("9138");
-		list.add("9136");
-		list.add("9151");
-		list.add("9152");
-		list.add("9153");
-		list.add("9157");
-		list.add("9159");
-		list.add("9160");
-		list.add("9162");
-		list.add("9164");
-		list.add("9171");
-		list.add("9177");
-		list.add("9180");
-		list.add("9181");
-		list.add("9224");
-		list.add("9225");
-		list.add("9228");
-		BlogSolrHandler.getInstance().deleteBeans(list);
+		/*String ids = "6565, 6566, 6571, 6572, 6573, 6574, 6575, 9249, 9250, 9252, 9424, 9437, 9442, 9444, 9446, 9487, 9489, 9490, 9492, 9494, 9496, 9499, 9501, 9502, 9503, 9505, 9506, 9507, 9509, 9510, 9511, 9513, 9514, 9519, 9520, 9524, 9527, 9532, 9533, 9535, 9536, 9540, 9542, 9546, 9607, 9744, 9746, 9748, 9762, 9764, 9766, 9768, 9775, 9779, 9806, 9810, 9812, 9828, 9832, 9845, 9847, 9850, 9856, 9857, 9859, 9861, 9862, 9864, 9865, 9868, 9870, 9872, 9874, 9876, 9879,9880, 9887, 9889, 9892, 9894, 9899, 9901, 9902, 9904, 9905, 9907, 9914, 9917, 9919, 9921, 9929, 9933, 9945, 9949, 9951, 9958,9960, 9967, 9971, 9975, 9977, 9979, 9981, 9986, 9993, 9995, 9999, 10001, 10003, 10005, 10007, 10011, 10012, 10015, 10018, 10023, 10027, 10029, 10032, 10033, 10034, 10036, 10038, 10040, 10042, 10043, 9522";
+		String[] idArray = ids.split(",");
+		List<String> list = new ArrayList<String>();
+		for(String id: idArray){
+			int d = StringUtil.changeObjectToInt(id.trim());
+			list.add(String.valueOf(d));
+		}
+		BlogSolrHandler.getInstance().deleteBeans(list);*/
 		
 		message.putAll(commentService.getCommentsByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();

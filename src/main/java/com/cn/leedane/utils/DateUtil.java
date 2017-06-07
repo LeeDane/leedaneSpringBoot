@@ -605,6 +605,33 @@ public class DateUtil {
 		return "";
 	}
 	
+	/**
+	 * 对字符串进行格式化，格式如Thu Sep 03 23:51:25 CST 2015
+	 * @param str
+	 * @param format
+	 * @return 转化不了返回""
+	 */
+	public static String formatStringTime(String str){
+		if(StringUtil.isNotNull(str) && str.trim().length() == 21){
+			return str.trim().substring(0, 19);
+		}
+		return str;
+	}
+	
+	/**
+	 * 对字符串进行格式化，格式如Thu Sep 03 23:51:25 CST 2015
+	 * @param str
+	 * @param format
+	 * @return 转化不了返回""
+	 */
+	public static String formatStringTime(String str, String format){
+		str = formatStringTime(str);
+		if(StringUtil.isNotNull(str)){
+			return DateToString(stringToDate(str), format);
+		}
+		return str;
+	}
+	
 	/*public static void main(String[] args) {
 		try {
 			int i = leftMinutes(stringToDate("2016-11-03 18:59:00"), new Date());

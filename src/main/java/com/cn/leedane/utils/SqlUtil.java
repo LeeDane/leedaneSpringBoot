@@ -1,9 +1,7 @@
 package com.cn.leedane.utils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,8 +11,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONArray;
-import com.cn.leedane.model.FinancialBean;
-import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.mybatis.SqlProvider;
 import com.cn.leedane.mybatis.table.TableFormat;
 import com.cn.leedane.mybatis.table.annotation.Column;
@@ -75,6 +71,7 @@ public class SqlUtil {
     public static List convertMapsToBeans(Class<?> clazz, List<Map<String, Object>> maps) {
        return JSONArray.parseArray(JSONArray.toJSONString(maps), clazz);
     }
+  
     
     /**
      * 组装实体bean(class没有实例化的情况)

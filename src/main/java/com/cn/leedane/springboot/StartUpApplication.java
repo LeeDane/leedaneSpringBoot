@@ -53,6 +53,7 @@ import com.cn.leedane.handler.CommentHandler;
 import com.cn.leedane.handler.CommonHandler;
 import com.cn.leedane.handler.FanHandler;
 import com.cn.leedane.handler.FriendHandler;
+import com.cn.leedane.handler.InitCacheData;
 import com.cn.leedane.handler.MoodHandler;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.SignInHandler;
@@ -308,6 +309,11 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
         return prop;  
     }  
     
+    @Bean(name= "initCacheData")
+    public InitCacheData getInitCacheData() {
+        return new InitCacheData();  
+    }
+    
 	public static void main(String[] args) {
 		logger.warn( "项目开始启动。。。" );
         //SpringApplication.run("classpath:spring-common.xml", args);
@@ -318,8 +324,10 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
 	        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory)context.getBeanFactory(); 
 	        beanFactory.removeBeanDefinition("multipartResolver");*/
 	
-        InitCacheData initCacheData = new InitCacheData();
-        initCacheData.init();
+        //InitCacheData initCacheData = new InitCacheData();
+        //initCacheData.init();
+		InitCacheData initCacheData = (InitCacheData) ctx.getBean("initCacheData");
+		initCacheData.init();
 	}
 
 	// 创建事务管理器1

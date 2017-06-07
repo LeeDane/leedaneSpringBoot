@@ -1,11 +1,14 @@
 package com.cn.leedane.task.spring.scheduling;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.quartz.SchedulerException;
@@ -13,16 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.crawl.WangyiNews;
-import com.cn.leedane.handler.BlogHandler;
 import com.cn.leedane.handler.UserHandler;
-import com.cn.leedane.lucene.solr.BlogSolrHandler;
 import com.cn.leedane.mapper.BlogMapper;
 import com.cn.leedane.mapper.CrawlMapper;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.CrawlBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.UserService;
+import com.cn.leedane.thread.ThreadUtil;
+import com.cn.leedane.thread.single.BlogSolrAddThread;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsoupUtil;
@@ -55,8 +58,21 @@ public class WangyiNewsDeal implements BaseScheduling{
 	public void execute() throws SchedulerException {
 		//logger.info(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Wangyi:deal()");
 		try {
-			@SuppressWarnings("unchecked")
-			List<CrawlBean> beans = SqlUtil.convertMapsToBeans(CrawlBean.class, crawlMapper.findAllNotCrawl(0, EnumUtil.WebCrawlType.网易新闻.value));
+			SqlUtil sqlUtil = new SqlUtil();
+			List<Map<String, Object>> results = crawlMapper.findAllNotCrawl(0, EnumUtil.WebCrawlType.网易新闻.value);
+			if(CollectionUtil.isEmpty(results)){
+				logger.error("处理网易新闻信息--->没有数据");
+				return;
+			}		
+			List<CrawlBean> beans = new ArrayList<CrawlBean>();
+			for(Map<String, Object> result: results){
+				result.put("create_time", DateUtil.formatStringTime(StringUtil.changeNotNull(result.get("create_time"))));
+				result.put("modify_time", DateUtil.formatStringTime(StringUtil.changeNotNull(result.get("modify_time"))));
+				JSONObject json = JSONObject.fromObject(result);
+				CrawlBean bean = (CrawlBean) sqlUtil.getBean(json, CrawlBean.class);
+				beans.add(bean);
+			}
+			
 			for(CrawlBean bean: beans){
 				Pattern p=Pattern.compile("http://[a-z]+.163.com/[0-9]{2}/[0-9]{4}/[0-9]{2}/*");//找网易新闻的子站
 				Matcher m=p.matcher(bean.getUrl());
@@ -113,7 +129,10 @@ public class WangyiNewsDeal implements BaseScheduling{
 						
 						//抓取成功
 						if(result){
-							BlogSolrHandler.getInstance().addBean(blog);
+							//异步修改solr索引
+							new ThreadUtil().singleTask(new BlogSolrAddThread(blog));
+							
+							//BlogSolrHandler.getInstance().addBean(blog);
 							bean.setCrawl(true);
 							//bean.setScore(wangyi.score());
 							//将抓取标记为已经抓取
@@ -131,7 +150,7 @@ public class WangyiNewsDeal implements BaseScheduling{
 			}
 		} catch (Exception e) {
 			//e.printStackTrace();
-			logger.error("处理网易新闻信息出现异常：deal()");
+			logger.error("处理网易新闻信息出现异常：deal()"+ e.getMessage());
 		}
 	}
 }

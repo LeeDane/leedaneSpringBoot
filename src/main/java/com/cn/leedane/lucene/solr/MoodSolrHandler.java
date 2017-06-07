@@ -20,7 +20,7 @@ import com.cn.leedane.model.MoodBean;
  * Version 1.0
  */
 public class MoodSolrHandler extends BaseSolrHandler<MoodBean> {
-public static MoodSolrHandler handler;
+	public static MoodSolrHandler handler;
 	
 	public static HttpSolrServer server;
 	
@@ -86,8 +86,6 @@ public static MoodSolrHandler handler;
 	public boolean addBean(MoodBean bean){
 		try {
 			server.addBean(bean);
-			//对索引进行优化
-            server.optimize();
 			server.commit();
 			return true;
 		} catch (IOException e) {
@@ -102,8 +100,6 @@ public static MoodSolrHandler handler;
 	public boolean addBeans(List<MoodBean> beans){
 		try {
 			server.addBeans(beans);
-			//对索引进行优化
-            server.optimize();
 			server.commit();
 			return true;
 		} catch (SolrServerException e) {
@@ -129,8 +125,6 @@ public static MoodSolrHandler handler;
 	public boolean deleteBean(String id){
 		try {
 			server.deleteById(id);
-			//对索引进行优化
-            server.optimize();
 			server.commit();
 			return true;
 		} catch (SolrServerException e) {
@@ -145,8 +139,6 @@ public static MoodSolrHandler handler;
 	public boolean deleteBeans(List<String> ids){
 		try {
 			server.deleteById(ids);
-			//对索引进行优化
-            server.optimize();
 			server.commit();
 			return true;
 		} catch (SolrServerException e) {
@@ -165,5 +157,19 @@ public static MoodSolrHandler handler;
 	@Override
 	public boolean updateBeans(List<MoodBean> beans) {
 		return addBeans(beans);
+	}
+
+	@Override
+	public boolean optimize() {
+		try {
+			//对索引进行优化
+            server.optimize();
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}catch (SolrServerException e) {
+			e.printStackTrace();
+		}  
+		return false;
 	}
 }

@@ -13,6 +13,8 @@ import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.json.JSONObject;
+
 import org.apache.log4j.Logger;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import com.cn.leedane.mapper.BlogMapper;
 import com.cn.leedane.mapper.CrawlMapper;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.CrawlBean;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
@@ -58,8 +61,23 @@ public class SanwenNetDeal implements BaseScheduling{
 	public void execute() throws SchedulerException {
 		//logger.info(DateUtil.getSystemCurrentTime("yyyy-MM-dd HH:mm:ss") + ":Sanwen:deal()");
 		
-		@SuppressWarnings("unchecked")
-		List<CrawlBean> beans = SqlUtil.convertMapsToBeans(CrawlBean.class, crawlMapper.findAllNotCrawl(0, EnumUtil.WebCrawlType.散文网.value));;
+		//@SuppressWarnings("unchecked")
+		//List<CrawlBean> beans = SqlUtil.convertMapsToBeans(CrawlBean.class, crawlMapper.findAllNotCrawl(0, EnumUtil.WebCrawlType.散文网.value));;
+		SqlUtil sqlUtil = new SqlUtil();
+		List<Map<String, Object>> results = crawlMapper.findAllNotCrawl(0, EnumUtil.WebCrawlType.散文网.value);
+		if(CollectionUtil.isEmpty(results)){
+			logger.error("处理散文网信息--->没有数据");
+			return;
+		}		
+		List<CrawlBean> beans = new ArrayList<CrawlBean>();
+		for(Map<String, Object> result: results){
+			result.put("create_time", DateUtil.formatStringTime(StringUtil.changeNotNull(result.get("create_time"))));
+			result.put("modify_time", DateUtil.formatStringTime(StringUtil.changeNotNull(result.get("modify_time"))));
+			JSONObject json = JSONObject.fromObject(result);
+			CrawlBean bean = (CrawlBean) sqlUtil.getBean(json, CrawlBean.class);
+			beans.add(bean);
+		}
+		
 		if(beans != null && beans.size()> 0){
 			List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
 			ExecutorService threadpool = Executors.newFixedThreadPool(beans.size() >2 ? 3: beans.size());
