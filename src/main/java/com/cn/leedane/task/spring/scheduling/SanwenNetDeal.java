@@ -1,6 +1,5 @@
 package com.cn.leedane.task.spring.scheduling;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -210,21 +209,4 @@ public class SanwenNetDeal implements BaseScheduling{
 		}
 		
 	}
-	
-	/**
-     * 获取文件的在本地的临时路径
-     * @param user
-     * @param file
-     * @return
-     */
-    public static String getRootPath(String fileName){
-    	//新的文件名，为了避免冲突
-		String newFileName = DateUtil.DateToString(new Date(), "yyyyMMddHHmmss") + fileName;
-        StringBuffer rootPath = new StringBuffer();
-		rootPath.append(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER);
-		rootPath.append(com.cn.leedane.enums.FileType.TEMPORARY.value);
-		rootPath.append(File.separator);
-		rootPath.append(newFileName);
-		return rootPath.toString();
-    }
 }

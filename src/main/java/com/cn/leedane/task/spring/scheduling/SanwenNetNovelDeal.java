@@ -203,6 +203,5 @@ public class SanwenNetNovelDeal implements BaseScheduling{
 			}
 			return false;
 		}
-		
 	}
 }
