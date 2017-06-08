@@ -1,5 +1,6 @@
 package com.cn.leedane.task.spring.scheduling;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,6 +27,7 @@ import com.cn.leedane.mapper.BlogMapper;
 import com.cn.leedane.mapper.CrawlMapper;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.CrawlBean;
+import com.cn.leedane.model.GalleryBean;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.BlogSolrAddThread;
 import com.cn.leedane.utils.CollectionUtil;
@@ -33,6 +35,7 @@ import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.FileUtil;
 import com.cn.leedane.utils.JsoupUtil;
 import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
@@ -169,7 +172,7 @@ public class SanwenNetDeal implements BaseScheduling{
 							
 							//获取主图
 							String mainImgUrl = sanwenNet.getMainImg("#article .content img", 0);
-							if( mainImgUrl != null && !mainImgUrl.equals("")){
+							if(StringUtil.isNotNull(mainImgUrl)){
 								blog.setHasImg(true);
 								
 								//对base64位的src属性处理
@@ -177,7 +180,9 @@ public class SanwenNetDeal implements BaseScheduling{
 									mainImgUrl = JsoupUtil.getInstance().base64ToLink(mainImgUrl, userHandler.getUserName(mCrawlBean.getCreateUserId()));
 								}
 								
-								blog.setImgUrl(mainImgUrl);
+								//由于图片做了限制，需要对图片进行先预处理
+								GalleryBean bean = FileUtil.getNetWorkImgAttrs(null, mainImgUrl);
+								blog.setImgUrl(bean.getPath());
 							}
 							blog.setOriginLink(url);
 							//把抓取到的数据添加进博客表中
@@ -193,8 +198,6 @@ public class SanwenNetDeal implements BaseScheduling{
 								return true;
 							}
 						}
-						
-						
 					}
 					
 				//不合符抓取条件的记录也标记为已经抓取
@@ -207,4 +210,21 @@ public class SanwenNetDeal implements BaseScheduling{
 		}
 		
 	}
+	
+	/**
+     * 获取文件的在本地的临时路径
+     * @param user
+     * @param file
+     * @return
+     */
+    public static String getRootPath(String fileName){
+    	//新的文件名，为了避免冲突
+		String newFileName = DateUtil.DateToString(new Date(), "yyyyMMddHHmmss") + fileName;
+        StringBuffer rootPath = new StringBuffer();
+		rootPath.append(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER);
+		rootPath.append(com.cn.leedane.enums.FileType.TEMPORARY.value);
+		rootPath.append(File.separator);
+		rootPath.append(newFileName);
+		return rootPath.toString();
+    }
 }

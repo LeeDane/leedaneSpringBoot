@@ -21,12 +21,14 @@ import com.cn.leedane.mapper.BlogMapper;
 import com.cn.leedane.mapper.CrawlMapper;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.CrawlBean;
+import com.cn.leedane.model.GalleryBean;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.BlogSolrAddThread;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.FileUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsoupUtil;
 import com.cn.leedane.utils.SqlUtil;
@@ -108,8 +110,10 @@ public class WangyiNewsDeal implements BaseScheduling{
 								if(!StringUtil.isLink(mainImgUrl)){
 									mainImgUrl = JsoupUtil.getInstance().base64ToLink(mainImgUrl, userHandler.getUserName(bean.getCreateUserId()));
 								}
-								blog.setImgUrl(mainImgUrl);
 								
+								//由于图片做了限制，需要对图片进行先预处理
+								GalleryBean galleryBean = FileUtil.getNetWorkImgAttrs(null, mainImgUrl);
+								blog.setImgUrl(galleryBean.getPath());								
 							}
 							blog.setOriginLink(bean.getUrl());
 							//保存进博客表中
