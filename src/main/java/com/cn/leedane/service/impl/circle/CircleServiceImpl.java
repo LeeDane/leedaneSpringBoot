@@ -1,5 +1,8 @@
 package com.cn.leedane.service.impl.circle;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +25,7 @@ import com.cn.leedane.model.circle.MemberBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.circle.CircleService;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.JsonUtil;
@@ -65,7 +69,42 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	@Autowired
 	private CircleHandle circleHandle;
-
+	@Override
+	public Map<String, Object> init(UserBean user,
+			HttpServletRequest request) {
+		logger.info("CircleServiceImpl-->init(), user=" +user.getAccount());
+		ResponseMap message = new ResponseMap();
+		message.put("score", 10003); //获取总的贡献值
+		
+		List<CircleBean> circleBeans = circleHandle.getAllCircles(user);
+		List<Map<String, Object>> myCircles = new ArrayList<Map<String,Object>>();
+		List<Map<String, Object>> allCircles = new ArrayList<Map<String,Object>>();
+		int myCircleNumber = 0, allCircleNumber = 0;
+		
+		if(CollectionUtil.isNotEmpty(circleBeans)){
+			allCircleNumber = circleBeans.size();
+			for(CircleBean circleBean: circleBeans){
+				Map<String, Object> cc = new HashMap<String, Object>();
+				cc.put("cid", circleBean.getId());
+				cc.put("cname", circleBean.getName());
+				if(circleBean.getCreateUserId() == user.getId()){
+					myCircleNumber ++;
+					myCircles.add(cc);
+				}
+				allCircles.add(cc);
+			}
+		}
+		
+		message.put("myCircleNumber", myCircleNumber); //获取我的圈子数量
+		message.put("myCircles", myCircles); //获取我的圈子
+		
+		message.put("allCircleNumber", allCircleNumber); //获取所有的圈子数量
+		message.put("allCircles", allCircles); //获取所有的圈子
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取自己所有圈子的初始化数据"), "init()", ConstantsUtil.STATUS_NORMAL, 0);
+				
+		return message.getMap();
+	}
 
 	@Override
 	public Map<String, Object> create(JSONObject jo, UserBean user,

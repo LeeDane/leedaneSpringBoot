@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.circle.CircleMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="getAllCircles" parameterType="int">
+		select id, link, alias, status,
+		(case when role then 
+			(select group_concat(r.role_code) from t_link_role_or_permission lrp inner join t_role r on lrp.role_id = r.id where lrp.link_id = lm.id and lrp.status = #{status} and r.status = #{status}) 
+			else 
+			(select group_concat(p.permission_code) from t_link_role_or_permission lrp inner join t_permission p on lrp.permission_id = p.id where lrp.link_id = lm.id and lrp.status = #{status} and p.status = #{status}) 
+			end) roleOrPermissionCodes, role, order_, all_, date_format(lm.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		from t_link_manage lm where lm.status = #{status}
+	</select>
+
+</mapper>

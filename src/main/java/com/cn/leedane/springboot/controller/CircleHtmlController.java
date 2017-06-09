@@ -2,16 +2,21 @@ package com.cn.leedane.springboot.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cn.leedane.controller.BaseController;
+import com.cn.leedane.controller.UserController;
 import com.cn.leedane.model.JobManageBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.service.JobManageService;
 import com.cn.leedane.service.UserService;
+import com.cn.leedane.service.circle.CircleService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 
 /**
@@ -28,7 +33,7 @@ public class CircleHtmlController extends BaseController{
 	private UserService<UserBean> userService;
 	
 	@Autowired
-	private JobManageService<JobManageBean> jobManageService;
+	private CircleService<CircleBean> circleService;
 	
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面
@@ -44,6 +49,15 @@ public class CircleHtmlController extends BaseController{
 	
 	@RequestMapping("/")
 	public String index1(Model model, HttpServletRequest request){
+		
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        if(currentUser.isAuthenticated()){
+        	UserBean user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        	//获取页面初始化的信息
+        	model.addAllAttributes(circleService.init(user, request));
+        }
+        
 		//首页不需要验证是否登录
 		return loginRoleCheck("circle/index", model, request);
 	}

@@ -1,9 +1,6 @@
 package com.cn.leedane.model.circle;
 
-import org.apache.solr.client.solrj.beans.Field;
-
 import com.cn.leedane.model.RecordTimeBean;
-import com.cn.leedane.mybatis.table.annotation.Column;
 
 /**
  * 圈子实体bean
@@ -29,13 +26,6 @@ public class CircleBean extends RecordTimeBean{
 	 * 圈子的描述信息(介绍信息)
 	 */
 	private String describe;
-	
-	/**
-	 * 圈子的描述信息(介绍信息)
-	 */
-	@Column(value = "order_www", required = false)
-	@Field
-	private String ffdd;
 
 	public String getName() {
 		return name;
@@ -52,14 +42,4 @@ public class CircleBean extends RecordTimeBean{
 	public void setDescribe(String describe) {
 		this.describe = describe;
 	}
-
-	public String getFfdd() {
-		return ffdd;
-	}
-
-	public void setFfdd(String ffdd) {
-		this.ffdd = ffdd;
-	}
-	
-	
 }

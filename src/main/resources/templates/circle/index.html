@@ -30,9 +30,14 @@
 					<div class="row">
 						<div class="thumbnail">
 					      <div class="caption">
-					        <h4>欢迎您:leedane</h4>
-					        <p>贡献值：10000</p>
-					        <p>创建/已加圈子：<a href="#" data-toggle="tooltip" title="您创建的圈子数">3</a>/<a href="#" data-toggle="tooltip" title="您加入的圈子数">10</a></p>
+					        <h4>欢迎您:
+					        		<span th:if="${isLogin}" th:utext="${account}"></span>
+					        		<a th:if="${not isLogin}" href="#" class="btn btn-default btn-sm" role="button" data-toggle="tooltip" title="请先登录">登录</a>
+					        </h4>
+					        <p>贡献值：<span th:if="${isLogin}" th:utext="${scroe}"></span><span th:if="${not isLogin}">0</span></p>
+					        <p th:if="${isLogin}">创建/已加圈子：
+					        	<a href="#" data-toggle="tooltip" title="您创建的圈子数">3</a>/<a href="#" data-toggle="tooltip" title="您加入的圈子数">10</a>
+					        </p>
 					        <p><a href="#" class="btn btn-primary btn-sm" role="button" data-toggle="tooltip" title="签到的奖励为圈子专属">签到</a> <a href="#" class="btn btn-default btn-sm" role="button" data-toggle="tooltip" title="创建一个专属于您的圈子">创建圈子</a></p>
 					      </div>
 					    </div>
@@ -45,7 +50,7 @@
 						        </h3>
 						    </div>
 						    <div class="panel-body">
-						        <div class="row">
+						        <div class="row" th:if="${isLogin}">
 						        	<div class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
 						        		 <img data-toggle="tooltip" title="雷州话交流圈子" class="img-circle img-responsive hand" style="width: 100%; height: 65px;" src="/page/images/main_content_bg_02.jpg"
 			                 alt="通用的占位符缩略图" />
@@ -63,8 +68,12 @@
 			                 alt="通用的占位符缩略图" />
 						        	</div>
 						        </div>
-						        <div class="row pull-right" style="margin-top: 8px; margin-right: 0px;">
+						        
+						        <div th:if="${isLogin}" class="row pull-right" style="margin-top: 8px; margin-right: 0px;">
 						        	<a href="#">查看更多</a>
+						        </div>
+						        <div class="row" th:if="${not isLogin}">
+						        	暂无数据
 						        </div>
 						    </div>
 						</div>
@@ -76,7 +85,7 @@
 						        </h3>
 						    </div>
 						    <div class="panel-body">
-						        <div class="row">
+						        <div class="row" th:if="${isLogin}">
 						        	<div class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
 						        		 <img data-toggle="tooltip" title="周杰伦" class="img-circle img-responsive hand" style="width: 100%; height: 65px;" src="/page/images/main_content_bg_02.jpg"
 			                 alt="通用的占位符缩略图" />
@@ -94,8 +103,11 @@
 			                 alt="通用的占位符缩略图" />
 						        	</div>
 						        </div>
-						        <div class="row pull-right" style="margin-top: 8px; margin-right: 0px;">
+						        <div th:if="${isLogin}" class="row pull-right" style="margin-top: 8px; margin-right: 0px;">
 						        	<a href="#">查看更多</a>
+						        </div>
+						         <div class="row" th:if="${not isLogin}">
+						        	暂无数据
 						        </div>
 						    </div>
 						</div>

@@ -18,6 +18,15 @@ import com.cn.leedane.model.UserBean;
 public interface CircleService <T extends IDBean>{
 	
 	/**
+	 * 初始化操作
+	 * @param jo 参数
+	 * @param user 用户
+	 * @param request
+	 * @return
+	 */
+	public  Map<String,Object> init(UserBean user, HttpServletRequest request);
+	
+	/**
 	 * 创建圈子
 	 * @param jo 参数
 	 * @param user 用户
