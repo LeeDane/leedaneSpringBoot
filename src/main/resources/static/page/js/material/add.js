@@ -88,7 +88,7 @@ function showTab(){
 		          // zoomin: null,
 		          // zoomout: null,
 
-		          aspectRatio: 3 / 4,
+		          //aspectRatio: 3 / 4,
 		          preview: '.img-preview',
 		          crop: function (data) {
 		            $dataX.val(Math.round(data.x));

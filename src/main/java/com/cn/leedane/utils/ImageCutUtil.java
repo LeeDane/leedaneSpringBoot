@@ -73,7 +73,25 @@ public class ImageCutUtil {
             ImageFilter cropFilter;  
             // 读取源图像  
             int srcWidth = bi.getWidth(); // 源图宽度  
-            int srcHeight = bi.getHeight(); // 源图高度            
+            int srcHeight = bi.getHeight(); // 源图高度          
+            
+            if(x < 0){
+            	destWidth = destWidth - Math.abs(x);
+            	x = 0;
+            }
+            
+            if(y < 0){
+            	destHeight = destHeight - Math.abs(y);
+            	y = 0;
+            }
+            	
+            if(destWidth >= srcWidth)
+            	destWidth = srcWidth -1;
+            
+            if(destHeight >= srcHeight)
+            	destHeight = srcHeight -1;
+            
+            
             if (srcWidth >= destWidth && srcHeight >= destHeight) {  
                 Image image = bi.getScaledInstance(srcWidth, srcHeight,  
                         Image.SCALE_DEFAULT);  
