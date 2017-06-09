@@ -244,11 +244,12 @@ function imgHandOver(obj, index){
 		var top = $(obj).offset().top;
 		var left = $(obj).offset().left;
 		$("body").append('<span id="desc_'+ index +'">'+ photo['gallery_desc'] +'</span>');
-		$("#desc_"+index).css("position", "absolute");
-		$("#desc_"+index).css("top", top);
-		$("#desc_"+index).css("left", left);
-		$("#desc_"+index).css("color", "#fff");
-		$("#desc_"+index).css("background-color", "#666");
+		var $desc = $("#desc_"+index);
+		$desc.css("position", "absolute");
+		$desc.css("top", top);
+		$desc.css("left", left);
+		$desc.css("color", "#fff");
+		$desc.css("background-color", "#666");
 	}
 	console.log("over");
 }
@@ -298,4 +299,13 @@ function addLink(params){
 		}
 	});
 	
+}
+
+/**
+ * 获取素材的回调函数
+ * @param links
+ */
+function afterSelectMaterial(links){
+	$(".gallery-link").val(links);
+	$(".gallery-desc").val("从素材选择");
 }
