@@ -22,7 +22,8 @@ import com.cn.leedane.mybatis.table.impl.HumpToUnderLineFormat;
  *
  */
 public class SqlUtil {
-	public static boolean getBooleanByList(List<Map<String, Object>> list) {
+	
+	public static boolean getBooleanByList(List<?> list) {
 		boolean result = false;
 		if(!CollectionUtils.isEmpty(list)){
 			result = true;
@@ -68,7 +69,8 @@ public class SqlUtil {
      * @param map
      * @return
      */
-    public static List convertMapsToBeans(Class<?> clazz, List<Map<String, Object>> maps) {
+    @SuppressWarnings("rawtypes")
+	public static List convertMapsToBeans(Class<?> clazz, List<Map<String, Object>> maps) {
        return JSONArray.parseArray(JSONArray.toJSONString(maps), clazz);
     }
   
@@ -159,12 +161,12 @@ public class SqlUtil {
 				Column column = field.getAnnotation(Column.class);
 				String columnName = "";
 				//判断是否获取的是注解的信息，是的话在实体后面添加上注解，便于还原回实体
-				boolean getAnnotation = false; 
+				//boolean getAnnotation = false; 
 				if (column != null) {
 					if (!column.required())
 						continue;
 					columnName = column.value().toUpperCase();
-					getAnnotation = true;
+					//getAnnotation = true;
 				}
 				
 				if (StringUtils.isEmpty(columnName)) {
@@ -224,12 +226,12 @@ public class SqlUtil {
 				Column column = field.getAnnotation(Column.class);
 				String columnName = "";
 				//判断是否获取的是注解的信息，是的话在实体后面添加上注解，便于还原回实体
-				boolean getAnnotation = false; 
+				//boolean getAnnotation = false; 
 				if (column != null) {
 					if (!column.required())
 						continue;
 					columnName = column.value().toUpperCase();
-					getAnnotation = true;
+					//getAnnotation = true;
 				}
 				
 				if (StringUtils.isEmpty(columnName)) {

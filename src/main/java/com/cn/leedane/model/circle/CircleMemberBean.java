@@ -1,6 +1,9 @@
 package com.cn.leedane.model.circle;
 
+import org.apache.solr.client.solrj.beans.Field;
+
 import com.cn.leedane.model.RecordTimeBean;
+import com.cn.leedane.mybatis.table.annotation.Column;
 import com.cn.leedane.mybatis.table.annotation.Table;
 
 /**
@@ -10,7 +13,7 @@ import com.cn.leedane.mybatis.table.annotation.Table;
  * version 1.0
  */
 @Table(value="t_circle_member")
-public class MemberBean extends RecordTimeBean{
+public class CircleMemberBean extends RecordTimeBean{
 
 	/**
 	 * 
@@ -22,17 +25,23 @@ public class MemberBean extends RecordTimeBean{
 	/**
 	 * 成员id,外键是UserBean的id
 	 */
+	@Column("member_id")
+	@Field
 	private int memberId;
 	
 	/**
 	 * 圈子id,外键是CircleBean的id
 	 */
+	@Column("circle_id")
+	@Field
 	private int circleId;
 	
 	/**
 	 * 权限的类型，为1是创建者，2是管理者，0是普通
 	 * 说明：创建者不能被删除，创建者有管理者的权限，管理者有普通者的权限
 	 */
+	@Column("role_type")
+	@Field
 	private int roleType;
 
 	public int getMemberId() {

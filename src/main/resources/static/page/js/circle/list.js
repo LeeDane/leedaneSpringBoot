@@ -91,11 +91,13 @@ function buildEachCircleRow(index, circle){
 					'<td>'+ changeNotNullString(circle.admins) +'</td>'+
 					'<td>'+ circle.circle_desc +'</td>'+
 					'<td width="60">'+ (circle.status == 1? '正常': (circle.status == 2 ? '已删除': '禁用'))+'</td>'+
-					'<td width="100">'+ circle.create_time +'</td>';
-		if(circle.create_user_id = loginUserId){
-			html += '<td width="140"><a href="javascript:void(0);" onclick="rowEditJob(this);" style="margin-right: 10px;">分配</a><a href="javascript:void(0);" onclick="showEditCircleModal(this, '+ index +');" style="margin-right: 10px;">编辑</a><a href="javascript:void(0);" onclick="doDelete(this, '+ index +');" style="margin-right: 10px;">删除</a></td>';
+					'<td width="100">'+ circle.create_time +'</td>'+
+					'<td width="140">';
+		if(circle.create_user_id == loginUserId){
+			html += '<a href="javascript:void(0);" onclick="rowEditJob(this);" style="margin-right: 10px;">分配</a><a href="javascript:void(0);" onclick="showEditCircleModal(this, '+ index +');" style="margin-right: 10px;">编辑</a><a href="javascript:void(0);" onclick="doDelete(this, '+ index +');" style="margin-right: 10px;">删除</a>';
 		}
-		html += '</tr>';
+		html += '</td>'+
+			'</tr>';
 	return html;
 }
 

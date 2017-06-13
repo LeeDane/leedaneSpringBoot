@@ -38,6 +38,14 @@ public class CircleBean extends RecordTimeBean{
 	@Column("circle_path")
 	@Field
 	private String circlePath;
+	
+	@Column("circle_score")
+	@Field
+	private int circleScore;
+	
+	@Column("circle_recommend")
+	@Field
+	private int circleRecommend;
 
 	public String getName() {
 		return name;
@@ -62,4 +70,22 @@ public class CircleBean extends RecordTimeBean{
 	public void setCirclePath(String circlePath) {
 		this.circlePath = circlePath;
 	}
+
+	public int getCircleScore() {
+		return circleScore;
+	}
+
+	public void setCircleScore(int circleScore) {
+		this.circleScore = circleScore;
+	}
+
+	public int getCircleRecommend() {
+		return circleRecommend;
+	}
+
+	public void setCircleRecommend(int circleRecommend) {
+		this.circleRecommend = circleRecommend;
+	}
+	
+	
 }

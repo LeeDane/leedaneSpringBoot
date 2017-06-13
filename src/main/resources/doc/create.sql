@@ -472,6 +472,8 @@ CREATE TABLE `t_circle` (
   `name` varchar(25) NOT NULL COMMENT '圈子名称',
   `circle_desc` varchar(25) COMMENT '圈子描述信息',
   `circle_path` varchar(255) COMMENT '圈子的图像地址',
+  `circle_score` int(11) NOT　NULL DEFAULT 0 COMMENT '一定时间的评分，目前计划是通过定时任务去计算评分',
+  `circle_recommend` bit(1) DEFAULT b'0' COMMENT '是否推荐',
   PRIMARY KEY (`id`),
   KEY `FK_circle_main_create_user` (`create_user_id`),
   KEY `FK_circle_main_modify_user` (`modify_user_id`),
@@ -527,3 +529,30 @@ CREATE TABLE `t_circle_create_limit` (
   CONSTRAINT `FK_circle_create_limit_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_circle_create_limit_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
+-- Table structure for t_circle_setting
+-- ----------------------------
+DROP TABLE IF EXISTS `t_circle_setting`;
+CREATE TABLE `t_circle_setting` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `circle_id` int(11) DEFAULT NULL COMMENT '圈子id',
+  `add_member` bit(1) DEFAULT b'1' NOT NULL COMMENT '是否可以添加成员',
+  `welcome_member`varchar(255) DEFAULT NULL COMMENT '欢迎成员的信息(支持el表达式)，为空将不发送',
+  `question_title`varchar(255) DEFAULT NULL COMMENT '问题的标题',
+  `question_answer`varchar(255) DEFAULT NULL COMMENT '问题的答案',
+  PRIMARY KEY (`id`),
+  KEY `FK_circle_setting_create_user` (`create_user_id`),
+  KEY `FK_circle_setting_modify_user` (`modify_user_id`),
+  KEY `FK_circle_setting_circle_id` (`circle_id`),
+  CONSTRAINT `FK_circle_setting_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_circle_setting_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_circle_setting_circle_id` FOREIGN KEY (`circle_id`) REFERENCES `t_circle` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_circle_setting add constraint circle_setting_id_unique UNIQUE(circle_id);

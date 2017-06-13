@@ -1,5 +1,6 @@
 package com.cn.leedane.mapper.circle;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -42,4 +43,10 @@ public interface CircleMapper extends BaseMapper<CircleBean>{
 			@Param("pageSize")int pageSize, 
 			@Param("status") int status);
 	
+	/**
+	 * 获取目前最热门的圈子
+	 * @param time
+	 * @return
+	 */
+	public List<CircleBean> getHotests(@Param("time") Date time);
 }

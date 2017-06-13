@@ -39,8 +39,8 @@
 					        	<a href="/cc/list" data-toggle="tooltip" title="您创建的圈子数" th:utext="${myCircleNumber}">0</a>/<a href="/cc/list" data-toggle="tooltip" title="您加入的圈子数" th:utext="${allCircleNumber}">0</a>
 					        </p>
 					        <p>
-					        	<a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button" data-toggle="tooltip" title="签到的奖励为圈子专属">签到</a>
-								<a href="javascript:void(0);" class="btn btn-default btn-sm create-circle" role="button" data-toggle="tooltip" title="创建一个专属于您的圈子">创建圈子</a>
+					        	<!-- <a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button" data-toggle="tooltip" title="签到的奖励为圈子专属">签到</a> -->
+								<a href="javascript:void(0);" class="btn btn-primary btn-sm create-circle" role="button" data-toggle="tooltip" title="创建一个专属于您的圈子">创建圈子</a>
 							</p>
 					      </div>
 					    </div>
@@ -49,14 +49,13 @@
 						<div class="panel panel-default">
 						    <div class="panel-heading">
 						        <h3 class="panel-title">
-						            	我的圈子(<span color="red" th:utext="${myCircleNumber}"></span>)
+						            	我的圈子(<span color="red" th:utext="${allCircleNumber}"></span>)
 						        </h3>
 						    </div>
 						    <div class="panel-body">
 						        <div class="row" th:if="${isLogin}">
-						        	<div  th:each="user,userStat : ${allCircles}" class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
-						        		 <img data-toggle="tooltip" title="雷州话交流圈子" class="img-circle img-responsive hand" style="width: 100%; height: 65px;" src="/page/images/main_content_bg_02.jpg"
-			                 alt="通用的占位符缩略图" />
+						        	<div  th:each="circle,iterStat : ${allCircles}" class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
+						        		 <img th:data="${circle.id}" data-toggle="tooltip" th:title="${circle.name}" class="img-circle img-responsive hand" style="width: 100%; height: 65px;" th:src="${circle.path}" />
 						        	</div>
 						        	
 						        </div>
@@ -110,6 +109,29 @@
 					</div>
 			</div>
 			<div class="col-lg-9">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						最新圈子
+					</div>
+					<div class="panel-body panel-table-container">
+						<table class="table table-bordered">
+						  <tbody>
+						    <tr>
+						      <td><a href="#">Tanmay</a></td>
+						      <td><a href="#">Bangalore</a></td>
+						    </tr>
+						    <tr>
+						      <td><a href="#">Sachin</a></td>
+						      <td><a href="#">Mumbai</a></td>
+						    </tr>
+						    <tr>
+						      <td><a href="#">Uma</a></td>
+						      <td><a href="#">Pune</a></td>
+						    </tr>
+						  </tbody>
+						</table>
+					</div>
+				</div>
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						热门圈子

@@ -36,8 +36,10 @@
 					        </h4>
 					        <p>贡献值：0</p>
 					        <p>
-					        	<a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button" data-toggle="tooltip" title="打卡的奖励为圈子专属">打卡</a>
-								<a th:if="${not isCreater}" href="javascript:void(0);" class="btn btn-default btn-sm into-circle" role="button" data-toggle="tooltip" title="申请加入该圈子">加入圈子</a>
+					        	<a th:if="${isCreater or inMember}" href="javascript:void(0);" class="btn btn-primary btn-sm" role="button" data-toggle="tooltip" title="打卡的奖励为圈子专属">打卡</a>
+								<a th:if="${not isCreater and not inMember}" href="javascript:void(0);" class="btn btn-default btn-sm into-circle" role="button" data-toggle="tooltip" title="申请加入该圈子">加入圈子</a>
+								<a th:if="${not isCreater and inMember}" href="javascript:void(0);" class="btn btn-default btn-sm" role="button" data-toggle="tooltip" title="您已加入该圈子" disabled="disabled">已加入</a>
+								<a th:if="${not isCreater and inMember and isAdmin}" href="javascript:void(0);" class="btn btn-default btn-sm circle-setting" role="button" data-toggle="tooltip" title="圈子设置">设置</a>
 								<a th:if="${isCreater}" href="javascript:void(0);" class="btn btn-default btn-sm circle-setting" role="button" data-toggle="tooltip" title="圈子设置">设置</a>
 							</p>
 					      </div>
@@ -209,6 +211,8 @@
 			</div>
 		</div>
 	</div>
-
+<script th:inline="javascript">
+	var circleId = /*[[${circle.id}]]*/;//取账号值  
+</script>
 </body>
 </html>

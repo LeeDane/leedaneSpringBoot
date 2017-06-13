@@ -75,8 +75,8 @@ $(function(){
 				$("#select-list").append('<div class="has-select-file" id="select-file-'+ material.id +'" class="cut-text"><span class="badge" style="background-color: red; margin-right: 3px;">x</span><a href="'+ material.qiniu_path +'">'+ getFileName(material.qiniu_path)+'</a></div>');
 			}else
 				$("#select-list").append('<div class="has-select-file" id="select-file-'+ material.id +'" class="cut-text"><span class="badge" style="background-color: red; margin-right: 3px;">x</span><a href="'+ material.qiniu_path +'">'+ getFileName(material.qiniu_path)+'</a></div>');
-			resetContrainHeight();
 		}
+		resetContrainHeight();
 	});
 });
 
@@ -157,7 +157,7 @@ function getMaterials(){
  * @returns {String}
  */
 function buildEachMaterialImgRow(index, material){
-		var html = '<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" id="material-row-'+ index +'">'+
+		var html = '<div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" id="material-row-'+ index +'">'+
 						'<div class="thumbnail">'+
 						      '<img width="100%" style="height: '+materialListImgHight+'px;" src="'+ material.qiniu_path +'" alt="..." />'+
 						      '<div class="caption">'+

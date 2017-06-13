@@ -28,6 +28,14 @@ $(function(){
 			}
 		});
 	});
+	
+	//圈子时间的绑定
+	$(document).on("click", "img.img-circle", function(event){
+		event.stopPropagation();//阻止冒泡 
+		var $img = $(this);
+		var id = $img.attr("data");
+		linkToCircle(id);
+	});
 });
 
 /**

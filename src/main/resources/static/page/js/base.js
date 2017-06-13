@@ -190,7 +190,7 @@ function linkToMy(id){
  */
 function linkToCircle(id){
 	if(isEmpty(id)){
-		layer.msg("该用户不存在，请联系管理员核实");
+		layer.msg("该圈子不存在，请联系管理员核实");
 		return;
 	}
 	window.open("/cc/circle/"+id, "_self");

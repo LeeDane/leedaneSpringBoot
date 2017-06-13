@@ -108,4 +108,33 @@ public class CircleController extends BaseController{
 		return message.getMap();
 	}
 	
+	/**
+	 * 申请加入圈子之前判断是否可以加入
+	 * @return
+	 */
+	@RequestMapping(value = "/join/check", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> joinCheck(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circleService.joinCheck(getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 申请加入圈子
+	 * @return
+	 */
+	@RequestMapping(value = "/join", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> join(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circleService.join(getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
 }

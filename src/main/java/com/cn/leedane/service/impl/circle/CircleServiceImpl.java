@@ -19,11 +19,13 @@ import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.mapper.circle.CircleCreateLimitMapper;
 import com.cn.leedane.mapper.circle.CircleMapper;
-import com.cn.leedane.mapper.circle.MemberMapper;
+import com.cn.leedane.mapper.circle.CircleMemberMapper;
+import com.cn.leedane.mapper.circle.CircleSettingMapper;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleBean;
-import com.cn.leedane.model.circle.MemberBean;
+import com.cn.leedane.model.circle.CircleMemberBean;
+import com.cn.leedane.model.circle.CircleSettingBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.circle.CircleService;
@@ -66,7 +68,10 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	private CircleMapper circleMapper;
 	
 	@Autowired
-	private MemberMapper memberMapper;
+	private CircleMemberMapper circleMemberMapper;
+	
+	@Autowired
+	private CircleSettingMapper circleSettingMapper;
 
 	@Autowired
 	private OperateLogService<OperateLogBean> operateLogService;
@@ -96,8 +101,13 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			int count = 0;
 			for(CircleBean circleBean: circleBeans){
 				Map<String, Object> cc = new HashMap<String, Object>();
-				cc.put("cid", circleBean.getId());
-				cc.put("cname", circleBean.getName());
+				cc.put("id", circleBean.getId());
+				cc.put("name", circleBean.getName());
+				if(StringUtil.isNull(circleBean.getCirclePath())){
+					cc.put("path", ConstantsUtil.DEFAULT_NO_PIC_PATH);
+				}else{
+					cc.put("path", circleBean.getCirclePath());
+				}
 				if(circleBean.getCreateUserId() == user.getId()){
 					myCircleNumber ++;
 				}
@@ -116,6 +126,23 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 				
 		return message.getMap();
 	}
+	
+	@Override
+	public Map<String, Object> main(CircleBean circle, UserBean user, HttpServletRequest request) {
+		logger.info("CircleServiceImpl-->main(), user=" +user.getAccount());
+		ResponseMap message = new ResponseMap();
+		
+		if(user.getId() == circle.getCreateUserId()){
+			message.put("isCreater", true);
+    	}else{
+    		message.put("isCreater", false);
+    		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circle.getId(), ConstantsUtil.STATUS_NORMAL);
+    		message.put("inMember", SqlUtil.getBooleanByList(members));
+    		message.put("isAdmin", SqlUtil.getBooleanByList(members) &&  members.get(0).getRoleType() == CIRCLE_MANAGER);
+    	}
+		message.put("circle", circle);
+		return message.getMap();
+	}
 
 	@Override
 	public Map<String, Object> check(JSONObject json, UserBean user,
@@ -124,8 +151,8 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		ResponseMap message = new ResponseMap();
 		int number = circleCreateLimitMapper.getNumber(user.getId(), ConstantsUtil.STATUS_NORMAL);
 		if(number < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.超出您能创建的圈子数量.value));
-			message.put("responseCode", EnumUtil.ResponseCode.超出您能创建的圈子数量.value);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.已超出您能创建的圈子数量.value));
+			message.put("responseCode", EnumUtil.ResponseCode.已超出您能创建的圈子数量.value);
 			return message.getMap();
 		}
 		
@@ -169,7 +196,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		boolean result = circleMapper.save(circleBean) > 0;
 		if(result){
 			//添加一条成员记录
-			MemberBean member = new MemberBean();
+			CircleMemberBean member = new CircleMemberBean();
 			member.setCreateTime(createTime);
 			member.setCreateUserId(user.getId());
 			member.setCircleId(circleBean.getId());
@@ -177,7 +204,16 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			member.setRoleType(CIRCLE_CREATER);
 			member.setStatus(ConstantsUtil.STATUS_NORMAL);
 			
-			result = memberMapper.save(member) > 0;
+			result = circleMemberMapper.save(member) > 0;
+			
+			//保存基本的设置
+			CircleSettingBean setting = new CircleSettingBean();
+			setting.setCreateUserId(user.getId());
+			setting.setCreateTime(createTime);
+			setting.setCircleId(circleBean.getId());
+			setting.setStatus(ConstantsUtil.STATUS_NORMAL);
+			setting.setAddMember(true);
+			result = circleSettingMapper.save(setting) > 0;
 			if(result){
 				message.put("isSuccess", true);
 				message.put("message", "您已成功创建名称为《"+ name +"》的圈子。");
@@ -308,5 +344,111 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	public CircleBean findById(int cid) {
 		logger.info("CircleServiceImpl-->findById():cid="+cid);
 		return circleMapper.findById(CircleBean.class, cid);
+	}
+	
+	@Override
+	public Map<String, Object> joinCheck(JSONObject json, UserBean user,
+			HttpServletRequest request) {
+		logger.info("CircleServiceImpl-->joinCheck():jo="+json.toString());
+		ResponseMap message = new ResponseMap();
+		int cid = JsonUtil.getIntValue(json, "cid", 0);
+		if(cid < 1){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
+			message.put("responseCode", EnumUtil.ResponseCode.缺少请求参数.value);
+			return message.getMap();
+		}
+		
+		List<CircleSettingBean> circleSettingBeans = circleSettingMapper.getSetting(cid, ConstantsUtil.STATUS_NORMAL);
+		if(CollectionUtil.isEmpty(circleSettingBeans))
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
+		
+		CircleSettingBean circleSettingBean = circleSettingBeans.get(0);
+		
+		if(SqlUtil.getBooleanByList(circleMemberMapper.getMember(user.getId(), cid, ConstantsUtil.STATUS_NORMAL))){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.您已经在圈子中.value));
+			message.put("responseCode", EnumUtil.ResponseCode.您已经在圈子中.value);
+			return message.getMap();
+		}
+		
+		//获取是否需要回答问题
+		if(StringUtil.isNotNull(circleSettingBean.getQuestionTitle()) && StringUtil.isNotNull(circleSettingBean.getQuestionAnswer())){
+			message.put("message", true);
+			message.put("question", circleSettingBean.getQuestionTitle());
+		}else{
+			message.put("message", false);
+		}
+		
+		message.put("isSuccess", true);
+		return message.getMap();
+	}
+	
+	
+	@Override
+	public Map<String, Object> join(JSONObject json, UserBean user,
+			HttpServletRequest request) {
+		logger.info("CircleServiceImpl-->join():jo="+json.toString());
+		ResponseMap message = new ResponseMap();
+		int cid = JsonUtil.getIntValue(json, "cid", 0);
+		if(cid < 1){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
+			message.put("responseCode", EnumUtil.ResponseCode.缺少请求参数.value);
+			return message.getMap();
+		}
+		List<CircleSettingBean> circleSettingBeans = circleSettingMapper.getSetting(cid, ConstantsUtil.STATUS_NORMAL);
+		if(CollectionUtil.isEmpty(circleSettingBeans))
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
+		
+		CircleSettingBean circleSettingBean = circleSettingBeans.get(0);
+		if(SqlUtil.getBooleanByList(circleMemberMapper.getMember(user.getId(), cid, ConstantsUtil.STATUS_NORMAL))){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.您已经在圈子中.value));
+			message.put("responseCode", EnumUtil.ResponseCode.您已经在圈子中.value);
+			return message.getMap();
+		}
+		
+		//判断是否需要回到问题
+		if(StringUtil.isNotNull(circleSettingBean.getQuestionTitle())){
+			String answer = JsonUtil.getStringValue(json, "answer");
+			if(StringUtil.isNull(answer)){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
+				message.put("responseCode", EnumUtil.ResponseCode.缺少请求参数.value);
+				return message.getMap();
+			}
+			
+			if(!answer.equals(circleSettingBean.getQuestionAnswer())){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.回答的答案不正确.value));
+				message.put("responseCode", EnumUtil.ResponseCode.回答的答案不正确.value);
+				return message.getMap();
+			}
+		}
+		CircleMemberBean member = new CircleMemberBean();
+		member.setCreateTime(new Date());
+		member.setCreateUserId(user.getId());
+		member.setCircleId(cid);
+		member.setMemberId(user.getId());
+		member.setRoleType(CIRCLE_NORMAL);
+		member.setStatus(ConstantsUtil.STATUS_NORMAL);
+		circleMemberMapper.save(member);
+		
+		String msg = "恭喜您加入圈子";
+		//判断是否有返回
+		if(StringUtil.isNotNull(circleSettingBean.getWelcomeMember())){
+			msg = circleSettingBean.getWelcomeMember();
+		}
+		
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"申请加入圈子--", cid).toString(), "join()", ConstantsUtil.STATUS_NORMAL, 0);		
+		message.put("isSuccess", true);
+		message.put("message", msg);
+		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		return message.getMap();
+	}
+	
+	@Override
+	public void saveVisitLog(int circleId, UserBean user,
+			HttpServletRequest request) {
+		logger.info("CircleServiceImpl-->saveVisitLog() , circleId= "+ circleId +", --" + (user == null ? "" : user.getAccount()));
+		
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, "访问圈子"+ circleId, "saveVisitLog()", ConstantsUtil.STATUS_NORMAL, 0);			
 	}
 }

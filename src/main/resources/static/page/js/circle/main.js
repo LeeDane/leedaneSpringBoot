@@ -9,16 +9,33 @@ $(function(){
 	
 	$(".tooltip").css("display", "block");
 	
-	//创建圈子
+	//加入圈子
 	$(".into-circle").click(function(){
 		$.ajax({
-			url : "/cc/check",
+			url : "/cc/join/check?cid="+circleId,
 			dataType: 'json', 
 			beforeSend:function(){
 			},
 			success : function(data) {
 				if(data.isSuccess){
-					showCreateModal(data.message);
+					if(data.message){
+						var question = data.question;
+						layer.prompt({title: question, formType: 0}, function(pass, promptIndex){
+						  var index = layer.load(1, {
+						    shade: [0.1,'#fff'] //0.1透明度的白色背景
+						  });
+						  joinCircle(pass);
+						});
+					}else{
+						//询问框
+						layer.confirm('您确定加入该圈子吗？', {
+						  btn: ['确定','放弃'] //按钮
+						}, function(){
+							joinCircle();
+						}, function(){
+						  
+						});
+					}
 				}else{
 					ajaxError(data);
 				}
@@ -31,40 +48,30 @@ $(function(){
 });
 
 /**
- * 展示创建圈子的modal
- * @param number
+ * 申请加入圈子
+ * @param answer
  */
-function showCreateModal(number){
-	//prompt层
-	layer.prompt({title: '输入圈子名称并确认(还能创建'+ number +'个)', formType: 0}, function(pass, promptIndex){
-	  //layer.close(promptIndex);
-	  //loading层
-	  var index = layer.load(1, {
-	    shade: [0.1,'#fff'] //0.1透明度的白色背景
-	  });
-	  
-	  $.ajax({
-		  	type: 'POST',
-			url : "/cc/circle",
-			data: {name: pass},
-			dataType: 'json', 
-			beforeSend:function(){
-			},
-			success : function(data) {
-				//关闭弹出loading
-				layer.close(index);
-				if(data.isSuccess){
-					layer.msg(data.message);
-					//添加圈子成功，关闭窗口
-					layer.close(promptIndex);
-				}else{
-					ajaxError(data);
-				}
-			},
-			error : function(data) {
-				layer.close(index);
+function joinCircle(answer){
+	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+	$.ajax({
+		type: 'POST',
+		data: {cid: circleId, answer: answer},
+		url : "/cc/join",
+		dataType: 'json', 
+		beforeSend:function(){
+		},
+		success : function(data) {
+			layer.close(loadi);
+			if(data.isSuccess){
+				layer.msg("加入圈子成功，1秒后自动刷新");
+				reloadPage(1000);
+			}else{
 				ajaxError(data);
 			}
-		});
+		},
+		error : function(data) {
+			layer.close(loadi);
+			ajaxError(data);
+		}
 	});
 }

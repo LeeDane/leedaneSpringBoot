@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.circle.CircleMemberMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+
+	<select id="getMember" parameterType="int" resultMap="objectBean">
+		select cm.id , cm.member_id, cm.circle_id, cm.role_type, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time, cm.create_user_id
+		from t_circle_member cm 
+		where cm.member_id = #{memberId} and cm.circle_id = #{circleId} and cm.status = #{status} limit 1
+	</select>
+	
+	<resultMap type="com.cn.leedane.model.circle.CircleMemberBean" id="objectBean">
+        <id property="id" column="id"/>
+        <result property="circleId" column="circle_id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="roleType" column="role_type"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+   </resultMap>
+</mapper>

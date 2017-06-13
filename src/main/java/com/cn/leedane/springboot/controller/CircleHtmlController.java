@@ -13,10 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.controller.UserController;
 import com.cn.leedane.exception.RE404Exception;
-import com.cn.leedane.model.JobManageBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleBean;
-import com.cn.leedane.service.JobManageService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.service.circle.CircleService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
@@ -84,15 +82,14 @@ public class CircleHtmlController extends BaseController{
 		
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
+        UserBean user = null;
         if(currentUser.isAuthenticated()){
-        	UserBean user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-        	if(user.getId() == circle.getCreateUserId()){
-        		model.addAttribute("isCreater", true);
-        	}
+        	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        	//获取页面初始化的信息
+        	model.addAllAttributes(circleService.main(circle, user, request));
         }
         
-		model.addAttribute("circle", circle);
-		
+        circleService.saveVisitLog(cid, user, request);
 		return loginRoleCheck("circle/main", true, model, request);
 	}
 }
