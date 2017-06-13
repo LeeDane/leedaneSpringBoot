@@ -100,11 +100,9 @@ function buildEachRow(appVersion, index){
 	var html = '<div class="row list-row">'+
 			   		'<div class="col-lg-12">'+
 					 	'<div class="row">'+
-					 		'<div class="col-lg-12">'+
-						 		'<div class="col-lg-4">版本号：'+ appVersion.file_version +'</div>'+
-				  			 	'<div class="col-lg-4">文件大小：'+ (appVersion.lenght/1024/1024).toFixed(2) +'M</div>'+
-				  			 	'<div class="col-lg-4">发布时间：'+ appVersion.create_time +'</div>'+
-						 	'</div>'+
+					 		'<div class="col-lg-4">版本号：'+ appVersion.file_version +'</div>'+
+			  			 	'<div class="col-lg-4">文件大小：'+ (appVersion.lenght/1024/1024).toFixed(2) +'M</div>'+
+			  			 	'<div class="col-lg-4">发布时间：'+ appVersion.create_time +'</div>'+
 						 '</div>'+
 						'<div class="row">'+
 				  			 '<div class="col-lg-12">'+ appVersion.file_desc +'</div>'+

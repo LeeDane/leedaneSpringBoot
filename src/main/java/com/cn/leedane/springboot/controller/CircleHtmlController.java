@@ -7,10 +7,12 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.controller.UserController;
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.model.JobManageBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleBean;
@@ -18,6 +20,7 @@ import com.cn.leedane.service.JobManageService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.service.circle.CircleService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.EnumUtil;
 
 /**
  * 圈子Html页面的控制器
@@ -65,5 +68,31 @@ public class CircleHtmlController extends BaseController{
 	@RequestMapping("/index")
 	public String index2(Model model, HttpServletRequest request){
 		return index1(model, request);
+	}
+	
+	@RequestMapping("/list")
+	public String list(Model model, HttpServletRequest request){
+		return loginRoleCheck("circle/list", true, model, request);
+	}
+	
+	@RequestMapping("/circle/{cid}")
+	public String main(@PathVariable(value="cid") int cid, Model model, HttpServletRequest request){
+		
+		CircleBean circle = circleService.findById(cid);
+		if(circle == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
+		
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        if(currentUser.isAuthenticated()){
+        	UserBean user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        	if(user.getId() == circle.getCreateUserId()){
+        		model.addAttribute("isCreater", true);
+        	}
+        }
+        
+		model.addAttribute("circle", circle);
+		
+		return loginRoleCheck("circle/main", true, model, request);
 	}
 }

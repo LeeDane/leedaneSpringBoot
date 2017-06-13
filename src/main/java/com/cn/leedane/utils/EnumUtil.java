@@ -77,7 +77,8 @@ public class EnumUtil {
 		聊天("t_chat"), 聊天背景("t_chat_bg"), 聊天背景与用户("t_chat_bg_user"), 私信("t_private_chat"),文件("t_file_path"), 
 		粉丝("t_fan"), 收藏("t_collection"),关注("t_attention"), 好友("t_friend"), 图库("t_gallery"), 操作日志("t_operate_log"),
 		举报("t_report"), 积分("t_score"), 签到("t_sign_in"), 上传("t_upload"), 权限("t_permission"), 角色权限("t_role_permission"),
-		角色("t_role"), 用户角色("t_user_role"), 链接管理("t_link_manage"), 留言("t_message_board"), 素材("t_material"), 任务("t_job_manage");
+		角色("t_role"), 用户角色("t_user_role"), 链接管理("t_link_manage"), 留言("t_message_board"), 素材("t_material"), 任务("t_job_manage"),
+		圈子("t_circle");
 	
 		private DataTableType(String value) {
 			this.value = value;
@@ -395,7 +396,10 @@ public class EnumUtil {
 		文件上传成功(3095), 
 		空指针异常(3096),
 		圈子名称不能为空(3097),
-		根据请求参数构建实体对象失败(3098)
+		根据请求参数构建实体对象失败(3098),
+		超出您能创建的圈子数量(3099),
+		该圈子名称已经被占用啦(3100),
+		该圈子不存在(3101)
 		;
 		
 		private ResponseCode(int value) {

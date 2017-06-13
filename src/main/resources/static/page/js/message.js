@@ -145,7 +145,7 @@ function linkToSpecifiedTab(tabName){
 }
 
 /**
- * 获取博客的评论内容
+ * 获取我的消息列表
  * @param bid
  */
 function getMessages(){

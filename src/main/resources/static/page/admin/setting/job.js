@@ -303,7 +303,7 @@ function buildRow(job, index){
 					'<td>'+ changeNotNullString(job.job_desc) +'</td>'+
 					'<td>'+ (job.status == 1? '正常': '禁用')+'</td>'+
 					'<td>'+ job.create_time+'</td>'+
-					'<td><a href="javascript:void(0);" onclick="rowEditJob(this);" style="margin-left: 10px;">编辑</a><a href="javascript:void(0);" onclick="rowDeleteJob(this);" style="margin-left: 10px;">删除</a></td>'+
+					'<td><a href="javascript:void(0);" onclick="rowEditJob(this);" style="margin-right: 10px;">编辑</a><a href="javascript:void(0);" onclick="rowDeleteJob(this);" style="margin-right: 10px;">删除</a></td>'+
 				'</tr>';
 	return html;
 }

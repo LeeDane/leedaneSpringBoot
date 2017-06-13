@@ -10,7 +10,7 @@ $(function(){
 	$(".tooltip").css("display", "block");
 	
 	//创建圈子
-	$(".create-circle").click(function(){
+	$(".into-circle").click(function(){
 		$.ajax({
 			url : "/cc/check",
 			dataType: 'json', 

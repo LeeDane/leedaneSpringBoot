@@ -21,3 +21,9 @@ where id in (
 		UNION 
 		select from_user_id id from t_friend where to_user_id = 1 and status = 1
 );
+
+/*圈子限制数量初始化*/
+INSERT INTO `t_circle_create_limit` VALUES ('1', '1', '2017-06-11 17:09:06', null, '1', null, '5', '0', '500', '小于500分，只能创建5个圈子');
+INSERT INTO `t_circle_create_limit` VALUES ('2', '1', '2017-06-11 17:09:53', null, '1', null, '10', '500', '1000', '大于500积分小于1000积分，只能创建10个圈子');
+INSERT INTO `t_circle_create_limit` VALUES ('3', '1', '2017-06-11 17:10:46', null, '1', null, '20', '1000', '2000', '大于1000积分小于2000积分，只能创建20个圈子');
+INSERT INTO `t_circle_create_limit` VALUES ('4', '1', '2017-06-11 17:11:25', null, '1', null, '40', '2000', '-1', '大于2000，能创建40个圈子');

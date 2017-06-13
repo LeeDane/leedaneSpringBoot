@@ -1,6 +1,7 @@
 package com.cn.leedane.model.circle;
 
 import com.cn.leedane.model.RecordTimeBean;
+import com.cn.leedane.mybatis.table.annotation.Table;
 
 /**
  * 成员实体bean
@@ -8,6 +9,7 @@ import com.cn.leedane.model.RecordTimeBean;
  * 2017年5月30日 下午6:43:37
  * version 1.0
  */
+@Table(value="t_circle_member")
 public class MemberBean extends RecordTimeBean{
 
 	/**

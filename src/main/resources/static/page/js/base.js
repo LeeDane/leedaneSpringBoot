@@ -185,6 +185,18 @@ function linkToMy(id){
 }
 
 /**
+ * 跳转到圈子页面
+ * @param id
+ */
+function linkToCircle(id){
+	if(isEmpty(id)){
+		layer.msg("该用户不存在，请联系管理员核实");
+		return;
+	}
+	window.open("/cc/circle/"+id, "_self");
+}
+
+/**
  * 跳转到我的表名和表ID对应的详情
  * @param tableName
  * @param tableId

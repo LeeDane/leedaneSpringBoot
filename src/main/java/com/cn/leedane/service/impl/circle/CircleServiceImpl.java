@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cn.leedane.exception.RE404Exception;
-import com.cn.leedane.handler.circle.CircleHandle;
+import com.cn.leedane.handler.UserHandler;
+import com.cn.leedane.handler.circle.CircleHandler;
+import com.cn.leedane.mapper.circle.CircleCreateLimitMapper;
 import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.mapper.circle.MemberMapper;
 import com.cn.leedane.model.OperateLogBean;
@@ -27,8 +29,10 @@ import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.circle.CircleService;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.RelativeDateFormat;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
@@ -51,12 +55,12 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	/**
 	 * 圈子管理者状态
 	 */
-	public static final int CIRCLE_MANAGER = 1;
+	public static final int CIRCLE_MANAGER = 2;
 	
 	/**
 	 * 圈子普通成员状态
 	 */
-	public static final int CIRCLE_NORMAL = 1;
+	public static final int CIRCLE_NORMAL = 0;
 	
 	@Autowired
 	private CircleMapper circleMapper;
@@ -68,7 +72,14 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	private OperateLogService<OperateLogBean> operateLogService;
 	
 	@Autowired
-	private CircleHandle circleHandle;
+	private CircleHandler circleHandler;
+	
+	@Autowired
+	private UserHandler userHandler;
+	
+	@Autowired
+	private CircleCreateLimitMapper circleCreateLimitMapper;
+	
 	@Override
 	public Map<String, Object> init(UserBean user,
 			HttpServletRequest request) {
@@ -76,28 +87,28 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		ResponseMap message = new ResponseMap();
 		message.put("score", 10003); //获取总的贡献值
 		
-		List<CircleBean> circleBeans = circleHandle.getAllCircles(user);
-		List<Map<String, Object>> myCircles = new ArrayList<Map<String,Object>>();
-		List<Map<String, Object>> allCircles = new ArrayList<Map<String,Object>>();
+		List<CircleBean> circleBeans = circleHandler.getAllCircles(user);
+		List<Map<String, Object>> allCircles = new ArrayList<Map<String,Object>>(4);
 		int myCircleNumber = 0, allCircleNumber = 0;
 		
 		if(CollectionUtil.isNotEmpty(circleBeans)){
 			allCircleNumber = circleBeans.size();
+			int count = 0;
 			for(CircleBean circleBean: circleBeans){
 				Map<String, Object> cc = new HashMap<String, Object>();
 				cc.put("cid", circleBean.getId());
 				cc.put("cname", circleBean.getName());
 				if(circleBean.getCreateUserId() == user.getId()){
 					myCircleNumber ++;
-					myCircles.add(cc);
 				}
-				allCircles.add(cc);
+				if(count < 4)
+					allCircles.add(cc);
+				
+				count++;
 			}
 		}
 		
-		message.put("myCircleNumber", myCircleNumber); //获取我的圈子数量
-		message.put("myCircles", myCircles); //获取我的圈子
-		
+		message.put("myCircleNumber", myCircleNumber); //获取我的圈子数量		
 		message.put("allCircleNumber", allCircleNumber); //获取所有的圈子数量
 		message.put("allCircles", allCircles); //获取所有的圈子
 		//保存操作日志
@@ -106,6 +117,24 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		return message.getMap();
 	}
 
+	@Override
+	public Map<String, Object> check(JSONObject json, UserBean user,
+			HttpServletRequest request) {
+		logger.info("CircleServiceImpl-->check(), user=" +user.getAccount());
+		ResponseMap message = new ResponseMap();
+		int number = circleCreateLimitMapper.getNumber(user.getId(), ConstantsUtil.STATUS_NORMAL);
+		if(number < 1){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.超出您能创建的圈子数量.value));
+			message.put("responseCode", EnumUtil.ResponseCode.超出您能创建的圈子数量.value);
+			return message.getMap();
+		}
+		
+		message.put("isSuccess", true);
+		message.put("message", number);
+		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		return message.getMap();
+	}
+	
 	@Override
 	public Map<String, Object> create(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
@@ -121,13 +150,21 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			return message.getMap();
 		}
 		
+		//判断名称是否存在，避免页面报异常
+		if(CollectionUtil.isNotEmpty(circleMapper.isExists(name))){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子名称已经被占用啦.value));
+			message.put("responseCode", EnumUtil.ResponseCode.该圈子名称已经被占用啦.value);
+			return message.getMap();
+		}
+		
 		Date createTime = new Date();
 		
 		CircleBean circleBean = new CircleBean();
 		circleBean.setCreateTime(createTime);
 		circleBean.setCreateUserId(user.getId());
 		circleBean.setStatus(ConstantsUtil.STATUS_NORMAL);
-		circleBean.setDescribe(describe);
+		circleBean.setCircleDesc(describe);
+		circleBean.setName(name);
 		
 		boolean result = circleMapper.save(circleBean) > 0;
 		if(result){
@@ -177,8 +214,8 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		if(circleBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
 		
-		//判断是否是管理员或者圈主
-		if(circleBean.getCreateUserId() != user.getId() && circleHandle.getRoleCode(user, cid) != CIRCLE_MANAGER)
+		//判断是否是圈主
+		if(circleBean.getCreateUserId() != user.getId()/* && circleHandler.getRoleCode(user, cid) != CIRCLE_MANAGER*/)
 			throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
 		
 		//自动填充更新的bean
@@ -187,7 +224,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		circleBean.setModifyTime(new Date());
 		circleBean.setModifyUserId(user.getId());
 		
-		boolean result = circleMapper.save(circleBean) > 0;
+		boolean result = circleMapper.update(circleBean) > 0;
 		if(result){
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
@@ -210,8 +247,8 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		if(circleBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
 		
-		//判断是否是管理员或者圈主
-		if(circleBean.getCreateUserId() != user.getId() && circleHandle.getRoleCode(user, cid) != CIRCLE_MANAGER)
+		//判断是否是圈主
+		if(circleBean.getCreateUserId() != user.getId()/* && circleHandler.getRoleCode(user, cid) != CIRCLE_MANAGER*/)
 			throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
 
 		//这里是逻辑删除
@@ -229,5 +266,47 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		return message.getMap();
 	}
 	
+	@Override
+	public Map<String, Object> paging(JSONObject jsonObject, UserBean user,
+			HttpServletRequest request) {
+		logger.info("CircleServiceImpl-->paging():jo="+jsonObject.toString());
+		ResponseMap message = new ResponseMap();
+		int pageSize = JsonUtil.getIntValue(jsonObject, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
+		int currentIndex = JsonUtil.getIntValue(jsonObject, "current", 0); //当前的索引
+		int total = JsonUtil.getIntValue(jsonObject, "total", 0); //总数
+		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
+		List<Map<String, Object>> rs = circleMapper.paging(user.getId(), CIRCLE_MANAGER, start, pageSize, ConstantsUtil.STATUS_NORMAL);
+		if(CollectionUtil.isNotEmpty(rs)){
+			int createUserId = 0;			
+			for(int i = 0; i < rs.size(); i++){
+				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
+				rs.get(i).put("create_user_name", userHandler.getUserName(createUserId));
+				rs.get(i).put("create_time", RelativeDateFormat.format(DateUtil.stringToDate(StringUtil.changeNotNull(rs.get(i).get("create_time")))));
+				if(rs.get(i).get("admins") != null){
+					String strs = StringUtil.changeNotNull(rs.get(i).get("admins"));
+					if(StringUtil.isNotNull(strs)){
+						Map<String, Object> mp = new HashMap<String, Object>();
+						String[] strArray = strs.split(",");
+						for(String s: strArray)
+							mp.put(s, userHandler.getUserName(Integer.parseInt(s)));
+						
+						rs.get(i).put("adminMap", mp);
+					}
+				}
+			}
+			message.put("total", circleMapper.getAllCircles(createUserId, ConstantsUtil.STATUS_NORMAL).size());
+		}
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取圈子列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
+		message.put("message", rs);
+		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		message.put("isSuccess", true);
+		return message.getMap();
+	}
 	
+	@Override
+	public CircleBean findById(int cid) {
+		logger.info("CircleServiceImpl-->findById():cid="+cid);
+		return circleMapper.findById(CircleBean.class, cid);
+	}
 }

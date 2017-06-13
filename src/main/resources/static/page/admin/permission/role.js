@@ -419,7 +419,7 @@ function buildRow(role, index){
 		}
 		html += '<td>'+ (role.status == 1? '正常': '禁用')+'</td>'+
 					'<td>'+ role.create_time+'</td>'+
-					'<td><a href="javascript:void(0);" onclick="showUserList(this, '+ role.id +');" style="margin-left: 10px;">分配</a><a href="javascript:void(0);" onclick="rowEditRole(this);" style="margin-left: 10px;">编辑</a><a href="javascript:void(0);" onclick="rowDeleteRole(this);" style="margin-left: 10px;">删除</a></td>'+
+					'<td><a href="javascript:void(0);" onclick="showUserList(this, '+ role.id +');" style="margin-right: 10px;">分配</a><a href="javascript:void(0);" onclick="rowEditRole(this);" style="margin-right: 10px;">编辑</a><a href="javascript:void(0);" onclick="rowDeleteRole(this);" style="margin-right: 10px;">删除</a></td>'+
 				'</tr>';
 	return html;
 }

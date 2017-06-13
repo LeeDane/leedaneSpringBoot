@@ -17,7 +17,7 @@ import com.cn.leedane.utils.ConstantsUtil;
  * version 1.0
  */
 @Component
-public class CircleHandle {
+public class CircleHandler {
 	@Autowired
 	private CircleMapper circleMapper;
 	

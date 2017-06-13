@@ -418,7 +418,7 @@ function buildRow(permission, index){
 		}
 		html += '<td>'+ (permission.status == 1? '正常': '禁用')+'</td>'+
 					'<td>'+ permission.create_time+'</td>'+
-					'<td><a href="javascript:void(0);" onclick="showRoleList(this, '+ permission.id +');" style="margin-left: 10px;">分配</a><a href="javascript:void(0);" onclick="rowEditPermission(this);" style="margin-left: 10px;">编辑</a><a href="javascript:void(0);" onclick="rowDeletePermission(this);" style="margin-left: 10px;">删除</a></td>'+
+					'<td><a href="javascript:void(0);" onclick="showRoleList(this, '+ permission.id +');" style="margin-right: 10px;">分配</a><a href="javascript:void(0);" onclick="rowEditPermission(this);" style="margin-right: 10px;">编辑</a><a href="javascript:void(0);" onclick="rowDeletePermission(this);" style="margin-right: 10px;">删除</a></td>'+
 				'</tr>';
 	return html;
 }

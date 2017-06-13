@@ -9,14 +9,32 @@
 <mapper namespace="com.cn.leedane.mapper.circle.CircleMapper">
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
-	<select id="getAllCircles" parameterType="int">
-		select id, link, alias, status,
-		(case when role then 
-			(select group_concat(r.role_code) from t_link_role_or_permission lrp inner join t_role r on lrp.role_id = r.id where lrp.link_id = lm.id and lrp.status = #{status} and r.status = #{status}) 
-			else 
-			(select group_concat(p.permission_code) from t_link_role_or_permission lrp inner join t_permission p on lrp.permission_id = p.id where lrp.link_id = lm.id and lrp.status = #{status} and p.status = #{status}) 
-			end) roleOrPermissionCodes, role, order_, all_, date_format(lm.create_time,'%Y-%m-%d %H:%i:%s') create_time
-		from t_link_manage lm where lm.status = #{status}
+	<select id="getAllCircles" parameterType="int" resultMap="objectBean">
+		select c.id id, c.name name, c.circle_desc, c.circle_path, c.create_user_id, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		from t_circle c inner join t_circle_member cm on c.id = cm.circle_id where cm.member_id = #{createUserId} and c.status = #{status}
 	</select>
+	
+	<select id="isExists" resultType="java.util.Map">
+		select c.id, c.name name, c.circle_desc, c.circle_path, c.status, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		from t_circle c where c.name = #{name} limit 1
+	</select>
+	
+	<resultMap type="com.cn.leedane.model.circle.CircleBean" id="objectBean">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="circleDesc" column="circle_desc"/>
+        <result property="status" column="status"/>
+        <result property="circlePath" column="circle_path"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+   </resultMap>
 
+	<select id="paging" parameterType="int" resultType="java.util.Map">
+		select c.id, c.status, c.circle_desc, c.name, c.circle_path, 
+			date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time 
+			, c.create_user_id, (select CONCAT(cm1.member_id) from t_circle_member cm1 where c.id = cm1.circle_id and cm1.`status` = #{status} and cm1.role_type = #{roleType}) admins
+		from t_circle c inner join t_circle_member cm on c.id = cm.circle_id 
+		where cm.member_id = #{createUserId} and cm.status = #{status}
+		order by c.create_time desc, c.id desc limit #{start}, #{pageSize}
+	</select>
 </mapper>

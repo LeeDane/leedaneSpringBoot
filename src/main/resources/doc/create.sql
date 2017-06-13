@@ -456,3 +456,74 @@ CREATE TABLE `t_job_manage` (
   CONSTRAINT `FK_job_manage_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 alter table t_job_manage add constraint job_manage_unique UNIQUE(job_name, job_group);
+
+
+-- ----------------------------
+-- Table structure for t_circle
+-- ----------------------------
+DROP TABLE IF EXISTS `t_circle`;
+CREATE TABLE `t_circle` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `name` varchar(25) NOT NULL COMMENT '圈子名称',
+  `circle_desc` varchar(25) COMMENT '圈子描述信息',
+  `circle_path` varchar(255) COMMENT '圈子的图像地址',
+  PRIMARY KEY (`id`),
+  KEY `FK_circle_main_create_user` (`create_user_id`),
+  KEY `FK_circle_main_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_circle_main_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_circle_main_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_circle add constraint circle_main_unique UNIQUE(name);
+
+-- ----------------------------
+-- Table structure for t_circle_member
+-- ----------------------------
+DROP TABLE IF EXISTS `t_circle_member`;
+CREATE TABLE `t_circle_member` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `member_id` int(11) DEFAULT NULL COMMENT '成员id，一般情况下跟create_user_id一致',
+  `circle_id` int(11) DEFAULT NULL COMMENT '圈子id',
+  `role_type` int(2) NOT NULL DEFAULT 0 COMMENT '权限的类型，为1是创建者，2是管理者，0是普通',
+  PRIMARY KEY (`id`),
+  KEY `FK_circle_member_create_user` (`create_user_id`),
+  KEY `FK_circle_member_modify_user` (`modify_user_id`),
+  KEY `FK_circle_member_member_id` (`member_id`),
+  KEY `FK_circle_member_circle_id` (`circle_id`),
+  CONSTRAINT `FK_circle_member_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_circle_member_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_circle_member_member_id` FOREIGN KEY (`member_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_circle_member_circle_id` FOREIGN KEY (`circle_id`) REFERENCES `t_circle` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_circle_member add constraint circle_member_unique UNIQUE(member_id, circle_id);
+
+-- ----------------------------
+-- Table structure for t_circle_create_limit
+-- ----------------------------
+DROP TABLE IF EXISTS `t_circle_create_limit`;
+CREATE TABLE `t_circle_create_limit` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `number` int(11) DEFAULT 0 COMMENT '能创建的最多数量',
+  `left_score` int(11) DEFAULT 0 COMMENT '左边范围，大于等于',
+  `right_score` int(11) DEFAULT 0 COMMENT '右边范围，小于',
+  `limit_desc` varchar(255) COMMENT '描述信息',
+  PRIMARY KEY (`id`),
+  KEY `FK_circle_create_limit_create_user` (`create_user_id`),
+  KEY `FK_circle_create_limit_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_circle_create_limit_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_circle_create_limit_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

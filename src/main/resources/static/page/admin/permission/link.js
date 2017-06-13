@@ -460,7 +460,7 @@ function buildRow(link, index){
 				'<td>'+ (link.all_? '全部匹配': '任意匹配')+'</td>'+
 				'<td>'+ (link.role? '角色控制': '权限控制')+'</td>'+
 				'<td>'+ link.create_time+'</td>'+
-				'<td><a href="javascript:void(0);" onclick="showRoleOrPermissionList(this, '+ link.role +','+ link.id +');" style="margin-left: 10px;">分配</a><a href="javascript:void(0);" onclick="rowEditRole(this);" style="margin-left: 10px;">编辑</a><a href="javascript:void(0);" onclick="rowDeleteRole(this);" style="margin-left: 10px;">删除</a></td>'+
+				'<td><a href="javascript:void(0);" onclick="showRoleOrPermissionList(this, '+ link.role +','+ link.id +');" style="margin-right: 10px;">分配</a><a href="javascript:void(0);" onclick="rowEditRole(this);" style="margin-right: 10px;">编辑</a><a href="javascript:void(0);" onclick="rowDeleteRole(this);" style="margin-right: 10px;">删除</a></td>'+
 				'</tr>';
 	return html;
 }
