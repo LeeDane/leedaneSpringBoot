@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -87,8 +88,15 @@ public class BlogController extends BaseController{
 		blog.setContent(content);
 		blog.setTag(JsonUtil.getStringValue(json, "tag"));
 		blog.setFroms(JsonUtil.getStringValue(json, "froms"));
-		blog.setOriginLink(JsonUtil.getStringValue(json, "origin_link"));
-		blog.setSource(JsonUtil.getStringValue(json, "source"));
+		
+		if(StringUtil.isNotNull(JsonUtil.getStringValue(json, "source"))){
+			blog.setOriginLink(JsonUtil.getStringValue(json, "origin_link"));
+			blog.setSource(JsonUtil.getStringValue(json, "source"));
+		}else{
+			//因为系统对链接做了唯一性约束
+			blog.setOriginLink(UUID.randomUUID().toString() + UUID.randomUUID().toString());
+			blog.setSource("leedane");
+		}
 		
 		//非管理员发布的文章需要审核
 		int status = JsonUtil.getIntValue(json, "status");

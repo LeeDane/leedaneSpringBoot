@@ -119,7 +119,7 @@ function getInfo(bid){
 						}
 					}
 				}
-				if(isEmpty(blog.origin_link) && isEmpty(blog.source)){
+				if(isNotEmpty(blog.origin_link) && isNotEmpty(blog.source) && blog.source == 'leedane'){
 					$("#isOriginal").html('<span class="original">原</span>');
 				}else{
 					$("#isOriginal").html('<span class="original red">爬</span>');

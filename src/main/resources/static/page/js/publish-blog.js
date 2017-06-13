@@ -487,7 +487,7 @@ function clearTag(obj){
   	}
   
   	//是否原创
-  	var isOriginal = isEmpty(blog.origin_link) && isEmpty(blog.source);
+  	var isOriginal = isNotEmpty(blog.source) && blog.source == "leedane";
   	$('[name="is_original"]').prop('checked', isOriginal);
   	if(!isOriginal){
   		$(".is-original-row").removeClass("hidden");
