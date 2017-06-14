@@ -14,7 +14,7 @@
 	</select>
 	
 	<select id="paging" parameterType="int" resultType="java.util.Map">
-		select jm.id, jm.job_name, jm.job_group, jm.class_name,
+		select jm.id, jm.job_name, jm.job_group, jm.class_name, jm.job_params,
 			jm.expression, jm.job_order, jm.job_desc, date_format(jm.create_time,'%Y-%m-%d %H:%i:%s') create_time , jm.create_user_id, jm.status
 		from t_job_manage jm 
 		order by jm.job_order desc, jm.id desc limit #{start}, #{pageSize}

@@ -45,6 +45,11 @@ public class JobManageBean extends RecordTimeBean{
 	@Column(value = "class_name")
 	@Field
     private String className;
+	
+	/** 任务的额外参数 **/
+	@Column(value = "job_params")
+	@Field
+	private String jobParams;
    
     public String getJobName() {
         return jobName;
@@ -81,6 +86,12 @@ public class JobManageBean extends RecordTimeBean{
 	}
 	public void setClassName(String className) {
 		this.className = className;
+	}
+	public String getJobParams() {
+		return jobParams;
+	}
+	public void setJobParams(String jobParams) {
+		this.jobParams = jobParams;
 	}
    
 }

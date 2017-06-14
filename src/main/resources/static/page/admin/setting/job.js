@@ -75,6 +75,7 @@ function addJob(){
 	$addOrEditModal.find('input[name="expression"]').val("");
 	$addOrEditModal.find('input[name="class_name"]').val("");
 	$addOrEditModal.find('input[name="job_name"]').val("");
+	$addOrEditModal.find('input[name="job_params"]').val("");
 	$addOrEditModal.find('input[name="job_order"]').val("");
 	$addOrEditModal.find('textarea[name="job_desc"]').val("");
 	$addOrEditModal.find('input[name1="status_normal"]').prop("checked", true);
@@ -103,6 +104,7 @@ function editJob(){
 	$addOrEditModal.find('input[name="expression"]').val(job.expression);
 	$addOrEditModal.find('input[name="class_name"]').val(job.class_name);
 	$addOrEditModal.find('input[name="job_name"]').val(job.job_name);
+	$addOrEditModal.find('input[name="job_params"]').val(job.job_params);
 	$addOrEditModal.find('input[name="job_order"]').val(job.job_order);
 	$addOrEditModal.find('textarea[name="job_desc"]').val(job.job_desc);
 	if(job.status == 1){
@@ -128,6 +130,7 @@ function rowEditJob(obj){
 	$addOrEditModal.find('input[name="expression"]').val(job.expression);
 	$addOrEditModal.find('input[name="class_name"]').val(job.class_name);
 	$addOrEditModal.find('input[name="job_name"]').val(job.job_name);
+	$addOrEditModal.find('input[name="job_params"]').val(job.job_params);
 	$addOrEditModal.find('input[name="job_order"]').val(job.job_order);
 	$addOrEditModal.find('textarea[name="job_desc"]').val(job.job_desc);
 	if(job.status == 1){
@@ -299,6 +302,7 @@ function buildRow(job, index){
 					'<td>'+ job.job_group+'</td>'+
 					'<td>'+ job.expression+'</td>'+
 					'<td>'+ job.class_name+'</td>'+
+					'<td>'+ changeNotNullString(job.job_params)+'</td>'+
 					'<td>'+ changeNotNullString(job.job_order) +'</td>'+
 					'<td>'+ changeNotNullString(job.job_desc) +'</td>'+
 					'<td>'+ (job.status == 1? '正常': '禁用')+'</td>'+

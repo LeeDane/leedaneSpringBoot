@@ -10,7 +10,7 @@ import org.quartz.SchedulerException;
  */
 public interface BaseScheduling {
 	
-	
+	public void params();
 	/**
 	 * 执行任务的操作
 	 * @throws SchedulerException
