@@ -24,7 +24,7 @@ import com.cn.leedane.utils.OptionUtil;
  * version 1.0
  */
 @Component("wangyiNewsCrawl")
-public class WangyiNewsCrawl implements BaseScheduling{
+public class WangyiNewsCrawl extends AbstractScheduling{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired

@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.quartz.SchedulerException;
 
 import com.cn.leedane.model.JobManageBean;
+import com.cn.leedane.task.spring.scheduling.AbstractScheduling;
 import com.cn.leedane.task.spring.scheduling.BaseScheduling;
 
 /**
@@ -18,22 +19,23 @@ public class SchedulingThread implements Runnable{
 	/**
 	 * 任务调度实例
 	 */
-	private BaseScheduling baseScheduling;
+	private AbstractScheduling abstractScheduling;
 	
 	/**
 	 * 计划任务信息实体
 	 */
 	private JobManageBean scheduleJob;
 	
-	public SchedulingThread(BaseScheduling baseScheduling, JobManageBean scheduleJob){
-		this.baseScheduling = baseScheduling;
+	public SchedulingThread(AbstractScheduling abstractScheduling, JobManageBean scheduleJob){
+		this.abstractScheduling = abstractScheduling;
 		this.scheduleJob = scheduleJob;
 	}
 
 	@Override
 	public void run() {
 		try {
-			baseScheduling.execute();
+			abstractScheduling.setParams(scheduleJob.getJobParams());
+			abstractScheduling.execute();
 		} catch (SchedulerException e) {
 			logger.error("任务调度执行失败，任务名称："+ scheduleJob.getJobName() 
 						+", 任务分组："+ scheduleJob.getJobGroup()

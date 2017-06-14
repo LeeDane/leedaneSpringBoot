@@ -15,7 +15,7 @@ import com.cn.leedane.lucene.solr.UserSolrHandler;
  * version 1.0
  */
 @Component("solrIndexOptimize")
-public class SolrIndexOptimize implements BaseScheduling{
+public class SolrIndexOptimize extends AbstractScheduling{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	@Override

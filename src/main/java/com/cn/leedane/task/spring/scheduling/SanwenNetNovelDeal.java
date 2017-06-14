@@ -46,7 +46,7 @@ import com.cn.leedane.utils.StringUtil;
  * version 1.0
  */
 @Component("sanwenNetNovelDeal")
-public class SanwenNetNovelDeal implements BaseScheduling{
+public class SanwenNetNovelDeal extends AbstractScheduling{
 
 	private Logger logger = Logger.getLogger(getClass());
 	

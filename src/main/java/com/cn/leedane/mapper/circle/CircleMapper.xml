@@ -40,9 +40,9 @@
 		order by c.create_time desc, c.id desc limit #{start}, #{pageSize}
 	</select>
 	
-	<select id="getHotests" resultMap="objectBean" statementType="CALLABLE">
+	<select id="getHotests" resultType="java.util.Map" statementType="CALLABLE">
 		{
-			call getHostestCirclesProcedure(#{time})
+			call getHostestCirclesProcedure(#{time}, #{pageSize})
 		}
 	</select>
 </mapper>

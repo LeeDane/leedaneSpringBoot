@@ -30,40 +30,45 @@ delimiter
 drop PROCEDURE if EXISTS `getHostestCirclesProcedure` ;
 -- 用户打卡记录 * 0.3 + 用户净新增记录(新增-退出) * 0.6 + 任务完成总数 * 0.4 + 打开的次数 * 0.1 
 delimiter $$
-CREATE PROCEDURE `getHostestCirclesProcedure` (in $time DATETIME)
+CREATE PROCEDURE `getHostestCirclesProcedure` (in $time DATETIME, in $limit INT)
 BEGIN
-	declare circle_id int(11); -- 自定义变量1
-	declare addNumber int(11); -- 这个时间段内新增的成员数
-	declare logNumber int(11); -- 这个时间段内访问数
-	declare subjectVal VARCHAR(255); -- 日记的标题
-  declare totalScore FLOAT; -- 最终的总分
-	DECLARE done INT DEFAULT FALSE; -- 自定义控制游标循环变量,默认false 
-	#获取符合条件的圈子列表
-	DECLARE My_Cursor CURSOR FOR (SELECT c.id  from t_circle c where c.create_time > $time);
-	OPEN My_Cursor; -- 打开游标
-  myLoop: LOOP -- 开始循环体,myLoop为自定义循环名,结束循环时用到  
-    FETCH My_Cursor into circle_id; -- 将游标当前读取行的数据顺序赋予自定义变量12  
-    IF done THEN -- 判断是否继续循环  
-      LEAVE myLoop; -- 结束循环  
-    END IF;  
+	DECLARE circle_id INT(11); -- 自定义变量1
+	DECLARE addNumber INT(11); -- 这个时间段内新增的成员数
+	DECLARE logNumber INT(11); -- 这个时间段内访问数
+	DECLARE subjectVal VARCHAR(255); -- 日记的标题
+  DECLARE totalScore FLOAT; -- 最终的总分
+	DECLARE DONE BOOLEAN DEFAULT 0; #定义结束标识  
+	
+	-- 获取符合条件的圈子列表
+	DECLARE cursor_circles CURSOR FOR (SELECT c.id  from t_circle c where c.create_time > $time);
 
-		set addNumber = 0; -- 这个时间段内新增的成员数
-    set logNumber = 0; -- 这个时间段内访问数
-		set totalScore = 0; -- 设置总分为0
-    -- 获取这个时间段内新增的成员数
-    SELECT count(cm.id) into addNumber from t_circle_member cm where cm.circle_id = circle_id and cm.create_time > $time;
-  
-		set subjectVal = concat('访问圈子', circle_id);
-		-- 获取圈子在这段时间内被访问的次数
-		select count(id) into logNumber from t_operate_log ol where ol.`subject` = subjectVal;
+	
+	-- 定义游标的结束--当遍历完成时，将DONE设置为1  
+	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET DONE = 1;  
 
-		set totalScore = addNumber * 0.6 + logNumber* 0.1;
-		update t_circle c set c.circle_score = totalScore where c.id = circle_id;
-		select addNumber * 0.6 + logNumber* 0.1, totalScore, addNumber, logNumber, subjectVal;
+	OPEN cursor_circles; -- 打开游标
+		
+			FETCH cursor_circles into circle_id; -- 将游标当前读取行的数据顺序赋予自定义变量12 
+			REPEAT 
+			set addNumber = 0; -- 这个时间段内新增的成员数
+			set logNumber = 0; -- 这个时间段内访问数
+			set totalScore = 0; -- 设置总分为0
+			-- 获取这个时间段内新增的成员数
+			SELECT count(cm.id) into addNumber from t_circle_member cm where cm.circle_id = circle_id and cm.create_time > $time;
+		
+			set subjectVal = concat('访问圈子', circle_id);
+			-- 获取圈子在这段时间内被访问的次数
+			select count(id) into logNumber from t_operate_log ol where ol.`subject` = subjectVal;
 
-    COMMIT; -- 提交事务  
-  END LOOP myLoop; -- 结束自定义循环体  
-  CLOSE My_Cursor; -- 关闭游标  
+			set totalScore = addNumber * 0.6 + logNumber* 0.1;
+			update t_circle c set c.circle_score = totalScore where c.id = circle_id;
+			 -- select addNumber * 0.6 + logNumber* 0.1, totalScore, addNumber, logNumber, subjectVal;
 
+		FETCH cursor_circles into circle_id; -- 将游标当前读取行的数据顺序赋予自定义变量12 
+		UNTIL DONE
+		END REPEAT ;
+  CLOSE cursor_circles; -- 关闭游标 
+
+  select * from t_circle order by circle_score desc limit 0, $limit;
 END $$
 delimiter

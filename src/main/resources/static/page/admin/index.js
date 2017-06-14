@@ -72,6 +72,15 @@ var config = [{
               ]
             }]
          },{
+             id: 'circle', 
+             homePage: 'task',
+             menu:[{
+                 text:'任务配置',
+                 items:[
+                   {id:'task',text:'任务管理',href:'/ad/cc/task',closeable : false}
+                 ]
+               }]
+            },{
              id: 'permission', 
              homePage: 'permission',
              menu:[{

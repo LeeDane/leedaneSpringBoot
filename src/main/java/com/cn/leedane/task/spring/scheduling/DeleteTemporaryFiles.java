@@ -26,7 +26,7 @@ import com.cn.leedane.utils.StringUtil;
  * version 1.0
  */
 @Component("deleteTemporaryFiles")
-public class DeleteTemporaryFiles implements BaseScheduling{
+public class DeleteTemporaryFiles extends AbstractScheduling{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	//保存无法删除成功的文件路径

@@ -48,5 +48,5 @@ public interface CircleMapper extends BaseMapper<CircleBean>{
 	 * @param time
 	 * @return
 	 */
-	public List<CircleBean> getHotests(@Param("time") Date time);
+	public List<Map<String, Object>> getHotests(@Param("time") Date time, @Param("pageSize") int pageSize);
 }

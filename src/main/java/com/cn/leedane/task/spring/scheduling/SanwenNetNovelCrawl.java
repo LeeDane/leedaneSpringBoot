@@ -24,7 +24,7 @@ import com.cn.leedane.utils.OptionUtil;
  * version 1.0
  */
 @Component("sanwenNetNovelCrawl")
-public class SanwenNetNovelCrawl implements BaseScheduling {
+public class SanwenNetNovelCrawl extends AbstractScheduling{
 
 	private Logger logger = Logger.getLogger(getClass());
 	

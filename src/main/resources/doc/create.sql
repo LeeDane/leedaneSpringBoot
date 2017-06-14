@@ -449,6 +449,7 @@ CREATE TABLE `t_job_manage` (
   `class_name` varchar(25) NOT NULL COMMENT '任务实体类名称 ',
   `job_desc` varchar(255) COMMENT '任务描述 ',
   `job_order` int(5) NOT NULL DEFAULT '0' COMMENT '排序顺序，默认是0' ,
+  `job_params` varchar(255) COMMENT '任务的参数，支持表达式',
   PRIMARY KEY (`id`),
   KEY `FK_job_manage_create_user` (`create_user_id`),
   KEY `FK_job_manage_modify_user` (`modify_user_id`),

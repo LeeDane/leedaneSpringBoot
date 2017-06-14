@@ -41,7 +41,7 @@ import com.cn.leedane.utils.StringUtil;
  * version 1.0
  */
 @Component("financialMonth")
-public class FinancialMonth implements BaseScheduling{
+public class FinancialMonth extends AbstractScheduling{
 	private static Logger logger = Logger.getLogger(FinancialMonth.class);
 	
 	@Autowired

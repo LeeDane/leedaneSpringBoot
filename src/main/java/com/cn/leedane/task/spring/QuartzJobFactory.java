@@ -10,6 +10,7 @@ import org.quartz.JobExecutionException;
 
 import com.cn.leedane.model.JobManageBean;
 import com.cn.leedane.springboot.SpringUtil;
+import com.cn.leedane.task.spring.scheduling.AbstractScheduling;
 import com.cn.leedane.task.spring.scheduling.BaseScheduling;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.SchedulingThread;
@@ -34,7 +35,7 @@ public class QuartzJobFactory implements Job{
         	 logger.error(DateUtil.DateToString(new Date())+ "--->任务名称 = [" + scheduleJob.getJobName() + "]");
         	 Object obj = SpringUtil.getBean(scheduleJob.getClassName());
         	 if(null != obj){
-        		new ThreadUtil().singleTask(new SchedulingThread((BaseScheduling) obj, scheduleJob));
+        		new ThreadUtil().singleTask(new SchedulingThread((AbstractScheduling) obj, scheduleJob));
         	 } else{
         		 logger.error("任务调度执行失败, 原因是没有找到对应的任务实现bean!");
         	 }

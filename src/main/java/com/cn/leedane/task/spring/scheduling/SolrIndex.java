@@ -37,7 +37,7 @@ import com.cn.leedane.utils.StringUtil;
  * version 1.0
  */
 @Component("solrIndex")
-public class SolrIndex implements BaseScheduling{
+public class SolrIndex extends AbstractScheduling{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	/**

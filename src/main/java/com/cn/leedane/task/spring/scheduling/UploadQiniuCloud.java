@@ -23,7 +23,7 @@ import com.cn.leedane.utils.StringUtil;
  * version 1.0
  */
 @Component("uploadQiniuCloud")
-public class UploadQiniuCloud implements BaseScheduling{
+public class UploadQiniuCloud extends AbstractScheduling{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired

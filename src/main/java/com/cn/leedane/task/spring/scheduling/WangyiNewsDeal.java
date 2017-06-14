@@ -41,7 +41,7 @@ import com.cn.leedane.utils.StringUtil;
  * version 1.0
  */
 @Component("wangyiNewsDeal")
-public class WangyiNewsDeal implements BaseScheduling{
+public class WangyiNewsDeal extends AbstractScheduling{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired

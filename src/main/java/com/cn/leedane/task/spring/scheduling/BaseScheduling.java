@@ -1,5 +1,7 @@
 package com.cn.leedane.task.spring.scheduling;
 
+import java.util.Map;
+
 import org.quartz.SchedulerException;
 
 /**
@@ -10,7 +12,17 @@ import org.quartz.SchedulerException;
  */
 public interface BaseScheduling {
 	
-	public void params();
+	/**
+	 * 获取参数
+	 * @return
+	 */
+	public Map<String, Object> getParams();
+	
+	/**
+	 * 设置参数
+	 */
+	public void setParams(String params);
+	
 	/**
 	 * 执行任务的操作
 	 * @throws SchedulerException
