@@ -35,7 +35,7 @@
 					        		<a th:if="${not isLogin}" href="javascript:void(0);" class="btn btn-default btn-sm" role="button" data-toggle="tooltip" title="请先登录" onclick="linkToLogin();">登录</a>
 					        </h4>
 					        <p>贡献值：<span th:if="${isLogin}" th:utext="${scroe}"></span><span th:if="${not isLogin}">0</span></p>
-					        <p th:if="${isLogin}">创建/已加圈子：
+					        <p th:if="${isLogin}">创建/已加：
 					        	<a href="/cc/list" data-toggle="tooltip" title="您创建的圈子数" th:utext="${myCircleNumber}">0</a>/<a href="/cc/list" data-toggle="tooltip" title="您加入的圈子数" th:utext="${allCircleNumber}">0</a>
 					        </p>
 					        <p>
@@ -54,14 +54,14 @@
 						    </div>
 						    <div class="panel-body">
 						        <div class="row" th:if="${isLogin}">
-						        	<div  th:each="circle,iterStat : ${allCircles}" class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
+						        	<div th:each="circle,iterStat : ${allCircles}" class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
 						        		 <img th:data="${circle.id}" data-toggle="tooltip" th:title="${circle.name}" class="img-circle img-responsive hand" style="width: 100%; height: 65px;" th:src="${circle.path}" />
 						        	</div>
 						        	
 						        </div>
 						        
 						        <div th:if="${isLogin}" class="row pull-right" style="margin-top: 8px; margin-right: 0px;">
-						        	<a href="/cc/list">查看更多</a>
+						        	<a target="_blank" href="/cc/list">查看更多</a>
 						        </div>
 						        <div class="row" th:if="${not isLogin}">
 						        	<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
@@ -109,24 +109,19 @@
 					</div>
 			</div>
 			<div class="col-lg-9">
+				
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						最新圈子
+						推荐圈子
 					</div>
 					<div class="panel-body panel-table-container">
 						<table class="table table-bordered">
 						  <tbody>
-						    <tr>
-						      <td><a href="#">Tanmay</a></td>
-						      <td><a href="#">Bangalore</a></td>
-						    </tr>
-						    <tr>
-						      <td><a href="#">Sachin</a></td>
-						      <td><a href="#">Mumbai</a></td>
-						    </tr>
-						    <tr>
-						      <td><a href="#">Uma</a></td>
-						      <td><a href="#">Pune</a></td>
+						    <tr th:each="circleEven,iterStat : ${recommends}" th:if="${iterStat.even}">
+						      	<td valign="middle"><img alt="" th:data="${circleEven.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleEven.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleEven.id}" th:utext="${circleEven.name}">Bangalore</a></td>
+						     	<td valign="middle" th:if="${#lists.size(recommends)} gt (${iterStat.index} + 1)" th:with="circleOdd=${recommends[(iterStat.index+1)]}">
+						    		<img alt="" th:data="${circleOdd.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleOdd.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleOdd.id}" th:utext="${circleOdd.name}">Bangalore</a>
+						    	</td>
 						    </tr>
 						  </tbody>
 						</table>
@@ -139,17 +134,11 @@
 					<div class="panel-body panel-table-container">
 						<table class="table table-bordered">
 						  <tbody>
-						    <tr>
-						      <td><a href="#">Tanmay</a></td>
-						      <td><a href="#">Bangalore</a></td>
-						    </tr>
-						    <tr>
-						      <td><a href="#">Sachin</a></td>
-						      <td><a href="#">Mumbai</a></td>
-						    </tr>
-						    <tr>
-						      <td><a href="#">Uma</a></td>
-						      <td><a href="#">Pune</a></td>
+						    <tr th:each="circleEven,iterStat : ${hotests}" th:if="${iterStat.even}">
+						      	<td valign="middle"><img alt="" th:data="${circleEven.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleEven.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleEven.id}" th:utext="${circleEven.name}">Bangalore</a></td>
+						     	<td valign="middle" th:if="${#lists.size(hotests)} gt (${iterStat.index} + 1)" th:with="circleOdd=${hotests[(iterStat.index+1)]}">
+						    		<img alt="" th:data="${circleOdd.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleOdd.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleOdd.id}" th:utext="${circleOdd.name}">Bangalore</a>
+						    	</td>
 						    </tr>
 						  </tbody>
 						</table>
@@ -157,28 +146,21 @@
 				</div>
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						推荐圈子
+						最新圈子
 					</div>
 					<div class="panel-body panel-table-container">
 						<table class="table table-bordered">
 						  <tbody>
-						    <tr>
-						      <td><a href="#">Tanmay</a></td>
-						      <td><a href="#">Bangalore</a></td>
-						    </tr>
-						    <tr>
-						      <td><a href="#">Sachin</a></td>
-						      <td><a href="#">Mumbai</a></td>
-						    </tr>
-						    <tr>
-						      <td><a href="#">Uma</a></td>
-						      <td><a href="#">Pune</a></td>
+						    <tr th:each="circleEven,iterStat : ${newests}" th:if="${iterStat.even}">
+						      	<td valign="middle"><img alt="" th:data="${circleEven.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleEven.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleEven.id}" th:utext="${circleEven.name}">Bangalore</a></td>
+						     	<td valign="middle" th:if="${#lists.size(newests)} gt (${iterStat.index} + 1)" th:with="circleOdd=${newests[(iterStat.index+1)]}">
+						    		<img alt="" th:data="${circleOdd.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleOdd.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleOdd.id}" th:utext="${circleOdd.name}">Bangalore</a>
+						    	</td>
 						    </tr>
 						  </tbody>
 						</table>
 					</div>
 				</div>
-				
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						活跃圈友

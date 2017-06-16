@@ -1,5 +1,5 @@
 var type;
-var pageSize = 9;
+var pageSize = 10;
 var currentIndex = 0;
 var materials;
 var totalPage = 0;

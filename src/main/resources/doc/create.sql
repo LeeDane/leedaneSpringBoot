@@ -557,3 +557,54 @@ CREATE TABLE `t_circle_setting` (
   CONSTRAINT `FK_circle_setting_circle_id` FOREIGN KEY (`circle_id`) REFERENCES `t_circle` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 alter table t_circle_setting add constraint circle_setting_id_unique UNIQUE(circle_id);
+
+-- ----------------------------
+-- Table structure for t_clock_in
+-- ----------------------------
+DROP TABLE IF EXISTS `t_clock_in`;
+CREATE TABLE `t_clock_in` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `circle_id` int(11) NOT NULL COMMENT '外键关联圈子的id',
+  `continuous` int(11) NOT NULL COMMENT '连续打卡的天数',
+  `pid` int(11) DEFAULT NULL COMMENT '上次记录的id',
+  `create_date` varchar(10) DEFAULT NULL COMMENT '创建日期(用于和create_user_id做联合约束记录的唯一性)',
+  `froms` varchar(25) COMMENT '打卡方式',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `clock_in_unique` (`create_user_id`,`create_date`),
+  KEY `FK_clock_in_create_user` (`create_user_id`),
+  KEY `FK_clock_in_modify_user` (`modify_user_id`),
+  KEY `FK_clock_in_circle_id` (`circle_id`),
+  CONSTRAINT `FK_clock_in_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_in_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_in_circle_id` FOREIGN KEY (`circle_id`) REFERENCES `t_circle` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
+-- Table structure for t_circle_contribution
+-- ----------------------------
+DROP TABLE IF EXISTS `t_circle_contribution`;
+CREATE TABLE `t_circle_contribution` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `score_desc` varchar(255) DEFAULT NULL,
+  `score` int(11) NOT NULL COMMENT '当前的获得的贡献值(非总贡献值)',
+  `circle_id` int(11) NOT NULL COMMENT '外键关联圈子的id',
+  `total_score` int(11) DEFAULT NULL COMMENT '历史的总贡献值(冗余字段)',
+  PRIMARY KEY (`id`),
+  KEY `FK_circle_contribution_create_user` (`create_user_id`),
+  KEY `FK_circle_contribution_modify_user` (`modify_user_id`),
+  KEY `FK_circle_contribution_circle_id` (`circle_id`),
+  CONSTRAINT `FK_circle_contribution_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_circle_contribution_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_circle_contribution_circle_id` FOREIGN KEY (`circle_id`) REFERENCES `t_circle` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

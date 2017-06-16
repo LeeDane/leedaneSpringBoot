@@ -53,12 +53,12 @@ public class CircleHtmlController extends BaseController{
 		
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
+        UserBean user = null;
         if(currentUser.isAuthenticated()){
-        	UserBean user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-        	//获取页面初始化的信息
-        	model.addAllAttributes(circleService.init(user, request));
+        	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
         }
-        
+    	//获取页面初始化的信息
+    	model.addAllAttributes(circleService.init(user, request));
 		//首页不需要验证是否登录
 		return loginRoleCheck("circle/index", model, request);
 	}

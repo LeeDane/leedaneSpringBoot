@@ -23,7 +23,7 @@ public class ChatSquareHandler {
 	 */
 	public boolean addChat(String userKey){
 		String chatKey = getChatKey(userKey);
-		redisUtil.expire(chatKey, null, StringUtil.changeObjectToInt(RedisConfig.properties.get("chatSquareTime")));
+		redisUtil.expire(chatKey, StringUtil.changeObjectToInt(RedisConfig.properties.get("chatSquareTime")));
 		return true;
 	}
 	

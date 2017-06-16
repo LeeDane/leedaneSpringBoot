@@ -34,13 +34,24 @@
 					        		<span th:if="${isLogin}" th:utext="${circle.name}"></span>
 					        		<a th:if="${not isLogin}" href="javascript:void(0);" class="btn btn-default btn-sm" role="button" data-toggle="tooltip" title="请先登录" onclick="linkToLogin();">登录</a>
 					        </h4>
-					        <p>贡献值：0</p>
+					        <p>贡献值：<span th:utext="${myContribute}"></span>/<span th:utext="${allContribute}"></span></p>
+					        <p>圈主：<a th:onclick="'linkToMy('+ ${createId} +');'" href="javascript:void(0);" th:utext="${createName}"></a></p>
+					        <p>管理员：
+					        	<span th:each="admin,adminStat : ${admins}">
+						        	<a th:onclick="'linkToMy('+ ${admin.member_id} +');'" href="javascript:void(0);" th:utext="${admin.account}"></a>
+						        </span>
+					        </p>
+					        <p>创建时间：<span th:text="${createTime}"></span></p>
+					        <p class="cut-text" data-toggle="tooltip" th:title="${circle.circleDesc}">
+					        	说明：<span th:text="${circle.circleDesc}"></span>
+					        </p>
 					        <p>
-					        	<a th:if="${isCreater or inMember}" href="javascript:void(0);" class="btn btn-primary btn-sm" role="button" data-toggle="tooltip" title="打卡的奖励为圈子专属">打卡</a>
+					        	<a th:if="${isCreater or inMember} and ${isClockIn}" href="javascript:void(0);" class="btn btn-primary btn-sm" role="button" data-toggle="tooltip" title="您今天已经打卡" disabled="disabled">已打卡</a>
+					        	<a th:if="${isCreater or inMember} and ${not isClockIn}" href="javascript:void(0);" class="btn btn-primary btn-sm add-clock-in" role="button" data-toggle="tooltip" title="打卡的奖励为圈子专属">打卡</a>
 								<a th:if="${not isCreater and not inMember}" href="javascript:void(0);" class="btn btn-default btn-sm into-circle" role="button" data-toggle="tooltip" title="申请加入该圈子">加入圈子</a>
-								<a th:if="${not isCreater and inMember}" href="javascript:void(0);" class="btn btn-default btn-sm" role="button" data-toggle="tooltip" title="您已加入该圈子" disabled="disabled">已加入</a>
-								<a th:if="${not isCreater and inMember and isAdmin}" href="javascript:void(0);" class="btn btn-default btn-sm circle-setting" role="button" data-toggle="tooltip" title="圈子设置">设置</a>
-								<a th:if="${isCreater}" href="javascript:void(0);" class="btn btn-default btn-sm circle-setting" role="button" data-toggle="tooltip" title="圈子设置">设置</a>
+								<a th:if="${not isCreater and inMember}" href="javascript:void(0);" class="btn btn-default btn-sm circle-leave" role="button" data-toggle="tooltip" title="退出该圈子">退出圈子</a>
+								<a th:if="${isCreater} or ${isCircleAdmin}" href="javascript:void(0);" class="btn btn-default btn-sm circle-setting" role="button" data-toggle="tooltip" title="圈子设置">设置</a>
+								<a th:if="${isLogin} and ${inMember}" href="javascript:void(0);" class="btn btn-warning btn-sm circle-post" role="button" data-toggle="tooltip" title="发表关于该圈子的帖子">发帖</a>
 							</p>
 					      </div>
 					    </div>

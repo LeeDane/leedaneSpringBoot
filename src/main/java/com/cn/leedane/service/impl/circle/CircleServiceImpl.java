@@ -1,4 +1,5 @@
 package com.cn.leedane.service.impl.circle;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.circle.CircleHandler;
+import com.cn.leedane.mapper.circle.CircleClockInMapper;
+import com.cn.leedane.mapper.circle.CircleContributionMapper;
 import com.cn.leedane.mapper.circle.CircleCreateLimitMapper;
 import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.mapper.circle.CircleMemberMapper;
@@ -72,6 +75,12 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	@Autowired
 	private CircleSettingMapper circleSettingMapper;
+	
+	@Autowired
+	private CircleClockInMapper circleClockInMapper;
+	
+	@Autowired
+	private CircleContributionMapper circleContributionMapper;
 
 	@Autowired
 	private OperateLogService<OperateLogBean> operateLogService;
@@ -86,43 +95,55 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	private CircleCreateLimitMapper circleCreateLimitMapper;
 	
 	@Override
-	public Map<String, Object> init(UserBean user,
-			HttpServletRequest request) {
-		logger.info("CircleServiceImpl-->init(), user=" +user.getAccount());
+	public Map<String, Object> init(UserBean user, HttpServletRequest request) {
+		logger.info("CircleServiceImpl-->init(), user=" +(user != null ? user.getAccount(): "用户还未登录"));
 		ResponseMap message = new ResponseMap();
 		message.put("score", 10003); //获取总的贡献值
 		
-		List<CircleBean> circleBeans = circleHandler.getAllCircles(user);
-		List<Map<String, Object>> allCircles = new ArrayList<Map<String,Object>>(4);
-		int myCircleNumber = 0, allCircleNumber = 0;
-		
-		if(CollectionUtil.isNotEmpty(circleBeans)){
-			allCircleNumber = circleBeans.size();
-			int count = 0;
-			for(CircleBean circleBean: circleBeans){
-				Map<String, Object> cc = new HashMap<String, Object>();
-				cc.put("id", circleBean.getId());
-				cc.put("name", circleBean.getName());
-				if(StringUtil.isNull(circleBean.getCirclePath())){
-					cc.put("path", ConstantsUtil.DEFAULT_NO_PIC_PATH);
-				}else{
-					cc.put("path", circleBean.getCirclePath());
+		if(user != null){
+			List<CircleBean> circleBeans = circleHandler.getAllCircles(user);
+			List<Map<String, Object>> allCircles = new ArrayList<Map<String,Object>>(4);
+			int myCircleNumber = 0, allCircleNumber = 0;
+			
+			if(CollectionUtil.isNotEmpty(circleBeans)){
+				allCircleNumber = circleBeans.size();
+				int count = 0;
+				for(CircleBean circleBean: circleBeans){
+					Map<String, Object> cc = new HashMap<String, Object>();
+					cc.put("id", circleBean.getId());
+					cc.put("name", circleBean.getName());
+					if(StringUtil.isNull(circleBean.getCirclePath())){
+						cc.put("path", ConstantsUtil.DEFAULT_NO_PIC_PATH);
+					}else{
+						cc.put("path", circleBean.getCirclePath());
+					}
+					if(circleBean.getCreateUserId() == user.getId()){
+						myCircleNumber ++;
+					}
+					if(count < 4)
+						allCircles.add(cc);
+					
+					count++;
 				}
-				if(circleBean.getCreateUserId() == user.getId()){
-					myCircleNumber ++;
-				}
-				if(count < 4)
-					allCircles.add(cc);
-				
-				count++;
 			}
+			
+			message.put("myCircleNumber", myCircleNumber); //获取我的圈子数量		
+			message.put("allCircleNumber", allCircleNumber); //获取所有的圈子数量
+			message.put("allCircles", allCircles); //获取所有的圈子
 		}
 		
-		message.put("myCircleNumber", myCircleNumber); //获取我的圈子数量		
-		message.put("allCircleNumber", allCircleNumber); //获取所有的圈子数量
-		message.put("allCircles", allCircles); //获取所有的圈子
+		try {
+			message.put("hotests", circleHandler.getHostest().getCircleBeans());//获取热门的圈子
+			message.put("newests", circleHandler.getNestest().getCircleBeans()); //获取最新的圈子
+			message.put("recommends", circleHandler.getRecommend().getCircleBeans()); //获取推荐的圈子
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取自己所有圈子的初始化数据"), "init()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr((user != null ? user.getAccount(): "用户还未登录"), "获取自己所有圈子的初始化数据"), "init()", ConstantsUtil.STATUS_NORMAL, 0);
 				
 		return message.getMap();
 	}
@@ -134,13 +155,37 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		
 		if(user.getId() == circle.getCreateUserId()){
 			message.put("isCreater", true);
+			message.put("inMember", true);
     	}else{
     		message.put("isCreater", false);
     		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circle.getId(), ConstantsUtil.STATUS_NORMAL);
     		message.put("inMember", SqlUtil.getBooleanByList(members));
-    		message.put("isAdmin", SqlUtil.getBooleanByList(members) &&  members.get(0).getRoleType() == CIRCLE_MANAGER);
+    		message.put("isCircleAdmin", SqlUtil.getBooleanByList(members) &&  members.get(0).getRoleType() == CIRCLE_MANAGER);
     	}
+		
+		//获取我的贡献值以及总贡献值
+		List<Map<String, Object>> contributes = circleContributionMapper.getContribute(circle.getId(), user.getId());
+		if(CollectionUtil.isNotEmpty(contributes)){
+			message.putAll(contributes.get(0));
+		}
+		
+		if(!message.containsKey("myContribute") || StringUtil.changeObjectToInt(message.get("myContribute")) < 1){
+			message.put("myContribute", 0);
+		}
+	
+		if(!message.containsKey("allContribute") || StringUtil.changeObjectToInt(message.get("allContribute")) < 1){
+			message.put("allContribute", 0);
+		}
+		
+		//判断当天是否有签到
+		message.put("isClockIn", CollectionUtil.isNotEmpty(circleClockInMapper.getClockInBean(circle.getId(), user.getId(), ConstantsUtil.STATUS_NORMAL, DateUtil.DateToString(new Date(), "yyyy-MM-dd"))));
+		
+		//获取管理员
+		message.put("admins", circleMemberMapper.getMembersByRoleType(circle.getId(), CIRCLE_MANAGER, ConstantsUtil.STATUS_NORMAL));
 		message.put("circle", circle);
+		message.put("createTime", RelativeDateFormat.format(circle.getCreateTime()));
+		message.put("createName", userHandler.getUserName(circle.getCreateUserId()));
+		message.put("createId", circle.getCreateUserId());
 		return message.getMap();
 	}
 
@@ -450,5 +495,38 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, "访问圈子"+ circleId, "saveVisitLog()", ConstantsUtil.STATUS_NORMAL, 0);			
+	}
+	
+	@Override
+	public Map<String, Object> leave(int circleId, UserBean user,
+			HttpServletRequest request) {
+		logger.info("CircleServiceImpl-->leave():circleId="+circleId);
+		ResponseMap message = new ResponseMap();
+		
+		CircleBean circleBean = circleMapper.findById(CircleBean.class, circleId);
+		
+		if(circleBean == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
+
+		List<CircleMemberBean> circleMemberBeans = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
+		if(!SqlUtil.getBooleanByList(circleMemberBeans)){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.您已经离开该圈子.value));
+			message.put("responseCode", EnumUtil.ResponseCode.您已经离开该圈子.value);
+			return message.getMap();
+		}
+		
+		
+		boolean result = circleMemberMapper.deleteById(CircleMemberBean.class, (circleMemberBeans.get(0)).getId()) > 0;
+		if(result){
+			//保存操作日志
+			operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"离开圈子--", circleId).toString(), "leave()", ConstantsUtil.STATUS_NORMAL, 0);		
+			message.put("isSuccess", true);
+			message.put("message", "退出圈子成功");
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		}else{
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
+			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
+		}
+		return message.getMap();
 	}
 }

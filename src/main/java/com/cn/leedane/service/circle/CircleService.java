@@ -121,6 +121,15 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 */
 	public void saveVisitLog(int circleId, UserBean user, HttpServletRequest request);
+
+	/**
+	 * 退出该圈子
+	 * @param circleId
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> leave(int circleId, UserBean user, HttpServletRequest request);
 	
 	/**
 	 * 获取最新的圈子

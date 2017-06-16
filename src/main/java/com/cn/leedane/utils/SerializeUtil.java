@@ -1,5 +1,6 @@
 package com.cn.leedane.utils;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -52,7 +53,7 @@ public class SerializeUtil {
 		}
 				
 		ByteArrayInputStream bais = new ByteArrayInputStream(buf);
-		ObjectInputStream ois = new ObjectInputStream(bais);
+		ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(bais));
 		Object o = ois.readObject();
 		
 		if(null != ois){

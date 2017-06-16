@@ -686,7 +686,7 @@ public class RedisUtil{
 	}
 	
 	/**
-	 * 过期键值
+	 * 过期键值(改变原来的值，注意：原来的类型不是String的情况下请慎用)
 	 * @param key
 	 * @param value
 	 * @param seconds
@@ -698,6 +698,28 @@ public class RedisUtil{
 		try {
 			if(jedis != null){
 				jedis.set(key, StringUtil.isNull(value) ? "0000": value);
+				jedis.expire(key, seconds);
+				result = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			RedisUtil.returnResource(jedis);
+		}
+		return result;
+	}
+	
+	/**
+	 * 过期键值(不改变原值)
+	 * @param key
+	 * @param seconds
+	 * @return
+	 */
+	public boolean expire(String key, int seconds){
+		boolean result = false;
+		Jedis jedis = getJedis();
+		try {
+			if(jedis != null){
 				jedis.expire(key, seconds);
 				result = true;
 			}

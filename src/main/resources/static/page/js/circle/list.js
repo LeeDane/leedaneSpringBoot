@@ -88,7 +88,11 @@ function buildEachCircleRow(index, circle){
 					'<td width="30"><img alt="" src="'+ (isEmpty(circle.circle_path) ? '' : circle.circle_path) +'" width="25" height="25"/></td>'+
 					'<td width="150" class="cut-text"><a href="javascript:void(0);" onclick="linkToCircle('+ circle.id +');">'+ circle.name +'</a></td>'+
 					'<td>'+ circle.create_user_name +'</td>'+
-					'<td>'+ changeNotNullString(circle.admins) +'</td>'+
+					'<td>'
+				if(isNotEmpty(circle.admins)){
+					html += changeNotNullString(getAdminMapValue(circle.adminMap));
+				}
+			html += '</td>'+
 					'<td>'+ circle.circle_desc +'</td>'+
 					'<td width="60">'+ (circle.status == 1? '正常': (circle.status == 2 ? '已删除': '禁用'))+'</td>'+
 					'<td width="100">'+ circle.create_time +'</td>'+
@@ -99,6 +103,21 @@ function buildEachCircleRow(index, circle){
 		html += '</td>'+
 			'</tr>';
 	return html;
+}
+
+/**
+ * 获取管理员的列表
+ */
+function getAdminMapValue(adminMap){
+	if(adminMap){
+		var html = '';
+		for(var m in adminMap){
+			html += '<a href="javascript: void(0);" onclick="linkToMy('+ m +');">' + adminMap[m] + '</a>,';
+		}
+		
+		return deleteLastStr(html);
+	}
+	return '';
 }
 
 function getCircleData(index){

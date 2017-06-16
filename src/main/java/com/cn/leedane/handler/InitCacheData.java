@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.mapper.BaseMapper;
+import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.model.JobManageBean;
 import com.cn.leedane.model.OptionBean;
 import com.cn.leedane.model.RecordTimeBean;
@@ -61,6 +62,21 @@ import com.cn.leedane.utils.sensitiveWord.SensitiveWordInit;
 public class InitCacheData {
 	private Logger logger = Logger.getLogger(getClass());
 	
+	/**
+	 * 最热门的圈子
+	 */
+	//public static List<CircleBean> hotestCircleBeans = new ArrayList<CircleBean>();
+	
+	/**
+	 * 最新的圈子
+	 */
+	//public static List<CircleBean> newestCircleBeans = new ArrayList<CircleBean>();
+	
+	/**
+	 * 推荐的圈子
+	 */
+	//public static List<CircleBean> recommendCircleBeans = new ArrayList<CircleBean>();
+	
 	@Autowired
 	private SystemCache systemCache;
 	
@@ -70,12 +86,16 @@ public class InitCacheData {
 	@Autowired
 	private Scheduler scheduler;
 	
+	@Autowired
+	private CircleMapper circleMapper;
+	
 	public void init(){
 
 		checdRidesOpen();//检查redis服务器有没有打开
 		initCache();
 		loadOptionTable(); //加载选项表中的数据
 		startJob(); //加载定时任务
+		//getApplicationData(); //获取系统上下文的全局数据
 		new OptionUtil();//加载选项到内存中
 		
 		loadFilterUrls(); //加载过滤的url地址
@@ -358,5 +378,18 @@ public class InitCacheData {
 			logger.error("初始化读取T_JOB_MANAGE表出现异常");
 			ex.printStackTrace();
 		}
+	}
+	
+	/**
+	 * 获取系统上下文的全局数据
+	 */
+	public void getApplicationData(){
+		logger.warn("加载系统上下文的全局数据开始"); 
+		long begin = System.currentTimeMillis(); 
+		//hotestCircleBeans = circleMapper.getHotests(DateUtil.getDayBeforeOrAfter(-4, true), 6);
+		//newestCircleBeans = circleMapper.getNewests(5);
+		//recommendCircleBeans = circleMapper.getRecommends(6);
+		long end = System.currentTimeMillis();
+		logger.warn("加载系统上下文的全局数据结束，共计耗时："+(end - begin) +"ms"); 
 	}
 }

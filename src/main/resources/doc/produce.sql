@@ -26,9 +26,9 @@ END $$
 delimiter
 
 
--- 计算圈子的积分
+-- 计算热门圈子的积分
 drop PROCEDURE if EXISTS `getHostestCirclesProcedure` ;
--- 用户打卡记录 * 0.3 + 用户净新增记录(新增-退出) * 0.6 + 任务完成总数 * 0.4 + 打开的次数 * 0.1 
+-- 用户打卡记录 * 0.3 + 用户净新增记录(新增-退出) * 0.6 + 任务完成总数 * 0.4 + 打开的次数 * 0.01 -被举报总数 * 0.8
 delimiter $$
 CREATE PROCEDURE `getHostestCirclesProcedure` (in $time DATETIME, in $limit INT)
 BEGIN
@@ -60,7 +60,7 @@ BEGIN
 			-- 获取圈子在这段时间内被访问的次数
 			select count(id) into logNumber from t_operate_log ol where ol.`subject` = subjectVal;
 
-			set totalScore = addNumber * 0.6 + logNumber* 0.1;
+			set totalScore = addNumber * 0.6 + logNumber* 0.01;
 			update t_circle c set c.circle_score = totalScore where c.id = circle_id;
 			 -- select addNumber * 0.6 + logNumber* 0.1, totalScore, addNumber, logNumber, subjectVal;
 
@@ -70,5 +70,19 @@ BEGIN
   CLOSE cursor_circles; -- 关闭游标 
 
   select * from t_circle order by circle_score desc limit 0, $limit;
+END $$
+delimiter
+
+-- 获取该圈子的总贡献值和我的贡献值
+drop PROCEDURE if EXISTS `getCircleContributeProcedure` ;
+delimiter $$
+CREATE PROCEDURE `getCircleContributeProcedure` (in $circleId INT, in $userId INT)
+BEGIN
+	DECLARE myContribute INT(11); -- 自定义变量该圈子内我的贡献值
+	DECLARE allContribute INT(11); -- 自定义变量该圈子的贡献值
+
+  select sum(cc.score) into allContribute from t_circle_contribution cc where cc.circle_id = $circleId;
+  select cc.total_score into myContribute from t_circle_contribution cc where cc.circle_id = $circleId and cc.create_user_id = $userId order by id desc limit 1;
+	select myContribute my, allContribute entire;
 END $$
 delimiter

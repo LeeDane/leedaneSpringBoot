@@ -34,15 +34,30 @@
 	<select id="paging" parameterType="int" resultType="java.util.Map">
 		select c.id, c.status, c.circle_desc, c.name, c.circle_path, 
 			date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time 
-			, c.create_user_id, (select CONCAT(cm1.member_id) from t_circle_member cm1 where c.id = cm1.circle_id and cm1.`status` = #{status} and cm1.role_type = #{roleType}) admins
+			, c.create_user_id, (select GROUP_CONCAT(cm1.member_id) from t_circle_member cm1 where c.id = cm1.circle_id and cm1.`status` = #{status} and cm1.role_type = #{roleType}) admins
 		from t_circle c inner join t_circle_member cm on c.id = cm.circle_id 
 		where cm.member_id = #{createUserId} and cm.status = #{status}
 		order by c.create_time desc, c.id desc limit #{start}, #{pageSize}
 	</select>
 	
-	<select id="getHotests" resultType="java.util.Map" statementType="CALLABLE">
+	<select id="calculateGetHotests" resultType="java.util.Map" statementType="CALLABLE">
 		{
 			call getHostestCirclesProcedure(#{time}, #{pageSize})
 		}
+	</select>
+	
+	<select id="getHotests" resultMap="objectBean">
+		select c.id, c.name name, c.circle_desc, c.circle_path, c.status, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		from t_circle c where c.create_time > #{time} order by c.circle_score desc limit 0, #{pageSize};
+	</select>
+	
+	<select id="getNewests" parameterType="int" resultMap="objectBean">
+		select c.id, c.name name, c.circle_desc, c.circle_path, c.status, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		from t_circle c order by c.id desc limit 0, #{pageSize};
+	</select>
+	
+	<select id="getRecommends" parameterType="int" resultMap="objectBean">
+		select c.id, c.name name, c.circle_desc, c.circle_path, c.status, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		from t_circle c where c.circle_recommend = true order by c.id desc limit 0, #{pageSize};
 	</select>
 </mapper>

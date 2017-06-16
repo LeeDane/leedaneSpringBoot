@@ -25,10 +25,6 @@ public class CommentHandler {
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
 	public void addComment(String tableName, int tableId){
-		/**
-		 * 通过表名+ID唯一存储
-		 */
-		RedisUtil redisUtil = RedisUtil.getInstance();
 		String key = getCommentKey(tableName, tableId);
 		int count = 0;
 		//还没有添加到redis中

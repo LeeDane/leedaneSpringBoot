@@ -24,4 +24,10 @@
         <result property="createUserId" column="create_user_id"/>
         <result property="createTime" column="create_time"/>
    </resultMap>
+   
+   <select id="getMembersByRoleType" parameterType="int" resultType="java.util.Map">
+		select cm.id , cm.member_id, cm.circle_id, cm.role_type, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time, cm.create_user_id, u.account
+		from t_circle_member cm inner join t_user u on u.id = cm.member_id
+		where cm.circle_id = #{circleId} and cm.status = #{status} and cm.role_type = #{roleType}
+	</select>
 </mapper>

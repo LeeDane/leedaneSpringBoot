@@ -11,6 +11,8 @@ import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cn.leedane.handler.InitCacheData;
+import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.JsonUtil;
@@ -30,6 +32,9 @@ public class CircleHostest extends AbstractScheduling{
 	@Autowired
 	private CircleMapper circleMapper;
 	
+	@Autowired
+	private CircleHandler circleHandler;
+	
 	@Override
 	public void execute() throws SchedulerException {
 		
@@ -41,8 +46,7 @@ public class CircleHostest extends AbstractScheduling{
 		
 		//circleMapper
 		Date time = DateUtil.getDayBeforeOrAfter(recent, true);
-		List<Map<String, Object>> mp = circleMapper.getHotests(time, limit);
-		System.out.println(mp.size());
+		circleMapper.calculateGetHotests(time, limit);
 		long end = System.currentTimeMillis();
 		logger.info("执行最热门的圈子任务总计耗时：" + (end - start) +"毫秒");
 	}

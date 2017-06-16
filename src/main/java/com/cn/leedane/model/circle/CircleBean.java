@@ -12,12 +12,12 @@ import com.cn.leedane.mybatis.table.annotation.Column;
  * version 1.0
  */
 public class CircleBean extends RecordTimeBean{
-
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7320151621589479551L;
-	
+	private static final long serialVersionUID = 1L;
+
 	//圈子的状态：0：禁用， 1：正常
 	
 	/**

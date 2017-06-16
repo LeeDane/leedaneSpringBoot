@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
@@ -13,13 +12,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.handler.SignInHandler;
 import com.cn.leedane.mapper.SignInMapper;
@@ -30,6 +22,13 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.ScoreService;
 import com.cn.leedane.service.SignInService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.DateUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.SqlUtil;
+import com.cn.leedane.utils.StringUtil;
 
 /**
  * 签到service实现类
@@ -57,12 +56,6 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 	 */
 	@Autowired
 	private SystemCache systemCache;
-	
-	@Resource
-	public void setOperateLogService(
-			OperateLogService<OperateLogBean> operateLogService) {
-		this.operateLogService = operateLogService;
-	}
 	
 	@Override
 	public boolean isSign(int userId, String dateTime) {

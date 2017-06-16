@@ -1,7 +1,6 @@
 package com.cn.leedane.mapper.circle;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -23,5 +22,16 @@ public interface CircleMemberMapper extends BaseMapper<CircleMemberBean>{
 	 * @return
 	 */
 	public List<CircleMemberBean> getMember(@Param("memberId") int memberId, @Param("circleId") int circleId, @Param("status") int status);
+	
+	/**
+	 * 获取圈子的管理员列表
+	 * @param memberId
+	 * @param circleId
+	 * @return
+	 */
+	public List<CircleMemberBean> getMembersByRoleType(
+			@Param("circleId") int circleId
+			, @Param("roleType") int roleType, 
+			@Param("status") int status);
 
 }

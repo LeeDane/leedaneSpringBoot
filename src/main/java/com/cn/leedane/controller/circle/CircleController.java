@@ -137,4 +137,20 @@ public class CircleController extends BaseController{
 		message.putAll(circleService.join(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
+	
+	/**
+	 * 离开圈子
+	 * @return
+	 */
+	@RequestMapping(value = "/leave/{circleId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> leave(@PathVariable("circleId") int circleId, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circleService.leave(circleId, getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
 }
