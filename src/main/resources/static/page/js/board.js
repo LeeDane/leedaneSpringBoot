@@ -124,7 +124,7 @@ function buildEachCommentRow(index, comment){
 										'<div class="row">'+
 							       				'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right">'+
 							       					 '<button class="btn btn-sm btn-primary pull-right reply-other-btn" style="width: 60px;" type="button">回复TA</button>';
-				       					 if(isAdmin || comment.create_user_id == loginUserId){
+				       					 if(true/*isAdmin || comment.create_user_id == loginUserId*/){
 				       						 html += '<button class="btn btn-sm btn-primary pull-right delete-other-btn" style="width: 60px; margin-right: 5px;" type="button">删除</button>';
 				       					 }
 							       					 

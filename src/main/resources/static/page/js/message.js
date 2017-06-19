@@ -221,7 +221,7 @@ function buildEachMessageRow(index, message){
 										if(!message.is_read){
 											html += '<button class="btn btn-sm btn-primary pull-right tag-read-btn" style="width: 80px;" type="button">标为已读</button>';
 										}
-				       					 if(isAdmin && message.to_user_id == loginUserId){
+				       					 if(isAdmin || message.to_user_id == loginUserId){
 				       						 html += '<button class="btn btn-sm btn-primary pull-right delete-other-btn" style="width: 60px; margin-right: 5px;" type="button">删除</button>';
 				       					 }
 							       					 
