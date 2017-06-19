@@ -89,8 +89,8 @@
 			padding: 5px 8px !important;
 		}
 		.message-content{
-				border: 1px solid #ddd;
-				border-top:none !important;
+			border: 1px solid #ddd;
+			border-top:none !important;
 		}
 		.nav-tabs{
 			border-bottom: 0 !important;
@@ -103,6 +103,20 @@
 		#notification-tabs .active a{
 			/* background-color: #2e6da4 !important; */
 		}
+		
+		.label-primary{
+	   		cursor: pointer;
+	   		margin-right: 8px;
+   		}
+   		.label-info{
+   			cursor: pointer;
+   			margin-right: 8px !important;
+   		}
+   		
+   		.label{
+   			display: inline-block !important;
+  			margin-top: 8px !important;
+   		}
 	</style>
 </head>
 <body>
@@ -184,6 +198,45 @@
 			</div>
 			<div class="modal-footer">
 			      <button class="btn btn-default" type="button" onclick="doEdit(this);">编辑</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+<div class="modal fade" data-id="" id="admin-list" tabindex="-1" role="dialog" aria-labelledby="adminListModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="adminListModalLabel">
+					分配管理员权限
+				</h4>
+			</div>
+			<div class="modal-body">
+				已经分配:
+				<div style="margin-bottom: 8px;" id="alreadyAdmins">
+					<span class="label label-primary">Primary</span>
+					<span class="label label-primary">Primary</span>
+					<span class="label label-primary">Primary</span>
+					<span class="label label-primary">Primary</span>
+				</div>
+				
+				待分配:
+				<div id="notAdmins">
+					<span class="label label-info">Info</span>
+					<span class="label label-info">Info</span>
+					<span class="label label-info">Info</span>
+					<span class="label label-info">Info</span>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭
+				</button>
+				<button type="button" class="btn btn-primary admin-list-btn" onclick="admin(this);">
+					分配
+				</button>
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal -->

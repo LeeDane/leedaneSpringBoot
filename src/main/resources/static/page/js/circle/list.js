@@ -98,12 +98,129 @@ function buildEachCircleRow(index, circle){
 					'<td width="100">'+ circle.create_time +'</td>'+
 					'<td width="140">';
 		if(circle.create_user_id == loginUserId){
-			html += '<a href="javascript:void(0);" onclick="rowEditJob(this);" style="margin-right: 10px;">分配</a><a href="javascript:void(0);" onclick="showEditCircleModal(this, '+ index +');" style="margin-right: 10px;">编辑</a><a href="javascript:void(0);" onclick="doDelete(this, '+ index +');" style="margin-right: 10px;">删除</a>';
+			html += '<a href="javascript:void(0);" onclick="showAllotAdminList(this, '+ circle.id+');" style="margin-right: 10px;">分配</a><a href="javascript:void(0);" onclick="showEditCircleModal(this, '+ index +');" style="margin-right: 10px;">编辑</a><a href="javascript:void(0);" onclick="doDelete(this, '+ index +');" style="margin-right: 10px;">删除</a>';
 		}
 		html += '</td>'+
 			'</tr>';
 	return html;
 }
+
+/**
+ * 展示分配的管理员列表
+ * @param obj
+ * @param circleId
+ */
+function showAllotAdminList(obj, circleId){
+	//获取所有的管理员列表
+	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+	$.ajax({
+		url : "/cc/circle/"+ circleId +"/admins",
+		dataType: 'json', 
+		beforeSend:function(){
+			$("#alreadyAdmins").html("");
+			$("#notAdmins").html("");
+		},
+		success : function(data) {
+			layer.close(loadi);
+			if(data.isSuccess){
+				for(var i = 0 ; i < data.message.length; i++){
+					if(data.message[i].role_type == 0){
+						buildNotAdminsHtml(data.message[i]);
+					}else if(data.message[i].role_type == 2){
+						buildAlreadyAdminsHtml(data.message[i]);
+					}
+				}
+				$("#admin-list").modal("show");
+				$("#admin-list").attr("data-id", circleId);
+			}else{
+				ajaxError(data);
+			}
+		},
+		error : function(data) {
+			layer.close(loadi);
+			ajaxError(data);
+		}
+	});
+}
+
+/**
+ * 添加没有分配管理员的角色的html
+ * @param member
+ */
+function buildNotAdminsHtml(circleMember){
+	var html = '<span class="label label-info" data-id="'+ circleMember.member_id +'" onclick="notClick(this);">'+ circleMember.account +'</span>';
+	$("#notAdmins").append(html);
+}
+
+/**
+ * 添加已经分配管理员的角色的html
+ * @param member
+ */
+function buildAlreadyAdminsHtml(circleMember){
+	var html = '<span class="label label-primary" data-id="'+ circleMember.member_id +'" onclick="alreadyClick(this);">'+ circleMember.account +'</span>';
+	$("#alreadyAdmins").append(html);
+}
+
+/**
+ * 将已经分配的取消，加入待分配列表
+ * @param obj
+ */
+function notClick(obj){
+	var circleMember = {};
+	circleMember.member_id = $(obj).attr("data-id");
+	circleMember.account = $(obj).text();
+	$(obj).remove();
+	buildAlreadyAdminsHtml(circleMember);
+}
+
+/**
+ * 将已经分配的取消，加入待分配列表
+ * @param obj
+ */
+function alreadyClick(obj){
+	var circleMember = {};
+	circleMember.member_id = $(obj).attr("data-id");
+	circleMember.account = $(obj).text();
+	$(obj).remove();
+	buildNotAdminsHtml(circleMember);
+}
+
+/**
+ * 分配权限操作
+ * @param obj
+ */
+function admin(obj){
+	var modal = $(obj).closest(".modal");
+	var circleId = modal.attr("data-id");
+	var alreadyAdmins = modal.find("#alreadyAdmins span");
+	var adminIds = "";
+	alreadyAdmins.each(function(){
+		adminIds += $(this).attr("data-id") +",";
+	});
+	
+	adminIds = deleteLastStr(adminIds);
+	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+	$.ajax({
+		url : "/cc/circle/"+ circleId +"/admins/allot?admins="+ adminIds,
+		dataType: 'json', 
+		beforeSend:function(){
+		},
+		success : function(data) {
+			layer.close(loadi);
+			if(data.isSuccess){
+				layer.msg(data.message + ",1秒后自动刷新");
+				reloadPage(1000);
+			}else{
+				ajaxError(data);
+			}
+		},
+		error : function(data) {
+			layer.close(loadi);
+			ajaxError(data);
+		}
+	});
+}
+
 
 /**
  * 获取管理员的列表

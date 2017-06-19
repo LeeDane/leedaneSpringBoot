@@ -30,4 +30,28 @@
 		from t_circle_member cm inner join t_user u on u.id = cm.member_id
 		where cm.circle_id = #{circleId} and cm.status = #{status} and cm.role_type = #{roleType}
 	</select>
+	
+	<select id="getAllMembers" parameterType="int" resultType="java.util.Map">
+		select cm.id , cm.member_id, cm.circle_id, cm.role_type, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time, cm.create_user_id, u.account
+		from t_circle_member cm inner join t_user u on u.id = cm.member_id
+		where cm.circle_id = #{circleId} and cm.status = #{status}
+	</select>
+	
+	<select id="findByMemberIds" resultMap="objectBean">
+		select cm.id , cm.member_id, cm.circle_id, cm.role_type, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time, cm.create_user_id
+		from t_circle_member cm 
+		where cm.circle_id = #{circleId} and cm.status = #{status} and member_id in 
+		<foreach collection="memberIds" item="memberId" index="index"
+            open="(" close=")" separator=",">
+            #{memberId}
+        </foreach>
+	</select>
+	
+	<update id="updateByBatch">
+	    update t_circle_member set role_type = #{roleType}
+	    where circle_id = #{circleId} and id in 
+	    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">    
+           #{item.id, jdbcType=INTEGER}
+	    </foreach>
+    </update>
 </mapper>

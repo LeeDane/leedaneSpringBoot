@@ -130,7 +130,7 @@ public interface CircleService <T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> leave(int circleId, UserBean user, HttpServletRequest request);
-	
+
 	/**
 	 * 获取最新的圈子
 	 * @param user
@@ -150,5 +150,25 @@ public interface CircleService <T extends IDBean>{
 	 *//*
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<CircleBean> hotest(UserBean user, int limit, HttpServletRequest request);*/
+	
+	/**
+	 * 获取已经分配的管理员列表
+	 * @param cid
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> admins(int cid, UserBean user, HttpServletRequest request);
+
+	
+	/**
+	 * 圈子成员做分配管理员操作
+	 * @param cid
+	 * @param admins
+	 * @param userFromMessage
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> allot(int cid, String admins, UserBean user, HttpServletRequest request);
 	
 }

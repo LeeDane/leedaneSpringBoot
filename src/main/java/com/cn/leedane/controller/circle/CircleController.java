@@ -4,6 +4,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.service.circle.CircleService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 /**
@@ -153,4 +156,36 @@ public class CircleController extends BaseController{
 		return message.getMap();
 	}
 	
+	/**
+	 * 分页获取权限列表
+	 * @return
+	 */
+	@RequestMapping(value = "/circle/{cid}/admins", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> roles(HttpServletRequest request, @PathVariable("cid") int cid){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circleService.admins(cid, getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 角色的分配
+	 * @return
+	 */
+	@RequestMapping(value = "/circle/{cid}/admins/allot", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> allot(HttpServletRequest request, @PathVariable("cid") int cid){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		JSONObject json = getJsonFromMessage(message);
+		String admins = JsonUtil.getStringValue(json, "admins");
+		
+		message.putAll(circleService.allot(cid, admins, getUserFromMessage(message), request));
+		return message.getMap();
+	}
 }
