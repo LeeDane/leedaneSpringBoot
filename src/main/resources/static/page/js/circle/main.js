@@ -9,6 +9,14 @@ $(function(){
 	
 	$(".tooltip").css("display", "block");
 	
+	//圈子用户头像图片的绑定
+	$(document).on("click", "img.user-img", function(event){
+		event.stopPropagation();//阻止冒泡 
+		var $img = $(this);
+		var id = $img.attr("data");
+		linkToMy(id);
+	});
+	
 	//加入圈子
 	$(".into-circle").click(function(){
 		$.ajax({
@@ -61,6 +69,7 @@ $(function(){
 	$(".add-clock-in").click(function(){
 		doClockIn();
 	});
+
 });
 
 /**

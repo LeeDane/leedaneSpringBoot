@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>圈子</title>
+	<title th:text="'圈子《'+ ${circle.name}+'》'"></title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
 	<style type="text/css">
 		#main-container{
@@ -51,7 +51,7 @@
 								<a th:if="${not isCreater and not inMember}" href="javascript:void(0);" class="btn btn-default btn-sm into-circle" role="button" data-toggle="tooltip" title="申请加入该圈子">加入圈子</a>
 								<a th:if="${not isCreater and inMember}" href="javascript:void(0);" class="btn btn-default btn-sm circle-leave" role="button" data-toggle="tooltip" title="退出该圈子">退出圈子</a>
 								<a th:if="${isCreater} or ${isCircleAdmin}" href="javascript:void(0);" class="btn btn-default btn-sm circle-setting" role="button" data-toggle="tooltip" title="圈子设置">设置</a>
-								<a th:if="${isLogin} and ${inMember}" href="javascript:void(0);" class="btn btn-warning btn-sm circle-post" role="button" data-toggle="tooltip" title="发表关于该圈子的帖子">发帖</a>
+								<a th:if="${isLogin} and ${inMember}" th:href="'/cc/'+ ${circle.id} +'/write'" class="btn btn-warning btn-sm circle-post" role="button" data-toggle="tooltip" title="发表关于该圈子的帖子">发帖</a>
 							</p>
 					      </div>
 					    </div>
@@ -60,20 +60,19 @@
 						<div class="panel panel-default">
 						    <div class="panel-heading">
 						        <h3 class="panel-title">
-						            	我的任务(<span color="red" th:utext="${taskNumber}"></span>)
+						            	圈子成员(<span color="red" th:utext="${memberNumber}"></span>)
 						        </h3>
 						    </div>
 						    <div class="panel-body">
 						        <div class="row" th:if="${isLogin}">
-						        	<div  th:each="user,userStat : ${allCircles}" class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
-						        		 <img data-toggle="tooltip" title="雷州话交流圈子" class="img-circle img-responsive hand" style="width: 100%; height: 65px;" src="/page/images/main_content_bg_02.jpg"
-			                 alt="通用的占位符缩略图" />
+						        	<div  th:each="member,memberStat : ${newestMembers}" class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
+						        		 <img th:data="${member.member_id}" data-toggle="tooltip" th:title="${member.account}" class="img-circle img-responsive hand user-img" style="width: 100%; height: 65px;" th:src="${member.user_pic_path}" />
 						        	</div>
 						        	
 						        </div>
 						        
 						        <div th:if="${isLogin}" class="row pull-right" style="margin-top: 8px; margin-right: 0px;">
-						        	<a href="/cc/list">查看更多</a>
+						        	<a th:href="'/cc/' + ${circle.id} +'/member-list'">查看更多</a>
 						        </div>
 						        <div class="row" th:if="${not isLogin}">
 						        	<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
@@ -86,33 +85,46 @@
 						<div class="panel panel-default">
 						    <div class="panel-heading">
 						        <h3 class="panel-title">
-						            	我的圈友
+						            	活跃成员
 						        </h3>
 						    </div>
 						    <div class="panel-body">
 						        <div class="row" th:if="${isLogin}">
-						        	<div class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
-						        		 <img data-toggle="tooltip" title="周杰伦" class="img-circle img-responsive hand" style="width: 100%; height: 65px;" src="/page/images/main_content_bg_02.jpg"
-			                 alt="通用的占位符缩略图" />
+						        	<div  th:each="member,memberStat : ${hotestMembers}" class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
+						        		 <img th:data="${member.member_id}" data-toggle="tooltip" th:title="${member.account}" class="img-circle img-responsive hand user-img" style="width: 100%; height: 65px;" th:src="${member.user_pic_path}" />
 						        	</div>
-						        	<div class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
-						        		 <img data-toggle="tooltip" title="成龙" class="img-circle img-responsive hand" style="width: 100%; height: 65px;" src="/page/images/main_content_bg_02.jpg"
-			                 alt="通用的占位符缩略图" />
-						        	</div>
-						        	<div class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
-						        		 <img data-toggle="tooltip" title="李连杰" class="img-circle img-responsive hand" style="width: 100%; height: 65px;" src="/page/images/main_content_bg_02.jpg"
-			                 alt="通用的占位符缩略图" />
-						        	</div>
-						        	<div class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
-						        		 <img data-toggle="tooltip" title="张学友" class="img-circle img-responsive hand" style="width: 100%; height: 65px;" src="/page/images/main_content_bg_02.jpg"
-			                 alt="通用的占位符缩略图" />
-						        	</div>
+						        	
 						        </div>
-						        <div th:if="${isLogin}" class="row pull-right" style="margin-top: 8px; margin-right: 0px;">
-						        	<a href="#">查看更多</a>
+						        
+						        <div th:if="${isLogin} and ${#lists.size(hotestMembers)} gt 4" class="row pull-right" style="margin-top: 8px; margin-right: 0px;">
+						        	<a href="'/cc/' + ${circle.id} +'/member-list'">查看更多</a>
 						        </div>
-						         <div class="row" th:if="${not isLogin}">
-						         	<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+						        <div class="row" th:if="${not isLogin}">
+						        	<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+						         		登录才能查看
+						         	</div>
+						        </div>
+						    </div>
+						</div>
+						<div class="panel panel-default">
+						    <div class="panel-heading">
+						        <h3 class="panel-title">
+						            	推荐成员
+						        </h3>
+						    </div>
+						    <div class="panel-body">
+						        <div class="row" th:if="${isLogin}">
+						        	<div  th:each="member,memberStat : ${recommendMembers}" class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
+						        		 <img th:data="${member.member_id}" data-toggle="tooltip" th:title="${member.account}" class="img-circle img-responsive hand user-img" style="width: 100%; height: 65px;" th:src="${member.user_pic_path}" />
+						        	</div>
+						        	
+						        </div>
+						        
+						        <div th:if="${isLogin} and ${#lists.size(recommendMembers)} gt 4" class="row pull-right" style="margin-top: 8px; margin-right: 0px;">
+						        	<a href="'/cc/' + ${circle.id} +'/member-list'">查看更多</a>
+						        </div>
+						        <div class="row" th:if="${not isLogin}">
+						        	<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
 						         		登录才能查看
 						         	</div>
 						        </div>

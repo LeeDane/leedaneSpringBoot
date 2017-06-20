@@ -1,5 +1,6 @@
 package com.cn.leedane.mapper.circle;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -65,5 +66,50 @@ public interface CircleMemberMapper extends BaseMapper<CircleMemberBean>{
 			@Param("roleType") int roleType,
 			@Param("circleId") int circleId);
 	
+	/**
+	 * 分页获取圈子成员列表
+	 * @param createUserId
+	 * @param circleId
+	 * @param start
+	 * @param pageSize
+	 * @param status
+	 * @return
+	 */
+	public List<Map<String, Object>> paging(
+			@Param("circleId")int circleId,
+			@Param("start")int start, 
+			@Param("pageSize")int pageSize, 
+			@Param("status") int status);
 	
+	/**
+	 * 获取目前最热门的圈子成员(只计算)
+	 * @param time
+	 * @return
+	 */
+	public void calculateHotests(@Param("circleId") int circleId);
+	
+	/**
+	 * 获取目前圈子最热门的成员
+	 * @param circleId
+	 * @param time
+	 * @param pageSize
+	 * @return
+	 */
+	public List<Map<String, Object>> getHotests(@Param("circleId")int circleId, @Param("time") Date time, @Param("pageSize") int pageSize);
+	
+	/**
+	 * 获取目前圈子最新的成员
+	 * @param circleId
+	 * @param pageSize
+	 * @return
+	 */
+	public List<Map<String, Object>> getNewests(@Param("circleId")int circleId, @Param("pageSize") int pageSize);
+	
+	/**
+	 * 获取目前圈子推荐的成员
+	 * @param circleId
+	 * @param pageSize
+	 * @return
+	 */
+	public List<Map<String, Object>> getRecommends(@Param("circleId")int circleId, @Param("pageSize") int pageSize);
 }

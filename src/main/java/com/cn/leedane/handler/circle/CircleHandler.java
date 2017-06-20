@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleBean;
@@ -13,6 +14,7 @@ import com.cn.leedane.model.circle.CirclesSerializeBean;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
+import com.cn.leedane.utils.OptionUtil;
 import com.cn.leedane.utils.SerializeUtil;
 
 /**
@@ -27,6 +29,9 @@ public class CircleHandler {
 	private CircleMapper circleMapper;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
+	
+	@Autowired
+	private SystemCache systemCache;
 	
 	/**
 	 * 获取该用户在该圈子角色的编码
@@ -60,7 +65,7 @@ public class CircleHandler {
 		//redisUtil.delete(hostestKey);
 		//热门
 		if(!redisUtil.hasKey(hostestKey)){
-			circlesSerializeBean.setCircleBeans(circleMapper.getHotests(DateUtil.getDayBeforeOrAfter(-4, true), 6));
+			circlesSerializeBean.setCircleBeans(circleMapper.getHotests(DateUtil.getDayBeforeOrAfter(OptionUtil.circleHostestBeforeDay, true), 6));
 			redisUtil.addSerialize(hostestKey, SerializeUtil.serializeObject(circlesSerializeBean));
 			redisUtil.expire(hostestKey, 60 * 60); //设置一个小时过期
 		}else{

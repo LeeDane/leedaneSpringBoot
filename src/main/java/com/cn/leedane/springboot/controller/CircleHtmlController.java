@@ -1,7 +1,11 @@
 package com.cn.leedane.springboot.controller;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.websocket.server.PathParam;
+
+import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,16 +13,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.controller.UserController;
 import com.cn.leedane.exception.RE404Exception;
+import com.cn.leedane.mapper.circle.CircleMemberMapper;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleBean;
+import com.cn.leedane.model.circle.CircleMemberBean;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.service.circle.CircleService;
+import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.SqlUtil;
 
 /**
  * 圈子Html页面的控制器
@@ -35,6 +44,9 @@ public class CircleHtmlController extends BaseController{
 	
 	@Autowired
 	private CircleService<CircleBean> circleService;
+	
+	@Autowired
+	private CircleMemberMapper circleMemberMapper;
 	
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面
@@ -91,5 +103,53 @@ public class CircleHtmlController extends BaseController{
         
         circleService.saveVisitLog(cid, user, request);
 		return loginRoleCheck("circle/main", true, model, request);
+	}
+	
+	/**
+	 * 圈子成员列表
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/{circleId}/member-list")
+	public String memberList(@PathVariable(value="circleId") int circleId, Model model, HttpServletRequest request){
+		CircleBean circle = circleService.findById(circleId);
+		if(circle == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
+		
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        UserBean user = null;
+        if(currentUser.isAuthenticated()){
+        	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        	//获取页面初始化的信息
+        	model.addAllAttributes(circleService.memberListInit(circle, user, request));
+    		
+        }
+		model.addAttribute("circle", circle);
+		return loginRoleCheck("circle/member-list", true, model, request);
+	}
+	
+	@RequestMapping("/{circleId}/write")
+	public String write(@PathVariable(value="circleId") int circleId, 
+			@RequestParam(value="postId", required = false) Integer postId, 
+			Model model, 
+			HttpServletRequest request){
+		//postId 不为空表示编辑
+		CircleBean circle = circleService.findById(circleId);
+		if(circle == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
+		
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        UserBean user = null;
+        if(currentUser.isAuthenticated()){
+        	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        	List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
+    		if(!SqlUtil.getBooleanByList(members))
+    			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先加入该圈子.value));
+        }
+        model.addAttribute("circle", circle);
+		return loginRoleCheck("circle/write", true, model, request);
 	}
 }

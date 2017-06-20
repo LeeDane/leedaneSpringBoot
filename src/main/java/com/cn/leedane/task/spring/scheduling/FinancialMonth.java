@@ -67,7 +67,7 @@ public class FinancialMonth extends AbstractScheduling{
 			
 			for(int i = 0; i < futures.size(); i++){
 				try {
-					if(futures.get(i).get()){
+					if(!futures.get(i).get()){
 						logger.error(users.get(i).getAccount() + "的周报发送失败");
 					}
 				} catch (InterruptedException e) {

@@ -1,8 +1,6 @@
 package com.cn.leedane.task.spring.scheduling;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import net.sf.json.JSONObject;
 
@@ -11,12 +9,12 @@ import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.handler.InitCacheData;
+import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.OptionUtil;
 
 /**
  * 获取最热门的圈子任务
@@ -35,22 +33,20 @@ public class CircleHostest extends AbstractScheduling{
 	@Autowired
 	private CircleHandler circleHandler;
 	
+	@Autowired
+	private SystemCache systemCache;
+	
 	@Override
 	public void execute() throws SchedulerException {
-		
+ 		
 		long start = System.currentTimeMillis();
 		
 		JSONObject params = getParams();
-		int recent = JsonUtil.getIntValue(params, "recent" , -4);//默认是最近3天
-		int limit = JsonUtil.getIntValue(params, "recent" , 5);//默认显示最热门的5条记录
-		
-		//circleMapper
-		Date time = DateUtil.getDayBeforeOrAfter(recent, true);
+		int limit = JsonUtil.getIntValue(params, "limit" , 5);//默认显示最热门的5条记录
+		Date time = DateUtil.getDayBeforeOrAfter(OptionUtil.circleHostestBeforeDay, true);
 		circleMapper.calculateGetHotests(time, limit);
 		long end = System.currentTimeMillis();
 		logger.info("执行最热门的圈子任务总计耗时：" + (end - start) +"毫秒");
 	}
-	
-	
 	
 }

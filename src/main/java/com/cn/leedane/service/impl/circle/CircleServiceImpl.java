@@ -21,6 +21,7 @@ import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.circle.CircleHandler;
+import com.cn.leedane.handler.circle.CircleMemberHandler;
 import com.cn.leedane.mapper.circle.CircleClockInMapper;
 import com.cn.leedane.mapper.circle.CircleContributionMapper;
 import com.cn.leedane.mapper.circle.CircleCreateLimitMapper;
@@ -39,6 +40,7 @@ import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.RelativeDateFormat;
@@ -91,6 +93,9 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	@Autowired
 	private CircleHandler circleHandler;
+	
+	@Autowired
+	private CircleMemberHandler circleMemberHandler;
 	
 	@Autowired
 	private UserHandler userHandler;
@@ -160,18 +165,19 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		logger.info("CircleServiceImpl-->main(), user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
+		int circleId = circle.getId();
 		if(user.getId() == circle.getCreateUserId()){
 			message.put("isCreater", true);
 			message.put("inMember", true);
     	}else{
     		message.put("isCreater", false);
-    		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circle.getId(), ConstantsUtil.STATUS_NORMAL);
+    		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
     		message.put("inMember", SqlUtil.getBooleanByList(members));
     		message.put("isCircleAdmin", SqlUtil.getBooleanByList(members) &&  members.get(0).getRoleType() == CIRCLE_MANAGER);
     	}
 		
 		//获取我的贡献值以及总贡献值
-		List<Map<String, Object>> contributes = circleContributionMapper.getContribute(circle.getId(), user.getId());
+		List<Map<String, Object>> contributes = circleContributionMapper.getContribute(circleId, user.getId());
 		if(CollectionUtil.isNotEmpty(contributes)){
 			message.putAll(contributes.get(0));
 		}
@@ -185,17 +191,60 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		}
 		
 		//判断当天是否有签到
-		message.put("isClockIn", CollectionUtil.isNotEmpty(circleClockInMapper.getClockInBean(circle.getId(), user.getId(), ConstantsUtil.STATUS_NORMAL, DateUtil.DateToString(new Date(), "yyyy-MM-dd"))));
+		message.put("isClockIn", CollectionUtil.isNotEmpty(circleClockInMapper.getClockInBean(circleId, user.getId(), ConstantsUtil.STATUS_NORMAL, DateUtil.DateToString(new Date(), "yyyy-MM-dd"))));
 		
 		//获取管理员
-		message.put("admins", circleMemberMapper.getMembersByRoleType(circle.getId(), CIRCLE_MANAGER, ConstantsUtil.STATUS_NORMAL));
+		message.put("admins", circleMemberMapper.getMembersByRoleType(circleId, CIRCLE_MANAGER, ConstantsUtil.STATUS_NORMAL));
 		message.put("circle", circle);
 		message.put("createTime", RelativeDateFormat.format(circle.getCreateTime()));
 		message.put("createName", userHandler.getUserName(circle.getCreateUserId()));
 		message.put("createId", circle.getCreateUserId());
+		
+		message.put("memberNumber", SqlUtil.getTotalByList(circleMemberMapper.getTotal(DataTableType.圈子成员.value, " where circle_id= "+ circle.getId())));
+		try {
+			message.put("hotestMembers", getCircleMembers(circleMemberHandler.getHostest(circleId).getCircleMemberBeans()));//获取圈子热门的成员
+			message.put("newestMembers", getCircleMembers(circleMemberHandler.getNestest(circleId).getCircleMemberBeans())); //获取圈子最新的成员
+			message.put("recommendMembers", getCircleMembers(circleMemberHandler.getRecommend(circleId).getCircleMemberBeans())); //获取圈子推荐的成员
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		return message.getMap();
+	}
+	
+	@Override
+	public Map<String, Object> memberListInit(CircleBean circle, UserBean user, HttpServletRequest request) {
+		logger.info("CircleServiceImpl-->memberListInit(), user=" +user.getAccount());
+		ResponseMap message = new ResponseMap();
+		
+		int circleId = circle.getId();
+		if(user.getId() == circle.getCreateUserId()){
+			message.put("canAdmin", true);
+    	}else{
+    		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
+    		message.put("canAdmin", SqlUtil.getBooleanByList(members) &&  members.get(0).getRoleType() == CIRCLE_MANAGER);
+    	}
 		return message.getMap();
 	}
 
+	
+	/**
+	 * 获取数据
+	 * @param members
+	 * @return
+	 */
+	private List<Map<String, Object>> getCircleMembers(List<Map<String, Object>> members){
+	
+		if(CollectionUtil.isNotEmpty(members)){
+			for(Map<String, Object> member: members){
+				int toUserId = StringUtil.changeObjectToInt(member.get("member_id"));
+				member.putAll(userHandler.getBaseUserInfo(toUserId));
+			}
+		}
+		return members;
+	}
+	
 	@Override
 	public Map<String, Object> check(JSONObject json, UserBean user,
 			HttpServletRequest request) {

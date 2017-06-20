@@ -62,6 +62,7 @@ import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.WechatHandler;
 import com.cn.leedane.handler.ZanHandler;
 import com.cn.leedane.handler.circle.CircleHandler;
+import com.cn.leedane.handler.circle.CircleMemberHandler;
 
 /**
  * 项目启动的入口
@@ -196,6 +197,10 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
         return new CircleHandler();  
     }
 	
+	@Bean(name= "circleMemberHandler")
+    public CircleMemberHandler getCircleMemberHandler() {
+        return new CircleMemberHandler();  
+    }
 	
 	/*
 	 * ehcache 主要的管理器

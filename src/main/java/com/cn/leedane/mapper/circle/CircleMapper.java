@@ -31,7 +31,7 @@ public interface CircleMapper extends BaseMapper<CircleBean>{
 	public List<CircleBean> isExists(@Param("name") String name);
 	
 	/**
-	 * 分页获取任务列表
+	 * 分页获取圈子列表
 	 * @param start
 	 * @param pageSize
 	 * @return

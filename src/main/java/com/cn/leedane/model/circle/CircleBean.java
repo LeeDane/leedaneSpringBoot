@@ -45,7 +45,7 @@ public class CircleBean extends RecordTimeBean{
 	
 	@Column("circle_recommend")
 	@Field
-	private int circleRecommend;
+	private boolean circleRecommend;
 
 	public String getName() {
 		return name;
@@ -79,11 +79,11 @@ public class CircleBean extends RecordTimeBean{
 		this.circleScore = circleScore;
 	}
 
-	public int getCircleRecommend() {
+	public boolean getCircleRecommend() {
 		return circleRecommend;
 	}
 
-	public void setCircleRecommend(int circleRecommend) {
+	public void setCircleRecommend(boolean circleRecommend) {
 		this.circleRecommend = circleRecommend;
 	}
 	

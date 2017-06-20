@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title th:text="'发帖子--圈子《'+ ${circle.name}+'》'"></title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<style type="text/css">
+		.clearFloat{
+			clear: both;
+		}
+		.container{
+			margin-top: 50px;
+		}
+		.blog-info{
+			margin-top: 15px;
+		}
+		.must-not-null{
+			margin-left: 2px;
+			color: red;
+		}
+		.tag-list{
+		}
+		.tag-item{
+			 margin-right: 10px;
+		}
+		.badge {
+	    	background-color: #d9534f !important;
+	    	margin-right: 5px;
+	    }
+	</style>
+</head>
+<body>
+<div th:include="common :: hello">what?</div>
+<script th:src="@{/page/js/circle/write.js}" type="text/javascript"></script>
+<script th:src="@{/page/js/select-material.js}"></script>
+<div class="main clearFloat">	
+	<div class="container">
+		<div class="row" th:if="${not isAdmin}">
+			<div class="col-lg-12">
+				<div class="alert alert-warning alert-dismissible" role="alert">
+				  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				  <strong>警告！您是非圈子管理员账号，发布的帖子需要等待圈子管理员审核!</strong>
+				</div>
+			</div>
+		</div>
+		<div class="row blog-info">
+	   		<div class="col-lg-9">
+	   			<div class="form-group">
+	   				<label for="name">帖子标题<font class="must-not-null">*</font></label>
+				    <input class="form-control" type="text" name="title" placeholder="请输入标题" />
+				 </div>
+				 <div class="form-group">
+				    <label for="content">帖子内容</label>
+				    <textarea class="form-control" rows="3" name="digest"></textarea>
+				  </div>
+	   		</div>
+	   </div>
+	   
+	    <div class="row" style="margin-top: 5px;">
+	   		<div class="col-lg-12">
+	   			<button class="btn btn-default" type="button" onclick="createSelectMaterialModal(this, 9, 1, 'afterSelect');">选择素材</button>
+	   		</div>
+	   </div>
+	   
+	   <div class="row" style="margin-top: 5px;">
+	   		<div class="col-lg-12">
+	   			<label for="name">标签</label>
+	   		</div>
+	   </div>
+	   <div class="row">
+	   		<div class="col-lg-4">
+	   			<div class="form-group">
+				    <input type="text" class="form-control tag-input" placeholder="请输入标签，最多3个，每个限制10位，回车添加" onkeypress="if (event.keyCode == 13) addTag(this);" />
+				 </div>
+	   		</div>
+	   		<div class="col-lg-8">
+	   			<div class="tag-list">
+	   			
+	   			</div>
+	   		</div>
+	   </div>
+	   <div class="row">
+	   		<div class="col-lg-12">
+	   			<div class="checkbox">
+					<label>
+						<input type="checkbox" checked="checked" name="can_comment" title="该功能暂时不能使用" disabled = "disabled" />是否能评论
+					</label>
+				</div>
+	   		</div>
+	   </div>
+	   <div class="row">
+	   		<div class="col-lg-12">
+	   			<div class="checkbox">
+					<label>
+						<input type="checkbox" checked="checked" name="can_transmit" title="该功能暂时不能使用" disabled = "disabled" />是否能转发
+					</label>
+				</div>
+	   		</div>
+	   </div>
+	   <div class="row">
+	   		<div class="col-lg-12">
+	   			<div class="checkbox">
+					<label>
+						<input type="checkbox" th:if="${isAdmin}" checked="checked" name="is_recommend" title="是否推荐"/>
+						<input type="checkbox" th:if="${not isAdmin}" disabled = "disabled" name="is_recommend" title="是否推荐"/>是否推荐
+					</label>
+				</div>
+	   		</div>
+	   </div>
+	   
+	   <div class="row" style="display: none;">
+	   		<input type="hidden" name="create_user_id" />
+	   </div>
+	   <div class="row" style="margin-bottom: 20px;">
+	   		<div class="col-lg-12" style="text-align: center;">
+	   			<button type="button" class="btn btn-primary btn-sm" style="margin-right: 10px;" onclick="release();">发布文章</button>
+	   			<button type="button" class="btn btn-primary btn-sm" onclick="draft();">存为草稿</button>
+	   		</div>
+	   </div>
+	</div>
+</div>
+</body>
+<script th:inline="javascript">
+var circleId = /*[[${circle.id}]]*/;//取值
+</script>
+</html>

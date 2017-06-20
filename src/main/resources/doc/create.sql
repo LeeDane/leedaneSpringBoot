@@ -497,6 +497,8 @@ CREATE TABLE `t_circle_member` (
   `member_id` int(11) DEFAULT NULL COMMENT '成员id，一般情况下跟create_user_id一致',
   `circle_id` int(11) DEFAULT NULL COMMENT '圈子id',
   `role_type` int(2) NOT NULL DEFAULT 0 COMMENT '权限的类型，为1是创建者，2是管理者，0是普通',
+  `member_score` int(11) NOT　NULL DEFAULT 0 COMMENT '一定时间的评分，目前计划是通过定时任务去计算评分',
+  `member_recommend` bit(1) DEFAULT b'0' COMMENT '是否推荐',
   PRIMARY KEY (`id`),
   KEY `FK_circle_member_create_user` (`create_user_id`),
   KEY `FK_circle_member_modify_user` (`modify_user_id`),
@@ -607,4 +609,29 @@ CREATE TABLE `t_circle_contribution` (
   CONSTRAINT `FK_circle_contribution_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_circle_contribution_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_circle_contribution_circle_id` FOREIGN KEY (`circle_id`) REFERENCES `t_circle` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
+-- Table structure for t_circle_post
+-- ----------------------------
+DROP TABLE IF EXISTS `t_circle_post`;
+CREATE TABLE `t_circle_post` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `title` varchar(255) NOT NULL COMMENT '帖子的标题',
+  `content` varchar(255) NOT NULL COMMENT '帖子的内容',
+  `has_img` bit(1) DEFAULT b'0' NOT NULL COMMENT '是否包含图片，冗余字段',
+  `circle_id` int(11) NOT NULL COMMENT '外键关联圈子的id',
+  PRIMARY KEY (`id`),
+  KEY `FK_circle_post_create_user` (`create_user_id`),
+  KEY `FK_circle_post_modify_user` (`modify_user_id`),
+  KEY `FK_circle_post_circle_id` (`circle_id`),
+  CONSTRAINT `FK_circle_post_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_circle_post_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_circle_post_circle_id` FOREIGN KEY (`circle_id`) REFERENCES `t_circle` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

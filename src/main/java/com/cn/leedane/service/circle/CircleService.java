@@ -42,6 +42,16 @@ public interface CircleService <T extends IDBean>{
 	public Map<String,Object> main(CircleBean circle, UserBean user, HttpServletRequest request);
 	
 	/**
+	 * 圈子成员列表的初始化
+	 * @param circle
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public Map<String,Object> memberListInit(CircleBean circle, UserBean user, HttpServletRequest request);
+	
+	/**
 	 * 创建圈子
 	 * @param jo 参数
 	 * @param user 用户

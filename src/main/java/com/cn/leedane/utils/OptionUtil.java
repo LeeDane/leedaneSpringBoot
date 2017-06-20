@@ -14,9 +14,17 @@ import com.cn.leedane.springboot.SpringUtil;
  * Version 1.0
  */
 public class OptionUtil {
-	
-	public static UserBean adminUser = null;
 	private static Logger logger = Logger.getLogger(OptionUtil.class);
+	/**
+	 * 管理员账号
+	 */
+	public static UserBean adminUser = null;
+	
+	/**
+	 * 计算热门圈子的时间
+	 */
+	public static int circleHostestBeforeDay = 0;
+
 	static{
 		SystemCache systemCache = (SystemCache) SpringUtil.getBean("systemCache");
 		//获取选项表中的管理员ID
@@ -26,6 +34,11 @@ public class OptionUtil {
 			logger.info("系统管理员账号ID为空,已启动ID为1的用户做为默认管理员账号");
 		}else {
 			adminId = StringUtil.changeObjectToInt(admin);
+		}
+		circleHostestBeforeDay = StringUtil.changeObjectToInt(systemCache.getCache("circle-hostest-before-day"));
+		//默认是倒数7天的圈子
+		if(circleHostestBeforeDay == 0){
+			circleHostestBeforeDay = -7;
 		}
 		
 		@SuppressWarnings("unchecked")

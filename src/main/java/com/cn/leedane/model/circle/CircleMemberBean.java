@@ -43,6 +43,14 @@ public class CircleMemberBean extends RecordTimeBean{
 	@Column("role_type")
 	@Field
 	private int roleType;
+	
+	@Column("member_score")
+	@Field
+	private int memberScore;
+	
+	@Column("member_recommend")
+	@Field
+	private boolean memberRecommend;
 
 	public int getMemberId() {
 		return memberId;
@@ -67,4 +75,22 @@ public class CircleMemberBean extends RecordTimeBean{
 	public void setRoleType(int roleType) {
 		this.roleType = roleType;
 	}
+
+	public int getMemberScore() {
+		return memberScore;
+	}
+
+	public void setMemberScore(int memberScore) {
+		this.memberScore = memberScore;
+	}
+
+	public boolean getMemberRecommend() {
+		return memberRecommend;
+	}
+
+	public void setMemberRecommend(boolean memberRecommend) {
+		this.memberRecommend = memberRecommend;
+	}
+	
+	
 }

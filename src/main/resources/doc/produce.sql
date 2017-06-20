@@ -69,7 +69,7 @@ BEGIN
 		END REPEAT ;
   CLOSE cursor_circles; -- 关闭游标 
 
-  select * from t_circle order by circle_score desc limit 0, $limit;
+  select * from t_circle where create_time > $time order by circle_score desc limit 0, $limit;
 END $$
 delimiter
 
@@ -84,5 +84,40 @@ BEGIN
   select sum(cc.score) into allContribute from t_circle_contribution cc where cc.circle_id = $circleId;
   select cc.total_score into myContribute from t_circle_contribution cc where cc.circle_id = $circleId and cc.create_user_id = $userId order by id desc limit 1;
 	select myContribute my, allContribute entire;
+END $$
+delimiter
+
+-- 计算圈子的热门成员积分
+drop PROCEDURE if EXISTS `getHostestCircleMembersProcedure` ;
+-- 打卡积分 * 0.6 + 任务积分 * 0.3 
+delimiter $$
+CREATE PROCEDURE `getHostestCircleMembersProcedure` (in $circleId INT, in $limit INT)
+BEGIN
+	DECLARE member_id INT(11); -- 自定义变量1
+	DECLARE contributionNumber INT(11); -- 这个圈子该成员的贡献值
+  DECLARE totalScore FLOAT; -- 最终的总分
+	DECLARE DONE BOOLEAN DEFAULT 0; #定义结束标识  
+	
+	-- 获取符合条件的圈子成员列表
+	DECLARE cursor_circle_members CURSOR FOR (SELECT cm.member_id  from t_circle_member cm where cm.circle_id = $circleId);
+	
+	-- 定义游标的结束--当遍历完成时，将DONE设置为1  
+	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET DONE = 1;  
+
+	OPEN cursor_circle_members; -- 打开游标
+		
+			FETCH cursor_circle_members into member_id; -- 将游标当前读取行的数据顺序赋予自定义变量
+			REPEAT 
+			set contributionNumber = 0; -- 这个圈子该成员的贡献值
+			set totalScore = 0; -- 设置总分为0
+			-- 获取这个时间段内新增的成员数
+			SELECT sum(cc.total_score) into contributionNumber from t_circle_contribution cc where cc.circle_id = $circleId and cc.create_user_id = member_id ORDER BY cc.id desc LIMIT 1;
+			set totalScore = contributionNumber * 0.6;
+			update t_circle_member cm set cm.member_score = totalScore where cm.member_id = member_id and cm.circle_id = $circleId;
+
+		FETCH cursor_circle_members into member_id; -- 将游标当前读取行的数据顺序赋予自定义变量
+		UNTIL DONE
+		END REPEAT ;
+  CLOSE cursor_circle_members; -- 关闭游标
 END $$
 delimiter
