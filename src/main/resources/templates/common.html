@@ -85,6 +85,16 @@
 			overflow: hidden; 
 			text-overflow: ellipsis;
 		}
+		/* 只显示两行数据 */
+		.cut-text2{
+		    line-height: 18px;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		    -o-text-overflow: ellipsis; /* 针对Opera */
+		    display: -webkit-box;
+		    -webkit-line-clamp: 2;
+		    -webkit-box-orient: vertical;
+		}
 		.color-red{
 			color: red;
 		}
