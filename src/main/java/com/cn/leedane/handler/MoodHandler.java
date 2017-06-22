@@ -126,6 +126,7 @@ public class MoodHandler {
 	 * @param tableUuid
 	 * @return
 	 */
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getMoodIms(String tableName, String tableUuid){
 		String moodImgsKey = getMoodImgsKey(tableName, tableUuid);

@@ -8,6 +8,17 @@
  -->
 <mapper namespace="com.cn.leedane.mapper.circle.CirclePostMapper">
 
-	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 --> 
+	<select id="getCirclePost" parameterType="int" resultType="java.util.Map">
+		select cp.id, cp.status, cp.title, cp.content, cp.has_img, cp.circle_id
+		, date_format(cp.create_time,'%Y-%m-%d %H:%i:%s') create_time, cp.create_user_id
+		from t_circle_post cp
+		where cp.id = #{postId} and cp.status = #{status} limit 1
+	</select>
 
+	<select id="getCirclePostImgs" parameterType="int" resultType="java.util.Map">
+		select qiniu_path, pic_size, pic_order, width, height, lenght
+		from "+DataTableType.文件.value
+		where status = ? and table_name=? and table_uuid = ? and is_upload_qiniu=? and pic_size =? order by pic_order,id
+	</select>
 </mapper>

@@ -34,6 +34,15 @@ public class CircleHandler {
 	private SystemCache systemCache;
 	
 	/**
+	 * 获取圈子对象
+	 * @param circleId
+	 * @return
+	 */
+	public CircleBean getCircleBean(int circleId){
+		return circleMapper.findById(CircleBean.class, circleId);
+	}
+	
+	/**
 	 * 获取该用户在该圈子角色的编码
 	 * @param user
 	 * @param circle

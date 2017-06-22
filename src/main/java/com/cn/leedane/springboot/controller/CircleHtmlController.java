@@ -1,11 +1,11 @@
 package com.cn.leedane.springboot.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
 
-import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +18,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.controller.UserController;
 import com.cn.leedane.exception.RE404Exception;
+import com.cn.leedane.handler.circle.CircleHandler;
+import com.cn.leedane.handler.circle.CirclePostHandler;
 import com.cn.leedane.mapper.circle.CircleMemberMapper;
+import com.cn.leedane.mapper.circle.CirclePostMapper;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.model.circle.CircleMemberBean;
+import com.cn.leedane.model.circle.CirclePostBean;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.service.circle.CircleService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.SqlUtil;
+import com.cn.leedane.utils.StringUtil;
 
 /**
  * 圈子Html页面的控制器
@@ -47,6 +52,15 @@ public class CircleHtmlController extends BaseController{
 	
 	@Autowired
 	private CircleMemberMapper circleMemberMapper;
+	
+	@Autowired
+	private CirclePostMapper circlePostMapper;
+	
+	@Autowired
+	private CircleHandler circleHandler;
+	
+	@Autowired
+	private CirclePostHandler circlePostHandler;
 	
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面
@@ -88,7 +102,7 @@ public class CircleHtmlController extends BaseController{
 	@RequestMapping("/circle/{cid}")
 	public String main(@PathVariable(value="cid") int cid, Model model, HttpServletRequest request){
 		
-		CircleBean circle = circleService.findById(cid);
+		CircleBean circle = circleHandler.getCircleBean(cid);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
@@ -113,7 +127,7 @@ public class CircleHtmlController extends BaseController{
 	 */
 	@RequestMapping("/{circleId}/member-list")
 	public String memberList(@PathVariable(value="circleId") int circleId, Model model, HttpServletRequest request){
-		CircleBean circle = circleService.findById(circleId);
+		CircleBean circle = circleHandler.getCircleBean(circleId);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
@@ -136,9 +150,15 @@ public class CircleHtmlController extends BaseController{
 			Model model, 
 			HttpServletRequest request){
 		//postId 不为空表示编辑
-		CircleBean circle = circleService.findById(circleId);
+		CircleBean circle = circleHandler.getCircleBean(circleId);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
+		
+		CirclePostBean circlePostBean = new CirclePostBean();
+		//circlePostBean.setHasImg(true);
+		List<String> imgs = new ArrayList<String>();
+		List<String> tags = new ArrayList<String>();
+		//imgs.add(ConstantsUtil.DEFAULT_NO_PIC_PATH);
 		
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
@@ -148,8 +168,24 @@ public class CircleHtmlController extends BaseController{
         	List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
     		if(!SqlUtil.getBooleanByList(members))
     			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先加入该圈子.value));
+    		
+    		if(postId != null){
+    			circlePostBean = circlePostHandler.getCirclePostBean(circle, postId, user);
+    			if(circlePostBean == null || circlePostBean.getCreateUserId() != user.getId())
+    				throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该帖子不存在.value));
+
+    			if(circlePostBean.isHasImg() && StringUtil.isNotNull(circlePostBean.getImgs())){
+    				imgs = Arrays.asList(circlePostBean.getImgs().split(";"));
+    			}
+    			if(StringUtil.isNotNull(circlePostBean.getTag()))
+    				tags = Arrays.asList(circlePostBean.getTag().split(","));
+    		}
         }
+        
         model.addAttribute("circle", circle);
+        model.addAttribute("post", circlePostBean);
+        model.addAttribute("imgs", imgs); //这个是有图像的时候转化下的List列表
+        model.addAttribute("tags", tags); //这个是有图像的时候转化下的List列表
 		return loginRoleCheck("circle/write", true, model, request);
 	}
 }

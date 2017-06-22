@@ -1,12 +1,13 @@
+var pageSize = 8;
+var currentIndex = 0;
+var posts;
+var totalPage = 0;
 $(function(){
-	
 	$("[data-toggle='tooltip']").tooltip();
-	
 	$(".navbar-nav .nav-main-li").each(function(){
 		$(this).removeClass("active");
 	});
 	$(".nav-circle").addClass("active");
-	
 	$(".tooltip").css("display", "block");
 	
 	//圈子用户头像图片的绑定

@@ -32,6 +32,36 @@ public class CirclePostController extends BaseController{
 
 	@Autowired
 	private CirclePostService<CirclePostBean> circlePostService;
+	
+	/**
+	 * 写帖子
+	 * @return
+	 */
+	@RequestMapping(value = "/{circleId}/post", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> add(@PathVariable("circleId") int circleId, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circlePostService.add(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 修改帖子
+	 * @return
+	 */
+	@RequestMapping(value = "/{circleId}/post", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> update(@PathVariable("circleId") int circleId, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circlePostService.update(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
 		
 	/**
 	 * 获取圈子帖子分页列表

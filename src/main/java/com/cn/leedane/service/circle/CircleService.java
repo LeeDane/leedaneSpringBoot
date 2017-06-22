@@ -98,13 +98,6 @@ public interface CircleService <T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> paging(JSONObject json, UserBean user, HttpServletRequest request);
-	
-	/**
-	 * 查找圈子
-	 * @param cid
-	 * @return
-	 */
-	public CircleBean findById(int cid);
 
 	/**
 	 * 对是否能申请加入圈子的检查

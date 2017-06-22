@@ -14,10 +14,15 @@
 		
 		.panel-table-container{
 			padding: 0!important;
+			padding-top: 8px !important;
+			padding-bottom: 3px !important;
 		}
 		
 		.panel-table-container table{
 			margin-bottom: 0!important;
+		}
+		.panel-table-container .img-container{
+			padding: 10px !important;
 		}
 	</style>
 </head>
@@ -114,7 +119,7 @@
 						    </div>
 						    <div class="panel-body">
 						        <div class="row" th:if="${isLogin}">
-						        	<div  th:each="member,memberStat : ${recommendMembers}" class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
+						        	<div th:each="member,memberStat : ${recommendMembers}" class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
 						        		 <img th:data="${member.member_id}" data-toggle="tooltip" th:title="${member.account}" class="img-circle img-responsive hand user-img" style="width: 100%; height: 65px;" th:src="${member.user_pic_path}" />
 						        	</div>
 						        	
@@ -135,73 +140,53 @@
 			<div class="col-lg-9">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						热门圈子
+						胖迪2017-06-21广州行日程安排
 					</div>
 					<div class="panel-body panel-table-container">
-						<table class="table table-bordered">
-						  <tbody>
-						    <tr>
-						      <td><a href="#">Tanmay</a></td>
-						      <td><a href="#">Bangalore</a></td>
-						    </tr>
-						    <tr>
-						      <td><a href="#">Sachin</a></td>
-						      <td><a href="#">Mumbai</a></td>
-						    </tr>
-						    <tr>
-						      <td><a href="#">Uma</a></td>
-						      <td><a href="#">Pune</a></td>
-						    </tr>
-						  </tbody>
-						</table>
+						<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+							<blockquote>
+								<div class="cut-text hand"><a data-toggle="tooltip" data-placement="left" title="查看该帖子详细信息">这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈</a></div>
+								<small><cite>leedane</cite>&nbsp;&nbsp;一天前</small>
+							</blockquote>
+						</div>
+						<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 cut-text2">
+							这是一个基本的面板内容。这是一个基本的面板内容。
+			            	这是一个基本的面板内容。这是一个基本的面板内容。
+			            	这是一个基本的面板内容。这是一个基本的面板内容。
+			            	这是一个基本的面板内容。这是一个基本的面板内容。
+			            	这是一个基本的面板内容。这是一个基本的面板内容。
+			            	这是一个基本的面板内容。这是一个基本的面板内容。
+			            	这是一个基本的面板内容。这是一个基本的面板内容。
+			            	这是一个基本的面板内容。这是一个基本的面板内容。
+			            	这是一个基本的面板内容。这是一个基本的面板内容。
+			            	这是一个基本的面板内容。这是一个基本的面板内容
+						</div>
+		
+						<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12 img-container">
+							<img src="http://7xnv8i.com1.z0.glb.clouddn.com/default_no_pic20170613.jpg" width="100%" height="180px" class="img-responsive" onClick="" />
+						</div>
+						<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12 img-container">
+							<img src="http://7xnv8i.com1.z0.glb.clouddn.com/default_no_pic20170613.jpg" width="100%" height="180px" class="img-responsive" onClick="" />
+						</div>
+						<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12 img-container">
+							<img src="http://7xnv8i.com1.z0.glb.clouddn.com/default_no_pic20170613.jpg" width="100%" height="180px" class="img-responsive" onClick="" />
+						</div>
+								
+					</div>
+					<div class="panel-footer">
+						<button type="button" class="btn btn-default btn-xs">
+						  <span class="glyphicon glyphicon-user" aria-hidden="true"></span> LeeDane
+						</button>&nbsp;&nbsp;5天前
+						<span class="pull-right">
+							<span class="glyphicon glyphicon-trash hand" aria-hidden="true"></span>
+							<span class="glyphicon glyphicon-comment hand" aria-hidden="true"></span>
+							<span class="glyphicon glyphicon-share-alt hand" aria-hidden="true"></span>
+							<span class="glyphicon glyphicon-thumbs-up hand" aria-hidden="true"></span>
+							<span class="glyphicon glyphicon-credit-card hand" aria-hidden="true"></span>
+						</span>
 					</div>
 				</div>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						推荐圈子
-					</div>
-					<div class="panel-body panel-table-container">
-						<table class="table table-bordered">
-						  <tbody>
-						    <tr>
-						      <td><a href="#">Tanmay</a></td>
-						      <td><a href="#">Bangalore</a></td>
-						    </tr>
-						    <tr>
-						      <td><a href="#">Sachin</a></td>
-						      <td><a href="#">Mumbai</a></td>
-						    </tr>
-						    <tr>
-						      <td><a href="#">Uma</a></td>
-						      <td><a href="#">Pune</a></td>
-						    </tr>
-						  </tbody>
-						</table>
-					</div>
-				</div>
-				
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						活跃圈友
-					</div>
-					<div class="panel-body">
-						面板内容
-					</div>
-				</div>
-				<div class="col-sm-6 col-md-3">
-			        <div class="thumbnail">
-			            <img style="width: 100%; height: 120px;" src="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_2017061310460215.jpg!960.jpg"
-			                 alt="通用的占位符缩略图" />
-			            <div class="caption">
-			                <h3>缩略图标签</h3>
-			                <p>一些示例文本。一些示例文本。</p>
-			                <p>
-			                    <a href="#" class="btn btn-primary" role="button">按钮</a>
-			                    <a href="#" class="btn btn-default" role="button">按钮</a>
-			                </p>
-			            </div>
-			        </div>
-			    </div>
+			
 			    <div class="col-sm-6 col-md-3">
 			        <div class="thumbnail">
 			            <img style="width: 100%; height: 120px;" src="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_2017061310460215.jpg!960.jpg"

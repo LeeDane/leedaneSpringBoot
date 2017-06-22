@@ -45,11 +45,25 @@ public class CirclePostBean extends RecordTimeBean{
 	private String content;
 	
 	/**
-	 * 为了性能，此处增加冗余字段标记是否有照片，为true将去PhotoBean查找相关的照片
+	 * 为了性能，此处增加冗余字段标记是否有照片
 	 */
 	@Column("has_img")
 	@Field
 	private boolean hasImg;
+	
+	/**
+	 * 为了性能，此处增加冗余字段存储图片(考虑到实际图片存在此处更合适)
+	 */
+	@Column("imgs")
+	@Field
+	private String imgs;
+	
+	/**
+	 * 帖子的标签
+	 */
+	@Column("tag")
+	@Field
+	private String tag;
 
 	public int getCircleId() {
 		return circleId;
@@ -81,5 +95,21 @@ public class CirclePostBean extends RecordTimeBean{
 
 	public void setHasImg(boolean hasImg) {
 		this.hasImg = hasImg;
+	}
+
+	public String getImgs() {
+		return imgs;
+	}
+
+	public void setImgs(String imgs) {
+		this.imgs = imgs;
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 }

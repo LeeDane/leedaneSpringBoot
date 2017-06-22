@@ -378,7 +378,7 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 					var imgs = mood.imgs.split(";");
 					for(var i = 0; i < imgs.length; i++){
 						html += '<div class="col-lg-4 col-sm-4">'+
-					      			'<img src="'+ imgs[i] +'" width="100%" height="180px" class="img-responsive" onClick="showImg('+ index +', '+ i +');">'+
+					      			'<img src="'+ imgs[i] +'" width="100%" height="180px" class="img-responsive" onClick="showImg('+ index +', '+ i +');" />'+
 						      	'</div>';
 					}
 				}

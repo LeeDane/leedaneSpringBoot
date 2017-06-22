@@ -29,6 +29,9 @@
 	    	background-color: #d9534f !important;
 	    	margin-right: 5px;
 	    }
+	    .img-container img{
+	    	margin-top: 10px !important;
+	    }
 	</style>
 </head>
 <body>
@@ -49,18 +52,23 @@
 	   		<div class="col-lg-9">
 	   			<div class="form-group">
 	   				<label for="name">帖子标题<font class="must-not-null">*</font></label>
-				    <input class="form-control" type="text" name="title" placeholder="请输入标题" />
+				    <input class="form-control" data-placement="left" data-toggle="tooltip" title="请输入帖子标题，不能为空，最多100个字" type="text" name="title" placeholder="请输入帖子标题" th:value="${post.title}" empty="false" limit="100"/>
 				 </div>
 				 <div class="form-group">
-				    <label for="content">帖子内容</label>
-				    <textarea class="form-control" rows="3" name="digest"></textarea>
+				    <label for="content">帖子内容<font class="must-not-null">*</font></label>
+				    <textarea class="form-control" data-placement="left" data-toggle="tooltip" title="请输入帖子内容，不能为空，最多255个字" rows="3" name="content" placeholder="请输入帖子的内容，不能超过255个文字。" th:text="${post.content}" empty="false" limit="100"></textarea>
 				  </div>
 	   		</div>
 	   </div>
 	   
 	    <div class="row" style="margin-top: 5px;">
 	   		<div class="col-lg-12">
-	   			<button class="btn btn-default" type="button" onclick="createSelectMaterialModal(this, 9, 1, 'afterSelect');">选择素材</button>
+	   			<button class="btn btn-default" data-placement="left" data-toggle="tooltip" title="选择素材，最多9张图片" rows="3" name="digest" type="button" onclick="createSelectMaterialModal(this, 9, 1, 'afterSelect');">选择素材</button>
+	   		</div>
+	   		<div class="img-container">
+		   		<div class="col-lg-4" th:each="img,imgStat : ${imgs}">
+		   			<img th:src="${img}" style="width: 100%; height: 180px;" class="img-responsive" onClick="" />
+		   		</div>
 	   		</div>
 	   </div>
 	   
@@ -72,12 +80,33 @@
 	   <div class="row">
 	   		<div class="col-lg-4">
 	   			<div class="form-group">
-				    <input type="text" class="form-control tag-input" placeholder="请输入标签，最多3个，每个限制10位，回车添加" onkeypress="if (event.keyCode == 13) addTag(this);" />
+				    <input type="text" class="form-control tag-input" data-placement="left" data-toggle="tooltip" title="添加标签，最多3个，回车添加" placeholder="请输入标签，最多3个，每个限制10位，回车添加" onkeypress="if (event.keyCode == 13) addTag(this);" />
 				 </div>
 	   		</div>
 	   		<div class="col-lg-8">
 	   			<div class="tag-list">
-	   			
+	   				<div th:each="tag,tagStat : ${tags}" th:class="'btn-group dropup tag-item tag-item-'+ ${tagStat.index}" >
+	   					<button type="button" class="btn btn-primary tag-value" th:text="${tag}"></button>
+	   					<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+	   						<span class="caret"></span>
+	   						<span class="sr-only">Toggle Dropdown</span>
+	   					</button>
+	   					<ul class="dropdown-menu dropdown-menu-right" role="menu">
+	   						<li>
+	   							<a href="javascript:void(0);" onclick="deleteTag(this, 0);">删除</a>
+	   						</li>
+	   						<li>
+	   							<a href="javascript:void(0);" onclick="moveLeftTag(this, 0);">左移</a>
+	   						</li>
+	   						<li>
+	   							<a href="javascript:void(0);" onclick="moveRightTag(this, 0);">右移</a>
+	   						</li>
+	   						<li class="divider"></li>
+	   						<li>
+	   							<a href="javascript:void(0);" onclick="clearTag(this);">清空</a>
+	   						</li>
+	   					</ul>
+	   				</div>
 	   			</div>
 	   		</div>
 	   </div>
@@ -115,8 +144,8 @@
 	   </div>
 	   <div class="row" style="margin-bottom: 20px;">
 	   		<div class="col-lg-12" style="text-align: center;">
-	   			<button type="button" class="btn btn-primary btn-sm" style="margin-right: 10px;" onclick="release();">发布文章</button>
-	   			<button type="button" class="btn btn-primary btn-sm" onclick="draft();">存为草稿</button>
+	   			<button th:if="${post.id} gt 0" type="button" class="btn btn-primary btn-sm" style="margin-right: 10px;" onclick="release(this, true);">编辑</button>
+	   			<button th:if="${post.id} le 0" type="button" class="btn btn-primary btn-sm" style="margin-right: 10px;" onclick="release(this, false);">写帖子</button>
 	   		</div>
 	   </div>
 	</div>
@@ -124,5 +153,6 @@
 </body>
 <script th:inline="javascript">
 var circleId = /*[[${circle.id}]]*/;//取值
+var postId = /*[[${post.id}]]*/;//取值
 </script>
 </html>

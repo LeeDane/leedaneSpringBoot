@@ -341,15 +341,15 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		logger.info("CircleServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
-		int cid = JsonUtil.getIntValue(jo, "cid", 0);
-		if(cid < 1){
+		int circleId = JsonUtil.getIntValue(jo, "cid", 0);
+		if(circleId < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
 			message.put("responseCode", EnumUtil.ResponseCode.缺少请求参数.value);
 			return message.getMap();
 		}
-		CircleBean circleBean = circleMapper.findById(CircleBean.class, cid);
+		CircleBean circleBean = circleHandler.getCircleBean(circleId);
 		if(circleBean == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
 		//判断是否是圈主
 		if(circleBean.getCreateUserId() != user.getId()/* && circleHandler.getRoleCode(user, cid) != CIRCLE_MANAGER*/)
@@ -380,7 +380,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		logger.info("CircleServiceImpl-->delete():cid=" +cid +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
-		CircleBean circleBean = circleMapper.findById(CircleBean.class, cid);
+		CircleBean circleBean = circleHandler.getCircleBean(cid);
 		if(circleBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
 		
@@ -439,12 +439,6 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);
 		return message.getMap();
-	}
-	
-	@Override
-	public CircleBean findById(int cid) {
-		logger.info("CircleServiceImpl-->findById():cid="+cid);
-		return circleMapper.findById(CircleBean.class, cid);
 	}
 	
 	@Override

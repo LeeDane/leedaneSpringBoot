@@ -79,7 +79,7 @@ public class EnumUtil {
 		举报("t_report"), 积分("t_score"), 签到("t_sign_in"), 上传("t_upload"), 权限("t_permission"), 角色权限("t_role_permission"),
 		角色("t_role"), 用户角色("t_user_role"), 链接管理("t_link_manage"), 留言("t_message_board"), 素材("t_material"), 
 		任务("t_job_manage"), 贡献值("t_circle_contribution"),
-		圈子("t_circle"), 圈子成员("t_circle_member");
+		圈子("t_circle"), 圈子成员("t_circle_member"), 帖子("t_circle_post");
 	
 		private DataTableType(String value) {
 			this.value = value;
@@ -407,7 +407,8 @@ public class EnumUtil {
 		今天已经打卡(3105),
 		贡献打卡成功(3106),
 		今天还未打卡(3107),
-		请先加入该圈子(3108)
+		请先加入该圈子(3108),
+		该帖子不存在(3109),
 		;
 		
 		private ResponseCode(int value) {

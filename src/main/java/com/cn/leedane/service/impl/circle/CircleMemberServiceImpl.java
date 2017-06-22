@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.UserHandler;
+import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.handler.circle.CircleMemberHandler;
 import com.cn.leedane.mapper.circle.CircleMemberMapper;
 import com.cn.leedane.model.OperateLogBean;
@@ -51,6 +52,9 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 	
 	@Autowired
 	private CircleMemberHandler circleMemberHandler;
+	
+	@Autowired
+	private CircleHandler circleHandler;
 	
 	@Autowired
 	private UserHandler userHandler;
@@ -92,7 +96,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 		ResponseMap message = new ResponseMap();
 		
 		boolean recommend = JsonUtil.getBooleanValue(jsonObject, "recommend");
-		CircleBean circle = circleService.findById(circleId);
+		CircleBean circle = circleHandler.getCircleBean(circleId);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		

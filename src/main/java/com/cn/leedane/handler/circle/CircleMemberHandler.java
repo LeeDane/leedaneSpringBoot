@@ -35,10 +35,10 @@ public class CircleMemberHandler {
 	public CirclesMemberSerializeBean getHostest(int circleId) throws IOException, ClassNotFoundException{
 		String hostestKey = getHostestMemberKey(circleId);
 		CirclesMemberSerializeBean circlesMemberSerializeBean = new CirclesMemberSerializeBean();
-		redisUtil.delete(hostestKey);
+		//redisUtil.delete(hostestKey);
 		//热门
 		if(!redisUtil.hasKey(hostestKey)){
-			circlesMemberSerializeBean.setCircleMemberBeans(circleMemberMapper.getHotests(circleId, DateUtil.getDayBeforeOrAfter(OptionUtil.circleHostestBeforeDay, true), 6));
+			circlesMemberSerializeBean.setCircleMemberBeans(circleMemberMapper.getHotests(circleId, DateUtil.getDayBeforeOrAfter(OptionUtil.circleHostestBeforeDay, true), 4));
 			redisUtil.addSerialize(hostestKey, SerializeUtil.serializeObject(circlesMemberSerializeBean));
 			redisUtil.expire(hostestKey, 60 * 60); //设置一个小时过期
 		}else{
@@ -57,10 +57,10 @@ public class CircleMemberHandler {
 	public CirclesMemberSerializeBean getNestest(int circleId) throws IOException, ClassNotFoundException{
 		String newestKey = getNewestMemberKey(circleId);
 		CirclesMemberSerializeBean circlesMemberSerializeBean = new CirclesMemberSerializeBean();
-		redisUtil.delete(newestKey);
+		//redisUtil.delete(newestKey);
 		//最新
 		if(!redisUtil.hasKey(newestKey)){
-			circlesMemberSerializeBean.setCircleMemberBeans(circleMemberMapper.getNewests(circleId, 6));
+			circlesMemberSerializeBean.setCircleMemberBeans(circleMemberMapper.getNewests(circleId, 4));
 			redisUtil.addSerialize(newestKey, SerializeUtil.serializeObject(circlesMemberSerializeBean));
 			redisUtil.expire(newestKey, 60); //设置一分钟过期
 		}else{
@@ -78,10 +78,10 @@ public class CircleMemberHandler {
 	public CirclesMemberSerializeBean getRecommend(int circleId) throws IOException, ClassNotFoundException{
 		String recommendKey = getRecommendMemberKey(circleId);
 		CirclesMemberSerializeBean circlesMemberSerializeBean = new CirclesMemberSerializeBean();
-		redisUtil.delete(recommendKey);
+		//redisUtil.delete(recommendKey);
 		//推荐
 		if(!redisUtil.hasKey(recommendKey)){
-			circlesMemberSerializeBean.setCircleMemberBeans(circleMemberMapper.getRecommends(circleId, 6));
+			circlesMemberSerializeBean.setCircleMemberBeans(circleMemberMapper.getRecommends(circleId, 4));
 			redisUtil.addSerialize(recommendKey, SerializeUtil.serializeObject(circlesMemberSerializeBean));
 			redisUtil.expire(recommendKey, 60); //设置一分钟过期
 		}else{

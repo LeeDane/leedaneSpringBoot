@@ -3,6 +3,7 @@ $(function(){
 
 	}
 	
+	$("[data-toggle='tooltip']").tooltip();
 	//是否有主图
 	$('[name="has_img"]').click(function(){ 
 		if(this.checked){
@@ -76,8 +77,7 @@ function addTagItem(obj, text){
 		layer.msg("标签超过3个，请先删除后添加");
     		return;
     	}
-					    
-  
+	
 		var tagItemHtml = '<div class="btn-group dropup tag-item tag-item-'+ length +'">'+
 				        '<button type="button" class="btn btn-primary tag-value">'+ text +'</button>'+
 				        '<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">'+
@@ -133,6 +133,9 @@ function moveLeftTag(obj, index){
  */
 function moveRightTag(obj, index){
 	var current = $(obj);
+	var len = $(obj).closest(".tag-list").find(".tag-item").length;
+	if(len == 1)
+		return;
 	
 	if(index == 2)
 		return;
@@ -159,44 +162,54 @@ function clearTag(obj){
 }
 
  /**
-  * 发布文章
+  * 写/编辑帖子
+  * @param obj
+  * @param isEdit
   */
- function release(){
+ function release(obj, isEdit){
 	var jsonParams = {};
    	jsonParams.status = 1;
-	if(buildParams(jsonParams)){
-		doRelease(jsonParams);
-	}
- }
- /**
-  * 发布草稿
-  */
- function draft(){
-	var jsonParams = {};
-    jsonParams.status = -1;
- 	if(buildParams(jsonParams)){
- 		doRelease(jsonParams);
+   	if(buildParams(jsonParams)){
+ 		doRelease(jsonParams, isEdit);
  	}
  }
  
  /**
-  * 执行发布(草稿)文章
+  * 执行发布/编辑帖子
   * @param jsonParams
+  * @param isEdit
   */
- function doRelease(jsonParams){
-	 var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+ function doRelease(jsonParams, isEdit){
+	var formControl = $(".container").find(".form-control");
+	var flag = true;
+	formControl.each(function(index){
+		var name = $(this).attr("name");
+		var empty = $(this).attr("empty");
+		if(empty && empty == "false" && isEmpty($(this).val())){
+			$(this).focus();
+			layer.msg($(this).attr("placeholder"));
+			flag = false;
+			return;
+		}
+		if(name)
+			jsonParams[name] = $(this).val();
+	});
+	if(flag){
+		if(isEdit)
+			jsonParams.post_id = postId;
+		var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 		$.ajax({
-			type : "post",
+			type : !isEdit ? "post": "PUT",
 			data : jsonParams,
-			url : "/bg/blog",
+			url : "/cc/"+ circleId +"/post",
 			dataType: 'json', 
 			beforeSend:function(){
 			},
 			success : function(data) {
 				layer.close(loadi);
 				if(data != null && data.isSuccess){
-					layer.msg("发布文章成功");
-					window.location.reload();
+					layer.msg(data.message);
+					reloadPage(1000);
 				}else{
 					ajaxError(data);
 				}
@@ -206,6 +219,7 @@ function clearTag(obj){
 				ajaxError(data);
 			}
 		});
+	}
  }
  
  /**
@@ -214,74 +228,22 @@ function clearTag(obj){
   * @returns {Boolean}
   */
  function buildParams(jsonParams){
-  	//校验标题
-  	var titleObj = $('[name="title"]');
-  	var title = titleObj.val();
-  	if(isEmpty(title)){
-  		layer.msg(titleObj.attr("placeholder"));
-  		titleObj.focus();
-  		return false;
-  	}
-  	jsonParams.title = title;
-  	
-  	//校验内容
-  	var content = ue.getContent();
-  	if(isEmpty(content)){
-  		layer.msg("内容不能为空");
-  		ue.focus();
-  		return false;
-  	}
-  	
-  	console.log(ue.getAllHtml());
-  	jsonParams.content = content;
   	
   	//是否有图
-  	var hasImg = $('[name="has_img"]').is(':checked');
-  	if(hasImg){
-  		var img_url = $('[name="img_url"]').val();
-  		if(isNotEmpty(img_url) && !isLink(img_url)){
-			layer.msg("该图片的链接不合法");
-			$('[name="img_url"]').focus();
-			return false;
-		}
-  		jsonParams.img_url = img_url;
-  	}
-  	jsonParams.has_img = hasImg;
-  
-  	//是否原创
-  	var original = $('[name="is_original"]').is(':checked');
-  	if(!original){
-  		var originLinkObj = $('[name="origin_link"]');
-  		var originLink = originLinkObj.val();
-  		if(isEmpty(originLink)){
-  			layer.msg(originLinkObj.attr("placeholder"));
-  			originLinkObj.focus();
-      		return false;
-  		}
-  		
-  		if(!isLink(originLink)){
-			layer.msg("该图片的链接不合法");
-			originLinkObj.focus();
-			return false;
-		}
-  		jsonParams.origin_link = originLink;
-  		
-  		var sourceObj = $('[name="source"]');
-  		var source = sourceObj.val();
-  		if(isEmpty(source)){
-  			layer.msg(sourceObj.attr("placeholder"));
-  			sourceObj.focus();
-      		return false;
-  		}
-  		jsonParams.source = source;
+  	var $img = $('.img-container').find('img');
+  	if($img && $img.length > 0){
+  		var imgs = "";
+  		$img.each(function(index){
+  			imgs = imgs + $(this)[0].src +";";
+  		});
+  		jsonParams.has_img = true;
+  		jsonParams.imgs = deleteLastStr(imgs);
+  	}else{
+  		jsonParams.has_img = false;
   	}
   	//是否推荐
   	var recommend = $('[name="is_recommend"]').is(':checked');
-  	jsonParams.is_recommend = recommend;
-  	//获取摘要
-  	var digest = $('[name="digest"]').val();
-  	jsonParams.has_digest = isEmpty(digest);
-  	jsonParams.digest = digest;
+  	jsonParams.post_recommend = recommend;
   	
   	//获取标签
   	var tagItems = $(".tag-item");
@@ -303,18 +265,11 @@ function clearTag(obj){
   	//是否能转发
   	var canTransmit = $('[name="can_transmit"]').is(':checked');
   	jsonParams.can_transmit = canTransmit;
-  	
-  	//是否公开
-  	var public_ = $('[name="public"]').is(':checked');
-  	jsonParams.public_ = public_;
-  	
+
   	jsonParams.froms = "web网页端";
-  	
-  	//分类
-  	jsonParams.category = $('[name="category"]').val();
-  	
-  	if(bid && bid > 0)
-  		jsonParams.bid = bid;
+  
+  	if(circleId && circleId > 0)
+  		jsonParams.circle_id = circleId;
   	
   	var createUserId = $('[name="create_user_id"]').val();
   	if(isNotEmpty(createUserId))
@@ -323,177 +278,18 @@ function clearTag(obj){
   	return true;
  }
  
- var draftList;
  /**
-  * 加载草稿列表
+  * 选择素材后的回调函数
   */
- function draftlist(){
-	 var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
-		$.ajax({
-			url : "/bg/drafts",
-			dataType: 'json', 
-			beforeSend:function(){
-				$("#draft-group-list").empty();
-				draftList = [];
-			},
-			success : function(data) {
-				layer.close(loadi);
-				if(data != null && data.isSuccess){
-					$("#load-draft").modal("show");
-					buildDraftList(data.message);
-				}else{
-					ajaxError(data);
-				}
-			},
-			error : function(data) {
-				layer.close(loadi);
-				ajaxError(data);
-			}
-		});
- }
- 
- /**
-  * 构造草稿列表
-  * @param blogs
-  */
- function buildDraftList(blogs){
-	 draftList = blogs;
-	 $("#draft-group-list").empty();
-	 for(var i = 0 ; i < blogs.length; i++){
-		 var itemsHtml = '<div class="list-group-item draft-item" style="cursor:pointer;">'+
-									'<div class="row">'+
-								'<div class="col-lg-1 col-sm-1" onclick="addDraftToEdit('+i+');">'+
-									'<span class="badge">' + (i + 1) + '</span>'+
-								'</div>'+
-								'<div class="col-lg-6 col-sm-6" onclick="addDraftToEdit('+i+');">'+ blogs[i].title +
-								'</div>'+
-								'<div class="col-lg-4 col-sm-4" onclick="addDraftToEdit('+i+');">'+ blogs[i].create_time +
-								'</div>'+
-								'<div class="col-lg-1 col-sm-1"  onclick="deleteDraft(this, '+i+');"><button type="button" class="close" aria-hidden="true">×</button></div>'+
-							'</div>'+
-						'</div>';
-		$("#draft-group-list").append(itemsHtml);
+ function afterSelect(links){
+	 $('.img-container').empty();
+	 var array = links.split(";");
+	 var html = '';
+	 for(var i = 0; i < array.length; i++){
+		html += '<div class="col-lg-4">'+
+						'<img src="'+ changeNotNullString(array[i])+'" style="width: 100%; height: 180px;" class="img-responsive" onClick="" />'+
+					'</div>';
 	 }
-	 
- }
- 
- /**
-  * 将草稿加载到编辑列表
-  * @param index
-  */
- function addDraftToEdit(index){
-	 if(!draftList || draftList.length < 1){
-		 layer.msg("草稿列表为空");
-		 return;
-	 }
-	 
-	 if(draftList.length <= index){
-		 layer.msg("编辑的草稿索引越界，请刷新");
-		 return;
-	 }
-	 addToEdit(draftList[index]);
-	 $("#load-draft").modal("hide");
- }
- 
- /**
-  * 删除草稿
-  * @param index
-  */
- function deleteDraft(obj, index){
-	 if(!draftList || draftList.length < 1){
-		 layer.msg("草稿列表为空");
-		 return;
-	 }
-	 
-	 if(draftList.length <= index){
-		 layer.msg("编辑的草稿索引越界，请刷新");
-		 return;
-	 }
-	 
-	 layer.confirm('您要删除该条草稿记录吗？', {
-		  btn: ['确定','点错了'] //按钮
-	}, function(){
-		var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
-		$.ajax({
-			type: "delete",
-			url : "/bg/blog?b_id=" + draftList[index].id,
-			dataType: 'json', 
-			beforeSend:function(){
-			},
-			success : function(data) {
-				layer.close(loadi);
-				if(data.isSuccess){
-					layer.msg(data.message);
-					draftList.splice(index,1);
-					buildDraftList(draftList);
-				}else{
-					ajaxError(data);
-				}
-			},
-			error : function(data) {
-				layer.close(loadi);
-				ajaxError(data);
-			}
-		});
-	}, function(data){
-		ajaxError(data);
-	});
- }
- 
- /**
-  * 将文章列表添加到编辑页面
-  * @param blog
-  */
- function addToEdit(blog){
-	//标题
-  	var titleObj = $('[name="title"]');
-  	titleObj.val(blog.title);
-  	
-  	//内容
-  	var ct = blog.content;
-  	ue.setContent(ct);
-  	
-  	//是否有图
-  	$('[name="has_img"]').attr('checked', blog.has_img);
-  	if(blog.has_img){
-  		$(".img-url-row").removeClass("hidden");
-  		$('[name="img_url"]').val(blog.img_url);
-  	}
-  
-  	//是否原创
-  	var isOriginal = isNotEmpty(blog.source) && blog.source == "leedane";
-  	$('[name="is_original"]').prop('checked', isOriginal);
-  	if(!isOriginal){
-  		$(".is-original-row").removeClass("hidden");
-  		$('[name="origin_link"]').val(changeNotNullString(blog.origin_link));
-  		$('[name="source"]').val(changeNotNullString(blog.source));
-  	}
-  	//是否推荐
-  	$('[name="is_recommend"]').prop('checked', blog.is_recommend);
-  	
-  	//摘要
-  	$('[name="digest"]').val(blog.digest);
-  	
-  	//获取标签
-  	var tagText = blog.tag;
-  	if(isNotEmpty(tagText)){
-  		var tagObj = $(".tag-input");
-  		var tagArray = tagText.split(",");
-  		for(var i = 0; i < tagArray.length; i++){
-  			addTagItem(tagObj, tagArray[i]);
-  		}
-  	}
-  	
-  	//评论
-  	$('[name="can_comment"]').attr('checked', blog.can_comment);
-  	
-  	if(isNotEmpty(blog.category)){
-  		$('[name="category"]').find('option[text="'+ blog.category +'"]').attr("selected",true); 
-  	}
-  	
-  	//转发
-  	$('[name="can_transmit"]').attr('checked', blog.can_transmit);
-  	
-  	$('[name="create_user_id"]').val(""+blog.create_user_id);
-  		
+	 $('.img-container').append(html);
+	 $('body').removeClass("modal-open");
  }
