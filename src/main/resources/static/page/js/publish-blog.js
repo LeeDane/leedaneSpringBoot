@@ -160,6 +160,10 @@ function moveLeftTag(obj, index){
 function moveRightTag(obj, index){
 	var current = $(obj);
 	
+	var len = $(obj).closest(".tag-list").find(".tag-item").length;
+	if(len == 1)
+		return;
+	
 	if(index == 2)
 		return;
 	
