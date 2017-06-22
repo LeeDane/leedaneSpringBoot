@@ -16,3 +16,4 @@ target
 build
 logs
 *.properties
+src/main/resources/application.properties
