@@ -25,7 +25,6 @@ BEGIN
 END $$
 delimiter
 
-
 -- 计算热门圈子的积分
 drop PROCEDURE if EXISTS `getHostestCirclesProcedure` ;
 -- 用户打卡记录 * 0.3 + 用户净新增记录(新增-退出) * 0.6 + 任务完成总数 * 0.4 + 打开的次数 * 0.01 -被举报总数 * 0.8
@@ -36,11 +35,20 @@ BEGIN
 	DECLARE addNumber INT(11); -- 这个时间段内新增的成员数
 	DECLARE logNumber INT(11); -- 这个时间段内访问数
 	DECLARE subjectVal VARCHAR(255); -- 日记的标题
-  DECLARE totalScore FLOAT; -- 最终的总分
+  	DECLARE totalScore FLOAT; -- 最终的总分
 	DECLARE DONE BOOLEAN DEFAULT 0; #定义结束标识  
 	
-	-- 获取符合条件的圈子列表
-	DECLARE cursor_circles CURSOR FOR (SELECT c.id  from t_circle c where c.create_time > $time);
+	-- 获取符合条件的圈子列表(最近时间段内有过用户访问记录的圈子)
+	DECLARE cursor_circles CURSOR FOR (
+									select v.table_id
+									from t_visitor v 
+									where v.status=1 and v.table_name='t_circle'
+									and not exists (
+										select 1 from t_visitor v1 
+										where v1.status=1 and v1.table_name='t_circle' and v.table_id = v1.table_id
+										and v1.create_time > v.create_time) 
+									and v.create_time >= $time
+									ORDER BY v.create_time desc, v.id desc limit $limit);
 
 	
 	-- 定义游标的结束--当遍历完成时，将DONE设置为1  
@@ -56,20 +64,18 @@ BEGIN
 			-- 获取这个时间段内新增的成员数
 			SELECT count(cm.id) into addNumber from t_circle_member cm where cm.circle_id = circle_id and cm.create_time > $time;
 		
-			set subjectVal = concat('访问圈子', circle_id);
 			-- 获取圈子在这段时间内被访问的次数
-			select count(id) into logNumber from t_operate_log ol where ol.`subject` = subjectVal;
+			select count(id) into logNumber from t_visitor v where v.table_name='t_circle' and v.table_id = circle_id;
 
 			set totalScore = addNumber * 0.6 + logNumber* 0.01;
 			update t_circle c set c.circle_score = totalScore where c.id = circle_id;
 			 -- select addNumber * 0.6 + logNumber* 0.1, totalScore, addNumber, logNumber, subjectVal;
-
 		FETCH cursor_circles into circle_id; -- 将游标当前读取行的数据顺序赋予自定义变量12 
 		UNTIL DONE
 		END REPEAT ;
   CLOSE cursor_circles; -- 关闭游标 
 
-  select * from t_circle where create_time > $time order by circle_score desc limit 0, $limit;
+  -- select * from t_circle where create_time > $time order by circle_score desc limit 0, $limit;
 END $$
 delimiter
 
@@ -96,7 +102,7 @@ BEGIN
 	DECLARE member_id INT(11); -- 自定义变量1
 	DECLARE contributionNumber INT(11); -- 这个圈子该成员的贡献值
   DECLARE totalScore FLOAT; -- 最终的总分
-	DECLARE DONE BOOLEAN DEFAULT 0; #定义结束标识  
+	DECLARE DONE BOOLEAN DEFAULT 0; --定义结束标识  
 	
 	-- 获取符合条件的圈子成员列表
 	DECLARE cursor_circle_members CURSOR FOR (SELECT cm.member_id  from t_circle_member cm where cm.circle_id = $circleId);
