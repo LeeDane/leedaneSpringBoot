@@ -99,6 +99,8 @@ public class UserHandler {
 			}
 			
 		}
+		if(StringUtil.isNull(userPicPath))
+			userPicPath = ConstantsUtil.DEFAULT_NO_PIC_PATH;
 		return userPicPath;
 	}
 	
