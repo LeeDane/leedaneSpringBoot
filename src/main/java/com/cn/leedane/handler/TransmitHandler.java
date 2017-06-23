@@ -23,6 +23,29 @@ public class TransmitHandler {
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 
+	/**
+	 * 添加转发
+	 * @param tableName
+	 * @param tableId
+	 */
+	public void addTransmit(String tableName, int tableId){
+		String key = TransmitHandler.getTransmitKey(tableId, tableName);
+		int count = 0;
+		//还没有添加到redis中
+		if(!redisUtil.hasKey(key)){
+			//获取数据库中所有转发的数量
+			count = SqlUtil.getTotalByList(transmitMapper.getTotal(DataTableType.转发.value, "where table_id = "+tableId+" and table_name='"+tableName+"'")) + 1;
+		}else{
+			count = Integer.parseInt(redisUtil.getString(key)) + 1;
+		}
+		redisUtil.addString(key, String.valueOf(count));
+	}
+	/**
+	 * 获取转发总数
+	 * @param tableId
+	 * @param tableName
+	 * @return
+	 */
 	public int getTransmitNumber(int tableId, String tableName){
 		String transmitKey = getTransmitKey(tableId, tableName);
 		int transmitNumber;

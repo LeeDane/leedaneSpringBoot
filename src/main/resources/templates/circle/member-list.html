@@ -37,6 +37,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-12">
+				<button type="button" class="btn btn-warning btn-sm" data-placement="left" data-toggle="tooltip" title="点击进入圈子中心" th:text="${circle.name}" th:onclick="'linkToCircle('+ ${circle.id} +')'"></button>
 				<button type="button" class="btn btn-info btn-sm" data-placement="left" data-toggle="tooltip" title="更多该圈子的基本设置" >更多设置</button>
 			</div>
 		</div>

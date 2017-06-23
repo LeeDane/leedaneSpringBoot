@@ -24,6 +24,41 @@
 		.panel-table-container .img-container{
 			padding: 10px !important;
 		}
+		.panel-footer .glyphicon{
+			vertical-align: middle; 
+			top: 0px !important;
+		}
+		.post-tag{
+			background: #EBEBEB;
+		    padding: 7px 6px 5px;
+		    margin-top: 5px;
+		    line-height: 1;
+		    font-size: 14px;
+		    margin-right: 10px;
+		    font-family: "Times New Roman",Georgia,Serif;
+		    font-size: 10px;
+		    color: #666;
+		}
+		
+		.pagination ul{
+   			list-style:none; /* 去掉ul前面的符号 */
+   			margin: 0px; /* 与外界元素的距离为0 */
+   			padding: 0px; /* 与内部元素的距离为0 */
+   			width: auto; /* 宽度根据元素内容调整 */
+   		}
+   		.pagination li{
+   			float: left;
+   			padding: 20px; 
+   			margin-left: 10px!important;
+   			margin-top: 10px!important;
+   			padding: 0 !important;
+   		}
+   		#post-list blockquote{
+   			font-size: 15px!important;
+   			/* border-left: 3px solid #ccc;
+          	background-color:#f1f1f1;
+          	font: 14px/22px normal helvetica, sans-serif; */
+   		}
 	</style>
 </head>
 <body>
@@ -55,7 +90,7 @@
 					        	<a th:if="${isCreater or inMember} and ${not isClockIn}" href="javascript:void(0);" class="btn btn-primary btn-sm add-clock-in" role="button" data-toggle="tooltip" title="打卡的奖励为圈子专属">打卡</a>
 								<a th:if="${not isCreater and not inMember}" href="javascript:void(0);" class="btn btn-default btn-sm into-circle" role="button" data-toggle="tooltip" title="申请加入该圈子">加入圈子</a>
 								<a th:if="${not isCreater and inMember}" href="javascript:void(0);" class="btn btn-default btn-sm circle-leave" role="button" data-toggle="tooltip" title="退出该圈子">退出圈子</a>
-								<a th:if="${isCreater} or ${isCircleAdmin}" href="javascript:void(0);" class="btn btn-default btn-sm circle-setting" role="button" data-toggle="tooltip" title="圈子设置">设置</a>
+								<a th:if="${isCreater} or ${isCircleAdmin}" th:href="'/cc/'+ ${circle.id} +'/member-list'" class="btn btn-default btn-sm circle-setting" role="button" data-toggle="tooltip" title="圈子设置">设置</a>
 								<a th:if="${isLogin} and ${inMember}" th:href="'/cc/'+ ${circle.id} +'/write'" class="btn btn-warning btn-sm circle-post" role="button" data-toggle="tooltip" title="发表关于该圈子的帖子">发帖</a>
 							</p>
 					      </div>
@@ -137,90 +172,83 @@
 						</div>
 					</div>
 			</div>
-			<div class="col-lg-9">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						胖迪2017-06-21广州行日程安排
-					</div>
-					<div class="panel-body panel-table-container">
-						<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
-							<blockquote>
-								<div class="cut-text hand"><a data-toggle="tooltip" data-placement="left" title="查看该帖子详细信息">这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈</a></div>
-								<small><cite>leedane</cite>&nbsp;&nbsp;一天前</small>
-							</blockquote>
+			<div class="col-lg-9" >
+				<div id="post-list">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<p>胖迪2017-06-21广州行日程安排</p>
+							<div>
+								<button type="button" class="btn btn-default btn-xs">
+								  <img src="http://7xnv8i.com1.z0.glb.clouddn.com/10_10_20160430172759_489c15f4d74a11151fa92c53f63acdd8.jpg" class="img-circle" style="width: 20px; height: 20px" /> 管理员
+								</button>&nbsp;&nbsp;5天前
+							</div>
+							<p style="margin-top: 10px;">
+								标签：<span class="post-tag">测试</span><span class="post-tag">测试1</span><span class="post-tag">dane</span>
+							</p>
+							<div class="pull-right" title="Title" data-container="body" data-toggle="popover" data-content="Popover 中的一些内容 —— options 方法 ">
+								<img src="/page/images/more.png" class="" style="width: 20px; height: 20px" />
+							</div>
 						</div>
-						<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 cut-text2">
-							这是一个基本的面板内容。这是一个基本的面板内容。
-			            	这是一个基本的面板内容。这是一个基本的面板内容。
-			            	这是一个基本的面板内容。这是一个基本的面板内容。
-			            	这是一个基本的面板内容。这是一个基本的面板内容。
-			            	这是一个基本的面板内容。这是一个基本的面板内容。
-			            	这是一个基本的面板内容。这是一个基本的面板内容。
-			            	这是一个基本的面板内容。这是一个基本的面板内容。
-			            	这是一个基本的面板内容。这是一个基本的面板内容。
-			            	这是一个基本的面板内容。这是一个基本的面板内容。
-			            	这是一个基本的面板内容。这是一个基本的面板内容
+						<div class="panel-body panel-table-container">
+							<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+								<blockquote>
+									<div class="cut-text hand"><a data-toggle="tooltip" data-placement="left" title="查看该帖子详细信息">这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈这是真的吗？哈哈</a></div>
+									<small><cite>leedane</cite>&nbsp;&nbsp;一天前</small>
+								</blockquote>
+							</div>
+							<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 cut-text2">
+								这是一个基本的面板内容。这是一个基本的面板内容。
+				            	这是一个基本的面板内容。这是一个基本的面板内容。
+				            	这是一个基本的面板内容。这是一个基本的面板内容。
+				            	这是一个基本的面板内容。这是一个基本的面板内容。
+				            	这是一个基本的面板内容。这是一个基本的面板内容。
+				            	这是一个基本的面板内容。这是一个基本的面板内容。
+				            	这是一个基本的面板内容。这是一个基本的面板内容。
+				            	这是一个基本的面板内容。这是一个基本的面板内容。
+				            	这是一个基本的面板内容。这是一个基本的面板内容。
+				            	这是一个基本的面板内容。这是一个基本的面板内容
+							</div>
+			
+							<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12 img-container">
+								<img src="http://7xnv8i.com1.z0.glb.clouddn.com/default_no_pic20170613.jpg" width="100%" height="180px" class="img-responsive" onClick="" />
+							</div>
+							<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12 img-container">
+								<img src="http://7xnv8i.com1.z0.glb.clouddn.com/default_no_pic20170613.jpg" width="100%" height="180px" class="img-responsive" onClick="" />
+							</div>
+							<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12 img-container">
+								<img src="http://7xnv8i.com1.z0.glb.clouddn.com/default_no_pic20170613.jpg" width="100%" height="180px" class="img-responsive" onClick="" />
+							</div>
+									
 						</div>
-		
-						<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12 img-container">
-							<img src="http://7xnv8i.com1.z0.glb.clouddn.com/default_no_pic20170613.jpg" width="100%" height="180px" class="img-responsive" onClick="" />
+						<div class="panel-footer" style="color: #666;">
+							<p>
+								<img src="http://7xnv8i.com1.z0.glb.clouddn.com/10_10_20160430172759_489c15f4d74a11151fa92c53f63acdd8.jpg" class="img-circle" style="width: 20px; height: 20px" />&nbsp;<img src="http://7xnv8i.com1.z0.glb.clouddn.com/1_1_20160727183009_1469401739017.jpg" class="img-circle" style="width: 20px; height: 20px" />&nbsp;<img src="http://7xnv8i.com1.z0.glb.clouddn.com/e6c48b7a-acc2-44ca-9a2c-b36c95489680_861530.jpg" class="img-circle" style="width: 20px; height: 20px" />&nbsp;等10人觉得很赞
+							</p>
+							<p>
+								<span class="glyphicon glyphicon-trash hand" aria-hidden="true"></span>&nbsp;&nbsp;
+								<span class="glyphicon glyphicon-comment hand" aria-hidden="true"></span>&nbsp;0&nbsp;&nbsp;
+								<span class="glyphicon glyphicon-share-alt hand" aria-hidden="true"></span>&nbsp;1110&nbsp;&nbsp;
+								<span class="glyphicon glyphicon-thumbs-up hand" aria-hidden="true"></span>&nbsp;0&nbsp;&nbsp;
+								<span class="glyphicon glyphicon-credit-card hand" aria-hidden="true"></span>&nbsp;0&nbsp;&nbsp;
+								查看详情
+							</p>
 						</div>
-						<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12 img-container">
-							<img src="http://7xnv8i.com1.z0.glb.clouddn.com/default_no_pic20170613.jpg" width="100%" height="180px" class="img-responsive" onClick="" />
-						</div>
-						<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12 img-container">
-							<img src="http://7xnv8i.com1.z0.glb.clouddn.com/default_no_pic20170613.jpg" width="100%" height="180px" class="img-responsive" onClick="" />
-						</div>
-								
-					</div>
-					<div class="panel-footer">
-						<button type="button" class="btn btn-default btn-xs">
-						  <span class="glyphicon glyphicon-user" aria-hidden="true"></span> LeeDane
-						</button>&nbsp;&nbsp;5天前
-						<span class="pull-right">
-							<span class="glyphicon glyphicon-trash hand" aria-hidden="true"></span>
-							<span class="glyphicon glyphicon-comment hand" aria-hidden="true"></span>
-							<span class="glyphicon glyphicon-share-alt hand" aria-hidden="true"></span>
-							<span class="glyphicon glyphicon-thumbs-up hand" aria-hidden="true"></span>
-							<span class="glyphicon glyphicon-credit-card hand" aria-hidden="true"></span>
-						</span>
 					</div>
 				</div>
-			
-			    <div class="col-sm-6 col-md-3">
-			        <div class="thumbnail">
-			            <img style="width: 100%; height: 120px;" src="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_2017061310460215.jpg!960.jpg"
-			                 alt="通用的占位符缩略图" />
-			            <div class="caption">
-			                <h3>缩略图标签</h3>
-			                <p>一些示例文本。一些示例文本。</p>
-			                <p>
-			                    <a href="#" class="btn btn-primary" role="button">按钮</a>
-			                    <a href="#" class="btn btn-default" role="button">按钮</a>
-			                </p>
-			            </div>
-			        </div>
-			    </div>
-			    <div class="col-sm-6 col-md-3">
-			        <div class="thumbnail">
-			            <img style="width: 100%; height: 120px;"  src="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_2017061310460215.jpg!960.jpg"
-			                 alt="通用的占位符缩略图" />
-			            <div class="caption">
-			                <h3>缩略图标签</h3>
-			                <p>一些示例文本。一些示例文本。</p>
-			                <p>
-			                    <a href="#" class="btn btn-primary" role="button">按钮</a>
-			                    <a href="#" class="btn btn-default" role="button">按钮</a>
-			                </p>
-			            </div>
-			        </div>
-			    </div>
-			    
+				
+				<div class="col-lg-8 col-lg-offset-2">
+		   			<nav aria-label="Page navigation">
+	  					<ul class="pagination"></ul>
+					</nav>
+		   		</div>
 			</div>
+			
 		</div>
 	</div>
 <script th:inline="javascript">
 	var circleId = /*[[${circle.id}]]*/;//取账号值  
+	var isCircleAdmin = /*[[${isCircleAdmin}]]*/;//取账号值  
+	var isCreater = /*[[${isCreater}]]*/;//取账号值  
 </script>
 </body>
 </html>

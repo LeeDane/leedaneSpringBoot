@@ -323,7 +323,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			rs = moodMapper.executeSQL(sql.toString(), toUserId, firstId, pageSize);
 		}
 		
-		if(rs !=null && rs.size() > 0){
+		if(CollectionUtil.isNotEmpty(rs)){
 			boolean hasImg ;
 			String uuid;
 			int moodId;
@@ -365,7 +365,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		String picSize = ConstantsUtil.DEFAULT_PIC_SIZE; //JsonUtil.getStringValue(jo, "pic_size"); //图像的规格(大小)		
 		ResponseMap message = new ResponseMap();
 		rs = moodMapper.getMoodPaging(user.getId(), toUserId, start, pageSize, ConstantsUtil.STATUS_NORMAL, ConstantsUtil.STATUS_SELF);
-		if(rs !=null && rs.size() > 0){
+		if(CollectionUtil.isNotEmpty(rs)){
 			boolean hasImg ;
 			String uuid;
 			int moodId;

@@ -6,7 +6,6 @@ import java.util.Map;
 
 import net.sf.json.JSONArray;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +21,7 @@ import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -32,7 +32,7 @@ import com.cn.leedane.utils.StringUtil;
  */
 @Component
 public class CirclePostHandler {
-	private Logger logger = Logger.getLogger(getClass());
+	//private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
 	private CirclePostMapper circlePostMapper;
@@ -43,13 +43,65 @@ public class CirclePostHandler {
 	private CommentHandler commentHandler;
 	
 	@Autowired
-	private TransmitHandler transmitHandler;
-	
-	@Autowired
 	private ZanHandler zanHandler;
 	
 	@Autowired
 	private UserHandler userHandler;
+	
+	/**
+	 * 添加转发帖子
+	 * @param postId
+	 */
+	public void addTransmit(int postId){
+		String key = TransmitHandler.getTransmitKey(postId, DataTableType.帖子.value);
+		int count = 0;
+		//还没有添加到redis中
+		if(StringUtil.isNull(redisUtil.getString(key))){
+			//获取数据库中所有评论的数量
+			count = SqlUtil.getTotalByList(circlePostMapper.getTotal(DataTableType.帖子.value, "where pid = "+postId));	
+		}else{
+			count = Integer.parseInt(redisUtil.getString(key)) + 1;
+		}
+		redisUtil.addString(key, String.valueOf(count));
+	}
+	
+	/**
+	 * 获取帖子转发总数
+	 * @param postId
+	 * @return
+	 */
+	public int getTransmitNumber(int postId){
+		
+		String transmitKey = TransmitHandler.getTransmitKey(postId, DataTableType.帖子.value);
+		int transmitNumber;
+		//redisUtil.delete(transmitKey);
+		//转发
+		if(!redisUtil.hasKey(transmitKey)){
+			transmitNumber = SqlUtil.getTotalByList(circlePostMapper.getTotal(DataTableType.帖子.value, "where pid = "+postId));
+			redisUtil.addString(transmitKey, String.valueOf(transmitNumber));
+		}else{
+			transmitNumber = Integer.parseInt(redisUtil.getString(transmitKey));
+		}
+		return transmitNumber;
+	}
+	
+	/**
+	 * 删除转发后修改转发数量
+	 * @param postId
+	 */
+	public void deleteTransmit(int postId){
+		String transmitKey = TransmitHandler.getTransmitKey(postId, DataTableType.帖子.value);
+		int transmitNumber;
+		//转发
+		if(!redisUtil.hasKey(transmitKey)){
+			transmitNumber = SqlUtil.getTotalByList(circlePostMapper.getTotal(DataTableType.帖子.value, "where pid = "+postId));
+			redisUtil.addString(transmitKey, String.valueOf(transmitNumber));
+		}else{
+			transmitNumber = Integer.parseInt(redisUtil.getString(transmitKey));
+			transmitNumber = transmitNumber -1;//转发总数减去1
+			redisUtil.addString(transmitKey, String.valueOf(transmitNumber));
+		}
+	}
 	
 	/**
 	 * 获取帖子对象
@@ -62,15 +114,26 @@ public class CirclePostHandler {
 	
 	/**
 	 * 获取帖子对象（校验是否帖子属于圈子的用户的，不是返回null对象）
-	 * @param circleId
+	 * @param circle
 	 * @param postId
 	 * @param user
 	 * @return
 	 */
 	public CirclePostBean getCirclePostBean(CircleBean circle, int postId, UserBean user){
+		return getCirclePostBean(circle.getId(), postId, user);
+	}
+	
+	/**
+	 * 获取帖子对象（校验是否帖子属于圈子的用户的，不是返回null对象）
+	 * @param circleId
+	 * @param postId
+	 * @param user 不为空将校验帖子和该用户是否是同一个
+	 * @return
+	 */
+	public CirclePostBean getCirclePostBean(int circleId, int postId, UserBean user){
 		CirclePostBean circlePostBean = getCirclePostBean(postId);
-		if(circle != null && circlePostBean != null){
-			if(circlePostBean.getCircleId() != circle.getId() || circlePostBean.getCreateUserId() != user.getId() )
+		if(circleId > 0 && circlePostBean != null){
+			if(circlePostBean.getCircleId() != circleId || (user != null && circlePostBean.getCreateUserId() != user.getId()) )
 				return null;
 		}
 			
@@ -78,25 +141,52 @@ public class CirclePostHandler {
 	}
 	
 	/**
-	 * 获取帖子的详细信息(注意：有照片的情况下，只缓存该照片已经上传到七牛存储服务器的，未上传的情况不做缓存)
-	 * @param moodId
-	 * @param user
+	 * 获取帖子对象（校验是否帖子属于圈子的用户的，不是返回null对象）
+	 * @param circleId
+	 * @param postId
 	 * @return
 	 */
-	public List<Map<String, Object>> getPostDetail(int postId, UserBean user){
-		return getPostDetail(postId, user, false);
+	public CirclePostBean getCirclePostBean(int circleId, int postId){
+		return getCirclePostBean(circleId, postId, null);
 	}
 	
 	/**
 	 * 获取帖子的详细信息(注意：有照片的情况下，只缓存该照片已经上传到七牛存储服务器的，未上传的情况不做缓存)
-	 * @param moodId
+	 * @param circleId
+	 * @param postId
 	 * @param user
-	 * @param onlyContent true表示只获取内容
+	 * @return
+	 */
+	public List<Map<String, Object>> getPostDetail(int postId, UserBean user){
+		CirclePostBean postBean = circlePostMapper.findById(CirclePostBean.class, postId);
+		if(postBean == null)
+			return null;
+		
+		return getPostDetail(postBean.getCircleId(), postId, user, false);
+	}
+	
+	/**
+	 * 获取帖子的详细信息(注意：有照片的情况下，只缓存该照片已经上传到七牛存储服务器的，未上传的情况不做缓存)
+	 * @param circleId
+	 * @param postId
+	 * @param user
+	 * @return
+	 */
+	public List<Map<String, Object>> getPostDetail(int circleId, int postId, UserBean user){
+		return getPostDetail(circleId, postId, user, false);
+	}
+	
+	/**
+	 * 获取帖子的详细信息(注意：有照片的情况下，只缓存该照片已经上传到七牛存储服务器的，未上传的情况不做缓存)
+	 * @param circleId
+	 * @param postId
+	 * @param user
+	 * @param onlyContent
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Map<String, Object>> getPostDetail(int postId, UserBean user, boolean onlyContent){
-		String postKey = getPostKey(postId);
+	public List<Map<String, Object>> getPostDetail(int circleId, int postId, UserBean user, boolean onlyContent){
+		String postKey = getPostKey(circleId, postId);
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		JSONArray jsonArray = new JSONArray();
 		if(!redisUtil.hasKey(postKey)){
@@ -122,7 +212,7 @@ public class CirclePostHandler {
 		
 		if(CollectionUtil.isNotEmpty(list) && list.size() == 1 && !onlyContent){
 			list.get(0).put("comment_number", commentHandler.getCommentNumber(postId, DataTableType.帖子.value));
-			list.get(0).put("transmit_number", transmitHandler.getTransmitNumber(postId, DataTableType.帖子.value));
+			list.get(0).put("transmit_number", getTransmitNumber(postId));
 			list.get(0).put("zan_number", zanHandler.getZanNumber(postId, DataTableType.帖子.value));
 			list.get(0).put("zan_users", zanHandler.getZanUser(postId, DataTableType.帖子.value, user, 6));
 			int createUserId = StringUtil.changeObjectToInt(list.get(0).get("create_user_id"));
@@ -134,74 +224,24 @@ public class CirclePostHandler {
 	}
 	
 	/**
-	 * 获得帖子的图片
+	 * 删除在redis
 	 * @param circleId
 	 * @param postId
 	 * @return
 	 */
-	public String getPostImgs(int postId){
-		String postImgKey = getPostImgKey(postId);
-		if(!redisUtil.hasKey(postImgKey)){
-			String path = null;
-			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
-			StringBuffer sql = new StringBuffer();
-			sql.append("select qiniu_path, pic_size, pic_order, width, height, lenght ");
-			sql.append(" from "+DataTableType.文件.value);
-			sql.append(" where status = ? and table_name=? and table_uuid = ? and is_upload_qiniu=? and pic_size =? order by pic_order,id");
-			list = circlePostMapper.getCirclePostImgs(postId, ConstantsUtil.STATUS_NORMAL);
-			if(CollectionUtil.isNotEmpty(list)){
-				StringBuffer buffer = new StringBuffer();
-				String p = null;
-				for(int i = 0; i< list.size(); i++){
-					p = StringUtil.changeNotNull(list.get(i).get("qiniu_path"));
-					if(p.startsWith("http://") || p.startsWith("https://")){
-						buffer.append(p);
-						if(i != list.size() -1){
-							buffer.append(";");
-						}
-					}
-					
-				}
-				path = buffer.toString();
-				if(StringUtil.isNotNull(path)){
-					redisUtil.addString(postImgKey, path);
-				}
-			}
-			return path;
-		}else{
-			logger.info("postImgKey:"+postImgKey);
-			return redisUtil.getString(postImgKey);
-		}
-	}
-	
-	/**
-	 * 删除在redis
-	 * @param postId
-	 * @return
-	 */
-	public boolean delete(int postId){
-		String postKey = getPostKey(postId);
-		String postImgsKey = getPostImgKey(postId);
-		redisUtil.delete(postImgsKey);
+	public boolean delete(int circleId, int postId){
+		String postKey = getPostKey(circleId, postId);
 		return redisUtil.delete(postKey);
 	}
 	
 	/**
 	 * 获取帖子在redis的key
+	 * @param circleId
 	 * @param postId
 	 * @return
 	 */
-	public static String getPostKey(int postId){
-		return ConstantsUtil.CIRCLE_REDIS +"POST_" + postId;
-	}
-	
-	/**
-	 * 获取帖子图片在redis的key
-	 * @param postId
-	 * @return
-	 */
-	public static String getPostImgKey(int postId){
-		return ConstantsUtil.CIRCLE_REDIS + "IMGS_POST_" +postId;
+	public static String getPostKey(int circleId, int postId){
+		return ConstantsUtil.CIRCLE_REDIS + circleId +"_POST_" + postId;
 	}
 	
 }

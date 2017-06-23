@@ -26,7 +26,6 @@ import com.cn.leedane.model.FriendBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.TransmitBean;
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.OperateLogService;
@@ -75,7 +74,6 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 	@Autowired
 	private OperateLogService<OperateLogBean> operateLogService;
 	
-	private RedisUtil redisUtil = RedisUtil.getInstance();
 	@Override
 	public Map<String, Object> add(JSONObject jo, UserBean user, HttpServletRequest request){
 		//{\"table_name\":\"t_mood\", \"table_id\":1, 'content':'转发信息'}
@@ -128,18 +126,15 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 			}
 			
 		}
-		String key = getTransmitKey(tableName, tableId);
-		String count = null;
-		//还没有添加到redis中
-		if(StringUtil.isNull(redisUtil.getString(key))){
-			//获取数据库中所有转发的数量
-			List<Map<String, Object>> numbers = transmitMapper.executeSQL("select count(id) number from "+DataTableType.转发.value+" where table_name=? and table_id = ?", tableName, tableId);
-			count = String.valueOf(StringUtil.changeObjectToInt(numbers.get(0).get("number")) +1);	
+		transmitHandler.addTransmit(tableName, tableId);
+		if(result){
+			message.put("isSuccess", result);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.转发成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
-			count = String.valueOf(Integer.parseInt(redisUtil.getString(key)) + 1);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.转发失败.value));
+			message.put("responseCode", EnumUtil.ResponseCode.转发失败.value);
 		}
-		redisUtil.addString(key, count);
-		message.put("isSuccess", result);
 		return message.getMap();
 	}
 	
@@ -167,21 +162,6 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 		return canTransmit;
 	}
 	
-	/**
-	 * 获取redis存储的key
-	 * @param tableName
-	 * @param tableId
-	 * @return
-	 */
-	private String getTransmitKey(String tableName, int tableId){
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(ConstantsUtil.TRANSMIT_REDIS);
-		buffer.append(tableName);
-		buffer.append("_");
-		buffer.append(tableId);
-		return buffer.toString();
-	}
-
 	@Override
 	public Map<String, Object> deleteTransmit(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
@@ -202,11 +182,16 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
 		}
-		
 		if(result){
 			transmitHandler.deleteTransmit(transmitBean.getTableId(), transmitBean.getTableName());
-			message.put("isSuccess", true);
-		}			
+			message.put("isSuccess", result);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除转发成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		}else{
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除转发失败.value));
+			message.put("responseCode", EnumUtil.ResponseCode.删除转发失败.value);
+		}
+		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除转发ID为", tid, "的数据", StringUtil.getSuccessOrNoStr(result)).toString(), "deleteTransmit()", StringUtil.changeBooleanToInt(result), 0);
 		return message.getMap();
@@ -319,7 +304,9 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 		boolean result = transmitMapper.updateSql(EnumUtil.getBeanClass(EnumUtil.getTableCNName(tableName)), " set can_transmit=? where id=?", canTransmit, tableId) > 0;
 		
 		if(result){
+			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.更新转发状态成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.更新转发状态失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.更新转发状态失败.value);

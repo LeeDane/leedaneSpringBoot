@@ -30,11 +30,13 @@ import com.cn.leedane.mapper.circle.CircleMemberMapper;
 import com.cn.leedane.mapper.circle.CircleSettingMapper;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.VisitorBean;
 import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.model.circle.CircleMemberBean;
 import com.cn.leedane.model.circle.CircleSettingBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.service.circle.CircleService;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
@@ -105,6 +107,9 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	@Autowired
 	private NotificationHandler notificationHandler;
+	
+	@Autowired
+	private VisitorService<VisitorBean> visitorService;
 	
 	@Override
 	public Map<String, Object> init(UserBean user, HttpServletRequest request) {
@@ -543,8 +548,9 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			HttpServletRequest request) {
 		logger.info("CircleServiceImpl-->saveVisitLog() , circleId= "+ circleId +", --" + (user == null ? "" : user.getAccount()));
 		
+		visitorService.saveVisitor(user, "web网页端", "t_circle", circleId, ConstantsUtil.STATUS_NORMAL);
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, "访问圈子"+ circleId, "saveVisitLog()", ConstantsUtil.STATUS_NORMAL, 0);			
+		//operateLogService.saveOperateLog(user, request, null, "访问圈子"+ circleId, "saveVisitLog()", ConstantsUtil.STATUS_NORMAL, 0);			
 	}
 	
 	@Override
@@ -560,8 +566,8 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 
 		List<CircleMemberBean> circleMemberBeans = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
 		if(!SqlUtil.getBooleanByList(circleMemberBeans)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.您已经离开该圈子.value));
-			message.put("responseCode", EnumUtil.ResponseCode.您已经离开该圈子.value);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已经不在该圈子中.value));
+			message.put("responseCode", EnumUtil.ResponseCode.用户已经不在该圈子中.value);
 			return message.getMap();
 		}
 		

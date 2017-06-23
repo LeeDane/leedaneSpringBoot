@@ -395,16 +395,13 @@ CREATE TABLE `t_visitor` (
   `create_user_id` int(11) DEFAULT NULL,
   `modify_user_id` int(11) DEFAULT NULL,
   `froms` varchar(255) COMMENT '来源',
-  `user_id` int(11) NOT NULL COMMENT '访问的用户ID',
   `table_name` varchar(255) NOT NULL COMMENT '对应业务表的名称',
   `table_id` int(11) NOT NULL COMMENT '对应业务表的ID',
   PRIMARY KEY (`id`),
   KEY `FK_visitor_create_user` (`create_user_id`),
   KEY `FK_visitor_modify_user` (`modify_user_id`),
-  KEY `FK_visitor_user_id` (`user_id`),
   CONSTRAINT `FK_visitor_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_visitor_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_visitor_user_id` FOREIGN KEY (`user_id`) REFERENCES `t_user` (`id`)
+  CONSTRAINT `FK_visitor_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -623,12 +620,15 @@ CREATE TABLE `t_circle_post` (
   `modify_time` datetime DEFAULT NULL,
   `create_user_id` int(11) DEFAULT NULL,
   `modify_user_id` int(11) DEFAULT NULL,
+  `pid` int(11) NOT NULL DEFAULT 0 COMMENT '父圈子的id(转发、引用时候才不为0),关联自身',
   `title` varchar(255) NOT NULL COMMENT '帖子的标题',
   `content` varchar(255) NOT NULL COMMENT '帖子的内容',
   `tag` varchar(50) COMMENT '帖子的标签',
   `has_img` bit(1) DEFAULT b'0' NOT NULL COMMENT '是否包含图片，冗余字段',
   `imgs` text  COMMENT '帖子的图片链接，多个用;隔开',
   `circle_id` int(11) NOT NULL COMMENT '外键关联圈子的id',
+  `can_comment` bit(1) DEFAULT b'1' NOT NULL COMMENT '是否能评论，默认能评论',
+  `can_transmit` bit(1) DEFAULT b'1' NOT NULL COMMENT '是否能转发，默认能转发',
   PRIMARY KEY (`id`),
   KEY `FK_circle_post_create_user` (`create_user_id`),
   KEY `FK_circle_post_modify_user` (`modify_user_id`),

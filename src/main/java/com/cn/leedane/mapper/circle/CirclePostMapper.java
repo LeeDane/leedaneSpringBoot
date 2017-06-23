@@ -25,10 +25,18 @@ public interface CirclePostMapper extends BaseMapper<CirclePostBean>{
 	public List<Map<String, Object>> getCirclePost(@Param("postId")int postId, @Param("status")int status);
 	
 	/**
-	 * 获取帖子对象图片
-	 * @param postId
-	 * @param status
+	 * 分页获取帖子列表
+	 * @param id
+	 * @param toUserId
+	 * @param start
+	 * @param pageSize
+	 * @param statusNormal
+	 * @param statusSelf
 	 * @return
 	 */
-	public List<Map<String, Object>> getCirclePostImgs(@Param("postId")int postId, @Param("status")int status);
+	public List<Map<String, Object>> paging(
+			@Param("circleId") int circleId, 
+			@Param("start") int start,
+			@Param("pageSize") int pageSize, 
+			@Param("status") int status);
 }

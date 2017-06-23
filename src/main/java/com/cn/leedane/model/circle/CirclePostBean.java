@@ -23,6 +23,13 @@ public class CirclePostBean extends RecordTimeBean{
 	//帖子状态：正常、禁用、待审核、已删除等等
 	
 	/**
+	 * 父圈子的id(转发、引用时候才不为0),关联自身
+	 */
+	@Column("pid")
+	@Field
+	private int pid;
+	
+	/**
 	 * 圈子的id,外键关联CircleBean
 	 */
 	@Column("circle_id")
@@ -64,6 +71,20 @@ public class CirclePostBean extends RecordTimeBean{
 	@Column("tag")
 	@Field
 	private String tag;
+	
+	/**
+     * 是否可以评论(默认可以评论)
+     */
+	@Column("can_comment")
+	@Field
+    private boolean canComment;
+    
+    /**
+     * 是否可以转发(默认可以转发)
+     */
+	@Column("can_transmit")
+	@Field
+    private boolean canTransmit;
 
 	public int getCircleId() {
 		return circleId;
@@ -112,4 +133,29 @@ public class CirclePostBean extends RecordTimeBean{
 	public void setTag(String tag) {
 		this.tag = tag;
 	}
+
+	public int getPid() {
+		return pid;
+	}
+
+	public void setPid(int pid) {
+		this.pid = pid;
+	}
+
+	public boolean isCanComment() {
+		return canComment;
+	}
+
+	public void setCanComment(boolean canComment) {
+		this.canComment = canComment;
+	}
+
+	public boolean isCanTransmit() {
+		return canTransmit;
+	}
+
+	public void setCanTransmit(boolean canTransmit) {
+		this.canTransmit = canTransmit;
+	}
+	
 }

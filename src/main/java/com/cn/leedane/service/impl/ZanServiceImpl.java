@@ -112,7 +112,14 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 		
 		//记录到redis服务器中
 		zanHandler.addZanUser(tableId, tableName, user);
-		message.put("isSuccess", true);
+		if(result){
+			message.put("isSuccess", result);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.点赞成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		}else{
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.点赞失败.value));
+			message.put("responseCode", EnumUtil.ResponseCode.点赞失败.value);
+		}
 		return message.getMap();
 	}
 
@@ -229,12 +236,17 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
 		}
-		
 		if(result){
 			//取消赞的数据
 			zanHandler.cancelZan(zanBean.getTableId(), zanBean.getTableName(), user);
-			message.put("isSuccess", true);
-		}			
+			message.put("isSuccess", result);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.取消点赞成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		}else{
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.取消点赞失败.value));
+			message.put("responseCode", EnumUtil.ResponseCode.取消点赞失败.value);
+		}
+		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除赞ID为", zid, "的数据", StringUtil.getSuccessOrNoStr(result)).toString(), "deleteZan()", StringUtil.changeBooleanToInt(result), 0);
 		return message.getMap();
@@ -275,10 +287,10 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 		
 		message.put("isSuccess", true);
 		message.put("message", rs);
+		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取表ID为：", tableId, ",表名为：", tableName, "的全部赞用户", StringUtil.getSuccessOrNoStr(true)).toString(), "getAllZanUser()", ConstantsUtil.STATUS_NORMAL, 0);
-		
 		return message.getMap();
 	}
 
@@ -286,5 +298,4 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 	public List<Map<String, Object>> executeSQL(String sql, Object... params) {
 		return zanMapper.executeSQL(sql, params);
 	}
-	
 }

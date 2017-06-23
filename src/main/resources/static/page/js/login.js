@@ -119,7 +119,7 @@
 				layer.close(loadi);
 				if(data.isSuccess){
 					layer.msg(data.message);
-					window.location.href="122";
+					reloadPage(100);
 				}else{
 					var errorHtml ='<div class="alert alert-warning alert-dismissible" role="alert">'+
 									  '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>'+

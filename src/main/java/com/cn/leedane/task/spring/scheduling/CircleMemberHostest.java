@@ -3,6 +3,7 @@ package com.cn.leedane.task.spring.scheduling;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -17,13 +18,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.cache.SystemCache;
+import com.cn.leedane.mapper.VisitorMapper;
 import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.mapper.circle.CircleMemberMapper;
-import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.utils.CollectionUtil;
+import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.OptionUtil;
+import com.cn.leedane.utils.StringUtil;
 
 /**
  * 获取圈子最热门的成员任务
@@ -42,6 +46,9 @@ public class CircleMemberHostest extends AbstractScheduling{
 	private CircleMapper circleMapper;
 	
 	@Autowired
+	private VisitorMapper visitorMapper;
+	
+	@Autowired
 	private SystemCache systemCache;
 	
 	@Override
@@ -50,18 +57,18 @@ public class CircleMemberHostest extends AbstractScheduling{
 		long start = System.currentTimeMillis();
 		
 		JSONObject params = getParams();
-		int limit = JsonUtil.getIntValue(params, "limit" , 100);//默认显示最热门的5条记录
+		int limit = JsonUtil.getIntValue(params, "limit" , 100);//默认计算最近时间内有过使用的圈子数量
 		Date time = DateUtil.getDayBeforeOrAfter(OptionUtil.circleHostestBeforeDay, true);
-		//获取最近热门的100个圈子才去计算其成员热门
-		List<CircleBean> circleBeans = circleMapper.getHotests(time, limit);
-		if(CollectionUtil.isEmpty(circleBeans))
+		//获取最近时间有被人访问过的圈子列表
+		List<Map<String, Object>> recentlyCircles = visitorMapper.getRecently(time, DataTableType.圈子.value, 0, limit, ConstantsUtil.STATUS_NORMAL);
+		if(CollectionUtil.isEmpty(recentlyCircles))
 			return;
 		
 		List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
-		ExecutorService threadpool = Executors.newFixedThreadPool(circleBeans.size() >5 ? 5: circleBeans.size());
+		ExecutorService threadpool = Executors.newFixedThreadPool(recentlyCircles.size() >5 ? 5: recentlyCircles.size());
 		SingleCalculateTask dealTask;
-		for(CircleBean bean: circleBeans){
-			dealTask = new SingleCalculateTask(bean);
+		for(Map<String, Object> recentlyCircle: recentlyCircles){
+			dealTask = new SingleCalculateTask(StringUtil.changeObjectToInt(recentlyCircle.get("table_id")));
 			futures.add(threadpool.submit(dealTask));
 		}
 		
@@ -70,7 +77,7 @@ public class CircleMemberHostest extends AbstractScheduling{
 		for(int i = 0; i < futures.size(); i++){
 			try {
 				if(!futures.get(i).get()){
-					logger.error(circleBeans.get(i).getName() + "--->圈子的热门成员计算失败");
+					logger.error("圈子Id为：" +recentlyCircles.get(i).get("table_name") + "--->圈子的热门成员计算失败");
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -90,16 +97,16 @@ public class CircleMemberHostest extends AbstractScheduling{
 	 * version 1.0
 	 */
 	class SingleCalculateTask implements Callable<Boolean>{
-		private CircleBean mCircle;
+		private int mCircleId;
 		
-		public SingleCalculateTask(CircleBean circle){
-			this.mCircle = circle;
+		public SingleCalculateTask(int circleId){
+			this.mCircleId = circleId;
 		}
 		@Override
 		public Boolean call() throws Exception {
 			
 			try{
-				circleMemberMapper.calculateHotests(mCircle.getId());
+				circleMemberMapper.calculateHotests(mCircleId);
 				return true;
 			}catch(Exception e){
 				e.printStackTrace();

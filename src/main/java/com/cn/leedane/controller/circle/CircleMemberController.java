@@ -63,4 +63,19 @@ public class CircleMemberController extends BaseController{
 		message.putAll(circleMemberService.recommend(circleId, memberId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
+	
+	/**
+	 * 删除某个成员
+	 * @return
+	 */
+	@RequestMapping(value = "/{circleId}/member/{memberId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> delete(@PathVariable("circleId") int circleId, @PathVariable("memberId") int memberId, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circleMemberService.delete(circleId, memberId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
 }

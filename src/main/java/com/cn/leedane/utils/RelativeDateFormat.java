@@ -1,7 +1,5 @@
 package com.cn.leedane.utils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -35,7 +33,7 @@ public class RelativeDateFormat {
         long delta = new Date().getTime() - date.getTime();
         if (delta < 1L * ONE_MINUTE) {
             long seconds = toSeconds(delta);
-            if(seconds <= 0){
+            if(seconds < -30){
             	return DateUtil.DateToString(date);
             } 
             if(seconds < 10)

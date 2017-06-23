@@ -79,7 +79,7 @@ public class EnumUtil {
 		举报("t_report"), 积分("t_score"), 签到("t_sign_in"), 上传("t_upload"), 权限("t_permission"), 角色权限("t_role_permission"),
 		角色("t_role"), 用户角色("t_user_role"), 链接管理("t_link_manage"), 留言("t_message_board"), 素材("t_material"), 
 		任务("t_job_manage"), 贡献值("t_circle_contribution"),
-		圈子("t_circle"), 圈子成员("t_circle_member"), 帖子("t_circle_post");
+		圈子("t_circle"), 圈子成员("t_circle_member"), 帖子("t_circle_post"), 不存在的表("t_inexistence");
 	
 		private DataTableType(String value) {
 			this.value = value;
@@ -298,6 +298,18 @@ public class EnumUtil {
 		用户已被禁止使用(2028),
 		注册未激活账户(2029),
 		未完善信息(2030),
+		转发成功(2031),
+		转发失败(2032),
+		删除转发成功(2033),
+		删除转发失败(2034),
+		评论成功(2035),
+		评论失败(2036),
+		删除评论成功(2037),
+		删除评论失败(2038),
+		点赞成功(2039),
+		点赞失败(2040),
+		取消点赞成功(2041),
+		取消点赞失败(2042),
 		用户不存在或请求参数不对(3001),
 		用户已经注销(3002),
 		请先验证邮箱(3003),
@@ -403,12 +415,16 @@ public class EnumUtil {
 		该圈子不存在(3101),
 		您已经在圈子中(3102),
 		回答的答案不正确(3103),
-		您已经离开该圈子(3104),
+		用户已经不在该圈子中(3104),
 		今天已经打卡(3105),
 		贡献打卡成功(3106),
 		今天还未打卡(3107),
 		请先加入该圈子(3108),
 		该帖子不存在(3109),
+		该帖子无法校验(3110),
+		圈主不能被删除(3111),
+		该成员已被移除出圈子(3112),
+		自己不能将自己移除出该圈子(3113),
 		;
 		
 		private ResponseCode(int value) {

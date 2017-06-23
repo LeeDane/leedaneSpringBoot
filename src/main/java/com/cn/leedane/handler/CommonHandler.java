@@ -7,9 +7,9 @@ import java.util.Map;
 
 import net.sf.json.JSONArray;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.cn.leedane.handler.circle.CirclePostHandler;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
@@ -35,6 +35,9 @@ public class CommonHandler {
 	@Autowired
 	private UserHandler userHandler;
 	
+	@Autowired
+	private CirclePostHandler circlePostHandler;
+	
 
 	/**
 	 * 通过表名和表ID获取该资源对象的展示内容
@@ -52,6 +55,8 @@ public class CommonHandler {
 			list = moodHandler.getMoodDetail(tableId, user, true);
 		}else if(DataTableType.博客.value.equalsIgnoreCase(tableName)){
 			list = blogHandler.getBlogDetail(tableId, user, true);
+		}else if(DataTableType.帖子.value.equalsIgnoreCase(tableName)){
+			list = circlePostHandler.getPostDetail(tableId, user);
 		}else{
 			return "";
 		}
@@ -99,6 +104,8 @@ public class CommonHandler {
 			list = moodHandler.getMoodDetail(tableId, user, true);
 		}else if(DataTableType.博客.value.equalsIgnoreCase(tableName)){
 			list = blogHandler.getBlogDetail(tableId, user, true);
+		}else if(DataTableType.帖子.value.equalsIgnoreCase(tableName)){
+			list = circlePostHandler.getPostDetail(tableId, user);
 		}else{
 			return result;
 		}

@@ -43,7 +43,7 @@ public class OperateLogSaveThread implements Runnable{
 	@Override
 	public void run() {
 		OperateLogBean operateLogBean = new OperateLogBean();
-		logger.info("OperateLogServiceImpl-->saveOperateLog():subject="+mSubject+",method="+mMethod+",status="+mStatus+",operateType="+mOperateType);
+		logger.info("OperateLogSaveThread--run()>saveOperateLog():subject="+mSubject+",method="+mMethod+",status="+mStatus+",operateType="+mOperateType);
 		if(mRequest != null){
 			String browserInfo = CommonUtil.getBroswerInfo(mRequest);// 获取浏览器的类型
 			String ip = CommonUtil.getIPAddress(mRequest); //获得IP地址

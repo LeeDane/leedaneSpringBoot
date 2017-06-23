@@ -62,20 +62,79 @@ public class CirclePostController extends BaseController{
 		message.putAll(circlePostService.update(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
+	
+	/**
+	 * 删除帖子
+	 * @return
+	 */
+	@RequestMapping(value = "/{circleId}/post/{postId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> delete(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circlePostService.delete(circleId, postId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
 		
 	/**
 	 * 获取圈子帖子分页列表
 	 * @return
 	 */
-	@RequestMapping(value = "/{circleId}/member/{memberId}/posts", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/{circleId}/posts", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> paging(@PathVariable("circleId") int circleId, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		//message.putAll(circlePostService.paging(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circlePostService.paging(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
+	/**
+	 * 帖子评论
+	 * @return
+	 */
+	@RequestMapping(value = "/{circleId}/post/{postId}/comment", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> comment(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circlePostService.comment(circleId, postId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 帖子转发
+	 * @return
+	 */
+	@RequestMapping(value = "/{circleId}/post/{postId}/transmit", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> transmit(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circlePostService.transmit(circleId, postId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 帖子点赞
+	 * @return
+	 */
+	@RequestMapping(value = "/{circleId}/post/{postId}/zan", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> zan(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circlePostService.zan(circleId, postId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
 }

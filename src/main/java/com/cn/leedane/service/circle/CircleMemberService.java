@@ -40,4 +40,14 @@ public interface CircleMemberService <T extends IDBean>{
 	 */
 	public Map<String, Object> recommend(int circleId, int memberId, JSONObject json, UserBean user, HttpServletRequest request);
 	
+	/**
+	 * 删除某个成员(必须是圈主或者圈子管理员才能操作)，圈主不能删除
+	 * @param circleId
+	 * @param memberId
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> delete(int circleId, int memberId, JSONObject json, UserBean user, HttpServletRequest request);
+	
 }

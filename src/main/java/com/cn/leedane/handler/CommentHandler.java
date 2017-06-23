@@ -24,8 +24,13 @@ public class CommentHandler {
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
+	/**
+	 * 添加评论
+	 * @param tableName
+	 * @param tableId
+	 */
 	public void addComment(String tableName, int tableId){
-		String key = getCommentKey(tableName, tableId);
+		String key = getCommentKey(tableId, tableName);
 		int count = 0;
 		//还没有添加到redis中
 		if(StringUtil.isNull(redisUtil.getString(key))){
@@ -36,22 +41,6 @@ public class CommentHandler {
 		}
 		redisUtil.addString(key, String.valueOf(count));
 	}
-	
-	/**
-	 * 获取redis存储的key
-	 * @param tableName
-	 * @param tableId
-	 * @return
-	 */
-	private String getCommentKey(String tableName, int tableId){
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(ConstantsUtil.COMMENT_REDIS);
-		buffer.append(tableName);
-		buffer.append("_");
-		buffer.append(tableId);
-		return buffer.toString();
-	}
-	
 
 	/**
 	 * 获取评论总数

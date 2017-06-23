@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cn.leedane.controller.BaseController;
-import com.cn.leedane.controller.RoleController;
 import com.cn.leedane.controller.UserController;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.UserBean;
@@ -42,7 +41,6 @@ import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.BlogCategory;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.EnumUtil.ResponseCode;
 import com.cn.leedane.utils.JsoupUtil;
 import com.cn.leedane.utils.StringUtil;
 
@@ -185,7 +183,7 @@ public class HtmlController extends BaseController{
     			model.addAttribute("isLoginUser", uid == user.getId());
     			//保存访客记录
     			if(uid != user.getId())
-    				visitorService.saveVisitor(user, "web网页端", uid, "t_mood", uid, ConstantsUtil.STATUS_NORMAL);
+    				visitorService.saveVisitor(user, "web网页端", "t_mood", uid, ConstantsUtil.STATUS_NORMAL);
     			return loginRoleCheck("my", true, model, request);
     		}
         }

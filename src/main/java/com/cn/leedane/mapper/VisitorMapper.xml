@@ -10,10 +10,25 @@
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
 	<select id="visitors" resultType="java.util.Map">
-		select v.id, v.create_user_id, date_format(v.create_time,'%Y-%c-%d %H:%i:%s') create_time
+		select v.id, v.create_user_id, date_format(v.create_time,'%Y-%c-%d %H:%i:%s') create_time 
 		from t_visitor v 
-		where v.status=#{status} and v.user_id = #{user_id} and v.table_name=#{table_name} and v.table_id = #{table_id} 
-		GROUP BY v.create_user_id
-		order by v.create_time desc, v.id desc limit #{start}, #{page_size}
+		where v.status=#{status} and v.table_name=#{tableName} and v.table_id = #{tableId} 
+		and not exists (
+			select 1 from t_visitor v1 
+			where v1.status=#{status} and v1.table_name=#{tableName} and v1.table_id = #{tableId} 
+			and v.create_user_id = v1.create_user_id and v1.create_time > v.create_time) 
+		ORDER BY v.create_time desc, v.id desc limit #{start}, #{pageSize};
+	</select>
+	
+	<select id="getRecently" resultType="java.util.Map">
+		select v.id, v.create_user_id, date_format(v.create_time,'%Y-%c-%d %H:%i:%s') create_time, v.table_id, v.table_name
+		from t_visitor v 
+		where v.status=#{status} and v.table_name=#{tableName}
+		and not exists (
+			select 1 from t_visitor v1 
+			where v1.status=#{status} and v1.table_name=#{tableName} and v.table_id = v1.table_id
+			and v1.create_time > v.create_time) 
+		and v.create_time >= #{time}
+		ORDER BY v.create_time desc, v.id desc limit #{start}, #{pageSize};
 	</select>
 </mapper>

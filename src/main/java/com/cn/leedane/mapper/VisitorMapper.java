@@ -1,5 +1,6 @@
 package com.cn.leedane.mapper;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -15,11 +16,35 @@ import com.cn.leedane.model.VisitorBean;
  */
 public interface VisitorMapper extends BaseMapper<VisitorBean>{
 	
+	/**
+	 * 获取访问者
+	 * @param tableName
+	 * @param tableId
+	 * @param start
+	 * @param pageSize
+	 * @param status
+	 * @return
+	 */
 	public List<Map<String, Object>> visitors(
-			@Param("user_id")int userId, 
-			@Param("table_name")String tableName,
-			@Param("table_id")int tableId,
+			@Param("tableName")String tableName,
+			@Param("tableId")int tableId,
 			@Param("start")int start,
-			@Param("page_size")int pageSize,
+			@Param("pageSize")int pageSize,
+			@Param("status") int status);
+	
+	/**
+	 * 获取某tableName(类型)最近有过访问记录的数据
+	 * @param time
+	 * @param tableName
+	 * @param start
+	 * @param pageSize
+	 * @param status
+	 * @return
+	 */
+	public List<Map<String, Object>> getRecently(
+			@Param("time")Date time,
+			@Param("tableName")String tableName,
+			@Param("start")int start,
+			@Param("pageSize")int pageSize,
 			@Param("status") int status);
 }

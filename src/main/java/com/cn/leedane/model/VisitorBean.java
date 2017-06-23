@@ -25,13 +25,6 @@ public class VisitorBean extends RecordTimeBean{
 	/**
 	 * 访客对象的类型(对象表名)必须
 	 */
-	@Column("user_id")
-	@Field
-	private int userId;
-	
-	/**
-	 * 访客对象的类型(对象表名)必须
-	 */
 	@Column("table_name")
 	@Field
 	private String tableName;
@@ -61,11 +54,5 @@ public class VisitorBean extends RecordTimeBean{
 	}
 	public void setFroms(String froms) {
 		this.froms = froms;
-	}
-	public int getUserId() {
-		return userId;
-	}
-	public void setUserId(int userId) {
-		this.userId = userId;
 	}
 }

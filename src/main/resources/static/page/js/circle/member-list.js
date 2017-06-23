@@ -14,6 +14,18 @@ $(function(){
 	
 	$(".tooltip").css("display", "block");
 	
+	//推荐成员的点击事件
+	$(document).on("click", ".member-recommend", function(event){
+		event.stopPropagation();//阻止冒泡
+		recommendMember($(this));
+	});
+	
+	//移除成员的点击事件
+	$(document).on("click", ".member-delete", function(event){
+		event.stopPropagation();//阻止冒泡
+		deleteMember($(this));
+	});
+	
 	getCircleMembers();
 });
 
@@ -41,7 +53,7 @@ function getCircleMembers(){
 				}
 				for(var i = 0; i < circles.length; i++){
 					$(".table tbody").append(buildEachCircleMemberRow(i, circles[i]));
-					$("#row-index-"+i).data("circle", circles[i]);
+					$("#row-index-"+i).data("member", circles[i]);
 				}
 				pageDivUtil(data.total);
 			}else{
@@ -55,6 +67,63 @@ function getCircleMembers(){
 			ajaxError(data);
 		}
 	});
+}
+
+/**
+ * 是否推荐
+ * @param obj
+ */
+function recommendMember(obj){
+	var member = $(obj).closest("tr").data("member");
+	//询问框
+	layer.confirm('您确定要'+ (member.member_recommend? '取消推荐': '推荐') +'该成员吗，请谨慎！', {
+	  btn: ['确定','放弃'] //按钮
+	}, function(){
+		doRecommend(member.member_id, member.member_recommend);
+	}, function(){
+	  
+	});
+}
+
+/**
+ * 执行移除用户
+ * @param obj
+ */
+function deleteMember(obj){
+	var member = $(obj).closest("tr").data("member");
+	layer.confirm('您要将《'+ member.account +'》移除出圈子吗？删除掉将无法恢复，请慎重！', {
+		  btn: ['确定','点错了'] //按钮
+	}, function(){
+		layer.prompt({title: '请输入您要移除该用户的原因(必填)', formType: 0}, function(pass, promptIndex){
+		    var index = layer.load(1, {
+		    	shade: [0.1,'#fff'] //0.1透明度的白色背景
+		    });
+		  	var loadi = layer.load('努力加载中…');
+			$.ajax({
+				type : "DELETE",
+				url : '/cc/'+ circleId +'/member/'+ member.member_id +"?reason="+ pass,
+				dataType: 'json', 
+				beforeSend:function(){
+				},
+				success : function(data) {
+						layer.close(loadi);
+						if(data.isSuccess){
+							layer.msg(data.message+ "，1秒后自动刷新");
+							reloadPage(1000);
+						}else{
+							layer.msg(data.message);
+							layer.close(loadi);
+						}
+				},
+				error : function() {
+					layer.close(loadi);
+					layer.msg("网络请求失败");
+				}
+			});
+		});
+	}, function(){
+	});
+	
 }
 
 /**
@@ -73,27 +142,14 @@ function buildEachCircleMemberRow(index, member){
 					'<td width="100">'+ member.create_time +'</td>'+ 
 					'<td width="140">';
 				if(canAdmin){
-					html += '<a href="javascript:void(0);" onclick="recommend(this, '+ member.member_id+', '+ member.member_recommend +');" style="margin-right: 10px;">'+(member.member_recommend? '取消推荐': '推荐')+'</a><a href="javascript:void(0);" onclick="showAllotAdminList(this, '+ member.id+');" style="margin-right: 10px;">删除</a>';
+					
+					html += '<a href="javascript:void(0);" class="member-recommend" style="margin-right: 10px;">'+(member.member_recommend? '取消推荐': '推荐')+'</a>';
+					if(member.role_type != 1 && member.member_id != loginUserId)
+						html += '<a href="javascript:void(0);" class="member-delete" style="margin-right: 10px;">删除</a>';
 				}
 			html +='</td>'+ 
 				'</tr>';
 	return html;
-}
-
-/**
- * 是否推荐
- * @param obj
- * @param circleId
- */
-function recommend(obj, memberId, recommend){
-	//询问框
-	layer.confirm('您确定要'+ (recommend? '取消推荐': '推荐') +'该成员吗，请谨慎！', {
-	  btn: ['确定','放弃'] //按钮
-	}, function(){
-		doRecommend(memberId, recommend);
-	}, function(){
-	  
-	});
 }
 
 function doRecommend(memberId, recommend){

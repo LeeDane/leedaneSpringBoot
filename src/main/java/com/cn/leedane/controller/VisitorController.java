@@ -37,14 +37,14 @@ public class VisitorController extends BaseController{
 	 * 获取对象的访客列表
 	 * @return
 	 */
-	@RequestMapping(value = "user/{uid}/visitors", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(@PathVariable("uid") int uid, HttpServletRequest request){
+	@RequestMapping(value = "user/{tableId}/visitors", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> paging(@PathVariable("tableId") int tableId, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(visitorService.getVisitorsByLimit(uid, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(visitorService.getVisitorsByLimit(tableId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 }

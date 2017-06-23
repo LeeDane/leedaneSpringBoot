@@ -207,6 +207,8 @@ function linkToTable(tableName, tableId, createUserId){
 		goToReadFull(tableId);
 	}else if(tableName == "t_mood"){
 		goToReadMoodFull(tableId, createUserId);
+	}else if(tableName == "t_circle_post"){
+		goToReadPostFull(tableId);
 	}
 	return;
 }
@@ -228,7 +230,20 @@ function goToReadFull(id){
 		layer.msg("该博客不存在，请联系管理员核实");
 		return;
 	}
-	window.open("dt/"+id, "_blank");
+	window.open("/dt/"+id, "_blank");
+}
+
+/**
+ * 跳转到帖子详情阅读
+ * @param id
+ */
+function goToReadPostFull(id){
+	//layer.msg("文章ID为："+id);
+	if(isEmpty(id)){
+		layer.msg("该帖子不存在，请联系管理员核实");
+		return;
+	}
+	window.open("/post/dt/"+id, "_blank");
 }
 
 /**

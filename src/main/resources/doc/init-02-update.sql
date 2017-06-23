@@ -15,3 +15,6 @@ alter table t_user add constraint user_phone_unique UNIQUE(mobile_phone);
 
 /*为文章表添加source和origin_link唯一约束*/
 ALTER TABLE t_blog ADD UNIQUE blog_source_origin_link(source, origin_link);
+
+/*为访客表的tableName, tableId以及创建时间添加唯一性约束*/
+alter table t_visitor add constraint visitor_all_unique UNIQUE(table_name, table_id, create_time);

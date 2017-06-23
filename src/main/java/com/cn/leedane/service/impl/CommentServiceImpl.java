@@ -119,8 +119,8 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		bean.setTableId(tableId);
 		bean.setTableName(tableName);
 		//bean.setCid(cid);
-		
-		if(commentMapper.save(bean) > 0){
+		boolean result = commentMapper.save(bean) > 0;
+		if(result){
 			int createUserId = 0;
 			//String str = "{from_user_remark}评论您："+content;
 			if(pid > 0){//说明是回复别人的评论
@@ -164,7 +164,14 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			 */
 			commentHandler.addComment(tableName, tableId);
 		}
-		message.put("isSuccess", true);
+		if(result){
+			message.put("isSuccess", result);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.评论成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		}else{
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.评论失败.value));
+			message.put("responseCode", EnumUtil.ResponseCode.评论失败.value);
+		}
 		return message.getMap();
 	}
 	
@@ -508,11 +515,11 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		if(result){
 			commentHandler.deleteComment(commentBean.getTableId(), commentBean.getTableName());
 			message.put("isSuccess", true);
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除评论成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除评论失败.value));
+			message.put("responseCode", EnumUtil.ResponseCode.删除评论失败.value);
 		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除评论ID为", cid, "的数据", StringUtil.getSuccessOrNoStr(result)).toString(), "deleteComment()", StringUtil.changeBooleanToInt(result), 0);
@@ -540,7 +547,9 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		boolean result = commentMapper.updateSql(EnumUtil.getBeanClass(EnumUtil.getTableCNName(tableName)), " set can_comment=? where id=?", canComment, tableId) > 0;
 		
 		if(result){
+			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.更新评论状态成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.更新评论状态失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.更新评论状态失败.value);

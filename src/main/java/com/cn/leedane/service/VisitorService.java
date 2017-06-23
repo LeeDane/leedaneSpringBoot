@@ -23,17 +23,17 @@ public interface VisitorService<T extends IDBean>{
 	 * 保存访客记录
 	 * @return
 	 */
-	public boolean saveVisitor(UserBean user, String froms, int userId, String tableName, int tableId, int status);
+	public boolean saveVisitor(UserBean user, String froms, String tableName, int tableId, int status);
 
 	/**
 	 * 获取访客列表
-	 * @param uid
+	 * @param tableId
 	 * @param jo
 	 * @param user
 	 * @param request
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getVisitorsByLimit(int uid,
+	public Map<String, Object> getVisitorsByLimit(int tableId,
 			JSONObject json, UserBean user, HttpServletRequest request);
 }
