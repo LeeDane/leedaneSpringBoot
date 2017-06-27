@@ -219,6 +219,9 @@ public class CircleHtmlController extends BaseController{
         	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
         }
         model.addAllAttributes(circlePostService.initDetail(circle, postBean, user, request));
+        
+        //保存帖子的访问记录
+        circlePostService.saveVisitLog(postId, user, request);
 		return loginRoleCheck("circle/post-detail", true, model, request);
 	}
 }

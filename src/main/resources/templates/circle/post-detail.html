@@ -104,7 +104,7 @@
 						<span class="glyphicon glyphicon-credit-card hand" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="打赏"></span>
 					</p>
 			   		<div id="zan-users"></div>
-			   		<div class="row-content" th:text="${post.content}"></div>
+			   		<div class="row-content" th:utext="${post.content}"></div>
 			   		<div class="row" style="margin-top: 5px;" th:if="${post.imgs != null} and ${post.imgs != ''}">
 				   		<div class="img-container">
 					   		<div class="col-lg-4" th:each="img,imgStat : ${post.imgs.split(';')}">

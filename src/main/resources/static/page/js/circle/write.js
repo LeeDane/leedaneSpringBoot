@@ -1,7 +1,7 @@
+var $contentContainer;
 $(function(){
-	if(circleId > 0){
-
-	}
+	$contentContainer = $("textarea[name='content']");
+	$contentContainer.markdown();
 	
 	$("[data-toggle='tooltip']").tooltip();
 	//是否有主图
@@ -191,8 +191,13 @@ function clearTag(obj){
 			flag = false;
 			return;
 		}
-		if(name)
+		if(name == "content"){
+			var markdown = $contentContainer.data('markdown');
+			var text = markdown.parseContent();
+			jsonParams[name] = text;
+		}else{
 			jsonParams[name] = $(this).val();
+		}
 	});
 	if(flag){
 		if(isEdit)
@@ -289,6 +294,7 @@ function clearTag(obj){
 		html += '<div class="col-lg-4">'+
 						'<img src="'+ changeNotNullString(array[i])+'" style="width: 100%; height: 180px;" class="img-responsive" onClick="" />'+
 					'</div>';
+		//$contentContainer.val($contentContainer.val() + '![]('+ array[i] +')\r\n');
 	 }
 	 $('.img-container').append(html);
 	 $('body').removeClass("modal-open");

@@ -11,6 +11,7 @@
 	<title th:text="${uaccount}+ '个人中心'">个人中心</title>
 	<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_733gvu39kn265hfr.css" />
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<script th:src="@{/page/js/page.js}" type="text/javascript"></script>
 	<style type="text/css">
 		.clearFloat{
 			clear: both;
@@ -137,19 +138,6 @@
 		.list-group-item.active:focus{
 			z-index: 0 !important; 
 		}
-		.pagination ul{
-   			list-style:none; /* 去掉ul前面的符号 */
-   			margin: 0px; /* 与外界元素的距离为0 */
-   			padding: 0px; /* 与内部元素的距离为0 */
-   			width: auto; /* 宽度根据元素内容调整 */
-   		}
-   		.pagination li{
-   			float: left;
-   			padding: 20px; 
-   			margin-left: 10px!important;
-   			margin-top: 10px!important;
-   			padding: 0 !important;
-   		}
 	</style>
 </head>
 <body data-spy="scroll" data-target="#myScrollspy" data-offset="90">
@@ -187,170 +175,14 @@
 						</nav>
 				    </div>
 	      		</div>
-		      	<!-- <div class="list-group">
-				    <div class="list-group-item active">
-				    	<div class="row">
-				    		<div class="col-lg-8">
-				    			<span class="list-group-item-heading">
-						            	来自：小米手机5s plus
-						        </span>
-				    		</div>
-				    		<div class="col-lg-4">
-				    			<span class="list-group-item-heading" style="margin-right: 5px;">
-						        	2016-10-10 10:00:01
-						        </span>
-				    			<span class="list-group-item-heading glyphicon glyphicon-chevron-down cursor">
-						        </span>
-						        
-				    		</div>
-				    	</div>
-				        
-				    </div>
-				    <div class="list-group-item">
-				        <div class="list-group-item-text">
-				            	今天解决心情列表到最底部下滑时候程序奔溃的问题，原因是：viewfooter通过匿名方式加载进来没有赋值给mViewFooter变量所致。
-				        </div>
-				        <p class="location">	
-				        	位置:郑州市二七路110号郑州市公安局
-				        </p>
-				        <div class="row">
-				          	<div class="col-lg-4 col-sm-4">
-				          		<img src="images/main_content_img.jpg" width="100%" height="180px" class="img-responsive">
-				          	</div>
-				          	<div class="col-lg-4 col-sm-4">
-				          		<img src="images/main_content_img.jpg" width="100%" height="180px" class="img-responsive">
-				          	</div>
-				          	<div class="col-lg-4 col-sm-4">
-				          		<img src="images/main_content_img.jpg" width="100%" height="180px" class="img-responsive">
-				          	</div>
-				        </div>
-				        <div class="zan_user">leedane、hehe等觉得很赞</div>
-				    </div>
-				    <div class="list-group-item list-group-item-operate">
-				         <button type="button" class="btn btn-primary btn-sm">评论(10)</button>
-				         <button type="button" class="btn btn-primary btn-sm" disabled="disabled">转发(10)</button>
-				         <button type="button" class="btn btn-primary btn-sm">查看详细</button>
-				    </div>
-				</div>
-		
-				<div id="section2"> 
-					<h1>Section 2</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>        
-				<div id="section3">         
-					<h1>Section 3</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>
-				<div id="section6">         
-					<h1>section6</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>   
-				<div id="section6">         
-					<h1>section6</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>   
-				<div id="section6">         
-					<h1>section6</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>   
-				<div id="section6">         
-					<h1>section6</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>   
-				<div id="section6" onclick="testClick(this)">         
-					<h1>sectionuuuuyy</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>  
-				<div id="section6">         
-					<h1>section6</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>  
-				<div id="section6">         
-					<h1>section6</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>  
-				<div id="section6">         
-					<h1>section6</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>  
-				<div id="section6">         
-					<h1>section888</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>  
-				<div id="section6">         
-					<h1>section6</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>  
-				<div id="section6">         
-					<h1>section6</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>  
-				<div id="section6">         
-					<h1>section6</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>  
-				<div id="section6">         
-					<h1>section6</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>  
-				<div id="section6">         
-					<h1>section6</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>  
-				<div id="section6">         
-					<h1>section6</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>  
-				<div id="section41">         
-					<h1>Section 4-1</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div>      
-				<div id="section42">         
-					<h1>Section 4-2</h1>
-					<p>Try to scroll this section and look at the navigation list while scrolling!</p>
-				</div> -->
 	      </div>
 	      <nav class="col-sm-3" id="navbarExample">
 	      	<div class="row">
 	      		<div class="table-responsive">
-						<table class="table table-striped"  id="message-boards" style="border: 1px solid #fff; table-layout:fixed; background-color: #fff;">
-							<!-- <caption>响应式表格布局</caption> -->
-							<!-- <tbody>
-								<tr class="each-row">
-									<td>产品1</td>
-									<td>23/11/2013</td>
-								</tr>
-								<tr class="each-row">
-									<td>产品2</td>
-									<td>10/11/2013</td>
-								</tr>
-								<tr class="each-row">
-									<td>产品3</td>
-									<td>20/10/2013</td>
-								</tr>
-								<tr class="each-row">
-									<td>产品4</td>
-									<td>20/10/2013</td>
-								</tr>
-								<tr>
-									<td colspan="2" style="text-align: center;"><button type="button" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil"></span> 留言板</button></td>
-								</tr>
-							</tbody> -->
+					<table class="table table-striped"  id="message-boards" style="border: 1px solid #fff; table-layout:fixed; background-color: #fff;">
 					</table>
 		    	</div>
 		    	<ul class="list-group" id="visitors-list">
-				    <!-- <li class="list-group-item"><img alt="" width="40" height="40" src=""/></li>
-				    <li class="list-group-item">免费 Window 空间托管</li>
-				    <li class="list-group-item">图像的数量</li>
-				    <li class="list-group-item">
-				        <span class="badge">好友</span>
-				        24*7 支持
-				    </li>
-				    <li class="list-group-item">每年更新成本</li>
-				    <li class="list-group-item">
-				        <span class="badge">粉丝</span>
-				        折扣优惠
-				    </li> -->
 				</ul>
 	      	</div>
 	      </nav>
@@ -420,38 +252,9 @@
 				</h4>
 			</div>
 			<div class="modal-body" id="comment-or-transmit-item">
-				<!-- <div class="list-group">
-					<div class="list-group-item">
-						<div class="row">
-							<div class="col-lg-2 col-sm-2">
-								<div>
-									<img src="images/main_content_img.jpg" width="60px" height="60px" class="img-circle">
-								</div>
-								<div class="commentOrTransmitUser text-info">leedanssfffffffdddse</div> 
-							</div>
-							<div class="col-lg-10 col-sm-10">
-								<div class="row">
-									<div class="col-lg-8 col-sm-8 text-muted">来自：机器人自动回复 </div>
-									<div class="col-lg-4 col-sm-4 text-muted" style="text-align: right;">
-										14天前<button type="button" class="btn btn-primary btn-xs" 
-											    data-toggle="button" style="margin-left: 5px;">回复
-											</button>
-									</div>
-								</div>
-								<div>你啊，怎么这么逗你啊，怎么这么逗你啊，怎么这么逗你啊，么这么逗你啊，怎么这么逗你啊，么这么逗你啊，怎么这么逗你啊，么这么逗你啊，怎么这么逗你啊，么这么逗你啊，怎么这么逗你啊，么这么逗你啊，怎么这么逗你啊，怎么这么逗你啊，怎么这么逗你啊，怎么这么逗你啊，怎么这么逗</div>
-							</div>
-						</div>
-					</div>
-				</div> -->
-				
 				<button class="btn btn-info">加载更多</button>
 			</div>
 			<div class="modal-footer">
-				<!-- <div class="form-group">
-					<input type="text" class="form-control">
-					<button type="button" class="btn btn-default" data-dismiss="modal">关闭
-					</button>
-				</div> -->
 				<div class="input-group">
 			      <input type="text" id="comment-or-transmit-text" class="form-control" placeholder="请说点什么吧" />
 			      <span class="input-group-btn">
@@ -476,19 +279,14 @@
 				</h4>
 			</div>
 			<div class="modal-footer">
-				<!-- <div class="form-group">
-					<input type="text" class="form-control">
-					<button type="button" class="btn btn-default" data-dismiss="modal">关闭
-					</button>
-				</div> -->
-				<div class="input-group">
-			      <input type="text" id="push-mood-text" class="form-control" placeholder="请说点什么吧" />
-			      <span class="input-group-btn">
+				<textarea rows="5" cols="10" id="push-mood-text" class="form-control" placeholder="请说点什么吧"></textarea>
+		      	<div class="input-group" style="margin-top: 5px;">
+			      <span class="input-group-btn" style="padding-left: 5px;">
 			      	<button class="btn btn-default" type="button" onclick="createSelectMaterialModal(this, 3, 1, 'afterSelect');">选择素材</button>
 			        <button class="btn btn-default" type="button" onclick="sendMood();">发送</button>
 			      </span>
-			    </div><!-- /input-group -->
-			    <div class="select-links"></div>
+			  	</div>
+			 	 <div class="select-links"></div>
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal -->

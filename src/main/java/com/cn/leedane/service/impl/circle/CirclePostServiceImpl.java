@@ -26,6 +26,7 @@ import com.cn.leedane.mapper.circle.CirclePostMapper;
 import com.cn.leedane.model.CommentBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.VisitorBean;
 import com.cn.leedane.model.ZanBean;
 import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.model.circle.CircleContributionBean;
@@ -34,6 +35,7 @@ import com.cn.leedane.model.circle.CirclePostBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.CommentService;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.service.ZanService;
 import com.cn.leedane.service.circle.CircleContributionService;
 import com.cn.leedane.service.circle.CirclePostService;
@@ -44,6 +46,8 @@ import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.JsoupUtil;
+import com.cn.leedane.utils.MardownUtil;
 import com.cn.leedane.utils.RelativeDateFormat;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.SqlUtil;
@@ -98,12 +102,15 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	@Autowired
 	private CircleContributionService<CircleContributionBean> circleContributionService;
 	
+	@Autowired
+	private VisitorService<VisitorBean> visitorService;
+	
 	@Override
 	public Map<String, Object> add(int circleId, JSONObject json, UserBean user,
 			HttpServletRequest request) {
 		logger.info("CirclePostServiceImpl-->add(), circleId= " + circleId +",user=" +user.getAccount());
 		SqlUtil sqlUtil = new SqlUtil();
-		CirclePostBean circlePostBean = (com.cn.leedane.model.circle.CirclePostBean) sqlUtil.getBean(json, CirclePostBean.class);
+		CirclePostBean circlePostBean = (CirclePostBean) sqlUtil.getBean(json, CirclePostBean.class);
 		
 		CircleBean circleBean = circleHandler.getNormalCircleBean(circleId);
 		if(circleBean == null)
@@ -117,7 +124,10 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		}
 		
 		Date createTime = new Date();
-		
+		String content = circlePostBean.getContent();
+		//取180个作为摘要
+		circlePostBean.setDigest(JsoupUtil.getInstance().getDigest(content, 0, 180));
+		circlePostBean.setContent(MardownUtil.parseHtml(content));
 		circlePostBean.setCreateTime(createTime);
 		circlePostBean.setCreateUserId(user.getId());
 		circlePostBean.setStatus(ConstantsUtil.STATUS_NORMAL);
@@ -130,7 +140,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			circlePostHandler.deleteUserPostPosts(circleId, user.getId());
 			
 			//对用户添加贡献值
-			circleContributionService.addScore(5, "发帖子奖励贡献值", circleId, user);
+			circleContributionService.addScore(5, "发帖子《"+ circlePostBean.getTitle() +"》奖励贡献值", circleId, user);
 			
 			message.put("isSuccess", true);
 			message.put("message", "您的帖子已经发布成功！");
@@ -259,7 +269,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		Map<String, Object> results = commentService.add(json, user, request);
 		if(results != null && results.containsKey("isSuccess") && StringUtil.changeObjectToBoolean(results.get("isSuccess"))){
 			//对评论帖子添加贡献值
-			circleContributionService.addScore(1, "评论帖子奖励贡献值", circleId, user);
+			circleContributionService.addScore(1, "评论帖子《"+ oldCirclePostBean.getTitle() +"》奖励贡献值", circleId, user);
 		}
 		return results;
 	}
@@ -300,7 +310,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			circlePostHandler.addTransmit(postId);
 			
 			//对转发帖子添加贡献值
-			circleContributionService.addScore(1, "转发帖子奖励贡献值", circleId, user);
+			circleContributionService.addScore(1, "转发帖子《"+ circlePostBean.getTitle() +"》奖励贡献值", circleId, user);
 			
 			message.put("isSuccess", true);
 			message.put("message", "您已成功转发帖子！");
@@ -330,7 +340,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		Map<String, Object> results = zanService.addZan(json, user, request);
 		if(results != null && results.containsKey("isSuccess") && StringUtil.changeObjectToBoolean(results.get("isSuccess"))){
 			//对点赞帖子添加贡献值
-			circleContributionService.addScore(1, "点赞帖子奖励贡献值", circleId, user);
+			circleContributionService.addScore(1, "点赞帖子《"+ oldCirclePostBean.getTitle() +"》奖励贡献值", circleId, user);
 		}
 		return results;
 	}
@@ -371,7 +381,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			notificationHandler.sendNotificationById(false, user, createUserId, content, NotificationType.通知, DataTableType.不存在的表.value, postId, null);
 			
 			//对点赞帖子添加贡献值
-			circleContributionService.reduceScore(8, "删除帖子扣除贡献值", circleId, user);
+			circleContributionService.reduceScore(5, "删除帖子《"+ circlePostBean.getTitle() +"》扣除贡献值", circleId, user);
 			
 			message.put("isSuccess", true);
 			message.put("message", "您已成功删除帖子！");
@@ -428,5 +438,13 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			message.put("blockquote_content", blockquoteContent);
 		}
 		return message;
+	}
+
+	@Override
+	public void saveVisitLog(int postId, UserBean user,
+			HttpServletRequest request) {
+		logger.info("CirclePostServiceImpl-->saveVisitLog() , postId= "+ postId +", --" + (user == null ? "" : user.getAccount()));
+		
+		visitorService.saveVisitor(user, "web网页端", DataTableType.帖子.value, postId, ConstantsUtil.STATUS_NORMAL);
 	}
 }

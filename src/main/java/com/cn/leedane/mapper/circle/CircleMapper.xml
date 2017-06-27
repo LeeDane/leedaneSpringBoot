@@ -40,7 +40,7 @@
 		order by c.create_time desc, c.id desc limit #{start}, #{pageSize}
 	</select>
 	
-	<select id="calculateGetHotests" resultType="java.util.Map" statementType="CALLABLE">
+	<select id="calculateHotests" resultType="java.util.Map" statementType="CALLABLE">
 		{
 			call getHostestCirclesProcedure(#{time}, #{pageSize})
 		}

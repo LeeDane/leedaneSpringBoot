@@ -1,5 +1,6 @@
 package com.cn.leedane.mapper.circle;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -69,4 +70,11 @@ public interface CirclePostMapper extends BaseMapper<CirclePostBean>{
 			@Param("start") int start,
 			@Param("pageSize") int pageSize, 
 			@Param("status") int statusl);
+	
+	/**
+	 * 获取目前最热门的帖子(计算)
+	 * @param postId
+	 * @return
+	 */
+	public void calculateHotests(@Param("time") Date time, @Param("pageSize") int pageSize);
 }

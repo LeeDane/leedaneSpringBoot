@@ -43,6 +43,12 @@ public class CirclePostBean extends RecordTimeBean{
 	@Field
 	private String title;
 	
+	/**
+	 * 帖子的摘要
+	 */
+	@Column("digest")
+	@Field
+	private String digest;
 	
 	/**
 	 * 帖子的内容
@@ -180,6 +186,14 @@ public class CirclePostBean extends RecordTimeBean{
 
 	public void setPostRecommend(boolean postRecommend) {
 		this.postRecommend = postRecommend;
+	}
+
+	public String getDigest() {
+		return digest;
+	}
+
+	public void setDigest(String digest) {
+		this.digest = digest;
 	}
 	
 }

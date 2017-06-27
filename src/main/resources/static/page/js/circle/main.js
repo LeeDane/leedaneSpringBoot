@@ -182,7 +182,7 @@ function buildEachPostRow(index, post){
 							}
 					html += '</p>';
 						}
-					html += '<div class="pull-right" title="Title" data-container="body" data-toggle="popover" data-content="Popover 中的一些内容 —— options 方法 ">'+
+					html += '<div class="pull-right" title="标题" data-container="body" data-toggle="popover" data-content="Popover内容 ">'+
 								'<img src="/page/images/more.png" class="" style="width: 20px; height: 20px" />'+
 							'</div>'+
 						'</div>'+
@@ -197,7 +197,7 @@ function buildEachPostRow(index, post){
 						html +='</blockquote>'+
 							'</div>';
 						}
-					html +=	'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 cut-text2" data-toggle="tooltip" data-placement="left" title="'+ post.content +'">'+ post.content +'</div>';
+					html +=	'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 cut-text2" data-toggle="tooltip" data-placement="left" title="'+ post.digest +'">'+ post.digest +'</div>';
 					if(isNotEmpty(post.imgs)){
 						var imgArray = post.imgs.split(";");
 						for(var imgIndex = 0; imgIndex < imgArray.length; imgIndex++){

@@ -1,18 +1,24 @@
 var userinfo;
 var moods = [];
 var isLoad = false;
-var currentIndex = 0;
-var pageSize = 8;
-var totalPage = 0;
 //浏览器可视区域页面的高度
 var winH = $(window).height(); 
 var monthArray = new Array();
+var $moodContainer;
+var $moodMardownContent;
+var $commentOrTransmitItemContainer;
+
 $(function(){
+	initPage(".pagination", "getMoods");
+	$cOTItemContainer = $("#comment-or-transmit-item");
+	$moodMardownContent = $("#push-mood-text");
 	$(".navbar-nav .nav-main-li").each(function(){
 		$(this).removeClass("active");
 	});
 	$(".nav-my").addClass("active");
 	
+	initPage(".pagination", "getMoods", 9);
+	$moodContainer = $("#mood-container");
 	loadUserInfo();
 	getMoods();
 	getMessageBoards();//获取留言板列表
@@ -31,17 +37,17 @@ $(function(){
 		editUserinfo(json);
 	});
 		
-	$('#comment-or-transmit-item').on('scroll',function(){
-		var groups = $("#comment-or-transmit-item").find(".list-group");
+	$cOTItemContainer.on('scroll',function(){
+		var groups = $cOTItemContainer.find(".list-group");
 		var totalH = 0;
 		groups.each(function(){
 			totalH += $(this).height();
 		});
 		console.log("totalH--->"+ totalH);
 	    // div 滚动了
-		var pageH = $("#comment-or-transmit-item").height(); //页面总高度 
+		var pageH = $cOTItemContainer.height(); //页面总高度 
 		console.log("pageH"+ pageH);
-	    var scrollT = $("#comment-or-transmit-item").scrollTop(); //滚动条top 
+	    var scrollT = $cOTItemContainer.scrollTop(); //滚动条top 
 	    console.log("scrollT"+ scrollT);
 	 
 	    var height = (pageH-scrollT)/winH;
@@ -193,36 +199,26 @@ function getMoods(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			$("#mood-container").empty();
+			$moodContainer.empty();
 			if(data != null && data.isSuccess){
-				//if(method == 'firstloading')
-					//$("#float-month").empty();
-					//$("#mood-container").empty();
-				
 				if(data.message.length == 0){
-					$("#mood-container").append("空空的，还没有数据");
+					if(currentIndex == 0){
+						$moodContainer.append("还没有发表过任何心情，请发一篇心情吧！");
+					}else{
+						$moodContainer.append("已经没有更多的心情啦，请重新选择！");
+						pageDivUtil(data.total);
+					}
 					return;
 				}
 				
 				moods = data.message;
 				for(var i = 0; i < moods.length; i++){
-					
-					//var ifFlagNew = false;
-					/*var flagMonth = moods[i].create_time.substring(0, 7);
-					if(!isInMonthArray(flagMonth)){
-						ifFlagNew = true
-						monthArray.push(flagMonth);
-						$("#float-month").append('<li  class="active"><a href="#mood-'+flagMonth+'">'+ flagMonth +'</a></li>');
-					}*/
-					
 					//添加每一行到心情容器
-					$("#mood-container").append(buildMoodRow(i, moods[i]/*, ifFlagNew, flagMonth*/));
+					$moodContainer.append(buildMoodRow(i, moods[i]/*, ifFlagNew, flagMonth*/));
 					if(i == 0)
 						first_id = moods[i].id;
 					if(i == moods.length -1)
 						last_id = moods[i].id;
-					
-					
 				}
 				pageDivUtil(data.total);
 				console.log(monthArray);
@@ -239,85 +235,6 @@ function getMoods(){
 			ajaxError(data);
 		}
 	});
-}
-
-/**
- * 生成分页div
- * @param total
- */
-function pageDivUtil(total){
-	var html = '<li>'+
-					'<a href="javascript:void(0);" onclick="pre();" aria-label="Previous">'+
-						'<span aria-hidden="true">&laquo;</span>'+
-					'</a>'+
-				'</li>';
-	totalPage = parseInt(Math.ceil(total / pageSize));
-	var start = 0;
-	var end = totalPage > start + 6 ? start + 6: totalPage;
-	
-	var selectHtml = '<li><select class="form-control" onchange="optionChange()">';
-	for(var i = 0; i < totalPage; i++){
-		if(currentIndex == i)
-			selectHtml += '<option name="pageIndex" selected="selected" value="'+ i +'">'+ (i + 1) +'</option>';
-		else
-			selectHtml += '<option name="pageIndex" value="'+ i +'">'+ (i + 1) +'</option>';
-	}
-	selectHtml += '</select></li>';
-	for(var i = start; i < end; i++){
-		if(currentIndex == i)
-			html += '<li class="active"><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
-		else
-			html += '<li><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
-	}
-	html += '<li>'+
-				'<a href="javascript:void(0);" onclick="next();" aria-label="Next">'+
-					'<span aria-hidden="true">&raquo;</span>'+
-				'</a>'+ 
-			'</li>';
-	
-	selectHtml += '<li><a href="javascript:void(0);">共计：' +total +'条记录</a></li>';
-	
-	html += selectHtml;
-	$(".pagination").html(html);
-}
-
-/**
- * 选择改变的监听
- */
-function optionChange(){
-	var objS = document.getElementsByTagName("select")[0];
-    var index = objS.options[objS.selectedIndex].value;
-    currentIndex = index;
-    getMoods();
-}
-
-/**
- * 点击向左的按钮
- */
-function goIndex(index){
-	currentIndex = index;
-	getMoods();
-}
-
-/**
- * 点击向左的按钮
- */
-function pre(){
-	currentIndex --;
-	if(currentIndex < 0)
-		currentIndex = 0;
-	getMoods();
-}
-
-
-/**
- * 点击向右的按钮
- */
-function next(){
-	currentIndex ++;
-	if(currentIndex > totalPage)
-		currentIndex = totalPage;
-	getMoods();
 }
 
 function isInMonthArray(str){
@@ -832,16 +749,16 @@ function asynchronousLoadData(){
 				layer.close(loadi);
 				if(data != null && data.isSuccess){
 					if(ct_method == 'firstloading')
-						$("#comment-or-transmit-item").empty();
-						//$("#mood-container").empty();
+						$cOTItemContainer.empty();
+						//$moodContainer.empty();
 					
-					$("#comment-or-transmit-item").find(".footer-button").remove();
+					$cOTItemContainer.find(".footer-button").remove();
 					
 					if(ct_method == 'firstloading'){
 						cts = data.message;
 						for(var i = 0; i < cts.length; i++){
 							//添加每一行到心情容器
-							$("#comment-or-transmit-item").append(buildCommentOrTransmitRow(i, cts[i]));
+							$cOTItemContainer.append(buildCommentOrTransmitRow(i, cts[i]));
 							if(i == 0)
 								ct_first_id = cts[i].id;
 							if(i == cts.length -1)
@@ -849,24 +766,24 @@ function asynchronousLoadData(){
 						}
 						if(data.message.length == 0){
 							ct_canLoadData = false;
-							$("#comment-or-transmit-item").html('<button class="btn btn-info">无更多数据</button>');
+							$cOTItemContainer.html('<button class="btn btn-info">无更多数据</button>');
 						}else{
-							$("#comment-or-transmit-item").append('<button class="btn btn-info footer-button" onclick="asynchronousLoadData()">点击加载更多</button>');
+							$cOTItemContainer.append('<button class="btn btn-info footer-button" onclick="asynchronousLoadData()">点击加载更多</button>');
 						}
 					}else{
 						var currentIndex = cts.length;
 						for(var i = 0; i < data.message.length; i++){
 							cts.push(data.message[i]);
-							$("#comment-or-transmit-item").append(buildCommentOrTransmitRow(currentIndex + i, data.message[i]));
+							$cOTItemContainer.append(buildCommentOrTransmitRow(currentIndex + i, data.message[i]));
 								
 							if(i == data.message.length -1)
 								ct_last_id = data.message[i].id;
 						}
 						if(data.message.length == 0){
 							ct_canLoadData = false;
-							$("#comment-or-transmit-item").append('<button class="btn btn-info footer-button">无更多数据</button>');
+							$cOTItemContainer.append('<button class="btn btn-info footer-button">无更多数据</button>');
 						}else{
-							$("#comment-or-transmit-item").append('<button class="btn btn-info footer-button" onclick="asynchronousLoadData()">点击加载更多</button>');
+							$cOTItemContainer.append('<button class="btn btn-info footer-button" onclick="asynchronousLoadData()">点击加载更多</button>');
 						}
 					}
 				}else{
@@ -985,10 +902,10 @@ function shoqSendMoodDialog(){
  * 发送心情
  */
 function sendMood(){
-	var text = $('#push-mood-text').val();
+	var text = $moodMardownContent.val();
 	if(isEmpty(text)){
 		layer.msg("请先输入你想说的");
-		$('#push-mood-text').focus();
+		$moodMardownContent.focus();
 		return;
 	}
 	

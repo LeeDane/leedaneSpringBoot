@@ -107,4 +107,13 @@ public interface CirclePostService <T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public  Map<String,Object> initDetail(CircleBean circle, CirclePostBean post, UserBean user, HttpServletRequest request);
+
+	/**
+	 * 保存帖子的访问记录
+	 * @param postId
+	 * @param user
+	 * @param request
+	 */
+	public void saveVisitLog(int postId, UserBean user,
+			HttpServletRequest request);
 }

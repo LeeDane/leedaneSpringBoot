@@ -8,7 +8,7 @@ BEGIN
 	DECLARE arealy INT DEFAULT 0;
 	select sum(t.score) into  score from t_score t where create_user_id = $createUserId and `status` = $status;
 	
-	#获取该用户最多可以创建的圈子数量
+	-- 获取该用户最多可以创建的圈子数量
 	SELECT number into returnValue  from t_circle_create_limit ccl where score >= left_score and
 		(case when right_score = -1 then 
 			(select 1=1 )
@@ -17,10 +17,10 @@ BEGIN
 			end
 		) limit 1;
 
-	#获取该用户已经创建的圈子数量
+	-- 获取该用户已经创建的圈子数量
 	select count(c.id) into arealy from t_circle c where c.create_user_id = $createUserId and c.`status` = $status;
 
-	#set returnValue = 0;
+	-- set returnValue = 0;
 	select returnValue - arealy as number;
 END $$
 delimiter
@@ -36,7 +36,7 @@ BEGIN
 	DECLARE logNumber INT(11); -- 这个时间段内访问数
 	DECLARE postScore INT(11);  -- 这个时间段内的帖子积分(通过帖子热门算法去计算)
 	DECLARE subjectVal VARCHAR(255); -- 日记的标题
-  DECLARE totalScore FLOAT; -- 最终的总分
+    DECLARE totalScore FLOAT; -- 最终的总分
 	DECLARE DONE BOOLEAN DEFAULT 0; #定义结束标识  
 	
 	-- 获取符合条件的圈子列表(最近时间段内有过用户访问记录的圈子)
@@ -66,7 +66,7 @@ BEGIN
 			SELECT count(cm.id) into addNumber from t_circle_member cm where cm.circle_id = circle_id and cm.create_time > $time;
 		
 			-- 获取圈子在这段时间内被访问的次数
-			select count(id) into logNumber from t_visitor v where v.table_name='t_circle' and v.table_id = circle_id;
+			select count(id) into logNumber from t_visitor v where v.table_name='t_circle' and v.table_id = circle_id and v.create_time > $time;
 
 			-- 获取圈子在这段时间内的帖子的积分
 			select sum(p.post_score) into postScore from t_circle_post p where p.circle_id = circle_id;
@@ -106,7 +106,7 @@ BEGIN
 	DECLARE member_id INT(11); -- 自定义变量1
 	DECLARE contributionNumber INT(11); -- 这个圈子该成员的贡献值
   DECLARE totalScore FLOAT; -- 最终的总分
-	DECLARE DONE BOOLEAN DEFAULT 0; --定义结束标识  
+	DECLARE DONE BOOLEAN DEFAULT 0; -- 定义结束标识  
 	
 	-- 获取符合条件的圈子成员列表
 	DECLARE cursor_circle_members CURSOR FOR (SELECT cm.member_id  from t_circle_member cm where cm.circle_id = $circleId);

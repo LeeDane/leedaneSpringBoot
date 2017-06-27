@@ -77,7 +77,7 @@ public class CircleMemberHostest extends AbstractScheduling{
 		for(int i = 0; i < futures.size(); i++){
 			try {
 				if(!futures.get(i).get()){
-					logger.error("圈子Id为：" +recentlyCircles.get(i).get("table_name") + "--->圈子的热门成员计算失败");
+					logger.error("圈子Id为：" +recentlyCircles.get(i).get("table_id") + "--->圈子的热门成员计算失败");
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();

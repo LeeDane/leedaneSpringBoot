@@ -565,10 +565,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	public void saveVisitLog(int circleId, UserBean user,
 			HttpServletRequest request) {
 		logger.info("CircleServiceImpl-->saveVisitLog() , circleId= "+ circleId +", --" + (user == null ? "" : user.getAccount()));
-		
-		visitorService.saveVisitor(user, "web网页端", "t_circle", circleId, ConstantsUtil.STATUS_NORMAL);
-		//保存操作日志
-		//operateLogService.saveOperateLog(user, request, null, "访问圈子"+ circleId, "saveVisitLog()", ConstantsUtil.STATUS_NORMAL, 0);			
+		visitorService.saveVisitor(user, "web网页端", DataTableType.圈子.value, circleId, ConstantsUtil.STATUS_NORMAL);
 	}
 	
 	@Override

@@ -11,9 +11,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cn.leedane.exception.RE404Exception;
+import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.mapper.circle.CircleClockInMapper;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.model.circle.CircleClockInBean;
 import com.cn.leedane.model.circle.CircleContributionBean;
 import com.cn.leedane.service.AdminRoleCheckService;
@@ -47,6 +50,9 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 	
 	@Autowired
 	private OperateLogService<OperateLogBean> operateLogService;
+	
+	@Autowired
+	private CircleHandler circleHandler;
 
 	@Override
 	public Map<String, Object> isClockIn(UserBean user, int circleId,
@@ -69,6 +75,11 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 	@Override
 	public Map<String, Object> saveClockIn(int circleId, JSONObject jo, UserBean user,
 			HttpServletRequest request) {
+		
+		CircleBean circleBean = circleHandler.getNormalCircleBean(circleId);
+		if(circleBean == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
+		
 		logger.info("CircleClockInServiceImpl-->saveClockIn(), user=" +user.getAccount()+", jo="+jo +", circleId="+ circleId);
 		ResponseMap message = new ResponseMap();		
 		Date currentTime = new Date();
@@ -102,7 +113,7 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 		boolean result = circleClockInMapper.save(circleClockInBean) > 0 ;
 		if(result){
 			int preScore = StringUtil.getScoreBySignin(circleClockInBean.getContinuous() - 1);
-			Map<String, Object> results = circleContributionService.addScore(preScore, "每日打卡得贡献值", circleId, user);
+			Map<String, Object> results = circleContributionService.addScore(preScore, "给圈子《"+ circleBean.getName() +"》每日打卡得贡献值", circleId, user);
 			result = results != null && !results.isEmpty() && results.containsKey("isSuccess")? StringUtil.changeObjectToBoolean(results.get("isSuccess")) : false;
 			if(result){
 				message.put("isSuccess", true);

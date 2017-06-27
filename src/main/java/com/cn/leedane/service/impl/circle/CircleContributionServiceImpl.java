@@ -112,7 +112,7 @@ public class CircleContributionServiceImpl implements CircleContributionService<
 		operateLogService.saveOperateLog(user, null, null, StringUtil.getStringBufferStr(user.getAccount(),"扣除贡献值").toString(), "reduceScore()", ConstantsUtil.STATUS_NORMAL, 0);
 		if(result){
 			//通知用户
-			notificationHandler.sendNotificationById(true, user, user.getId(), "您的贡献值减少"+ - reduceScore +"分，原因："+ (StringUtil.isNotNull(desc) ? desc : "暂无"), NotificationType.通知, DataTableType.不存在的表.value, -1, null);
+			notificationHandler.sendNotificationById(true, user, user.getId(), "您的贡献值减少"+ reduceScore +"分，原因："+ (StringUtil.isNotNull(desc) ? desc : "暂无"), NotificationType.通知, DataTableType.不存在的表.value, -1, null);
 			
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
