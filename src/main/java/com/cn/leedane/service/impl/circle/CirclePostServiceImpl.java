@@ -380,8 +380,9 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			//非自己的帖子，管理员/圈子删除的，将通知用户(这里用不存在的表目的的查询通知的时候不去获取源数据)
 			notificationHandler.sendNotificationById(false, user, createUserId, content, NotificationType.通知, DataTableType.不存在的表.value, postId, null);
 			
-			//对点赞帖子添加贡献值
-			circleContributionService.reduceScore(5, "删除帖子《"+ circlePostBean.getTitle() +"》扣除贡献值", circleId, user);
+			//对删除帖子减少贡献值
+			if(circlePostBean.getCreateUserId() == user.getId())
+				circleContributionService.reduceScore(5, "删除帖子《"+ circlePostBean.getTitle() +"》扣除贡献值", circleId, user);
 			
 			message.put("isSuccess", true);
 			message.put("message", "您已成功删除帖子！");
