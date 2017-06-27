@@ -8,19 +8,53 @@
  -->
 <mapper namespace="com.cn.leedane.mapper.circle.CirclePostMapper">
 
+	<resultMap type="com.cn.leedane.model.circle.CirclePostBean" id="objectBean">
+        <id property="id" column="id"/>
+        <result property="status" column="status"/>
+        <result property="pid" column="pid"/>
+        <result property="circleId" column="circle_id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="hasImg" column="has_img"/>
+        <result property="imgs" column="imgs"/>
+        <result property="tag" column="tag"/>
+        <result property="canComment" column="can_comment"/>
+        <result property="canTransmit" column="can_transmit"/>
+        <result property="postScore" column="post_score"/>
+        <result property="postRecommend" column="post_recommend"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+   </resultMap>
+   
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 --> 
 	<select id="getCirclePost" parameterType="int" resultType="java.util.Map">
 		select cp.id, cp.status, cp.title, cp.content, cp.has_img, cp.circle_id, cp.pid
-		, date_format(cp.create_time,'%Y-%m-%d %H:%i:%s') create_time, cp.create_user_id, cp.imgs, cp.tag
+		, date_format(cp.create_time,'%Y-%m-%d %H:%i:%s') create_time, cp.create_user_id, cp.imgs, cp.tag, cp.post_score, cp.post_recommend
 		from t_circle_post cp
 		where cp.id = #{postId} and cp.status = #{status} limit 1
 	</select>
 	
 	<select id="paging" parameterType="int" resultType="java.util.Map">
-		select cp.id, cp.status, cp.title, cp.content, cp.has_img, cp.circle_id, cp.pid
-		, date_format(cp.create_time,'%Y-%m-%d %H:%i:%s') create_time, cp.create_user_id, cp.imgs, cp.tag
-		from t_circle_post cp
+		select cp.id, cp.status, cp.title, cp.content, cp.has_img, cp.circle_id, cp.pid, cp.post_score, cp.post_recommend
+		, date_format(cp.create_time,'%Y-%m-%d %H:%i:%s') create_time, cp.create_user_id, cp.imgs, cp.tag, cm.role_type
+		from t_circle_post cp inner join t_circle_member cm on cp.create_user_id = cm.member_id and cp.circle_id = cm.circle_id
 		where cp.circle_id = #{circleId} and cp.status = #{status} 
+		order by cp.id desc limit #{start}, #{pageSize}
+	</select>
+	
+	<select id="getUserCirclePosts" parameterType="int" resultMap="objectBean">
+		select cp.id, cp.status, cp.title, cp.content, cp.has_img, cp.circle_id, cp.pid
+		, date_format(cp.create_time,'%Y-%m-%d %H:%i:%s') create_time, cp.create_user_id, cp.imgs, cp.tag, cp.post_score, cp.post_recommend
+		from t_circle_post cp 
+		where cp.create_user_id=#{userId} and cp.status = #{status} 
+		order by cp.id desc limit #{start}, #{pageSize}
+	</select>
+	
+	<select id="getUserPostPosts" parameterType="int" resultMap="objectBean">
+		select cp.id, cp.status, cp.title, cp.content, cp.has_img, cp.circle_id, cp.pid
+		, date_format(cp.create_time,'%Y-%m-%d %H:%i:%s') create_time, cp.create_user_id, cp.imgs, cp.tag, cp.post_score, cp.post_recommend
+		from t_circle_post cp 
+		where cp.circle_id = #{circleId} and cp.create_user_id=#{userId} and cp.status = #{status} 
 		order by cp.id desc limit #{start}, #{pageSize}
 	</select>
 </mapper>

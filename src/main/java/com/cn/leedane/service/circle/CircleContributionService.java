@@ -18,14 +18,6 @@ import com.cn.leedane.model.UserBean;
  */
 @Transactional
 public interface CircleContributionService<T extends IDBean>{
-	
-	/**
-	 * 获取当前用户的总贡献值
-	 * @param userId
-	 * @return
-	 */
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public int getTotalScore(int userId);
 
 	/**
 	 * 分页获得贡献值历史列表
@@ -38,22 +30,21 @@ public interface CircleContributionService<T extends IDBean>{
 	public Map<String, Object> paging(JSONObject jo, UserBean user, HttpServletRequest request);
 	
 	/**
-	 * 获取当前用户的总贡献值
-	 * @param jo
-	 * @param user
-	 * @param request
+	 * 增加分数(并通知用户)
+	 * @param addScore
+	 * @param desc
 	 * @return
 	 */
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getTotalScore(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> addScore(int addScore, String desc, int circleId, UserBean user);
 	
 	/**
-	 * 减少分数
+	 * 减少分数(并通知用户)
 	 * @param reduceScore
 	 * @param desc
+	 * @param circleId
 	 * @param user
 	 * @return
 	 */
-	public Map<String, Object> reduceScore(int reduceScore, String desc, UserBean user);
+	public Map<String, Object> reduceScore(int reduceScore, String desc, int circleId ,UserBean user);
 	
 }

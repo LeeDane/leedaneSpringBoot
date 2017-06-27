@@ -85,6 +85,14 @@ public class CirclePostBean extends RecordTimeBean{
 	@Column("can_transmit")
 	@Field
     private boolean canTransmit;
+	
+	@Column("post_score")
+	@Field
+	private float postScore;
+	
+	@Column("post_recommend")
+	@Field
+	private boolean postRecommend;
 
 	public int getCircleId() {
 		return circleId;
@@ -156,6 +164,22 @@ public class CirclePostBean extends RecordTimeBean{
 
 	public void setCanTransmit(boolean canTransmit) {
 		this.canTransmit = canTransmit;
+	}
+
+	public float getPostScore() {
+		return postScore;
+	}
+
+	public void setPostScore(float postScore) {
+		this.postScore = postScore;
+	}
+
+	public boolean isPostRecommend() {
+		return postRecommend;
+	}
+
+	public void setPostRecommend(boolean postRecommend) {
+		this.postRecommend = postRecommend;
 	}
 	
 }

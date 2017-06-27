@@ -191,10 +191,10 @@ public class SearchController extends BaseController{
 		//List<UserBean> userBeans4 = userService.getAllUsers(4);
 		//UserSolrHandler.getInstance().addBeans(userBeans4);
 		
-		//List<BlogBean> blogs = blogService.getBlogBeans("select * from t_blog where status=?", ConstantsUtil.STATUS_NORMAL);
+		//List<BlogBean> blogs = blogService.getBlogBeans("select * from "+ DataTableType.博客.value +" where status=?", ConstantsUtil.STATUS_NORMAL);
 		//BlogSolrHandler.getInstance().addBeans(blogs);
 		
-		//List<MoodBean> moods = moodService.getMoodBeans("select * from t_mood where status=?", ConstantsUtil.STATUS_NORMAL);
+		//List<MoodBean> moods = moodService.getMoodBeans("select * from "+ DataTableType.心情.value +" where status=?", ConstantsUtil.STATUS_NORMAL);
 		//MoodSolrHandler.getInstance().addBeans(moods);
 		message.put("message", docsMap);
 		message.put("isSuccess", true);

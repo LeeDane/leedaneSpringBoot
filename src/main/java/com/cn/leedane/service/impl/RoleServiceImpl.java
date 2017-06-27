@@ -153,7 +153,7 @@ private Logger logger = Logger.getLogger(getClass());
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		
 		sql.append("select r.id, r.role_desc, r.role_name, r.role_code, r.role_order, date_format(r.create_time,'%Y-%m-%d %H:%i:%s') create_time , r.create_user_id, r.status");
-		sql.append(", (select group_concat(u.account) from t_user_role ur INNER JOIN t_user u on ur.user_id = u.id where ur.role_id = r.id) users");
+		sql.append(", (select group_concat(u.account) from "+ DataTableType.用户角色.value +" ur INNER JOIN "+ DataTableType.用户.value +" u on ur.user_id = u.id where ur.role_id = r.id) users");
 		sql.append(" from "+DataTableType.角色.value+" r ");
 		sql.append(" order by r.role_order desc,r.id desc limit ?,?");
 		rs = roleMapper.executeSQL(sql.toString(), start, pageSize);
@@ -164,9 +164,8 @@ private Logger logger = Logger.getLogger(getClass());
 				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
 				rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId));
 			}
-			message.put("total", SqlUtil.getTotalByList(roleMapper.getTotal(DataTableType.角色.value, null)));
 		}
-		
+		message.put("total", SqlUtil.getTotalByList(roleMapper.getTotal(DataTableType.角色.value, null)));
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取角色列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
 		message.put("message", rs);

@@ -60,6 +60,7 @@ import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.cn.leedane.utils.FileUtil;
 import com.cn.leedane.utils.FilterUtil;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.MardownUtil;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
@@ -284,9 +285,9 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	}
 
 	@Override
-	public Map<String, Object> getMoodByLimit(JSONObject jo,
+	public Map<String, Object> rolling(JSONObject jo,
 			UserBean user, HttpServletRequest request){
-		logger.info("MoodServiceImpl-->getMoodByLimit():jo=" +jo.toString());
+		logger.info("MoodServiceImpl-->rolling():jo=" +jo.toString());
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id", user.getId()); //
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -346,7 +347,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			}	
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户id为"+toUserId+"个人中心", "getMoodByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户id为"+toUserId+"个人中心", "rolling()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("isSuccess", true);
 		return message.getMap();
@@ -370,20 +371,17 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			String uuid;
 			int moodId;
 			//为名字备注赋值
-			for(int i = 0; i < rs.size(); i++){
-				hasImg = StringUtil.changeObjectToBoolean(rs.get(i).get("has_img"));
-				uuid = StringUtil.changeNotNull(rs.get(i).get("uuid"));
-				moodId = StringUtil.changeObjectToInt(rs.get(i).get("id"));
-				
-				rs.get(i).put("zan_users", zanHandler.getZanUser(moodId, DataTableType.心情.value, user, 6));
-				rs.get(i).put("comment_number", commentHandler.getCommentNumber(moodId, DataTableType.心情.value));
-				rs.get(i).put("transmit_number", transmitHandler.getTransmitNumber(moodId, DataTableType.心情.value));
-				rs.get(i).put("zan_number", zanHandler.getZanNumber(moodId, DataTableType.心情.value));
-				
-				
+			for(Map<String, Object> map: rs){
+				hasImg = StringUtil.changeObjectToBoolean(map.get("has_img"));
+				uuid = StringUtil.changeNotNull(map.get("uuid"));
+				moodId = StringUtil.changeObjectToInt(map.get("id"));
+				map.put("zan_users", zanHandler.getZanUser(moodId, DataTableType.心情.value, user, 6));
+				map.put("comment_number", commentHandler.getCommentNumber(moodId, DataTableType.心情.value));
+				map.put("transmit_number", transmitHandler.getTransmitNumber(moodId, DataTableType.心情.value));
+				map.put("zan_number", zanHandler.getZanNumber(moodId, DataTableType.心情.value));
 				//有图片的获取图片的路径
 				if(hasImg && !StringUtil.isNull(uuid)){
-					rs.get(i).put("imgs", moodHandler.getMoodImg(DataTableType.心情.value, uuid, picSize));
+					map.put("imgs", moodHandler.getMoodImg(DataTableType.心情.value, uuid, picSize));
 				}
 			}	
 		}
@@ -681,7 +679,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		
 		if(result){
 			MoodBean moodBean = new MoodBean();
-			moodBean.setContent(content);
+			moodBean.setContent(MardownUtil.parseHtml(content));
 			String location = JsonUtil.getStringValue(jsonObject, "location");
 			if(StringUtil.isNotNull(location)){
 				double longitude = JsonUtil.getDoubleValue(jsonObject, "longitude");

@@ -1,7 +1,4 @@
-var pageSize = 8;
-var currentIndex = 0;
 var posts;
-var totalPage = 0;
 var $postListContainer;
 /**
  * 解决动态html无法绑定tooltip和popover
@@ -13,6 +10,7 @@ function bindTool(){
 }
 
 $(function(){
+	initPage(".pagination", "getPosts");
 	$(".navbar-nav .nav-main-li").each(function(){
 		$(this).removeClass("active");
 	});
@@ -30,9 +28,8 @@ $(function(){
 	//查看帖子详情
 	$(document).on("click", ".link-to-post-detail", function(event){
 		event.stopPropagation();//阻止冒泡 
-		var $span = $(this);
-		var id = $span.attr("data");
-		linkToMy(id);
+		var post = $(this).closest(".panel").data("post");
+		linkToPostDetail(post.circle_id, post.id);
 	});
 	
 	//赞的点击事件
@@ -175,7 +172,7 @@ function buildEachPostRow(index, post){
 							'<div>'+
 								'<button type="button" class="btn btn-default btn-xs user-img" data="'+ post.create_user_id +'">'+
 								  '<img src="'+ post.user_pic_path +'" class="img-circle" style="width: 20px; height: 20px" /> '+ post.account+
-								'</button>&nbsp;&nbsp;'+ post.create_time +
+								  '</button>&nbsp;&nbsp;'+ '<span class="label label-info tag">'+ (post.role_type == 1 ? '圈主': (post.role_type == 2 ? '管理员': '普通')) +'</span>&nbsp;&nbsp;'+ post.create_time +
 							'</div>';
 						if(isNotEmpty(post.tag)){
 					html +='<p style="margin-top: 10px;">标签：';
@@ -193,14 +190,14 @@ function buildEachPostRow(index, post){
 						if(post.pid > 0){
 					html += '<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">'+
 								'<blockquote>'+
-									'<div class="cut-text hand"><a '+ (post.blockquote ? 'data-toggle="tooltip" data-placement="left" title="查看该帖子详细信息"': '') +'>'+ post.blockquote_content +'</a></div>';
+									'<div class="cut-text hand"><a '+ (post.blockquote ? 'data-toggle="tooltip" data-placement="left" title="查看该帖子详细信息"': '') +' onclick="linkToPostDetail('+ post.circle_id +','+ post.pid +');">'+ post.blockquote_content +'</a></div>';
 									if(post.blockquote){
 								html += '<small><cite>'+ post.blockquote_account +'</cite>&nbsp;&nbsp;'+ post.blockquote_time +'</small>';
 									}
 						html +='</blockquote>'+
 							'</div>';
 						}
-					html +=	'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 cut-text2">'+ post.content +'</div>';
+					html +=	'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 cut-text2" data-toggle="tooltip" data-placement="left" title="'+ post.content +'">'+ post.content +'</div>';
 					if(isNotEmpty(post.imgs)){
 						var imgArray = post.imgs.split(";");
 						for(var imgIndex = 0; imgIndex < imgArray.length; imgIndex++){
@@ -227,13 +224,13 @@ function buildEachPostRow(index, post){
 							}
 					html += '<p>';
 					if(isCreater || isCircleAdmin || loginUserId == post.create_user_id){
-						html += '<span class="glyphicon glyphicon-trash post-delete hand" aria-hidden="true"></span>&nbsp;&nbsp;';
+						html += '<span class="glyphicon glyphicon-trash post-delete hand" data-toggle="tooltip" data-placement="left" title="删除" aria-hidden="true"></span>&nbsp;&nbsp;';
 					}
 								
-						html += '<span class="glyphicon glyphicon-comment hand post-comment" aria-hidden="true"></span>&nbsp;'+ post.comment_number +'&nbsp;&nbsp;'+
-								'<span class="glyphicon glyphicon-share-alt hand post-transmit" aria-hidden="true"></span>&nbsp;'+ post.transmit_number +'&nbsp;&nbsp;'+
-								'<span class="glyphicon glyphicon-thumbs-up hand post-zan" aria-hidden="true"></span>&nbsp;'+ post.zan_number +'&nbsp;&nbsp;'+
-								'<span class="glyphicon glyphicon-credit-card hand" aria-hidden="true"></span>&nbsp;'+ post.comment_number +'&nbsp;&nbsp;'+
+						html += '<span class="glyphicon glyphicon-comment hand post-comment" data-toggle="tooltip" data-placement="left" title="评论" aria-hidden="true"></span>&nbsp;'+ post.comment_number +'&nbsp;&nbsp;'+
+								'<span class="glyphicon glyphicon-share-alt hand post-transmit" data-toggle="tooltip" data-placement="left" title="转发" aria-hidden="true"></span>&nbsp;'+ post.transmit_number +'&nbsp;&nbsp;'+
+								'<span class="glyphicon glyphicon-thumbs-up hand post-zan" data-toggle="tooltip" data-placement="left" title="很赞" aria-hidden="true"></span>&nbsp;'+ post.zan_number +'&nbsp;&nbsp;'+
+								'<span class="glyphicon glyphicon-credit-card hand" data-toggle="tooltip" data-placement="left" title="打赏" aria-hidden="true"></span>&nbsp;'+ 0 +'&nbsp;&nbsp;'+
 								'<span class="hand link-to-post-detail" data="'+ post.id +'">查看详情</a>'+
 							'</p>'+
 						'</div>'+
@@ -492,84 +489,4 @@ function doDelete(postId, reason){
 			layer.msg("网络请求失败");
 		}
 	});
-}
-
-
-/**
- * 生成分页div
- * @param total
- */
-function pageDivUtil(total){
-	var html = '<li>'+
-					'<a href="javascript:void(0);" onclick="pre();" aria-label="Previous">'+
-						'<span aria-hidden="true">&laquo;</span>'+
-					'</a>'+
-				'</li>';
-	totalPage = parseInt(Math.ceil(total / pageSize));
-	var start = 0;
-	var end = totalPage > start + 10 ? start + 10: totalPage;
-	
-	var selectHtml = '<li><select class="form-control" onchange="optionChange()">';
-	for(var i = 0; i < totalPage; i++){
-		if(currentIndex == i)
-			selectHtml += '<option name="pageIndex" selected="selected" value="'+ i +'">'+ (i + 1) +'</option>';
-		else
-			selectHtml += '<option name="pageIndex" value="'+ i +'">'+ (i + 1) +'</option>';
-	}
-	
-	for(var i = start; i < end; i++){
-		if(currentIndex == i)
-			html += '<li class="active"><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
-		else
-			html += '<li><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
-	}
-	html += '<li>'+
-				'<a href="javascript:void(0);" onclick="next();" aria-label="Next">'+
-					'<span aria-hidden="true">&raquo;</span>'+
-				'</a>'+
-			'</li>';
-	
-	selectHtml += '</select></li>';
-	
-	html += selectHtml;
-	$(".pagination").html(html);
-}
-
-/**
- * 选择改变的监听
- */
-function optionChange(){
-	var objS = document.getElementsByTagName("select")[0];
-    var index = objS.options[objS.selectedIndex].value;
-    currentIndex = index;
-    getPosts();
-}
-
-/**
- * 点击向左的按钮
- */
-function goIndex(index){
-	currentIndex = index;
-	getPosts();
-}
-
-/**
- * 点击向左的按钮
- */
-function pre(){
-	currentIndex --;
-	if(currentIndex < 0)
-		currentIndex = 0;
-	getPosts();
-}
-
-
-/**
- * 点击向右的按钮
- */
-function next(){
-	currentIndex ++;
-	if(currentIndex > totalPage)
-		currentIndex = totalPage;
-	getPosts();
 }

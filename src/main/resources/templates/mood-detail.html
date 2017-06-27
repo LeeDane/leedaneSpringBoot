@@ -11,7 +11,7 @@
 		.container{
 			margin-top: 50px;
 		}
-		.row{
+		#content-container .row{
 			margin-top: 15px;
 		}
 		.panel-footer button{
@@ -47,8 +47,8 @@
 			margin-right: 12px;
 		}
 		.comment-list{
-			border:1px solid #f5f5f5;
-			box-shadow: 1px 0px 5px #888888;
+			/* border:1px solid #f5f5f5;
+			box-shadow: 1px 0px 5px #888888; */
 			margin-bottom: 10px;
 		}
 		.comment-list-padding{
@@ -86,7 +86,7 @@ jEmoji.unifiedToHTML(emojiText) -->
 </body>
 	<div class="container">
 		<div class="row">
-			<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12">
+			<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12" id="content-container">
 			   <div class="row">
 			   		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<a href="JavaScript:void(0);" target="_blank" class="marginRight" id="b-account"></a>
@@ -108,9 +108,7 @@ jEmoji.unifiedToHTML(emojiText) -->
 							<textarea class="form-control" name="add-comment" placeholder="评论这篇心情，最多250个文字。" style="min-height: 125px;" autofocus ="true"></textarea>
 						</div>
 						<div class="row">
-							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-								<button class="btn btn-md btn-primary btn-block pull-right" type="button" style="margin-top: 10px; width: 60px;" onclick="addComment(this);">评论</button>
-							</div>
+							<button class="btn btn-md btn-primary btn-block pull-right" type="button" style="margin-top: 10px; width: 60px;" onclick="addComment(this);">评论</button>
 						</div>
 					</div>
 			   </div>

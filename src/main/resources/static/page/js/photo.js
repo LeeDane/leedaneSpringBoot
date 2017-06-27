@@ -1,13 +1,10 @@
 var last_id = 0;
 var first_id = 0;
 var method = 'firstloading';
-
 var photos;
-
 var column1Height = 0;
 var column2Height = 0;
 var column3Height = 0;
-
 var canLoadData = true;
 
 //浏览器可视区域页面的高度

@@ -41,7 +41,7 @@ public class CircleBean extends RecordTimeBean{
 	
 	@Column("circle_score")
 	@Field
-	private int circleScore;
+	private float circleScore;
 	
 	@Column("circle_recommend")
 	@Field
@@ -71,11 +71,11 @@ public class CircleBean extends RecordTimeBean{
 		this.circlePath = circlePath;
 	}
 
-	public int getCircleScore() {
+	public float getCircleScore() {
 		return circleScore;
 	}
 
-	public void setCircleScore(int circleScore) {
+	public void setCircleScore(float circleScore) {
 		this.circleScore = circleScore;
 	}
 

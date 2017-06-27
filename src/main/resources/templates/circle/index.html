@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>圈子广场</title>
+	<title>我的圈子广场</title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
 	<style type="text/css">
 		#main-container{
@@ -18,6 +18,7 @@
 		
 		.panel-table-container table{
 			margin-bottom: 0!important;
+			table-layout: fixed !important ;
 		}
 	</style>
 </head>
@@ -55,7 +56,7 @@
 						    <div class="panel-body">
 						        <div class="row" th:if="${isLogin}">
 						        	<div th:each="circle,iterStat : ${allCircles}" class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
-						        		 <img th:data="${circle.id}" data-toggle="tooltip" th:title="${circle.name}" class="img-circle img-responsive hand" style="width: 100%; height: 65px;" th:src="${circle.path}" />
+						        		 <img th:data="${circle.id}" data-toggle="tooltip" data-placement="left" th:title="${circle.name}" class="img-circle img-responsive hand" style="width: 100%; height: 65px;" th:src="${circle.path}" />
 						        	</div>
 						        	
 						        </div>
@@ -71,7 +72,7 @@
 						    </div>
 						</div>
 						
-						<div class="panel panel-default">
+						<!-- <div class="panel panel-default">
 						    <div class="panel-heading">
 						        <h3 class="panel-title">
 						            	我的圈友
@@ -104,6 +105,26 @@
 						         		登录才能查看
 						         	</div>
 						        </div>
+						    </div>
+						</div> -->
+						
+						<div class="panel panel-default">
+						    <div class="panel-heading">
+						        <h3 class="panel-title">
+						            	我的帖子(<span color="red" th:if="${circleUserPosts != null}" th:utext="${circleUserPosts.total}"></span>)
+						        </h3>
+						    </div>
+						    <div th:if="${circleUserPosts != null}" class="panel-body panel-table-container">
+						        <table class="table table-bordered table-fix" style="border: 0!important;">
+								  <tbody>
+								    <tr th:each="postEven,postStat : ${circleUserPosts.posts}">
+								      	<td valign="middle" class="cut-text" data-toggle="tooltip" data-placement="right" th:title="${postEven.title}"><a target="_blank" th:href="'/cc/circle/'+ ${postEven.circleId} +'/post/' + ${postEven.id}" th:utext="${postEven.title}">笑话精刚刚灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌选</a></td>
+								     	<td valign="middle" style="width: 80px;" th:text="${postEven.createTime}">
+								    		一个月前
+								    	</td>
+								    </tr>
+								  </tbody>
+								</table>
 						    </div>
 						</div>
 					</div>
@@ -161,7 +182,7 @@
 						</table>
 					</div>
 				</div>
-				<div class="panel panel-default">
+				<!-- <div class="panel panel-default">
 					<div class="panel-heading">
 						活跃圈友
 					</div>
@@ -210,7 +231,7 @@
 			                </p>
 			            </div>
 			        </div>
-			    </div>
+			    </div> -->
 			    
 			</div>
 		</div>

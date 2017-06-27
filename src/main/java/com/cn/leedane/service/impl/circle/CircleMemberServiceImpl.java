@@ -85,8 +85,8 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 				rs.get(i).putAll(userHandler.getBaseUserInfo(memberId));
 				rs.get(i).put("create_time", RelativeDateFormat.format(DateUtil.stringToDate(StringUtil.changeNotNull(rs.get(i).get("create_time")))));
 			}
-			message.put("total", circleMemberMapper.getAllMembers(circleId, ConstantsUtil.STATUS_NORMAL).size());
 		}
+		message.put("total", circleMemberMapper.getAllMembers(circleId, ConstantsUtil.STATUS_NORMAL).size());
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取圈子id为"+ circleId+"成员列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
 		message.put("message", rs);
@@ -102,7 +102,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 		ResponseMap message = new ResponseMap();
 		
 		boolean recommend = JsonUtil.getBooleanValue(jsonObject, "recommend");
-		CircleBean circle = circleHandler.getCircleBean(circleId);
+		CircleBean circle = circleHandler.getNormalCircleBean(circleId);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
@@ -153,7 +153,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 		if(!SqlUtil.getBooleanByList(membersLoginUser))
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先加入该圈子.value));
 		
-		CircleBean circle = circleHandler.getCircleBean(circleId);
+		CircleBean circle = circleHandler.getNormalCircleBean(circleId);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 	

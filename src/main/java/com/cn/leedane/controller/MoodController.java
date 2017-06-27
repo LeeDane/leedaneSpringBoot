@@ -132,13 +132,13 @@ public class MoodController extends BaseController{
 	@RequestMapping(value = "/moods", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	//@RequiresRoles("ADMIN")
 	//@RequiresPermissions("ADMIN_MANAGER")
-	public Map<String, Object> getPagingMood(HttpServletRequest request){
+	public Map<String, Object> rolling(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(moodService.getMoodByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(moodService.rolling(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	

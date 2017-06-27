@@ -1,10 +1,9 @@
 var permissions;
-var currentIndex = 0;
-var pageSize = 8;
-var totalPage = 0;
 var $addOrEditModal;
+var $tableContainer;
 //浏览器可视区域页面的高度
 $(function(){
+	initPage(".pagination", "getPermissions");
 	$addOrEditModal = $("#add-or-edit-permission");
 	$("#totalCheckbox").change(function(){
 		if(!$(this).hasClass("checked")){
@@ -23,7 +22,7 @@ $(function(){
 	$("tr.each-row").find("input[type='checkbox']").on("click", function(){
 		alert("ddd");
 	});
-	
+	$tableContainer = $(".table");
 	//默认查询操作
 	getPermissions();
 });
@@ -42,18 +41,23 @@ function getPermissions(){
 		success : function(data) {
 			layer.close(loadi);
 			//清空原来的数据
-			$(".table").find(".each-row").remove();
+			$tableContainer.find(".each-row").remove();
 			if(data.isSuccess){
 				if(data.message.length == 0){
-					$(".table").append('<tr class="each-row"><td colspan="7">空空的，还没有数据</td></tr>');
+					if(currentIndex == 0){
+						$tableContainer.append('<tr class="each-row"><td colspan="9">暂时还没有任何权限！</td></tr>');
+					}else{
+						$tableContainer.append('<tr class="each-row"><td colspan="9">已经没有更多的权限啦，请重新选择！</td></tr>');
+						pageDivUtil(data.total);
+					}
 					return;
 				}
 				
 				permissions = data.message;
 				for(var i = 0; i < permissions.length; i++){
-					$(".table").append(buildRow(permissions[i], i));
+					$tableContainer.append(buildRow(permissions[i], i));
 					if(permissions[i].status != 1)
-						$(".table").find(".each-row").eq(i).addClass("status-disabled-row");
+						$tableContainer.find(".each-row").eq(i).addClass("status-disabled-row");
 				}
 				
 				pageDivUtil(data.total);
@@ -421,82 +425,4 @@ function buildRow(permission, index){
 					'<td><a href="javascript:void(0);" onclick="showRoleList(this, '+ permission.id +');" style="margin-right: 10px;">分配</a><a href="javascript:void(0);" onclick="rowEditPermission(this);" style="margin-right: 10px;">编辑</a><a href="javascript:void(0);" onclick="rowDeletePermission(this);" style="margin-right: 10px;">删除</a></td>'+
 				'</tr>';
 	return html;
-}
-
-/**
- * 生成分页div
- * @param total
- */
-function pageDivUtil(total){
-	var html = '<li>'+
-					'<a href="javascript:void(0);" onclick="pre();" aria-label="Previous">'+
-						'<span aria-hidden="true">&laquo;</span>'+
-					'</a>'+
-				'</li>';
-	totalPage = parseInt(Math.ceil(total / pageSize));
-	var start = 0;
-	var end = totalPage > start + 10 ? start + 10: totalPage;
-	
-	var selectHtml = '<li><select class="form-control" onchange="optionChange()">';
-	for(var i = 0; i < totalPage; i++){
-		if(currentIndex == i)
-			selectHtml += '<option name="pageIndex" selected="selected" value="'+ i +'">'+ (i + 1) +'</option>';
-		else
-			selectHtml += '<option name="pageIndex" value="'+ i +'">'+ (i + 1) +'</option>';
-	}
-	selectHtml += '</select></li>';
-	for(var i = start; i < end; i++){
-		if(currentIndex == i)
-			html += '<li class="active"><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
-		else
-			html += '<li><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
-	}
-	html += '<li>'+
-				'<a href="javascript:void(0);" onclick="next();" aria-label="Next">'+
-					'<span aria-hidden="true">&raquo;</span>'+
-				'</a>'+
-			'</li>';
-	
-	selectHtml += '<li><a href="javascript:void(0);">共计：' +total +'条记录</a></li>';
-	html += selectHtml;
-	$(".pagination").html(html);
-}
-
-/**
- * 选择改变的监听
- */
-function optionChange(){
-	var objS = document.getElementsByTagName("select")[0];
-    var index = objS.options[objS.selectedIndex].value;
-    currentIndex = index;
-    getPermissions();
-}
-
-/**
- * 点击向左的按钮
- */
-function goIndex(index){
-	currentIndex = index;
-	getPermissions();
-}
-
-/**
- * 点击向左的按钮
- */
-function pre(){
-	currentIndex --;
-	if(currentIndex < 0)
-		currentIndex = 0;
-	getPermissions();
-}
-
-
-/**
- * 点击向右的按钮
- */
-function next(){
-	currentIndex ++;
-	if(currentIndex > totalPage)
-		currentIndex = totalPage;
-	getPermissions();
 }

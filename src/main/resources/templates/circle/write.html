@@ -48,6 +48,11 @@
 				</div>
 			</div>
 		</div>
+		<div class="row" style="margin-top: 5px;">
+			<div class="col-lg-12">
+				<button type="button" class="btn btn-warning btn-sm" data-placement="left" data-toggle="tooltip" title="点击进入圈子中心" th:text="${circle.name}" th:onclick="'linkToCircle('+ ${circle.id} +')'"></button>
+			</div>
+		</div>
 		<div class="row blog-info">
 	   		<div class="col-lg-9">
 	   			<div class="form-group">

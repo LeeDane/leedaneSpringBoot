@@ -94,7 +94,7 @@ public class MoodTest extends BaseTest {
 		String str = "{\"account\":\"leedane\",\"uid\":2,\"method\":\"firstloading\",\"login_mothod\":\"android\",\"no_login_code\":\"14480951808066e31568670e51be42bc7978cc2066ea060.521926355594616\",\"pageSize\":10}";
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
-			Map<String, Object> ls = moodService.getMoodByLimit(jo, user, null);
+			Map<String, Object> ls = moodService.rolling(jo, user, null);
 			logger.info("总数:" +ls.size());
 			for(Entry<String, Object> entry :ls.entrySet()){
 				logger.info(entry.getKey() +":" +entry.getValue());

@@ -1,9 +1,8 @@
-var pageSize = 8;
-var currentIndex = 0;
 var circles;
-var totalPage = 0;
 var $circleEditModal;
+var $tableContainer;
 $(function(){
+	initPage(".pagination", "getCircles");
 	$circleEditModal = $("#edit-circle-modal");
 	$("[data-toggle='tooltip']").tooltip();
 	
@@ -13,6 +12,8 @@ $(function(){
 	$(".nav-circle").addClass("active");
 	
 	$(".tooltip").css("display", "block");
+	
+	$tableContainer = $(".table tbody");
 	
 	//创建圈子
 	$(".create-circle").click(function(){
@@ -33,7 +34,6 @@ $(function(){
 			}
 		});
 	});
-	
 	getCircles();
 });
 
@@ -48,7 +48,7 @@ function getCircles(){
 		url : "/cc/circles?"+ jsonToGetRequestParams(params),
 		dataType: 'json',
 		beforeSend:function(){
-			$(".table tbody tr").remove();
+			$tableContainer.find("tr").remove();
 			$(".pagination").empty();
 		},
 		success : function(data) {
@@ -56,11 +56,16 @@ function getCircles(){
 			if(data.isSuccess){
 				circles = data.message;
 				if(circles.length == 0){
-					$(".table tbody").append('<tr>空空的，还没有数据</tr>');
+					if(currentIndex == 0){
+						$tableContainer.append('<tr><td colspan="7">您还未加入任何的圈子！</td></tr>');
+					}else{
+						$tableContainer.append('<tr><td colspan="7">已经没有更多的圈子啦，请重新选择！</td></tr>');
+						pageDivUtil(data.total);
+					}
 					return;
 				}
 				for(var i = 0; i < circles.length; i++){
-					$(".table tbody").append(buildEachCircleRow(i, circles[i]));
+					$tableContainer.append(buildEachCircleRow(i, circles[i]));
 					$("#row-index-"+i).data("circle", circles[i]);
 				}
 				pageDivUtil(data.total);
@@ -378,86 +383,6 @@ function showCreateModal(number){
 		});
 	});
 }
-
-/**
- * 生成分页div
- * @param total
- */
-function pageDivUtil(total){
-	var html = '<li>'+
-					'<a href="javascript:void(0);" onclick="pre();" aria-label="Previous">'+
-						'<span aria-hidden="true">&laquo;</span>'+
-					'</a>'+
-				'</li>';
-	totalPage = parseInt(Math.ceil(total / pageSize));
-	var start = 0;
-	var end = totalPage > start + 10 ? start + 10: totalPage;
-	
-	var selectHtml = '<li><select class="form-control" onchange="optionChange()">';
-	for(var i = 0; i < totalPage; i++){
-		if(currentIndex == i)
-			selectHtml += '<option name="pageIndex" selected="selected" value="'+ i +'">'+ (i + 1) +'</option>';
-		else
-			selectHtml += '<option name="pageIndex" value="'+ i +'">'+ (i + 1) +'</option>';
-	}
-	
-	for(var i = start; i < end; i++){
-		if(currentIndex == i)
-			html += '<li class="active"><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
-		else
-			html += '<li><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
-	}
-	html += '<li>'+
-				'<a href="javascript:void(0);" onclick="next();" aria-label="Next">'+
-					'<span aria-hidden="true">&raquo;</span>'+
-				'</a>'+
-			'</li>';
-	
-	selectHtml += '</select></li>';
-	
-	html += selectHtml;
-	$(".pagination").html(html);
-}
-
-/**
- * 选择改变的监听
- */
-function optionChange(){
-	var objS = document.getElementsByTagName("select")[0];
-    var index = objS.options[objS.selectedIndex].value;
-    currentIndex = index;
-    getCircles();
-}
-
-/**
- * 点击向左的按钮
- */
-function goIndex(index){
-	currentIndex = index;
-	getCircles();
-}
-
-/**
- * 点击向左的按钮
- */
-function pre(){
-	currentIndex --;
-	if(currentIndex < 0)
-		currentIndex = 0;
-	getCircles();
-}
-
-
-/**
- * 点击向右的按钮
- */
-function next(){
-	currentIndex ++;
-	if(currentIndex > totalPage)
-		currentIndex = totalPage;
-	getCircles();
-}
-
 /**
  * 选择图像后的回调
  * @param links

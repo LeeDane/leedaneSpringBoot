@@ -59,7 +59,17 @@ public interface CommentService<T extends IDBean>{
 	 * @throws Exception
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getCommentsByLimit(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> rolling(JSONObject jo, UserBean user, HttpServletRequest request);
+	
+	/**
+	 * 分页获取评论列表
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public Map<String, Object> paging(JSONObject jo, UserBean user, HttpServletRequest request);
 	
 	/**
 	 * 获得当个评论的所有子评论列表

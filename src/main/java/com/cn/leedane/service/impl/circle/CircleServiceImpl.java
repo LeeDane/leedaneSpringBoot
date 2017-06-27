@@ -22,6 +22,7 @@ import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.handler.circle.CircleMemberHandler;
+import com.cn.leedane.handler.circle.CirclePostHandler;
 import com.cn.leedane.mapper.circle.CircleClockInMapper;
 import com.cn.leedane.mapper.circle.CircleContributionMapper;
 import com.cn.leedane.mapper.circle.CircleCreateLimitMapper;
@@ -34,6 +35,7 @@ import com.cn.leedane.model.VisitorBean;
 import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.model.circle.CircleMemberBean;
 import com.cn.leedane.model.circle.CircleSettingBean;
+import com.cn.leedane.model.circle.CircleUserPostsBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.VisitorService;
@@ -100,6 +102,9 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	private CircleMemberHandler circleMemberHandler;
 	
 	@Autowired
+	private CirclePostHandler circlePostHandler;
+	
+	@Autowired
 	private UserHandler userHandler;
 	
 	@Autowired
@@ -147,6 +152,10 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			message.put("myCircleNumber", myCircleNumber); //获取我的圈子数量		
 			message.put("allCircleNumber", allCircleNumber); //获取所有的圈子数量
 			message.put("allCircles", allCircles); //获取所有的圈子
+			
+			//获取该用户的帖子列表
+			CircleUserPostsBean circleUserPosts = circlePostHandler.getUserCirclePosts(user.getId());
+			message.put("circleUserPosts", circleUserPosts);
 		}
 		
 		try {
@@ -157,8 +166,8 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
-		
+		}
+				
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr((user != null ? user.getAccount(): "用户还未登录"), "获取自己所有圈子的初始化数据"), "init()", ConstantsUtil.STATUS_NORMAL, 0);
 				
@@ -215,6 +224,9 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
+		//获取该圈子该用户的帖子列表
+		CircleUserPostsBean circleUserPosts = circlePostHandler.getUserPostPosts(circleId, user.getId());
+		message.put("circleUserPosts", circleUserPosts);
 		return message.getMap();
 	}
 	
@@ -298,6 +310,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		circleBean.setStatus(ConstantsUtil.STATUS_NORMAL);
 		circleBean.setCircleDesc(describe);
 		circleBean.setName(name);
+		circleBean.setCirclePath(ConstantsUtil.DEFAULT_NO_PIC_PATH);
 		
 		boolean result = circleMapper.save(circleBean) > 0;
 		if(result){
@@ -368,6 +381,8 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		
 		boolean result = circleMapper.update(circleBean) > 0;
 		if(result){
+			//清除该圈子的缓存
+			circleHandler.deleteCircleBeanCache(circleBean.getId());
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -397,6 +412,8 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		circleBean.setStatus(ConstantsUtil.STATUS_DELETE);
 		boolean result = circleMapper.update(circleBean) > 0;
 		if(result){
+			//清除该圈子的缓存
+			circleHandler.deleteCircleBeanCache(circleBean.getId());
 			//通知所有的成员该圈子已经被删除
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
@@ -436,8 +453,9 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 					}
 				}
 			}
-			message.put("total", circleMapper.getAllCircles(createUserId, ConstantsUtil.STATUS_NORMAL).size());
 		}
+		message.put("total", circleMapper.getAllCircles(user.getId(), ConstantsUtil.STATUS_NORMAL).size());
+		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取圈子列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
 		message.put("message", rs);

@@ -190,9 +190,8 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
 				rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId));
 			}
-			message.put("total", SqlUtil.getTotalByList(linkManageMapper.getTotal(DataTableType.链接管理.value, null)));
 		}
-		
+		message.put("total", SqlUtil.getTotalByList(linkManageMapper.getTotal(DataTableType.链接管理.value, null)));
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取链接管理列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
 		message.put("message", rs);

@@ -62,9 +62,10 @@ function showCreateModal(number){
 				//关闭弹出loading
 				layer.close(index);
 				if(data.isSuccess){
-					layer.msg(data.message);
+					layer.msg(data.message+ "，1秒后自动刷新");
 					//添加圈子成功，关闭窗口
 					layer.close(promptIndex);
+					reloadPage(1000);
 				}else{
 					ajaxError(data);
 				}

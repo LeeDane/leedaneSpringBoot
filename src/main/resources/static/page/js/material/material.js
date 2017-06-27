@@ -1,7 +1,4 @@
-var pageSize = 9;
-var currentIndex = 0;
 var materials;
-var totalPage = 0;
 var fileIndex = 0; //未上传文件的索引
 var isUploading = false;//标记当前是否在上传
 var $progressBar;
@@ -11,6 +8,7 @@ var $materialListContainer;
 var materialListImgHight;
 var type;
 $(function(){
+	initPage(".pagination", "getMaterials", 10);
 	$materialListContainer = $("#material-row-container");
 	$uploadImgModal = $("#upload-img-modal");
 	var containerWidth = $materialListContainer.width();
@@ -40,9 +38,6 @@ $(function(){
 	$progressBar.closest(".progress").hide();
 	$formUpload = $("#form-upload");
 	$formUpload.hide();
-	//alert($(document).width());//浏览器当前窗口文档对象宽度
-	//alert($(document.body).width());//浏览器当前窗口文档body的宽度
-	//alert($(document.body).outerWidth(true));//浏览器当前窗口文档body的总宽度 包括border padding margin
 	
 	if(isNotEmpty(tabName)){
 		$("#material-tabs").find("li").each(function(index){
@@ -89,7 +84,12 @@ function getMaterials(){
 			if(data.isSuccess){
 				materials = data.message;
 				if(materials.length == 0){
-					$materialListContainer.append('<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">空空的，还没有数据</div>');
+					if(currentIndex == 0){
+						$materialListContainer.append('<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">暂时没有更多的数据！</div>');
+					}else{
+						$materialListContainer.append('<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">已经没有更多的素材，请重新选择</div>');
+						pageDivUtil(data.total);
+					}
 					return;
 				}
 				for(var i = 0; i < materials.length; i++){
@@ -426,85 +426,6 @@ function deleteMaterial(event, materialId){
 function editMaterial(event, materialId){
 	event.stopPropagation();//阻止冒泡 
 	layer.msg("暂时不开发");
-}
-
-/**
- * 生成分页div
- * @param total
- */
-function pageDivUtil(total){
-	var html = '<li>'+
-					'<a href="javascript:void(0);" onclick="pre();" aria-label="Previous">'+
-						'<span aria-hidden="true">&laquo;</span>'+
-					'</a>'+
-				'</li>';
-	totalPage = parseInt(Math.ceil(total / pageSize));
-	var start = 0;
-	var end = totalPage > start + 10 ? start + 10: totalPage;
-	
-	var selectHtml = '<li><select class="form-control" onchange="optionChange()">';
-	for(var i = 0; i < totalPage; i++){
-		if(currentIndex == i)
-			selectHtml += '<option name="pageIndex" selected="selected" value="'+ i +'">'+ (i + 1) +'</option>';
-		else
-			selectHtml += '<option name="pageIndex" value="'+ i +'">'+ (i + 1) +'</option>';
-	}
-	
-	for(var i = start; i < end; i++){
-		if(currentIndex == i)
-			html += '<li class="active"><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
-		else
-			html += '<li><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
-	}
-	html += '<li>'+
-				'<a href="javascript:void(0);" onclick="next();" aria-label="Next">'+
-					'<span aria-hidden="true">&raquo;</span>'+
-				'</a>'+
-			'</li>';
-	
-	selectHtml += '</select></li>';
-	
-	html += selectHtml;
-	$(".pagination").html(html);
-}
-
-/**
- * 选择改变的监听
- */
-function optionChange(){
-	var objS = document.getElementsByTagName("select")[0];
-    var index = objS.options[objS.selectedIndex].value;
-    currentIndex = index;
-    getMaterials();
-}
-
-/**
- * 点击向左的按钮
- */
-function goIndex(index){
-	currentIndex = index;
-	getMaterials();
-}
-
-/**
- * 点击向左的按钮
- */
-function pre(){
-	currentIndex --;
-	if(currentIndex < 0)
-		currentIndex = 0;
-	getMaterials();
-}
-
-
-/**
- * 点击向右的按钮
- */
-function next(){
-	currentIndex ++;
-	if(currentIndex > totalPage)
-		currentIndex = totalPage;
-	getMaterials();
 }
 
 /**

@@ -629,6 +629,8 @@ CREATE TABLE `t_circle_post` (
   `circle_id` int(11) NOT NULL COMMENT '外键关联圈子的id',
   `can_comment` bit(1) DEFAULT b'1' NOT NULL COMMENT '是否能评论，默认能评论',
   `can_transmit` bit(1) DEFAULT b'1' NOT NULL COMMENT '是否能转发，默认能转发',
+  `post_score` int(11) NOT　NULL DEFAULT 0 COMMENT '一定时间的评分，目前计划是通过定时任务去计算评分',
+  `post_recommend` bit(1) DEFAULT b'0' COMMENT '是否推荐',
   PRIMARY KEY (`id`),
   KEY `FK_circle_post_create_user` (`create_user_id`),
   KEY `FK_circle_post_modify_user` (`modify_user_id`),

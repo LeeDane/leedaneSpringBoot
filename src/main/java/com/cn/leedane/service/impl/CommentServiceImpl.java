@@ -214,9 +214,9 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	}
 
 	@Override
-	public Map<String, Object> getCommentsByLimit(JSONObject jo,
+	public Map<String, Object> rolling(JSONObject jo,
 			UserBean user, HttpServletRequest request){
-		logger.info("CommentServiceImpl-->getCommentByLimit():jsonObject=" +jo.toString());
+		logger.info("CommentServiceImpl-->rolling():jsonObject=" +jo.toString());
 		ResponseMap message = new ResponseMap();
 		if(user == null)
 			user = OptionUtil.adminUser;
@@ -353,7 +353,91 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户ID为：",toUserId,",表名：",tableName,"，表id为：",tableId,"的评论列表").toString(), "getCommentByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户ID为：",toUserId,",表名：",tableName,"，表id为：",tableId,"的评论列表").toString(), "rolling()", ConstantsUtil.STATUS_NORMAL, 0);
+		message.put("isSuccess", true);
+		message.put("message", rs);
+		return message.getMap();
+	}
+	
+	@Override
+	public Map<String, Object> paging(JSONObject jo,
+			UserBean user, HttpServletRequest request){
+		logger.info("CommentServiceImpl-->paging():jsonObject=" +jo.toString());
+		ResponseMap message = new ResponseMap();
+		if(user == null)
+			user = OptionUtil.adminUser;
+		String tableName = JsonUtil.getStringValue(jo, "table_name"); //操作表名
+		int tableId = JsonUtil.getIntValue(jo, "table_id", 0); //操作表中的id
+		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
+		int toUserId = JsonUtil.getIntValue(jo, "to_user_id"); //操作的对象用户的id
+		boolean showUserInfo = JsonUtil.getBooleanValue(jo, "showUserInfo");
+		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
+		int currentIndex = JsonUtil.getIntValue(jo, "current", 0); //当前的索引
+		int total = JsonUtil.getIntValue(jo, "total", 0); //总数
+		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
+		//查找该用户所有的评论
+		if(StringUtil.isNull(tableName) && toUserId > 0){
+			rs = commentMapper.getAllByUser(toUserId, ConstantsUtil.STATUS_NORMAL, start, pageSize);
+			message.put("total", SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, " c where c.create_user_id ="+ toUserId + " and status = "+ ConstantsUtil.STATUS_NORMAL)));
+		}
+				
+		//查找指定表的数据
+		if(StringUtil.isNotNull(tableName) && toUserId < 1 && tableId > 0){
+			rs = commentMapper.getAllByTable(tableName, tableId, ConstantsUtil.STATUS_NORMAL, start, pageSize);
+			message.put("total", SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, " c where c.table_name = '"+ tableName + "' and c.table_id ="+ tableId + " and status = "+ ConstantsUtil.STATUS_NORMAL)));
+		}
+		if(rs !=null && rs.size() > 0){
+			int createUserId = 0;
+			JSONObject friendObject = friendHandler.getFromToFriends(user.getId());
+			
+			//String account = "";
+			String tabName;
+			int tabId;
+			int pid = 0;
+			int pCreateUserId = 0;
+			String blockquoteAccount = ""; //@用户的名称
+			//为名字备注赋值
+			for(int i = 0; i < rs.size(); i++){
+				if(StringUtil.isNull(tableName) && tableId <1){
+					//在非获取指定表下的评论列表的情况下的前面35个字符
+					tabName = StringUtil.changeNotNull((rs.get(i).get("table_name")));
+					tabId = StringUtil.changeObjectToInt(rs.get(i).get("table_id"));
+					rs.get(i).put("source", commonHandler.getContentByTableNameAndId(tabName, tabId, user));
+				}else{
+					pid = StringUtil.changeObjectToInt(rs.get(i).get("pid"));
+					if(pid > 0 ){
+						CommentBean pCommentBean = commentMapper.findById(CommentBean.class, pid);
+						if(pCommentBean != null){
+							pCreateUserId = pCommentBean.getCreateUserId();
+							blockquoteAccount = "";
+							if(pCreateUserId > 0){
+								blockquoteAccount = userHandler.getUserName(pCreateUserId);
+								if(StringUtil.isNotNull(blockquoteAccount)){
+									/*resultContent = StringUtil.changeNotNull((rs.get(i).get("content")));
+									if(resultContent.indexOf("@"+atUsername) > 0 )
+										rs.get(i).put("content", resultContent);
+									else{
+										rs.get(i).put("content", "回复@"+atUsername + " " + resultContent);
+									}*/
+									rs.get(i).put("blockquote_account", blockquoteAccount); //引用的用户名称
+								}
+							}
+							rs.get(i).put("blockquote_content", pCommentBean.getContent()); //引用的用户名称
+							rs.get(i).put("blockquote_time", DateUtil.DateToString(pCommentBean.getCreateTime())); //引用的用户名称
+						}else{
+							rs.get(i).put("blockquote_content", "该评论已经被删除"); //引用的用户名称
+						}
+					}
+				}
+				if(showUserInfo){
+					createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
+					rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId, user, friendObject));
+				}
+			}	
+		}
+		
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户ID为：",toUserId,",表名：",tableName,"，表id为：",tableId,"的评论列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("isSuccess", true);
 		message.put("message", rs);
 		return message.getMap();
@@ -619,9 +703,8 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
 				rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId, user, friendObject));
 			}
-			message.put("total", SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, "where table_name='"+ DataTableType.留言.value +"' and table_id='"+ userId +"' and status="+ ConstantsUtil.STATUS_NORMAL)));
 		}
-		
+		message.put("total", SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, "where table_name='"+ DataTableType.留言.value +"' and table_id='"+ userId +"' and status="+ ConstantsUtil.STATUS_NORMAL)));
 		message.put("isSuccess", true);
 		message.put("message", rs);
 		//保存操作日志

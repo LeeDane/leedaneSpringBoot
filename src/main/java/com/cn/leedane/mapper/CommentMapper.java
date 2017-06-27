@@ -26,4 +26,31 @@ public interface CommentMapper extends BaseMapper<CommentBean>{
 	
 	public List<Map<String, Object>> getMessageBoards(@Param("tableId") int tableId, @Param("status") int status, 
 			@Param("start")int start, @Param("pageSize") int pageSize);
+	
+	
+	/**
+	 * 获取该用户的全部评论
+	 * @param userId
+	 * @param status
+	 * @param start
+	 * @param pageSize
+	 * @return
+	 */
+	public List<Map<String, Object>> getAllByUser(@Param("userId") int userId, @Param("status") int status, 
+			@Param("start")int start, @Param("pageSize") int pageSize);
+	
+	/**
+	 * 获取该表资源的全部评论
+	 * @param userId
+	 * @param status
+	 * @param start
+	 * @param pageSize
+	 * @return
+	 */
+	public List<Map<String, Object>> getAllByTable(
+			@Param("tableName") String tableName, 
+			@Param("tableId") int tableId, 
+			@Param("status") int status, 
+			@Param("start")int start, 
+			@Param("pageSize") int pageSize);
 }

@@ -183,7 +183,7 @@ public class HtmlController extends BaseController{
     			model.addAttribute("isLoginUser", uid == user.getId());
     			//保存访客记录
     			if(uid != user.getId())
-    				visitorService.saveVisitor(user, "web网页端", "t_mood", uid, ConstantsUtil.STATUS_NORMAL);
+    				visitorService.saveVisitor(user, "web网页端", DataTableType.心情.value, uid, ConstantsUtil.STATUS_NORMAL);
     			return loginRoleCheck("my", true, model, request);
     		}
         }

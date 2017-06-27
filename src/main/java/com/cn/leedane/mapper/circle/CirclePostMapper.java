@@ -39,4 +39,34 @@ public interface CirclePostMapper extends BaseMapper<CirclePostBean>{
 			@Param("start") int start,
 			@Param("pageSize") int pageSize, 
 			@Param("status") int status);
+
+	/**
+	 * 在圈子中心获取用户的帖子列表
+	 * @param userId
+	 * @param start
+	 * @param pageSize
+	 * @param status
+	 * @return
+	 */
+	public List<CirclePostBean> getUserCirclePosts(
+			@Param("userId") int userId, 
+			@Param("start") int start,
+			@Param("pageSize") int pageSize, 
+			@Param("status") int status);
+
+	/**
+	 * 在帖子中心获取用户的帖子列表
+	 * @param circleId
+	 * @param userId
+	 * @param start
+	 * @param pageSize
+	 * @param statusl
+	 * @return
+	 */
+	public List<CirclePostBean> getUserPostPosts(
+			@Param("circleId") int circleId, 
+			@Param("userId") int userId, 
+			@Param("start") int start,
+			@Param("pageSize") int pageSize, 
+			@Param("status") int statusl);
 }

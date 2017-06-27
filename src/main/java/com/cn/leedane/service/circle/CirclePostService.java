@@ -6,10 +6,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
 
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.circle.CircleBean;
+import com.cn.leedane.model.circle.CirclePostBean;
 
 /**
  * 帖子的Service类
@@ -93,4 +96,15 @@ public interface CirclePostService <T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> delete(int circleId, int postId, JSONObject jsonFromMessage, UserBean userFromMessage, HttpServletRequest request);
+	
+	/**
+	 * 帖子详情初始化操作
+	 * @param circle
+	 * @param post
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public  Map<String,Object> initDetail(CircleBean circle, CirclePostBean post, UserBean user, HttpServletRequest request);
 }

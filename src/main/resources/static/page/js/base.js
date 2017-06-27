@@ -197,6 +197,19 @@ function linkToCircle(id){
 }
 
 /**
+ * 跳转到帖子详细页面
+ * @param circleId
+ * @param postId
+ */
+function linkToPostDetail(circleId, postId){
+	if(isEmpty(circleId) || isEmpty(postId)){
+		layer.msg("该帖子不存在，请联系管理员核实");
+		return;
+	}
+	window.open("/cc/circle/"+circleId +"/post/"+ postId, "_self");
+}
+
+/**
  * 跳转到我的表名和表ID对应的详情
  * @param tableName
  * @param tableId

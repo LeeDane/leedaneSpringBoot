@@ -1,9 +1,7 @@
-var pageSize = 8;
-var currentIndex = 0;
 var messages;
-var totalPage = 0;
 var type; //通知类型
 $(function(){
+	initPage(".pagination", "getMessages");
 	$(".navbar-nav .nav-main-li").each(function(){
 		$(this).removeClass("active");
 	});
@@ -37,7 +35,6 @@ $(function(){
 		$("#notification-tabs").find("li").removeClass("active");
 		$(this).addClass("active");
 		type = $(this).attr("data-value");
-
 		currentIndex = 0;
 		getMessages();
 	});
@@ -163,7 +160,12 @@ function getMessages(){
 			if(data.isSuccess){
 				messages = data.message;
 				if(messages.length == 0){
-					$("#message-list-content").append('空空的，还没有数据');
+					if(currentIndex == 0){
+						$("#message-list-content").append('暂时没有更多的数据！');
+					}else{
+						$("#message-list-content").append('已经没有更多的消息啦，请重新选择！');
+						pageDivUtil(data.total);
+					}
 					return;
 				}
 				for(var i = 0; i < messages.length; i++){
@@ -234,83 +236,4 @@ function buildEachMessageRow(index, message){
 			'</div>';
 	
 	return html;
-}
-
-/**
- * 生成分页div
- * @param total
- */
-function pageDivUtil(total){
-	var html = '<li>'+
-					'<a href="javascript:void(0);" onclick="pre();" aria-label="Previous">'+
-						'<span aria-hidden="true">&laquo;</span>'+
-					'</a>'+
-				'</li>';
-	totalPage = parseInt(Math.ceil(total / pageSize));
-	var start = 0;
-	var end = totalPage > start + 10 ? start + 10: totalPage;
-	
-	var selectHtml = '<li><select class="form-control" onchange="optionChange()">';
-	for(var i = 0; i < totalPage; i++){
-		if(currentIndex == i)
-			selectHtml += '<option name="pageIndex" selected="selected" value="'+ i +'">'+ (i + 1) +'</option>';
-		else
-			selectHtml += '<option name="pageIndex" value="'+ i +'">'+ (i + 1) +'</option>';
-	}
-	
-	for(var i = start; i < end; i++){
-		if(currentIndex == i)
-			html += '<li class="active"><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
-		else
-			html += '<li><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
-	}
-	html += '<li>'+
-				'<a href="javascript:void(0);" onclick="next();" aria-label="Next">'+
-					'<span aria-hidden="true">&raquo;</span>'+
-				'</a>'+
-			'</li>';
-	
-	selectHtml += '</select></li>';
-	
-	html += selectHtml;
-	$(".pagination").html(html);
-}
-
-/**
- * 选择改变的监听
- */
-function optionChange(){
-	var objS = document.getElementsByTagName("select")[0];
-    var index = objS.options[objS.selectedIndex].value;
-    currentIndex = index;
-    getMessages();
-}
-
-/**
- * 点击向左的按钮
- */
-function goIndex(index){
-	currentIndex = index;
-	getMessages();
-}
-
-/**
- * 点击向左的按钮
- */
-function pre(){
-	currentIndex --;
-	if(currentIndex < 0)
-		currentIndex = 0;
-	getMessages();
-}
-
-
-/**
- * 点击向右的按钮
- */
-function next(){
-	currentIndex ++;
-	if(currentIndex > totalPage)
-		currentIndex = totalPage;
-	getMessages();
 }

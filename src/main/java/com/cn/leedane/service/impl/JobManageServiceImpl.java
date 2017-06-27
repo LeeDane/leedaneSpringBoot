@@ -232,8 +232,8 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
 				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
 				rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId));
 			}
-			message.put("total", SqlUtil.getTotalByList(jobManageMapper.getTotal(DataTableType.任务.value, null)));
 		}
+		message.put("total", SqlUtil.getTotalByList(jobManageMapper.getTotal(DataTableType.任务.value, null)));
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取任务列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
 		message.put("message", rs);

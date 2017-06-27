@@ -28,12 +28,14 @@ import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.ZanBean;
 import com.cn.leedane.model.circle.CircleBean;
+import com.cn.leedane.model.circle.CircleContributionBean;
 import com.cn.leedane.model.circle.CircleMemberBean;
 import com.cn.leedane.model.circle.CirclePostBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.CommentService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.ZanService;
+import com.cn.leedane.service.circle.CircleContributionService;
 import com.cn.leedane.service.circle.CirclePostService;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
@@ -93,6 +95,9 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	@Autowired
 	private ZanService<ZanBean> zanService;
 	
+	@Autowired
+	private CircleContributionService<CircleContributionBean> circleContributionService;
+	
 	@Override
 	public Map<String, Object> add(int circleId, JSONObject json, UserBean user,
 			HttpServletRequest request) {
@@ -100,7 +105,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		SqlUtil sqlUtil = new SqlUtil();
 		CirclePostBean circlePostBean = (com.cn.leedane.model.circle.CirclePostBean) sqlUtil.getBean(json, CirclePostBean.class);
 		
-		CircleBean circleBean = circleHandler.getCircleBean(circleId);
+		CircleBean circleBean = circleHandler.getNormalCircleBean(circleId);
 		if(circleBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
@@ -119,6 +124,14 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		
 		boolean result = circlePostMapper.save(circlePostBean) > 0;
 		if(result){
+			
+			//先清空一下响应的用户和帖子绑定的缓存
+			circlePostHandler.deleteUserCirclePosts(user.getId());
+			circlePostHandler.deleteUserPostPosts(circleId, user.getId());
+			
+			//对用户添加贡献值
+			circleContributionService.addScore(5, "发帖子奖励贡献值", circleId, user);
+			
 			message.put("isSuccess", true);
 			message.put("message", "您的帖子已经发布成功！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -145,7 +158,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			return message.getMap();
 		}
 		
-		CircleBean circleBean = circleHandler.getCircleBean(circleId);
+		CircleBean circleBean = circleHandler.getNormalCircleBean(circleId);
 		if(circleBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
@@ -161,6 +174,11 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		
 		boolean result = circlePostMapper.update(circlePostBean) > 0;
 		if(result){
+			//先清空一下响应的用户和帖子绑定的缓存
+			circlePostHandler.deleteUserCirclePosts(user.getId());
+			circlePostHandler.deleteUserPostPosts(circleId, user.getId());
+			//清空该帖子详情的缓存
+			circlePostHandler.deletePostBeanCache(postId);
 			message.put("isSuccess", true);
 			message.put("message", "您的帖子已经更新成功！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -238,7 +256,12 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		if(!SqlUtil.getBooleanByList(members))
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先加入该圈子.value));
 		
-		return commentService.add(json, user, request);
+		Map<String, Object> results = commentService.add(json, user, request);
+		if(results != null && results.containsKey("isSuccess") && StringUtil.changeObjectToBoolean(results.get("isSuccess"))){
+			//对评论帖子添加贡献值
+			circleContributionService.addScore(1, "评论帖子奖励贡献值", circleId, user);
+		}
+		return results;
 	}
 	
 	@Override
@@ -275,6 +298,10 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		boolean result = circlePostMapper.save(circlePostBean) > 0;
 		if(result){
 			circlePostHandler.addTransmit(postId);
+			
+			//对转发帖子添加贡献值
+			circleContributionService.addScore(1, "转发帖子奖励贡献值", circleId, user);
+			
 			message.put("isSuccess", true);
 			message.put("message", "您已成功转发帖子！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -300,7 +327,12 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		if(!SqlUtil.getBooleanByList(members))
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先加入该圈子.value));
 		
-		return zanService.addZan(json, user, request);
+		Map<String, Object> results = zanService.addZan(json, user, request);
+		if(results != null && results.containsKey("isSuccess") && StringUtil.changeObjectToBoolean(results.get("isSuccess"))){
+			//对点赞帖子添加贡献值
+			circleContributionService.addScore(1, "点赞帖子奖励贡献值", circleId, user);
+		}
+		return results;
 	}
 	
 	@Override
@@ -327,12 +359,19 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		String content = "您的帖子《"+ circlePostBean.getTitle() +"》被管理者：\""+ user.getAccount() +"\" 删除, 原因是："+ reason;
 		boolean result = circlePostMapper.delete(circlePostBean) > 0;
 		if(result){
-			
+			//先清空一下响应的用户和帖子绑定的缓存
+			circlePostHandler.deleteUserCirclePosts(user.getId());
+			circlePostHandler.deleteUserPostPosts(circleId, user.getId());
+			//清空该帖子的详情
+			circlePostHandler.deletePostBeanCache(postId);
 			//删除父帖子的转发数
 			if(circlePostBean.getPid() > 0)
 				circlePostHandler.deleteTransmit(circlePostBean.getPid());
 			//非自己的帖子，管理员/圈子删除的，将通知用户(这里用不存在的表目的的查询通知的时候不去获取源数据)
 			notificationHandler.sendNotificationById(false, user, createUserId, content, NotificationType.通知, DataTableType.不存在的表.value, postId, null);
+			
+			//对点赞帖子添加贡献值
+			circleContributionService.reduceScore(8, "删除帖子扣除贡献值", circleId, user);
 			
 			message.put("isSuccess", true);
 			message.put("message", "您已成功删除帖子！");
@@ -344,5 +383,50 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleId, "帖子为", postId, "转发，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "transmit()", ConstantsUtil.STATUS_NORMAL, 0);	
 		return message.getMap();
+	}
+	
+	@Override
+	public Map<String, Object> initDetail(CircleBean circle, CirclePostBean post,
+			UserBean user, HttpServletRequest request) {
+		logger.info("CirclePostServiceImpl-->initDetail(), user=" +(user != null ? user.getAccount(): "用户还未登录"));
+		ResponseMap message = new ResponseMap();
+		message.put("circle", circle);
+		message.put("post", post);
+		
+		//标记用户是否有删除权限
+    	boolean canDelete = false;
+		if(user != null){
+			List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circle.getId(), ConstantsUtil.STATUS_NORMAL);
+			if(CollectionUtil.isNotEmpty(members)){
+				int roleType = members.get(0).getRoleType();
+				canDelete = roleType == CircleServiceImpl.CIRCLE_CREATER || roleType == CircleServiceImpl.CIRCLE_MANAGER;
+			}
+		}
+    	message.put("canDelete", canDelete);
+		
+		int postId = post.getId();
+		message.put("create_time", DateUtil.DateToString(post.getCreateTime()));
+		message.put("zan_users", zanHandler.getZanUser(postId, DataTableType.帖子.value, user, 6));
+		message.put("comment_number", commentHandler.getCommentNumber(postId, DataTableType.帖子.value));
+		message.put("transmit_number", circlePostHandler.getTransmitNumber(postId));
+		message.put("zan_number", zanHandler.getZanNumber(postId, DataTableType.帖子.value));
+		message.put("create_user_account", userHandler.getUserName(post.getCreateUserId()));
+		message.put("create_user_pic_path", userHandler.getUserPicPath(post.getCreateUserId(), "30x30"));
+		int pid = post.getPid();
+		if(pid > 0){
+			CirclePostBean postBean = circlePostHandler.getCirclePostBean(pid);
+			String blockquoteContent = "该帖子已被删除！";
+			int blockCreateUserId = 0;
+			message.put("blockquote", false);
+			if(postBean != null){
+				blockquoteContent = postBean.getTitle();
+				blockCreateUserId = postBean.getCreateUserId();
+				message.put("blockquote", true);
+				message.put("blockquote_account", userHandler.getUserName(blockCreateUserId));
+				message.put("blockquote_time", RelativeDateFormat.format(postBean.getCreateTime()));
+			}
+			message.put("blockquote_content", blockquoteContent);
+		}
+		return message;
 	}
 }

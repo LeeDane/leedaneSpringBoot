@@ -146,9 +146,9 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		Map<String,Object> message = new HashMap<String,Object>();
 		UserBean findUser = null;	
 		if(user.getId() == 0){ //没有登录/没有注册的用户
-			findUser = userMapper.getBeans("select * from t_user  where account=? or email=?", user.getAccount(), user.getAccount()).get(0);
+			findUser = userMapper.getBeans("select * from "+ DataTableType.用户.value +"  where account=? or email=?", user.getAccount(), user.getAccount()).get(0);
 		}else{ //已经登录的用户/或已经注册的用户
-			findUser = userMapper.getBeans("select * from t_user  where id=? ", user.getId()).get(0);
+			findUser = userMapper.getBeans("select * from "+ DataTableType.用户.value +"  where id=? ", user.getId()).get(0);
 		}			
 		//return list.size() > 0 ? list.get(0) : null;
 		if(findUser!=null){ //已经有用户存在了
@@ -1137,7 +1137,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			return null;
 		}
 		
-		users = userMapper.getBeans("select * from t_user where wechat_user_name='"+fromUserName+"'");
+		users = userMapper.getBeans("select * from "+ DataTableType.用户.value +" where wechat_user_name='"+fromUserName+"'");
 
 		return users != null && users.size() > 0 ? users.get(0): null;
 	}

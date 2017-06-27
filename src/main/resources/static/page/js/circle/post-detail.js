@@ -1,23 +1,45 @@
-
-var last_id = 0;
-var first_id = 0;
-var method = 'firstloading';
 var comments;
-//浏览器可视区域页面的高度
-var winH = $(window).height(); 
-var isLoad = false;
-var canLoadData = true;
 var $container;
+var $commentContainer;
 $(function(){
-	if(isEmpty(bid)){
-		layer.msg("文章不存在");
-		return;
-	}
-	getInfo(bid);
-	getComments(bid);
 	$container= $(".container");
+	$commentContainer = $("#comment-list-container");
+	initPage(".pagination", "getComments", 10);
+	getComments();
 	$container.on("click", ".reply-other-btn", function(){
 		$(this).closest(".list-group").find(".reply-container").toggle("fast");
+	});
+	
+	$("[data-toggle='tooltip']").tooltip();
+	$(".tooltip").css("display", "block");
+	//删除的点击事件
+	$(document).on("click", ".post-delete", function(event){
+		event.stopPropagation();//阻止冒泡
+		deletePost($(this));
+	});
+	
+	//赞的点击事件
+	$(document).on("click", ".post-zan", function(event){
+		event.stopPropagation();//阻止冒泡
+		addZan($(this));
+	});
+	
+	//评论的点击事件
+	$(document).on("click", ".post-comment", function(event){
+		event.stopPropagation();//阻止冒泡
+		addComment($(this));
+	});
+	
+	//转发的点击事件
+	$(document).on("click", ".post-transmit", function(event){
+		event.stopPropagation();//阻止冒泡
+		addTransmit($(this));
+	});
+	
+	//删除的点击事件
+	$(document).on("click", ".post-delete", function(event){
+		event.stopPropagation();//阻止冒泡
+		deletePost($(this));
 	});
 	
 	$container.on("click", ".delete-other-btn", function(){
@@ -52,89 +74,109 @@ $(function(){
 			});
 		}
 	});
-	
-	$(window).scroll(function (e) {
-		e = e || window.event;
-	    if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件             
-	        if (e.wheelDelta > 0) { //当滑轮向上滚动时
-	            return;
-	        }
-	    } else if (e.detail) {  //Firefox滑轮事件
-	        if (e.detail> 0) { //当滑轮向上滚动时
-	            return;
-	        }
-	    }
-	    var pageH = $(document.body).height(); //页面总高度 
-	    var scrollT = $(window).scrollTop(); //滚动条top 
-	    var height = (pageH-winH-scrollT)/winH;
-	    if(height < 0.20 && !isLoad && canLoadData){
-	    	isLoad = true;
-	    	method = 'lowloading';
-	    	getComments(bid);
-	    }
-	}); 
+	buildZanUser();
 });
 
+
 /**
- * 获取博客的基本信息
- * @param bid
+ * 生成点赞的用户列表
  */
-function getInfo(bid){
+function buildZanUser(){
+	if(isNotEmpty(zanUsers)){
+		var users = zanUsers.split(";");
+		var userStr = "";
+		for(var i = 0; i < users.length; i++){
+			var user = users[i];
+			if(isNotEmpty(user) && user.split(",").length == 2){
+				if(i != users.length -1)
+					userStr += '<a href="JavaScript:void(0);" onclick="linkToMy('+ user.split(",")[0] +')">'+ changeNotNullString(user.split(",")[1]) +'</a>、';
+				else
+					userStr += '<a href="JavaScript:void(0);" onclick="linkToMy('+ user.split(",")[0] +')">'+ changeNotNullString(user.split(",")[1]) +'</a>';
+			}
+		}
+		$("#zan-users").html('<div class="zan_user">'+ userStr +'等'+ zanNumber +'人觉得很赞</div>');
+	}
+}
+
+/**
+ * 删除帖子
+ * @param obj
+ */
+function deletePost(obj){	
+	layer.confirm('您要删除该条帖子吗？删除掉将无法恢复，请慎重！', {
+		  btn: ['确定','点错了'] //按钮
+	}, function(){
+		//判断是否是自己的帖子
+		if(createUserId == loginUserId){
+			doDelete(postId, '');
+		}else{
+			//prompt层
+			layer.prompt({title: '请输入您要删除该帖子的原因(必填)', formType: 0}, function(pass, promptIndex){
+			  var index = layer.load(1, {
+			    shade: [0.1,'#fff'] //0.1透明度的白色背景
+			  });
+			  doDelete(postId, pass);
+			});
+		}
+	}, function(){
+	});
+	
+}
+
+/**
+ * 执行删除操作
+ * @param reason
+ */
+function doDelete(postId, reason){
+	var loadi = layer.load('努力加载中…');
 	$.ajax({
-		url : "/bg/blog/"+ bid +"?t="+ Math.random(),
-		dataType: 'json',
+		type : "DELETE",
+		url : '/cc/'+ circleId +'/post/'+ postId +"?reason="+ reason,
+		dataType: 'json', 
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess && data.message.length > 0){
-				var blog = data.message[0];
-				document.title = data.message[0].title;
-				$("#b-title").html(changeNotNullString(blog.title));
-				$("#b-account").html(changeNotNullString(blog.account));
-				$("#b-account").attr("onclick", 'linkToMy('+ blog.create_user_id +')');
-				$("#b-create-time").html("发表于:"+changeNotNullString(blog.create_time));
-				$("#b-read-time").html("阅读:"+blog.read_number);
-				$("#b-comment-number").html("评论:"+blog.comment_number);
-				$("#b-transmit-number").html("转发:"+blog.transmit_number);
-				$("#b-zan-number").html("点赞:"+blog.zan_number);
-				$("#b-share-number").html("分享:"+blog.share_number);
-				var keywords = blog.keywords;
-				if(typeof(keywords) != 'undefined' && keywords.length > 0){
-					$("#keywords").find("a").remove();
-					for(var i = 0; i < keywords.length; i++){
-						$("#keywords").append('<a href="/s?q='+ keywords[i] +'&t='+ Math.random() +'" target="_self" class="marginRight">'+ keywords[i] +'</a>');
-					}
-				}
-				var tag = blog.tag;
-				$('#tags').empty();
-				if(isNotEmpty(tag)){
-					var tags = tag.split(",");
-					for(var i = 0; i < tags.length; i++){
-						if(i == 0){
-							$('#tags').append('<span class="label label-default tag" style="font-size: 13px;">'+ tags[i] +'</span>');
-						}else if(i == 1){
-							$('#tags').append('<span class="label label-primary tag" style="font-size: 13px;">'+ tags[i] +'</span>');
-						}else{
-							$('#tags').append('<span class="label label-success tag" style="font-size: 13px;">'+ tags[i] +'</span>');
-						}
-					}
-				}
-				if(isNotEmpty(blog.origin_link) && isNotEmpty(blog.source) && blog.source == 'leedane'){
-					$("#isOriginal").html('<span class="original">原</span>');
+				layer.close(loadi);
+				if(data.isSuccess){
+					layer.msg(data.message+ "，1秒后自动刷新");
+					reloadPage(1000);
 				}else{
-					$("#isOriginal").html('<span class="original red">爬</span>');
+					layer.msg(data.message);
+					layer.close(loadi);
 				}
-				
-				if(blog.is_recommend){
-					$("#isRecommed").html('<span class="original red">荐</span>');
-				}
-				$(".row-content").html(data.message[0].content);
-			}else{
-				ajaxError(data);
-			}
 		},
-		error : function(data) {
-			ajaxError(data);
+		error : function() {
+			layer.close(loadi);
+			layer.msg("网络请求失败");
+		}
+	});
+}
+
+/**
+ * 添加赞
+ * @param id
+ */
+function addZan(obj){
+	var loadi = layer.load('努力加载中…');
+	$.ajax({
+		type : "post",
+		data: {table_name: 't_circle_post', content: '喜欢', froms: '网页端', table_id: postId},
+		url : '/cc/'+ circleId +'/post/'+ postId +'/zan',
+		dataType: 'json', 
+		beforeSend:function(){
+		},
+		success : function(data) {
+				layer.close(loadi);
+				if(data.isSuccess){
+					layer.msg(data.message + "，1秒后自动刷新");
+					reloadPage(1000);
+				}else
+					layer.msg(data.message);
+				
+		},
+		error : function() {
+			layer.close(loadi);
+			layer.msg("网络请求失败");
 		}
 	});
 }
@@ -143,14 +185,11 @@ function getInfo(bid){
  * 获取评论请求列表参数
  */
 function getCommentsRequestParams(){
-	var pageSize = 15;
-	if(method != 'firstloading')
-		pageSize = 5;
-	return {table_name: "t_blog", table_id: bid, showUserInfo: true, pageSize: pageSize, last_id: last_id, first_id: first_id, method: method, t: Math.random()};
+	return {current: currentIndex, total: totalPage, table_name: "t_circle_post", table_id: postId, showUserInfo: true, page_size: pageSize, t: Math.random()};
 }
 
 /**
- * 获取博客的评论内容
+ * 获取帖子的评论内容
  * @param bid
  */
 function getComments(bid){
@@ -158,48 +197,33 @@ function getComments(bid){
 	$.ajax({
 		//contentType: "application/x-www-form-urlencoded;charset=UTF-8",
 		contentType:"application/json",
-		url : "/cm/comments?"+ jsonToGetRequestParams(getCommentsRequestParams()),
+		url : "/cm/comments/paging?"+ jsonToGetRequestParams(getCommentsRequestParams()),
 		dataType: 'json',
 		beforeSend:function(){
+			$commentContainer.empty();
 		},
 		success : function(data) {
 			layer.close(loadi);
 			if(data.isSuccess){
-				if(method == 'firstloading')
-					$(".comment-list").remove();
-				
-				if(data.message.length == 0 && method != 'firstloading'){
-					canLoadData = false;
-					layer.msg("已无更多评论数据");
+				if(data.message.length == 0){
+					if(currentIndex == 0){
+						$commentContainer.append("还没有发表过任何评论，请给TA评论吧！");
+					}else{
+						$commentContainer.append("已经没有更多的评论啦，请重新选择！");
+						pageDivUtil(data.total);
+					}
 					return;
 				}
-				
-				if(method == 'firstloading'){
-					comments = data.message;
-					for(var i = 0; i < comments.length; i++){
-						buildEachCommentRow(i, comments[i]);
-						if(i == 0)
-							first_id = comments[i].id;
-						if(i == comments.length -1)
-							last_id = comments[i].id;
-					}
-				}else{
-					var currentIndex = comments.length;
-					for(var i = 0; i < data.message.length; i++){
-						comments.push(data.message[i]);
-						buildEachCommentRow(currentIndex + i, data.message[i]);
-						
-						if(i == data.message.length -1)
-							last_id = data.message[i].id;
-					}
+				comments = data.message;
+				for(var i = 0; i < comments.length; i++){
+					buildEachCommentRow(i, comments[i]);
 				}
+				pageDivUtil(data.total);
 			}else{
 				ajaxError(data);
 			}
-			isLoad = false;
 		},
 		error : function(data) {
-			isLoad = false;
 			layer.close(loadi);
 			ajaxError(data);
 		}
@@ -212,7 +236,7 @@ function getComments(bid){
  * @param index
  */
 function buildEachCommentRow(index, comment){
-		var html = '<div class="row comment-list comment-list-padding" data-id="'+ comment.id +'" create-user-id="'+ comment.create_user_id +'">'+
+		var html = '<div class="row comment-list comment-list-padding" data-id="'+ comment.id+'" create-user-id="'+ comment.create_user_id+'" >'+
 			   			'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">'+
 							'<img src="'+ changeNotNullString(comment.user_pic_path) +'" width="40" height="40" class="img-rounded hand center-block">'+
 						'</div>'+
@@ -242,7 +266,7 @@ function buildEachCommentRow(index, comment){
 										'<div class="row">'+
 							       				'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right">'+
 							       					 '<button class="btn btn-sm btn-primary btn-block pull-right reply-other-btn" style="width: 60px;" type="button">回复TA</button>';
-				       					if(isAdmin || comment.create_user_id == loginUserId){
+				       					 if(isAdmin || comment.create_user_id == loginUserId){
 				       						 html += '<button class="btn btn-sm btn-primary pull-right delete-other-btn" style="width: 60px; margin-right: 5px;" type="button">删除</button>';
 				       					 }
 										html +=	'</div>'+
@@ -269,17 +293,61 @@ function buildEachCommentRow(index, comment){
 					'</div>'+
 			'</div>';
 	
-	$(".container").append(html);
+		$commentContainer.append(html);
 }
 
 /**
  * 评论别人的评论
  * @param obj
  */
-function commentItem(obj, pid, bid){
+function commentItem(obj, pid, postId){
 	var content = $(obj).closest(".reply-container").find(".reply-comment-text").val();
-	var params = {table_name: "t_blog", table_id: bid, content: content, pid: pid, froms: "web端", t: Math.random()};
+	if(isEmpty(content)){
+		layer.msg("评论内容不能为空");
+		$(obj).closest(".reply-container").find(".reply-comment-text").focus();
+		return;
+	}
+	var params = {table_name: "t_circle_post", table_id: postId, content: content, pid: pid, froms: "web端", t: Math.random()};
 	doAddComment(params);
+}
+
+/**
+ * 添加转发
+ * @param obj
+ */
+function addTransmit(obj){
+	var addTransmitObj = $("#comment").find('[name="add-comment"]');
+	if(isEmpty(addTransmitObj.val())){
+		addTransmitObj.focus();
+		layer.msg("转发内容不能为空");
+		return;
+	}
+	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+	 var params = {froms: 'web网页端'};
+	 params.content = addTransmitObj.val();
+	 params.title = "转发帖子";
+	 $.ajax({
+		type : "post",
+		data: params,
+		url : '/cc/'+ circleId+ '/post/'+ postId +'/transmit',
+		dataType: 'json', 
+		beforeSend:function(){
+		},
+		success : function(data) {
+				layer.close(loadi);
+				if(data.isSuccess){
+					layer.msg(data.message+ "，1秒后自动刷新");
+					reloadPage(1000);
+				}else{
+					layer.msg(data.message);
+					layer.close(loadi);
+				}
+		},
+		error : function() {
+			layer.close(loadi);
+			layer.msg("网络请求失败");
+		}
+	});
 }
 
 /**
@@ -293,13 +361,13 @@ function addComment(obj){
 		layer.msg("评论内容不能为空");
 		return;
 	}
-	var params = {table_name: "t_blog", table_id: bid, content: addCommentObj.val(), froms: "web端", t: Math.random()};
+	var params = {table_name: "t_circle_post", table_id: postId, content: addCommentObj.val(), froms: "web端", t: Math.random()};
 	doAddComment(params);
 }
 
 /**
- * 获取博客的评论内容
- * @param bid
+ * 获取帖子的评论内容
+ * @param params
  */
 function doAddComment(params){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可

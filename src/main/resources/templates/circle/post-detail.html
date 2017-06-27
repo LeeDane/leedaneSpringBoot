@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title th:text="${post.title}"></title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<script th:src="@{/page/js/page.js}" type="text/javascript"></script>
+	<style type="text/css">
+		
+		.container{
+			margin-top: 50px;
+		}
+		#content-container .row{
+			margin-top: 15px;
+		}
+		.panel-footer button{
+			margin-top: 5px;
+			margin-right: 5px;
+		}
+		.btn-group{
+			margin-top: 10px;
+		}
+		.row-content{
+			font-family: "华文宋体";
+			font-size: 14px;
+		}
+		.original{
+			border-color: #51BAE3;
+  			color: #51BAE3;
+  			box-sizing: inherit;
+  			-webkit-tap-highlight-color: transparent;
+  			border: 2px solid;
+		    border-radius: 50%;
+		    width: 25px;
+		    height: 25px;
+		    vertical-align: text-bottom;
+		    text-align: center;
+		    font-size: 16px;
+		    line-height: 26px;
+		    float: left;
+		}
+		.inline{
+			display: inline-block !important;
+		}
+		.marginRight{
+			margin-right: 12px;
+		}
+		.comment-list{
+			/* border:1px solid #f5f5f5;
+			box-shadow: 1px 0px 5px #888888; */
+			margin-bottom: 10px;
+		}
+		.comment-list-padding{
+			padding: 5px;
+			border-radius: 3px; 
+		}
+		.comment-list-item{
+			background-color: #fff !important;
+			border-color: #f5f5f5 !important;
+		}
+		.publish-time{
+			color: #999;
+		}
+		.text-align-right{
+			text-align: right;
+		}
+		.comment-list:hover {
+			border: 1px dashed #999;
+		}
+		.tag{
+			margin-right: 5px;
+		}
+		.list-group-item{
+			padding: 5px 8px !important;
+		}
+		#operate-list .glyphicon{
+			top: 4px !important;
+		}
+	</style>
+</head>
+<body>
+<div th:include="common :: hello">what?</div>
+<script th:src="@{/page/js/circle/post-detail.js}" type="text/javascript"></script>
+</body>
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12" id="content-container">
+				<div class="row">
+					<button type="button" class="btn btn-warning btn-sm" data-placement="left" data-toggle="tooltip" title="点击进入圈子中心" th:text="${circle.name}" th:onclick="'linkToCircle('+ ${circle.id} +')'"></button>
+				</div>
+			   <div class="row">
+			   		<p th:utext="${post.title}" style="font-size: 25px; font-weight: bolder;"></p>
+					<p id="operate-list" style="color: #666;">
+						<button type="button" class="btn btn-default btn-xs user-img" data="'+ post.createUserId +'">
+								  <img th:src="${create_user_pic_path}" class="img-circle" style="width: 20px; height: 20px" /> <span th:text="${create_user_account}"></span>
+						</button>
+						<span class="label label-primary" th:text="${create_time}"></span>
+						<span th:if="${canDelete}" class="glyphicon glyphicon-trash post-delete hand" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="删除"></span>&nbsp;&nbsp;
+						<span class="glyphicon glyphicon-comment" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="评论"></span>&nbsp;<span th:text="${comment_number}"></span>&nbsp;&nbsp;
+						<span class="glyphicon glyphicon-share-alt" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="转发"></span>&nbsp;<span th:text="${transmit_number}"></span>&nbsp;&nbsp;
+						<span class="glyphicon glyphicon-thumbs-up hand post-zan" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="很赞"></span>&nbsp;<span th:text="${zan_number}"></span>&nbsp;&nbsp;
+						<span class="glyphicon glyphicon-credit-card hand" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="打赏"></span>
+					</p>
+			   		<div id="zan-users"></div>
+			   		<div class="row-content" th:text="${post.content}"></div>
+			   		<div class="row" style="margin-top: 5px;" th:if="${post.imgs != null} and ${post.imgs != ''}">
+				   		<div class="img-container">
+					   		<div class="col-lg-4" th:each="img,imgStat : ${post.imgs.split(';')}">
+					   			<img th:src="${img}" style="width: 100%; height: 180px;" class="img-responsive" onClick="" />
+					   		</div>
+				   		</div>
+				   </div>
+			   </div>
+			   <div class="row" id="comment">
+			   		<div class="col-lg-12" th:if="${not isLogin}" style="text-align: center;">
+					        您还未登录，无法参与评论 <a type="button" class="btn btn-info" href="javascript:void(0);" onclick="linkToLogin();">登录</a>
+					</div>
+					
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${isLogin}" style="text-align: center;">
+						<div class="row">
+							<textarea class="form-control" name="add-comment" placeholder="评论/转发这篇帖子，最多250个文字。" style="min-height: 125px;" autofocus ="true"></textarea>
+						</div>
+						<div class="row">
+							<button class="btn btn-md btn-primary btn-block pull-right post-comment" type="button" style="margin-top: 10px; width: 60px; ">评论</button>
+							<button class="btn btn-md btn-primary btn-block pull-right post-transmit" type="button" style="margin-top: 10px; width: 60px; margin-right: 5px;">转发</button>
+						</div>
+					</div>
+			   </div>
+			   <div class="row" id="comment-list-container">
+			   </div>
+			   <div>
+			    	<nav aria-label="Page navigation">
+	  					<ul class="pagination"></ul>
+					</nav>
+			    </div>
+			</div>
+		</div>
+	</div>
+<script th:inline="javascript">//引用  
+	/*<![CDATA[*/  
+	var zanUsers = /*[[${zan_users}]]*/;//取值  zan_number
+	var zanNumber = /*[[${zan_number}]]*/;//取值
+	var postId = /*[[${post.id}]]*/;//取值
+	var circleId = /*[[${post.circleId}]]*/;//取值
+	var createUserId = /*[[${post.createUserId}]]*/;//取值
+	/*]]>*/  
+</script> 
+</html>

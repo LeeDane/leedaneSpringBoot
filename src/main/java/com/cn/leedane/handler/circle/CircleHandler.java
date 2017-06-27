@@ -33,14 +33,88 @@ public class CircleHandler {
 	@Autowired
 	private SystemCache systemCache;
 	
+	
 	/**
-	 * 获取圈子对象
+	 * 获取正常状态的圈子对象
+	 * @param circleId
+	 * @return
+	 */
+	public CircleBean getNormalCircleBean(int circleId){
+		CircleBean circle = getCircleBean(circleId);
+		if(circle == null || circle.getStatus() != ConstantsUtil.STATUS_NORMAL){
+			return null;
+		}
+		return circle;
+	}
+	
+	/**
+	 * 获取圈子对象(不去判断是否是正常状态的圈子)
 	 * @param circleId
 	 * @return
 	 */
 	public CircleBean getCircleBean(int circleId){
-		return circleMapper.findById(CircleBean.class, circleId);
+		String key = getCircleKey(circleId);
+		Object obj = systemCache.getCache(key);
+		CircleBean circleBean = null;
+		/*for(int i = 0; i < 22; i++)
+			deleteCircleBeanCache(i);*/
+		if(obj == ""){
+			if(redisUtil.hasKey(key)){
+				try {
+					circleBean =  (CircleBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), CircleBean.class);
+					if(circleBean != null){
+						systemCache.addCache(key, circleBean);
+					}else{
+						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
+						redisUtil.delete(key);
+						circleBean = circleMapper.findById(CircleBean.class, circleId);
+						if(circleBean != null){
+							try {
+								redisUtil.addSerialize(key, SerializeUtil.serializeObject(circleBean));
+								systemCache.addCache(key, circleBean);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}catch (IOException e) {
+					e.printStackTrace();
+				}
+			}else{//redis没有的处理
+				circleBean = circleMapper.findById(CircleBean.class, circleId);
+				if(circleBean != null){
+					try {
+						redisUtil.addSerialize(key, SerializeUtil.serializeObject(circleBean));
+						systemCache.addCache(key, circleBean);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}else{
+			circleBean = (CircleBean)obj;
+		}
+		
+		if(circleBean == null || circleBean.getStatus() != ConstantsUtil.STATUS_NORMAL){
+			return null;
+		}
+		return circleBean;
 	}
+	
+	/**
+	 * 根据圈子ID删除该圈子的cache和redis缓存
+	 * @param circleId
+	 * @return
+	 */
+	public boolean deleteCircleBeanCache(int circleId){
+		String key = getCircleKey(circleId);
+		redisUtil.delete(key);
+		systemCache.removeCache(key);
+		return true;
+	}
+	
 	
 	/**
 	 * 获取该用户在该圈子角色的编码
@@ -124,6 +198,15 @@ public class CircleHandler {
 		}
 		return circlesSerializeBean;
 	}
+	
+	/**
+	 * 获取圈子在redis的key
+	 * @return
+	 */
+	public static String getCircleKey(int circleId){
+		return ConstantsUtil.CIRCLE_REDIS + circleId;
+	}
+	
 
 	/**
 	 * 获取热门在redis的key

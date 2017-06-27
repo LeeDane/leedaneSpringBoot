@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.mapper.circle.CircleContributionMapper;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
@@ -22,6 +23,7 @@ import com.cn.leedane.service.circle.CircleContributionService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.SqlUtil;
@@ -40,11 +42,9 @@ public class CircleContributionServiceImpl implements CircleContributionService<
 	
 	@Autowired
 	private OperateLogService<OperateLogBean> operateLogService;
-
-	@Override
-	public int getTotalScore(int userId) {
-		return SqlUtil.getTotalByList(circleContributionMapper.executeSQL("select sum(t.score) ct from t_score t where create_user_id=?", userId));
-	}
+	
+	@Autowired
+	private NotificationHandler notificationHandler;
 
 	@Override
 	public Map<String, Object> paging(JSONObject jo, UserBean user,
@@ -90,26 +90,15 @@ public class CircleContributionServiceImpl implements CircleContributionService<
 		message.put("isSuccess", true);
 		return message.getMap();		
 	}
-
+	
 	@Override
-	public Map<String, Object> getTotalScore(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
-		logger.info("CircleContributionServiceImpl-->getTotalScore():jsonObject=" +jo.toString() +", user=" +user.getAccount()); 		
-		ResponseMap message = new ResponseMap();
-		int score = getTotalScore(user.getId());
-		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取总贡献值").toString(), "getTotalScore()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("message", score);
-		message.put("isSuccess", true);
-		return message.getMap();		
-	}
-
-	@Override
-	public Map<String, Object> reduceScore(int reduceScore, String desc, UserBean user) {
+	public Map<String, Object> reduceScore(int reduceScore, String desc, int circleId, UserBean user) {
 		logger.info("CircleContributionServiceImpl-->reduceScore():user=" +user.getAccount()); 		
 		
+		reduceScore = reduceScore < 1 ? 0 : reduceScore;
+		
 		ResponseMap message = new ResponseMap();
-		int sc = getTotalScore(user.getId());
+		int sc = SqlUtil.getTotalByList(circleContributionMapper.getTotalScore(circleId, user.getId()));
 		CircleContributionBean contributionBean = new CircleContributionBean();
 		contributionBean.setTotalScore(sc - reduceScore);
 		contributionBean.setScore(-reduceScore);
@@ -117,10 +106,46 @@ public class CircleContributionServiceImpl implements CircleContributionService<
 		contributionBean.setCreateUserId(user.getId());
 		contributionBean.setScoreDesc(desc);
 		contributionBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+		contributionBean.setCircleId(circleId);
 		boolean result = circleContributionMapper.save(contributionBean) > 0;
 		//保存操作日志
 		operateLogService.saveOperateLog(user, null, null, StringUtil.getStringBufferStr(user.getAccount(),"扣除贡献值").toString(), "reduceScore()", ConstantsUtil.STATUS_NORMAL, 0);
 		if(result){
+			//通知用户
+			notificationHandler.sendNotificationById(true, user, user.getId(), "您的贡献值减少"+ - reduceScore +"分，原因："+ (StringUtil.isNotNull(desc) ? desc : "暂无"), NotificationType.通知, DataTableType.不存在的表.value, -1, null);
+			
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		}else{
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
+			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
+		}
+		message.put("isSuccess", result);
+		return message.getMap();
+	}
+
+	@Override
+	public Map<String, Object> addScore(int addScore, String desc, int circleId, UserBean user) {
+		logger.info("CircleContributionServiceImpl-->addScore():user=" +user.getAccount()); 		
+		
+		addScore = addScore < 1 ? 0 : addScore;
+		ResponseMap message = new ResponseMap();
+		int sc = SqlUtil.getTotalByList(circleContributionMapper.getTotalScore(circleId, user.getId()));
+		CircleContributionBean contributionBean = new CircleContributionBean();
+		contributionBean.setTotalScore(sc + addScore);
+		contributionBean.setScore(addScore);
+		contributionBean.setCreateTime(new Date());
+		contributionBean.setCreateUserId(user.getId());
+		contributionBean.setScoreDesc(desc);
+		contributionBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+		contributionBean.setCircleId(circleId);
+		boolean result = circleContributionMapper.save(contributionBean) > 0;
+		//保存操作日志
+		operateLogService.saveOperateLog(user, null, null, StringUtil.getStringBufferStr(user.getAccount(),"增加贡献值").toString(), "addScore()", ConstantsUtil.STATUS_NORMAL, 0);
+		if(result){
+			//通知用户
+			notificationHandler.sendNotificationById(true, user, user.getId(), "您的贡献值增加"+ addScore+"分，原因："+ (StringUtil.isNotNull(desc) ? desc : "暂无"), NotificationType.通知, DataTableType.不存在的表.value, -1, null);
+			
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{

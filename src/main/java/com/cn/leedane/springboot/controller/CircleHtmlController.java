@@ -27,12 +27,16 @@ import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.model.circle.CircleMemberBean;
 import com.cn.leedane.model.circle.CirclePostBean;
 import com.cn.leedane.service.UserService;
+import com.cn.leedane.service.circle.CirclePostService;
 import com.cn.leedane.service.circle.CircleService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.RelativeDateFormat;
 import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
 
 /**
  * 圈子Html页面的控制器
@@ -49,6 +53,9 @@ public class CircleHtmlController extends BaseController{
 	
 	@Autowired
 	private CircleService<CircleBean> circleService;
+	
+	@Autowired
+	private CirclePostService<CirclePostBean> circlePostService;
 	
 	@Autowired
 	private CircleMemberMapper circleMemberMapper;
@@ -150,7 +157,7 @@ public class CircleHtmlController extends BaseController{
 			Model model, 
 			HttpServletRequest request){
 		//postId 不为空表示编辑
-		CircleBean circle = circleHandler.getCircleBean(circleId);
+		CircleBean circle = circleHandler.getNormalCircleBean(circleId);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
@@ -187,5 +194,31 @@ public class CircleHtmlController extends BaseController{
         model.addAttribute("imgs", imgs); //这个是有图像的时候转化下的List列表
         model.addAttribute("tags", tags); //这个是有图像的时候转化下的List列表
 		return loginRoleCheck("circle/write", true, model, request);
+	}
+	
+	/**
+	 * 帖子详情
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/circle/{circleId}/post/{postId}")
+	public String postDetail(@PathVariable(value="circleId") int circleId, @PathVariable(value="postId") int postId, Model model, HttpServletRequest request){
+		CircleBean circle = circleHandler.getCircleBean(circleId);
+		if(circle == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
+		
+		CirclePostBean postBean = circlePostHandler.getCirclePostBean(circle, postId);
+		if(postBean == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该帖子不存在.value));
+		
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        UserBean user = null;
+        if(currentUser.isAuthenticated()){
+        	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        }
+        model.addAllAttributes(circlePostService.initDetail(circle, postBean, user, request));
+		return loginRoleCheck("circle/post-detail", true, model, request);
 	}
 }

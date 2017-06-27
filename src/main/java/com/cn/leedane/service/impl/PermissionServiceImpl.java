@@ -165,8 +165,8 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
 				rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId));
 			}
-			message.put("total", SqlUtil.getTotalByList(permissionMapper.getTotal(DataTableType.权限.value, null)));
 		}
+		message.put("total", SqlUtil.getTotalByList(permissionMapper.getTotal(DataTableType.权限.value, null)));
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取权限列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
 		message.put("message", rs);

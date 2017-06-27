@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -146,9 +145,8 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 				fromUserId = StringUtil.changeObjectToInt(rs.get(i).get("from_user_id"));
 				rs.get(i).putAll(userHandler.getBaseUserInfo(fromUserId));
 			}
-			message.put("total", SqlUtil.getTotalByList(notificationMapper.getTotal(DataTableType.通知.value, "where to_user_id = " + user.getId() +" and status = "+ConstantsUtil.STATUS_NORMAL+" and type ='"+ type +"'")));
 		}
-		
+		message.put("total", SqlUtil.getTotalByList(notificationMapper.getTotal(DataTableType.通知.value, "where to_user_id = " + user.getId() +" and status = "+ConstantsUtil.STATUS_NORMAL+" and type ='"+ type +"'")));
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"分页获取收到的通知列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("isSuccess", true);

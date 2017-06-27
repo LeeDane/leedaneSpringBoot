@@ -27,15 +27,16 @@ delimiter
 
 -- 计算热门圈子的积分
 drop PROCEDURE if EXISTS `getHostestCirclesProcedure` ;
--- 用户打卡记录 * 0.3 + 用户净新增记录(新增-退出) * 0.6 + 任务完成总数 * 0.4 + 打开的次数 * 0.01 -被举报总数 * 0.8
+-- 用户打卡记录 * 0.3 + 用户净新增记录(新增-退出) * 0.6 + 任务完成总数 * 0.4 + 打开的次数 * 0.01 + 帖子热门积分* 0.02 -被举报总数 * 0.8
 delimiter $$
 CREATE PROCEDURE `getHostestCirclesProcedure` (in $time DATETIME, in $limit INT)
 BEGIN
 	DECLARE circle_id INT(11); -- 自定义变量1
 	DECLARE addNumber INT(11); -- 这个时间段内新增的成员数
 	DECLARE logNumber INT(11); -- 这个时间段内访问数
+	DECLARE postScore INT(11);  -- 这个时间段内的帖子积分(通过帖子热门算法去计算)
 	DECLARE subjectVal VARCHAR(255); -- 日记的标题
-  	DECLARE totalScore FLOAT; -- 最终的总分
+  DECLARE totalScore FLOAT; -- 最终的总分
 	DECLARE DONE BOOLEAN DEFAULT 0; #定义结束标识  
 	
 	-- 获取符合条件的圈子列表(最近时间段内有过用户访问记录的圈子)
@@ -67,9 +68,12 @@ BEGIN
 			-- 获取圈子在这段时间内被访问的次数
 			select count(id) into logNumber from t_visitor v where v.table_name='t_circle' and v.table_id = circle_id;
 
-			set totalScore = addNumber * 0.6 + logNumber* 0.01;
+			-- 获取圈子在这段时间内的帖子的积分
+			select sum(p.post_score) into postScore from t_circle_post p where p.circle_id = circle_id;
+
+			set totalScore = ifNull(addNumber, 0) * 0.6 + ifNull(logNumber, 0)* 0.01 + ifNull(postScore, 0) * 0.02;
 			update t_circle c set c.circle_score = totalScore where c.id = circle_id;
-			 -- select addNumber * 0.6 + logNumber* 0.1, totalScore, addNumber, logNumber, subjectVal;
+			-- select addNumber * 0.6 + logNumber* 0.1, totalScore, addNumber, logNumber, ifNull(postScore, 0);
 		FETCH cursor_circles into circle_id; -- 将游标当前读取行的数据顺序赋予自定义变量12 
 		UNTIL DONE
 		END REPEAT ;

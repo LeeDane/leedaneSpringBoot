@@ -79,7 +79,7 @@ public interface MoodService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getMoodByLimit(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> rolling(JSONObject jo, UserBean user, HttpServletRequest request);
 	
 	
 	/**

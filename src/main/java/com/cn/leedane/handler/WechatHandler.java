@@ -13,6 +13,7 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.wechat.bean.WeixinCacheBean;
@@ -58,7 +59,7 @@ public class WechatHandler {
 				return stringToCacheBean(value);
 			}
 		}else{//查找数据库获取key
-			List<UserBean> users = userMapper.getBeans("select * from t_user where wechat_user_name='"+FromUserName+"' limit 1");
+			List<UserBean> users = userMapper.getBeans("select * from "+ DataTableType.用户.value +" where wechat_user_name='"+FromUserName+"' limit 1");
 			if(CollectionUtil.isNotEmpty(users)){
 				UserBean user = users.get(0);
 				if(user != null){

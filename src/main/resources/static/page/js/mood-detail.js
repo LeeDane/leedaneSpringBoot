@@ -7,7 +7,7 @@ var comments;
 var winH = $(window).height(); 
 var isLoad = false;
 var canLoadData = true;
-
+var $container;
 $(function(){
 	if(isEmpty(mid)){
 		layer.msg("心情不存在");
@@ -15,12 +15,12 @@ $(function(){
 	}
 	getDetail();
 	getComments();
-	
-	$(".container").on("click", ".reply-other-btn", function(){
+	$container= $(".container");
+	$container.on("click", ".reply-other-btn", function(){
 		$(this).closest(".list-group").find(".reply-container").toggle("fast");
 	});
 	
-	$(".container").on("click", ".delete-other-btn", function(){
+	$container.on("click", ".delete-other-btn", function(){
 		var dataId = $(this).closest(".comment-list").attr("data-id");
 		var createUserId = $(this).closest(".comment-list").attr("create-user-id");
 		if(dataId > 0 && createUserId > 0){

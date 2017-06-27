@@ -1,26 +1,34 @@
 package com.cn.leedane.handler.circle;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.sf.json.JSONArray;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.handler.CommentHandler;
 import com.cn.leedane.handler.TransmitHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.ZanHandler;
 import com.cn.leedane.mapper.circle.CirclePostMapper;
+import com.cn.leedane.model.RolesBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.model.circle.CirclePostBean;
+import com.cn.leedane.model.circle.CircleUserPostBean;
+import com.cn.leedane.model.circle.CircleUserPostsBean;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.RelativeDateFormat;
+import com.cn.leedane.utils.SerializeUtil;
 import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
 
@@ -48,6 +56,194 @@ public class CirclePostHandler {
 	@Autowired
 	private UserHandler userHandler;
 	
+	@Autowired
+	private SystemCache systemCache;
+	
+	/**
+	 * 获取圈子用户的帖子列表(这里只缓存8条用户最新帖子记录，主要用于首页的展示)
+	 * @param circleId
+	 * @param userId
+	 * @return
+	 */
+	public CircleUserPostsBean getUserCirclePosts(int userId){
+		String key = getUserCirclePostKey(userId);
+		Object obj = systemCache.getCache(key);
+		CircleUserPostsBean userPostBean = null;
+		//deleteUserCirclePosts(userId);
+		if(obj == ""){
+			if(redisUtil.hasKey(key)){
+				try {
+					userPostBean =  (CircleUserPostsBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), RolesBean.class);
+					if(userPostBean != null){
+						systemCache.addCache(key, userPostBean);
+						return userPostBean;
+					}else{
+						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
+						redisUtil.delete(key);
+						userPostBean = getTheUserCirclePosts(userId, 8);
+						if(CollectionUtil.isNotEmpty(userPostBean.getPosts())){
+							try {
+								redisUtil.addSerialize(key, SerializeUtil.serializeObject(userPostBean));
+								systemCache.addCache(key, userPostBean);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}catch (IOException e) {
+					e.printStackTrace();
+				}
+			}else{//redis没有的处理
+				userPostBean = getTheUserCirclePosts(userId, 8);
+				if(CollectionUtil.isNotEmpty(userPostBean.getPosts())){
+					try {
+						redisUtil.addSerialize(key, SerializeUtil.serializeObject(userPostBean));
+						systemCache.addCache(key, userPostBean);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}else{
+			userPostBean = (CircleUserPostsBean)obj;
+		}
+		return userPostBean;
+	}
+	
+	/**
+	 * 获取圈子当前用户的帖子列表
+	 * @param userId
+	 * @param limit
+	 * @return
+	 */
+	private CircleUserPostsBean getTheUserCirclePosts(int userId, int limit){
+		CircleUserPostsBean userPostsBean = new CircleUserPostsBean();
+		//这里只缓存8条用户最新帖子记录
+		userPostsBean.setPosts(getCircleUserPost(circlePostMapper.getUserCirclePosts(userId, 0, limit, ConstantsUtil.STATUS_NORMAL)));
+		userPostsBean.setTotal(SqlUtil.getTotalByList(circlePostMapper.getTotal(DataTableType.帖子.value, " m where create_user_id = "+ userId + " and status = 1")));
+		return userPostsBean;
+	}
+	
+	private List<CircleUserPostBean> getCircleUserPost(List<CirclePostBean> circlePostBeans){
+		List<CircleUserPostBean> datas = new ArrayList<CircleUserPostBean>();
+		if(CollectionUtil.isNotEmpty(circlePostBeans)){
+			for(CirclePostBean postBean: circlePostBeans){
+				CircleUserPostBean data = new CircleUserPostBean();
+				data.setId(postBean.getId());
+				data.setCircleId(postBean.getCircleId());
+				data.setContent(postBean.getContent());
+				data.setHasImg(postBean.isHasImg());
+				data.setImgs(postBean.getImgs());
+				data.setPid(postBean.getPid());
+				data.setTag(postBean.getTag());
+				data.setTitle(postBean.getTitle());
+				data.setCreateTime(RelativeDateFormat.format(postBean.getCreateTime()));
+				datas.add(data);
+			}
+		}
+		return datas;
+	}
+	
+	/**
+	 * 根据用户id删除其对应的帖子的cache和redis缓存
+	 * @param userId
+	 * @return
+	 */
+	public boolean deleteUserCirclePosts(int userId){
+		String key = getUserCirclePostKey(userId);
+		redisUtil.delete(key);
+		systemCache.removeCache(key);
+		return true;
+	}
+	
+	/**
+	 * 获取圈子用户的帖子列表(这里只缓存8条用户最新帖子记录，主要用于首页的展示)
+	 * @param postId
+	 * @param userId
+	 * @return
+	 */
+	public CircleUserPostsBean getUserPostPosts(int circleId, int userId){
+		/*CirclePostBean postBean =CirclePostBean 
+		if(postBean == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该帖子不存在.value));
+		
+		int circleId = postBean.getCircleId();*/
+		String key = getUserPostPostKey(circleId, userId);
+		Object obj = systemCache.getCache(key);
+		CircleUserPostsBean userPostsBean = null;
+		//deleteUserPostPosts(circleId, userId);
+		if(obj == ""){
+			if(redisUtil.hasKey(key)){
+				try {
+					userPostsBean =  (CircleUserPostsBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), RolesBean.class);
+					if(userPostsBean != null){
+						systemCache.addCache(key, userPostsBean);
+						return userPostsBean;
+					}else{
+						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
+						redisUtil.delete(key);
+						userPostsBean = getTheUserPostPosts(circleId, userId, 8);
+						if(CollectionUtil.isNotEmpty(userPostsBean.getPosts())){
+							try {
+								redisUtil.addSerialize(key, SerializeUtil.serializeObject(userPostsBean));
+								systemCache.addCache(key, userPostsBean);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}catch (IOException e) {
+					e.printStackTrace();
+				}
+			}else{//redis没有的处理
+				userPostsBean = getTheUserPostPosts(circleId, userId, 8);
+				if(CollectionUtil.isNotEmpty(userPostsBean.getPosts())){
+					try {
+						redisUtil.addSerialize(key, SerializeUtil.serializeObject(userPostsBean));
+						systemCache.addCache(key, userPostsBean);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}else{
+			userPostsBean = (CircleUserPostsBean)obj;
+		}
+		return userPostsBean;
+	}
+	
+	/**
+	 * 根据圈子的当前登录用户的id删除其对应的帖子的cache和redis缓存
+	 * @param postId
+	 * @param userId
+	 * @return
+	 */
+	public boolean deleteUserPostPosts(int circleId, int userId){
+		String key = getUserPostPostKey(circleId, userId);
+		redisUtil.delete(key);
+		systemCache.removeCache(key);
+		return true;
+	}
+	
+	/**
+	 * 获取帖子当前用户的帖子列表
+	 * @param circleId
+	 * @param userId
+	 * @param limit
+	 * @return
+	 */
+	private CircleUserPostsBean getTheUserPostPosts(int circleId, int userId, int limit){
+		CircleUserPostsBean userPostsBean = new CircleUserPostsBean();
+		//这里只缓存8条用户最新帖子记录
+		userPostsBean.setPosts(getCircleUserPost(circlePostMapper.getUserPostPosts(circleId, userId, 0, limit, ConstantsUtil.STATUS_NORMAL)));
+		userPostsBean.setTotal(SqlUtil.getTotalByList(circlePostMapper.getTotal(DataTableType.帖子.value, " m where circle_id = "+ circleId +" and create_user_id = "+ userId +" and status = 1")));
+		return userPostsBean;
+	}
+
 	/**
 	 * 添加转发帖子
 	 * @param postId
@@ -104,16 +300,52 @@ public class CirclePostHandler {
 	}
 	
 	/**
-	 * 获取帖子对象
+	 * 获取正常状态的帖子对象
+	 * @param circleId
 	 * @param postId
 	 * @return
 	 */
 	public CirclePostBean getCirclePostBean(int postId){
-		return circlePostMapper.findById(CirclePostBean.class, postId);
+		
+		return getCirclePostBean(-1, postId, null);
 	}
 	
 	/**
-	 * 获取帖子对象（校验是否帖子属于圈子的用户的，不是返回null对象）
+	 * 根据圈子ID/帖子ID删除该帖子的cache和redis缓存
+	 * @param postId
+	 * @return
+	 */
+	public boolean deletePostBeanCache(int postId){
+		String key = getPostKey(postId);
+		redisUtil.delete(key);
+		systemCache.removeCache(key);
+		return true;
+	}
+	
+	
+	/**
+	 * 获取帖子的详情
+	 * @param postId
+	 * @param user
+	 * @return
+	 */
+	public List<Map<String, Object>> getPostDetail(int postId, UserBean user){
+		CirclePostBean circlePostBean = getCirclePostBean(postId);
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+		if(circlePostBean != null){
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("create_user_id", circlePostBean.getCreateUserId());
+			map.put("account", userHandler.getUserName(circlePostBean.getCreateUserId()));
+			map.put("create_time", RelativeDateFormat.format(circlePostBean.getCreateTime()));
+			map.put("title", circlePostBean.getTitle());
+			map.put("content", circlePostBean.getContent());
+			list.add(map);
+		}
+		return list;
+	}
+	
+	/**
+	 * 获取正常状态的帖子对象（校验是否帖子属于圈子的用户的，不是返回null对象）
 	 * @param circle
 	 * @param postId
 	 * @param user
@@ -124,16 +356,71 @@ public class CirclePostHandler {
 	}
 	
 	/**
-	 * 获取帖子对象（校验是否帖子属于圈子的用户的，不是返回null对象）
+	 * 获取正常状态的帖子对象（校验是否帖子属于圈子的用户的，不是返回null对象）
+	 * @param circle
+	 * @param postId
+	 * @return
+	 */
+	public CirclePostBean getCirclePostBean(CircleBean circle, int postId){
+		return getCirclePostBean(circle.getId(), postId, null);
+	}
+	
+	
+	/**
+	 * 获取正常状态的帖子对象（校验是否帖子属于圈子的用户的，不是返回null对象）
 	 * @param circleId
 	 * @param postId
 	 * @param user 不为空将校验帖子和该用户是否是同一个
 	 * @return
 	 */
 	public CirclePostBean getCirclePostBean(int circleId, int postId, UserBean user){
-		CirclePostBean circlePostBean = getCirclePostBean(postId);
-		if(circleId > 0 && circlePostBean != null){
-			if(circlePostBean.getCircleId() != circleId || (user != null && circlePostBean.getCreateUserId() != user.getId()) )
+		String key = getPostKey(postId);
+		Object obj = systemCache.getCache(key);
+		CirclePostBean circlePostBean = null;
+		//deleteUserCirclePosts(userId);
+		if(obj == ""){
+			if(redisUtil.hasKey(key)){
+				try {
+					circlePostBean =  (CirclePostBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), CirclePostBean.class);
+					if(circlePostBean != null){
+						systemCache.addCache(key, circlePostBean);
+					}else{
+						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
+						redisUtil.delete(key);
+						circlePostBean = circlePostMapper.findById(CirclePostBean.class, postId);
+						if(circlePostBean != null){
+							try {
+								redisUtil.addSerialize(key, SerializeUtil.serializeObject(circlePostBean));
+								systemCache.addCache(key, circlePostBean);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}catch (IOException e) {
+					e.printStackTrace();
+				}
+			}else{//redis没有的处理
+				circlePostBean = circlePostMapper.findById(CirclePostBean.class, postId);
+				if(circlePostBean != null){
+					try {
+						redisUtil.addSerialize(key, SerializeUtil.serializeObject(circlePostBean));
+						systemCache.addCache(key, circlePostBean);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}else{
+			circlePostBean = (CirclePostBean)obj;
+		}
+		
+		
+		if(postId > 0 && circlePostBean != null){
+			//非正常状态
+			if(circlePostBean.getStatus() != ConstantsUtil.STATUS_NORMAL || (circleId > 0 && circlePostBean.getCircleId() != circleId) || (user != null && circlePostBean.getCreateUserId() != user.getId()))
 				return null;
 		}
 			
@@ -141,7 +428,7 @@ public class CirclePostHandler {
 	}
 	
 	/**
-	 * 获取帖子对象（校验是否帖子属于圈子的用户的，不是返回null对象）
+	 * 获取正常状态的帖子对象（校验是否帖子属于圈子的用户的，不是返回null对象）
 	 * @param circleId
 	 * @param postId
 	 * @return
@@ -151,97 +438,32 @@ public class CirclePostHandler {
 	}
 	
 	/**
-	 * 获取帖子的详细信息(注意：有照片的情况下，只缓存该照片已经上传到七牛存储服务器的，未上传的情况不做缓存)
-	 * @param circleId
-	 * @param postId
-	 * @param user
-	 * @return
-	 */
-	public List<Map<String, Object>> getPostDetail(int postId, UserBean user){
-		CirclePostBean postBean = circlePostMapper.findById(CirclePostBean.class, postId);
-		if(postBean == null)
-			return null;
-		
-		return getPostDetail(postBean.getCircleId(), postId, user, false);
-	}
-	
-	/**
-	 * 获取帖子的详细信息(注意：有照片的情况下，只缓存该照片已经上传到七牛存储服务器的，未上传的情况不做缓存)
-	 * @param circleId
-	 * @param postId
-	 * @param user
-	 * @return
-	 */
-	public List<Map<String, Object>> getPostDetail(int circleId, int postId, UserBean user){
-		return getPostDetail(circleId, postId, user, false);
-	}
-	
-	/**
-	 * 获取帖子的详细信息(注意：有照片的情况下，只缓存该照片已经上传到七牛存储服务器的，未上传的情况不做缓存)
-	 * @param circleId
-	 * @param postId
-	 * @param user
-	 * @param onlyContent
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Map<String, Object>> getPostDetail(int circleId, int postId, UserBean user, boolean onlyContent){
-		String postKey = getPostKey(circleId, postId);
-		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
-		JSONArray jsonArray = new JSONArray();
-		if(!redisUtil.hasKey(postKey)){
-			list = circlePostMapper.getCirclePost(postId, ConstantsUtil.STATUS_NORMAL);
-			if(list != null && list.size() >0){
-				int createUserId;
-				for(int i = 0; i < list.size(); i++){
-					createUserId = StringUtil.changeObjectToInt(list.get(i).get("create_user_id"));
-					list.get(i).putAll(userHandler.getBaseUserInfo(createUserId));
-				}
-			}
-			jsonArray = JSONArray.fromObject(list);
-			redisUtil.addString(postKey, jsonArray.toString());
-		}else{
-			String mood = redisUtil.getString(postKey);
-			//要把null转化成“”字符串，在json转化才不会报错：net.sf.json.JSONException: null object
-			mood = mood.replaceAll("null", "\"\"");
-			if(StringUtil.isNotNull(mood) && !"[null]".equalsIgnoreCase(mood)){
-				jsonArray = JSONArray.fromObject(mood);
-				list = (List<Map<String, Object>>) jsonArray;
-			}
-		}
-		
-		if(CollectionUtil.isNotEmpty(list) && list.size() == 1 && !onlyContent){
-			list.get(0).put("comment_number", commentHandler.getCommentNumber(postId, DataTableType.帖子.value));
-			list.get(0).put("transmit_number", getTransmitNumber(postId));
-			list.get(0).put("zan_number", zanHandler.getZanNumber(postId, DataTableType.帖子.value));
-			list.get(0).put("zan_users", zanHandler.getZanUser(postId, DataTableType.帖子.value, user, 6));
-			int createUserId = StringUtil.changeObjectToInt(list.get(0).get("create_user_id"));
-			if( createUserId > 0)
-				//填充图片信息
-				list.get(0).putAll(userHandler.getBaseUserInfo(createUserId));
-		}
-		return list;
-	}
-	
-	/**
-	 * 删除在redis
-	 * @param circleId
-	 * @param postId
-	 * @return
-	 */
-	public boolean delete(int circleId, int postId){
-		String postKey = getPostKey(circleId, postId);
-		return redisUtil.delete(postKey);
-	}
-	
-	/**
 	 * 获取帖子在redis的key
-	 * @param circleId
 	 * @param postId
 	 * @return
 	 */
-	public static String getPostKey(int circleId, int postId){
-		return ConstantsUtil.CIRCLE_REDIS + circleId +"_POST_" + postId;
+	public static String getPostKey(int postId){
+		return ConstantsUtil.CIRCLE_REDIS + "P_" + postId;
 	}
 	
+	/**
+	 * 获取用户的圈子帖子列表关系在redis的key
+	 * @param circleId
+	 * @param userId
+	 * @return
+	 */
+	public static String getUserCirclePostKey(int userId){
+		return ConstantsUtil.CIRCLE_REDIS +"_U_" + userId;
+	}
+	
+	/**
+	 * 获取圈子里面的用户的帖子列表关系在redis的key
+	 * @param circleId
+	 * @param postId
+	 * @param userId
+	 * @return
+	 */
+	public static String getUserPostPostKey(int circleId, int userId){
+		return ConstantsUtil.CIRCLE_REDIS+ circleId +"_U_" + userId;
+	}
 }

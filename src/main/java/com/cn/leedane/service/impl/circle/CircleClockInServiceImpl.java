@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cn.leedane.mapper.circle.CircleClockInMapper;
-import com.cn.leedane.mapper.circle.CircleContributionMapper;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleClockInBean;
@@ -20,6 +19,7 @@ import com.cn.leedane.model.circle.CircleContributionBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.circle.CircleClockInService;
+import com.cn.leedane.service.circle.CircleContributionService;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
@@ -27,7 +27,6 @@ import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.PlatformType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -44,7 +43,7 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 	private CircleClockInMapper circleClockInMapper;
 	
 	@Autowired
-	private CircleContributionMapper circleContributionMapper;
+	private CircleContributionService<CircleContributionBean> circleContributionService;
 	
 	@Autowired
 	private OperateLogService<OperateLogBean> operateLogService;
@@ -88,8 +87,7 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 		circleClockInBean.setStatus(ConstantsUtil.STATUS_NORMAL);
 		circleClockInBean.setCircleId(circleId);
 		circleClockInBean.setFroms(JsonUtil.getStringValue(jo, "froms", PlatformType.网页版.value));
-		//获取打卡前的贡献值
-		int yesterDayTotal = SqlUtil.getTotalByList(circleContributionMapper.getTotalScore(circleId, user.getId()));
+		
 		//获取昨天是否有打卡
 		Date yesterDayTime = DateUtil.getYestoday();
 		List<CircleClockInBean> circleYesterdayClockInBeans = circleClockInMapper.getClockInBean(circleId, user.getId(), ConstantsUtil.STATUS_NORMAL, DateUtil.DateToString(yesterDayTime, "yyyy-MM-dd"));
@@ -103,16 +101,9 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 		
 		boolean result = circleClockInMapper.save(circleClockInBean) > 0 ;
 		if(result){
-			CircleContributionBean contributionBean = new CircleContributionBean();
 			int preScore = StringUtil.getScoreBySignin(circleClockInBean.getContinuous() - 1);
-			contributionBean.setScore(preScore);
-			contributionBean.setTotalScore(yesterDayTotal + preScore);
-			contributionBean.setCreateUserId(user.getId());
-			contributionBean.setCreateTime(currentTime);
-			contributionBean.setStatus(ConstantsUtil.STATUS_NORMAL);
-			contributionBean.setScoreDesc("打卡得贡献值");
-			contributionBean.setCircleId(circleId);
-			result = circleContributionMapper.save(contributionBean) > 0;
+			Map<String, Object> results = circleContributionService.addScore(preScore, "每日打卡得贡献值", circleId, user);
+			result = results != null && !results.isEmpty() && results.containsKey("isSuccess")? StringUtil.changeObjectToBoolean(results.get("isSuccess")) : false;
 			if(result){
 				message.put("isSuccess", true);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.贡献打卡成功.value));

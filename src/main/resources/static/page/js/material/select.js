@@ -1,12 +1,11 @@
 var type;
-var pageSize = 10;
-var currentIndex = 0;
 var materials;
-var totalPage = 0;
 var $image;
 var $materialListContainer;
+var $tabsContainer;
 var selectObjs = {}; //用map集合包装， key为id， 值为链接
 $(function(){
+	initPage(".pagination", "getMaterials", 10);
 	$materialListContainer = $("#material-row-container");
 	var containerWidth = $materialListContainer.width();
 	//动态计算模态框的宽度，适配手机
@@ -18,9 +17,10 @@ $(function(){
 		materialListImgHight = Math.floor((modalWidth / 3)) - 30;
 		console.log("高度是："+ materialListImgHight);
 	}
-
+	$tabsContainer = $("#material-tabs");
+	
 	if(isNotEmpty(tabName)){
-		$("#material-tabs").find("li").each(function(index){
+		$tabsContainer.find("li").each(function(index){
 			if($(this).attr("data-value") == tabName){
 				type = tabName;
 				$(this).addClass("active");
@@ -29,14 +29,14 @@ $(function(){
 			}
 		});
 	}else{
-		 $("#material-tabs").find("li").eq(0).addClass("active");
-		 type = $("#material-tabs").find("li").eq(0).attr("data-value")
+		$tabsContainer.find("li").eq(0).addClass("active");
+		 type = $tabsContainer.find("li").eq(0).attr("data-value")
 	}
 	getMaterials();
 	
 	//获取通知类型
-	$("#material-tabs").find("li").on("click", function(index){
-		$("#material-tabs").find("li").removeClass("active");
+	$tabsContainer.find("li").on("click", function(index){
+		$tabsContainer.find("li").removeClass("active");
 		$(this).addClass("active");
 		type = $(this).attr("data-value");
 		currentIndex = 0;
@@ -85,7 +85,7 @@ $(function(){
  */
 function resetContrainHeight(){
 	var height = $("#select-list").height();
-	$("#material-tabs").css("margin-top", (height + 20) +"px");
+	$tabsContainer.css("margin-top", (height + 20) +"px");
 }
 
 /**
@@ -107,7 +107,12 @@ function getMaterials(){
 			if(data.isSuccess){
 				materials = data.message;
 				if(materials.length == 0){
-					$materialListContainer.append('<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">空空的，还没有数据</div>');
+					if(currentIndex == 0){
+						$materialListContainer.append('<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">暂时没有素材，请前往素材管理中心添加！</div>');
+					}else{
+						$materialListContainer.append('<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">已经没有更多的素材，请重新选择！</div>');
+						pageDivUtil(data.total);
+					}
 					return;
 				}
 				
@@ -208,85 +213,6 @@ function buildEachMaterialFileRow(index, material){
 				'</div>';
 
 	return html;
-}
-
-/**
- * 生成分页div
- * @param total
- */
-function pageDivUtil(total){
-	var html = '<li>'+
-					'<a href="javascript:void(0);" onclick="pre();" aria-label="Previous">'+
-						'<span aria-hidden="true">&laquo;</span>'+
-					'</a>'+
-				'</li>';
-	totalPage = parseInt(Math.ceil(total / pageSize));
-	var start = 0;
-	var end = totalPage > start + 10 ? start + 10: totalPage;
-	
-	var selectHtml = '<li><select class="form-control" onchange="optionChange()">';
-	for(var i = 0; i < totalPage; i++){
-		if(currentIndex == i)
-			selectHtml += '<option name="pageIndex" selected="selected" value="'+ i +'">'+ (i + 1) +'</option>';
-		else
-			selectHtml += '<option name="pageIndex" value="'+ i +'">'+ (i + 1) +'</option>';
-	}
-	
-	for(var i = start; i < end; i++){
-		if(currentIndex == i)
-			html += '<li class="active"><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
-		else
-			html += '<li><a href="javascript:void(0);" onclick="goIndex('+ i +');">'+ (i+1) +'</a></li>';
-	}
-	html += '<li>'+
-				'<a href="javascript:void(0);" onclick="next();" aria-label="Next">'+
-					'<span aria-hidden="true">&raquo;</span>'+
-				'</a>'+
-			'</li>';
-	
-	selectHtml += '</select></li>';
-	
-	html += selectHtml;
-	$(".pagination").html(html);
-}
-
-/**
- * 选择改变的监听
- */
-function optionChange(){
-	var objS = document.getElementsByTagName("select")[0];
-    var index = objS.options[objS.selectedIndex].value;
-    currentIndex = index;
-    getMaterials();
-}
-
-/**
- * 点击向左的按钮
- */
-function goIndex(index){
-	currentIndex = index;
-	getMaterials();
-}
-
-/**
- * 点击向左的按钮
- */
-function pre(){
-	currentIndex --;
-	if(currentIndex < 0)
-		currentIndex = 0;
-	getMaterials();
-}
-
-
-/**
- * 点击向右的按钮
- */
-function next(){
-	currentIndex ++;
-	if(currentIndex > totalPage)
-		currentIndex = totalPage;
-	getMaterials();
 }
 
 /**
