@@ -95,6 +95,15 @@
 
 			// Options (public access)
 			options: this.options,
+			
+			addNode: $.proxy(this.addNode, this), //添加一个节点
+			addNodes: $.proxy(this.addNodes, this), //添加多个节点
+			// Delete Node methods
+			deleteNode: $.proxy(this.deleteNode, this),
+			setDeleteNode: $.proxy(this.setDeleteNode, this),
+			
+			// Update Node methods
+			updateNode: $.proxy(this.updateNode, this),
 
 			// Initialize / destroy methods
 			init: $.proxy(this.init, this),
@@ -1182,6 +1191,160 @@
 			}
 		});
 	};
+	
+	/**
+	 * 给节点添加子节点 
+	 * @param {Object|Number} identifiers - A valid node, node id or array of node identifiers 
+	 * @param {optional Object} options.node; 
+	*/  
+	Tree.prototype.addNode = function (identifiers, options) {
+		 this.forEachIdentifier(identifiers, options, $.proxy(function (node, options) {  
+		     this.setAddNode(node, options);   
+		 }, this));  
+		
+		 this.setInitialStates({ nodes: this.tree }, 0);  
+		 this.render();  
+	}  
+	
+	/** 
+	*  添加子节点 
+	*/  
+	Tree.prototype.setAddNode = function (node, options) {  
+		 if (node.nodes == null) node.nodes = [];  
+		 if (options.node) {
+			 var nodes = node.nodes;
+			 var flag = false;
+			 //判断是否有同一个名称的节点存在平级
+			 if(nodes && nodes.length > 0){
+				 for(var i = 0; i < nodes.length; i++){
+					 flag = nodes[i].text == options.node.text;
+					 if(flag)
+						 break;
+				 }
+			 }
+			 if(!flag)
+				 node.nodes.push(options.node); 
+			 else
+				 layer.msg("平级的节点名称必须是唯一的");
+		  };  
+	}; 
+	
+	/**
+	 * 给节点添加多个子节点(将清空所有的节点)
+	 * @param {Object|Number} identifiers - A valid node, node id or array of node identifiers 
+	 * @param {optional Object} options.node; 
+	*/  
+	Tree.prototype.addNodes = function (identifiers, options) {
+		 this.forEachIdentifier(identifiers, options, $.proxy(function (node, options) {  
+		     this.setAddNodes(node, options);   
+		 }, this));  
+		
+		 this.setInitialStates({ nodes: this.tree }, 0);  
+		 this.render();  
+	}
+	
+	/** 
+	* 添加多个子节点(将清空所有的节点)
+	*/  
+	Tree.prototype.setAddNodes = function (node, options) { 
+		 node.nodes = [];  
+		 if (options.node) {
+			 var nodes = node.nodes;
+			 var flag = false;
+			 //判断是否有同一个名称的节点存在平级
+			 if(nodes && nodes.length > 0){
+				 for(var i = 0; i < nodes.length; i++){
+					 if(options.node && options.node.length > 0){
+						 flag = nodes[i].text == options.node[i].text;
+					 }
+					 if(flag)
+						 break;
+				 }
+			 }
+			 if(!flag){
+				 if(options.node && options.node.length > 0){
+					 for(var i = 0; i < options.node.length; i++)
+						 node.nodes.push(options.node[i]); 
+				 }
+			 }
+			 else
+				 layer.msg("平级的节点名称必须是唯一的");
+		  };  
+	}; 
+	
+	/**
+	 * 更新节点 
+	 * @param {Object|Number} identifiers - A valid node, node id or array of node identifiers 
+	 * @param {optional Object} options.node; 
+	*/  
+	Tree.prototype.updateNode = function (identifiers, options) {
+		 this.forEachIdentifier(identifiers, options, $.proxy(function (node, options) {  
+		     this.setUpdateNode(node, options);   
+		 }, this));  
+		
+		 this.setInitialStates({ nodes: this.tree }, 0);  
+		 this.render();  
+	}  
+	
+	/** 
+	*  设置更新节点 
+	*/  
+	Tree.prototype.setUpdateNode = function (node, options) {  
+		 if (options.node){
+			 var flag = false;
+			 var nodes = node.nodes;
+			 //判断是否有同一个名称的节点存在平级
+			 if(nodes && nodes.length > 0){
+				 for(var i = 0; i < nodes.length; i++){
+					 flag = nodes[i].text == options.node.text;
+					 if(flag)
+						 break;
+				 }
+			 }
+			 if(!flag){
+				 node.text = options.node.text;  
+			 }else{
+				 layer.msg("平级的节点名称必须是唯一的");
+			 }
+		 };  
+	};  
+	/**
+	 * 删除子节点
+	 */
+	Tree.prototype.deleteNode = function (identifiers, options) {         
+ 		this.forEachIdentifier(identifiers, options, $.proxy(function (node, options) {  
+		    var parentNode = this.getParent(node);
+		    this.setDeleteNode(parentNode, node, options);
+	    }, this));    
+	 };
+	 
+	 /**
+	  * 设置删除节点
+	  */
+	 Tree.prototype.setDeleteNode = function (node,  deletenode, options) {
+		 //删除的是非根目录下面的
+		 if (node && node.nodes != null){
+		     for(var i = node.nodes.length-1; i >= 0; i--){
+		    	 var mynode = node.nodes[i];       
+		    	 if(mynode.nodeId == deletenode.nodeId){
+		    		 node.nodes.splice(i, 1);
+		    	 }
+		     }
+		     if(node.nodes && node.nodes.length < 1)
+		    	 delete node["nodes"];
+		     this.setInitialStates({ nodes: this.tree }, 0); 
+		     this.render();
+	     }else{
+	    	 for(var i =  this.tree.length-1; i >= 0; i--){
+		    	 var mynode = this.tree[i];       
+		    	 if(mynode.nodeId == deletenode.nodeId){
+		    		 this.tree.splice(i, 1);
+		    	 }
+		     }
+		     this.setInitialStates({ nodes: this.tree }, 0); 
+		     this.render();
+	     }
+	 };
 
 	/**
 		Recursive find for retrieving nested attributes values
