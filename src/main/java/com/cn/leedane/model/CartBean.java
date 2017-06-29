@@ -11,7 +11,7 @@ import java.util.List;
 public class CartBean extends RecordTimeBean{
 
 	private static final long serialVersionUID = 1L;
-	//购物车状态，0：过期 1：正常
+	//购物车状态，-1：草稿，1：正常，0:禁用，2、删除, 3:待审核
 	
 
 	/**

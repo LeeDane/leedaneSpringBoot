@@ -324,4 +324,9 @@ public class ControllerBaseNameUtil {
 	 * 圈子统一入口根路径
 	 */
 	public static final String cc = "cc";
+	
+	/**
+	 * 分类管理统一入口
+	 */
+	public static final String cg = "cg";
 }

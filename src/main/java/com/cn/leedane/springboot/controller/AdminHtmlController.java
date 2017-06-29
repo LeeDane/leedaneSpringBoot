@@ -1,29 +1,18 @@
 package com.cn.leedane.springboot.controller;
 
-import java.util.UUID;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cn.leedane.controller.BaseController;
-import com.cn.leedane.controller.RoleController;
-import com.cn.leedane.controller.UserController;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.UserService;
-import com.cn.leedane.utils.CommonUtil;
-import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.EnumUtil.ResponseCode;
-import com.cn.leedane.utils.StringUtil;
 
 /**
  * 后台管理Html页面的控制器
@@ -146,45 +135,5 @@ public class AdminHtmlController extends BaseController{
 		return loginRoleCheck(urlParse, false, model, httpSession, request);
 	}
 	
-	/**
-	 * 校验地址，校验是否登录
-	 * @param urlParse
-	 * @param mustAdmin 为true表示必须是管理员身份登录，不然就跳转到登录页面
-	 * @param model
-	 * @param httpSession
-	 * @return
-	 */
-	public String loginRoleCheck(String urlParse, boolean mustAdmin, Model model, HttpSession httpSession, HttpServletRequest request){
-		//设置统一的请求模式
-		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
-		Object obj = httpSession.getAttribute(UserController.USER_INFO_KEY);
-		UserBean userBean = null;
-		String account = "";
-		boolean isLogin = false;
-		if(obj != null){
-			logger.info("obj不为空");
-			isLogin = !isLogin;
-			userBean = (UserBean)obj;
-
-			//获取当前的Subject  
-	        Subject currentUser = SecurityUtils.getSubject();
-			//后台只有管理员权限才能操作
-			if(currentUser.hasRole(RoleController.ADMIN_ROLE_CODE)){
-				isLogin = !isLogin;
-				account = userBean.getAccount();
-				model.addAttribute("isLogin", isLogin);
-				model.addAttribute("account", account);
-			}else{
-				httpSession.removeAttribute(UserController.USER_INFO_KEY);
-				model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请使用有管理员权限的账号登录.value));
-				return "redirect:/lg?errorcode=" +EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value +"&t="+ UUID.randomUUID().toString() +"&ref="+ CommonUtil.getFullPath(request);
-			}
-		}else{
-			logger.info("obj为空");
-			model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
-			return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();
-		}
-		
-		return StringUtil.isNotNull(urlParse) ? urlParse : "404";
-	}
+	
 }

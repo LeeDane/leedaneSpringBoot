@@ -640,3 +640,25 @@ CREATE TABLE `t_circle_post` (
   CONSTRAINT `FK_circle_post_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_circle_post_circle_id` FOREIGN KEY (`circle_id`) REFERENCES `t_circle` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_category
+-- ----------------------------
+DROP TABLE IF EXISTS `t_category`;
+CREATE TABLE `t_category` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `text` varchar(20) NOT NULL COMMENT '分类名称',
+  `pid` int(11) NOT NULL DEFAULT 0 COMMENT '上级的id',
+	`is_system` bit(1) DEFAULT b'0' NOT NULL COMMENT '是否是系统级别的',
+  PRIMARY KEY (`id`),
+  KEY `FK_category_create_user` (`create_user_id`),
+  KEY `FK_category_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_category_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_category_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_category add constraint category_create_user_id_pid_text_unique UNIQUE(create_user_id, pid, text);

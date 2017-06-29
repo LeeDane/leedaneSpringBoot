@@ -389,6 +389,8 @@ function getRandomNumber1(number){
 function ajaxError(data){
 	var json = isJson(data)? data : eval('(' + data.responseText + ')');
 	
+	if(!json.message && json.responseText)
+		json.message = json.responseText;
 	//如果是需要用户登录
 	if(json['responseCode'] && json.responseCode == 1001){
 		linkToLogin();

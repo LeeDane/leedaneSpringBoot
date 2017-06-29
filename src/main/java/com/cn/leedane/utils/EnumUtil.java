@@ -78,8 +78,8 @@ public class EnumUtil {
 		粉丝("t_fan"), 收藏("t_collection"),关注("t_attention"), 好友("t_friend"), 图库("t_gallery"), 操作日志("t_operate_log"),
 		举报("t_report"), 积分("t_score"), 签到("t_sign_in"), 上传("t_upload"), 权限("t_permission"), 角色权限("t_role_permission"),
 		角色("t_role"), 用户角色("t_user_role"), 链接管理("t_link_manage"), 留言("t_message_board"), 素材("t_material"), 
-		任务("t_job_manage"), 贡献值("t_circle_contribution"),
-		圈子("t_circle"), 圈子成员("t_circle_member"), 帖子("t_circle_post"), 不存在的表("t_inexistence");
+		任务("t_job_manage"), 贡献值("t_circle_contribution"),圈子("t_circle"), 圈子成员("t_circle_member"), 帖子("t_circle_post"), 
+		不存在的表("t_inexistence"), 分类("t_category");
 	
 		private DataTableType(String value) {
 			this.value = value;

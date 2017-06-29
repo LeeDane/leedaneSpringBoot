@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONObject;
 
@@ -620,6 +621,48 @@ public class BaseController {
 		model.addAttribute("isLogin",  isLogin);
 		model.addAttribute("isAdmin", isAdmin);
 		if(mustLogin && !isLogin){
+			model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
+			return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();
+		}
+		
+		return StringUtil.isNotNull(urlParse) ? urlParse : "404";
+	}
+	
+	/**
+	 * 校验地址，校验是否登录
+	 * @param urlParse
+	 * @param mustAdmin 为true表示必须是管理员身份登录，不然就跳转到登录页面
+	 * @param model
+	 * @param httpSession
+	 * @return
+	 */
+	public String loginRoleCheck(String urlParse, boolean mustAdmin, Model model, HttpSession httpSession, HttpServletRequest request){
+		//设置统一的请求模式
+		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
+		Object obj = httpSession.getAttribute(UserController.USER_INFO_KEY);
+		UserBean userBean = null;
+		String account = "";
+		boolean isLogin = false;
+		if(obj != null){
+			logger.info("obj不为空");
+			isLogin = !isLogin;
+			userBean = (UserBean)obj;
+
+			//获取当前的Subject  
+	        Subject currentUser = SecurityUtils.getSubject();
+			//后台只有管理员权限才能操作
+			if(currentUser.hasRole(RoleController.ADMIN_ROLE_CODE)){
+				isLogin = !isLogin;
+				account = userBean.getAccount();
+				model.addAttribute("isLogin", isLogin);
+				model.addAttribute("account", account);
+			}else{
+				httpSession.removeAttribute(UserController.USER_INFO_KEY);
+				model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请使用有管理员权限的账号登录.value));
+				return "redirect:/lg?errorcode=" +EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value +"&t="+ UUID.randomUUID().toString() +"&ref="+ CommonUtil.getFullPath(request);
+			}
+		}else{
+			logger.info("obj为空");
 			model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
 			return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();
 		}
