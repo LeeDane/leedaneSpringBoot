@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
@@ -38,5 +39,20 @@ public class CategoryHtmlController extends BaseController{
 	@RequestMapping("/index")
 	public String index2(Model model, HttpServletRequest request){
 		return index1(model, request);
+	}
+	
+	/**
+	 * 选择分类
+	 * @param model
+	 * @param type  类型，值可以是iframe或者其他
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/select")
+	public String select(Model model, 
+			@RequestParam(value="rootId") int rootId, //根节点的名称
+			HttpServletRequest request){
+		model.addAttribute("rootId", rootId);
+		return loginRoleCheck("category/select", true, model, request);
 	}
 }

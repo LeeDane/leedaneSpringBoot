@@ -242,11 +242,11 @@ public class HtmlController extends BaseController{
 			noHeader1 = StringUtil.changeObjectToBoolean(noHeaderStr1);
 		}
 		
-		List<String> categorys = new ArrayList<String>();
+		/*List<String> categorys = new ArrayList<String>();
 		for(BlogCategory ts: EnumUtil.BlogCategory.values()){
 			categorys.add(ts.name());
 		}
-		model.addAttribute("categorys", categorys);
+		model.addAttribute("categorys", categorys);*/
 		model.addAttribute("blogId", blogId);
 		model.addAttribute("noHeader1", noHeader1);
 		

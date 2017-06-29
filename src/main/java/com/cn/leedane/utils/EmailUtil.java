@@ -80,27 +80,20 @@ public class EmailUtil {
 		}
 		return mEmailUtil;
 	}
-	
+
 	/**
-	 * 实例化对象
-	 * @return
+	 * 构建邮件的实体，同时发送，这样所有的内容将一样
+	 * @param userFrom  邮件发送来自的用户信息
+	 * @param userTos   邮件发送到对方的用户信息
+	 * @param content   邮件的具体内容
+	 * @param subject  邮件的标题
 	 */
-	public static synchronized EmailUtil getInstance(UserBean userFrom, Set<UserBean> userTos, String[] contents, String subject){
-		if(mEmailUtil == null){
-			mEmailUtil = new EmailUtil(userFrom, userTos, contents, subject);
-		}
-		return mEmailUtil;
-	}
-	
-	/**
-	 * 实例化对象
-	 * @return
-	 */
-	public static synchronized EmailUtil getInstance(UserBean userFrom, Set<UserBean> userTos, String content, String subject){
-		if(mEmailUtil == null){
-			mEmailUtil = new EmailUtil(userFrom, userTos, content, subject);
-		}
-		return mEmailUtil;
+	public void initData(UserBean userFrom, Set<UserBean> userTos, String content, String subject){
+		//this.userFrom = userFrom;
+		this.userTos = userTos;
+		this.content = content;
+		this.subject= subject;
+		this.init();
 	}
 	
 	/**
@@ -111,7 +104,7 @@ public class EmailUtil {
 	 * @param content  邮件的具体内容数组
 	 * @param subject  邮件的标题
 	 */
-	private EmailUtil(UserBean userFrom, Set<UserBean> userTos, String[] contents, String subject) {
+	public void initData(UserBean userFrom, Set<UserBean> userTos, String[] contents, String subject){
 		if(userTos.size() != contents.length){
 			throw new Error("userTos的size()和content的length值不相等");
 		}
@@ -119,21 +112,6 @@ public class EmailUtil {
 		this.userTos = userTos;
 		this.contents = contents;
 		this.subject= subject;
-		this.init();
-	}
-	
-	/**
-	 * 构建邮件的实体，同时发送，这样所有的内容将一样
-	 * @param userFrom  邮件发送来自的用户信息
-	 * @param userTos   邮件发送到对方的用户信息
-	 * @param content   邮件的具体内容
-	 * @param subject  邮件的标题
-	 */
-	private EmailUtil(UserBean userFrom, Set<UserBean> userTos, String content, String subject) {
-		//this.userFrom = userFrom;
-		this.userTos = userTos;
-		this.content = content;
-		this.subject = subject;
 		this.init();
 	}
 	

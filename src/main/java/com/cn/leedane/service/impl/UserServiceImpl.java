@@ -267,7 +267,8 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		Set<UserBean> set = new HashSet<UserBean>();		
 		set.add(user2);	
 		
-		EmailUtil emailUtil = EmailUtil.getInstance(user, set, content, ConstantsUtil.WEBSIT_NAME +"注册验证");
+		EmailUtil emailUtil = EmailUtil.getInstance();
+		emailUtil.initData(user, set, content, ConstantsUtil.WEBSIT_NAME +"注册验证");
 		try {
 			emailUtil.sendMore();
 		} catch (Exception e) {

@@ -24,6 +24,12 @@ public interface VisitorService<T extends IDBean>{
 	 * @return
 	 */
 	public boolean saveVisitor(UserBean user, String froms, String tableName, int tableId, int status);
+	
+	/**
+	 * 删除访客记录
+	 * @return
+	 */
+	public boolean deleteVisitor(UserBean user, String tableName, int tableId);
 
 	/**
 	 * 获取访客列表

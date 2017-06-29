@@ -131,7 +131,7 @@ public class ToolController extends BaseController{
 	 * 发送信息
 	 * @return
 	 */
-	@RequestMapping(value = "/sendMsg", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/sendMsg", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> sendMessage(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))

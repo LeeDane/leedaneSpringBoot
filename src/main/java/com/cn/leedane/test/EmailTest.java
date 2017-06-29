@@ -61,7 +61,8 @@ public class EmailTest {
 		//email.setSubject("我是主题/标题");
 		String subject = "我是同步主题/标题";
 		
-		EmailUtil smt = EmailUtil.getInstance(user, set, content, subject);
+		EmailUtil smt = EmailUtil.getInstance();
+		smt.initData(user, set, content, subject);
 		try {
 			smt.sendMore();
 		} catch (Exception e) {
@@ -90,7 +91,8 @@ public class EmailTest {
 				+ "<p>请勿回复此邮件，有事联系客服QQ642034701</p>",
 				"欢迎您：账号3注册！<a href = 'http://localhost:8080/leedane/user/completeRegister.action?registerCode=abcd2'>点击完成注册</a>"
 				+ "<p>请勿回复此邮件，有事联系客服QQ642034701</p>"};
-		EmailUtil email = EmailUtil.getInstance(null,userTos,content,"我是测试不同步的多账号");
+		EmailUtil email = EmailUtil.getInstance();
+		email.initData(null,userTos,content,"我是测试不同步的多账号");
 		try {
 			email.sendOne();
 		} catch (Exception e) {

@@ -39,6 +39,7 @@ import com.cn.leedane.rabbitmq.recieve.EmailRecieve;
 import com.cn.leedane.rabbitmq.recieve.FinancialMonthReportRecieve;
 import com.cn.leedane.rabbitmq.recieve.IRecieve;
 import com.cn.leedane.rabbitmq.recieve.LogRecieve;
+import com.cn.leedane.rabbitmq.recieve.VisitorDeleteRecieve;
 import com.cn.leedane.rabbitmq.recieve.VisitorRecieve;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.springboot.SpringUtil;
@@ -141,6 +142,14 @@ public class InitCacheData {
 			}
 		}).start();
 		
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				startRabbitMqVisitorDeleteListener(); //异步启动rabbitmq删除访客队列的监听
+			}
+		}).start();
+		
 		SensitiveWordInit.getInstance(); //加载敏感词库
 		
 		FinancialCategoryUtil.getInstance();
@@ -169,8 +178,23 @@ public class InitCacheData {
 	private void startRabbitMqVisitorListener() {
 		
 		try {
-			//记账月报队列的监听
+			//访客队列的监听
 			IRecieve recieve = new VisitorRecieve();
+			RecieveMessage recieveMessage = new RecieveMessage(recieve);
+			recieveMessage.getMsg();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	/**
+	 * 启动rabbitmq删除访客队列的监听
+	 */
+	private void startRabbitMqVisitorDeleteListener() {
+		
+		try {
+			//删除访客队列的监听
+			IRecieve recieve = new VisitorDeleteRecieve();
 			RecieveMessage recieveMessage = new RecieveMessage(recieve);
 			recieveMessage.getMsg();
 		} catch (Exception e) {

@@ -3,6 +3,7 @@ package com.cn.leedane.model;
 import org.apache.solr.client.solrj.beans.Field;
 
 import com.cn.leedane.mybatis.table.annotation.Column;
+import com.cn.leedane.mybatis.table.annotation.Table;
 
 
 /**
@@ -11,7 +12,7 @@ import com.cn.leedane.mybatis.table.annotation.Column;
  * 2017年5月11日 下午4:33:52
  * version 1.0
  */
-//@Table(name="T_VISITOR")
+@Table(value="T_VISITOR")
 public class VisitorBean extends RecordTimeBean{
 	
 	private static final long serialVersionUID = 1L;

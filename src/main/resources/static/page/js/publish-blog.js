@@ -517,13 +517,27 @@ function clearTag(obj){
   	//评论
   	$('[name="can_comment"]').attr('checked', blog.can_comment);
   	
-  	if(isNotEmpty(blog.category)){
+  	//分类
+  	/*if(isNotEmpty(blog.category)){
   		$('[name="category"]').find('option[text="'+ blog.category +'"]').attr("selected",true); 
-  	}
-  	
+  	}*/
+  	var categoryObj = $('[name="category"]');
+  	categoryObj.val(blog.category);
+
   	//转发
   	$('[name="can_transmit"]').attr('checked', blog.can_transmit);
   	
   	$('[name="create_user_id"]').val(""+blog.create_user_id);
   		
+ }
+ 
+ /**
+  * 选择分类后的回调函数
+  * @param id
+  * @param text
+  */
+ function afterSelectCategory(id, text){
+	 console.log(id + "" + text);
+	 $('[name="category"]').val(text);
+	 $('body').removeClass("modal-open");
  }

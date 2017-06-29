@@ -910,7 +910,18 @@ function sendMood(){
 	}
 	
 	var loadi = layer.load('努力加载中…');
-	var params = {table_name: 't_mood', table_id: ct_id, content: text, links: $(".select-links").text(),froms: 'web网页端'};
+	
+	var links = '';
+	var $imgs = $(".select-links").find("img"); //获取所有的图片标签
+	if($imgs && $imgs.length > 0){
+		$imgs.each(function(index){
+			links += $(this).attr("src") +';';
+		});
+		links = deleteLastStr(links);
+	}
+	
+	
+	var params = {table_name: 't_mood', table_id: ct_id, content: text, links: links,froms: 'web网页端'};
 	if(ct_click_index >= 0){
 		params.pid = cts[ct_click_index].id;
 	}
@@ -943,7 +954,17 @@ function sendMood(){
  */
 function afterSelect(links){
 	$(".select-links").empty();
-	$(".select-links").text(links);
+	//$(".select-links").text(links);
+	if(isNotEmpty(links)){
+		var imgs = links.split(";");
+		var html = '';
+		for(var i = 0; i < imgs.length; i++){
+			html += '<div class="col-lg-4 col-sm-4">'+
+		      			'<img src="'+ imgs[i] +'" style="width: 100%; max-height: 200px;" class="img-responsive" />'+
+			      	'</div>';
+		}
+		$(".select-links").html(html);
+	}
 }
 
 function testClick(obj){

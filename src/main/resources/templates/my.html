@@ -147,7 +147,6 @@
 <div class="container mainContainer clearFloat">
 	   <div class="row">
 		   <div class="col-lg-3" style="border: 1px solid #fff;background-color: #fff;">
-		   		<button th:if="${isLoginUser}" class="btn btn-sm btn-success pull-right" data-toggle="modal" data-target="#add-mood" onclick="shoqSendMoodDialog();">发布心情</button>
 		   		<div class="row" id="user-img">
 		   			<!-- <img src="images/main_content_img.jpg" width="200px" height="200px" class="img-circle"> -->
 		   		</div>
@@ -165,6 +164,19 @@
 		   		</div>
 		   </div>
 	      <div class="col-lg-6">
+	      		<div class="row" th:if="${isLoginUser}">
+		      		<div class="col-lg-12">
+		      			<textarea rows="3" cols="10" id="push-mood-text" class="form-control" placeholder="请说点什么吧"></textarea>
+				      	<div class="input-group" style="margin-top: 5px;">
+					      <span class="input-group-btn" style="padding-top: 8px; padding-bottom: 8px;">
+					      	<button class="btn btn-default pull-right" type="button" onclick="sendMood();">发送</button>
+					      	<button class="btn btn-default pull-right" type="button" onclick="createSelectMaterialModal(this, 3, 1, 'afterSelect');" style="margin-right: 8px;">选择素材</button>
+					        
+					      </span>
+					  	</div>
+					 	<div class="select-links"></div>
+		      		</div>
+	      		</div>
 	      		<div class="row">
 	      			<div class="col-lg-12 scrollspy-example" id="mood-container" data-spy="scroll" data-target="#navbarExample" data-offset="50">
 	      			
@@ -261,32 +273,6 @@
 			        <button class="btn btn-default" type="button" onclick="sendCommentOrTransmit();">发送</button>
 			      </span>
 			    </div><!-- /input-group -->
-			</div>
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal -->
-</div>
-
-<!-- 模态框发布心情列表 -->
-<div class="modal fade" id="push-mood" tabindex="-1" role="dialog" aria-labelledby="pushMoodListModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-					&times;
-				</button>
-				<h4 class="modal-title" id="pushMoodListModalLabel">
-					发布心情
-				</h4>
-			</div>
-			<div class="modal-footer">
-				<textarea rows="5" cols="10" id="push-mood-text" class="form-control" placeholder="请说点什么吧"></textarea>
-		      	<div class="input-group" style="margin-top: 5px;">
-			      <span class="input-group-btn" style="padding-left: 5px;">
-			      	<button class="btn btn-default" type="button" onclick="createSelectMaterialModal(this, 3, 1, 'afterSelect');">选择素材</button>
-			        <button class="btn btn-default" type="button" onclick="sendMood();">发送</button>
-			      </span>
-			  	</div>
-			 	 <div class="select-links"></div>
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal -->

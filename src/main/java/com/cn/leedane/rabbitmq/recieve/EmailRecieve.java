@@ -35,7 +35,8 @@ public class EmailRecieve implements IRecieve{
 		EmailBean emailBean = (EmailBean)obj;
 		try{
 			if(emailBean != null){
-				EmailUtil emailUtil = EmailUtil.getInstance(null, emailBean.getReplyTo(), emailBean.getContent(), emailBean.getSubject());
+				EmailUtil emailUtil = EmailUtil.getInstance();
+				emailUtil.initData(null, emailBean.getReplyTo(), emailBean.getContent(), emailBean.getSubject());
 				emailUtil.sendMore();
 			}
 			success = true;

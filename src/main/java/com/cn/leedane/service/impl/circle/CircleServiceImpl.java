@@ -415,6 +415,8 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			//清除该圈子的缓存
 			circleHandler.deleteCircleBeanCache(circleBean.getId());
 			//通知所有的成员该圈子已经被删除
+			
+			visitorService.deleteVisitor(user, DataTableType.圈子.value, cid);
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);

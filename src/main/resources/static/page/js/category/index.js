@@ -8,7 +8,7 @@ var $tree;
 $(function(){
 	//$tree.treeview({data: getTree(), enableLinks: false});
 	$tree = $('#tree');
-	//获取根节点
+	//获取子节点
 	getChildNodes(0, 0);
 });
 
@@ -76,7 +76,7 @@ function addRoot(obj){
 				if(data.isSuccess){
 					//关闭弹出loading
 					layer.closeAll();
-					layer.msg(data.message + "，1秒后自动刷新");
+					layer.msg("根节点添加成功，1秒后自动刷新");
 					reloadPage(1000);
 				}else{
 					layer.close(loadi);
@@ -228,77 +228,4 @@ function deleteNode(obj){
 	}else{
 		layer.msg("请先选择一个要删除的节点！");
 	}
-}
-
-/**
- * 构建生成树的数据
- * @param data
- * @returns {Array}
- */
-function getTree(data){
-	var tree = [
-
-	            {
-	              text: "Parent 1",
-	              icon: "glyphicon glyphicon-stop",
-	              selectedIcon: "glyphicon glyphicon-stop",
-	              color: "red",
-	              backColor: "#FFFFFF",
-	              href: "#node-1", 
-	              selectable: true,
-	              category: {id: 1, text: 'Parent 1'},
-	              nodes: [
-
-	                {
-	                  text: "Child 1",
-
-	                  nodes: [
-
-	                    {
-	                    		
-	                      text: "Grandchild 1"
-
-	                    },
-
-	                    {
-	                      text: "Grandchild 2"
-
-	                    }
-
-	                  ]
-
-	                },
-
-	                {
-	                  text: "Child 2"
-
-	                }
-
-	              ]
-
-	            },
-
-	            {
-	              text: "Parent 2"
-
-	            },
-
-	            {
-	              text: "Parent 3"
-
-	            },
-
-	            {
-	              text: "Parent 4"
-
-	            },
-
-	            {
-	              text: "Parent 5"
-
-	            }
-
-	          ];  
-	
-	return tree;
 }

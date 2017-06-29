@@ -48,6 +48,8 @@
 <script th:if="${isDebug}" th:src="@{/page/other/ueditor1_4_3_3-utf8-jsp/lang/zh-cn/zh-cn.js}" type="text/javascript"></script>
 
 <script th:src="@{/page/js/publish-blog.js}" type="text/javascript"></script>
+<script th:src="@{/page/js/select-category.js}" type="text/javascript"></script>
+
 <div class="main clearFloat">	
 	<div class="container">
 		<div class="row" th:if="${not isAdmin}">
@@ -72,9 +74,10 @@
 	   		<!-- 分类 -->
 	   		<div class="col-lg-3">
 	   			<div class="form-group" style="width: 100%; margin-top: 24px;">
-					<select class="form-control">
+					<!-- <select class="form-control">
 							<option  name="category" th:each="cValue : ${categorys}" th:value="${cValue}" th:text="${cValue}"></option>
-					</select>
+					</select> -->
+					<input class="form-control" name="category" type="text" readonly="readonly" placeholder="请点击选择分类" onclick="createSelectCategoryModal(this, 21, 'afterSelectCategory');"/>
 				</div>
 				<button type="button" class="btn btn-primary btn-sm" style="width: 100%; margin-bottom: 8px;" onclick="draftlist();">查看草稿列表</button>
 	   		</div>

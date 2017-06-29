@@ -1222,9 +1222,10 @@
 						 break;
 				 }
 			 }
-			 if(!flag)
+			 if(!flag){
+				 node.state.expanded = true;
 				 node.nodes.push(options.node); 
-			 else
+			 }else
 				 layer.msg("平级的节点名称必须是唯一的");
 		  };  
 	}; 
@@ -1265,6 +1266,8 @@
 				 if(options.node && options.node.length > 0){
 					 for(var i = 0; i < options.node.length; i++)
 						 node.nodes.push(options.node[i]); 
+					 
+					 //node.state.expanded = true;
 				 }
 			 }
 			 else

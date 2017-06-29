@@ -23,6 +23,7 @@ import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.thread.ThreadUtil;
+import com.cn.leedane.thread.single.VisitorDeleteThread;
 import com.cn.leedane.thread.single.VisitorSaveThread;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
@@ -61,6 +62,15 @@ public class VisitorServiceImpl extends AdminRoleCheckService implements Visitor
 		if(user == null)
 			return false;
 		new ThreadUtil().singleTask(new VisitorSaveThread(user, froms, tableName, tableId, status));
+		return true;
+	}
+	
+
+	@Override
+	public boolean deleteVisitor(final UserBean user, final String tableName, final int tableId){
+		if(user == null)
+			return false;
+		new ThreadUtil().singleTask(new VisitorDeleteThread(user, tableName, tableId));
 		return true;
 	}
 	

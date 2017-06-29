@@ -142,6 +142,9 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			//对用户添加贡献值
 			circleContributionService.addScore(5, "发帖子《"+ circlePostBean.getTitle() +"》奖励贡献值", circleId, user);
 			
+			//保存帖子的访问记录
+	        saveVisitLog(circlePostBean.getId(), user, request);
+	        
 			message.put("isSuccess", true);
 			message.put("message", "您的帖子已经发布成功！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -271,6 +274,8 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			//对评论帖子添加贡献值
 			circleContributionService.addScore(1, "评论帖子《"+ oldCirclePostBean.getTitle() +"》奖励贡献值", circleId, user);
 		}
+		//保存帖子的访问记录
+        saveVisitLog(postId, user, request);
 		return results;
 	}
 	
@@ -321,6 +326,8 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleId, "帖子为", postId, "转发，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "transmit()", ConstantsUtil.STATUS_NORMAL, 0);	
+		//保存帖子的访问记录
+        saveVisitLog(postId, user, request);
 		return message.getMap();
 	}
 
@@ -342,6 +349,8 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			//对点赞帖子添加贡献值
 			circleContributionService.addScore(1, "点赞帖子《"+ oldCirclePostBean.getTitle() +"》奖励贡献值", circleId, user);
 		}
+		//保存帖子的访问记录
+        saveVisitLog(postId, user, request);
 		return results;
 	}
 	
@@ -367,7 +376,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		int createUserId = circlePostBean.getCreateUserId();
 		String reason = JsonUtil.getStringValue(json, "reason", "没有原因");
 		String content = "您的帖子《"+ circlePostBean.getTitle() +"》被管理者：\""+ user.getAccount() +"\" 删除, 原因是："+ reason;
-		boolean result = circlePostMapper.delete(circlePostBean) > 0;
+		boolean result = circlePostMapper.deleteById(CirclePostBean.class, circlePostBean.getId()) > 0;
 		if(result){
 			//先清空一下响应的用户和帖子绑定的缓存
 			circlePostHandler.deleteUserCirclePosts(user.getId());
@@ -384,12 +393,15 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			if(circlePostBean.getCreateUserId() == user.getId())
 				circleContributionService.reduceScore(5, "删除帖子《"+ circlePostBean.getTitle() +"》扣除贡献值", circleId, user);
 			
+			//删除帖子访问记录
+			visitorService.deleteVisitor(user, DataTableType.帖子.value, postId);
+	        
 			message.put("isSuccess", true);
 			message.put("message", "您已成功删除帖子！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
+			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
 		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleId, "帖子为", postId, "转发，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "transmit()", ConstantsUtil.STATUS_NORMAL, 0);	

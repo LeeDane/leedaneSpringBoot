@@ -39,7 +39,12 @@ public class RecieveMessage {
 		 * 他是没有超时存在的，即除非重启rabbitmq，否则该消息队列会一直阻塞，直到收到响应，但如果与该消息队列的subscirbe断开的话，
 		 * 则表明过期，即该消息队列中消息会尝试重新发消息给一个订阅者进行处理
 		 */
-		channel.basicConsume(recieve.getQueueName(), false, consumer);
+		try {
+			channel.basicConsume(recieve.getQueueName(), false, consumer);
+		} catch (Exception e) {
+			System.out.println(recieve.getQueueName()+"队列还没有创建");
+		}
+		
 		//String message = null;
 		while (true)
 		{
@@ -48,14 +53,9 @@ public class RecieveMessage {
 			//message = new String(delivery.getBody());
 			Object o = SerializeUtil.deserializeObject(delivery.getBody(), recieve.getClass());
 			if(o != null){
-				if(recieve.excute(o) && !recieve.errorDestroy()){
-					//logger.info("日志执行成功");
-					//确认消息，已经收到  
-					channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-				}else{
-					//出错直接销毁
-					channel.basicAck(delivery.getEnvelope().getDeliveryTag(), true);
-				}
+				//确认消息，已经收到 
+				//出错直接销毁
+				channel.basicAck(delivery.getEnvelope().getDeliveryTag(), !(recieve.excute(o) && !recieve.errorDestroy()));
 			}
 				
 		}

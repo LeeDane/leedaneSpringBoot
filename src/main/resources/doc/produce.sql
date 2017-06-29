@@ -27,7 +27,7 @@ delimiter
 
 -- 计算热门圈子的积分
 drop PROCEDURE if EXISTS `getHostestCirclesProcedure` ;
--- 用户打卡记录 * 0.3 + 用户净新增记录(新增-退出) * 0.6 + 任务完成总数 * 0.4 + 打开的次数 * 0.01 + 帖子热门积分* 0.02 -被举报总数 * 0.8
+-- 用户打卡记录 * 0.3 + 用户净新增记录(新增-退出) * 0.6 + 任务完成总数 * 0.4 + 打开的次数 * 0.01 + 帖子热门积分* 0.3 -被举报总数 * 0.8
 delimiter $$
 CREATE PROCEDURE `getHostestCirclesProcedure` (in $time DATETIME, in $limit INT)
 BEGIN
@@ -71,7 +71,7 @@ BEGIN
 			-- 获取圈子在这段时间内的帖子的积分
 			select sum(p.post_score) into postScore from t_circle_post p where p.circle_id = circle_id;
 
-			set totalScore = ifNull(addNumber, 0) * 0.6 + ifNull(logNumber, 0)* 0.01 + ifNull(postScore, 0) * 0.02;
+			set totalScore = ifNull(addNumber, 0) * 0.6 + ifNull(logNumber, 0)* 0.01 + ifNull(postScore, 0) * 0.3;
 			update t_circle c set c.circle_score = totalScore where c.id = circle_id;
 			-- select addNumber * 0.6 + logNumber* 0.1, totalScore, addNumber, logNumber, ifNull(postScore, 0);
 		FETCH cursor_circles into circle_id; -- 将游标当前读取行的数据顺序赋予自定义变量12 
