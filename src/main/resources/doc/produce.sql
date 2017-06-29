@@ -101,7 +101,7 @@ delimiter
 drop PROCEDURE if EXISTS `getHostestCircleMembersProcedure` ;
 -- 打卡积分 * 0.6 + 任务积分 * 0.3 
 delimiter $$
-CREATE PROCEDURE `getHostestCircleMembersProcedure` (in $circleId INT, in $limit INT)
+CREATE PROCEDURE `getHostestCircleMembersProcedure` (in $circleId INT)
 BEGIN
 	DECLARE member_id INT(11); -- 自定义变量1
 	DECLARE contributionNumber INT(11); -- 这个圈子该成员的贡献值
@@ -122,12 +122,75 @@ BEGIN
 			set totalScore = 0; -- 设置总分为0
 			-- 获取这个时间段内新增的成员数
 			SELECT sum(cc.total_score) into contributionNumber from t_circle_contribution cc where cc.circle_id = $circleId and cc.create_user_id = member_id ORDER BY cc.id desc LIMIT 1;
-			set totalScore = contributionNumber * 0.6;
+			set totalScore = ifNull(contributionNumber, 0) * 0.6;
 			update t_circle_member cm set cm.member_score = totalScore where cm.member_id = member_id and cm.circle_id = $circleId;
 
 		FETCH cursor_circle_members into member_id; -- 将游标当前读取行的数据顺序赋予自定义变量
 		UNTIL DONE
 		END REPEAT ;
   CLOSE cursor_circle_members; -- 关闭游标
+END $$
+delimiter
+
+-- 计算热门帖子积分
+drop PROCEDURE if EXISTS `getHostestPostsProcedure` ;
+-- 一定时间内的所有的帖子： 访问数 * 0.01 + 点赞 * 0.3 + 评论数 * 0.6 + 转发数 * 0.7 + 打赏数 * 1.6 
+delimiter $$
+CREATE PROCEDURE `getHostestPostsProcedure` (in $time DATETIME, in $limit INT)
+BEGIN
+	DECLARE post_id INT(11); -- 自定义变量1
+  DECLARE logNumber INT(11); -- 这个时间段内访问数
+	DECLARE zanNumber INT(11); -- 这个时间段内点赞总数
+	DECLARE commentNumber INT(11); -- 这个时间段内评论数
+	DECLARE transmitNumber INT(11); -- 这个时间段内转发数
+  DECLARE totalScore FLOAT; -- 最终的总分
+	DECLARE DONE BOOLEAN DEFAULT 0; -- 定义结束标识  
+	
+	-- 获取符合条件的圈子成员列表
+	DECLARE cursor_circle_posts CURSOR FOR (
+		select v.table_id
+		from t_visitor v 
+		where v.status= 1 and v.table_name='t_circle_post'
+		and not exists (
+			select 1 from t_visitor v1 
+			where v1.status= 1 and v1.table_name='t_circle_post' and v.table_id = v1.table_id
+			and v1.create_time > v.create_time) 
+		and v.create_time >= $time
+		ORDER BY v.create_time desc, v.id desc limit $limit
+		);
+	
+	-- 定义游标的结束--当遍历完成时，将DONE设置为1  
+	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET DONE = 1;  
+
+	OPEN cursor_circle_posts; -- 打开游标
+		
+			FETCH cursor_circle_posts into post_id; -- 将游标当前读取行的数据顺序赋予自定义变量
+			REPEAT 
+			set logNumber = 0; -- 这个时间段内访问数
+			set zanNumber = 0; -- 这个帖子点赞总数为0
+			set commentNumber = 0; -- 这个帖子评论总数为0
+			set transmitNumber = 0; -- 这个帖子转发总数为0
+			set totalScore = 0; -- 设置总分为0
+			-- 获取圈子在这段时间内被访问的次数
+			select count(id) into logNumber from t_visitor v where v.table_name='t_circle_post' and v.table_id = post_id and v.create_time > $time;
+
+			-- 获取这个时间段内的点赞数
+			SELECT count(z.id) into zanNumber from t_zan z where z.table_id = post_id and z.table_name = 't_circle_post' and z.create_time > $time;
+
+			-- 获取这个时间段内的评论数
+			SELECT count(c.id) into commentNumber from t_comment c where c.table_id = post_id and c.table_name = 't_circle_post' and c.create_time > $time;
+
+			-- 获取这个时间段内的转发数
+			SELECT count(t.id) into transmitNumber from t_transmit t where t.table_id = post_id and t.table_name = 't_circle_post' and t.create_time > $time;
+			
+			set totalScore = ifNull(logNumber, 0) *0.01 + ifNull(zanNumber, 0) * 0.3 + ifNull(commentNumber, 0) * 0.6 + ifNull(transmitNumber, 0) * 0.7;
+
+			update t_circle_post cp set cp.post_score = totalScore where cp.id = post_id;
+			-- select totalScore, post_id;
+
+		FETCH cursor_circle_posts into post_id; -- 将游标当前读取行的数据顺序赋予自定义变量
+		UNTIL DONE
+		END REPEAT ;
+		CLOSE cursor_circle_posts; -- 关闭游标
 END $$
 delimiter
