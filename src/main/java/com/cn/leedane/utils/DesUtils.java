@@ -1,8 +1,14 @@
 package com.cn.leedane.utils;
 import java.security.Key;
 import java.security.Security;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.crypto.Cipher;
+
+import net.sf.json.JSONObject;
+
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * DES加密和解密工具,可以对字符串进行加密和解密操作
@@ -164,17 +170,21 @@ public class DesUtils {
 	   * main方法
 	   * @param args
 	   */
-	  /*public static void main(String[] args) {
+	 /* public static void main(String[] args) {
 	    try {
-	      String test = "{name: \"leedane\", value: \"测试\", total: 123}";
-	      test = "http://leedanetf.tunnel.qydev.com/leedaneMVC/page/download.jsp?leedaneapp=OWEzMGRhZTI5NzlmZTQ3NjIzYzBkMDBjYzFiNjBhMjVlYWY5Y2QzOTU4MzQyMzZlNjdmZjk5MDZlNWNkNDcwMQ==";
-	      test = "c02d233e418bd5c3650de69ab9ec4f8ca9b70274835b08f66f542299104f3d58dd6f8366766a2f92";
+	      String test = "{name: \"leedane\", value: \"test回复时{}《》<>\".,;+=%$#@*&是否覆盖\", total: 123}";
+	      //test = "http://leedanetf.tunnel.qydev.com/leedaneMVC/page/download.jsp?leedaneapp=OWEzMGRhZTI5NzlmZTQ3NjIzYzBkMDBjYzFiNjBhMjVlYWY5Y2QzOTU4MzQyMzZlNjdmZjk5MDZlNWNkNDcwMQ==";
+	      //test = "c02d233e418bd5c3650de69ab9ec4f8ca9b70274835b08f66f542299104f3d58dd6f8366766a2f92";
 	      DesUtils des = new DesUtils();//自定义密钥   
-	      logger.info("加密前的字符：" + test);
-	      logger.info("加密后的字符：" + des.encrypt(test));
-	      DesUtils des1 = new DesUtils("leedaneofficial");//自定义密钥   
-	      logger.info("解密后的字符：" + des1.decrypt(des.encrypt(test)));
-	      logger.info("解密后的字符：" + des1.decrypt(test));
+	      //System.out.println("加密前的字符：" + test);
+	      String s = des.encrypt(test);
+	      System.out.println("加密后的字符：" + s);
+	      System.out.println("加密后的字符长度：" + s.length());
+	      DesUtils des1 = new DesUtils("leedaneofficia");//自定义密钥   
+	      System.out.println("解密后的字符：" + des1.decrypt(s));
+	      //System.out.println("解密后的字符：" + des1.decrypt(test));
+	      System.out.println("base64加密后解密后的字符：" + new String(Base64Util.encode(s.getBytes())).length());
+	      System.out.println("ddd--->" +new String(DigestUtils.shaHex(test)));
 	      
 	      //logger.info("解密后的字符：" + des.decrypt("202cb962ac59075b964b07152d234b70"));
 	      Map<String, Object> infoMap = new HashMap<String, Object>();
@@ -182,11 +192,12 @@ public class DesUtils {
           infoMap.put("id", "dane");
           String newString = des.encrypt(JSONObject.fromObject(infoMap).toString());
           String string = newString+ "http://7xnv8i.com1.z0.glb.clouddn.com/10_10_20160430172759_489c15f4d74a11151fa92c53f63acdd8.jpg";
-          logger.info(des.encrypt(JSONObject.fromObject(infoMap).toString()));
-          logger.info(string.length());
+          System.out.println(des.encrypt(JSONObject.fromObject(infoMap).toString()));
+          System.out.println(string.length());
 	    }
 	    catch (Exception e) {
 	      e.printStackTrace();
 	    }
 	  }*/
+	  
 }

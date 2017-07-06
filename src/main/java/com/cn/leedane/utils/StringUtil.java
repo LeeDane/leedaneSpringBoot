@@ -54,21 +54,22 @@ public class StringUtil {
 	
 	/***
 	 * 获取免登陆验证码(7天过期)
-	 * @param account
-	 * @param loginTime
+	 * @param userid
+	 * @param secretCode
 	 * @return
-	 * @throws ErrorException 
+	 * @throws ErrorException
 	 */
-	public static String getUserToken(String userid, String pwd) throws ErrorException{
+	public static String getUserToken(String userid, String secretCode) throws ErrorException{
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("userid", userid);
-		map.put("pwd", pwd);
+		//map.put("pwd", pwd);
 		Date currentDate = DateUtil.getCurrentTime();
 		map.put("time", DateUtil.DateToString(currentDate, "yyyyMMddHHmmss"));
 		map.put("overdue", DateUtil.DateToString(DateUtil.getOverdueTime(currentDate, "7天")));
 		JSONObject json = JSONObject.fromObject(map);
 		String value = json.toString();
 		return new String(Base64Util.encode(value.getBytes()));
+		//return new String(Des3Utils.EncryptBy3DES(value, secretCode));
 	}
 	
 	/***
@@ -79,16 +80,17 @@ public class StringUtil {
 	 * @return
 	 * @throws ErrorException
 	 */
-	public static String getUserToken(String userid, String pwd, Date overdue) throws ErrorException{
+	public static String getUserToken(String userid, String secretCode, Date overdue) throws ErrorException{
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("userid", userid);
-		map.put("pwd", pwd);
+		//map.put("pwd", pwd);
 		Date currentDate = DateUtil.getCurrentTime();
 		map.put("time", DateUtil.DateToString(currentDate, "yyyyMMddHHmmss"));
 		map.put("overdue", DateUtil.DateToString(overdue, "yyyyMMddHHmmss"));
 		JSONObject json = JSONObject.fromObject(map);
 		String value = json.toString();
 		return new String(Base64Util.encode(value.getBytes()));
+		//return new String(Des3Utils.EncryptBy3DES(value, secretCode));
 	}
 	
 	/**

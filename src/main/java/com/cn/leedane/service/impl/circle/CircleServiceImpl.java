@@ -35,6 +35,7 @@ import com.cn.leedane.model.VisitorBean;
 import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.model.circle.CircleMemberBean;
 import com.cn.leedane.model.circle.CircleSettingBean;
+import com.cn.leedane.model.circle.CircleUserPostBean;
 import com.cn.leedane.model.circle.CircleUserPostsBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
@@ -157,6 +158,19 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			CircleUserPostsBean circleUserPosts = circlePostHandler.getUserCirclePosts(user.getId());
 			message.put("circleUserPosts", circleUserPosts);
 		}
+		
+		//获取热门帖子
+		CircleUserPostsBean hotestPosts = circlePostHandler.getHotestPosts();
+		if(hotestPosts != null && CollectionUtil.isNotEmpty(hotestPosts.getPosts())){
+			for(CircleUserPostBean post: hotestPosts.getPosts()){
+				if(StringUtil.isNotNull(post.getImgs())){
+					post.setImgs(post.getImgs().split(";")[0]);
+				}else{
+					post.setImgs(ConstantsUtil.DEFAULT_NO_PIC_PATH);
+				}
+			}
+		}
+		message.put("hotestPosts", hotestPosts);
 		
 		try {
 			message.put("hotests", circleHandler.getHostest().getCircleBeans());//获取热门的圈子

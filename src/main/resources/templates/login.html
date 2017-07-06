@@ -12,7 +12,7 @@
     
     <!-- 正式环境下的cdn引用-->
 	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css}"/>
-	<script th:if="${not isDebug}" type="text/javascript" th:src="@{http://libs.baidu.com/jquery/1.9.1/jquery.min.js}"></script>
+	<script th:if="${not isDebug}" type="text/javascript" th:src="@{https://libs.baidu.com/jquery/1.9.1/jquery.min.js}"></script>
 	<script th:if="${not isDebug}" src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script th:if="${not isDebug}" th:src="@{https://cdn.bootcss.com/layer/3.0.1/layer.js}" type="text/javascript"></script>
 	<script th:if="${not isDebug}" th:src="@{https://cdn.bootcss.com/layer/3.0.1/layer.min.js}" type="text/javascript"></script>

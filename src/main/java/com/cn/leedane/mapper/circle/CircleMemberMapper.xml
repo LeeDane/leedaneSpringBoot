@@ -75,18 +75,18 @@
 	<select id="getHotests" resultType="java.util.Map">
 		select cm.id, cm.member_id, cm.status, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time
 		from t_circle_member cm 
-		where cm.circle_id = #{circleId} and cm.create_time > #{time} order by cm.member_score desc limit 0, #{pageSize};
+		where cm.circle_id = #{circleId} and cm.status = #{status} and cm.create_time > #{time} order by cm.member_score desc limit 0, #{pageSize};
 	</select>
 	
 	<select id="getNewests" parameterType="int" resultType="java.util.Map">
 		select cm.id, cm.member_id, cm.status, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time
 		from t_circle_member cm 
-		where cm.circle_id = #{circleId} order by cm.id desc limit 0, #{pageSize};
+		where cm.circle_id = #{circleId} and cm.status = #{status} order by cm.id desc limit 0, #{pageSize};
 	</select>
 	
 	<select id="getRecommends" parameterType="int" resultType="java.util.Map">
 		select cm.id, cm.member_id, cm.status, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time
 		from t_circle_member cm 
-		where cm.circle_id = #{circleId} and cm.member_recommend = true order by cm.id desc limit 0, #{pageSize};
+		where cm.circle_id = #{circleId} and cm.status = #{status} and cm.member_recommend = true order by cm.id desc limit 0, #{pageSize};
 	</select>
 </mapper>

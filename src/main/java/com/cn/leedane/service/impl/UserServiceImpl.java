@@ -1412,7 +1412,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 					SendMessage sendMessage = new SendMessage(send);
 					sendMessage.sendMsg();//发送消息队列到消息队列
 					message.put("isSuccess", true);
-					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件已经发送.value));
+					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件已经发送.value) +", 请注意查收！");
 					message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 				} catch (Exception e) {
 					e.printStackTrace();

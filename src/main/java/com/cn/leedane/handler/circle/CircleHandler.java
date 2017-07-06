@@ -148,7 +148,7 @@ public class CircleHandler {
 		//redisUtil.delete(hostestKey);
 		//热门
 		if(!redisUtil.hasKey(hostestKey)){
-			circlesSerializeBean.setCircleBeans(circleMapper.getHotests(DateUtil.getDayBeforeOrAfter(OptionUtil.circleHostestBeforeDay, true), 6));
+			circlesSerializeBean.setCircleBeans(circleMapper.getHotests(DateUtil.getDayBeforeOrAfter(OptionUtil.circleHostestBeforeDay, true), 6, ConstantsUtil.STATUS_NORMAL));
 			redisUtil.addSerialize(hostestKey, SerializeUtil.serializeObject(circlesSerializeBean));
 			redisUtil.expire(hostestKey, 60 * 60); //设置一个小时过期
 		}else{
@@ -169,7 +169,7 @@ public class CircleHandler {
 		//redisUtil.delete(newestKey);
 		//最新
 		if(!redisUtil.hasKey(newestKey)){
-			circlesSerializeBean.setCircleBeans(circleMapper.getNewests(6));
+			circlesSerializeBean.setCircleBeans(circleMapper.getNewests(6, ConstantsUtil.STATUS_NORMAL));
 			redisUtil.addSerialize(newestKey, SerializeUtil.serializeObject(circlesSerializeBean));
 			redisUtil.expire(newestKey, 60); //设置一分钟过期
 		}else{
@@ -190,7 +190,7 @@ public class CircleHandler {
 		//redisUtil.delete(recommendKey);
 		//推荐
 		if(!redisUtil.hasKey(recommendKey)){
-			circlesSerializeBean.setCircleBeans(circleMapper.getRecommends(6));
+			circlesSerializeBean.setCircleBeans(circleMapper.getRecommends(6, ConstantsUtil.STATUS_NORMAL));
 			redisUtil.addSerialize(recommendKey, SerializeUtil.serializeObject(circlesSerializeBean));
 			redisUtil.expire(recommendKey, 60); //设置一分钟过期
 		}else{

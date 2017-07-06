@@ -272,7 +272,7 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 							'<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-right cut-text" style="text-align: right;">'+
 								'<span class="list-group-item-heading" style="margin-right: 5px;">'+ changeNotNullString(mood.create_time).substring(0, 16) +
 						        '</span>'+
-						        '<span class="list-group-item-heading glyphicon glyphicon-chevron-down cursor" onclick="showItemListModal('+ index +')">'+
+						        '<span class="list-group-item-heading glyphicon glyphicon-option-vertical cursor" onclick="showItemListModal('+ index +')">'+
 						        '</span> '+
 							'</div>'+
 						'</div>'+

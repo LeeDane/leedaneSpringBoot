@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.cn.leedane.mapper.circle.CircleMemberMapper;
 import com.cn.leedane.model.circle.CirclesMemberSerializeBean;
 import com.cn.leedane.redis.util.RedisUtil;
+import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.OptionUtil;
 import com.cn.leedane.utils.SerializeUtil;
@@ -38,7 +39,7 @@ public class CircleMemberHandler {
 		//redisUtil.delete(hostestKey);
 		//热门
 		if(!redisUtil.hasKey(hostestKey)){
-			circlesMemberSerializeBean.setCircleMemberBeans(circleMemberMapper.getHotests(circleId, DateUtil.getDayBeforeOrAfter(OptionUtil.circleHostestBeforeDay, true), 4));
+			circlesMemberSerializeBean.setCircleMemberBeans(circleMemberMapper.getHotests(circleId, DateUtil.getDayBeforeOrAfter(OptionUtil.circleHostestBeforeDay, true), 4, ConstantsUtil.STATUS_NORMAL));
 			redisUtil.addSerialize(hostestKey, SerializeUtil.serializeObject(circlesMemberSerializeBean));
 			redisUtil.expire(hostestKey, 60 * 60); //设置一个小时过期
 		}else{
@@ -60,7 +61,7 @@ public class CircleMemberHandler {
 		//redisUtil.delete(newestKey);
 		//最新
 		if(!redisUtil.hasKey(newestKey)){
-			circlesMemberSerializeBean.setCircleMemberBeans(circleMemberMapper.getNewests(circleId, 4));
+			circlesMemberSerializeBean.setCircleMemberBeans(circleMemberMapper.getNewests(circleId, 4, ConstantsUtil.STATUS_NORMAL));
 			redisUtil.addSerialize(newestKey, SerializeUtil.serializeObject(circlesMemberSerializeBean));
 			redisUtil.expire(newestKey, 60); //设置一分钟过期
 		}else{
@@ -81,7 +82,7 @@ public class CircleMemberHandler {
 		//redisUtil.delete(recommendKey);
 		//推荐
 		if(!redisUtil.hasKey(recommendKey)){
-			circlesMemberSerializeBean.setCircleMemberBeans(circleMemberMapper.getRecommends(circleId, 4));
+			circlesMemberSerializeBean.setCircleMemberBeans(circleMemberMapper.getRecommends(circleId, 4, ConstantsUtil.STATUS_NORMAL));
 			redisUtil.addSerialize(recommendKey, SerializeUtil.serializeObject(circlesMemberSerializeBean));
 			redisUtil.expire(recommendKey, 60); //设置一分钟过期
 		}else{

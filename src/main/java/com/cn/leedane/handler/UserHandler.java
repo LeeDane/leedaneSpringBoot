@@ -168,7 +168,8 @@ public class UserHandler {
 	 * @return
 	 */
 	public UserBean getUserBean(String username, String pwd){
-		UserBean user = userMapper.loginUser(username, MD5Util.compute(pwd));		
+		UserBean user = userMapper.loginUser(username, MD5Util.compute(pwd));
+		
 		if(user != null){
 			String userInfoKey = getRedisUserInfoKey(user.getId());
 			redisUtil.addSerialize(userInfoKey, SerializationUtils.serialize(user));

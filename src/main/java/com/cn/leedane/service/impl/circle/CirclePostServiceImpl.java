@@ -184,7 +184,8 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		CirclePostBean circlePostBean = (CirclePostBean) sqlUtil.getUpdateBean(json, oldPostBean);
 		circlePostBean.setModifyUserId(user.getId());
 		circlePostBean.setModifyTime(createTime);
-		
+		//取180个作为摘要
+		circlePostBean.setDigest(JsoupUtil.getInstance().getDigest(circlePostBean.getContent(), 0, 180));
 		boolean result = circlePostMapper.update(circlePostBean) > 0;
 		if(result){
 			//先清空一下响应的用户和帖子绑定的缓存
@@ -271,6 +272,9 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		
 		Map<String, Object> results = commentService.add(json, user, request);
 		if(results != null && results.containsKey("isSuccess") && StringUtil.changeObjectToBoolean(results.get("isSuccess"))){
+			//删除热门帖子
+			circlePostHandler.deleteHotestPosts();
+			
 			//对评论帖子添加贡献值
 			circleContributionService.addScore(1, "评论帖子《"+ oldCirclePostBean.getTitle() +"》奖励贡献值", circleId, user);
 		}
@@ -316,6 +320,8 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			
 			//对转发帖子添加贡献值
 			circleContributionService.addScore(1, "转发帖子《"+ circlePostBean.getTitle() +"》奖励贡献值", circleId, user);
+			//删除热门帖子
+			circlePostHandler.deleteHotestPosts();
 			
 			message.put("isSuccess", true);
 			message.put("message", "您已成功转发帖子！");
@@ -348,7 +354,11 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		if(results != null && results.containsKey("isSuccess") && StringUtil.changeObjectToBoolean(results.get("isSuccess"))){
 			//对点赞帖子添加贡献值
 			circleContributionService.addScore(1, "点赞帖子《"+ oldCirclePostBean.getTitle() +"》奖励贡献值", circleId, user);
+			
+			//删除热门帖子
+			circlePostHandler.deleteHotestPosts();
 		}
+		
 		//保存帖子的访问记录
         saveVisitLog(postId, user, request);
 		return results;
@@ -383,6 +393,8 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			circlePostHandler.deleteUserPostPosts(circleId, user.getId());
 			//清空该帖子的详情
 			circlePostHandler.deletePostBeanCache(postId);
+			//删除热门帖子
+			circlePostHandler.deleteHotestPosts();
 			//删除父帖子的转发数
 			if(circlePostBean.getPid() > 0)
 				circlePostHandler.deleteTransmit(circlePostBean.getPid());

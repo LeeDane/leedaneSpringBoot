@@ -48,16 +48,16 @@
 	
 	<select id="getHotests" resultMap="objectBean">
 		select c.id, c.name name, c.circle_desc, c.circle_path, c.status, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time
-		from t_circle c where c.create_time > #{time} order by c.circle_score desc limit 0, #{pageSize};
+		from t_circle c where c.status = #{status} and c.create_time > #{time} order by c.circle_score desc limit 0, #{pageSize};
 	</select>
 	
 	<select id="getNewests" parameterType="int" resultMap="objectBean">
 		select c.id, c.name name, c.circle_desc, c.circle_path, c.status, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time
-		from t_circle c order by c.id desc limit 0, #{pageSize};
+		from t_circle c where c.status = #{status} order by c.id desc limit 0, #{pageSize};
 	</select>
 	
 	<select id="getRecommends" parameterType="int" resultMap="objectBean">
 		select c.id, c.name name, c.circle_desc, c.circle_path, c.status, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time
-		from t_circle c where c.circle_recommend = true order by c.id desc limit 0, #{pageSize};
+		from t_circle c where c.status = #{status} and c.circle_recommend = true order by c.id desc limit 0, #{pageSize};
 	</select>
 </mapper>

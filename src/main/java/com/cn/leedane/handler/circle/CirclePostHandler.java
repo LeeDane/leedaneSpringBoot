@@ -2,6 +2,7 @@ package com.cn.leedane.handler.circle;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,15 +10,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.handler.CommentHandler;
 import com.cn.leedane.handler.TransmitHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.ZanHandler;
 import com.cn.leedane.mapper.circle.CirclePostMapper;
-import com.cn.leedane.model.RolesBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.model.circle.CirclePostBean;
@@ -26,7 +24,9 @@ import com.cn.leedane.model.circle.CircleUserPostsBean;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.OptionUtil;
 import com.cn.leedane.utils.RelativeDateFormat;
 import com.cn.leedane.utils.SerializeUtil;
 import com.cn.leedane.utils.SqlUtil;
@@ -60,6 +60,72 @@ public class CirclePostHandler {
 	private SystemCache systemCache;
 	
 	/**
+	 * 获取热门帖子列表(这里只缓存8条记录，主要用于首页的展示)
+	 * @param circleId
+	 * @param userId
+	 * @return
+	 */
+	public CircleUserPostsBean getHotestPosts(){
+		String key = getHotestPostKey();
+		Object obj = systemCache.getCache(key);
+		CircleUserPostsBean userPostBean = null;
+		deleteHotestPosts();
+		if(obj == ""){
+			if(redisUtil.hasKey(key)){
+				try {
+					userPostBean =  (CircleUserPostsBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), CircleUserPostsBean.class);
+					if(userPostBean != null){
+						systemCache.addCache(key, userPostBean);
+						return userPostBean;
+					}else{
+						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
+						redisUtil.delete(key);
+						userPostBean = getHostestPosts(8);
+						if(CollectionUtil.isNotEmpty(userPostBean.getPosts())){
+							try {
+								redisUtil.addSerialize(key, SerializeUtil.serializeObject(userPostBean));
+								systemCache.addCache(key, userPostBean);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}catch (IOException e) {
+					e.printStackTrace();
+				}
+			}else{//redis没有的处理
+				userPostBean = getHostestPosts(8);
+				if(CollectionUtil.isNotEmpty(userPostBean.getPosts())){
+					try {
+						redisUtil.addSerialize(key, SerializeUtil.serializeObject(userPostBean));
+						systemCache.addCache(key, userPostBean);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}else{
+			userPostBean = (CircleUserPostsBean)obj;
+		}
+		return userPostBean;
+	}
+	
+	/**
+	 * 删除热门帖子的cache和redis缓存
+	 * @param userId
+	 * @return
+	 */
+	public boolean deleteHotestPosts(){
+		String key = getHotestPostKey();
+		redisUtil.delete(key);
+		systemCache.removeCache(key);
+		return true;
+	}
+	
+	
+	/**
 	 * 获取圈子用户的帖子列表(这里只缓存8条用户最新帖子记录，主要用于首页的展示)
 	 * @param circleId
 	 * @param userId
@@ -69,11 +135,10 @@ public class CirclePostHandler {
 		String key = getUserCirclePostKey(userId);
 		Object obj = systemCache.getCache(key);
 		CircleUserPostsBean userPostBean = null;
-		//deleteUserCirclePosts(userId);
 		if(obj == ""){
 			if(redisUtil.hasKey(key)){
 				try {
-					userPostBean =  (CircleUserPostsBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), RolesBean.class);
+					userPostBean =  (CircleUserPostsBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), CircleUserPostsBean.class);
 					if(userPostBean != null){
 						systemCache.addCache(key, userPostBean);
 						return userPostBean;
@@ -118,6 +183,20 @@ public class CirclePostHandler {
 	 * @param limit
 	 * @return
 	 */
+	private CircleUserPostsBean getHostestPosts(int limit){
+		Date time = DateUtil.getDayBeforeOrAfter(OptionUtil.circleHostestBeforeDay, true);
+		CircleUserPostsBean userPostsBean = new CircleUserPostsBean();
+		//这里只缓存8条用户最新帖子记录
+		userPostsBean.setPosts(getCircleUserPost(circlePostMapper.getHostestPosts(time, 0, limit, ConstantsUtil.STATUS_NORMAL)));
+		return userPostsBean;
+	}
+	
+	/**
+	 * 获取圈子当前用户的帖子列表
+	 * @param userId
+	 * @param limit
+	 * @return
+	 */
 	private CircleUserPostsBean getTheUserCirclePosts(int userId, int limit){
 		CircleUserPostsBean userPostsBean = new CircleUserPostsBean();
 		//这里只缓存8条用户最新帖子记录
@@ -140,6 +219,7 @@ public class CirclePostHandler {
 				data.setTag(postBean.getTag());
 				data.setTitle(postBean.getTitle());
 				data.setCreateTime(RelativeDateFormat.format(postBean.getCreateTime()));
+				data.setDigest(postBean.getDigest());
 				datas.add(data);
 			}
 		}
@@ -177,7 +257,7 @@ public class CirclePostHandler {
 		if(obj == ""){
 			if(redisUtil.hasKey(key)){
 				try {
-					userPostsBean =  (CircleUserPostsBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), RolesBean.class);
+					userPostsBean =  (CircleUserPostsBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), CircleUserPostsBean.class);
 					if(userPostsBean != null){
 						systemCache.addCache(key, userPostsBean);
 						return userPostsBean;
@@ -465,5 +545,15 @@ public class CirclePostHandler {
 	 */
 	public static String getUserPostPostKey(int circleId, int userId){
 		return ConstantsUtil.CIRCLE_REDIS+ circleId +"_U_" + userId;
+	}
+	
+	/**
+	 * 获取热门帖子列表关系在redis的key
+	 * @param circleId
+	 * @param userId
+	 * @return
+	 */
+	public static String getHotestPostKey(){
+		return ConstantsUtil.CIRCLE_REDIS +"_H";
 	}
 }

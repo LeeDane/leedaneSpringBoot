@@ -95,7 +95,7 @@ public interface CircleMemberMapper extends BaseMapper<CircleMemberBean>{
 	 * @param pageSize
 	 * @return
 	 */
-	public List<Map<String, Object>> getHotests(@Param("circleId")int circleId, @Param("time") Date time, @Param("pageSize") int pageSize);
+	public List<Map<String, Object>> getHotests(@Param("circleId")int circleId, @Param("time") Date time, @Param("pageSize") int pageSize, @Param("status") int status);
 	
 	/**
 	 * 获取目前圈子最新的成员
@@ -103,7 +103,7 @@ public interface CircleMemberMapper extends BaseMapper<CircleMemberBean>{
 	 * @param pageSize
 	 * @return
 	 */
-	public List<Map<String, Object>> getNewests(@Param("circleId")int circleId, @Param("pageSize") int pageSize);
+	public List<Map<String, Object>> getNewests(@Param("circleId")int circleId, @Param("pageSize") int pageSize, @Param("status") int status);
 	
 	/**
 	 * 获取目前圈子推荐的成员
@@ -111,5 +111,5 @@ public interface CircleMemberMapper extends BaseMapper<CircleMemberBean>{
 	 * @param pageSize
 	 * @return
 	 */
-	public List<Map<String, Object>> getRecommends(@Param("circleId")int circleId, @Param("pageSize") int pageSize);
+	public List<Map<String, Object>> getRecommends(@Param("circleId")int circleId, @Param("pageSize") int pageSize, @Param("status") int status);
 }

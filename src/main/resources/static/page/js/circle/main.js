@@ -56,6 +56,17 @@ $(function(){
 		deletePost($(this));
 	});
 	
+	//修改的点击事件
+	$(document).on("click", ".post-update", function(event){
+		event.stopPropagation();//阻止冒泡
+		var postId = $(this).data("id");
+		if(isEmpty(postId)){
+			layer.msg("该帖子不存在，请联系管理员核实");
+			return;
+		}
+		window.open("/cc/"+circleId+"/write?postId="+postId, "_self");
+	});
+	
 	//加入圈子
 	$(".into-circle").click(function(){
 		$.ajax({
@@ -225,6 +236,10 @@ function buildEachPostRow(index, post){
 					html += '<p>';
 					if(isCreater || isCircleAdmin || loginUserId == post.create_user_id){
 						html += '<span class="glyphicon glyphicon-trash post-delete hand" data-toggle="tooltip" data-placement="left" title="删除" aria-hidden="true"></span>&nbsp;&nbsp;';
+					}
+					
+					if(loginUserId == post.create_user_id){
+						html += '<span class="glyphicon glyphicon-pencil post-update hand" data-toggle="tooltip" data-placement="left" title="编辑" aria-hidden="true" data-id="'+ post.id +'"></span>&nbsp;&nbsp;';
 					}
 								
 						html += '<span class="glyphicon glyphicon-comment hand post-comment" data-toggle="tooltip" data-placement="left" title="评论" aria-hidden="true"></span>&nbsp;'+ post.comment_number +'&nbsp;&nbsp;'+

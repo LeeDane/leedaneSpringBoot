@@ -119,7 +119,7 @@ class SingleTask implements Callable<Boolean>{
 			report.setUser(mUser);
 			
 			if(CollectionUtil.isNotEmpty(financialBeans)){
-				String detailLink = "http://127.0.0.1:8080/leedaneMVC/page/my.jsp";
+				String detailLink = "http://onlylove.top/fn";
 				float incomeTotal = 0;
 				float spendTotal = 0;
 				int incomeNum = 0;

@@ -36,6 +36,11 @@ public class CircleUserPostBean extends IDBean{
 	private String content;
 	
 	/**
+	 * 帖子的摘要
+	 */
+	private String digest;
+	
+	/**
 	 * 为了性能，此处增加冗余字段标记是否有照片
 	 */
 	private boolean hasImg;
@@ -118,6 +123,12 @@ public class CircleUserPostBean extends IDBean{
 	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
 	}
-	
-	
+
+	public String getDigest() {
+		return digest;
+	}
+
+	public void setDigest(String digest) {
+		this.digest = digest;
+	}
 }

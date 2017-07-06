@@ -184,6 +184,12 @@ public class UserBean extends StatusBean{
 	private String registerCode;
 	
 	/**
+	 * 保存私有码(注册的时候系统随机生成，uuid生成36位的码，作用于系统token校验等的匹配)
+	 */
+	@Column("secret_code")
+	private String secretCode;
+	
+	/**
 	 * 积分
 	 */
 	private int score;
@@ -479,6 +485,14 @@ public class UserBean extends StatusBean{
 	}
 	public void setWechatUserName(String wechatUserName) {
 		this.wechatUserName = wechatUserName;
+	}
+
+	public String getSecretCode() {
+		return secretCode;
+	}
+
+	public void setSecretCode(String secretCode) {
+		this.secretCode = secretCode;
 	}
 	
 	/**

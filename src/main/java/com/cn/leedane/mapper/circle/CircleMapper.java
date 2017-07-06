@@ -55,19 +55,19 @@ public interface CircleMapper extends BaseMapper<CircleBean>{
 	 * @param time
 	 * @return
 	 */
-	public List<CircleBean> getHotests(@Param("time") Date time, @Param("pageSize") int pageSize);
+	public List<CircleBean> getHotests(@Param("time") Date time, @Param("pageSize") int pageSize, @Param("status") int status);
 	
 	/**
 	 * 获取目前最新的圈子
 	 * @param time
 	 * @return
 	 */
-	public List<CircleBean> getNewests(@Param("pageSize") int pageSize);
+	public List<CircleBean> getNewests(@Param("pageSize") int pageSize, @Param("status") int status);
 	
 	/**
 	 * 获取目前推荐的圈子
 	 * @param time
 	 * @return
 	 */
-	public List<CircleBean> getRecommends(@Param("pageSize") int pageSize);
+	public List<CircleBean> getRecommends(@Param("pageSize") int pageSize, @Param("status") int status);
 }

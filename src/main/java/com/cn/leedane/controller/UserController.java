@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -191,7 +192,7 @@ public class UserController extends BaseController{
 	            if(StringUtil.isNotNull(platform) && PlatformType.安卓版.value.equals(platform)){
 	            	UserTokenBean userTokenBean = new UserTokenBean();
 	            	Date overdue = DateUtil.getOverdueTime(new Date(), "7天");
-	            	userTokenBean.setToken(StringUtil.getUserToken(String.valueOf(user.getId()), user.getPassword(), overdue));
+	            	userTokenBean.setToken(StringUtil.getUserToken(String.valueOf(user.getId()), user.getSecretCode(), overdue));
 	            	userTokenBean.setCreateTime(new Date());
 	            	userTokenBean.setCreateUserId(user.getId());
 	            	userTokenBean.setOverdue(overdue);
@@ -300,8 +301,8 @@ public class UserController extends BaseController{
 			removeMultSession(ConstantsUtil.USER_SESSION);
 		}*/
 		ResponseMap message = new ResponseMap();
-		if(!checkParams(message, request))
-			return message.getMap();
+		checkParams(message, request);
+			//return message.getMap();
 		
 		checkRoleOrPermission(request);
 		JSONObject json = getJsonFromMessage(message);
@@ -313,6 +314,7 @@ public class UserController extends BaseController{
 		user.setRegisterTime(registerTime);
 		user.setRegisterCode(StringUtil.produceRegisterCode(DateUtil.DateToString(registerTime, "YYYYMMDDHHmmss"),
 				JsonUtil.getStringValue(json, "account")));
+		user.setSecretCode(UUID.randomUUID().toString());
 		message.putAll(userService.saveUser(user));
 		//保存操作日志
 		this.operateLogService.saveOperateLog(OptionUtil.adminUser, request, null, user.getAccount()+"注册成功", "register", 1, 0);

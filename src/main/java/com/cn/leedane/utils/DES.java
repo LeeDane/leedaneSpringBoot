@@ -1,12 +1,11 @@
 package com.cn.leedane.utils;
-import java.security.Key;    
+import java.security.Key;
 
-import javax.crypto.Cipher;    
-import javax.crypto.KeyGenerator;    
-import javax.crypto.SecretKey;    
-import javax.crypto.SecretKeyFactory;    
-import javax.crypto.spec.DESKeySpec;    
-import javax.crypto.spec.IvParameterSpec;    
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
     
 /**  
  * DES 算法       1972美国IBM研制，对称加密算法  

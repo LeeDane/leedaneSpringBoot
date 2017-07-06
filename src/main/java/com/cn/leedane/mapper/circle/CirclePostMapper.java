@@ -77,4 +77,18 @@ public interface CirclePostMapper extends BaseMapper<CirclePostBean>{
 	 * @return
 	 */
 	public void calculateHotests(@Param("time") Date time, @Param("pageSize") int pageSize);
+	
+	/**
+	 * 在圈子中心获取用户的帖子列表
+	 * @param userId
+	 * @param start
+	 * @param pageSize
+	 * @param status
+	 * @return
+	 */
+	public List<CirclePostBean> getHostestPosts(
+			@Param("time") Date time, 
+			@Param("start") int start,
+			@Param("pageSize") int pageSize, 
+			@Param("status") int status);
 }
