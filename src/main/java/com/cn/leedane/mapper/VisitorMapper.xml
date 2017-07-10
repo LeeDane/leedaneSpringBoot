@@ -31,4 +31,16 @@
 		and v.create_time >= #{time}
 		ORDER BY v.create_time desc, v.id desc limit #{start}, #{pageSize};
 	</select>
+	
+	<select id="getTodayVisitors" resultType="int">
+		select count(v.id)
+		from t_visitor v 
+		where v.status=#{status} and v.create_time > #{createTime}  and v.table_name=#{tableName} and v.table_id = #{tableId}
+	</select>
+	
+	<select id="getAllVisitors" resultType="int">
+		select count(v.id)
+		from t_visitor v 
+		where v.status=#{status} and v.table_name=#{tableName} and v.table_id = #{tableId}
+	</select>
 </mapper>

@@ -42,4 +42,20 @@ public interface VisitorService<T extends IDBean>{
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getVisitorsByLimit(int tableId,
 			JSONObject json, UserBean user, HttpServletRequest request);
+
+	/**
+	 * 获取今日的访问数
+	 * @param tableName
+	 * @param tableId
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public int getTodayVisitors(String tableName, int tableId);
+	
+	/**
+	 * 获取所有的访问数
+	 * @param tableName
+	 * @param tableId
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public int getAllVisitors(String tableName, int tableId);
 }

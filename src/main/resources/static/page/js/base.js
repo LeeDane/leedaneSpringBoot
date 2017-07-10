@@ -58,6 +58,18 @@ function deleteLastStr(str){
 }
 
 /**
+ * 判断key是否在json里面
+ * @param json
+ * @param key
+ */
+function inJson(json, key){
+	if(!json)
+		return false;
+	
+	return isNotEmpty(json[key]);
+}
+
+/**
  * 展示图片的链接
  * @param index  当前心情的索引
  * @param imgIndex 当前心情图片的索引

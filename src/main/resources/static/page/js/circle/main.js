@@ -119,9 +119,41 @@ $(function(){
 	$(".add-clock-in").click(function(){
 		doClockIn();
 	});
-
+	getInit(); //获取初始化数据
 	getPosts();
 });
+
+/**
+ * 获取初始化数据
+ * @param
+ */
+function getInit(){
+	$.ajax({
+		url : "/cc/circle/"+ circleId +"/init",
+		dataType: 'json',
+		beforeSend:function(){
+			
+		},
+		success : function(data) {
+			if(data.isSuccess){
+				$("#todayVisitors").text(data.message.todayVisitors);
+				$("#visitors").text(data.message.visitors);
+				$("#allContribute").text(data.message.allContribute);
+				$("#myContribute").text(data.message.myContribute);
+				$(".memberNumber").text(data.message.memberNumber);
+				if(isNotEmpty(data.message.admins) && data.message.admins.length > 0){
+					for(var i = 0; i < data.message.admins.length; i++)
+						$("#admins").append('<a th:onclick="linkToMy('+ data.message.admins[i].member_id +');" href="javascript:void(0);">'+ data.message.admins[i].account +'</a>&nbsp;&nbsp;');
+				}
+			}else{
+				ajaxError(data);
+			}
+		},
+		error : function(data) {
+			ajaxError(data);
+		}
+	});
+}
 
 /**
  * 获取帖子
@@ -155,6 +187,7 @@ function getPosts(){
 					$postListContainer.append(buildEachPostRow(i, posts[i]));
 					$("#post-list-"+i).data("post", posts[i]);
 				}
+				$("#postNumbers").text(data.total);
 				bindTool();
 				pageDivUtil(data.total);
 			}else{
@@ -270,7 +303,7 @@ function joinCircle(answer){
 		success : function(data) {
 			layer.close(loadi);
 			if(data.isSuccess){
-				layer.msg("加入圈子成功，1秒后自动刷新");
+				layer.msg(data.message + "，1秒后自动刷新");
 				reloadPage(1000);
 			}else{
 				ajaxError(data);

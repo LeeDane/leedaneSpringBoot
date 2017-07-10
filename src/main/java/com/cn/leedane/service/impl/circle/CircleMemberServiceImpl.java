@@ -43,7 +43,7 @@ import com.cn.leedane.utils.StringUtil;
  * 2017年6月20日 下午2:45:08
  * version 1.0
  */
-@Service("circleMemberServiceImpl")
+@Service("circleMemberService")
 public class CircleMemberServiceImpl extends AdminRoleCheckService implements CircleMemberService<CircleMemberBean>{
 	Logger logger = Logger.getLogger(getClass());
 

@@ -55,6 +55,34 @@ public class CircleSettingBean extends RecordTimeBean {
 	@Field
 	private String questionAnswer;
 
+	/**
+	 * 公告
+	 */
+	@Column("announce")
+	@Field
+	private String announce;
+	
+	/**
+	 * 是否需要审核圈子的帖子
+	 */
+	@Column("check_post")
+	@Field
+	private boolean checkPost;
+	
+	/**
+	 * 背景颜色
+	 */
+	@Column("background_color")
+	@Field
+	private String backgroundColor;
+	
+	/**
+	 * 限制成员的总数
+	 */
+	@Column("limit_number")
+	@Field
+	private int limitNumber;
+	
 	public String getWelcomeMember() {
 		return welcomeMember;
 	}
@@ -93,6 +121,38 @@ public class CircleSettingBean extends RecordTimeBean {
 
 	public void setAddMember(boolean addMember) {
 		this.addMember = addMember;
+	}
+
+	public String getAnnounce() {
+		return announce;
+	}
+
+	public void setAnnounce(String announce) {
+		this.announce = announce;
+	}
+
+	public boolean isCheckPost() {
+		return checkPost;
+	}
+
+	public void setCheckPost(boolean checkPost) {
+		this.checkPost = checkPost;
+	}
+
+	public String getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public void setBackgroundColor(String backgroundColor) {
+		this.backgroundColor = backgroundColor;
+	}
+
+	public int getLimitNumber() {
+		return limitNumber;
+	}
+
+	public void setLimitNumber(int limitNumber) {
+		this.limitNumber = limitNumber;
 	}
 	
 	

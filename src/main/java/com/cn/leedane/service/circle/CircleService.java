@@ -173,5 +173,15 @@ public interface CircleService <T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> allot(int cid, String admins, UserBean user, HttpServletRequest request);
-	
+
+	/**
+	 * 获取圈子首页的初始化
+	 * @param cid
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public Map<String, Object> initialize(int cid,
+			UserBean userFromMessage, HttpServletRequest request);
 }

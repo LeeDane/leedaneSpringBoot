@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.model.circle.CircleBean;
+import com.cn.leedane.model.circle.CircleSettingBean;
 import com.cn.leedane.service.circle.CircleService;
+import com.cn.leedane.service.circle.CircleSettingService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
@@ -35,6 +37,9 @@ public class CircleController extends BaseController{
 
 	@Autowired
 	private CircleService<CircleBean> circleService;
+	
+	@Autowired
+	private CircleSettingService<CircleSettingBean> circleSettingService;
 		
 	/**
 	 * 检查是否能创建圈子
@@ -186,6 +191,21 @@ public class CircleController extends BaseController{
 		String admins = JsonUtil.getStringValue(json, "admins");
 		
 		message.putAll(circleService.allot(cid, admins, getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 圈子首页的一些初始化参数获取
+	 * @return
+	 */
+	@RequestMapping(value = "/circle/{cid}/init", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> initialize(HttpServletRequest request, @PathVariable("cid") int cid){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circleService.initialize(cid, getUserFromMessage(message), request));
 		return message.getMap();
 	}
 }

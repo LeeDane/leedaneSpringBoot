@@ -15,6 +15,7 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.pam.UnsupportedTokenException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -161,6 +162,12 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			message.put("message", "违反唯一性约束，请确定是否已经有相同数据存在！");
 			message.put("detail", exception.getMessage());
 			message.put("responseCode", ResponseCode.空指针异常.value);
+		}else if(exception instanceof DataIntegrityViolationException){
+			logger.error("mysql保存异常，某些字段长度太长！");
+			if(isPageRequest)
+				return new ModelAndView("redirect:/lg");
+			message.put("message", EnumUtil.getResponseValue(ResponseCode.某些字段超过其存储所需的长度.value));
+			message.put("responseCode", ResponseCode.某些字段超过其存储所需的长度.value);
 		}else{
 			StringPrintWriter strintPrintWriter = new StringPrintWriter();  
 	        exception.printStackTrace(strintPrintWriter);

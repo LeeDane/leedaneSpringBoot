@@ -20,6 +20,7 @@ import com.cn.leedane.controller.UserController;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.handler.circle.CirclePostHandler;
+import com.cn.leedane.handler.circle.CircleSettingHandler;
 import com.cn.leedane.mapper.circle.CircleMemberMapper;
 import com.cn.leedane.mapper.circle.CirclePostMapper;
 import com.cn.leedane.model.UserBean;
@@ -29,14 +30,13 @@ import com.cn.leedane.model.circle.CirclePostBean;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.service.circle.CirclePostService;
 import com.cn.leedane.service.circle.CircleService;
+import com.cn.leedane.service.impl.circle.CircleServiceImpl;
+import com.cn.leedane.service.impl.circle.CircleSettingServiceImpl;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.RelativeDateFormat;
 import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
 
 /**
  * 圈子Html页面的控制器
@@ -65,6 +65,9 @@ public class CircleHtmlController extends BaseController{
 	
 	@Autowired
 	private CircleHandler circleHandler;
+	
+	@Autowired
+	private CircleSettingHandler circleSettingHandler;
 	
 	@Autowired
 	private CirclePostHandler circlePostHandler;
@@ -127,6 +130,17 @@ public class CircleHtmlController extends BaseController{
 	}
 	
 	/**
+	 * 圈子设置
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/{circleId}/setting")
+	public String setting(@PathVariable(value="circleId") int circleId, Model model, HttpServletRequest request){
+		return memberList(circleId, model, request);
+	}
+	
+	/**
 	 * 圈子成员列表
 	 * @param model
 	 * @param request
@@ -147,6 +161,7 @@ public class CircleHtmlController extends BaseController{
         	model.addAllAttributes(circleService.memberListInit(circle, user, request));
     		
         }
+
 		model.addAttribute("circle", circle);
 		return loginRoleCheck("circle/member-list", true, model, request);
 	}
@@ -175,7 +190,14 @@ public class CircleHtmlController extends BaseController{
         	List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
     		if(!SqlUtil.getBooleanByList(members))
     			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先加入该圈子.value));
+    		CircleMemberBean memberBean = members.get(0);
     		
+    		boolean isCircleAdmin = false;
+    		if(memberBean.getRoleType() == CircleServiceImpl.CIRCLE_CREATER || memberBean.getRoleType() == CircleServiceImpl.CIRCLE_MANAGER){
+    			isCircleAdmin = true;
+    		}
+    		model.addAttribute("isCircleAdmin", isCircleAdmin);
+    		 
     		if(postId != null){
     			circlePostBean = circlePostHandler.getCirclePostBean(circle, postId, user);
     			if(circlePostBean == null || circlePostBean.getCreateUserId() != user.getId())
@@ -193,6 +215,7 @@ public class CircleHtmlController extends BaseController{
         model.addAttribute("post", circlePostBean);
         model.addAttribute("imgs", imgs); //这个是有图像的时候转化下的List列表
         model.addAttribute("tags", tags); //这个是有图像的时候转化下的List列表
+        model.addAttribute("setting", circleSettingHandler.getNormalSettingBean(circleId));
 		return loginRoleCheck("circle/write", true, model, request);
 	}
 	

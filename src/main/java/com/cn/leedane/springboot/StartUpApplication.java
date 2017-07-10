@@ -64,6 +64,7 @@ import com.cn.leedane.handler.ZanHandler;
 import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.handler.circle.CircleMemberHandler;
 import com.cn.leedane.handler.circle.CirclePostHandler;
+import com.cn.leedane.handler.circle.CircleSettingHandler;
 
 /**
  * 项目启动的入口
@@ -201,6 +202,11 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
 	@Bean(name= "circleMemberHandler")
     public CircleMemberHandler getCircleMemberHandler() {
         return new CircleMemberHandler();  
+    }
+	
+	@Bean(name= "circleSettingHandler")
+    public CircleSettingHandler getCircleSettingHandler() {
+        return new CircleSettingHandler();  
     }
 	
 	@Bean(name= "circlePostHandler")

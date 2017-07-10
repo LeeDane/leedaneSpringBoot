@@ -17,12 +17,14 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.handler.circle.CircleMemberHandler;
 import com.cn.leedane.handler.circle.CirclePostHandler;
+import com.cn.leedane.handler.circle.CircleSettingHandler;
 import com.cn.leedane.mapper.circle.CircleClockInMapper;
 import com.cn.leedane.mapper.circle.CircleContributionMapper;
 import com.cn.leedane.mapper.circle.CircleCreateLimitMapper;
@@ -79,6 +81,9 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	public static final int CIRCLE_NORMAL = 0;
 	
 	@Autowired
+	private SystemCache systemCache;
+	
+	@Autowired
 	private CircleMapper circleMapper;
 	
 	@Autowired
@@ -104,6 +109,9 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	@Autowired
 	private CirclePostHandler circlePostHandler;
+	
+	@Autowired
+	private CircleSettingHandler circleSettingHandler;
 	
 	@Autowired
 	private UserHandler userHandler;
@@ -204,31 +212,13 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
     		message.put("isCircleAdmin", SqlUtil.getBooleanByList(members) &&  members.get(0).getRoleType() == CIRCLE_MANAGER);
     	}
 		
-		//获取我的贡献值以及总贡献值
-		List<Map<String, Object>> contributes = circleContributionMapper.getContribute(circleId, user.getId());
-		if(CollectionUtil.isNotEmpty(contributes)){
-			message.putAll(contributes.get(0));
-		}
-		
-		if(!message.containsKey("myContribute") || StringUtil.changeObjectToInt(message.get("myContribute")) < 1){
-			message.put("myContribute", 0);
-		}
-	
-		if(!message.containsKey("allContribute") || StringUtil.changeObjectToInt(message.get("allContribute")) < 1){
-			message.put("allContribute", 0);
-		}
-		
 		//判断当天是否有签到
 		message.put("isClockIn", CollectionUtil.isNotEmpty(circleClockInMapper.getClockInBean(circleId, user.getId(), ConstantsUtil.STATUS_NORMAL, DateUtil.DateToString(new Date(), "yyyy-MM-dd"))));
-		
-		//获取管理员
-		message.put("admins", circleMemberMapper.getMembersByRoleType(circleId, CIRCLE_MANAGER, ConstantsUtil.STATUS_NORMAL));
 		message.put("circle", circle);
 		message.put("createTime", RelativeDateFormat.format(circle.getCreateTime()));
 		message.put("createName", userHandler.getUserName(circle.getCreateUserId()));
 		message.put("createId", circle.getCreateUserId());
 		
-		message.put("memberNumber", SqlUtil.getTotalByList(circleMemberMapper.getTotal(DataTableType.圈子成员.value, " where circle_id= "+ circle.getId())));
 		try {
 			message.put("hotestMembers", getCircleMembers(circleMemberHandler.getHostest(circleId).getCircleMemberBeans()));//获取圈子热门的成员
 			message.put("newestMembers", getCircleMembers(circleMemberHandler.getNestest(circleId).getCircleMemberBeans())); //获取圈子最新的成员
@@ -241,6 +231,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		//获取该圈子该用户的帖子列表
 		CircleUserPostsBean circleUserPosts = circlePostHandler.getUserPostPosts(circleId, user.getId());
 		message.put("circleUserPosts", circleUserPosts);
+		message.put("setting", circleSettingHandler.getNormalSettingBean(circleId));
 		return message.getMap();
 	}
 	
@@ -252,10 +243,19 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		int circleId = circle.getId();
 		if(user.getId() == circle.getCreateUserId()){
 			message.put("canAdmin", true);
+			CircleSettingBean circleSettingBean = circleSettingHandler.getNormalSettingBean(circle.getId());
+			if(circleSettingBean == null)
+				throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
+			
+			message.put("setting", circleSettingBean);
     	}else{
     		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
     		message.put("canAdmin", SqlUtil.getBooleanByList(members) &&  members.get(0).getRoleType() == CIRCLE_MANAGER);
+    		message.put("setting", new CircleSettingBean());
     	}
+		
+		message.put("maxNumber", StringUtil.changeObjectToInt(systemCache.getCache("circle-max-member")));//总的限制人数
+		message.put("memberNumber", circleMemberMapper.getAllMembers(circleId, ConstantsUtil.STATUS_NORMAL).size());
 		return message.getMap();
 	}
 
@@ -346,6 +346,8 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			setting.setCircleId(circleBean.getId());
 			setting.setStatus(ConstantsUtil.STATUS_NORMAL);
 			setting.setAddMember(true);
+			setting.setCheckPost(true);
+			setting.setLimitNumber(StringUtil.changeObjectToInt(systemCache.getCache("circle-max-member")));//总的限制人数
 			result = circleSettingMapper.save(setting) > 0;
 			if(result){
 				message.put("isSuccess", true);
@@ -485,23 +487,46 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			HttpServletRequest request) {
 		logger.info("CircleServiceImpl-->joinCheck():jo="+json.toString());
 		ResponseMap message = new ResponseMap();
-		int cid = JsonUtil.getIntValue(json, "cid", 0);
-		if(cid < 1){
+		int circleId = JsonUtil.getIntValue(json, "cid", 0);
+		if(circleId < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
 			message.put("responseCode", EnumUtil.ResponseCode.缺少请求参数.value);
 			return message.getMap();
 		}
 		
-		List<CircleSettingBean> circleSettingBeans = circleSettingMapper.getSetting(cid, ConstantsUtil.STATUS_NORMAL);
-		if(CollectionUtil.isEmpty(circleSettingBeans))
+		CircleSettingBean circleSettingBean = circleSettingHandler.getNormalSettingBean(circleId);
+		if(circleSettingBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
 		
-		CircleSettingBean circleSettingBean = circleSettingBeans.get(0);
-		
-		if(SqlUtil.getBooleanByList(circleMemberMapper.getMember(user.getId(), cid, ConstantsUtil.STATUS_NORMAL))){
+		if(SqlUtil.getBooleanByList(circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL))){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.您已经在圈子中.value));
 			message.put("responseCode", EnumUtil.ResponseCode.您已经在圈子中.value);
 			return message.getMap();
+		}
+		
+		/**
+		 * 判断是否能加入圈子
+		 */
+		if(!circleSettingBean.isAddMember()){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子已被设置为不添加成员.value));
+			message.put("responseCode", EnumUtil.ResponseCode.该圈子已被设置为不添加成员.value);
+			return message.getMap();
+		}
+		
+		/**
+		 * 判断是否超出人数
+		 */
+		if(circleSettingBean.getLimitNumber() > 1){
+			int maxNumber = StringUtil.changeObjectToInt(systemCache.getCache("circle-max-member"));//总的限制人数
+			int number = circleMemberMapper.getAllMembers(circleId, ConstantsUtil.STATUS_NORMAL).size();
+			int minNumber = Math.min(circleSettingBean.getLimitNumber(), maxNumber);
+			//circleSettingBean.getLimitNumber() 圈子自身的限制人数
+			boolean over = number < minNumber;
+			if(!over){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子成员已超额.value));
+				message.put("responseCode", EnumUtil.ResponseCode.该圈子成员已超额.value);
+				return message.getMap();
+			}
 		}
 		
 		//获取是否需要回答问题
@@ -522,21 +547,45 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			HttpServletRequest request) {
 		logger.info("CircleServiceImpl-->join():jo="+json.toString());
 		ResponseMap message = new ResponseMap();
-		int cid = JsonUtil.getIntValue(json, "cid", 0);
-		if(cid < 1){
+		int circleId = JsonUtil.getIntValue(json, "cid", 0);
+		if(circleId < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
 			message.put("responseCode", EnumUtil.ResponseCode.缺少请求参数.value);
 			return message.getMap();
 		}
-		List<CircleSettingBean> circleSettingBeans = circleSettingMapper.getSetting(cid, ConstantsUtil.STATUS_NORMAL);
-		if(CollectionUtil.isEmpty(circleSettingBeans))
+		CircleSettingBean circleSettingBean = circleSettingHandler.getNormalSettingBean(circleId);
+		if(circleSettingBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
 		
-		CircleSettingBean circleSettingBean = circleSettingBeans.get(0);
-		if(SqlUtil.getBooleanByList(circleMemberMapper.getMember(user.getId(), cid, ConstantsUtil.STATUS_NORMAL))){
+		if(SqlUtil.getBooleanByList(circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL))){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.您已经在圈子中.value));
 			message.put("responseCode", EnumUtil.ResponseCode.您已经在圈子中.value);
 			return message.getMap();
+		}
+		
+		/**
+		 * 判断是否能加入圈子
+		 */
+		if(!circleSettingBean.isAddMember()){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子已被设置为不添加成员.value));
+			message.put("responseCode", EnumUtil.ResponseCode.该圈子已被设置为不添加成员.value);
+			return message.getMap();
+		}
+		
+		/**
+		 * 判断是否超出人数
+		 */
+		if(circleSettingBean.getLimitNumber() > 1){
+			int maxNumber = StringUtil.changeObjectToInt(systemCache.getCache("circle-max-member"));//总的限制人数
+			int number = circleMemberMapper.getAllMembers(circleId, ConstantsUtil.STATUS_NORMAL).size();
+			int minNumber = Math.min(circleSettingBean.getLimitNumber(), maxNumber);
+			//circleSettingBean.getLimitNumber() 圈子自身的限制人数
+			boolean over = number < minNumber;
+			if(over){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子成员已超额.value));
+				message.put("responseCode", EnumUtil.ResponseCode.该圈子成员已超额.value);
+				return message.getMap();
+			}
 		}
 		
 		//判断是否需要回到问题
@@ -557,7 +606,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		CircleMemberBean member = new CircleMemberBean();
 		member.setCreateTime(new Date());
 		member.setCreateUserId(user.getId());
-		member.setCircleId(cid);
+		member.setCircleId(circleId);
 		member.setMemberId(user.getId());
 		member.setRoleType(CIRCLE_NORMAL);
 		member.setStatus(ConstantsUtil.STATUS_NORMAL);
@@ -570,7 +619,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"申请加入圈子--", cid).toString(), "join()", ConstantsUtil.STATUS_NORMAL, 0);		
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"申请加入圈子--", circleId).toString(), "join()", ConstantsUtil.STATUS_NORMAL, 0);		
 		message.put("isSuccess", true);
 		message.put("message", msg);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -686,6 +735,44 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);
 		
+		return message.getMap();
+	}
+	
+	@Override
+	public Map<String, Object> initialize(int circleId, UserBean user,
+			HttpServletRequest request) {
+		logger.info("CircleServiceImpl-->initialize():circleId="+circleId);
+		
+		ResponseMap message = new ResponseMap();
+		
+		CircleBean circleBean = circleMapper.findById(CircleBean.class, circleId);
+		
+		if(circleBean == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
+		
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("todayVisitors", visitorService.getTodayVisitors(DataTableType.圈子.value, circleId));
+		data.put("visitors", visitorService.getAllVisitors(DataTableType.圈子.value, circleId));
+		//获取我的贡献值以及总贡献值
+		List<Map<String, Object>> contributes = circleContributionMapper.getContribute(circleId, user.getId());
+		if(CollectionUtil.isNotEmpty(contributes)){
+			data.putAll(contributes.get(0));
+		}
+		
+		if(!data.containsKey("myContribute") || StringUtil.changeObjectToInt(data.get("myContribute")) < 1){
+			data.put("myContribute", 0);
+		}
+	
+		if(!data.containsKey("allContribute") || StringUtil.changeObjectToInt(data.get("allContribute")) < 1){
+			data.put("allContribute", 0);
+		}
+		data.put("memberNumber", SqlUtil.getTotalByList(circleMemberMapper.getTotal(DataTableType.圈子成员.value, " where circle_id= "+ circleId)));
+		//获取管理员
+		data.put("admins", circleMemberMapper.getMembersByRoleType(circleId, CIRCLE_MANAGER, ConstantsUtil.STATUS_NORMAL));
+				
+		message.put("message", data);
+		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		message.put("isSuccess", true);
 		return message.getMap();
 	}
 }

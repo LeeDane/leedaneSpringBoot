@@ -20,6 +20,7 @@ import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.ZanHandler;
 import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.handler.circle.CirclePostHandler;
+import com.cn.leedane.handler.circle.CircleSettingHandler;
 import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.mapper.circle.CircleMemberMapper;
 import com.cn.leedane.mapper.circle.CirclePostMapper;
@@ -76,6 +77,9 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	private CircleHandler circleHandler;
 	
 	@Autowired
+	private CircleSettingHandler circleSettingHandler;
+	
+	@Autowired
 	private CirclePostHandler circlePostHandler;
 	
 	@Autowired
@@ -123,6 +127,21 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			return message.getMap();
 		}
 		
+		
+		//校验是否加入圈子
+		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
+		if(!SqlUtil.getBooleanByList(members))
+			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先加入该圈子.value));
+
+		String returnMsg = "您的帖子已经发布成功！";
+		//判断用户的身份
+		CircleMemberBean memberBean = members.get(0);
+		if(memberBean.getMemberId() != user.getId() && memberBean.getRoleType() == CircleServiceImpl.CIRCLE_MANAGER){
+			circlePostBean.setStatus(ConstantsUtil.STATUS_AUDIT);
+			returnMsg = returnMsg + "请等待圈主/圈子管理员审核！";
+		}else
+			circlePostBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+
 		Date createTime = new Date();
 		String content = circlePostBean.getContent();
 		//取180个作为摘要
@@ -130,7 +149,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		circlePostBean.setContent(MardownUtil.parseHtml(content));
 		circlePostBean.setCreateTime(createTime);
 		circlePostBean.setCreateUserId(user.getId());
-		circlePostBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+		
 		
 		boolean result = circlePostMapper.save(circlePostBean) > 0;
 		if(result){
@@ -145,8 +164,11 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			//保存帖子的访问记录
 	        saveVisitLog(circlePostBean.getId(), user, request);
 	        
+	        //判断是否需要审核的帖子
+	        
+	        
 			message.put("isSuccess", true);
-			message.put("message", "您的帖子已经发布成功！");
+			message.put("message", returnMsg);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
@@ -462,6 +484,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			}
 			message.put("blockquote_content", blockquoteContent);
 		}
+		message.put("setting", circleSettingHandler.getNormalSettingBean(circle.getId()));
 		return message;
 	}
 

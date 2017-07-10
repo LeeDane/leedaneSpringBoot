@@ -1,6 +1,7 @@
 package com.cn.leedane.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -111,4 +112,16 @@ public class VisitorServiceImpl extends AdminRoleCheckService implements Visitor
 		return message.getMap();
 	}
 	
+	@Override
+	public int getTodayVisitors(String tableName, int tableId) {
+		logger.info("VisitorServiceImpl-->getTodayVisitor():tableName = "+ tableName +", tableId=" +tableId);
+		Date today = DateUtil.getTodayStart();
+		return visitorMapper.getTodayVisitors(today, tableName, tableId, ConstantsUtil.STATUS_NORMAL);
+	}
+	
+	@Override
+	public int getAllVisitors(String tableName, int tableId) {
+		logger.info("VisitorServiceImpl-->getAllVisitors():tableName = "+ tableName +", tableId=" +tableId);
+		return visitorMapper.getAllVisitors(tableName, tableId, ConstantsUtil.STATUS_NORMAL);
+	}
 }

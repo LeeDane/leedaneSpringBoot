@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.model.circle.CircleMemberBean;
+import com.cn.leedane.model.circle.CircleSettingBean;
 import com.cn.leedane.service.circle.CircleMemberService;
+import com.cn.leedane.service.circle.CircleSettingService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
 
@@ -32,6 +34,9 @@ public class CircleMemberController extends BaseController{
 
 	@Autowired
 	private CircleMemberService<CircleMemberBean> circleMemberService;
+	
+	@Autowired
+	private CircleSettingService<CircleSettingBean> circleSettingService;
 		
 	/**
 	 * 获取圈子成员分页列表
@@ -76,6 +81,21 @@ public class CircleMemberController extends BaseController{
 		
 		checkRoleOrPermission(request);
 		message.putAll(circleMemberService.delete(circleId, memberId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 圈子的设置(圈主或者圈子管理员才能设置)
+	 * @return
+	 */
+	@RequestMapping(value = "/{circleId}/setting/{settingId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> setting(@PathVariable("circleId") int circleId, @PathVariable("settingId") int settingId, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circleSettingService.update(circleId, settingId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 }

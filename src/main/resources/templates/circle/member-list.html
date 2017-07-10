@@ -6,6 +6,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title th:text="'圈子《'+ ${circle.name}+'》的成员列表'">圈子的成员列表</title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	
+	<!-- 正式环境下的cdn引用-->
+	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{//cdn.bootcss.com/bootstrap-switch/3.3.4/css/bootstrap3/bootstrap-switch.min.css}"/>
+	<!-- 测试环境下的引用 -->
+	<link rel="stylesheet" th:if="${isDebug}"  th:href="@{/page/other/bootstrap-switch-master/dist/css/bootstrap3/bootstrap-switch.min.css}" />
+	
 	<script th:src="@{/page/js/page.js}" type="text/javascript"></script>
 	<style type="text/css">
 		
@@ -15,17 +21,122 @@
 		.row{
 			margin-top: 8px;
 		}
+		.layui-form *{
+			-webkit-box-sizing: content-box !important;
+    		-moz-box-sizing: content-box !important;
+   			box-sizing: content-box !important;
+		}
 	</style>
 </head>
-<body>
+<body th:attr="style='background-color: ' +(${setting.backgroundColor} == '#f5f5f5' ? '' : ${setting.backgroundColor})">
 <div th:include="common :: hello">what?</div>
+<link rel="stylesheet" th:href="@{/page/other/layui/css/layui.css}" media="all" />
 <script th:src="@{/page/js/circle/member-list.js}" type="text/javascript"></script>
+<script th:src="@{/page/other/layui/layui.js}" type="text/javascript"></script>
+
+<!-- 正式环境下的cdn引用-->
+<script th:if="${not isDebug}" th:src="@{//cdn.bootcss.com/bootstrap-switch/3.3.4/js/bootstrap-switch.min.js}" type="text/javascript"></script>
+<!-- 测试环境下的引用 -->
+<script th:if="${isDebug}" th:src="@{/page/other/bootstrap-switch-master/dist/js/bootstrap-switch.js}"></script>
+
 </body>
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-12">
 				<button type="button" class="btn btn-warning btn-sm" data-placement="left" data-toggle="tooltip" title="点击进入圈子中心" th:text="${circle.name}" th:onclick="'linkToCircle('+ ${circle.id} +')'"></button>
-				<button type="button" class="btn btn-info btn-sm" data-placement="left" data-toggle="tooltip" title="更多该圈子的基本设置" >更多设置</button>
+ 				<button th:if="${canAdmin}" type="button" class="btn btn-info btn-sm" data-placement="left" data-toggle="tooltip" title="发布问答" >发布问答</button>
+			</div>
+		</div>
+		<div class="row" th:if="${canAdmin}">
+			<div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+				<div class="panel panel-default">
+				    <div class="panel-heading">
+				        <h3 class="panel-title">
+				            	基本设置
+				        </h3>
+				    </div>
+				    <div class="panel-body">
+					    <form class="layui-form" action="">
+						  <div class="layui-form-item">
+						    <label class="layui-form-label">欢迎语</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="welcome_member" th:value="${setting.welcomeMember}" placeholder="请输入欢迎新成员加入的欢迎语" class="layui-input" />
+						    </div>
+						  </div>
+						  <div class="layui-form-item">
+						    <label class="layui-form-label">限制成员数</label>
+						    <div class="layui-input-inline">
+						      <input type="number" name="limit_number" th:attr="max=${maxNumber},min=${memberNumber}" th:value="${setting.limitNumber}" required="required" lay-verify="required" placeholder="请输入圈子最大成员人数" autocomplete="off" class="layui-input" />
+						    </div>
+						    <div class="layui-form-mid layui-word-aux">最大<span th:text="${maxNumber}">0</span>人，最少<span th:text="${memberNumber}">0</span>人</div>
+						  </div>
+						  <!-- <div class="layui-form-item">
+						    <label class="layui-form-label">选择框</label>
+						    <div class="layui-input-block">
+						      <select name="city" lay-verify="required">
+						        <option value="2" selected="selected"></option>
+						        <option value="0">北京</option>
+						        <option value="1">上海</option>
+						        <option value="2">广州</option>
+						        <option value="3">深圳</option>
+						        <option value="4">杭州</option>
+						      </select>
+						    </div>
+						  </div> -->
+						  <!-- <div class="layui-form-item">
+						    <label class="layui-form-label">复选框</label>
+						    <div class="layui-input-block">
+						      <input type="checkbox" name="like[write]" title="写作" />
+						      <input type="checkbox" name="like[read]" title="阅读" checked="checked" />
+						      <input type="checkbox" name="like[dai]" title="发呆" />
+						    </div>
+						  </div> -->
+						  <div class="layui-form-item">
+						    <label class="layui-form-label">回答问题</label>
+						    <div class="layui-input-block">
+						      <input type="checkbox" name="switch" lay-filter="has_question" th:checked="${setting.questionTitle != null}" lay-skin="switch" lay-text="需要|不需要"/>
+						      <input th:if="${setting.questionTitle != null}" lay-verify="required" th:value="${setting.questionTitle}" type="text" name="question_title" placeholder="请输入用户加入时提示的标题" class="layui-input" style="margin-top: 5px;"/>
+						      <input th:if="${setting.questionAnswer != null}" lay-verify="required" th:value="${setting.questionAnswer}" type="text" name="question_answer" placeholder="请输入用户加入时标题的密码" class="layui-input" style="margin-top: 5px;"/>
+						    </div>
+						  </div>
+						  <div class="layui-form-item">
+						    <label class="layui-form-label">添加成员</label>
+						    <div class="layui-input-block">
+						      <input type="checkbox" name="add_member" th:checked="${setting.addMember}" lay-skin="switch" lay-text="允许|不允许"/>
+						    </div>
+						  </div>
+						  <div class="layui-form-item">
+						    <label class="layui-form-label">审核帖子</label>
+						    <div class="layui-input-block">
+						      <input type="checkbox" name="check_post" th:checked="${setting.checkPost}" lay-skin="switch" lay-text="开启|关闭"/>
+						    </div>
+						  </div>
+						  <div class="layui-form-item layui-form-text">
+						    <label class="layui-form-label">圈子公告</label>
+						    <div class="layui-input-block">
+						      <textarea name="announce" th:text="${setting.announce}" placeholder="请输入圈子的公告，250个文字以内，支持mardown语法" class="layui-textarea"></textarea>
+						    </div>
+						  </div>
+						  <div class="layui-form-item">
+						    <label class="layui-form-label">背景颜色</label>
+						    <div class="layui-input-block">
+						      <input type="radio" name="background_color" value="#f5f5f5" title="默认" th:checked="${setting.backgroundColor == '#f5f5f5'}" />
+						      <input type="radio" name="background_color" value="#ffce7b" title="卵色" th:checked="${setting.backgroundColor == '#ffce7b'}"/>
+						      <input type="radio" name="background_color" value="#7d5886" title="古代紫" th:checked="${setting.backgroundColor == '#7d5886'}"/>
+						      <input type="radio" name="background_color" value="#b7ba6b" title="抹茶色" th:checked="${setting.backgroundColor == '#b7ba6b'}" />
+						      <input type="radio" name="background_color" value="#76becc" title="秘色" th:checked="${setting.backgroundColor == '#76becc'}" />
+						      <input type="radio" name="background_color" value="#8e7437" title="香色" th:checked="${setting.backgroundColor == '#8e7437'}" />
+						      <input type="radio" name="background_color" value="#df9464" title="小麦色" th:checked="${setting.backgroundColor == '#df9464'}" />
+						    </div>
+						  </div>
+						  <div class="layui-form-item">
+						    <div class="layui-input-block">
+						      <button class="layui-btn save-setting" lay-submit="" lay-filter="*">立即提交</button>
+						    </div>
+						  </div>
+						</form>
+				    </div>
+				</div>
 			</div>
 		</div>
 		<div class="row">
@@ -68,5 +179,49 @@
 <script th:inline="javascript">//引用
 	var circleId = /*[[${circle.id}]]*/;//取值
 	var canAdmin = /*[[${canAdmin}]]*/;//取值
+	var settingId = /*[[${setting.id}]]*/;//取值
+	layui.use('form', function(){
+		  var form = layui.form();
+		  form.on('switch(has_question)', function(data){
+		  var oo = $(data.elem);
+		  var dd = oo.closest(".layui-input-block");
+			  if(data.elem.checked){
+				  $(data.elem).closest(".layui-input-block").append('<input lay-verify="required" type="text" name="question_title" placeholder="请输入用户加入时提示的标题" class="layui-input" style="margin-top: 5px;"/>');
+	              $(data.elem).closest(".layui-input-block").append('<input lay-verify="required" type="text" name="question_answer" placeholder="请输入用户加入时标题的密码" class="layui-input" style="margin-top: 5px;"/>');
+			  }else{
+				  $(data.elem).closest(".layui-input-block").find('input[name="question_title"]').remove();
+	              $(data.elem).closest(".layui-input-block").find('input[name="question_answer"]').remove();
+			  }
+			  console.log(data.elem); //得到checkbox原始DOM对象
+			  console.log(data.elem.checked); //是否被选中，true或者false
+			  console.log(data.value); //复选框value值，也可以通过data.elem.value得到
+			  console.log(data.this); //得到美化后的DOM对象
+			});   
+		  
+		  form.on('submit(*)', function(data){
+			  console.log(data.elem); //被执行事件的元素DOM对象，一般为button对象
+			  console.log(data.form); //被执行提交的form对象，一般在存在form标签时才会返回
+			  var field = data.field; //当前容器的全部表单字段，名值对形式：{name: value}
+			  for(var f in field){
+				  if(field[f] == "on")
+					  field[f] = true;
+			  }
+			  
+			  //由于checkbox没有选中就不处理，这里
+			  if(!inJson(field, "check_post"))
+				  field.check_post = false;
+			  
+			  if(!inJson(field, "add_member"))
+				  field.add_member = false;
+			  
+			  if(!inJson(field, "has_question"))
+				  field.has_question = false;
+			  
+			  saveSetting(field);
+			  return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+			});
+		  //各种基于事件的操作，下面会有进一步介绍
+		});
+
 </script> 
 </html>

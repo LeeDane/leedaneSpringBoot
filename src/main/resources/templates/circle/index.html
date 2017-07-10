@@ -57,7 +57,7 @@
 						<div class="panel panel-default">
 						    <div class="panel-heading">
 						        <h3 class="panel-title">
-						            	我的圈子(<span color="red" th:utext="${allCircleNumber}"></span>)
+						            	我的圈子<span color="red" th:if="${allCircleNumber != null}" th:utext="'('+ ${allCircleNumber} +')'"></span>
 						        </h3>
 						    </div>
 						    <div class="panel-body">
@@ -118,7 +118,7 @@
 						<div class="panel panel-default">
 						    <div class="panel-heading">
 						        <h3 class="panel-title">
-						            	我的帖子(<span color="red" th:if="${circleUserPosts != null}" th:utext="${circleUserPosts.total}"></span>)
+						            	我的帖子<span color="red" th:if="${circleUserPosts != null}" th:utext="'('+ ${circleUserPosts.total} +')'"></span>
 						        </h3>
 						    </div>
 						    <div th:if="${circleUserPosts != null}" class="panel-body panel-table-container">

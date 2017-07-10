@@ -1,7 +1,9 @@
 var circles;
 var $circleEditModal;
 var $tableContainer;
+
 $(function(){
+		
 	initPage(".pagination", "getCircleMembers");
 	$circleEditModal = $("#edit-circle-modal");
 	$("[data-toggle='tooltip']").tooltip();
@@ -25,6 +27,12 @@ $(function(){
 		event.stopPropagation();//阻止冒泡
 		deleteMember($(this));
 	});
+	
+	//保存设置的点击事件
+	/*$(document).on("click", ".save-setting", function(event){
+		event.stopPropagation();//阻止冒泡
+		saveSetting($(this));
+	});*/
 	
 	getCircleMembers();
 });
@@ -428,3 +436,31 @@ function afterSelect(links){
 	$('input[name="circle_path"]').val(links);
 }
 
+/**
+ * 保存设置
+ * @param field
+ */
+function saveSetting(field){
+	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+	$.ajax({
+		type: "PUT",
+		data: field,
+		url : "/cc/" + circleId+"/setting/"+ settingId,
+		dataType: 'json', 
+		beforeSend:function(){
+		},
+		success : function(data) {
+			layer.close(loadi);
+			if(data.isSuccess){
+				layer.msg(data.message + ",1秒后自动刷新");
+				reloadPage(1000);
+			}else{
+				ajaxError(data);
+			}
+		},
+		error : function(data) {
+			layer.close(loadi);
+			ajaxError(data);
+		}
+	});
+}
