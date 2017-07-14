@@ -792,8 +792,7 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/phone/login", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> loginByPhone(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		if(!checkParams(message, request))
-			return message.getMap();
+		checkParams(message, request);
 		
 		checkRoleOrPermission(request);
 		UserBean user = userService.loginByPhone(getJsonFromMessage(message), request);
@@ -854,6 +853,7 @@ public class UserController extends BaseController{
 		}
 		return message.getMap();
 	}
+	
 	
 	/**
 	 * 检查账号是否已经存在

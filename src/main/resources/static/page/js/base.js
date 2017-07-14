@@ -218,7 +218,7 @@ function linkToPostDetail(circleId, postId){
 		layer.msg("该帖子不存在，请联系管理员核实");
 		return;
 	}
-	window.open("/cc/circle/"+circleId +"/post/"+ postId, "_self");
+	window.open("/cc/"+circleId +"/post/"+ postId, "_self");
 }
 
 /**
@@ -268,7 +268,7 @@ function goToReadPostFull(id){
 		layer.msg("该帖子不存在，请联系管理员核实");
 		return;
 	}
-	window.open("/post/dt/"+id, "_blank");
+	window.open("/cc/post/dt/"+id, "_blank");
 }
 
 /**

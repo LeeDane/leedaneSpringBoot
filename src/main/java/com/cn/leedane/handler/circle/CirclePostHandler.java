@@ -385,9 +385,8 @@ public class CirclePostHandler {
 	 * @param postId
 	 * @return
 	 */
-	public CirclePostBean getCirclePostBean(int postId){
-		
-		return getCirclePostBean(-1, postId, null);
+	public CirclePostBean getNormalCirclePostBean(int postId){
+		return getNormalCirclePostBean(-1, postId, null);
 	}
 	
 	/**
@@ -410,7 +409,7 @@ public class CirclePostHandler {
 	 * @return
 	 */
 	public List<Map<String, Object>> getPostDetail(int postId, UserBean user){
-		CirclePostBean circlePostBean = getCirclePostBean(postId);
+		CirclePostBean circlePostBean = getNormalCirclePostBean(postId);
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		if(circlePostBean != null){
 			Map<String, Object> map = new HashMap<String, Object>();
@@ -431,8 +430,8 @@ public class CirclePostHandler {
 	 * @param user
 	 * @return
 	 */
-	public CirclePostBean getCirclePostBean(CircleBean circle, int postId, UserBean user){
-		return getCirclePostBean(circle.getId(), postId, user);
+	public CirclePostBean getNormalCirclePostBean(CircleBean circle, int postId, UserBean user){
+		return getNormalCirclePostBean(circle.getId(), postId, user);
 	}
 	
 	/**
@@ -441,8 +440,8 @@ public class CirclePostHandler {
 	 * @param postId
 	 * @return
 	 */
-	public CirclePostBean getCirclePostBean(CircleBean circle, int postId){
-		return getCirclePostBean(circle.getId(), postId, null);
+	public CirclePostBean getNormalCirclePostBean(CircleBean circle, int postId){
+		return getNormalCirclePostBean(circle.getId(), postId, null);
 	}
 	
 	
@@ -453,7 +452,36 @@ public class CirclePostHandler {
 	 * @param user 不为空将校验帖子和该用户是否是同一个
 	 * @return
 	 */
-	public CirclePostBean getCirclePostBean(int circleId, int postId, UserBean user){
+	public CirclePostBean getNormalCirclePostBean(int circleId, int postId, UserBean user){
+		CirclePostBean circlePostBean = getCirclePostBean(postId);
+		if(postId > 0 && circlePostBean != null){
+			//非正常状态
+			if(circlePostBean.getStatus() != ConstantsUtil.STATUS_NORMAL || (circleId > 0 && circlePostBean.getCircleId() != circleId) || (user != null && circlePostBean.getCreateUserId() != user.getId()))
+				return null;
+		}
+		return circlePostBean;
+	}
+	
+	/**
+	 * 获取帖子对象(没有状态)
+	 * @param postId
+	 * @param user 不为空将校验帖子和该用户是否是同一个
+	 * @return
+	 */
+	public CirclePostBean getCirclePostBean(int postId, UserBean user){
+		return getCirclePostBean(postId);
+	}
+	
+
+	/**
+	 * 获取帖子对象(没有状态)
+	 * @param circleId
+	 * @param postId
+	 * @param user 不为空将校验帖子和该用户是否是同一个
+	 * @param normal
+	 * @return
+	 */
+	private CirclePostBean getCirclePostBean(int postId){		
 		String key = getPostKey(postId);
 		Object obj = systemCache.getCache(key);
 		CirclePostBean circlePostBean = null;
@@ -496,13 +524,6 @@ public class CirclePostHandler {
 		}else{
 			circlePostBean = (CirclePostBean)obj;
 		}
-		
-		
-		if(postId > 0 && circlePostBean != null){
-			//非正常状态
-			if(circlePostBean.getStatus() != ConstantsUtil.STATUS_NORMAL || (circleId > 0 && circlePostBean.getCircleId() != circleId) || (user != null && circlePostBean.getCreateUserId() != user.getId()))
-				return null;
-		}
 			
 		return circlePostBean;
 	}
@@ -513,8 +534,8 @@ public class CirclePostHandler {
 	 * @param postId
 	 * @return
 	 */
-	public CirclePostBean getCirclePostBean(int circleId, int postId){
-		return getCirclePostBean(circleId, postId, null);
+	public CirclePostBean getNormalCirclePostBean(int circleId, int postId){
+		return getNormalCirclePostBean(circleId, postId, null);
 	}
 	
 	/**

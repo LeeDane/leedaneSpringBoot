@@ -168,7 +168,10 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 				return new ModelAndView("redirect:/lg");
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.某些字段超过其存储所需的长度.value));
 			message.put("responseCode", ResponseCode.某些字段超过其存储所需的长度.value);
-		}else{
+		}/*else if(exception instanceof MobCodeErrorException){
+			message.put("message", EnumUtil.getResponseValue(ResponseCode.验证码验证失败.value));
+			message.put("responseCode", ResponseCode.验证码验证失败.value);
+		}*/else{
 			StringPrintWriter strintPrintWriter = new StringPrintWriter();  
 	        exception.printStackTrace(strintPrintWriter);
 	        logger.error(strintPrintWriter.getString());

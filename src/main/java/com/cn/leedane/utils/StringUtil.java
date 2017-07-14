@@ -715,6 +715,37 @@ public class StringUtil {
 		return b.toString();
 	}
 	
+	/**
+	 * 获取统一状态的名称
+	 * @param status
+	 * @return
+	 */
+	public static String getStatusText(int status){
+		switch (status) {
+			case ConstantsUtil.STATUS_AUDIT:
+				return "等待审核";
+			case ConstantsUtil.STATUS_DELETE:
+				return "删除";
+			case ConstantsUtil.STATUS_DISABLE:
+				return "禁用";
+			case ConstantsUtil.STATUS_DRAFT:
+				return "草稿";
+			case ConstantsUtil.STATUS_INFORMATION:
+				return "等待完善资料";
+			case ConstantsUtil.STATUS_NO_ACTIVATION:
+				return "注册未激活";
+			case ConstantsUtil.STATUS_NO_TALK:
+				return "被禁言";
+			case ConstantsUtil.STATUS_NO_VALIDATION_EMAIL:
+				return "未验证邮箱";
+			case ConstantsUtil.STATUS_NORMAL:
+				return "正常";
+			case ConstantsUtil.STATUS_SELF:
+				return "私有";
+			default:
+				return null;
+		}
+	}
 	
 	/*public static void main(String[] args) {
 		//logger.info(StringUtil.changeNotNullAndUtf8("赵本山代表作被指\"丑化\"农民 丢弃农村传统底蕴"));

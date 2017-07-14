@@ -48,6 +48,10 @@
           	background-color:#f1f1f1;
           	font: 14px/22px normal helvetica, sans-serif; */
    		}
+   		
+   		.border-right{
+			border-right: 1px solid #ddd !important;
+		}
 	</style>
 </head>
 <body th:attr="style='background-color: ' +(${setting.backgroundColor} == '#f5f5f5' ? '' : ${setting.backgroundColor})">
@@ -196,10 +200,10 @@
 						        </h3>
 						    </div>
 						    <div th:if="${circleUserPosts != null}" class="panel-body panel-table-container">
-						        <table class="table table-bordered table-fix" style="border: 0!important;">
+						        <table class="table table-fix" style="border: 0!important; table-layout:fixed !important;">
 								  <tbody>
 								    <tr th:each="postEven,postStat : ${circleUserPosts.posts}">
-								      	<td valign="middle" class="cut-text" data-toggle="tooltip" data-placement="right" th:title="${postEven.title}"><a target="_blank" th:href="'/cc/circle/'+ ${postEven.circleId} +'/post/' + ${postEven.id}" th:utext="${postEven.title}">笑话精刚刚灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌选</a></td>
+								      	<td valign="middle" class="cut-text border-right" data-toggle="tooltip" data-placement="right" th:title="${postEven.title}"><a target="_blank" th:href="'/cc/circle/'+ ${postEven.circleId} +'/post/' + ${postEven.id}" th:utext="${postEven.title}">笑话精刚刚灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌选</a></td>
 								     	<td valign="middle" style="width: 80px;" th:text="${postEven.createTime}">
 								    		一个月前
 								    	</td>

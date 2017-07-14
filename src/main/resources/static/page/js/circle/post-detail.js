@@ -5,7 +5,9 @@ $(function(){
 	$container= $(".container");
 	$commentContainer = $("#comment-list-container");
 	initPage(".pagination", "getComments", 10);
-	getComments();
+	
+	if(!audit)
+		getComments();
 	$container.on("click", ".reply-other-btn", function(){
 		$(this).closest(".list-group").find(".reply-container").toggle("fast");
 	});
@@ -74,7 +76,8 @@ $(function(){
 			});
 		}
 	});
-	buildZanUser();
+	if(!audit)
+		buildZanUser();
 });
 
 

@@ -27,6 +27,9 @@
 		.panel-table-container .list-group{
 			margin-bottom: 0 !important;
 		}
+		.border-right{
+			border-right: 1px solid #ddd !important;
+		}
 	</style>
 </head>
 <body>
@@ -122,10 +125,10 @@
 						        </h3>
 						    </div>
 						    <div th:if="${circleUserPosts != null}" class="panel-body panel-table-container">
-						        <table class="table table-bordered table-fix" style="border: 0!important;">
+						        <table class="table table-fix" style="border: 0!important;">
 								  <tbody>
 								    <tr th:each="postEven,postStat : ${circleUserPosts.posts}">
-								      	<td valign="middle" class="cut-text" data-toggle="tooltip" data-placement="right" th:title="${postEven.title}"><a target="_blank" th:href="'/cc/circle/'+ ${postEven.circleId} +'/post/' + ${postEven.id}" th:utext="${postEven.title}">笑话精刚刚灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌选</a></td>
+								      	<td valign="middle" class="cut-text border-right" data-toggle="tooltip" data-placement="right" th:title="${postEven.title}"><a target="_blank" th:href="'/cc/'+ ${postEven.circleId} +'/post/' + ${postEven.id}" th:utext="${postEven.title}">笑话精刚刚灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌选</a></td>
 								     	<td valign="middle" style="width: 80px;" th:text="${postEven.createTime}">
 								    		一个月前
 								    	</td>
@@ -145,13 +148,13 @@
 						热门帖子
 					</div>
 					<div class="panel-body panel-table-container">
-						<table class="table table-bordered">
+						<table class="table">
 						  <tbody>
 						    <tr th:each="postEven,iterStat : ${hotestPosts.posts}" th:if="${iterStat.even}">
-						      	<td valign="middle">
+						      	<td valign="middle" class="border-right">
 						      		<div class="row">
 						      			<div class="col-lg-9 col-sm-9 col-md-12 col-xs-12">
-						      				<p><a th:href="'/cc/circle/' + ${postEven.circleId} + '/post/'+ ${postEven.id}" class="cut-text" th:title="${postEven.digest}" th:utext="${postEven.digest}"></a></p>
+						      				<p><a th:href="'/cc/' + ${postEven.circleId} + '/post/'+ ${postEven.id}" class="cut-text" th:title="${postEven.digest}" th:utext="${postEven.digest}"></a></p>
 						      				<p th:utext="${postEven.createTime}"></p>
 						      			</div>
 						      			<div class="col-lg-3 col-sm-3 col-md-12 col-xs-12">
@@ -162,7 +165,7 @@
 						      	<td valign="middle" th:if="${#lists.size(hotestPosts.posts)} gt (${iterStat.index} + 1)" th:with="postOdd=${hotestPosts.posts[(iterStat.index+1)]}">
 						      		<div class="row">
 						      			<div class="col-lg-9 col-sm-9 col-md-12 col-xs-12">
-						      				<p><a th:href="'/cc/circle/' + ${postOdd.circleId} + '/post/'+ ${postOdd.id}" class="cut-text" th:title="${postOdd.digest}" th:utext="${postOdd.digest}"></a></p>
+						      				<p><a th:href="'/cc/' + ${postOdd.circleId} + '/post/'+ ${postOdd.id}" class="cut-text" th:title="${postOdd.digest}" th:utext="${postOdd.digest}"></a></p>
 						      				<p th:utext="${postOdd.createTime}"></p>
 						      			</div>
 						      			<div class="col-lg-3 col-sm-3 col-md-12 col-xs-12">
@@ -180,10 +183,10 @@
 						推荐圈子
 					</div>
 					<div class="panel-body panel-table-container">
-						<table class="table table-bordered">
+						<table class="table">
 						  <tbody>
 						    <tr th:each="circleEven,iterStat : ${recommends}" th:if="${iterStat.even}">
-						      	<td valign="middle"><img alt="" th:data="${circleEven.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleEven.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleEven.id}" th:utext="${circleEven.name}">Bangalore</a></td>
+						      	<td valign="middle" class="border-right"><img alt="" th:data="${circleEven.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleEven.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleEven.id}" th:utext="${circleEven.name}">Bangalore</a></td>
 						     	<td valign="middle" th:if="${#lists.size(recommends)} gt (${iterStat.index} + 1)" th:with="circleOdd=${recommends[(iterStat.index+1)]}">
 						    		<img alt="" th:data="${circleOdd.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleOdd.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleOdd.id}" th:utext="${circleOdd.name}">Bangalore</a>
 						    	</td>
@@ -197,10 +200,10 @@
 						热门圈子
 					</div>
 					<div class="panel-body panel-table-container">
-						<table class="table table-bordered">
+						<table class="table">
 						  <tbody>
 						    <tr th:each="circleEven,iterStat : ${hotests}" th:if="${iterStat.even}">
-						      	<td valign="middle"><img alt="" th:data="${circleEven.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleEven.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleEven.id}" th:utext="${circleEven.name}">Bangalore</a></td>
+						      	<td valign="middle" class="border-right"><img alt="" th:data="${circleEven.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleEven.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleEven.id}" th:utext="${circleEven.name}">Bangalore</a></td>
 						     	<td valign="middle" th:if="${#lists.size(hotests)} gt (${iterStat.index} + 1)" th:with="circleOdd=${hotests[(iterStat.index+1)]}">
 						    		<img alt="" th:data="${circleOdd.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleOdd.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleOdd.id}" th:utext="${circleOdd.name}">Bangalore</a>
 						    	</td>
@@ -214,10 +217,10 @@
 						最新圈子
 					</div>
 					<div class="panel-body panel-table-container">
-						<table class="table table-bordered">
+						<table class="table">
 						  <tbody>
 						    <tr th:each="circleEven,iterStat : ${newests}" th:if="${iterStat.even}">
-						      	<td valign="middle"><img alt="" th:data="${circleEven.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleEven.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleEven.id}" th:utext="${circleEven.name}">Bangalore</a></td>
+						      	<td valign="middle" class="border-right"><img alt="" th:data="${circleEven.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleEven.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleEven.id}" th:utext="${circleEven.name}">Bangalore</a></td>
 						     	<td valign="middle" th:if="${#lists.size(newests)} gt (${iterStat.index} + 1)" th:with="circleOdd=${newests[(iterStat.index+1)]}">
 						    		<img alt="" th:data="${circleOdd.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleOdd.circlePath}"/><a target="_blank" th:href="'/cc/circle/'+ ${circleOdd.id}" th:utext="${circleOdd.name}">Bangalore</a>
 						    	</td>

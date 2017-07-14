@@ -3,7 +3,6 @@ var $circleEditModal;
 var $tableContainer;
 
 $(function(){
-		
 	initPage(".pagination", "getCircleMembers");
 	$circleEditModal = $("#edit-circle-modal");
 	$("[data-toggle='tooltip']").tooltip();
@@ -28,6 +27,11 @@ $(function(){
 		deleteMember($(this));
 	});
 	
+	//帖子审核的点击事件
+	$(document).on("click", ".post-check", function(event){
+		event.stopPropagation();//阻止冒泡
+		window.open("/cc/"+ circleId + "/post/check", "_self");
+	});
 	//保存设置的点击事件
 	/*$(document).on("click", ".save-setting", function(event){
 		event.stopPropagation();//阻止冒泡
@@ -35,7 +39,32 @@ $(function(){
 	});*/
 	
 	getCircleMembers();
+	
+	//获取等待审核的帖子总数
+	getNoCheckTotal();
 });
+
+/**
+ * 获取等待审核的帖子总数
+ */
+function getNoCheckTotal(){
+	$.ajax({
+		url : "/cc/"+ circleId +"/post/nochecktotal?t="+ Math.random(),
+		dataType: 'json',
+		beforeSend:function(){
+		},
+		success : function(data) {
+			if(data.isSuccess && data.message > 0){
+				$("button.post-check").text("审核帖子("+ data.message +")");
+			}else{
+				ajaxError(data);
+			}
+		},
+		error : function(data) {
+			ajaxError(data);
+		}
+	});
+}
 
 /**
  * 获取我的圈子成员列表

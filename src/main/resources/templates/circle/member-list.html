@@ -44,10 +44,11 @@
 		<div class="row">
 			<div class="col-lg-12">
 				<button type="button" class="btn btn-warning btn-sm" data-placement="left" data-toggle="tooltip" title="点击进入圈子中心" th:text="${circle.name}" th:onclick="'linkToCircle('+ ${circle.id} +')'"></button>
- 				<button th:if="${canAdmin}" type="button" class="btn btn-info btn-sm" data-placement="left" data-toggle="tooltip" title="发布问答" >发布问答</button>
+ 				<button th:if="${isCircleAdmin}" type="button" class="btn btn-info btn-sm" data-placement="left" data-toggle="tooltip" title="发布问答" >发布问答</button>
+ 				<button th:if="${isCircleAdmin}" type="button" class="btn btn-success btn-sm post-check" data-placement="left" data-toggle="tooltip" title="点击去审核帖子" >审核帖子</button>
 			</div>
 		</div>
-		<div class="row" th:if="${canAdmin}">
+		<div class="row" th:if="${isCircleAdmin}">
 			<div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
 				<div class="panel panel-default">
 				    <div class="panel-heading">
@@ -178,7 +179,7 @@
 	</div>
 <script th:inline="javascript">//引用
 	var circleId = /*[[${circle.id}]]*/;//取值
-	var canAdmin = /*[[${canAdmin}]]*/;//取值
+	var canAdmin = /*[[${isCircleAdmin}]]*/;//取值
 	var settingId = /*[[${setting.id}]]*/;//取值
 	layui.use('form', function(){
 		  var form = layui.form();

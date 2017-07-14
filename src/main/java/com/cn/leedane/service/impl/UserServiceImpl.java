@@ -21,6 +21,7 @@ import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.chat_room.ScanLoginWebSocket;
 import com.cn.leedane.enums.NotificationType;
 import com.cn.leedane.exception.ErrorException;
+import com.cn.leedane.exception.MobCodeErrorException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CommentHandler;
 import com.cn.leedane.handler.FanHandler;
@@ -34,6 +35,7 @@ import com.cn.leedane.mapper.UserMapper;
 import com.cn.leedane.message.ISendNotification;
 import com.cn.leedane.message.SendNotificationImpl;
 import com.cn.leedane.message.notification.Notification;
+import com.cn.leedane.mob.sms.utils.MobClient;
 import com.cn.leedane.model.EmailBean;
 import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.model.OperateLogBean;
@@ -604,13 +606,30 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		//{'validationCode':253432,'mobilePhone':172636634664}
 		String validationCode = JsonUtil.getStringValue(jo, "validationCode");
 		String mobilePhone = JsonUtil.getStringValue(jo, "mobilePhone");
+		int zone = JsonUtil.getIntValue(jo, "zone", 86);
 		UserBean resultUser =  new UserBean();
 		if(StringUtil.isNull(validationCode) || StringUtil.isNull(mobilePhone)){
 			return resultUser;
 		}
+		try {
+			MobClient client = new MobClient("https://webapi.sms.mob.com/sms/verify");
+			String checkStr = client.post("appkey=1f1494a737c89&phone="+ mobilePhone +"&zone="+ zone +"&&code="+ validationCode);
+			JSONObject jsonResult = JSONObject.fromObject(checkStr);
+			if(jsonResult.optInt("status") == 200){
+				//保存操作日志
+				UserBean user = userMapper.loginUserByPhone(mobilePhone);
+				operateLogService.saveOperateLog(user, request, null, "手机号码："+mobilePhone+"用户通过手机号码登录系统", "手机号码登录", ConstantsUtil.STATUS_NORMAL, 0);
+				return user;
+			}else{
+				throw new MobCodeErrorException(jsonResult.optString("error"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new MobCodeErrorException("处理手机登录出现异常！");
+		}
 		
 		//校验验证码
-		List<String> list = RedisUtil.getInstance().getMap("login_"+mobilePhone, "validationCode", "createTime", "endTime");
+		/*List<String> list = RedisUtil.getInstance().getMap("login_"+mobilePhone, "validationCode", "createTime", "endTime");
 		if(list.size() > 0){
 			if(list.get(0) != null){
 				String endTime = list.get(2);
@@ -627,8 +646,8 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 					}
 				}
 			}
-		}
-		return null;
+		}*/
+		//return null;
 	}
 
 	@Override

@@ -137,4 +137,50 @@ public class CirclePostController extends BaseController{
 		message.putAll(circlePostService.zan(circleId, postId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
+	
+	/**
+	 * 等待审核帖子总数
+	 * @return
+	 */
+	@RequestMapping(value = "/{circleId}/post/nochecktotal", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> noCheckTotal(@PathVariable("circleId") int circleId, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circlePostService.noCheckTotal(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 等待审核帖子列表
+	 * @return
+	 */
+	@RequestMapping(value = "/{circleId}/post/nochecks", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> noCheckList(@PathVariable("circleId") int circleId, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circlePostService.noCheckList(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 审核帖子
+	 * @return
+	 */
+	@RequestMapping(value = "/{circleId}/post/{postId}/check", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> check(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circlePostService.check(circleId, postId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
 }

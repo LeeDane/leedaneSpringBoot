@@ -116,4 +116,35 @@ public interface CirclePostService <T extends IDBean>{
 	 */
 	public void saveVisitLog(int postId, UserBean user,
 			HttpServletRequest request);
+	
+	/**
+	 * 获取等待审核的帖子总数
+	 * @param circleId
+	 * @param json
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> noCheckTotal(int circleId, JSONObject json, UserBean user, HttpServletRequest request);
+	
+	/**
+	 * 获取等待审核帖子列表
+	 * @param circleId
+	 * @param json
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> noCheckList(int circleId, JSONObject json, UserBean user, HttpServletRequest request);
+	
+	/**
+	 * 审核帖子
+	 * @param circleId
+	 * @param postId
+	 * @param json
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> check(int circleId, int postId, JSONObject json, UserBean user, HttpServletRequest request);
 }

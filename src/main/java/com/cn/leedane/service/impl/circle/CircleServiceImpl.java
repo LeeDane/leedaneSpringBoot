@@ -242,7 +242,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		
 		int circleId = circle.getId();
 		if(user.getId() == circle.getCreateUserId()){
-			message.put("canAdmin", true);
+			message.put("isCircleAdmin", true);
 			CircleSettingBean circleSettingBean = circleSettingHandler.getNormalSettingBean(circle.getId());
 			if(circleSettingBean == null)
 				throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
@@ -250,7 +250,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			message.put("setting", circleSettingBean);
     	}else{
     		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
-    		message.put("canAdmin", SqlUtil.getBooleanByList(members) &&  members.get(0).getRoleType() == CIRCLE_MANAGER);
+    		message.put("isCircleAdmin", SqlUtil.getBooleanByList(members) &&  members.get(0).getRoleType() == CIRCLE_MANAGER);
     		message.put("setting", new CircleSettingBean());
     	}
 		

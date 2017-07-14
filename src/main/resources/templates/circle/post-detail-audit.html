@@ -97,11 +97,6 @@
 								  <img th:src="${create_user_pic_path}" class="img-circle" style="width: 20px; height: 20px" /> <span th:text="${create_user_account}"></span>
 						</button>
 						<span class="label label-primary" th:text="${create_time}"></span>
-						<span th:if="${canDelete}" class="glyphicon glyphicon-trash post-delete hand" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="删除"></span>&nbsp;&nbsp;
-						<span class="glyphicon glyphicon-comment" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="评论"></span>&nbsp;<span th:text="${comment_number}"></span>&nbsp;&nbsp;
-						<span class="glyphicon glyphicon-share-alt" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="转发"></span>&nbsp;<span th:text="${transmit_number}"></span>&nbsp;&nbsp;
-						<span class="glyphicon glyphicon-thumbs-up hand post-zan" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="很赞"></span>&nbsp;<span th:text="${zan_number}"></span>&nbsp;&nbsp;
-						<span class="glyphicon glyphicon-credit-card hand" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="打赏"></span>
 					</p>
 			   		<div id="zan-users"></div>
 			   		<div class="row-content" th:utext="${post.content}"></div>
@@ -113,51 +108,11 @@
 				   		</div>
 				   </div>
 			   </div>
-			   <div class="row" id="comment">
-			   		<div class="col-lg-12" th:if="${not isLogin}" style="text-align: center;">
-					        您还未登录，无法参与评论 <a type="button" class="btn btn-info" href="javascript:void(0);" onclick="linkToLogin();">登录</a>
-					</div>
-					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${isLogin}" style="text-align: center;">
-						<div class="row">
-							<textarea class="form-control" name="add-comment" placeholder="评论/转发这篇帖子，最多250个文字。" style="min-height: 125px;" autofocus ="true"></textarea>
-						</div>
-						<div class="row">
-								<!--MOB SHARE BEGIN-->
-								<div class="-mob-share-ui" style="display: none">
-								    <ul class="-mob-share-list">
-								        <li class="-mob-share-weibo"><p>新浪微博</p></li>
-								        <li class="-mob-share-weixin"><p>微信</p></li>
-								        <li class="-mob-share-qzone"><p>QQ空间</p></li>
-								        <li class="-mob-share-qq"><p>QQ好友</p></li>
-								        <!-- <li class="-mob-share-douban"><p>豆瓣</p></li>
-								        <li class="-mob-share-facebook"><p>Facebook</p></li>
-								        <li class="-mob-share-twitter"><p>Twitter</p></li> -->
-								    </ul>
-								    <div class="-mob-share-close">取消</div>
-								</div>
-								<div class="-mob-share-ui-bg"></div>
-								<script id="-mob-share" src="http://f1.webshare.mob.com/code/mob-share.js?appkey=6861f5e3c06685e06ffc07c8d06a7ba7"></script>
-								<!--MOB SHARE END-->
-							<button class="btn btn-md btn-primary btn-block pull-right post-comment" type="button" style="margin-top: 10px; width: 60px; ">评论</button>
-							<button class="btn btn-md btn-primary btn-block pull-right post-transmit" type="button" style="margin-top: 10px; width: 60px; margin-right: 5px;">转发</button>
-							<button class="btn btn-md btn-primary btn-block pull-right -mob-share-ui-button -mob-share-open" type="button" style="margin-top: 10px; width: 60px; margin-right: 5px;">分享</button>
-						</div>
-					</div>
-			   </div>
-			   <div class="row" id="comment-list-container">
-			   </div>
-			   <div>
-			    	<nav aria-label="Page navigation">
-	  					<ul class="pagination"></ul>
-					</nav>
-			    </div>
 			</div>
 		</div>
 	</div>
 <script th:inline="javascript">//引用  
-	/*<![CDATA[*/  
-	var zanUsers = /*[[${zan_users}]]*/;//取值  zan_number
-	var zanNumber = /*[[${zan_number}]]*/;//取值
+	/*<![CDATA[*/
 	var postId = /*[[${post.id}]]*/;//取值
 	var circleId = /*[[${post.circleId}]]*/;//取值
 	var createUserId = /*[[${post.createUserId}]]*/;//取值
