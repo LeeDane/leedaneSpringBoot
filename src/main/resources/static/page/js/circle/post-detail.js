@@ -377,7 +377,7 @@ function doAddComment(params){
 	$.ajax({
 		type : "post",
 		data : params,
-		url : "/cm/comment",
+		url : "/cc/"+ circleId +"/post/"+ params.table_id +"/comment",
 		dataType: 'json',
 		beforeSend:function(){
 		},

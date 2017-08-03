@@ -241,7 +241,7 @@ function buildEachPostRow(index, post){
 						html +='</blockquote>'+
 							'</div>';
 						}
-					html +=	'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 cut-text2" data-toggle="tooltip" data-placement="left" title="'+ post.digest +'">'+ post.digest +'</div>';
+					html +=	'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 cut-text2" data-toggle="tooltip" data-placement="left" title="'+ changeNotNullString(post.digest) +'">'+ changeNotNullString(post.digest) +'</div>';
 					if(isNotEmpty(post.imgs)){
 						var imgArray = post.imgs.split(";");
 						for(var imgIndex = 0; imgIndex < imgArray.length; imgIndex++){

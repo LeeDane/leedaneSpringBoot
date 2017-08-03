@@ -291,8 +291,12 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		
 		//校验是否加入圈子
 		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
-		if(!SqlUtil.getBooleanByList(members))
-			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先加入该圈子.value));
+		if(!SqlUtil.getBooleanByList(members)){
+			ResponseMap message = new ResponseMap();
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先加入该圈子.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请先加入该圈子.value);
+			return message.getMap();
+		}
 		
 		Map<String, Object> results = commentService.add(json, user, request);
 		if(results != null && results.containsKey("isSuccess") && StringUtil.changeObjectToBoolean(results.get("isSuccess"))){
@@ -317,8 +321,12 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		
 		//校验是否加入圈子
 		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
-		if(!SqlUtil.getBooleanByList(members))
-			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先加入该圈子.value));
+		if(!SqlUtil.getBooleanByList(members)){
+			ResponseMap message = new ResponseMap();
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先加入该圈子.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请先加入该圈子.value);
+			return message.getMap();
+		}
 		
 		ResponseMap message = new ResponseMap();
 		
@@ -371,8 +379,12 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		
 		//校验是否加入圈子
 		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
-		if(!SqlUtil.getBooleanByList(members))
-			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先加入该圈子.value));
+		if(!SqlUtil.getBooleanByList(members)){
+			ResponseMap message = new ResponseMap();
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先加入该圈子.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请先加入该圈子.value);
+			return message.getMap();
+		}
 		
 		Map<String, Object> results = zanService.addZan(json, user, request);
 		if(results != null && results.containsKey("isSuccess") && StringUtil.changeObjectToBoolean(results.get("isSuccess"))){
