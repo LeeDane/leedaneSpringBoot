@@ -44,11 +44,11 @@ public interface CircleMapper extends BaseMapper<CircleBean>{
 			@Param("status") int status);
 	
 	/**
-	 * 获取目前最热门的圈子(计算)
+	 * 计算目前最热门的圈子(计算)
 	 * @param time
 	 * @return
 	 */
-	public void calculateHotests(@Param("time") Date time, @Param("pageSize") int pageSize);
+	public void calculateCircleHotests(@Param("time") Date time, @Param("pageSize") int pageSize);
 	
 	/**
 	 * 获取目前最热门的圈子

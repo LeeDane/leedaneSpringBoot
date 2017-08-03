@@ -61,7 +61,7 @@
 	
 	<select id="calculateHotests" resultType="java.util.Map" statementType="CALLABLE">
 		{
-			call getHostestPostsProcedure(#{time}, #{pageSize})
+			call calculateHostestPostsProcedure(#{time}, #{pageSize})
 		}
 	</select>
 	

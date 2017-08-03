@@ -54,8 +54,9 @@ function getNoCheckTotal(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess && data.message > 0){
-				$("button.post-check").text("审核帖子("+ data.message +")");
+			if(data.isSuccess){
+				if(data.message > 0)
+					$("button.post-check").text("审核帖子("+ data.message +")");
 			}else{
 				ajaxError(data);
 			}

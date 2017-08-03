@@ -40,15 +40,17 @@
 		order by c.create_time desc, c.id desc limit #{start}, #{pageSize}
 	</select>
 	
-	<select id="calculateHotests" resultType="java.util.Map" statementType="CALLABLE">
+	<select id="calculateCircleHotests" resultType="java.util.Map" statementType="CALLABLE">
 		{
-			call getHostestCirclesProcedure(#{time}, #{pageSize})
+			call calculateHostestCirclesProcedure(#{time}, #{pageSize})
 		}
 	</select>
 	
+	<!-- 获取热门的圈子 -->
 	<select id="getHotests" resultMap="objectBean">
-		select c.id, c.name name, c.circle_desc, c.circle_path, c.status, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time
-		from t_circle c where c.status = #{status} and c.create_time > #{time} order by c.circle_score desc limit 0, #{pageSize};
+		{
+			call getHostestCirclesProcedure(#{time}, #{pageSize} ,#{status})
+		}
 	</select>
 	
 	<select id="getNewests" parameterType="int" resultMap="objectBean">

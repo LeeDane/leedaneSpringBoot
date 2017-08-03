@@ -68,7 +68,7 @@
 	
     <select id="calculateHotests" resultType="java.util.Map" statementType="CALLABLE">
 		{
-			call getHostestCircleMembersProcedure(#{circleId})
+			call calculateHostestCircleMembersProcedure(#{circleId})
 		}
 	</select>
 	

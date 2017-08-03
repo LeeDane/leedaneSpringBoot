@@ -36,7 +36,7 @@ public class CircleHostest extends AbstractScheduling{
 		JSONObject params = getParams();
 		int limit = JsonUtil.getIntValue(params, "limit" , 5);//默认显示最热门的5条记录
 		Date time = DateUtil.getDayBeforeOrAfter(OptionUtil.circleHostestBeforeDay, true);
-		circleMapper.calculateHotests(time, limit);
+		circleMapper.calculateCircleHotests(time, limit);
 		long end = System.currentTimeMillis();
 		logger.info("执行最热门的圈子任务总计耗时：" + (end - start) +"毫秒");
 	}

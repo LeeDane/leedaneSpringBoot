@@ -26,10 +26,10 @@ END $$
 delimiter
 
 -- 计算热门圈子的积分
-drop PROCEDURE if EXISTS `getHostestCirclesProcedure` ;
+drop PROCEDURE if EXISTS `calculateHostestCirclesProcedure` ;
 -- 用户打卡记录 * 0.3 + 用户净新增记录(新增-退出) * 0.6 + 任务完成总数 * 0.4 + 打开的次数 * 0.01 + 帖子热门积分* 0.3 + 帖子数 * 0.5 -被举报总数 * 0.8
 delimiter $$
-CREATE PROCEDURE `getHostestCirclesProcedure` (in $time DATETIME, in $limit INT)
+CREATE PROCEDURE `calculateHostestCirclesProcedure` (in $time DATETIME, in $limit INT)
 BEGIN
 	DECLARE circle_id INT(11); -- 自定义变量1
 	DECLARE addNumber INT(11); -- 这个时间段内新增的成员数
@@ -103,10 +103,10 @@ END $$
 delimiter
 
 -- 计算圈子的热门成员积分
-drop PROCEDURE if EXISTS `getHostestCircleMembersProcedure` ;
+drop PROCEDURE if EXISTS `calculateHostestCircleMembersProcedure` ;
 -- 打卡积分 * 0.6 + 任务积分 * 0.3 
 delimiter $$
-CREATE PROCEDURE `getHostestCircleMembersProcedure` (in $circleId INT)
+CREATE PROCEDURE `calculateHostestCircleMembersProcedure` (in $circleId INT)
 BEGIN
 	DECLARE member_id INT(11); -- 自定义变量1
 	DECLARE contributionNumber INT(11); -- 这个圈子该成员的贡献值
@@ -138,10 +138,10 @@ END $$
 delimiter
 
 -- 计算热门帖子积分
-drop PROCEDURE if EXISTS `getHostestPostsProcedure` ;
+drop PROCEDURE if EXISTS `calculateHostestPostsProcedure` ;
 -- 一定时间内的所有的帖子： 访问数 * 0.01 + 点赞 * 0.3 + 评论数 * 0.6 + 转发数 * 0.7 + 打赏数 * 1.6 
 delimiter $$
-CREATE PROCEDURE `getHostestPostsProcedure` (in $time DATETIME, in $limit INT)
+CREATE PROCEDURE `calculateHostestPostsProcedure` (in $time DATETIME, in $limit INT)
 BEGIN
 	DECLARE post_id INT(11); -- 自定义变量1
   DECLARE logNumber INT(11); -- 这个时间段内访问数
@@ -197,5 +197,35 @@ BEGIN
 		UNTIL DONE
 		END REPEAT ;
 		CLOSE cursor_circle_posts; -- 关闭游标
+END $$
+delimiter
+
+-- 获取热门圈子存储过程
+drop PROCEDURE if EXISTS `getHostestCirclesProcedure`;
+delimiter $$
+CREATE PROCEDURE `getHostestCirclesProcedure` (in $time DATETIME, in $limit INT, in $status INT)
+BEGIN	
+  	drop table if exists tmp_circle;
+  	-- 创建临时表保存结果集变量
+	CREATE TEMPORARY TABLE tmp_circle(
+		`tmp_circle_id` int(11) NOT NULL
+	);
+
+	-- 查询到结果集保存到临时表中
+	insert into tmp_circle (tmp_circle_id) (select v.table_id
+	from t_visitor v 
+	where v.status= 1 and v.table_name='t_circle'
+	and not exists (
+		select 1 from t_visitor v1 
+		where v1.status= 1 and v1.table_name='t_circle' and v.table_id = v1.table_id
+		and v1.create_time > v.create_time) 
+	and v.create_time >= $time
+	ORDER BY v.create_time desc, v.id desc);
+	
+	select c.id, c.name name, c.circle_desc, c.circle_path, c.status, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time 
+	from t_circle c inner join tmp_circle tc on c.id = tc.tmp_circle_id 
+	where `status` = $status order by c.circle_score desc, c.id desc limit $limit;
+	-- 删除临时表
+	drop table if exists tmp_circle;
 END $$
 delimiter
