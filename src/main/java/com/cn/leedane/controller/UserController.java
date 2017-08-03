@@ -45,6 +45,8 @@ import com.cn.leedane.utils.EnumUtil.PlatformType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.MD5Util;
 import com.cn.leedane.utils.OptionUtil;
+import com.cn.leedane.utils.RSACoder;
+import com.cn.leedane.utils.RSAKeyUtil;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.wechat.bean.WeixinCacheBean;
@@ -96,138 +98,144 @@ public class UserController extends BaseController{
 			username = JsonUtil.getStringValue(json, "account");
 			password = JsonUtil.getStringValue(json, "pwd");
 		}
-			
 		
 		if(StringUtil.isNull(username) || StringUtil.isNull(password)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.账号或密码为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.账号或密码为空.value);
 		}else{
-			//获取登录失败的数量
-			int number = userHandler.getLoginErrorNumber(username);
-			if(number > 5){
-				Date date = userHandler.getLoginErrorTime(username);
-				if(date != null){
-					//是否在禁止5分钟内
-					if(DateUtil.isInMinutes(new Date(), date, 5)){
-						//计算还剩下几分钟
-						int minutes = DateUtil.leftMinutes(new Date(), date);
-						if(minutes > 1){
-							message.put("message", "由于您的账号失败连续超过5次，系统已限制您5分钟内不能登录,大概还剩余"+ minutes +"分钟");
-						}else{
-							message.put("message", "由于您的账号失败连续超过5次，系统已限制您5分钟内不能登录,大概还剩余"+ DateUtil.leftSeconds(new Date(), date) +"秒");
+			try {
+				byte[] decodedData = RSACoder.decryptByPrivateKey(password, RSAKeyUtil.getInstance().getPrivateKey());
+				password = new String(decodedData, "UTF-8");	
+				//获取登录失败的数量
+				int number = userHandler.getLoginErrorNumber(username);
+				if(number > 5){
+					Date date = userHandler.getLoginErrorTime(username);
+					if(date != null){
+						//是否在禁止5分钟内
+						if(DateUtil.isInMinutes(new Date(), date, 5)){
+							//计算还剩下几分钟
+							int minutes = DateUtil.leftMinutes(new Date(), date);
+							if(minutes > 1){
+								message.put("message", "由于您的账号失败连续超过5次，系统已限制您5分钟内不能登录,大概还剩余"+ minutes +"分钟");
+							}else{
+								message.put("message", "由于您的账号失败连续超过5次，系统已限制您5分钟内不能登录,大概还剩余"+ DateUtil.leftSeconds(new Date(), date) +"秒");
+							}
+							
+							message.put("responseCode", EnumUtil.ResponseCode.您的账号登录失败太多次.value);
+							return message.getMap();
 						}
-						
-						message.put("responseCode", EnumUtil.ResponseCode.您的账号登录失败太多次.value);
-						return message.getMap();
 					}
 				}
-			}
-			
-			CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken();
-			authenticationToken.setUsername(username);
-			authenticationToken.setPassword(password.toCharArray());
-			//这里只负责获取用户，不做校验，校验交给shiro的realm里面去做
-	        UserBean user = userHandler.getUserBean(username, password);
-	        authenticationToken.setUser(user);
-	        authenticationToken.setRememberMe(true);
-			
-	        //获取当前的Subject  
-	        Subject currentUser = SecurityUtils.getSubject();  
-	        logger.info("对用户[" + username + "]进行登录验证..验证开始");  
-            currentUser.login(authenticationToken);
-            logger.info("对用户[" + username + "]进行登录验证..验证通过");  
-	        /*try {  
-	            //在调用了login方法后,SecurityManager会收到AuthenticationToken,并将其发送给已配置的Realm执行必须的认证检查  
-	            //每个Realm都能在必要时对提交的AuthenticationTokens作出反应  
-	            //所以这一步在调用login(token)方法时,它会走到MyRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法  
-	            logger.info("对用户[" + username + "]进行登录验证..验证开始");  
+				
+				CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken();
+				authenticationToken.setUsername(username);
+				authenticationToken.setPassword(password.toCharArray());
+				//这里只负责获取用户，不做校验，校验交给shiro的realm里面去做
+		        UserBean user = userHandler.getUserBean(username, password);
+		        authenticationToken.setUser(user);
+		        authenticationToken.setRememberMe(true);
+				
+		        //获取当前的Subject  
+		        Subject currentUser = SecurityUtils.getSubject();  
+		        logger.info("对用户[" + username + "]进行登录验证..验证开始");  
 	            currentUser.login(authenticationToken);
 	            logger.info("对用户[" + username + "]进行登录验证..验证通过");  
-	        }catch(UnknownAccountException uae){  
-	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,未知账户");  
-	            redirectAttributes.addFlashAttribute("message", "未知账户");  
-	        }catch(BannedAccountException ba){  
-	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户已经被禁言了");  
-	            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已被禁言.value));  
-	        }catch(CancelAccountException ca){  
-	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户已经注销了");  
-	            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已经注销.value));  
-	        }catch(StopUseAccountException sua){  
-	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户暂时被禁止使用");  
-	            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已被禁止使用.value));  
-	        }catch(NoValidationEmailAccountException nveca){  
-	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户未验证邮箱");  
-	            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先验证邮箱.value));  
-	        }catch(NoActiveAccountException naa){  
-	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户未激活");  
-	            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注册未激活账户.value));  
-	        }catch(NoCompleteAccountException naa){  
-	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户未完善信息");  
-	            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.未完善信息.value));  
-	        }catch(IncorrectCredentialsException ice){  
-	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,错误的凭证");  
-	            redirectAttributes.addFlashAttribute("message", "密码不正确");  
-	        }catch(LockedAccountException lae){  
-	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,账户已锁定");  
-	            redirectAttributes.addFlashAttribute("message", "账户已锁定");  
-	        }catch(ExcessiveAttemptsException eae){  
-	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,错误次数过多");  
-	            redirectAttributes.addFlashAttribute("message", "用户名或密码错误次数过多");  
-	        }catch(AuthenticationException ae){  
-	            //通过处理Shiro的运行时AuthenticationException就可以控制用户登录失败或密码错误时的情景  
-	            logger.info("对用户[" + username + "]进行登录验证..验证未通过,堆栈轨迹如下");  
-	            ae.printStackTrace();  
-	            redirectAttributes.addFlashAttribute("message", "用户名或密码不正确");  
-	        } */
-	        
-	        //验证是否登录成功  
-	        if(currentUser.isAuthenticated()){  
-	            logger.info("用户[" + username + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)");
-	            
-	            currentUser.getSession().setAttribute(USER_INFO_KEY, user);
-	            //获取平台，如果是android就继续获取token
-	            String platform = request.getHeader("platform");
-	            
-	            Map<String, Object> userinfo = userHandler.getUserInfo(user, true);
-	            if(StringUtil.isNotNull(platform) && PlatformType.安卓版.value.equals(platform)){
-	            	UserTokenBean userTokenBean = new UserTokenBean();
-	            	Date overdue = DateUtil.getOverdueTime(new Date(), "7天");
-	            	userTokenBean.setToken(StringUtil.getUserToken(String.valueOf(user.getId()), user.getSecretCode(), overdue));
-	            	userTokenBean.setCreateTime(new Date());
-	            	userTokenBean.setCreateUserId(user.getId());
-	            	userTokenBean.setOverdue(overdue);
-	            	userTokenBean.setStatus(ConstantsUtil.STATUS_NORMAL);
-	            	ResponseMap responseMap = userTokenService.addUserToken(user, userTokenBean.getToken(), overdue, request);
-	            	if(StringUtil.changeObjectToBoolean(responseMap.get("isSuccess"))){
-	            		userinfo.put("token", userTokenBean.getToken());
-	            	}else{
-	            		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.token获取异常.value));
-	            		message.put("responseCode", EnumUtil.ResponseCode.token获取异常.value);
-	            		return message.getMap();
-	            	}
-	            }
-	            
-				userHandler.removeLoginErrorNumber(username);
-				message.put("userinfo", userinfo);
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您登录成功.value));
-				message.put("responseCode", EnumUtil.ResponseCode.恭喜您登录成功.value);
-				isSuccess = true;
-				message.put("isSuccess", isSuccess);				
-	        }else{  
-	        	authenticationToken.clear(); 
-				number = userHandler.addLoginErrorNumber(username);	
-				if(number > 5){
-					message.put("message", "您的账号已经连续登陆失败"+number+"次，账号已被限制5分钟");
-				}else{
-					message.put("message", "您的账号已经连续登陆失败"+number+"次，还剩下" +(5- number)+"次");
-				}
-				message.put("responseCode", EnumUtil.ResponseCode.账号或密码不匹配.value);
-	        }
-			
-			// 保存用户登录日志信息
-			String subject = user != null ? user.getAccount()+"登录系统": "账号" + username + "登录系统失败";
-			this.operateLogService.saveOperateLog(user, request, new Date(), subject, "账号登录", (isSuccess ? 1: 0), 0);
-		
+		        /*try {  
+		            //在调用了login方法后,SecurityManager会收到AuthenticationToken,并将其发送给已配置的Realm执行必须的认证检查  
+		            //每个Realm都能在必要时对提交的AuthenticationTokens作出反应  
+		            //所以这一步在调用login(token)方法时,它会走到MyRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法  
+		            logger.info("对用户[" + username + "]进行登录验证..验证开始");  
+		            currentUser.login(authenticationToken);
+		            logger.info("对用户[" + username + "]进行登录验证..验证通过");  
+		        }catch(UnknownAccountException uae){  
+		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,未知账户");  
+		            redirectAttributes.addFlashAttribute("message", "未知账户");  
+		        }catch(BannedAccountException ba){  
+		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户已经被禁言了");  
+		            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已被禁言.value));  
+		        }catch(CancelAccountException ca){  
+		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户已经注销了");  
+		            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已经注销.value));  
+		        }catch(StopUseAccountException sua){  
+		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户暂时被禁止使用");  
+		            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已被禁止使用.value));  
+		        }catch(NoValidationEmailAccountException nveca){  
+		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户未验证邮箱");  
+		            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先验证邮箱.value));  
+		        }catch(NoActiveAccountException naa){  
+		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户未激活");  
+		            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注册未激活账户.value));  
+		        }catch(NoCompleteAccountException naa){  
+		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,用户未完善信息");  
+		            redirectAttributes.addFlashAttribute("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.未完善信息.value));  
+		        }catch(IncorrectCredentialsException ice){  
+		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,错误的凭证");  
+		            redirectAttributes.addFlashAttribute("message", "密码不正确");  
+		        }catch(LockedAccountException lae){  
+		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,账户已锁定");  
+		            redirectAttributes.addFlashAttribute("message", "账户已锁定");  
+		        }catch(ExcessiveAttemptsException eae){  
+		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,错误次数过多");  
+		            redirectAttributes.addFlashAttribute("message", "用户名或密码错误次数过多");  
+		        }catch(AuthenticationException ae){  
+		            //通过处理Shiro的运行时AuthenticationException就可以控制用户登录失败或密码错误时的情景  
+		            logger.info("对用户[" + username + "]进行登录验证..验证未通过,堆栈轨迹如下");  
+		            ae.printStackTrace();  
+		            redirectAttributes.addFlashAttribute("message", "用户名或密码不正确");  
+		        } */
+		        
+		        //验证是否登录成功  
+		        if(currentUser.isAuthenticated()){  
+		            logger.info("用户[" + username + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)");
+		            
+		            currentUser.getSession().setAttribute(USER_INFO_KEY, user);
+		            //获取平台，如果是android就继续获取token
+		            String platform = request.getHeader("platform");
+		            
+		            Map<String, Object> userinfo = userHandler.getUserInfo(user, true);
+		            if(StringUtil.isNotNull(platform) && PlatformType.安卓版.value.equals(platform)){
+		            	UserTokenBean userTokenBean = new UserTokenBean();
+		            	Date overdue = DateUtil.getOverdueTime(new Date(), "7天");
+		            	userTokenBean.setToken(StringUtil.getUserToken(String.valueOf(user.getId()), user.getSecretCode(), overdue));
+		            	userTokenBean.setCreateTime(new Date());
+		            	userTokenBean.setCreateUserId(user.getId());
+		            	userTokenBean.setOverdue(overdue);
+		            	userTokenBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+		            	ResponseMap responseMap = userTokenService.addUserToken(user, userTokenBean.getToken(), overdue, request);
+		            	if(StringUtil.changeObjectToBoolean(responseMap.get("isSuccess"))){
+		            		userinfo.put("token", userTokenBean.getToken());
+		            	}else{
+		            		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.token获取异常.value));
+		            		message.put("responseCode", EnumUtil.ResponseCode.token获取异常.value);
+		            		return message.getMap();
+		            	}
+		            }
+		            
+					userHandler.removeLoginErrorNumber(username);
+					message.put("userinfo", userinfo);
+					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您登录成功.value));
+					message.put("responseCode", EnumUtil.ResponseCode.恭喜您登录成功.value);
+					isSuccess = true;
+					message.put("isSuccess", isSuccess);				
+		        }else{  
+		        	authenticationToken.clear(); 
+					number = userHandler.addLoginErrorNumber(username);	
+					if(number > 5){
+						message.put("message", "您的账号已经连续登陆失败"+number+"次，账号已被限制5分钟");
+					}else{
+						message.put("message", "您的账号已经连续登陆失败"+number+"次，还剩下" +(5- number)+"次");
+					}
+					message.put("responseCode", EnumUtil.ResponseCode.账号或密码不匹配.value);
+		        }
+				
+				// 保存用户登录日志信息
+				String subject = user != null ? user.getAccount()+"登录系统": "账号" + username + "登录系统失败";
+				this.operateLogService.saveOperateLog(user, request, new Date(), subject, "账号登录", (isSuccess ? 1: 0), 0);
+			} catch (Exception e) {
+				e.printStackTrace();
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.账号或密码为空.value));
+				message.put("responseCode", EnumUtil.ResponseCode.账号或密码为空.value);
+			}
 		}
 		return message.getMap();
 	}
@@ -795,6 +803,7 @@ public class UserController extends BaseController{
 		checkParams(message, request);
 		
 		checkRoleOrPermission(request);
+		
 		UserBean user = userService.loginByPhone(getJsonFromMessage(message), request);
 		if(user == null){
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));

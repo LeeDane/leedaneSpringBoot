@@ -60,6 +60,8 @@ import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EmailUtil;
 import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.RSACoder;
+import com.cn.leedane.utils.RSAKeyUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.EmailType;
 import com.cn.leedane.utils.FileUtil;
@@ -606,6 +608,13 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		//{'validationCode':253432,'mobilePhone':172636634664}
 		String validationCode = JsonUtil.getStringValue(jo, "validationCode");
 		String mobilePhone = JsonUtil.getStringValue(jo, "mobilePhone");
+		try {
+			byte[] decodedData = RSACoder.decryptByPrivateKey(mobilePhone, RSAKeyUtil.getInstance().getPrivateKey());
+			mobilePhone = new String(decodedData, "UTF-8");
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
 		int zone = JsonUtil.getIntValue(jo, "zone", 86);
 		UserBean resultUser =  new UserBean();
 		if(StringUtil.isNull(validationCode) || StringUtil.isNull(mobilePhone)){
@@ -733,6 +742,17 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		String phone = JsonUtil.getStringValue(jo, "mobilePhone");
 		ResponseMap message = new ResponseMap();
 		
+		try {
+			byte[] decodedData = RSACoder.decryptByPrivateKey(phone, RSAKeyUtil.getInstance().getPrivateKey());
+			phone = new String(decodedData, "UTF-8");
+			byte[] decodedData1 = RSACoder.decryptByPrivateKey(password, RSAKeyUtil.getInstance().getPrivateKey());
+			password = new String(decodedData1, "UTF-8");
+			byte[] decodedData2 = RSACoder.decryptByPrivateKey(confirmPassword, RSAKeyUtil.getInstance().getPrivateKey());
+			confirmPassword = new String(decodedData2, "UTF-8");
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
 		if(StringUtil.isNull(account)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户名不能为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.用户名不能为空.value);
@@ -787,7 +807,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 		
 		user.setScore(firstScore);
-		
+		user.setSecretCode("");
 		boolean result = userMapper.save(user) > 0;
 		if(result){
 			saveRegisterScore(user);

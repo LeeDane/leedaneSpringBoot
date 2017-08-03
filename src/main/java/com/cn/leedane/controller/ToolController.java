@@ -32,6 +32,7 @@ import com.cn.leedane.utils.Base64Util;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.RSAKeyUtil;
 import com.cn.leedane.utils.EnumUtil.EmailType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
@@ -156,6 +157,20 @@ public class ToolController extends BaseController{
 		checkRoleOrPermission(request);
 		message.put("isSuccess", true);
 		message.put("message", getToken());
+		return message.getMap();
+	}
+	
+	/**
+	 * 获取服务器上的公钥凭证
+	 * @return
+	 */
+	@RequestMapping(value = "/publicKey", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> publicKey(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		
+		message.put("isSuccess", true);
+		message.put("message", RSAKeyUtil.getInstance().getPublicKey());
 		return message.getMap();
 	}
 	

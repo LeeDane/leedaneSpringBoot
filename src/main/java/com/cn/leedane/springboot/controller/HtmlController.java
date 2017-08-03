@@ -39,6 +39,7 @@ import com.cn.leedane.utils.CommonUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.RSAKeyUtil;
 import com.cn.leedane.utils.EnumUtil.BlogCategory;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsoupUtil;
@@ -135,6 +136,8 @@ public class HtmlController extends BaseController{
 	        	return "redirect:/";
 	        }
 		}
+		String k = RSAKeyUtil.getInstance().getPublicKey();
+		model.addAttribute("publicKey", k);
 		return loginRoleCheck("login", model, request);
 	}
 	
