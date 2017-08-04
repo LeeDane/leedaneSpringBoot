@@ -19,9 +19,14 @@
         UPDATE t_notification SET is_read = #{read} WHERE type = #{type}
     </update>
     
-    <select id="noReadNumber" resultType="java.util.Map">
-		select n.type, count(n.id) number 
+    <select id="noReadNumber" resultMap="objectBean">
+		select n.type as key_, count(n.id) as value_ 
 		from t_notification n 
 		where n.to_user_id = #{toUserId} and n.status = #{status} and n.is_read = #{read} GROUP BY n.type
 	</select>
+	
+	<resultMap type="com.cn.leedane.model.KeyValueBean" id="objectBean">
+        <result property="key" column="key_"/>
+        <result property="value" column="value_"/>
+   </resultMap>
 </mapper>

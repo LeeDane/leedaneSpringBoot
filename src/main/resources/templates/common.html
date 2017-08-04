@@ -223,16 +223,16 @@
 					var currentMsg = $(".nav-msg").hasClass("active");
 					/*<![CDATA[*/
 					for(var i = 0 ; i < data.message.length; i++){
-						if(data.message[i]['type'] == '全部'){
-							$(".nav-msg").find(".badge").text(data.message[i].number);
+						if(data.message[i]['key'] == '全部'){
+							$(".nav-msg").find(".badge").text(data.message[i].value);
 							if(!currentMsg)
 								break;
 						}else{
 							if(currentMsg){
 								var lis = $("#notification-tabs").find("li");
 								for(var j = 0; j < lis.length; j++){
-									if(lis.eq(j).attr("data-value") == data.message[i]['type']){
-										lis.eq(j).find("a").text(data.message[i]['type'] +'(' + data.message[i]['number'] +')');
+									if(lis.eq(j).attr("data-value") == data.message[i]['key']){
+										lis.eq(j).find("a").text(data.message[i]['key'] +'(' + data.message[i]['value'] +')');
 									}
 								}
 							}

@@ -1,7 +1,6 @@
 package com.cn.leedane.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +17,8 @@ import com.cn.leedane.handler.CommonHandler;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.NotificationMapper;
+import com.cn.leedane.model.KeyValueBean;
+import com.cn.leedane.model.KeyValuesBean;
 import com.cn.leedane.model.NotificationBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
@@ -227,6 +228,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		notificationBean.setRead(read);
 		result = notificationMapper.update(notificationBean) > 0;
 		if(result){
+			notificationHandler.deleteNoReadMessagesNumber(user.getId());
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.修改成功.value);
 		}else{
@@ -255,6 +257,9 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		}
 			
 		boolean result = notificationMapper.updateAllRead(type, read) > 0;
+		if(result){
+			notificationHandler.deleteNoReadMessagesNumber(user.getId());
+		}
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
 		message.put("responseCode", EnumUtil.ResponseCode.修改成功.value);
 		//保存操作日志
@@ -269,18 +274,20 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		logger.info("NotificationServiceImpl-->noReadNumber():jo=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
-		List<Map<String, Object>> rs = notificationMapper.noReadNumber(user.getId(), false, ConstantsUtil.STATUS_NORMAL);
+		KeyValuesBean keyValues = notificationHandler.getNoReadMessagesNumber(user.getId()); 
+		List<KeyValueBean> list = new ArrayList<KeyValueBean>();
+		list.addAll(keyValues.getData());
 		int total = 0;
-		if(CollectionUtil.isNotEmpty(rs)){
-			for(Map<String, Object> mp: rs){
-				total += StringUtil.changeObjectToInt(mp.get("number"));
+		if(keyValues != null && CollectionUtil.isNotEmpty(keyValues.getData())){
+			for(KeyValueBean keyValueBean: keyValues.getData()){
+				total += StringUtil.changeObjectToInt(keyValueBean.getValue());
 			}
 		}
-		Map<String, Object> totalMap = new HashMap<String, Object>();
-		totalMap.put("type", "全部");
-		totalMap.put("number", total);
-		rs.add(totalMap);
-		message.put("message", rs);
+		KeyValueBean kv = new KeyValueBean();
+		kv.setKey("全部");
+		kv.setValue(StringUtil.changeNotNull(total));
+		list.add(kv);
+		message.put("message", list);
 		message.put("responseCode", EnumUtil.ResponseCode.修改成功.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取未读的消息列表").toString(), "noReadNumber()", 1, 0);

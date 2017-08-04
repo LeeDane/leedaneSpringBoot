@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.cn.leedane.model.KeyValueBean;
 import com.cn.leedane.model.NotificationBean;
 
 /**
@@ -38,6 +39,6 @@ public interface NotificationMapper extends BaseMapper<NotificationBean>{
 	 * @param status
 	 * @return
 	 */
-	public List<Map<String, Object>> noReadNumber(@Param("toUserId") int toUserId, @Param("read") boolean read, @Param("status") int status);
+	public List<KeyValueBean> noReadNumber(@Param("toUserId") int toUserId, @Param("read") boolean read, @Param("status") int status);
 	
 }

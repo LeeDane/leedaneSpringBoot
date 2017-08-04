@@ -28,16 +28,21 @@ import com.cn.leedane.message.notification.CustomMessage;
 import com.cn.leedane.message.notification.MessageNotification;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.CommentBean;
+import com.cn.leedane.model.KeyValuesBean;
 import com.cn.leedane.model.MoodBean;
 import com.cn.leedane.model.NotificationBean;
 import com.cn.leedane.model.TransmitBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.circle.CircleUserPostsBean;
+import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.springboot.SpringUtil;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.SerializeUtil;
 import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.wechat.util.HttpRequestUtil;
 
@@ -72,6 +77,8 @@ public class NotificationHandler {
 	
 	@Autowired
 	private CommentHandler commentHandler;
+	
+	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
 	/**
 	 * 发送通知
@@ -341,7 +348,6 @@ public class NotificationHandler {
 	class SingleSendNotification implements Callable<Boolean>{
 		private NotificationBean mNotificationBean;
 		
-		@SuppressWarnings("unchecked")
 		SingleSendNotification(NotificationBean notificationBean){
 			mNotificationBean = notificationBean;
 			if(notificationMapper == null){
@@ -354,6 +360,7 @@ public class NotificationHandler {
 			if(notificationMapper.save(mNotificationBean) > 0){
 				MessageNotification messageNotification = new JPushMessageNotificationImpl();
 				//logger.info("NotificationToUserId:"+mNotificationBean.getToUserId());
+				deleteNoReadMessagesNumber(mNotificationBean.getToUserId());
 				//发送消息不成功
 				if(!messageNotification.sendToAlias("leedane_user_"+mNotificationBean.getToUserId(), mNotificationBean.getType() +":"+ mNotificationBean.getContent())){
 					mNotificationBean.setPushError(true);
@@ -376,5 +383,76 @@ public class NotificationHandler {
 		MessageNotification messageNotification = new JPushMessageNotificationImpl();
 		messageNotification.sendToAllUser(broadcast);
 		return true;
+	}
+
+	/**
+	 * 获取未读消息的总数
+	 * @param userId
+	 * @return
+	 */
+	public KeyValuesBean getNoReadMessagesNumber(int userId) {
+		//deleteNoReadMessagesNumber(userId);
+		String key = getNoReadMessageKey(userId);
+		Object obj = systemCache.getCache(key);
+		KeyValuesBean messages = null;
+		
+		if(obj == ""){
+			if(redisUtil.hasKey(key)){
+				try {
+					messages =  (KeyValuesBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), CircleUserPostsBean.class);
+					if(messages != null){
+						systemCache.addCache(key, messages);
+						return messages;
+					}else{
+						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
+						redisUtil.delete(key);
+						messages = new KeyValuesBean();
+						messages.setData(notificationMapper.noReadNumber(userId, false, ConstantsUtil.STATUS_NORMAL));
+						if(CollectionUtil.isNotEmpty(messages.getData())){
+							try {
+								redisUtil.addSerialize(key, SerializeUtil.serializeObject(messages));
+								systemCache.addCache(key, messages);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}catch (IOException e) {
+					e.printStackTrace();
+				}
+			}else{//redis没有的处理
+				messages = new KeyValuesBean();
+				messages.setData(notificationMapper.noReadNumber(userId, false, ConstantsUtil.STATUS_NORMAL));
+				if(CollectionUtil.isNotEmpty(messages.getData())){
+					try {
+						redisUtil.addSerialize(key, SerializeUtil.serializeObject(messages));
+						systemCache.addCache(key, messages);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}else{
+			messages = (KeyValuesBean)obj;
+		}
+		return messages;
+	}
+	
+	/**
+	 * 删除未读消息的cache和redis缓存
+	 * @param userId
+	 * @return
+	 */
+	public boolean deleteNoReadMessagesNumber(int userId){
+		String key = getNoReadMessageKey(userId);
+		redisUtil.delete(key);
+		systemCache.removeCache(key);
+		return true;
+	}
+	
+	public static String getNoReadMessageKey(int userId){
+		return ConstantsUtil.MESSAGE_REDIS + userId;
 	}
 }
