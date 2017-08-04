@@ -69,7 +69,7 @@ public class CirclePostHandler {
 		String key = getHotestPostKey();
 		Object obj = systemCache.getCache(key);
 		CircleUserPostsBean userPostBean = null;
-		deleteHotestPosts();
+		//deleteHotestPosts();
 		if(obj == ""){
 			if(redisUtil.hasKey(key)){
 				try {
