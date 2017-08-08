@@ -580,7 +580,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			int number = circleMemberMapper.getAllMembers(circleId, ConstantsUtil.STATUS_NORMAL).size();
 			int minNumber = Math.min(circleSettingBean.getLimitNumber(), maxNumber);
 			//circleSettingBean.getLimitNumber() 圈子自身的限制人数
-			boolean over = number < minNumber;
+			boolean over = number >= minNumber;
 			if(over){
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子成员已超额.value));
 				message.put("responseCode", EnumUtil.ResponseCode.该圈子成员已超额.value);
