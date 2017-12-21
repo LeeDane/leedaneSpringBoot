@@ -1,28 +1,5 @@
-var colorsList = ["#FFC0CB", "#D8BFD8", "#DDA0DD", "#9932CC", "#E6E6FA", "#4169E1", "#E0FFFF"];
-//回车执行登录
-document.onkeydown=function(event){
-    var e = event || window.event || arguments.callee.caller.arguments[0];
-    if(e && e.keyCode==13){ // enter 键
-    	//sendMsg();
-   }
-}
-
-var websocket = null;
-
-var atScrollIndex = 0;
-
-//将消息显示在网页上
-function setMessageInnerHTML(innerHTML){
-  //document.getElementById('message').innerHTML += innerHTML + '<br/>';
-	console.log("data---"+innerHTML)
-}
-
-//关闭连接
-function closeWebSocket(){
-  websocket.close();
-}
-
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	//验证浏览器是否支持WebSocket协议
     if(!window.WebSocket){
     	layer.alert('WebSockeet not supported by this browser!', {
@@ -59,8 +36,33 @@ $(function(){
             //-- do something for user right click
             alert("Mouse up");
         }
-    }
+    }  
 });
+
+var colorsList = ["#FFC0CB", "#D8BFD8", "#DDA0DD", "#9932CC", "#E6E6FA", "#4169E1", "#E0FFFF"];
+//回车执行登录
+document.onkeydown=function(event){
+    var e = event || window.event || arguments.callee.caller.arguments[0];
+    if(e && e.keyCode==13){ // enter 键
+    	//sendMsg();
+   }
+}
+
+var websocket = null;
+
+var atScrollIndex = 0;
+
+//将消息显示在网页上
+function setMessageInnerHTML(innerHTML){
+  //document.getElementById('message').innerHTML += innerHTML + '<br/>';
+	console.log("data---"+innerHTML)
+}
+
+//关闭连接
+function closeWebSocket(){
+  websocket.close();
+}
+
 var ws;
 var pageW = $(document.body).width(); //页面总高度 
 var topArray = [100, 130, 170]; //距离顶部的可能数组
