@@ -1,3 +1,10 @@
+layui.use(['layer'], function(){
+	layer = layui.layer;
+	//$tree.treeview({data: getTree(), enableLinks: false});
+	$tree = $('#tree');
+	//获取子节点
+	getChildNodes(0, 0);  
+});
 /*
  * api文档的地址
  * http://www.cnblogs.com/mfc-itblog/p/5233453.html
@@ -5,12 +12,6 @@
  * 新增动态删除节点的例子代码：http://blog.csdn.net/u012718733/article/details/53288584
 */
 var $tree;
-$(function(){
-	//$tree.treeview({data: getTree(), enableLinks: false});
-	$tree = $('#tree');
-	//获取子节点
-	getChildNodes(0, 0);
-});
 
 /**
  * 获取直接一级的节点

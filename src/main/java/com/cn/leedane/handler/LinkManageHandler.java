@@ -35,7 +35,7 @@ public class LinkManageHandler {
 		
 		LinkManagesBean linkManageBeans = null;
 		String key = getLinkManageKey();
-	
+	deleteAllLinkManagesCache();
 		if(redisUtil.hasKey(key)){
 			try {
 				return (LinkManagesBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), LinkManagesBean.class);

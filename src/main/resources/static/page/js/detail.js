@@ -1,15 +1,6 @@
-
-var last_id = 0;
-var first_id = 0;
-var method = 'firstloading';
-var comments;
-//浏览器可视区域页面的高度
-var winH = $(window).height(); 
-var isLoad = false;
-var canLoadData = true;
-var $container;
-$(function(){
-	if(isEmpty(bid)){
+layui.use(['layer'], function(){
+  layer = layui.layer;
+  if(isEmpty(bid)){
 		layer.msg("文章不存在");
 		return;
 	}
@@ -74,6 +65,15 @@ $(function(){
 	    }
 	}); 
 });
+var last_id = 0;
+var first_id = 0;
+var method = 'firstloading';
+var comments;
+//浏览器可视区域页面的高度
+var winH = $(window).height(); 
+var isLoad = false;
+var canLoadData = true;
+var $container;
 
 /**
  * 获取博客的基本信息

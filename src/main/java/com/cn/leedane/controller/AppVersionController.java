@@ -27,10 +27,11 @@ public class AppVersionController extends BaseController{
 	private AppVersionService<FilePathBean> appVersionService;
 	
 	/**
-	 * 获取APP的最新版本信息
+	 * 获取APP的最新版本信息(已弃用，请调用ToolController下的newest方法)
 	 * @return
 	 */
 	@RequestMapping(value = "/newest", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	@Deprecated
 	public Map<String, Object> getNewest(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);

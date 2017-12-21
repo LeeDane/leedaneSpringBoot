@@ -60,7 +60,7 @@ public class CircleController extends BaseController{
 	 * 创建圈子
 	 * @return
 	 */
-	@RequestMapping(value = "/circle", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> add(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
@@ -75,14 +75,14 @@ public class CircleController extends BaseController{
 	 * 修改圈子
 	 * @return
 	 */
-	@RequestMapping(value = "/circle", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(HttpServletRequest request){
+	@RequestMapping(value = "/{circleId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> update(@PathVariable("circleId") int circleId, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(circleService.update(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circleService.update(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -105,14 +105,14 @@ public class CircleController extends BaseController{
 	 * 删除圈子
 	 * @return
 	 */
-	@RequestMapping(value = "/circle/{cid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(HttpServletRequest request, @PathVariable("cid") int cid){
+	@RequestMapping(value = "/{circleId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> delete(HttpServletRequest request, @PathVariable("circleId") int circleId){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(circleService.delete(cid, getUserFromMessage(message), request));
+		message.putAll(circleService.delete(circleId, getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -120,14 +120,14 @@ public class CircleController extends BaseController{
 	 * 申请加入圈子之前判断是否可以加入
 	 * @return
 	 */
-	@RequestMapping(value = "/join/check", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> joinCheck(HttpServletRequest request){
+	@RequestMapping(value = "/{circleId}/join/check", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> joinCheck(@PathVariable("circleId") int circleId, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(circleService.joinCheck(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circleService.joinCheck(circleId, getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -135,14 +135,14 @@ public class CircleController extends BaseController{
 	 * 申请加入圈子
 	 * @return
 	 */
-	@RequestMapping(value = "/join", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> join(HttpServletRequest request){
+	@RequestMapping(value = "/{circleId}/join", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> join(@PathVariable("circleId") int circleId, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(request);
-		message.putAll(circleService.join(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circleService.join(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -150,7 +150,7 @@ public class CircleController extends BaseController{
 	 * 离开圈子
 	 * @return
 	 */
-	@RequestMapping(value = "/leave/{circleId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/{circleId}/leave", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> leave(@PathVariable("circleId") int circleId, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
@@ -165,7 +165,7 @@ public class CircleController extends BaseController{
 	 * 分页获取权限列表
 	 * @return
 	 */
-	@RequestMapping(value = "/circle/{cid}/admins", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/{cid}/admins", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> roles(HttpServletRequest request, @PathVariable("cid") int cid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
@@ -180,7 +180,7 @@ public class CircleController extends BaseController{
 	 * 角色的分配
 	 * @return
 	 */
-	@RequestMapping(value = "/circle/{cid}/admins/allot", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/{cid}/admins/allot", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> allot(HttpServletRequest request, @PathVariable("cid") int cid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
@@ -198,7 +198,7 @@ public class CircleController extends BaseController{
 	 * 圈子首页的一些初始化参数获取
 	 * @return
 	 */
-	@RequestMapping(value = "/circle/{cid}/init", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	@RequestMapping(value = "/{cid}/init", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> initialize(HttpServletRequest request, @PathVariable("cid") int cid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))

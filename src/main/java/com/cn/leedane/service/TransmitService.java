@@ -27,7 +27,6 @@ public interface TransmitService<T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
 	public Map<String, Object> add(JSONObject jo, UserBean user, HttpServletRequest request);
 

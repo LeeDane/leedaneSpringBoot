@@ -1,13 +1,6 @@
-var last_id = 0;
-var first_id = 0;
-var method = 'firstloading';
-//浏览器可视区域页面的高度
-var winH = $(window).height(); 
-var canLoadData = true;
-var isLoad = false;
-
-var loginHostorys;
-$(function(){			
+layui.use(['layer'], function(){
+	layer = layui.layer;
+	winH = $(window).height();
 	queryPaging();
 	
 	$(window).scroll(function (e) {
@@ -31,6 +24,15 @@ $(function(){
 	    }
 	}); 
 });
+var last_id = 0;
+var first_id = 0;
+var method = 'firstloading';
+//浏览器可视区域页面的高度
+var winH; 
+var canLoadData = true;
+var isLoad = false;
+
+var loginHostorys;
 
 /**
  * 查询获取列表

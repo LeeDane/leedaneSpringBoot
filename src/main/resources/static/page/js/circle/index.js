@@ -1,5 +1,5 @@
-$(function(){
-	
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	$("[data-toggle='tooltip']").tooltip();
 	
 	$(".navbar-nav .nav-main-li").each(function(){
@@ -35,7 +35,9 @@ $(function(){
 		var $img = $(this);
 		var id = $img.attr("data");
 		linkToCircle(id);
-	});
+	});  
+	
+	resetParticlesHeight();
 });
 
 /**
@@ -53,7 +55,7 @@ function showCreateModal(number){
 	  
 	  $.ajax({
 		  	type: 'POST',
-			url : "/cc/circle",
+			url : "/cc",
 			data: {name: pass},
 			dataType: 'json', 
 			beforeSend:function(){

@@ -65,6 +65,13 @@ import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.handler.circle.CircleMemberHandler;
 import com.cn.leedane.handler.circle.CirclePostHandler;
 import com.cn.leedane.handler.circle.CircleSettingHandler;
+import com.cn.leedane.netty.PushServer;
+import com.cn.leedane.taobao.api.TbkRebateOrderGetRequest;
+import com.cn.leedane.taobao.api.TbkRebateOrderGetResponse;
+import com.taobao.api.ApiException;
+import com.taobao.api.DefaultTaobaoClient;
+import com.taobao.api.TaobaoClient;
+import com.taobao.api.internal.util.StringUtils;
 
 /**
  * 项目启动的入口
@@ -278,10 +285,10 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
         return null;
     }
 	
-	@Bean(name= "exceptionHandler")
+	/*@Bean(name= "exceptionHandler")
 	public ExceptionHandler getExceptionHandler(){
 		return new ExceptionHandler();
-	}
+	}*/
 	
 	//显示声明CommonsMultipartResolver为mutipartResolver
     @Bean(name = "multipartResolver")
@@ -330,22 +337,6 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
     public InitCacheData getInitCacheData() {
         return new InitCacheData();  
     }
-    
-	public static void main(String[] args) {
-		logger.warn( "项目开始启动。。。" );
-        //SpringApplication.run("classpath:spring-common.xml", args);
-		ApplicationContext ctx = (ApplicationContext)SpringApplication.run(StartUpApplication.class, args);
-		SpringUtil.setApplicationContext2(ctx);
-		
-		 /*ConfigurableApplicationContext context = (ConfigurableApplicationContext)ctx;  
-	        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory)context.getBeanFactory(); 
-	        beanFactory.removeBeanDefinition("multipartResolver");*/
-	
-        //InitCacheData initCacheData = new InitCacheData();
-        //initCacheData.init();
-		InitCacheData initCacheData = (InitCacheData) ctx.getBean("initCacheData");
-		initCacheData.init();
-	}
 
 	// 创建事务管理器1
    /* @Bean(name = "txManager")
@@ -362,4 +353,44 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
         return propertyPlaceholderConfigurer;
     }
 
+    
+    public static void main(String[] args) {
+		logger.warn( "项目开始启动。。。" );
+        //SpringApplication.run("classpath:spring-common.xml", args);
+		ApplicationContext ctx = (ApplicationContext)SpringApplication.run(StartUpApplication.class, args);
+		SpringUtil.setApplicationContext2(ctx);
+		
+		 /*ConfigurableApplicationContext context = (ConfigurableApplicationContext)ctx;  
+	        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory)context.getBeanFactory(); 
+	        beanFactory.removeBeanDefinition("multipartResolver");*/
+	
+        //InitCacheData initCacheData = new InitCacheData();
+        //initCacheData.init();
+		InitCacheData initCacheData = (InitCacheData) ctx.getBean("initCacheData");
+		initCacheData.init();
+		
+		/*TaobaoClient client = new DefaultTaobaoClient("https://eco.taobao.com/router/rest", "24712175", "a34e8aaca4b223fc8382a6b88205821b");
+		TbkRebateOrderGetRequest req = new TbkRebateOrderGetRequest();
+		req.setFields("tb_trade_parent_id,tb_trade_id,num_iid,item_title,item_num,price,pay_price,seller_nick,seller_shop_title,commission,commission_rate,unid,create_time,earning_time");
+		req.setStartTime(StringUtils.parseDateTime("2015-03-05 13:52:08"));
+		req.setSpan(600L);
+		req.setPageNo(1L);
+		req.setPageSize(20L);
+		TbkRebateOrderGetResponse rsp;
+		try {
+			rsp = client.execute(req);
+			System.out.println(rsp.getBody());
+		} catch (ApiException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}*/
+		
+		
+		PushServer pushServer = new PushServer();
+        try {
+			pushServer.bind();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

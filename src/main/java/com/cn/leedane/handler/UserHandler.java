@@ -17,13 +17,18 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.controller.RoleController;
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.mapper.UserMapper;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.UserSettingBean;
 import com.cn.leedane.model.UserTokenBean;
 import com.cn.leedane.redis.util.RedisUtil;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
+import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.MD5Util;
@@ -43,6 +48,91 @@ public class UserHandler {
 	private UserMapper userMapper;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
+	
+	@Autowired
+	private SystemCache systemCache;
+	
+	/**
+	 * 获取正常用户设置状态对象
+	 * @param circleId
+	 * @return
+	 */
+	public UserSettingBean getNormalSettingBean(int userId){
+		UserSettingBean settingBean = null;
+		String key = getUserSettingKey(userId);
+		Object obj = systemCache.getCache(key);
+		//deleteSettingBeanCache(circleId);
+		if(obj == ""){
+			if(redisUtil.hasKey(key)){
+				try {
+					settingBean =  (UserSettingBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), UserSettingBean.class);
+					if(settingBean != null){
+						systemCache.addCache(key, settingBean);
+					}else{
+						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
+						redisUtil.delete(key);
+						List<UserSettingBean> settingBeans = userMapper.getSetting(userId, ConstantsUtil.STATUS_NORMAL);
+						if(CollectionUtil.isEmpty(settingBeans))
+							throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
+						
+						settingBean = settingBeans.get(0);
+						if(settingBean != null){
+							try {
+								redisUtil.addSerialize(key, SerializeUtil.serializeObject(settingBean));
+								systemCache.addCache(key, settingBean);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}catch (IOException e) {
+					e.printStackTrace();
+				}
+			}else{//redis没有的处理
+				List<UserSettingBean> settingBeans = userMapper.getSetting(userId, ConstantsUtil.STATUS_NORMAL);
+				if(CollectionUtil.isEmpty(settingBeans))
+					throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
+				
+				settingBean = settingBeans.get(0);
+				try {
+					redisUtil.addSerialize(key, SerializeUtil.serializeObject(settingBean));
+					systemCache.addCache(key, settingBean);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}else{
+			settingBean = (UserSettingBean)obj;
+		}
+		
+		if(settingBean == null || settingBean.getStatus() != ConstantsUtil.STATUS_NORMAL){
+			return null;
+		}
+		return settingBean;
+	}
+	
+	
+	/**
+	 * 根据圈子设置ID删除该圈子的cache和redis缓存
+	 * @param circleId
+	 * @return
+	 */
+	public boolean deleteSettingBeanCache(int circleId){
+		String key = getUserSettingKey(circleId);
+		redisUtil.delete(key);
+		systemCache.removeCache(key);
+		return true;
+	}
+	
+	/**
+	 * 获取用户设置在redis的key
+	 * @return
+	 */
+	public static String getUserSettingKey(int userId){
+		return ConstantsUtil.USER_REDIS  + "_st_"+ userId;
+	}
 	
 	
 	/**

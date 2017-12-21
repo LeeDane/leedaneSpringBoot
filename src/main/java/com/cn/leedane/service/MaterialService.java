@@ -27,9 +27,8 @@ public interface MaterialService <T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
-	public Map<String, Object> save(JSONObject jo, UserBean user, HttpServletRequest request) throws Exception;
+	public Map<String, Object> save(JSONObject jo, UserBean user, HttpServletRequest request);
 
 	
 	/**

@@ -1,5 +1,5 @@
-var type;
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	if(isNotEmpty(tabName)){
 		$("#material-tabs").find("li").each(function(index){
 			if($(this).attr("data-value") == tabName){
@@ -23,8 +23,9 @@ $(function(){
 		$(this).addClass("active");
 		type = $(this).attr("data-value");
 		showTab();
-	});
+	});  
 });
+var type;
 
 var jcrop_api;
 function showTab(){

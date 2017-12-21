@@ -611,6 +611,25 @@ public class DateUtil {
 	 * @param format
 	 * @return 转化不了返回""
 	 */
+	public static Date formatLocaleTimeToDate(String str, String format){
+		try{
+			SimpleDateFormat sdf1 = new SimpleDateFormat ("EEE MMM dd HH:mm:ss Z yyyy", Locale.UK);
+	   	   	Date date = sdf1.parse(str);
+	   	   	SimpleDateFormat sdf = new SimpleDateFormat(format);
+	   	   	return stringToDate(sdf.format(date));
+		}
+		catch (ParseException e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 对字符串进行格式化，格式如Thu Sep 03 23:51:25 CST 2015
+	 * @param str
+	 * @param format
+	 * @return 转化不了返回""
+	 */
 	public static String formatStringTime(String str){
 		if(StringUtil.isNotNull(str) && str.trim().length() == 21){
 			return str.trim().substring(0, 19);
@@ -630,6 +649,17 @@ public class DateUtil {
 			return DateToString(stringToDate(str), format);
 		}
 		return str;
+	}
+	
+	/**
+	 * 判断两个时间是否在某个范围之内
+	 * @param end
+	 * @param start
+	 * @param range
+	 * @return
+	 */
+	public static boolean checkDateInRange(Date end, Date start, int range){
+		return (int) ((end.getTime() - start.getTime()) / (1000*60*60*24)) <= range;
 	}
 	
 	/*public static void main(String[] args) {

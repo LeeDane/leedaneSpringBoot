@@ -1,8 +1,5 @@
-var totalPage = 0;
-var $addOrEditModal;
-var $tableContainer;
-//浏览器可视区域页面的高度
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	initPage(".pagination", "getRoles");
 	$addOrEditModal = $("#add-or-edit-role");
 	$("#totalCheckbox").change(function(){
@@ -25,8 +22,11 @@ $(function(){
 	
 	$tableContainer = $(".table");
 	//默认查询操作
-	getRoles();
+	getRoles();  
 });
+var totalPage = 0;
+var $addOrEditModal;
+var $tableContainer;
 
 /**
 * 查询

@@ -124,23 +124,7 @@ public class BaseController {
 	 * @return
 	 */
 	protected boolean checkParams(Map<String, Object> message, HttpServletRequest request){
-		boolean result = false;
-		try{
-			return checkLogin(request, message);
-			//UserBean user = (UserBean) request.getAttribute("user");
-			//JSONObject json = JSONObject.fromObject(request.getAttribute("params"));
-			//message.put("json", json);
-			//message.put("user", user);
-			/*if(message.containsKey("")){
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value));
-				message.put("responseCode", EnumUtil.ResponseCode.请先登录.value);
-			}*/
-		}catch(Exception e){
-			e.printStackTrace();
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
-			message.put("responseCode", EnumUtil.ResponseCode.缺少请求参数.value);
-		}
-		return result;
+		return checkLogin(request, message);
 	}
 	
 	/**
@@ -556,7 +540,7 @@ public class BaseController {
 		if(beans != null && CollectionUtil.isNotEmpty(beans.getLinkManageBean())){
 			String uri = request.getRequestURI();
 			for(LinkManageBean bean: beans.getLinkManageBean()){
-				if(bean.getLink().equals(uri) || uri.matches(bean.getLink())){
+				if(bean.getLink().equals(uri) || uri.matches(bean.getLink()) || ifStartWithLink(uri, bean.getLink())){
 					String roleOrPermissionCodes = bean.getRoleOrPermissionCodes();
 					if(bean.isRole()){
 						if(StringUtil.isNotNull(roleOrPermissionCodes)){
@@ -578,6 +562,20 @@ public class BaseController {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 校验链接是否是模糊匹配的
+	 * @param requestLink
+	 * @param manageLink 必须以*结尾
+	 * @return
+	 */
+	private boolean ifStartWithLink(String requestLink, String manageLink){
+		if(!manageLink.endsWith("*"))
+			return false;
+		manageLink = manageLink.substring(0, manageLink.length() - 1);
+		
+		return requestLink.startsWith(manageLink);
 	}
 	
 	/**
@@ -615,8 +613,9 @@ public class BaseController {
 			isLogin = true;
 			UserBean user = (UserBean)o;
 			isAdmin = currentUser.hasRole(RoleController.ADMIN_ROLE_CODE);
-			model.addAttribute("account", user.getAccount());
+			model.addAllAttributes(userHandler.getBaseUserInfo(user.getId()));
 			model.addAttribute("loginUserId", user.getId());
+			model.addAttribute("user", user);
 		}
 		model.addAttribute("isLogin",  isLogin);
 		model.addAttribute("isAdmin", isAdmin);

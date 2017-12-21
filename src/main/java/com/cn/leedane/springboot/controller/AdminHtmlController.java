@@ -1,5 +1,8 @@
 package com.cn.leedane.springboot.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -11,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.shop.S_ProductBean;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.ProductPlatformType;
 
 /**
  * 后台管理Html页面的控制器
@@ -118,10 +124,39 @@ public class AdminHtmlController extends BaseController{
 		return loginRoleCheck("admin/permission/link", true, model, httpSession, request);
 	}
 	
+	/****************   商品管理          ***********************/
+	@RequestMapping(ControllerBaseNameUtil.adsh + "/home")
+	public String shHome(Model model, HttpSession httpSession, HttpServletRequest request){
+		return loginRoleCheck("admin/shop/home", true, model, httpSession, request);
+	}
+	
+	@RequestMapping(ControllerBaseNameUtil.adsh + "/product")
+	public String shProduct(Model model, HttpSession httpSession, HttpServletRequest request){
+		return loginRoleCheck("admin/shop/product", true, model, httpSession, request);
+	}
+	
+	@RequestMapping(ControllerBaseNameUtil.adsh + "/product-add")
+	public String shProductAdd(Model model, HttpSession httpSession, HttpServletRequest request){
+		S_ProductBean productBean = new S_ProductBean();
+		model.addAttribute("product", productBean);
+		
+		List<String> platforms = new ArrayList<String>();
+		for(ProductPlatformType type: EnumUtil.ProductPlatformType.values()){
+			platforms.add(type.value);
+		}
+		model.addAttribute("platforms", platforms);
+		return loginRoleCheck("admin/shop/product-add", true, model, httpSession, request);
+	}
+	
 	/****************   系统设置--->任务管理          ***********************/
 	@RequestMapping(ControllerBaseNameUtil.adst + "/job")
 	public String stJob(Model model, HttpSession httpSession, HttpServletRequest request){
 		return loginRoleCheck("admin/setting/job", true, model, httpSession, request);
+	}
+	
+	@RequestMapping(ControllerBaseNameUtil.adst + "/clearCache")
+	public String stClearCache(Model model, HttpSession httpSession, HttpServletRequest request){
+		return loginRoleCheck("admin/setting/clearCache", true, model, httpSession, request);
 	}
 	
 	/**

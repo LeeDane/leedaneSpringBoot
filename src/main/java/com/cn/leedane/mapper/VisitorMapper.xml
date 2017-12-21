@@ -38,6 +38,12 @@
 		where v.status=#{status} and v.create_time > #{createTime}  and v.table_name=#{tableName} and v.table_id = #{tableId}
 	</select>
 	
+	<select id="getVisitorsByTime" resultType="int">
+		select count(v.id)
+		from t_visitor v 
+		where v.status=#{status} and DATE_FORMAT(v.create_time, '%Y-%c-%d') = #{time}  and v.table_name=#{tableName} and v.table_id = #{tableId}
+	</select>
+	
 	<select id="getAllVisitors" resultType="int">
 		select count(v.id)
 		from t_visitor v 

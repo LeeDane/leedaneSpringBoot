@@ -1,34 +1,5 @@
-var financials;
-var OneCategorys; //缓存一级分类对象
-var twoCategorys;//缓存二级分类对象
-var locations; //位置信息
-
-var emptySearch = true;//是否是空查询(没有任何条件去查询)
-var last_id = 0;
-var last_addition_time = '';
-var method = 'firstloading';
-//浏览器可视区域页面的高度
-var winH = $(window).height(); 
-var canLoadData = true;
-var isLoad = false;
-
-var isChart = false;
-//基于准备好的dom，初始化echarts实例
-//收支
-var chartPayments;
-//基于准备好的dom，初始化echarts实例
-var chartTimes;
-
-
-var chartCategorys;
-
-window.addEventListener("resize", function () {
-	chartPayments.resize();
-	chartCategorys.resize();
-	chartTimes.resize();
-});
-
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	chartPayments = echarts.init(document.getElementById('chart-payments'));
 	chartCategorys = echarts.init(document.getElementById('chart-categorys'));
 	chartTimes = echarts.init(document.getElementById('chart-times'));
@@ -72,8 +43,36 @@ $(function(){
 	    	method = 'lowloading';
 	    	queryPaging();
 	    }
-	}); 
-	
+	});   
+});
+var financials;
+var OneCategorys; //缓存一级分类对象
+var twoCategorys;//缓存二级分类对象
+var locations; //位置信息
+
+var emptySearch = true;//是否是空查询(没有任何条件去查询)
+var last_id = 0;
+var last_addition_time = '';
+var method = 'firstloading';
+//浏览器可视区域页面的高度
+var winH = $(window).height(); 
+var canLoadData = true;
+var isLoad = false;
+
+var isChart = false;
+//基于准备好的dom，初始化echarts实例
+//收支
+var chartPayments;
+//基于准备好的dom，初始化echarts实例
+var chartTimes;
+
+
+var chartCategorys;
+
+window.addEventListener("resize", function () {
+	chartPayments.resize();
+	chartCategorys.resize();
+	chartTimes.resize();
 });
 
 /**

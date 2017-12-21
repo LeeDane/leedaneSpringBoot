@@ -95,7 +95,7 @@ public class JsonUtil {
 	 * @return
 	 */
 	public static String getStringValue(JSONObject object, String key){
-		if(JsonUtil.hasKey(object, key)){
+		if(JsonUtil.hasKey(object, key) && object.get(key) != null){
 			return String.valueOf(object.get(key));
 		}
 		return "";

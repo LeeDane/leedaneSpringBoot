@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<title>空指针异常页面</title>
+	<style type="text/css">
+		.container{
+			margin-top: 60px;
+		}
+	</style>
+</head>
+<body>
+	<div th:include="common :: hello">what?</div>
+	<div class="container">
+		抱歉，系统出现空指针异常啦！<span th:if="${error}">错误信息是：<span th:utext=" ${errorMessage}"></span></span>
+		
+	</div>
+</body>
+<div th:include="common-js :: commJs">what?</div>
+</html>

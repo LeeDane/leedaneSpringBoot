@@ -62,6 +62,21 @@ public interface VisitorMapper extends BaseMapper<VisitorBean>{
 			@Param("status") int status);
 	
 	/**
+	 * 获取访问量
+	 * @param createTime
+	 * @param tableName
+	 * @param tableId
+	 * @param status
+	 * @param time
+	 * @return
+	 */
+	public int getVisitorsByTime(			
+			@Param("tableName")String tableName,
+			@Param("tableId")int tableId, 
+			@Param("status") int status, 
+			@Param("time") String time);
+	
+	/**
 	 * 获取全部的访问量
 	 * @param tableName
 	 * @param tableId

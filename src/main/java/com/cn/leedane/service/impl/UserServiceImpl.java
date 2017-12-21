@@ -1,4 +1,5 @@
 package com.cn.leedane.service.impl;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.SignInHandler;
 import com.cn.leedane.handler.TransmitHandler;
 import com.cn.leedane.handler.UserHandler;
+import com.cn.leedane.lucene.solr.UserSolrHandler;
 import com.cn.leedane.mapper.FilePathMapper;
 import com.cn.leedane.mapper.UserMapper;
 import com.cn.leedane.message.ISendNotification;
@@ -41,6 +43,7 @@ import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.ScoreBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.circle.CircleSettingBean;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.EmailSend;
 import com.cn.leedane.rabbitmq.send.ISend;
@@ -51,22 +54,22 @@ import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.ScoreService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.thread.ThreadUtil;
-import com.cn.leedane.thread.single.UserSolrAddThread;
-import com.cn.leedane.thread.single.UserSolrDeleteThread;
-import com.cn.leedane.thread.single.UserSolrUpdateThread;
+import com.cn.leedane.thread.single.SolrAddThread;
+import com.cn.leedane.thread.single.SolrDeleteThread;
+import com.cn.leedane.thread.single.SolrUpdateThread;
 import com.cn.leedane.utils.Base64ImageUtil;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EmailUtil;
 import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.RSACoder;
-import com.cn.leedane.utils.RSAKeyUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.EmailType;
 import com.cn.leedane.utils.FileUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.MD5Util;
+import com.cn.leedane.utils.RSACoder;
+import com.cn.leedane.utils.RSAKeyUtil;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.SessionManagerUtil;
 import com.cn.leedane.utils.StringUtil;
@@ -145,7 +148,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	}
 
 	@Override
-	public Map<String,Object> saveUser(UserBean user) throws Exception{	
+	public Map<String,Object> saveUser(UserBean user){	
 		logger.info("UserServiceImpl-->saveUser():user="+user.toString());
 		Map<String,Object> message = new HashMap<String,Object>();
 		UserBean findUser = null;	
@@ -171,7 +174,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			if(isSave){
 				
 				//异步添加用户solr索引
-				new ThreadUtil().singleTask(new UserSolrAddThread(user));
+				new ThreadUtil().singleTask(new SolrAddThread<UserBean>(UserSolrHandler.getInstance(), user));
 				//UserSolrHandler.getInstance().addBean(user);
 				
 				saveRegisterScore(user);
@@ -233,7 +236,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 				 
 				 if(result)
 					//异步更新用户solr索引
-					new ThreadUtil().singleTask(new UserSolrUpdateThread(user));
+					new ThreadUtil().singleTask(new SolrUpdateThread<UserBean>(UserSolrHandler.getInstance(), user));
 					 //UserSolrHandler.getInstance().updateBean(user);
 				 return result;
 			 }else
@@ -248,7 +251,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	}
 
 	@Override
-	public void sendEmail(UserBean user) throws Exception{
+	public void sendEmail(UserBean user){
 		logger.info("UserServiceImpl-->sendEmail()");
 		afterRegister(user);	
 	}
@@ -257,7 +260,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	 * 实现发送邮件的方法
 	 * @throws Exception
 	 */
-	private void afterRegister(UserBean user2) throws Exception{
+	private void afterRegister(UserBean user2){
 		UserBean user = new UserBean();
 		
 		String content = "欢迎您："+user2.getAccount()+"感谢注册！<a href = '"+ConstantsUtil.SYSTEM_SERVER_URL+ "/leedane/user/completeRegister.action?registerCode="+user2.getRegisterCode()+"'>点击完成注册</a>"
@@ -351,7 +354,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public String getHeadBase64StrById(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception {
+			HttpServletRequest request) {
 		
 		logger.info("UserServiceImpl-->获取用户头像字符串:jo="+jo.toString()+",user_Account="+user.getAccount());
 		String filePath = getHeadFilePathStrById(jo, user, request);;
@@ -360,7 +363,11 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			filePath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER + "file//" + filePath;
 			//保存操作日志
 			operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取头像base64字符串", "getHeadBase64StrById", ConstantsUtil.STATUS_NORMAL, 0);
-			return Base64ImageUtil.convertImageToBase64(filePath, null);
+			try {
+				return Base64ImageUtil.convertImageToBase64(filePath, null);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		return "";
@@ -368,7 +375,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public boolean uploadHeadBase64StrById(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception {
+			HttpServletRequest request){
 		logger.info("UserServiceImpl-->用户上传头像():jo="+jo.toString()+",user_Account="+user.getAccount());
 		String base64 = JsonUtil.getStringValue(jo, "base64");
 		if(StringUtil.isNull(base64))
@@ -379,7 +386,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public String getHeadFilePathStrById(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception {
+			HttpServletRequest request){
 		logger.info("UserServiceImpl-->获取用户头像路径:jo="+jo.toString()+",user_Account="+user.getAccount());
 		int uid = JsonUtil.getIntValue(jo, "uid");
 		String size = JsonUtil.getStringValue(jo, "pic_size");
@@ -813,7 +820,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			saveRegisterScore(user);
 			
 			//异步添加用户solr索引
-			new ThreadUtil().singleTask(new UserSolrAddThread(user));
+			new ThreadUtil().singleTask(new SolrAddThread<UserBean>(UserSolrHandler.getInstance(), user));
 			//UserSolrHandler.getInstance().addBean(user);
 			
 			message.put("isSuccess", result);
@@ -992,7 +999,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		if(result){
 			
 			//异步修改用户solr索引
-			new ThreadUtil().singleTask(new UserSolrUpdateThread(user));
+			new ThreadUtil().singleTask(new SolrUpdateThread<UserBean>(UserSolrHandler.getInstance(), user));
 			//UserSolrHandler.getInstance().updateBean(user);
 			
 			message.put("isSuccess", result);
@@ -1052,7 +1059,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			}
 			
 			//异步修改用户solr索引
-			new ThreadUtil().singleTask(new UserSolrUpdateThread(user));
+			new ThreadUtil().singleTask(new SolrUpdateThread<UserBean>(UserSolrHandler.getInstance(), user));
 			//UserSolrHandler.getInstance().updateBean(updateUserBean);
 			
 			//通知相关用户
@@ -1379,7 +1386,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			message.put("isSuccess", true);
 			
 			//异步删除用户solr索引
-			new ThreadUtil().singleTask(new UserSolrDeleteThread(String.valueOf(toUserId)));
+			new ThreadUtil().singleTask(new SolrDeleteThread<UserBean>(UserSolrHandler.getInstance(), String.valueOf(toUserId)));
 			//UserSolrHandler.getInstance().deleteBean(String.valueOf(toUserId));
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
@@ -1529,7 +1536,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		boolean result = userMapper.insert(addUserBean) > 0;
 		if(result){
 			//异步添加用户solr索引
-			new ThreadUtil().singleTask(new UserSolrAddThread(user));
+			new ThreadUtil().singleTask(new SolrAddThread<UserBean>(UserSolrHandler.getInstance(), user));
 			//UserSolrHandler.getInstance().addBean(addUserBean);
 			
 			message.put("isSuccess", result);
@@ -1631,6 +1638,21 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		
 		String subject = user.getAccount() + "上传了头像" + StringUtil.getSuccessOrNoStr(result);
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "uploadUserHeadImageLink", StringUtil.changeBooleanToInt(result), 0);	
+		return message.getMap();
+	}
+
+	@Override
+	public Map<String, Object> initSetting(UserBean user,
+			HttpServletRequest request) {
+		logger.info("UserServiceImpl-->initSetting(), user=" +user.getAccount());
+		ResponseMap message = new ResponseMap();
+
+		message.put("isCircleAdmin", true);
+		CircleSettingBean circleSettingBean = null; //userHandler.getNormalSettingBean(user.getId());
+		if(circleSettingBean == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
+		
+		message.put("setting", circleSettingBean);
 		return message.getMap();
 	}
 

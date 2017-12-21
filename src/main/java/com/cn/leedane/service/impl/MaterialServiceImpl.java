@@ -53,7 +53,7 @@ public class MaterialServiceImpl extends AdminRoleCheckService implements Materi
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> save(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception {
+			HttpServletRequest request) {
 		logger.info("MaterialServiceImpl-->save():JSONObject="+jo.toString());
 		
 		ResponseMap message = new ResponseMap();

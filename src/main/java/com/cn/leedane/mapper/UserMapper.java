@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.UserSettingBean;
 
 /**
  * 用户mapper接口类
@@ -164,4 +165,12 @@ public interface UserMapper  extends BaseMapper<UserBean>{
 	 * @return
 	 */
 	public UserBean shakeSearch(@Param("createUserId")int createUserId, @Param("status")int status);
+	
+	/**
+	 * 获取个人的设置
+	 * @param circleId
+	 * @param status
+	 * @return
+	 */
+	public List<UserSettingBean> getSetting(@Param("userId") int userId, @Param("status") int status);
 }

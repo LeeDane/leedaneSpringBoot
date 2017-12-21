@@ -28,9 +28,8 @@ public interface GalleryService <T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
-	public Map<String, Object> addLink(JSONObject jo, UserBean user, HttpServletRequest request) throws Exception;
+	public Map<String, Object> addLink(JSONObject jo, UserBean user, HttpServletRequest request);
 
 	
 	/**

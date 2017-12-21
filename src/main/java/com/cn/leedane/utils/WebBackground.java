@@ -12,9 +12,9 @@ public class WebBackground {
 	
 	//七天的图像列表
 	private static final String[] IMAGES = new String[]{
-		"page/images/main_content_bg.jpg", "page/images/main_content_bg_02.jpg", "page/images/main_content_bg_03.jpg",
-		"page/images/main_content_bg_04.jpg", "page/images/main_content_bg_05.jpg", "page/images/main_content_bg_06.jpg",
-		"page/images/main_content_bg_07.jpg"
+		"main_content_bg.jpg", "main_content_bg_02.jpg", "main_content_bg_03.jpg",
+		"main_content_bg_04.jpg", "main_content_bg_05.jpg", "main_content_bg_06.jpg",
+		"main_content_bg_07.jpg"
 	};
 	
 	public String image = null;
@@ -33,7 +33,7 @@ public class WebBackground {
 		if (w < 0)
 			w = 0;
 		
-		image = IMAGES[w];
+		image = (ConstantsUtil.IS_DEBUG? "page/images/": "http://pic.onlyloveu.top/page_images_") +IMAGES[w];
 	}
 	
 	public synchronized String getImage() {

@@ -14,6 +14,7 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cn.leedane.handler.CategoryHandler;
 import com.cn.leedane.mapper.CategoryMapper;
 import com.cn.leedane.model.CategoryBean;
 import com.cn.leedane.model.OperateLogBean;
@@ -39,6 +40,9 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 	
 	@Autowired
 	private CategoryMapper categoryMapper;
+	
+	@Autowired
+	private CategoryHandler categoryHandler;
 	
 	@Autowired
 	private OperateLogService<OperateLogBean> operateLogService;
@@ -105,6 +109,36 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 		}
 		message.put("isSuccess", true);
 		message.put("message", rs);
+		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		return message.getMap();
+	}
+	
+	@Override
+	public Map<String, Object> shopCategory(int pid){
+		logger.info("CategoryServiceImpl-->shopCategory():pid=" +pid);
+		ResponseMap message = new ResponseMap();
+		
+		pid = pid < 1 ? 0: pid;
+		List<Map<String, Object>> rs = categoryMapper.getParentCategorys(pid);
+		List<String[]> relations = new ArrayList<String[]>();
+		if(CollectionUtil.isNotEmpty(rs)){
+			String categorys = StringUtil.changeNotNull(rs.get(0).get("categorys"));
+			if(StringUtil.isNotNull(categorys)){
+				String[] cates = categorys.split(",");
+				//倒叙摆放为了展示方便
+				for(int i = cates.length - 1; i >= 0; i--){
+					int ct = Integer.parseInt(cates[i]);
+					CategoryBean categoryBean = categoryHandler.getNormalCategoryBean(ct);
+					String[] relation = new String[3];
+					relation[0] = ct + "";
+					relation[1] = categoryBean != null? categoryBean.getText(): "";
+					relation[2] = categoryBean != null? "/shop/category/"+ ct: "";
+					relations.add(relation);
+				}
+			}
+		}
+		message.put("isSuccess", true);
+		message.put("message", relations);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		return message.getMap();
 	}

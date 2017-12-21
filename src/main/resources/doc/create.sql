@@ -66,7 +66,7 @@ CREATE TABLE `t_mood` (
   `latitude` double NOT NULL,
   `location` varchar(255) DEFAULT NULL,
   `longitude` double NOT NULL,
-  `can_comment` bit(1) DEFAULT b'1',
+  `can_comment` bit(1) DEFAULT b'1' COMMENT '是否能评论',
   `can_transmit` bit(1) DEFAULT b'1' COMMENT '是否能转发',
   PRIMARY KEY (`id`),
   KEY `FK_2787lae1f3u8spdpchjjpagol` (`create_user_id`),
@@ -666,3 +666,172 @@ CREATE TABLE `t_category` (
   CONSTRAINT `FK_category_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 alter table t_category add constraint category_create_user_id_pid_text_unique UNIQUE(create_user_id, pid, text);
+
+
+-- ----------------------------
+-- Table structure for t_shop_product
+-- ----------------------------
+DROP TABLE IF EXISTS `t_shop_product`;
+CREATE TABLE `t_shop_product` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `p_code` varchar(20) COMMENT '商品编号',
+  `title` varchar(255) NOT NULL COMMENT '商品的标题',
+  `subtitle` varchar(255) NOT NULL COMMENT '商品的副标题',
+  `digest` varchar(255) NOT NULL COMMENT '商品的摘要信息',
+  `detail` text NOT NULL COMMENT '商品的详情,用于展示的，已经通过mardown4j进行格式化过的。',
+  `detail_source` text NOT NULL COMMENT '最原始的用户输入编辑器的商品的详情,还没有通过mardown4j进行格式化过的。',
+  `platform` varchar(20) NOT NULL COMMENT '商品来源的平台(通过枚举赋值)',
+  `price` float NOT NULL DEFAULT '0.00' COMMENT '商品现价',
+  `old_price` float NOT NULL DEFAULT '0.00' COMMENT '商品原价',
+  `cash_back_ratio` float NOT NULL DEFAULT '0.00' COMMENT '商品总的返现比率(百分比)',
+  `cash_back` float NOT NULL DEFAULT '0.00' COMMENT '商品返现的价钱',
+  `shop_id` int(11) NOT NULL COMMENT '商店的ID',
+  `link` text COMMENT '商品的链接',
+  `is_new` bit(1) DEFAULT b'1' NOT NULL COMMENT '商品是否是最新的价格',
+  `category_id` int(11) NOT NULL COMMENT '商品分类ID',
+  `main_img_links` varchar(1000) NOT NULL COMMENT '商品的主图片链接，多个用;隔开',
+  PRIMARY KEY (`id`),
+  KEY `FK_shop_product_create_user` (`create_user_id`),
+  KEY `FK_shop_product_modify_user` (`modify_user_id`),
+  KEY `FK_shop_product_category` (`category_id`),
+  KEY `FK_shop_name` (`shop_id`),
+  CONSTRAINT `FK_shop_product_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_shop_product_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_shop_product_category` FOREIGN KEY (`category_id`) REFERENCES `t_category` (`id`),
+  CONSTRAINT `FK_shop_name` FOREIGN KEY (`shop_id`) REFERENCES `t_shop` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_shop_big_event
+-- ----------------------------
+DROP TABLE IF EXISTS `t_shop_big_event`;
+CREATE TABLE `t_shop_big_event` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `product_id` int(11) NOT NULL COMMENT '商品ID',
+  `text` varchar(255) NOT NULL COMMENT '事件描述的文本信息',
+  `can_comment` bit(1) DEFAULT b'1' COMMENT '是否能评论',
+  `can_transmit` bit(1) DEFAULT b'1' COMMENT '是否能转发',
+  PRIMARY KEY (`id`),
+  KEY `FK_shop_big_event_create_user` (`create_user_id`),
+  KEY `FK_shop_big_event_modify_user` (`modify_user_id`),
+  KEY `FK_shop_big_event_product` (`product_id`),
+  CONSTRAINT `FK_shop_big_event_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_shop_big_event_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_shop_big_event_product` FOREIGN KEY (`product_id`) REFERENCES `t_shop_product` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_shop_statistics
+-- ----------------------------
+DROP TABLE IF EXISTS `t_shop_statistics`;
+CREATE TABLE `t_shop_statistics` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `product_id` int(11) NOT NULL COMMENT '商品ID',
+  `statistics_date` date NOT NULL COMMENT '统计的日期',
+  `statistics_type` int(1) NOT NULL COMMENT '统计的类型，1、心愿单 2、评论 3、访问 4、购买',
+  `statistics_text` varchar(50) DEFAULT null COMMENT '统计展示的文本',
+  `comment_total` int(11) NOT NULL COMMENT '统计的评论总数',
+  `wish_total` int(11) NOT NULL COMMENT '统计的心愿单总数',
+  `visitor_total` int(11) NOT NULL COMMENT '统计的访问总数',
+  `buy_total` int(11) NOT NULL COMMENT '统计的购买总数',
+  PRIMARY KEY (`id`),
+  KEY `FK_shop_statistics_create_user` (`create_user_id`),
+  KEY `FK_shop_statistics_modify_user` (`modify_user_id`),
+  KEY `FK_shop_statistics_product` (`product_id`),
+  CONSTRAINT `FK_shop_statistics_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_shop_statistics_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_shop_statistics_product` FOREIGN KEY (`product_id`) REFERENCES `t_shop_product` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+ALTER TABLE `t_shop_statistics` ADD INDEX t_shop_statistics_index_date ( `statistics_date`);
+ALTER TABLE t_shop_statistics ADD CONSTRAINT shop_statistics_time_type_product_id_unique UNIQUE(statistics_date, statistics_type, product_id);
+
+-- ----------------------------
+-- Table structure for t_shop_wish
+-- ----------------------------
+DROP TABLE IF EXISTS `t_shop_wish`;
+CREATE TABLE `t_shop_wish` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `product_id` int(11) NOT NULL COMMENT '商品ID',
+  PRIMARY KEY (`id`),
+  KEY `FK_shop_wish_create_user` (`create_user_id`),
+  KEY `FK_shop_wish_modify_user` (`modify_user_id`),
+  KEY `FK_shop_wish_product` (`product_id`),
+  CONSTRAINT `FK_shop_wish_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_shop_wish_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_shop_wish_product` FOREIGN KEY (`product_id`) REFERENCES `t_shop_product` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_shop_wish add constraint shop_wish_create_user_product_id_unique UNIQUE(create_user_id, product_id);
+
+-- ----------------------------
+-- Table structure for t_shop
+-- ----------------------------
+DROP TABLE IF EXISTS `t_shop`;
+CREATE TABLE `t_shop` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `validation` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否验证， 默认还没有验证',
+  `is_official` bit(1) NOT NULL DEFAULT b'0' COMMENT '商店的是否是官方的, 默认不是',
+  `detail` text NOT NULL COMMENT '商店的描述信息',
+  `validation_detail` text NOT NULL COMMENT '商店的审核信息信息',
+  `shop_name` varchar(50) NOT NULL COMMENT '商店的名称',
+  `link` text NOT NULL COMMENT '商店的链接',
+  `img` text NOT NULL COMMENT '商店的图片',
+  PRIMARY KEY (`id`),
+  KEY `FK_shop_create_user` (`create_user_id`),
+  KEY `FK_shop_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_shop_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_shop_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_shop add constraint shop_name_unique UNIQUE(shop_name);
+
+-- ----------------------------
+-- Table structure for t_shop_order
+-- ----------------------------
+DROP TABLE IF EXISTS `t_shop_order`;
+CREATE TABLE `t_shop_order` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `order_code` varchar(50) NOT NULL COMMENT '订单编号',
+  `product_code` varchar(50) NOT NULL COMMENT '商品的编号的唯一ID',
+  `title` varchar(50) COMMENT '描述的标题，可以为空，用于展示用的',
+  `referrer` varchar(50) COMMENT '推荐人，可以为空',
+  `platform` varchar(50) COMMENT '平台',
+  `order_date` varchar(20) NOT NULL COMMENT '下订单的日期',
+  `price` float NOT NULL DEFAULT '0.00' COMMENT '商品现价',
+  `cash_back_ratio` float NOT NULL DEFAULT '0.00' COMMENT '商品总的返现比率(百分比)',
+  `cash_back` float NOT NULL DEFAULT '0.00' COMMENT '商品返现的价钱',
+  PRIMARY KEY (`id`),
+  KEY `FK_shop_order_create_user` (`create_user_id`),
+  KEY `FK_shop_order_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_order_wish_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_order_wish_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_shop_order add constraint shop_order_code_product_unique UNIQUE(order_code, product_code);

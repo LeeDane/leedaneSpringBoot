@@ -24,6 +24,9 @@ public class MardownUtil {
 	 */
 	public static String parseHtml(String mardownStr){
 		String re;
+		String hasTag = JsoupUtil.getInstance().getContentNoTag(mardownStr);
+		if(mardownStr.equals(hasTag))
+			return mardownStr;
 		try {
 			re = new Markdown4jProcessor().process(mardownStr);
 		} catch (IOException e) {

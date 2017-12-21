@@ -15,8 +15,9 @@
  </head>
 <body>
 	<div th:include="admin/common :: hello">what?</div>
-	<script th:src="@{/page/admin/welcome/download.js}" type="text/javascript"></script>
   	<div class="container mainContainer clearFloat">
 	</div>
 </body>
+<div th:include="admin/commonAdjs :: commAdJs">what?</div>
+<script th:src="@{/page/admin/welcome/download.js}" type="text/javascript"></script>
 </html>  

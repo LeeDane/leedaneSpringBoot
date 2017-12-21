@@ -285,6 +285,13 @@
 		    <version>${shiro.version}</version>  
 		</dependency>
 		
+		<!-- https://mvnrepository.com/artifact/org.xerial.snappy/snappy-java -->
+		<dependency>
+		    <groupId>org.xerial.snappy</groupId>
+		    <artifactId>snappy-java</artifactId>
+		    <version>1.1.4</version>
+		</dependency>
+		
 		<!-- 推荐算法系统 https://mvnrepository.com/artifact/org.grouplens.lenskit/lenskit-core -->
 		<dependency>
 		    <groupId>org.grouplens.lenskit</groupId>
@@ -320,6 +327,14 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
         </dependency> -->
+        
+        <!-- netty的依赖 -->
+        <dependency>
+		    <groupId>io.netty</groupId>
+		    <artifactId>netty-all</artifactId>
+		    <version>4.0.0.Final</version>
+		    <scope>compile</scope>
+		</dependency>
 		
 		
 		<!-- ****************************************** local-jar ****************************************** -->
@@ -383,10 +398,15 @@
 	     	<artifactId>smtp</artifactId>
 	     	<version>9.9.9</version>
 	  	</dependency>
-	  	<!-- taobao -->
+	  	<!-- taobao开放平台 -->
 	  	<dependency>
-	     	<groupId>com.leedane.other</groupId>
-	     	<artifactId>taobao</artifactId>
+	     	<groupId>com.leedane.other.taobao</groupId>
+	     	<artifactId>dayu</artifactId>
+	     	<version>9.9.9</version>
+	  	</dependency>
+	  	<dependency>
+	     	<groupId>com.leedane.other.taobao</groupId>
+	     	<artifactId>taobaoke</artifactId>
 	     	<version>9.9.9</version>
 	  	</dependency>
 	  	<!-- ueditor.jar -->
@@ -406,6 +426,40 @@
 	     	<artifactId>javase</artifactId>
 	     	<version>9.9.9</version>
 	  	</dependency>
+	  	
+	  	<!-- dubbo -->
+	  	 <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>2.5.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>3.4.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.sgroschupf</groupId>
+            <artifactId>zkclient</artifactId>
+            <version>0.1</version>
+        </dependency>
 	  	
 	  	<!-- mardown解析  https://mvnrepository.com/artifact/org.commonjava.googlecode.markdown4j/markdown4j -->
 		<dependency>

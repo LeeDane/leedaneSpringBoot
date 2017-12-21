@@ -1,14 +1,8 @@
 
 var last_id = 0;
 var first_id = 0;
-var method = 'firstloading';
-var comments;
-//浏览器可视区域页面的高度
-var winH = $(window).height(); 
-var isLoad = false;
-var canLoadData = true;
-var $container;
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	if(isEmpty(mid)){
 		layer.msg("心情不存在");
 		return;
@@ -72,8 +66,15 @@ $(function(){
 	    	method = 'lowloading';
 	    	getComments();
 	    }
-	}); 
+	});   
 });
+var method = 'firstloading';
+var comments;
+//浏览器可视区域页面的高度
+var winH = $(window).height(); 
+var isLoad = false;
+var canLoadData = true;
+var $container;
 
 /**
  * 获取博客的基本信息

@@ -83,6 +83,11 @@ public class ControllerBaseNameUtil {
 	public static final String dl = "dl";
 	
 	/**
+	 * 历史版本
+	 */
+	public static final String dlvs = "dlvs";
+	
+	/**
 	 * 粉丝
 	 */
 	public static final String fs = "fs";
@@ -306,6 +311,17 @@ public class ControllerBaseNameUtil {
 	 * 商城统一入口根路径
 	 */
 	public static final String shop = "shop";
+	
+	/**
+	 * 淘宝接口统一入口根路径
+	 */
+	public static final String taobao = "taobao";
+	
+	/**
+	 * 管理员->商品管理
+	 */
+	public static final String adsh = "ad/shop";
+	
 	
 	/**
 	 * 管理员->系统设置

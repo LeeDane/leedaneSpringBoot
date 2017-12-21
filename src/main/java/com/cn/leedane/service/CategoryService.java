@@ -24,7 +24,6 @@ public interface CategoryService<T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
 	public Map<String, Object> add(JSONObject jo, UserBean user, HttpServletRequest request);
 	
@@ -35,10 +34,16 @@ public interface CategoryService<T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
 	public Map<String, Object> children(boolean isAdmin, int pid, UserBean user, HttpServletRequest request);
 
+	/**
+	 * 获取该节点以及其上所有直接节点
+	 * @param pid
+	 * @return
+	 */
+	public Map<String, Object> shopCategory(int pid);
+	
 	/**
 	 * 修改节点
 	 * @param isAdmin 当前登录的用户是否是管理员

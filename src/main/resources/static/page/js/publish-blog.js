@@ -1,26 +1,6 @@
-//实例化编辑器
-//建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
-//var ue = UE.getEditor('editor');
-var ue = UE.getEditor('editor', {
-    "initialFrameHeight": "200",
-    
-    toolbars: [[
-              'fullscreen', 'source', '|', 'undo', 'redo', '|',
-              'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
-              'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
-              'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
-              'directionalityltr', 'directionalityrtl', 'indent', '|',
-              'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
-              'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|', 
-              'simpleupload', 'insertimage','emotion', 'scrawl'/*, 'insertvideo' , 'music' MP3*/, 'attachment', 'map', /* 'gmap', 谷歌地图 */ 'insertframe', 'insertcode'/* , 'webapp' 百度应用 */, 'pagebreak', 'template', 'background', '|',
-              'horizontal', 'date', 'time', 'spechars', /*'snapscreen', */'wordimage', '|',
-              'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
-              'print', 'preview', 'searchreplace', 'drafts'/* , 'help' 帮助 */
-          ]],
-    enterTag: "&nbsp;"
-});
 
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	if(bid > 0){
 		ue.addListener("ready", function () {
 			// editor准备好之后才可以使用,不然要是ue还没有初始化完成就调用就会报错
@@ -45,8 +25,28 @@ $(function(){
 		}else{
 			$(".is-original-row").addClass("hidden");
 		}
-	}); 
-	
+	});  
+});
+//实例化编辑器
+//建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
+//var ue = UE.getEditor('editor');
+var ue = UE.getEditor('editor', {
+    "initialFrameHeight": "200",
+    
+    toolbars: [[
+              'fullscreen', 'source', '|', 'undo', 'redo', '|',
+              'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
+              'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
+              'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
+              'directionalityltr', 'directionalityrtl', 'indent', '|',
+              'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
+              'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|', 
+              'simpleupload', 'insertimage','emotion', 'scrawl'/*, 'insertvideo' , 'music' MP3*/, 'attachment', 'map', /* 'gmap', 谷歌地图 */ 'insertframe', 'insertcode'/* , 'webapp' 百度应用 */, 'pagebreak', 'template', 'background', '|',
+              'horizontal', 'date', 'time', 'spechars', /*'snapscreen', */'wordimage', '|',
+              'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
+              'print', 'preview', 'searchreplace', 'drafts'/* , 'help' 帮助 */
+          ]],
+    enterTag: "&nbsp;"
 });
 
 /**

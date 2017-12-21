@@ -16,6 +16,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,10 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cn.leedane.handler.CloudStoreHandler;
 import com.cn.leedane.handler.ZXingCodeHandler;
 import com.cn.leedane.model.EmailBean;
+import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.EmailSend;
 import com.cn.leedane.rabbitmq.send.ISend;
+import com.cn.leedane.service.AppVersionService;
 import com.cn.leedane.utils.Base64Util;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
@@ -46,6 +49,9 @@ import com.qiniu.util.Auth;
 public class ToolController extends BaseController{
 
 	protected final Log log = LogFactory.getLog(getClass());
+	
+	@Autowired
+	private AppVersionService<FilePathBean> appVersionService;
 	
 	/**
 	 * 翻译
@@ -248,5 +254,19 @@ public class ToolController extends BaseController{
 		message.put("message", ZXingCodeHandler.createQRCode(bpath, 200));
 		message.put("isSuccess", true);
 		return message.getMap();
+	}
+	
+	/**
+	 * 获取最新的版本信息
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/newest", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> getNewest(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		message.put("message", "获取最新版本失败");
+		message.putAll(appVersionService.getNewest(getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();	
 	}
 }

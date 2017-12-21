@@ -1,8 +1,5 @@
-var posts;
-var $circleEditModal;
-var $tableContainer;
-
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	initPage(".pagination", "getNoCheckList");
 	$tableContainer = $(".table tbody");
 	
@@ -89,8 +86,11 @@ $(function(){
 		});
 	});
 	//获取等待审核的帖子列表
-	getNoCheckList();
+	getNoCheckList();  
 });
+var posts;
+var $circleEditModal;
+var $tableContainer;
 
 /**
  * 获取等待审核的帖子列表

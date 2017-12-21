@@ -1,14 +1,6 @@
-var last_id = 0;
-var first_id = 0;
-var method = 'firstloading';
-var imgs = [];
-
-var blogs;
-//浏览器可视区域页面的高度
-var winH = $(window).height(); 
-var isLoad = false;
-
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
+	  
 	//layer.msg($('.main_bg').offset().top)
 	//getLogin();
 	//getScore();
@@ -42,6 +34,15 @@ $(function(){
 	getMainContentData();
 	getCarouselImgs();//获取推荐的轮播图信息
 });
+var last_id = 0;
+var first_id = 0;
+var method = 'firstloading';
+var imgs = [];
+
+var blogs;
+//浏览器可视区域页面的高度
+var winH = $(window).height(); 
+var isLoad = false;
 
 /*function getLogin(){
 	var params = {account: 'leedane', password: $.md5("456"), t: Math.random()};

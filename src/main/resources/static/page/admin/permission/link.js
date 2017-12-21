@@ -1,8 +1,5 @@
-var links;
-var $addOrEditModal;
-var $tableContainer;
-//浏览器可视区域页面的高度
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	initPage(".pagination", "getLinks");
 	$addOrEditModal = $("#add-or-edit-role-or-permission");
 	$("#totalCheckbox").change(function(){
@@ -24,9 +21,11 @@ $(function(){
 	});
 	$tableContainer = $(".table");
 	//默认查询操作
-	getLinks();
+	getLinks();  
 });
-
+var links;
+var $addOrEditModal;
+var $tableContainer;
 /**
 * 查询
 */

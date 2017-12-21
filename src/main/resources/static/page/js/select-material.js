@@ -1,6 +1,8 @@
 /**
  * 创建选择素材的Modal
  * @param obj 当前点击的对象
+ * @param select 最多选择的数量
+ * @param selectType 选择类型1是图片
  * @param callBackFun 回调的函数
  */
 function createSelectMaterialModal(obj, select, selectType, callBackFun){
@@ -27,7 +29,7 @@ function createSelectMaterialModal(obj, select, selectType, callBackFun){
 						'<div class="modal-footer">'+
 							'<button type="button" class="btn btn-default" data-dismiss="modal">关闭'+
 							'</button>'+
-							'<button type="button" class="btn btn-primary update-image-btn" onclick="getSelectData(\''+ callBackFun +'\');">'+
+							'<button type="button" class="btn btn-primary update-image-btn" onclick="getSelectMaterialData(\''+ callBackFun +'\');">'+
 								'确定选择'+
 							'</button>'+
 						'</div>'+
@@ -46,11 +48,11 @@ function createSelectMaterialModal(obj, select, selectType, callBackFun){
  * 获取子窗口传递的数据
  * @param callBackFun 获取数据成功后的回调函数
  */
-function getSelectData(callBackFun){
+function getSelectMaterialData(callBackFun){
 	var data;
 	var links = "";
 	try{
-		data = document.getElementById("select-material-iframe").contentWindow.getSelectData();
+		data = document.getElementById("select-material-iframe").contentWindow.getSelectMaterialData();
 		for(var d in data){
 			links += data[d] +';';
 		}

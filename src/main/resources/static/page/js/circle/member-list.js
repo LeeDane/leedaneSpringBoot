@@ -1,8 +1,46 @@
-var circles;
-var $circleEditModal;
-var $tableContainer;
-
-$(function(){
+layui.use(['layer', 'form'], function(){
+	layer = layui.layer;
+	form = layui.form;
+	  form.on('switch(has_question)', function(data){
+	  var oo = $(data.elem);
+	  var dd = oo.closest(".layui-input-block");
+		  if(data.elem.checked){
+			  $(data.elem).closest(".layui-input-block").append('<input lay-verify="required" type="text" name="question_title" placeholder="请输入用户加入时提示的标题" class="layui-input" style="margin-top: 5px;"/>');
+             $(data.elem).closest(".layui-input-block").append('<input lay-verify="required" type="text" name="question_answer" placeholder="请输入用户加入时标题的密码" class="layui-input" style="margin-top: 5px;"/>');
+		  }else{
+			  $(data.elem).closest(".layui-input-block").find('input[name="question_title"]').remove();
+             $(data.elem).closest(".layui-input-block").find('input[name="question_answer"]').remove();
+		  }
+		  console.log(data.elem); //得到checkbox原始DOM对象
+		  console.log(data.elem.checked); //是否被选中，true或者false
+		  console.log(data.value); //复选框value值，也可以通过data.elem.value得到
+		  console.log(data.this); //得到美化后的DOM对象
+		});   
+	  
+	  form.on('submit(*)', function(data){
+		  console.log(data.elem); //被执行事件的元素DOM对象，一般为button对象
+		  console.log(data.form); //被执行提交的form对象，一般在存在form标签时才会返回
+		  var field = data.field; //当前容器的全部表单字段，名值对形式：{name: value}
+		  for(var f in field){
+			  if(field[f] == "on")
+				  field[f] = true;
+		  }
+		  
+		  //由于checkbox没有选中就不处理，这里
+		  if(!inJson(field, "check_post"))
+			  field.check_post = false;
+		  
+		  if(!inJson(field, "add_member"))
+			  field.add_member = false;
+		  
+		  if(!inJson(field, "has_question"))
+			  field.has_question = false;
+		  
+		  saveSetting(field);
+		  return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+		});
+	  //各种基于事件的操作，下面会有进一步介绍
+	  
 	initPage(".pagination", "getCircleMembers");
 	$circleEditModal = $("#edit-circle-modal");
 	$("[data-toggle='tooltip']").tooltip();
@@ -40,9 +78,13 @@ $(function(){
 	
 	getCircleMembers();
 	
-	//获取等待审核的帖子总数
-	getNoCheckTotal();
+	if(canAdmin)
+		//获取等待审核的帖子总数
+		getNoCheckTotal();  
 });
+var circles;
+var $circleEditModal;
+var $tableContainer;
 
 /**
  * 获取等待审核的帖子总数
@@ -209,7 +251,7 @@ function doRecommend(memberId, recommend){
 		success : function(data) {
 			layer.close(loadi);
 			if(data.isSuccess){
-				layer.msg("加入圈子成功，1秒后自动刷新");
+				layer.msg("推荐成功，1秒后自动刷新");
 				reloadPage(1000);
 			}else{
 				ajaxError(data);

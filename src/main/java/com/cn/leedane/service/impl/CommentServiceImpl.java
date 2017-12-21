@@ -39,6 +39,7 @@ import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.cn.leedane.utils.FilterUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.OptionUtil;
+import com.cn.leedane.utils.RelativeDateFormat;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
@@ -365,7 +366,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		logger.info("CommentServiceImpl-->paging():jsonObject=" +jo.toString());
 		ResponseMap message = new ResponseMap();
 		if(user == null)
-			user = OptionUtil.adminUser;
+			user = new UserBean();
 		String tableName = JsonUtil.getStringValue(jo, "table_name"); //操作表名
 		int tableId = JsonUtil.getIntValue(jo, "table_id", 0); //操作表中的id
 		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -375,6 +376,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		int currentIndex = JsonUtil.getIntValue(jo, "current", 0); //当前的索引
 		int total = JsonUtil.getIntValue(jo, "total", 0); //总数
 		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
+		boolean formatTime = JsonUtil.getBooleanValue(jo, "format_time", false); //是否格式化时间
 		//查找该用户所有的评论
 		if(StringUtil.isNull(tableName) && toUserId > 0){
 			rs = commentMapper.getAllByUser(toUserId, ConstantsUtil.STATUS_NORMAL, start, pageSize);
@@ -423,7 +425,12 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 								}
 							}
 							rs.get(i).put("blockquote_content", pCommentBean.getContent()); //引用的用户名称
-							rs.get(i).put("blockquote_time", DateUtil.DateToString(pCommentBean.getCreateTime())); //引用的用户名称
+							if(formatTime){
+								rs.get(i).put("blockquote_time", RelativeDateFormat.format(pCommentBean.getCreateTime())); //引用的用户名称
+							}else{
+								rs.get(i).put("blockquote_time", DateUtil.DateToString(pCommentBean.getCreateTime())); //引用的用户名称
+							}
+							
 						}else{
 							rs.get(i).put("blockquote_content", "该评论已经被删除"); //引用的用户名称
 						}
@@ -433,11 +440,17 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 					createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
 					rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId, user, friendObject));
 				}
+				
+				//是否格式化时间
+				if(formatTime){
+					String createTime = (String) rs.get(i).get("create_time");
+					rs.get(i).put("create_time", RelativeDateFormat.format(DateUtil.stringToDate(createTime)));
+				}
 			}	
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户ID为：",toUserId,",表名：",tableName,"，表id为：",tableId,"的评论列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
+		//operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户ID为：",toUserId,",表名：",tableName,"，表id为：",tableId,"的评论列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("isSuccess", true);
 		message.put("message", rs);
 		return message.getMap();

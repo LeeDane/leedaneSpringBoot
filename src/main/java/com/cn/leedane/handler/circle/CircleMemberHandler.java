@@ -92,6 +92,39 @@ public class CircleMemberHandler {
 	}
 	
 	/**
+	 * 根据圈子id删除其对应的最新成员的cache和redis缓存
+	 * @param circleId
+	 * @return
+	 */
+	public boolean deleteNewestMemberCache(int circleId){
+		String key = getNewestMemberKey(circleId);
+		redisUtil.delete(key);
+		return true;
+	}
+	
+	/**
+	 * 根据圈子id删除其对应的人热门成员的cache和redis缓存
+	 * @param circleId
+	 * @return
+	 */
+	public boolean deleteHostestMemberCache(int circleId){
+		String key = getHostestMemberKey(circleId);
+		redisUtil.delete(key);
+		return true;
+	}
+	
+	/**
+	 * 根据圈子id删除其对应的推荐成员的cache和redis缓存
+	 * @param circleId
+	 * @return
+	 */
+	public boolean deleteRecommendMemberCache(int circleId){
+		String key = getRecommendMemberKey(circleId);
+		redisUtil.delete(key);
+		return true;
+	}
+	
+	/**
 	 * 获取圈子热门成员在redis的key
 	 * @param circleId
 	 * @return

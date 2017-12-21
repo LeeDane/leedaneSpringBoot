@@ -1,6 +1,5 @@
-var moods;
-var searchKey;
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	$(".common-search").remove();
 	searchKey = getURLParam(decodeURI(window.location.href), "q");
 	if(isEmpty(searchKey)){
@@ -11,6 +10,8 @@ $(function(){
 	$("#common-search-text").val(searchKey);
 	doSearch();
 });
+var moods;
+var searchKey;
 
 /**
  * 搜索

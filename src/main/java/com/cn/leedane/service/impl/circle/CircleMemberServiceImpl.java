@@ -127,6 +127,8 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+			//清理推荐的缓存
+			circleMemberHandler.deleteRecommendMemberCache(circleId);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.修改失败.value);

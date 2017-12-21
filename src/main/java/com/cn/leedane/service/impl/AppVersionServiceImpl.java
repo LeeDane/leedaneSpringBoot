@@ -75,6 +75,8 @@ public class AppVersionServiceImpl implements AppVersionService<FilePathBean> {
 		if(list != null && list.size() ==1){
 			message.put("isSuccess", true);
 			message.put("message", list);
+		}else{
+			message.put("message", "暂无新版本！");
 		}
 		return message.getMap();
 	}
@@ -141,8 +143,22 @@ public class AppVersionServiceImpl implements AppVersionService<FilePathBean> {
 				
 		message.put("isSuccess", true);
 		message.put("message", rs);
-		logger.info("获得记账位置的数量：" +rs.size());
+		logger.info("获得app版本的数量：" +rs.size());
 		return message.getMap();
+	}
+	
+	/**
+	 * 获取数据库中上传的全部版本
+	 * @return
+	 */
+	public List<Map<String, Object>> getAllVersions(){
+		List<Map<String, Object>>  list = new ArrayList<Map<String,Object>>();
+		StringBuffer sql = new StringBuffer();
+		sql.append("select f.id, f.file_desc, f.file_version, f.qiniu_path path, f.lenght, date_format(f.create_time,'%Y-%m-%d %H:%i:%s') create_time");
+		sql.append(" from "+DataTableType.文件.value+" f");
+		sql.append(" where f.status=? and f.is_upload_qiniu = ? and f.table_name=? order by f.id desc");
+		list = filePathMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, true, ConstantsUtil.UPLOAD_APP_VERSION_TABLE_NAME);
+		return list;
 	}
 	
 }

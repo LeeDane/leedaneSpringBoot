@@ -2,24 +2,6 @@
 <html th:fragment="hello">
 <head>
 	<meta charset="utf-8" />
-	
-	<!-- 正式环境下的cdn引用-->
-	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css}"/>
-	<script th:if="${not isDebug}" type="text/javascript" th:src="@{http://libs.baidu.com/jquery/1.9.1/jquery.min.js}"></script>
-	<script th:if="${not isDebug}" src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script th:if="${not isDebug}" th:src="@{https://cdn.bootcss.com/layer/3.0.1/layer.js}" type="text/javascript"></script>
-	<script th:if="${not isDebug}" th:src="@{https://cdn.bootcss.com/layer/3.0.1/layer.min.js}" type="text/javascript"></script>
-	<!-- 通用引用 -->
-	<script th:if="${not isDebug}" th:src="@{http://7xnv8i.com1.z0.glb.clouddn.com/base.js}" type="text/javascript"></script>
-	
-	<!-- 测试环境下的引用 -->
-	<link rel="stylesheet" th:if="${isDebug}" th:href="@{/page/other/bootstrap-3.3.0/css/bootstrap.min.css}" />
-	<script th:if="${isDebug}" th:src="@{/page/other/jquery-1.9.1.min.js}" type="text/javascript"></script>
-	<script th:if="${isDebug}" th:src="@{/page/other/bootstrap-3.3.0/js/bootstrap.min.js}" type="text/javascript"></script>
-	<script th:if="${isDebug}" th:src="@{/page/other/layui/layui.js}" type="text/javascript"></script>
-	<script th:if="${isDebug}" th:src="@{/page/other/layui/lay/dest/layui.all.js}" type="text/javascript"></script>
-	<!-- 通用引用 -->
-	<script th:if="${isDebug}" th:src="@{/page/js/base.js}" type="text/javascript"></script>
 	<style type="text/css">
 		::-webkit-scrollbar {
 			  width: 5px;
@@ -124,17 +106,4 @@
 		}
 	</style>
 </head>
-<script th:inline="javascript">
-	var isLogin;
-	var isAdmin;
-	var loginUserId;
-	jQuery(function(){
-		isLogin = /*[[${isLogin}]]*/;//取值  
-		isAdmin = /*[[${isAdmin}]]*/;//取值  
-		loginUserId = /*[[${loginUserId}]]*/;//取值  
-		console.log($("body").height());
-		$(".left-sider-bg").hide();
-		
-	});
-</script>
 </html>

@@ -46,7 +46,6 @@
 </head>
 <body>
 <div th:include="common :: hello">what?</div>
-<script th:src="@{/page/js/material/material.js}" type="text/javascript"></script>
 <div class="container clearFloat" id="main-container">
 	<div class="row">
 		<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12">
@@ -119,8 +118,6 @@
 		</div>
 	</div>
 </div>
-
-
 <!-- 模态框上传图片 -->
 <div class="modal fade" id="upload-img-modal" tabindex="-1" role="dialog" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -150,6 +147,9 @@
 <form id="form-upload" enctype="multipart/form-data" method="post">
 
 </form>
+
+<div th:include="common-js :: commJs">what?</div>
+<script th:src="@{/page/js/material/material.js}" type="text/javascript"></script>
 <script th:inline="javascript">//引用
 	var tabName = /*[[${tabName}]]*/;//取值
 </script> 

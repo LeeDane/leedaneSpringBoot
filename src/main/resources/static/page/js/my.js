@@ -1,14 +1,5 @@
-var userinfo;
-var moods = [];
-var isLoad = false;
-//浏览器可视区域页面的高度
-var winH = $(window).height(); 
-var monthArray = new Array();
-var $moodContainer;
-var $moodMardownContent;
-var $commentOrTransmitItemContainer;
-
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	initPage(".pagination", "getMoods");
 	$cOTItemContainer = $("#comment-or-transmit-item");
 	$moodMardownContent = $("#push-mood-text");
@@ -59,9 +50,17 @@ $(function(){
 	    	ct_method = 'lowloading';
 	    	asynchronousLoadData();
 	    }
-	});
+	});  
 });
-
+var userinfo;
+var moods = [];
+var isLoad = false;
+//浏览器可视区域页面的高度
+var winH = $(window).height(); 
+var monthArray = new Array();
+var $moodContainer;
+var $moodMardownContent;
+var $commentOrTransmitItemContainer;
 
 /**
  * 获取留言板列表
@@ -155,8 +154,15 @@ function loadUserInfo(){
 				if(isNotEmpty(userinfo.user_pic_path))
 					$("#user-img").html('<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"><img src="'+ userinfo.user_pic_path +'" width="120px" height="120px" class="img-circle center-block"></div>');
 				
-				var descHtml = '<div class="h3">'+ 
-									userinfo.account + (userinfo.is_admin && uid == loginUserId ? '<span class="badge" style="margin-left:5px;">管理员</span>': '')+
+				var descHtml = '<div>'+ 
+									'<div class="animate three">';
+							if(userinfo.account){
+								for(var i = 0; i < userinfo.account.length; i++){
+									descHtml += '<span>'+ userinfo.account.charAt(i) +'</span>';	
+								}
+							}
+				
+						descHtml +=	'</div>'+
 								'</div>'+
 								'<div class="h4" style="max-height: 38px;overflow-y:auto;">'+ userinfo.personal_introduction+'</div>';
 								
@@ -166,6 +172,13 @@ function loadUserInfo(){
 								'</button>'+
 								'<button id="sign_button" type="button" class="btn btn-primary btn-xs" style="margin-left:5px;" disabled="disabled">'+
 								  
+								'</button>';
+				}else{
+					descHtml +=	'<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#edit-user-info">'+
+								  '<span class="glyphicon glyphicon-pencil" ></span> 关注TA'+
+								'</button>'+
+								'<button id="sign_button" type="button" class="btn btn-primary btn-xs" style="margin-left:5px;" disabled="disabled">'+
+									'<span class="glyphicon glyphicon-pencil" ></span> 粉TA'+
 								'</button>';
 				}
 				

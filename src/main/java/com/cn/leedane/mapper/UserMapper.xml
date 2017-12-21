@@ -46,4 +46,30 @@
 	<select id="shakeSearch" resultType="UserBean">
 		select * from t_user where status = #{status} and id != #{createUserId} order by rand() limit 1
 	</select>
+	
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+
+	<select id="getSetting" parameterType="int" resultMap="userSettingBean">
+		select cs.id, cs.status, cs.circle_id, cs.add_member, cs.welcome_member, cs.question_title, cs.question_answer
+		, date_format(cs.create_time,'%Y-%m-%d %H:%i:%s') create_time, cs.create_user_id, cs.announce, cs.check_post
+		, cs.background_color, cs.limit_number 
+		from t_user_setting cs inner join t_circle c on cs.circle_id = c.id
+		where c.id = #{circleId} and cs.status = #{status} and c.status = #{status} limit 1
+	</select>
+	
+	<resultMap type="com.cn.leedane.model.UserSettingBean" id="userSettingBean">
+        <id property="id" column="id"/>
+        <id property="status" column="status"/>
+        <result property="circleId" column="circle_id"/>
+        <result property="addMember" column="add_member"/>
+        <result property="welcomeMember" column="welcome_member"/>
+        <result property="questionTitle" column="question_title"/>
+        <result property="questionAnswer" column="question_answer"/>
+        <result property="announce" column="announce"/>
+        <result property="checkPost" column="check_post"/>
+        <result property="backgroundColor" column="background_color"/>
+        <result property="limitNumber" column="limit_number"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+   </resultMap>
 </mapper>

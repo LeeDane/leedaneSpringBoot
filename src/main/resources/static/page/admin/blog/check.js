@@ -1,13 +1,6 @@
-var blogs;
-var last_id = 0;
-var first_id = 0;
-var method = 'firstloading';
-//浏览器可视区域页面的高度
-var winH = $(window).height(); 
-var canLoadData = true;
-var isLoad = false;
-$(function(){
-	
+layui.use(['layer'], function(){
+	layer = layui.layer;
+	winH = $(window).height();
 	//默认查询操作
 	queryNoChecks();
 	
@@ -30,8 +23,16 @@ $(function(){
 	    	method = 'lowloading';
 	    	queryNoChecks();
 	    }
-	}); 
+	});
 });
+var blogs;
+var last_id = 0;
+var first_id = 0;
+var method = 'firstloading';
+//浏览器可视区域页面的高度
+var winH; 
+var canLoadData = true;
+var isLoad = false;
 
 /**
  * 获取请求列表

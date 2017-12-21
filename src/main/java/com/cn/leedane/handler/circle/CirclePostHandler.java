@@ -109,6 +109,17 @@ public class CirclePostHandler {
 		}else{
 			userPostBean = (CircleUserPostsBean)obj;
 		}
+		
+		//由于缓存，这里统一再处理一下时间
+		if(userPostBean != null && CollectionUtil.isNotEmpty(userPostBean.getPosts())){
+			for(CircleUserPostBean cUserPostBean: userPostBean.getPosts()){
+				if(cUserPostBean.getCreateTime().length() == "2017-10-10 10:10:10".length()){
+					cUserPostBean.setCreateTime(RelativeDateFormat.format(DateUtil.stringToDate(cUserPostBean.getCreateTime())));
+				}else{
+					deleteHotestPosts();
+				}
+			}
+		}
 		return userPostBean;
 	}
 	
@@ -174,6 +185,17 @@ public class CirclePostHandler {
 		}else{
 			userPostBean = (CircleUserPostsBean)obj;
 		}
+		
+		//由于缓存，这里统一再处理一下时间
+		if(userPostBean != null && CollectionUtil.isNotEmpty(userPostBean.getPosts())){
+			for(CircleUserPostBean cUserPostBean: userPostBean.getPosts()){
+				if(cUserPostBean.getCreateTime().length() == "2017-10-10 10:10:10".length()){
+					cUserPostBean.setCreateTime(RelativeDateFormat.format(DateUtil.stringToDate(cUserPostBean.getCreateTime())));
+				}else{
+					deleteUserCirclePosts(userId);
+				}
+			}
+		}
 		return userPostBean;
 	}
 	
@@ -218,7 +240,7 @@ public class CirclePostHandler {
 				data.setPid(postBean.getPid());
 				data.setTag(postBean.getTag());
 				data.setTitle(postBean.getTitle());
-				data.setCreateTime(RelativeDateFormat.format(postBean.getCreateTime()));
+				data.setCreateTime(DateUtil.DateToString(postBean.getCreateTime()));
 				data.setDigest(postBean.getDigest());
 				datas.add(data);
 			}
@@ -292,6 +314,17 @@ public class CirclePostHandler {
 			}
 		}else{
 			userPostsBean = (CircleUserPostsBean)obj;
+		}
+		
+		//由于缓存，这里统一再处理一下时间
+		if(userPostsBean != null && CollectionUtil.isNotEmpty(userPostsBean.getPosts())){
+			for(CircleUserPostBean cUserPostBean: userPostsBean.getPosts()){
+				if(cUserPostBean.getCreateTime().length() == "2017-10-10 10:10:10".length()){
+					cUserPostBean.setCreateTime(RelativeDateFormat.format(DateUtil.stringToDate(cUserPostBean.getCreateTime())));
+				}else{
+					deleteUserPostPosts(circleId, userId);
+				}
+			}
 		}
 		return userPostsBean;
 	}

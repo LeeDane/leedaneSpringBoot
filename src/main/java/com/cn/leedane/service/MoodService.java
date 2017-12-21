@@ -29,7 +29,7 @@ public interface MoodService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> saveMood(JSONObject jsonObject, UserBean user, int status, HttpServletRequest request)throws Exception;
+	public Map<String, Object> saveMood(JSONObject jsonObject, UserBean user, int status, HttpServletRequest request);
 	
 	/**
 	 * 保存纯文字的心情
@@ -119,7 +119,6 @@ public interface MoodService <T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getCountByUser(JSONObject jo, UserBean user, HttpServletRequest request);
@@ -132,7 +131,6 @@ public interface MoodService <T extends IDBean>{
 	 * @param request
 	 * @params picSize 图像的大小，如：120x120
 	 * @return
-	 * @throws Exception
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> detail(JSONObject jo, UserBean user,
@@ -144,7 +142,6 @@ public interface MoodService <T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> detailImgs(JSONObject jo, UserBean user,

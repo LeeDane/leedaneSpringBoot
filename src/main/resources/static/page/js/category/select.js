@@ -1,3 +1,9 @@
+layui.use(['layer'], function(){
+	layer = layui.layer;
+	$tree = $('#tree');
+	//获取子节点
+	getChildNodes(0, rootId);  
+});
 /*
  * api文档的地址
  * http://www.cnblogs.com/mfc-itblog/p/5233453.html
@@ -6,11 +12,6 @@
 */
 var $tree;
 var isFirst = false;
-$(function(){
-	$tree = $('#tree');
-	//获取子节点
-	getChildNodes(0, rootId);
-});
 
 /**
  * 获取直接一级的节点
@@ -56,7 +57,7 @@ function getChildNodes(nodeId, pid){
 /**
  * 父窗口调用获取选择的分类
  */
-function getSelectData(){
+function getSelectCategoryData(){
 	var nodeSelect = $tree.treeview('getSelected', 0);
 	if(nodeSelect && nodeSelect.length > 0 ){
 		return nodeSelect[0];

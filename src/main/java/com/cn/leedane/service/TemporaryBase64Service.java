@@ -22,7 +22,6 @@ public interface TemporaryBase64Service<T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
-	public boolean saveBase64Str(JSONObject jo, UserBean user, HttpServletRequest request) throws Exception;
+	public boolean saveBase64Str(JSONObject jo, UserBean user, HttpServletRequest request);
 }

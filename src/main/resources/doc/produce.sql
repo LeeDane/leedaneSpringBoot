@@ -229,3 +229,24 @@ BEGIN
 	drop table if exists tmp_circle;
 END $$
 delimiter
+
+-- 获取分类以及全部父类的存储过程
+drop PROCEDURE if EXISTS `getParentCategory`;
+delimiter $$
+CREATE PROCEDURE `getParentCategory` (in $pid INT)  
+BEGIN   
+DECLARE pid INT default 0; 
+DECLARE categorys varchar(1000) default concat($pid);
+
+WHILE $pid > 0  do   
+    SELECT c.pid into pid FROM t_category c WHERE c.id = $pid;   
+    IF pid > 0 THEN   
+        SET categorys = concat(categorys, ',' , pid);   
+        SET $pid = pid;   
+    ELSE   
+        SET $pid = pid;   
+    END IF;   
+END WHILE;   
+select categorys;  
+END $$
+delimiter

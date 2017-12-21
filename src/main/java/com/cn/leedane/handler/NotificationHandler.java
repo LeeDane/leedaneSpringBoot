@@ -42,6 +42,7 @@ import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.OptionUtil;
 import com.cn.leedane.utils.SerializeUtil;
 import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.wechat.util.HttpRequestUtil;
@@ -79,6 +80,20 @@ public class NotificationHandler {
 	private CommentHandler commentHandler;
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
+	
+	/**
+	 * 给管理员发送错误异常的通知
+	 * @param content
+	 * @param tableName
+	 * @param tableId
+	 * @param objectBean ids没有机器人的Id的时候可以为空
+	 */
+	public void sendErrorNotification(String content, String tableName, int tableId, Object objectBean){
+		Set<Integer> ids = new HashSet<Integer>();
+		ids.add(OptionUtil.adminUser.getId());
+		sendNotificationByIds(true, OptionUtil.adminUser, ids, content, NotificationType.通知, tableName, tableId, objectBean);
+	}
+	
 	
 	/**
 	 * 发送通知

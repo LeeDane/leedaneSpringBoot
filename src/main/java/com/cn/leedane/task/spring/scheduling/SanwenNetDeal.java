@@ -22,13 +22,14 @@ import org.springframework.stereotype.Component;
 
 import com.cn.leedane.crawl.SanwenNet;
 import com.cn.leedane.handler.UserHandler;
+import com.cn.leedane.lucene.solr.BlogSolrHandler;
 import com.cn.leedane.mapper.BlogMapper;
 import com.cn.leedane.mapper.CrawlMapper;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.CrawlBean;
 import com.cn.leedane.model.GalleryBean;
 import com.cn.leedane.thread.ThreadUtil;
-import com.cn.leedane.thread.single.BlogSolrAddThread;
+import com.cn.leedane.thread.single.SolrAddThread;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
@@ -190,7 +191,7 @@ public class SanwenNetDeal extends AbstractScheduling{
 							//保存成功之后
 							if(result){
 								//异步修改solr索引
-								new ThreadUtil().singleTask(new BlogSolrAddThread(blog));
+								new ThreadUtil().singleTask(new SolrAddThread<BlogBean>(BlogSolrHandler.getInstance(), blog));
 								mCrawlBean.setCrawl(true);
 								//将抓取标记为已经抓取
 								crawlMapper.update(mCrawlBean);

@@ -67,7 +67,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> update(JSONObject jo, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> update(int circleId, JSONObject jo, UserBean user, HttpServletRequest request);
 	
 	/**
 	 * 删除圈子
@@ -101,21 +101,22 @@ public interface CircleService <T extends IDBean>{
 
 	/**
 	 * 对是否能申请加入圈子的检查
-	 * @param json
+	 * @param circleId
 	 * @param user
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> joinCheck(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> joinCheck(int circleId, UserBean user, HttpServletRequest request);
 
 	/**
 	 * 申请加入圈子
+	 * @param circleId
 	 * @param json
 	 * @param user
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> join(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> join(int circleId, JSONObject json, UserBean user, HttpServletRequest request);
 	
 	/**
 	 * 保存访问圈子记录

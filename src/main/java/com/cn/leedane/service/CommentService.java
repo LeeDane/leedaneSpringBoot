@@ -44,7 +44,6 @@ public interface CommentService<T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
 	public Map<String, Object> add(JSONObject jo, UserBean user, HttpServletRequest request);
 
@@ -56,7 +55,6 @@ public interface CommentService<T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> rolling(JSONObject jo, UserBean user, HttpServletRequest request);
@@ -79,7 +77,6 @@ public interface CommentService<T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getOneCommentItemsByLimit(JSONObject jo, UserBean user, HttpServletRequest request);
@@ -91,7 +88,6 @@ public interface CommentService<T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getCountByObject(JSONObject jo, UserBean user, HttpServletRequest request);

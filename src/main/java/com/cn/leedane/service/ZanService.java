@@ -27,7 +27,6 @@ public interface ZanService<T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
 	public Map<String, Object> addZan(JSONObject jo, UserBean user, HttpServletRequest request);
 

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.shop.S_StatisticsMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="getRange" resultMap="objectBean">
+		select s.id, s.status, s.create_user_id, date_format(s.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		, s.statistics_date, s.statistics_type, s.statistics_text,  s.statistics_total 
+		from t_shop_statistics s inner join t_shop_product p where p.id = s.product_id 
+		where s.product_id = #{productId} and s.status = #{status} order by s.id desc
+	</select>
+	
+	<resultMap type="com.cn.leedane.model.shop.S_StatisticsBean" id="objectBean">
+        <id property="id" column="id"/>
+        <result property="status" column="status"/>
+        <result property="statisticsText" column="statistics_text"/>
+        <result property="statisticsDate" column="statistics_date"/>
+        <result property="statisticsTotal" column="statistics_total"/>
+        <result property="productId" column="product_id"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+   </resultMap>
+</mapper>

@@ -47,4 +47,11 @@ public interface AppVersionService <T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> paging(JSONObject json, UserBean user, HttpServletRequest request);	
+	
+	/**
+	 * 获取数据库中上传的全部版本
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public List<Map<String, Object>> getAllVersions();
 }

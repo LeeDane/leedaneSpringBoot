@@ -52,6 +52,16 @@ public interface VisitorService<T extends IDBean>{
 	public int getTodayVisitors(String tableName, int tableId);
 	
 	/**
+	 * 获取访问数
+	 * @param tableName
+	 * @param tableId
+	 * @param time
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public int getVisitorsByTime(String tableName, int tableId, String time);
+	
+	/**
 	 * 获取所有的访问数
 	 * @param tableName
 	 * @param tableId

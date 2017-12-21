@@ -36,7 +36,6 @@ public interface BlogService <T extends IDBean>{
 	 * @param blog
 	 * @param user
 	 * @return
-	 * @throws Exception
 	 */
 	public  Map<String,Object> addBlog(BlogBean blog, UserBean user);	
 	

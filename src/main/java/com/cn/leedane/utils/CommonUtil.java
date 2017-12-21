@@ -227,4 +227,28 @@ public class CommonUtil {
     	 logger.info(it.next());
      }
 	}*/
+	
+	/**
+	 * 获得格式化的总数
+	 * @param total
+	 * @return
+	 */
+	public static String getFormatTotal(int total){
+		if(total < 100)
+			return total + "";
+		
+		if(total >= 100 && total < 1000)
+			return ((int)total/100) +"00+";
+		
+		if(total >= 1000 && total < 10000)
+			return ((int)total/1000) +"000+";
+		
+		if(total >= 10000 && total < 100000)
+			return ((int)total/10000) +"0000+";
+		
+		if(total >= 100000 && total < 1000000)
+			return ((int)total/100000) +"00000+";
+		
+		return total +"";
+	}
 }

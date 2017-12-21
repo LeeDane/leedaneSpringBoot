@@ -25,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.WechatHandler;
+import com.cn.leedane.lucene.solr.UserSolrHandler;
 import com.cn.leedane.model.FriendBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
@@ -34,8 +35,8 @@ import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserTokenService;
 import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.thread.ThreadUtil;
-import com.cn.leedane.thread.single.UserSolrAddThread;
-import com.cn.leedane.thread.single.UserSolrUpdateThread;
+import com.cn.leedane.thread.single.SolrAddThread;
+import com.cn.leedane.thread.single.SolrUpdateThread;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.DateUtil;
@@ -381,7 +382,7 @@ public class UserController extends BaseController{
 					userService.sendEmail(user);
 					
 					//异步修改用户solr索引
-					new ThreadUtil().singleTask(new UserSolrUpdateThread(user));
+					new ThreadUtil().singleTask(new SolrUpdateThread<UserBean>(UserSolrHandler.getInstance(), user));
 					//UserSolrHandler.getInstance().updateBean(user);
 				}
 					
@@ -770,7 +771,7 @@ public class UserController extends BaseController{
 			}else{
 				
 				//异步添加用户solr索引
-				new ThreadUtil().singleTask(new UserSolrAddThread(user));
+				new ThreadUtil().singleTask(new SolrAddThread<UserBean>(UserSolrHandler.getInstance(), user));
 				//UserSolrHandler.getInstance().addBean(user);
 				
 				message.put("userinfo", userHandler.getUserInfo(user, true));
@@ -918,7 +919,7 @@ public class UserController extends BaseController{
 			wechatHandler.addCache(FromUserName, cacheBean);
 			
 			//异步修改用户solr索引
-			new ThreadUtil().singleTask(new UserSolrUpdateThread(user));
+			new ThreadUtil().singleTask(new SolrUpdateThread<UserBean>(UserSolrHandler.getInstance(), user));
 			//UserSolrHandler.getInstance().updateBean(user);	
 			
             currentUser.getSession().setAttribute(USER_INFO_KEY, user);

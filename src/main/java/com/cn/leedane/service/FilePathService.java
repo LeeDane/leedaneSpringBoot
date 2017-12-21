@@ -29,7 +29,7 @@ public interface FilePathService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public boolean saveEachTemporaryBase64ToFilePath(JSONObject jo, UserBean user, HttpServletRequest request)  throws Exception;
+	public boolean saveEachTemporaryBase64ToFilePath(JSONObject jo, UserBean user, HttpServletRequest request);
 	
 	/**
 	 * 获取单张图片的base64字符串
@@ -37,10 +37,9 @@ public interface FilePathService <T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public String downloadBase64Str(JSONObject jo, UserBean user, HttpServletRequest request) throws Exception;
+	public String downloadBase64Str(JSONObject jo, UserBean user, HttpServletRequest request);
 
 	/**
 	 * 获取单张图片的图片列表信息
@@ -61,9 +60,8 @@ public interface FilePathService <T extends IDBean>{
 	 * @param user
 	 * @param uuid
 	 * @param tableName 表的名称
-	 * @throws Exception
 	 */
-	public boolean saveEachFile(int order, String base64, UserBean user, String uuid, String tableName) throws Exception;
+	public boolean saveEachFile(int order, String base64, UserBean user, String uuid, String tableName);
 	
 	/**
 	 * 保存每一个filePath对象
@@ -74,9 +72,8 @@ public interface FilePathService <T extends IDBean>{
 	 * @param tableName
 	 * @param sourcePath
 	 * @return
-	 * @throws Exception
 	 */
-	public boolean saveEachFile(int order, String base64, UserBean user, String uuid, String tableName, String sourcePath) throws Exception;
+	public boolean saveEachFile(int order, String base64, UserBean user, String uuid, String tableName, String sourcePath);
 
 	/**
 	 * 分页获取该用户图片文件的路径列表

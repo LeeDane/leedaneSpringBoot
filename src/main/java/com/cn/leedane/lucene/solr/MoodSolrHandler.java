@@ -19,7 +19,7 @@ import com.cn.leedane.model.MoodBean;
  * 2016年7月12日 下午3:36:22
  * Version 1.0
  */
-public class MoodSolrHandler extends BaseSolrHandler<MoodBean> {
+public class MoodSolrHandler implements BaseSolrHandler<MoodBean> {
 	public static MoodSolrHandler handler;
 	
 	public static HttpSolrServer server;
@@ -29,14 +29,15 @@ public class MoodSolrHandler extends BaseSolrHandler<MoodBean> {
 	}
 	
 	@Override
-	protected String corename() {
+	public String corename() {
 		return "mood";
 	}
 	
 	public synchronized static MoodSolrHandler getInstance(){
 		if(handler == null){
 			synchronized(MoodSolrHandler.class){
-				handler = new MoodSolrHandler();
+				if(handler == null)
+					handler = new MoodSolrHandler();
 			}
 		}
 		return handler;
@@ -46,18 +47,18 @@ public class MoodSolrHandler extends BaseSolrHandler<MoodBean> {
 		if(server == null){
 			synchronized(BaseSolrHandler.class){
 				server = new HttpSolrServer(BaseSolrHandler.BASE_SOLR_URL +this.corename());
-			    server.setMaxRetries(5); // defaults to 0. > 1 not recommended.
-			    server.setConnectionTimeout(30000); // 5 seconds to establish TCP
+			    server.setMaxRetries(DEFAULT_MAX_RETRIES); // defaults to 0. > 1 not recommended.
+			    server.setConnectionTimeout(DEFAULT_CONNECTION_TIMEOUT); // 5 seconds to establish TCP
 			    //正常情况下，以下参数无须设置
 			    //使用老版本solrj操作新版本的solr时，因为两个版本的javabin incompatible,所以需要设置Parser
 			    server.setParser(new XMLResponseParser());
-			    server.setSoTimeout(60000); // socket read timeout
-			    server.setDefaultMaxConnectionsPerHost(100);
-			    server.setMaxTotalConnections(100);
-			    server.setFollowRedirects(false); // defaults to false
+			    server.setSoTimeout(DEFAULT_SO_TIMEOUT); // socket read timeout
+			    server.setDefaultMaxConnectionsPerHost(DEFAULT_MAX_CONNECTIONS_PERHOST);
+			    server.setMaxTotalConnections(DEFAULT_MAX_TOTAL_CONNECTIONS);
+			    server.setFollowRedirects(FOLLOW_REDIRECTS); // defaults to false
 			    // allowCompression defaults to false.
 			    // Server side must support gzip or deflate for this to have any effect.
-			    server.setAllowCompression(true);
+			    server.setAllowCompression(ALLOW_COMPRESSION);
 
 			    //使用ModifiableSolrParams传递参数
 //					ModifiableSolrParams params = new ModifiableSolrParams();

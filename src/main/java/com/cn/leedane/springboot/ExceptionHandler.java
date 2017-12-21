@@ -2,6 +2,8 @@ package com.cn.leedane.springboot;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +24,8 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
+import com.cn.leedane.exception.CompleteOrderDeleteException;
+import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.exception.user.BannedAccountException;
 import com.cn.leedane.exception.user.CancelAccountException;
@@ -61,11 +65,11 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			 message.put("message", EnumUtil.getResponseValue(ResponseCode.没有操作权限.value));
 			 message.put("responseCode", ResponseCode.没有操作权限.value);
 		}else if(exception instanceof UnsupportedTokenException){//不支持token异常
-			logger.error(EnumUtil.getResponseValue(ResponseCode.请先登录.value)); 
+			logger.error(EnumUtil.getResponseValue(ResponseCode.token过期或无效.value)); 
 			if(isPageRequest)
 				return new ModelAndView("redirect:/lg");
-			message.put("message", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
-			message.put("responseCode", ResponseCode.请先登录.value);
+			message.put("message", EnumUtil.getResponseValue(ResponseCode.token过期或无效.value));
+			message.put("responseCode", ResponseCode.token过期或无效.value);
 			
 		}else if(exception instanceof RE404Exception){//404异常
 			logger.error(EnumUtil.getResponseValue(ResponseCode.资源不存在.value)); 
@@ -153,6 +157,13 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			
 		}else if(exception instanceof NullPointerException){//空指针异常
 			logger.error("系统报错，空指针异常！！！");
+			//mo
+			if(isPageRequest)
+				try {
+					return new ModelAndView("redirect:/null-pointer?errorMessage="+ URLEncoder.encode(exception.getMessage(), "UTF-8"));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
 			message.put("message", "空指针异常 ");
 			message.put("detail", exception.getMessage());
 			message.put("responseCode", ResponseCode.空指针异常.value);
@@ -168,6 +179,14 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 				return new ModelAndView("redirect:/lg");
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.某些字段超过其存储所需的长度.value));
 			message.put("responseCode", ResponseCode.某些字段超过其存储所需的长度.value);
+		}else if(exception instanceof ParameterUnspecificationException){
+			logger.error("参数不规范的异常");
+			message.put("message", EnumUtil.getResponseValue(ResponseCode.参数为空或者不符合规范异常.value) +"：" + exception.getMessage());
+			message.put("responseCode", ResponseCode.参数为空或者不符合规范异常.value);
+		}else if(exception instanceof CompleteOrderDeleteException){
+			logger.error("已经完成的订单被删除的异常");
+			message.put("message", EnumUtil.getResponseValue(ResponseCode.完成状态的订单无法删除的异常.value));
+			message.put("responseCode", ResponseCode.完成状态的订单无法删除的异常.value);
 		}/*else if(exception instanceof MobCodeErrorException){
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.验证码验证失败.value));
 			message.put("responseCode", ResponseCode.验证码验证失败.value);

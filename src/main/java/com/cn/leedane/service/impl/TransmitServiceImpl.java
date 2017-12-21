@@ -201,7 +201,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 	public List<Map<String, Object>> getLimit(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		if(user == null)
-			user = OptionUtil.adminUser;
+			user = new UserBean();
 		logger.info("TransmitServiceImpl-->getLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int toUserId = JsonUtil.getIntValue(jo, "toUserId"); //操作的对象用户的id，如获取指定心情的转发数，这个为0
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
@@ -279,7 +279,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户ID为：",toUserId,",表名：",tableName,"，表id为：",tableId,"的转发列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+		//operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户ID为：",toUserId,",表名：",tableName,"，表id为：",tableId,"的转发列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		return rs;
 	}
 

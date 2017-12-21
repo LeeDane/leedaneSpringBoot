@@ -120,6 +120,12 @@ public class VisitorServiceImpl extends AdminRoleCheckService implements Visitor
 	}
 	
 	@Override
+	public int getVisitorsByTime(String tableName, int tableId, String time) {
+		logger.info("VisitorServiceImpl-->getVisitorsByTime():tableName = "+ tableName +", tableId=" +tableId +", time=" + time);
+		return visitorMapper.getVisitorsByTime(tableName, tableId, ConstantsUtil.STATUS_NORMAL, time);
+	}
+	
+	@Override
 	public int getAllVisitors(String tableName, int tableId) {
 		logger.info("VisitorServiceImpl-->getAllVisitors():tableName = "+ tableName +", tableId=" +tableId);
 		return visitorMapper.getAllVisitors(tableName, tableId, ConstantsUtil.STATUS_NORMAL);

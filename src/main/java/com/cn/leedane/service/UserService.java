@@ -1,5 +1,6 @@
 package com.cn.leedane.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,6 @@ public interface UserService<T extends IDBean>{
 	 * 基础删除实体的方法
 	 * @param t
 	 * @return
-	 * @throws Exception
 	 */
 	public boolean delete(UserBean t);
 	
@@ -88,7 +88,7 @@ public interface UserService<T extends IDBean>{
 	 * @param user
 	 * @return
 	 */
-	public Map<String,Object> saveUser(UserBean user) throws Exception;
+	public Map<String,Object> saveUser(UserBean user);
 	
 	/**
 	 * 检查验证码是否正确
@@ -118,7 +118,7 @@ public interface UserService<T extends IDBean>{
 	 * 给用户发送邮件
 	 * @param user
 	 */
-	public void sendEmail(UserBean user) throws Exception;
+	public void sendEmail(UserBean user);
 	
 	/**
 	 * 找回密码
@@ -210,7 +210,7 @@ public interface UserService<T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public String getHeadBase64StrById(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception;
+			HttpServletRequest request);
 	
 	/**
 	 * 根据用户ID获取其头像的路径
@@ -222,7 +222,7 @@ public interface UserService<T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public String getHeadFilePathStrById(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception;
+			HttpServletRequest request);
 	/**
 	 * 根据用户的ID上传头像
 	 * {"base64": "jjjhuhfuewudfbnfbbdfs"}
@@ -232,7 +232,7 @@ public interface UserService<T extends IDBean>{
 	 * @return
 	 */
 	public boolean uploadHeadBase64StrById(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception;
+			HttpServletRequest request);
 
 	/**
 	 * 检查账号是否被占用
@@ -509,4 +509,12 @@ public interface UserService<T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> uploadUserHeadImageLink(JSONObject json, UserBean user, HttpServletRequest request);
+
+	/**
+	 * 初始化设置
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> initSetting(UserBean user, HttpServletRequest request);
 }

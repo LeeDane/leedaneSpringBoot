@@ -25,6 +25,7 @@ import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.TransmitHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.ZanHandler;
+import com.cn.leedane.lucene.solr.MoodSolrHandler;
 import com.cn.leedane.mapper.FilePathMapper;
 import com.cn.leedane.mapper.MoodMapper;
 import com.cn.leedane.model.FilePathBean;
@@ -48,9 +49,9 @@ import com.cn.leedane.service.MoodService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.thread.ThreadUtil;
-import com.cn.leedane.thread.single.MoodSolrAddThread;
-import com.cn.leedane.thread.single.MoodSolrDeleteThread;
-import com.cn.leedane.thread.single.MoodSolrUpdateThread;
+import com.cn.leedane.thread.single.SolrAddThread;
+import com.cn.leedane.thread.single.SolrDeleteThread;
+import com.cn.leedane.thread.single.SolrUpdateThread;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
@@ -125,7 +126,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	}
 	
 	@Override
-	public Map<String, Object> saveMood(JSONObject jsonObject, UserBean user, int status, HttpServletRequest request) throws Exception {
+	public Map<String, Object> saveMood(JSONObject jsonObject, UserBean user, int status, HttpServletRequest request){
 		logger.info("MoodServiceImpl-->saveMood():jsonObject=" +jsonObject.toString() +", status=" +status);
 		String content = JsonUtil.getStringValue(jsonObject, "content");
 		ResponseMap message = new ResponseMap();
@@ -182,7 +183,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		        message.put("isSuccess", true);
 	        }
 	        //异步添加心情solr索引
-	        new ThreadUtil().singleTask(new MoodSolrAddThread(moodBean));
+	        new ThreadUtil().singleTask(new SolrAddThread<MoodBean>(MoodSolrHandler.getInstance(), moodBean));
 	        //MoodSolrHandler.getInstance().addBean(moodBean);
 	        
 		}else{
@@ -226,7 +227,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		if(result){
 			message.put("isSuccess", result);
 			//异步修改心情solr索引
-	        new ThreadUtil().singleTask(new MoodSolrUpdateThread(oldMoodBean));
+	        new ThreadUtil().singleTask(new SolrUpdateThread<MoodBean>(MoodSolrHandler.getInstance(), oldMoodBean));
 			//MoodSolrHandler.getInstance().updateBean(oldMoodBean);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
@@ -274,7 +275,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			circleOfFriendsHandler.deleteMyAndFansTimeLine(user, EnumUtil.DataTableType.心情.value, mid);
 			
 			//异步删除心情solr索引
-	        new ThreadUtil().singleTask(new MoodSolrDeleteThread(String.valueOf(mid)));
+	        new ThreadUtil().singleTask(new SolrDeleteThread<MoodBean>(MoodSolrHandler.getInstance(), String.valueOf(mid)));
 			//MoodSolrHandler.getInstance().deleteBean(String.valueOf(mid));
 			message.put("isSuccess", result);
 		}else{
@@ -454,7 +455,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			message.put("isSuccess", result);
 			
 			//异步添加心情solr索引
-	        new ThreadUtil().singleTask(new MoodSolrAddThread(moodBean));
+	        new ThreadUtil().singleTask(new SolrAddThread<MoodBean>(MoodSolrHandler.getInstance(), moodBean));
 	        //MoodSolrHandler.getInstance().addBean(moodBean);
 	        
 			//通过观察者的模式发送消息通知
@@ -580,7 +581,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		if(result){
 			
 			//异步添加心情solr索引
-	        new ThreadUtil().singleTask(new MoodSolrAddThread(moodBean));
+	        new ThreadUtil().singleTask(new SolrAddThread<MoodBean>(MoodSolrHandler.getInstance(), moodBean));
 			//MoodSolrHandler.getInstance().addBean(moodBean);
 			
 			/*//通过观察者的模式发送消息通知
@@ -702,7 +703,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			if(result){
 				
 				//异步添加心情solr索引
-		        new ThreadUtil().singleTask(new MoodSolrAddThread(moodBean));
+		        new ThreadUtil().singleTask(new SolrAddThread<MoodBean>(MoodSolrHandler.getInstance(), moodBean));
 				//MoodSolrHandler.getInstance().addBean(moodBean);
 				
 				TimeLineBean timeLineBean = new TimeLineBean();

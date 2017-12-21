@@ -345,6 +345,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		circlePostBean.setStatus(ConstantsUtil.STATUS_NORMAL);
 		circlePostBean.setCanComment(true);
 		circlePostBean.setCanTransmit(true);
+		circlePostBean.setDigest(circlePostBean.getContent());
 		
 		boolean result = circlePostMapper.save(circlePostBean) > 0;
 		if(result){

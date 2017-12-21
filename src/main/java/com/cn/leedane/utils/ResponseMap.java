@@ -7,11 +7,6 @@ import org.apache.log4j.Logger;
 import net.sf.json.JSONObject;
 
 /**
- * 
- * @author T5-SK
- *
- */
-/**
  * 请求响应的Map
  * @author LeeDane
  * 2017年3月19日 下午10:27:49

@@ -1,5 +1,21 @@
+layui.use(['laypage', 'layer'], function(){
+	  laypage = layui.laypage;
+	  layer = layui.layer;
+	  getInit(); //获取初始化数据
+	  getPosts();
+});
 var posts;
 var $postListContainer;
+/**
+ * 当前页面的索引
+ */
+var currentIndex = 0;
+
+/**
+ * 每一页最多的数
+ */
+var pageSize = 8;
+
 /**
  * 解决动态html无法绑定tooltip和popover
  */
@@ -10,7 +26,7 @@ function bindTool(){
 }
 
 $(function(){
-	initPage(".pagination", "getPosts");
+	 //$("script[src='../static/js/cpu_memory.js']").remove();
 	$(".navbar-nav .nav-main-li").each(function(){
 		$(this).removeClass("active");
 	});
@@ -70,7 +86,7 @@ $(function(){
 	//加入圈子
 	$(".into-circle").click(function(){
 		$.ajax({
-			url : "/cc/join/check?cid="+circleId,
+			url : "/cc/"+ circleId +"/join/check",
 			dataType: 'json', 
 			beforeSend:function(){
 			},
@@ -119,8 +135,7 @@ $(function(){
 	$(".add-clock-in").click(function(){
 		doClockIn();
 	});
-	getInit(); //获取初始化数据
-	getPosts();
+	
 });
 
 /**
@@ -129,7 +144,7 @@ $(function(){
  */
 function getInit(){
 	$.ajax({
-		url : "/cc/circle/"+ circleId +"/init",
+		url : "/cc/"+ circleId +"/init",
 		dataType: 'json',
 		beforeSend:function(){
 			
@@ -161,7 +176,7 @@ function getInit(){
  */
 function getPosts(){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
-	var params = {page_size: pageSize, current: currentIndex, total: totalPage, t: Math.random()};
+	var params = {page_size: pageSize, current: currentIndex, t: Math.random()};
 	$.ajax({
 		url : "/cc/"+ circleId +"/posts?"+ jsonToGetRequestParams(params),
 		dataType: 'json',
@@ -179,7 +194,6 @@ function getPosts(){
 						bindTool();
 					}else{
 						$postListContainer.append('已经没有更多的帖子！');
-						pageDivUtil(data.total);
 					}
 					return;
 				}
@@ -189,7 +203,25 @@ function getPosts(){
 				}
 				$("#postNumbers").text(data.total);
 				bindTool();
-				pageDivUtil(data.total);
+				//pageDivUtil(data.total);
+				
+				//执行一个laypage实例
+				 laypage.render({
+				    elem: 'item-pager' //注意，这里的 test1 是 ID，不用加 # 号
+				    ,layout: ['prev', 'page', 'next', 'count', 'skip']
+				    ,count: data.total //数据总数，从服务端得到
+				    ,limit: pageSize
+				    , curr: currentIndex + 1
+				    ,jump: function(obj, first){
+					    //obj包含了当前分页的所有参数，比如：
+					    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+					    console.log(obj.limit); //得到每页显示的条数
+					    if(!first){
+					    	currentIndex = obj.curr -1;
+					    	getPosts();
+					    }
+					  }
+				 });
 			}else{
 				ajaxError(data);
 			}
@@ -246,7 +278,7 @@ function buildEachPostRow(index, post){
 						var imgArray = post.imgs.split(";");
 						for(var imgIndex = 0; imgIndex < imgArray.length; imgIndex++){
 					html += '<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12 img-container">'+
-								'<img src="'+ imgArray[imgIndex] +'" style="width: 100%; height: 180px;" class="img-responsive" onClick="" />'+
+								'<img src="'+ imgArray[imgIndex] +'" class="img-responsive post-item-img hand" onClick="showImgDialog('+ imgIndex+', \''+ post.imgs +'\');" />'+
 							'</div>';		
 						}
 					}
@@ -288,6 +320,35 @@ function buildEachPostRow(index, post){
 }
 
 /**
+ * 展示图片的链接
+ * @param index  当前心情的索引
+ * @param imgs 当前心情图片的索引
+ */
+function showImgDialog(index, imgs){
+	var json = {
+			  "title": "相册标题", //相册标题
+			  "id": 0, //相册id
+			  "start": index //初始显示的图片序号，默认0
+			};
+	var datas = new Array();
+	var photos = imgs.split(";");
+	for(var i = 0; i < photos.length; i++){
+		var each = {};
+		var path = photos[i];
+		each.src = path;//原图地址
+		each.alt = path;//缩略图地址
+		datas.push(each);
+	}
+	
+	json.data = datas;
+	
+	layer.photos({
+	    photos: json
+	    ,shift: 1 //0-6的选择，指定弹出图片动画类型，默认随机
+	  });
+}
+
+/**
  * 申请加入圈子
  * @param answer
  */
@@ -296,7 +357,7 @@ function joinCircle(answer){
 	$.ajax({
 		type: 'POST',
 		data: {cid: circleId, answer: answer},
-		url : "/cc/join",
+		url : "/cc/"+ circleId +"/join",
 		dataType: 'json', 
 		beforeSend:function(){
 		},
@@ -323,7 +384,7 @@ function leaveCircle(){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
 		type: 'DELETE',
-		url : "/cc/leave/"+ circleId,
+		url : "/cc/"+ circleId +"/leave",
 		dataType: 'json', 
 		beforeSend:function(){
 		},
@@ -351,7 +412,7 @@ function doClockIn(){
 	$.ajax({
 		type: 'POST',
 		data: {forms: 'web网页端'},
-		url : "/cc/clockIn/"+circleId,
+		url : "/cc/"+circleId+"/clockIn",
 		dataType: 'json', 
 		beforeSend:function(){
 		},

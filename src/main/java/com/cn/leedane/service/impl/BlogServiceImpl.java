@@ -21,6 +21,7 @@ import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.TransmitHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.ZanHandler;
+import com.cn.leedane.lucene.solr.BlogSolrHandler;
 import com.cn.leedane.mapper.BlogMapper;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.OperateLogBean;
@@ -29,9 +30,9 @@ import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.thread.ThreadUtil;
-import com.cn.leedane.thread.single.BlogSolrAddThread;
-import com.cn.leedane.thread.single.BlogSolrDeleteThread;
-import com.cn.leedane.thread.single.BlogSolrUpdateThread;
+import com.cn.leedane.thread.single.SolrAddThread;
+import com.cn.leedane.thread.single.SolrDeleteThread;
+import com.cn.leedane.thread.single.SolrUpdateThread;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
@@ -106,7 +107,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			result = blogMapper.save(blog);
 		}
 		if(result > 0){
-			new ThreadUtil().singleTask(new BlogSolrAddThread(blog));
+			new ThreadUtil().singleTask(new SolrAddThread<BlogBean>(BlogSolrHandler.getInstance(), blog));
 			
 			message.put("isSuccess",true);
 			message.put("message","文章发布成功");
@@ -261,7 +262,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		boolean result = this.blogMapper.deleteById(BlogBean.class, id) > 0;
 		if(result){
 			//异步删除solr
-			new ThreadUtil().singleTask(new BlogSolrDeleteThread(String.valueOf(id)));
+			new ThreadUtil().singleTask(new SolrDeleteThread<BlogBean>(BlogSolrHandler.getInstance(), String.valueOf(id)));
 			
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
@@ -367,7 +368,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 				message.put("message", "添加成功，标签数量超过3个，已自动删掉第一个");
 			}else{
 				//异步修改solr索引
-				new ThreadUtil().singleTask(new BlogSolrUpdateThread(blogBean));
+				new ThreadUtil().singleTask(new SolrUpdateThread<BlogBean>(BlogSolrHandler.getInstance(), blogBean));
 				
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.标签添加成功.value));
 			}

@@ -1,5 +1,5 @@
-var $contentContainer;
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	$contentContainer = $("textarea[name='content']");
 	$contentContainer.markdown();
 	
@@ -20,9 +20,9 @@ $(function(){
 		}else{
 			$(".is-original-row").addClass("hidden");
 		}
-	}); 
-	
+	});   
 });
+var $contentContainer;
 
 /**
  * 获取编辑的博客
@@ -199,6 +199,10 @@ function clearTag(obj){
 			jsonParams[name] = $(this).val();
 		}
 	});
+	
+	if(pid > 0)
+  		jsonParams.title = "转发帖子";
+	
 	if(flag){
 		if(isEdit)
 			jsonParams.post_id = postId;

@@ -1,8 +1,5 @@
-var jobs;
-var $addOrEditModal;
-var $tableContainer;
-//浏览器可视区域页面的高度
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	$addOrEditModal = $("#add-or-edit-job");
 	$("#totalCheckbox").change(function(){
 		if(!$(this).hasClass("checked")){
@@ -22,8 +19,11 @@ $(function(){
 	
 	$tableContainer = $(".table");
 	//默认查询操作
-	getJobs();
+	getJobs();  
 });
+var jobs;
+var $addOrEditModal;
+var $tableContainer;
 
 /**
 * 查询

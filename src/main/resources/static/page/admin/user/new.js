@@ -1,6 +1,7 @@
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	$('[name="account"]').focus();
-	$('[name="register_time"]').val(formatDateTime());
+	$('[name="register_time"]').val(formatDateTime());  
 });
 
 /**

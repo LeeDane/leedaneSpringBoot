@@ -25,9 +25,8 @@ public interface UploadService<T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
-	public boolean addUpload(UploadBean upload, UserBean user, HttpServletRequest request) throws Exception;
+	public boolean addUpload(UploadBean upload, UserBean user, HttpServletRequest request);
 
 	
 

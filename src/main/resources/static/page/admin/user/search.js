@@ -1,14 +1,13 @@
-var users;
-$(function(){
-	
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	//默认查询操作
 	querySearch({});
 	
 	$(".senior-condition-btn").click(function(){
 		$(".senior-condition").toggle("fast");
-	});
-	
+	});  
 });
+var users;
 
 /**
 * 搜索

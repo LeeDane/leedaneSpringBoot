@@ -1,11 +1,7 @@
-var type;
-var materials;
-var $image;
-var $materialListContainer;
-var $tabsContainer;
-var selectObjs = {}; //用map集合包装， key为id， 值为链接
-$(function(){
-	initPage(".pagination", "getMaterials", 10);
+layui.use(['layer', 'laypage'], function(){
+	layer = layui.layer;
+	laypage = layui.laypage;
+	pageSize = 10;
 	$materialListContainer = $("#material-row-container");
 	var containerWidth = $materialListContainer.width();
 	//动态计算模态框的宽度，适配手机
@@ -77,8 +73,14 @@ $(function(){
 				$("#select-list").append('<div class="has-select-file" id="select-file-'+ material.id +'" class="cut-text"><span class="badge" style="background-color: red; margin-right: 3px;">x</span><a href="'+ material.qiniu_path +'">'+ getFileName(material.qiniu_path)+'</a></div>');
 		}
 		resetContrainHeight();
-	});
+	});  
 });
+var type;
+var materials;
+var $image;
+var $materialListContainer;
+var $tabsContainer;
+var selectObjs = {}; //用map集合包装， key为id， 值为链接
 
 /**
  * 选择后重置列表的距离
@@ -111,7 +113,6 @@ function getMaterials(){
 						$materialListContainer.append('<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">暂时没有素材，请前往素材管理中心添加！</div>');
 					}else{
 						$materialListContainer.append('<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">已经没有更多的素材，请重新选择！</div>');
-						pageDivUtil(data.total);
 					}
 					return;
 				}
@@ -141,7 +142,25 @@ function getMaterials(){
 						}
 					}
 				}
-				pageDivUtil(data.total);
+				
+				//执行一个laypage实例
+				 laypage.render({
+				    elem: 'list-pager' //注意，这里的 test1 是 ID，不用加 # 号
+				    ,layout: ['prev', 'page', 'next', 'count', 'skip']
+				    ,count: data.total //数据总数，从服务端得到
+				    ,limit: pageSize
+				    , curr: currentIndex + 1
+				    ,jump: function(obj, first){
+					    //obj包含了当前分页的所有参数，比如：
+					    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+					    console.log(obj.limit); //得到每页显示的条数
+					    if(!first){
+					    	currentIndex = obj.curr -1;
+					    	getMaterials();
+					    }
+					  }
+				 });
+				//pageDivUtil(data.total);
 			}else{
 				ajaxError(data);
 			}
@@ -218,6 +237,6 @@ function buildEachMaterialFileRow(index, material){
 /**
  * 父窗口调用获取选择的图片
  */
-function getSelectData(){
+function getSelectMaterialData(){
 	return selectObjs;
 }

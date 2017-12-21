@@ -1,41 +1,43 @@
+layui.use(['layer'], function(){
+	  layer = layui.layer;
+	  initPage(".pagination", "getCircles");
+		$circleEditModal = $("#edit-circle-modal");
+		$("[data-toggle='tooltip']").tooltip();
+		
+		$(".navbar-nav .nav-main-li").each(function(){
+			$(this).removeClass("active");
+		});
+		$(".nav-circle").addClass("active");
+		
+		$(".tooltip").css("display", "block");
+		
+		$tableContainer = $(".table tbody");
+		
+		//创建圈子
+		$(".create-circle").click(function(){
+			$.ajax({
+				url : "/cc/check",
+				dataType: 'json', 
+				beforeSend:function(){
+				},
+				success : function(data) {
+					if(data.isSuccess){
+						showCreateModal(data.message);
+					}else{
+						ajaxError(data);
+					}
+				},
+				error : function(data) {
+					ajaxError(data);
+				}
+			});
+		});
+		getCircles();
+});
 var circles;
 var $circleEditModal;
 var $tableContainer;
-$(function(){
-	initPage(".pagination", "getCircles");
-	$circleEditModal = $("#edit-circle-modal");
-	$("[data-toggle='tooltip']").tooltip();
-	
-	$(".navbar-nav .nav-main-li").each(function(){
-		$(this).removeClass("active");
-	});
-	$(".nav-circle").addClass("active");
-	
-	$(".tooltip").css("display", "block");
-	
-	$tableContainer = $(".table tbody");
-	
-	//创建圈子
-	$(".create-circle").click(function(){
-		$.ajax({
-			url : "/cc/check",
-			dataType: 'json', 
-			beforeSend:function(){
-			},
-			success : function(data) {
-				if(data.isSuccess){
-					showCreateModal(data.message);
-				}else{
-					ajaxError(data);
-				}
-			},
-			error : function(data) {
-				ajaxError(data);
-			}
-		});
-	});
-	getCircles();
-});
+
 
 /**
  * 获取我的圈子列表
@@ -119,7 +121,7 @@ function showAllotAdminList(obj, circleId){
 	//获取所有的管理员列表
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
-		url : "/cc/circle/"+ circleId +"/admins",
+		url : "/cc/"+ circleId +"/admins",
 		dataType: 'json', 
 		beforeSend:function(){
 			$("#alreadyAdmins").html("");
@@ -206,7 +208,7 @@ function admin(obj){
 	adminIds = deleteLastStr(adminIds);
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
-		url : "/cc/circle/"+ circleId +"/admins/allot?admins="+ adminIds,
+		url : "/cc/"+ circleId +"/admins/allot?admins="+ adminIds,
 		dataType: 'json', 
 		beforeSend:function(){
 		},
@@ -323,7 +325,7 @@ function doDelete(obj, index){
 		var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 		$.ajax({
 			type: "delete",
-			url : "/cc/circle/" + dataId,
+			url : "/cc/" + dataId,
 			dataType: 'json', 
 			beforeSend:function(){
 			},

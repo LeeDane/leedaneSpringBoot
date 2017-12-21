@@ -100,12 +100,37 @@ var config = [{
                  ]
              }]
          },{
+             id: 'mall', 
+             homePage: 'home',
+             menu:[{
+                 text:'首页管理',
+                 items:[
+                        {id:'home',text:'首页管理',href:'/ad/shop/home'}
+                 ]
+             },{
+                 text:'商品管理',
+                 items:[
+                        {id:'product',text:'商品管理',href:'/ad/shop/product'},
+                        {id:'product',text:'添加商品',href:'/ad/shop/product-add'}
+                 ]
+             },{
+                 text:'其他',
+                 items:[
+                   {id:'other',text:'其他',href:'/ad/shop/other'}
+                 ]
+             }]
+         },{
              id: 'setting', 
              homePage: 'job',
              menu:[{
                  text:'任务调度',
                  items:[
                         {id:'job',text:'任务管理',href:'/ad/st/job'}
+                 ]
+             },{
+                 text:'缓存管理',
+                 items:[
+                        {id:'clear',text:'清理缓存',href:'/ad/st/clearCache'}
                  ]
              }]
          }];

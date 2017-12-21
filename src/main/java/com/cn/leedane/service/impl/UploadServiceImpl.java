@@ -38,7 +38,7 @@ public class UploadServiceImpl implements UploadService<UploadBean>{
 	private OperateLogService<OperateLogBean> operateLogService;
 
 	@Override
-	public boolean addUpload(UploadBean upload, UserBean user, HttpServletRequest request) throws Exception {
+	public boolean addUpload(UploadBean upload, UserBean user, HttpServletRequest request){
 		logger.info("UploadServiceImpl-->addUpload():upload=" +upload.toString() +", user=" +user.getAccount());
 		
 		if(SqlUtil.getBooleanByList(uploadMapper.hasUpload(upload.getTableName(), upload.getTableUuid(), upload.getfOrder(), upload.getSerialNumber(), user.getId()))){

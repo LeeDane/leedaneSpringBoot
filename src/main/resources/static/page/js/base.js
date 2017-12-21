@@ -3,7 +3,7 @@
  * @param str
  */
 function isEmpty(str){
-	return typeof(str) == 'undefined' || str == null || str == undefined || str == '' || str.trim == '';
+	return typeof(str) == 'undefined' || str == null || str == undefined || str == '' || str.trim == '' || str == 'null';
 }
 
 /**
@@ -19,7 +19,8 @@ function isNotEmpty(str){
  * @param link
  */
 function isLink(link){
-	return true;
+	var urlRegExp=/^((https|http|ftp|rtsp|mms)?:\/\/)+[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/;
+    return urlRegExp.test(url);
 }
 
 /**
@@ -167,6 +168,18 @@ function linkToLogin(){
 }
 
 /**
+ * 跳转到指定的网址
+ * @param link
+ */
+function openLink(link){
+	if(isEmpty(link)){
+		layer.msg("要跳转的链接不能为空");
+		return;
+	}
+	window.open(link, '_blank');
+}
+
+/**
  * 跳转到404页面
  */
 function linkTo404(errorMessage){
@@ -205,7 +218,7 @@ function linkToCircle(id){
 		layer.msg("该圈子不存在，请联系管理员核实");
 		return;
 	}
-	window.open("/cc/circle/"+id, "_self");
+	window.open("/cc/"+id, "_self");
 }
 
 /**
@@ -282,6 +295,15 @@ function goToReadMoodFull(mid, createUserId){
 		return;
 	}
 	window.open("/user/"+createUserId+"/mood/"+mid+"/dt", "_blank");
+}
+
+
+/**
+ * 跳转到商品详情页
+ * @param productId
+ */
+function linkToProduct(productId){
+	window.open('/shop/product/'+ productId +'/detail', '_blank');
 }
 
 /**
@@ -416,8 +438,14 @@ function ajaxError(data){
 		else{
 			if(json['responseCode'])
 				layer.msg("服务器处理异常，异常编码是："+json.responseCode);
-			else
-				layer.msg("服务器处理异常"+json.responseCode);
+			else{
+				if(json.responseCode){
+					layer.msg("服务器处理异常"+json.responseCode);
+				}else{
+					layer.msg("网络连接失败！");
+				}
+			}
+				
 		}
 			
 	}
@@ -463,3 +491,19 @@ function jsonToGetRequestParams(json){
 function doCallback(fn,args){    
     return fn.apply(this, args);  
 } 
+
+/**
+ * 自定义模态框的点击关闭事件
+ * @param obj
+ */
+function leeCloseModal(obj){
+	$(".lee-modal-bg").css("display", "none");
+}
+
+/**
+ * 自定义模态框的点击关闭事件
+ * @param obj
+ */
+function leeShowModal(obj){
+	$(".lee-modal-bg").css("display", "block");
+}

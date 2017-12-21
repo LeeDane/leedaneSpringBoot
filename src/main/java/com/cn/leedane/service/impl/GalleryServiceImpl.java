@@ -50,7 +50,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 	
 	@Override
 	public Map<String, Object> addLink(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception {
+			HttpServletRequest request){
 		logger.info("GalleryServiceImpl-->add():JSONObject="+jo.toString());
 		
 		ResponseMap message = new ResponseMap();
@@ -88,9 +88,9 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 			path = gBean.getPath();
 		}
 		
-		if(length > 1024 * 1024 * 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.图片大于1M无法上传.value));
-			message.put("responseCode", EnumUtil.ResponseCode.图片大于1M无法上传.value);
+		if(length > 1024 * 1024 * 5){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.图片大于5M无法上传.value));
+			message.put("responseCode", EnumUtil.ResponseCode.图片大于5M无法上传.value);
 			return message.getMap();
 		}
 		

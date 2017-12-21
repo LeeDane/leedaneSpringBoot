@@ -1,0 +1,90 @@
+/***
+****
+**** 这个是公共的css类，不依赖于任何的第三方框架
+****
+****/
+
+/**  大屏样式 **/
+@media screen and (min-width: 900px){
+	.lee-modal-container{
+		top: 100px; 
+		left: 500px; 
+		right: 500px;
+	}
+}
+
+/**  小屏样式 **/
+@media screen and (max-width: 900px){
+	.lee-modal-container{
+		top: 50px; 
+		left: 10px; 
+		right: 10px;
+	}
+}
+
+.lee-modal-container{
+	position: fixed; 
+	background-color: #f5f5f5; 
+	z-index: 3000; 
+}
+.lee-modal-close-btn {
+	display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #333; 
+    background-color: #fff; 
+    border-color: #ccc;
+}
+
+.lee-modal-close-btn:hover{
+	color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+}
+
+.lee-modal-select-btn {
+	display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #fff;
+    background-color: #428bca;
+    border-color: #357ebd;
+}
+
+.lee-modal-select-btn:hover{
+	color: #fff;
+    background-color: #3071a9;
+    border-color: #285e8e;
+}

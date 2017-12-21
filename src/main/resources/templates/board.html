@@ -80,7 +80,6 @@
 </head>
 <body>
 <div th:include="common :: hello">what?</div>
-<script th:src="@{/page/js/board.js}" type="text/javascript"></script>
 <!-- <link href="http://cdn.staticfile.org/emoji/0.2.2/emoji.css" rel="stylesheet" type="text/css" />
 <script src="http://cdn.staticfile.org/jquery/2.1.0/jquery.min.js"></script>
 <script src="http://cdn.staticfile.org/emoji/0.2.2/emoji.js"></script>
@@ -150,6 +149,9 @@ jEmoji.unifiedToHTML(emojiText) -->
 		    	
 		</div>
 	</div>
+	
+<div th:include="common-js :: commJs">what?</div>
+<script th:src="@{/page/js/board.js}" type="text/javascript"></script>
 <script th:inline="javascript">//引用  
 	/*<![CDATA[*/  
 	var bid = /*[[${bid}]]*/;//取值  

@@ -79,7 +79,7 @@ public class EnumUtil {
 		举报("t_report"), 积分("t_score"), 签到("t_sign_in"), 上传("t_upload"), 权限("t_permission"), 角色权限("t_role_permission"),
 		角色("t_role"), 用户角色("t_user_role"), 链接管理("t_link_manage"), 留言("t_message_board"), 素材("t_material"), 
 		任务("t_job_manage"), 贡献值("t_circle_contribution"),圈子("t_circle"), 圈子成员("t_circle_member"), 帖子("t_circle_post"), 
-		不存在的表("t_inexistence"), 分类("t_category");
+		不存在的表("t_inexistence"), 分类("t_category"), 商店("t_shop"), 商店商品("t_shop_product"), 商品订单("t_shop_order"), 商品心愿单("t_shop_wish");
 	
 		private DataTableType(String value) {
 			this.value = value;
@@ -368,6 +368,7 @@ public class EnumUtil {
 		系统不支持查找该年份的数据(3053),
 		话题不能为空(3054),
 		图片大于1M无法上传(3055),
+		图片大于5M无法上传(3116),
 		收藏成功(3056),
 		数据库对象数量不符合要求(3057),
 		记账位置信息为空(3058),
@@ -428,7 +429,15 @@ public class EnumUtil {
 		该成员已被移除出圈子(3112),
 		自己不能将自己移除出该圈子(3113),
 		该圈子已被设置为不添加成员(3114),
-		该圈子成员已超额(3115)
+		该圈子成员已超额(3115),
+		token过期或无效(3117),
+		无法从详情中解析到主图(4001),
+		该商品不存在或已被删除(4002),
+		该商店不存在或已被删除(4003),
+		淘宝api请求失败(4004),
+		参数为空或者不符合规范异常(4005),
+		该订单已不存在(4006),
+		完成状态的订单无法删除的异常(4007)
 		;
 		
 		private ResponseCode(int value) {
@@ -535,5 +544,64 @@ public class EnumUtil {
         }
         public final String value;
     }
-  
+    
+    /**
+     * 商品平台类型
+     * @author LeeDane
+     * 2017年10月25日 下午3:13:31
+     * version 1.0
+     */
+	public enum ProductPlatformType {
+		淘宝("淘宝网"),京东("京东"), 苏宁("苏宁"), 天猫("天猫");
+	
+		private ProductPlatformType(String value) {
+			this.value = value;
+		}
+	
+		public final String value;
+	}
+	
+	/**
+     * 商品统计类型类型
+     * @author LeeDane
+     * 2017年10月25日 下午3:13:31
+     * version 1.0
+     */
+	public enum ShopStatisticsType {
+		心愿单(1),评论(2), 访问(3), 购买(4);
+	
+		private ShopStatisticsType(int value) {
+			this.value = value;
+		}
+	
+		public final int value;
+	}
+	
+	/**
+	 * 商品订单状态
+	 * @author LeeDane
+	 * 2017年12月8日 下午3:06:51
+	 * version 1.0
+	 */
+	public enum ShopOrderType {
+		禁用(0),已完成(1), 已删除(2), 待结算佣金(9), 待支付佣金(10), 已支付佣金 (11);
+	
+		private ShopOrderType(int value) {
+			this.value = value;
+		}
+		public final int value;
+	}
+	/**
+	 * 获取ShopOrderType对象
+	 * @param value
+	 * @return
+	 */
+	public static String getShopOrderType(int value){
+		for(ReportType nt: ReportType.values()){
+			if(nt.value == value){
+				return nt.name();
+			}
+		}
+		return "";
+	}
 }

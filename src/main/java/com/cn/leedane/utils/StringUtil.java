@@ -633,6 +633,19 @@ public class StringUtil {
 		return usernames;
 	}
 	
+	public static Set<String> getSearchHighlight(String content){
+		Set<String> topics = new HashSet<String>();
+		if(isNotNull(content)){
+			Pattern p = Pattern.compile("(<[^>]*>)");
+			Matcher m = p.matcher(content);
+			while(m.find()){
+				String group = m.group();
+				topics.add(group.substring(1, group.length() - 2));
+			}
+		}
+		return topics;
+	}
+	
 	/**
 	 * 获取文本的[]里面的ID(int)作为列表输出
 	 * @param content
@@ -768,5 +781,8 @@ public class StringUtil {
 		}
 		
 		logger.info("结果：" + text);
+		String content = "空格空格<和都会好的/>奶粉<sskfkf /><dj />回复返回回复<的集合附加费/>ff";
+		Set<String> ss = getTopic(content);
+		System.out.println(ss);
 	}*/
 }

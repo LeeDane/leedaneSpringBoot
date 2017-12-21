@@ -1,7 +1,5 @@
-var messageBoards;
-var $commentListContainer;
-var $container;
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	initPage(".pagination", "getMessageBoards");
 	$commentListContainer = $("#comment-list-container");
 	$container= $(".container");
@@ -42,8 +40,11 @@ $(function(){
 		}
 	});
 	
-	getMessageBoards();
+	getMessageBoards();  
 });
+var messageBoards;
+var $commentListContainer;
+var $container;
 
 /**
  * 获取评论请求列表参数

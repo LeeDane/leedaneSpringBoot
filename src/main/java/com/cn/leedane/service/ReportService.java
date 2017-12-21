@@ -27,7 +27,6 @@ public interface ReportService<T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
 	public Map<String, Object> addReport(JSONObject jo, UserBean user, HttpServletRequest request);
 

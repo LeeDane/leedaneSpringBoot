@@ -28,7 +28,6 @@ public interface AttentionService<T extends IDBean>{
 	 * @param user
 	 * @param request
 	 * @return
-	 * @throws Exception
 	 */
 	public Map<String, Object> addAttention(JSONObject jo, UserBean user, HttpServletRequest request) ;
 

@@ -11,7 +11,7 @@
 	<title th:text="${uaccount}+ '个人中心'">个人中心</title>
 	<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_733gvu39kn265hfr.css" />
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
-	<script th:src="@{/page/js/page.js}" type="text/javascript"></script>
+	
 	<style type="text/css">
 		.clearFloat{
 			clear: both;
@@ -138,12 +138,103 @@
 		.list-group-item.active:focus{
 			z-index: 0 !important; 
 		}
+		
+		
+		.animate {
+		  font-size: 20px;
+		  margin: 20px 0 0;
+		  border-bottom: 0.5px solid #ccc;
+		}
+		
+		.animate span {
+		  display: inline-block;
+		}
+		
+		.animate span:nth-of-type(2) {
+		  animation-delay: .05s;
+		}
+		
+		.animate span:nth-of-type(3) {
+		  animation-delay: .1s;
+		}
+		
+		.animate span:nth-of-type(4) {
+		  animation-delay: .15s;
+		}
+		
+		.animate span:nth-of-type(5) {
+		  animation-delay: .2s;
+		}
+		
+		.animate span:nth-of-type(6) {
+		  animation-delay: .25s;
+		}
+		
+		.animate span:nth-of-type(7) {
+		  animation-delay: .3s;
+		}
+		
+		.animate span:nth-of-type(8) {
+		  animation-delay: .35s;
+		}
+		
+		.animate span:nth-of-type(9) {
+		  animation-delay: .4s;
+		}
+		
+		.animate span:nth-of-type(10) {
+		  animation-delay: .45s;
+		}
+		
+		.animate span:nth-of-type(11) {
+		  animation-delay: .5s;
+		}
+		
+		.animate span:nth-of-type(12) {
+		  animation-delay: .55s;
+		}
+		
+		.animate span:nth-of-type(13) {
+		  animation-delay: .6s;
+		}
+		
+		.animate span:nth-of-type(14) {
+		  animation-delay: .65s;
+		}
+
+
+		/* Animation Three */
+		
+		.three span {
+		  color: #b10e81;
+		  opacity: 0;
+		  transform: translate(-300px, 0) scale(0);
+		  animation: sideSlide .5s forwards;
+		}
+		
+		@keyframes sideSlide {
+		  60% {
+		    transform: translate(20px, 0) scale(1);
+		    color: #b10e81;
+		  }
+		  80% {
+		    transform: translate(20px, 0) scale(1);
+		    color: #b10e81;
+		  }
+		  99% {
+		    transform: translate(0) scale(1.2);
+		    color: #00f0ff;
+		  }
+		  100% {
+		    transform: translate(0) scale(1);
+		    opacity: 1;
+		    color: #b10e81;
+		  }
+		}
 	</style>
 </head>
 <body data-spy="scroll" data-target="#myScrollspy" data-offset="90">
 <div th:include="common :: hello">what?</div>
-<script th:src="@{/page/js/my.js}"></script>
-<script th:src="@{/page/js/select-material.js}"></script>
 <div class="container mainContainer clearFloat">
 	   <div class="row">
 		   <div class="col-lg-3" style="border: 1px solid #fff;background-color: #fff;">
@@ -278,6 +369,11 @@
 	</div><!-- /.modal -->
 </div>
 </body>
+
+<div th:include="common-js :: commJs">what?</div>
+<script th:src="@{/page/js/page.js}" type="text/javascript"></script>
+<script th:src="@{/page/js/my.js}"></script>
+<script th:src="@{/page/js/select-material.js}"></script>
 <script th:inline="javascript">//引用  
 	var isLoginUser = /*[[${isLoginUser}]]*/;//取值 
 	var uid = /*[[${uid}]]*/;//取值

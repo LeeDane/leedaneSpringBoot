@@ -27,7 +27,7 @@ function createSelectCategoryModal(obj, rootId, callBackFun){
 						'<div class="modal-footer">'+
 							'<button type="button" class="btn btn-default" data-dismiss="modal">关闭'+
 							'</button>'+
-							'<button type="button" class="btn btn-primary update-image-btn" onclick="getSelectData(\''+ callBackFun +'\');">'+
+							'<button type="button" class="btn btn-primary update-image-btn" onclick="getSelectCategoryData(\''+ callBackFun +'\');">'+
 								'确定选择'+
 							'</button>'+
 						'</div>'+
@@ -46,10 +46,10 @@ function createSelectCategoryModal(obj, rootId, callBackFun){
  * 获取子窗口传递的数据
  * @param callBackFun 获取数据成功后的回调函数
  */
-function getSelectData(callBackFun){
+function getSelectCategoryData(callBackFun){
 	var data;
 	try{
-		data = document.getElementById("select-category-iframe").contentWindow.getSelectData();
+		data = document.getElementById("select-category-iframe").contentWindow.getSelectCategoryData();
 	}catch(err){
 		//在这里处理错误
 		layer.msg("选择分类出现错误，信息是："+err.message);

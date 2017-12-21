@@ -22,7 +22,6 @@
 	</head>
 	<body>
 		<div th:include="admin/common :: hello">what?</div>
-		<script th:src="@{/page/admin/user/new.js}" type="text/javascript"></script>
 	  	<div class="container mainContainer clearFloat">
 		    <div class="row main-row">
 		    	<div class="col-lg-12">
@@ -164,4 +163,6 @@
 		    </div>
 		</div>
 	</body>
+	<div th:include="admin/commonAdjs :: commAdJs">what?</div>
+	<script th:src="@{/page/admin/user/new.js}" type="text/javascript"></script>
 </html>  

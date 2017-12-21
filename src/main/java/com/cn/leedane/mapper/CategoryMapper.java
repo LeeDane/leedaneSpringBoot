@@ -35,4 +35,6 @@ public interface CategoryMapper extends BaseMapper<CategoryBean>{
 			@Param("id")int id, 
 			@Param("userId")int userId);
 
+	public List<Map<String, Object>> getParentCategorys(@Param("cid")int cid);
+
 }

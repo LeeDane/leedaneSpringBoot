@@ -1,7 +1,6 @@
-var messages;
-var type; //通知类型
-$(function(){
-	initPage(".pagination", "getMessages");
+layui.use(['layer'], function(){
+  layer = layui.layer;
+  initPage(".pagination", "getMessages");
 	$(".navbar-nav .nav-main-li").each(function(){
 		$(this).removeClass("active");
 	});
@@ -104,6 +103,9 @@ $(function(){
 	
 	getMessages();
 });
+var messages;
+var type; //通知类型
+
 
 /**
  * 当前tab标记为已读

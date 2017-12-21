@@ -176,6 +176,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 				}else{
 					post.setImgs(ConstantsUtil.DEFAULT_NO_PIC_PATH);
 				}
+				
 			}
 		}
 		message.put("hotestPosts", hotestPosts);
@@ -250,8 +251,17 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			message.put("setting", circleSettingBean);
     	}else{
     		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
-    		message.put("isCircleAdmin", SqlUtil.getBooleanByList(members) &&  members.get(0).getRoleType() == CIRCLE_MANAGER);
-    		message.put("setting", new CircleSettingBean());
+    		boolean isCircleAdmin = SqlUtil.getBooleanByList(members) &&  members.get(0).getRoleType() == CIRCLE_MANAGER;
+    		message.put("isCircleAdmin", isCircleAdmin);
+    		if(isCircleAdmin){
+    			CircleSettingBean circleSettingBean = circleSettingHandler.getNormalSettingBean(circle.getId());
+    			if(circleSettingBean == null)
+    				throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
+    			
+    			message.put("setting", circleSettingBean);
+    		}else{
+    			message.put("setting", new CircleSettingBean());
+    		}
     	}
 		
 		message.put("maxNumber", StringUtil.changeObjectToInt(systemCache.getCache("circle-max-member")));//总的限制人数
@@ -370,12 +380,11 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 
 
 	@Override
-	public Map<String, Object> update(JSONObject jo, UserBean user,
+	public Map<String, Object> update(int circleId, JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("CircleServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
-		int circleId = JsonUtil.getIntValue(jo, "cid", 0);
 		if(circleId < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
 			message.put("responseCode", EnumUtil.ResponseCode.缺少请求参数.value);
@@ -483,11 +492,10 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	}
 	
 	@Override
-	public Map<String, Object> joinCheck(JSONObject json, UserBean user,
+	public Map<String, Object> joinCheck(int circleId, UserBean user,
 			HttpServletRequest request) {
-		logger.info("CircleServiceImpl-->joinCheck():jo="+json.toString());
+		logger.info("CircleServiceImpl-->joinCheck():circleId="+circleId);
 		ResponseMap message = new ResponseMap();
-		int circleId = JsonUtil.getIntValue(json, "cid", 0);
 		if(circleId < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
 			message.put("responseCode", EnumUtil.ResponseCode.缺少请求参数.value);
@@ -543,11 +551,10 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	
 	@Override
-	public Map<String, Object> join(JSONObject json, UserBean user,
+	public Map<String, Object> join(int circleId, JSONObject json, UserBean user,
 			HttpServletRequest request) {
-		logger.info("CircleServiceImpl-->join():jo="+json.toString());
+		logger.info("CircleServiceImpl-->join():circleId="+circleId +", json="+ json);
 		ResponseMap message = new ResponseMap();
-		int circleId = JsonUtil.getIntValue(json, "cid", 0);
 		if(circleId < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
 			message.put("responseCode", EnumUtil.ResponseCode.缺少请求参数.value);
@@ -618,6 +625,8 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			msg = circleSettingBean.getWelcomeMember();
 		}
 		
+		circleMemberHandler.deleteNewestMemberCache(circleId);
+		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"申请加入圈子--", circleId).toString(), "join()", ConstantsUtil.STATUS_NORMAL, 0);		
 		message.put("isSuccess", true);
@@ -651,7 +660,6 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			return message.getMap();
 		}
 		
-		
 		boolean result = circleMemberMapper.deleteById(CircleMemberBean.class, (circleMemberBeans.get(0)).getId()) > 0;
 		if(result){
 			//保存操作日志
@@ -659,6 +667,10 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			message.put("isSuccess", true);
 			message.put("message", "退出圈子成功");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+			//清理缓存
+			circleMemberHandler.deleteHostestMemberCache(circleId);
+			circleMemberHandler.deleteNewestMemberCache(circleId);
+			circleMemberHandler.deleteRecommendMemberCache(circleId);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);

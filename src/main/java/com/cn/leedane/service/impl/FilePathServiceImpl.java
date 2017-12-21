@@ -63,7 +63,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 	}
 	@Override
 	public boolean saveEachTemporaryBase64ToFilePath(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception {
+			HttpServletRequest request) {
 		logger.info("FilePathServiceImpl-->saveEachTemporaryBase64ToFilePath():jo="+jo.toString());
 		String uuid = JsonUtil.getStringValue(jo, "uuid");
 		int order = JsonUtil.getIntValue(jo, "order");
@@ -338,13 +338,13 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 	 * @throws Exception
 	 */
 	@Override
-	public boolean saveEachFile(int order, String base64, UserBean user, String uuid, String tableName) throws Exception{
+	public boolean saveEachFile(int order, String base64, UserBean user, String uuid, String tableName){
 		return saveEachFile(order, base64, user, uuid, tableName, null);
 	}
 
 	@Override
 	public String downloadBase64Str(JSONObject jo, UserBean user,
-			HttpServletRequest request) throws Exception {
+			HttpServletRequest request){
 		// TODO Auto-generated method stub
 		return null;
 	}

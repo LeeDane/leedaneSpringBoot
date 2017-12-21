@@ -1,5 +1,8 @@
 package com.cn.leedane.springboot.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,12 +28,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.controller.UserController;
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.model.BlogBean;
+import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.VisitorBean;
+import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.AddReadSend;
 import com.cn.leedane.rabbitmq.send.ISend;
+import com.cn.leedane.service.AppVersionService;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.service.VisitorService;
@@ -60,6 +67,9 @@ public class HtmlController extends BaseController{
 	@Autowired
 	private VisitorService<VisitorBean> visitorService;
 	
+	@Autowired
+	private AppVersionService<FilePathBean> appVersionService;
+	
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面
 	 * @param model
@@ -86,6 +96,12 @@ public class HtmlController extends BaseController{
 	public String test(Model model, HttpServletRequest request){
 		return loginRoleCheck("test", false, model, request);
 	}
+	
+	@RequestMapping("/love")
+	public String love(Model model, HttpServletRequest request){
+		return loginRoleCheck("love", false, model, request);
+	}
+	
 	/**
 	 * 消息管理
 	 * @param model
@@ -108,6 +124,12 @@ public class HtmlController extends BaseController{
 	@RequestMapping(ControllerBaseNameUtil.dl)
 	public String download(Model model, HttpServletRequest request){
 		return loginRoleCheck("download", model, request);
+	}
+	
+	@RequestMapping(ControllerBaseNameUtil.dlvs)
+	public String downloadVersion(Model model, HttpServletRequest request){
+		model.addAttribute("historys", appVersionService.getAllVersions());
+		return loginRoleCheck("downloadVersion", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.dt +"/{bid}")
@@ -324,6 +346,27 @@ public class HtmlController extends BaseController{
 		return loginRoleCheck("material/select", true, model, request);
 	}
 	
+	/**
+	 * 个人设置
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/my/setting")
+	public String memberList(Model model, HttpServletRequest request){
+		
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        UserBean user = null;
+        if(currentUser.isAuthenticated()){
+        	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        	//获取页面初始化的信息
+        	model.addAllAttributes(userService.initSetting(user, request));
+        }
+
+		model.addAttribute("user", user);
+		return loginRoleCheck("setting", true, model, request);
+	}
 	@RequestMapping("403")
 	public String unauthorizedRole(Model model, HttpServletRequest request){
 		//设置统一的请求模式
@@ -340,8 +383,27 @@ public class HtmlController extends BaseController{
 			model.addAttribute("error", true);
 			model.addAttribute("errorMessage", errorMessage);
 		}
-		
 		return loginRoleCheck("p404", model, request);
+	}
+	
+	/**
+	 * 空指针异常
+	 * @param model
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException 
+	 */
+	@RequestMapping("null-pointer")
+	public String nullPointer(Model model, HttpServletRequest request) throws UnsupportedEncodingException{
+		//设置统一的请求模式
+		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
+		String errorMessage = request.getParameter("errorMessage");
+		if(StringUtil.isNotNull(errorMessage)){
+			model.addAttribute("error", true);
+			model.addAttribute("errorMessage", URLDecoder.decode(errorMessage, "UTF-8"));
+		}
+		
+		return loginRoleCheck("pnull-pointer", model, request);
 	}
 	
 	/**

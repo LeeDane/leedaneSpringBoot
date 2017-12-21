@@ -1,13 +1,5 @@
-var materials;
-var fileIndex = 0; //未上传文件的索引
-var isUploading = false;//标记当前是否在上传
-var $progressBar;
-var $formUpload;
-var $uploadImgModal;
-var $materialListContainer;
-var materialListImgHight;
-var type;
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	initPage(".pagination", "getMaterials", 10);
 	$materialListContainer = $("#material-row-container");
 	$uploadImgModal = $("#upload-img-modal");
@@ -61,9 +53,17 @@ $(function(){
 		type = $(this).attr("data-value");
 		currentIndex = 0;
 		getMaterials();
-	});
-	
+	});  
 });
+var materials;
+var fileIndex = 0; //未上传文件的索引
+var isUploading = false;//标记当前是否在上传
+var $progressBar;
+var $formUpload;
+var $uploadImgModal;
+var $materialListContainer;
+var materialListImgHight;
+var type;
 
 /**
  * 获取素材列表

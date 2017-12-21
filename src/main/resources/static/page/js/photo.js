@@ -1,16 +1,5 @@
-var last_id = 0;
-var first_id = 0;
-var method = 'firstloading';
-var photos;
-var column1Height = 0;
-var column2Height = 0;
-var column3Height = 0;
-var canLoadData = true;
-
-//浏览器可视区域页面的高度
-var winH = $(window).height(); 
-var isLoad = false;
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	$(window).scroll(function (e) {
 		e = e || window.event;
         if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件             
@@ -32,8 +21,20 @@ $(function(){
 	    }
 	}); 
 	
-	getWebPhotos();
+	getWebPhotos();  
 });
+var last_id = 0;
+var first_id = 0;
+var method = 'firstloading';
+var photos;
+var column1Height = 0;
+var column2Height = 0;
+var column3Height = 0;
+var canLoadData = true;
+
+//浏览器可视区域页面的高度
+var winH = $(window).height(); 
+var isLoad = false;
 
 /**
  * 获取网络图片
@@ -206,10 +207,10 @@ function findColumnToAdd(photo, index){
 
 	//判断是否是内部链接
 	if(photo.path.indexOf("7xnv8i.com1.z0.glb.clouddn.com") >= 0){
-		img = '<img width="100%" title="'+ (isNotEmpty(photo.desc) ? isNotEmpty(photo.desc) : '') +'" title" height="'+height+'" style="margin-top: 10px;" class="img-rounded index_'+index+'" alt="" src="'+ photo.path+'" onclick="showImg('+index+')" onmouseover="imgHandOver(this, '+ index +');" onmouseout="imgHandOut(this, '+ index +');">';
+		img = '<img width="100%" title="'+ (isNotEmpty(photo.desc) ? isNotEmpty(photo.desc) : '') +'" title" height="'+height+'" style="margin-top: 10px;" class="img-show img-rounded index_'+index+'" alt="" src="'+ photo.path+'" onclick="showImg('+index+')" onmouseover="imgHandOver(this, '+ index +');" onmouseout="imgHandOut(this, '+ index +');">';
 
 	}else{
-		img = '<img width="100%" title="'+ (isNotEmpty(photo.desc) ? isNotEmpty(photo.desc) : '') +'" height="'+height+'" style="margin-top: 10px;" class="img-rounded out-link index_'+index+'" alt="" temp-src="'+ photo.path+'" onclick="showImg('+index+')" onmouseover="imgHandOver(this, '+ index +');" onmouseout="imgHandOut(this, '+ index +');">';
+		img = '<img width="100%" title="'+ (isNotEmpty(photo.desc) ? isNotEmpty(photo.desc) : '') +'" height="'+height+'" style="margin-top: 10px;" class="img-show out-link index_'+index+'" alt="" temp-src="'+ photo.path+'" onclick="showImg('+index+')" onmouseover="imgHandOver(this, '+ index +');" onmouseout="imgHandOut(this, '+ index +');">';
 	}
 	if(min == column1Height){
 		$("#column-01").append(img);

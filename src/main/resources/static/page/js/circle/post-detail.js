@@ -1,7 +1,5 @@
-var comments;
-var $container;
-var $commentContainer;
-$(function(){
+layui.use(['layer'], function(){
+	layer = layui.layer;
 	$container= $(".container");
 	$commentContainer = $("#comment-list-container");
 	initPage(".pagination", "getComments", 10);
@@ -77,8 +75,12 @@ $(function(){
 		}
 	});
 	if(!audit)
-		buildZanUser();
+		buildZanUser();  
 });
+var comments;
+var $container;
+var $commentContainer;
+
 
 
 /**
