@@ -12,6 +12,7 @@ src/main/java/com/cn/leedane/utils/ConstantsUtil.java
 src/main/java/com/qiniu
 src/main/java/com/cn/leedane/osc
 src/main/java/com/cn/leedane/weibo
+src/main/java/com/cn/leedane/taobao
 target
 build
 logs
