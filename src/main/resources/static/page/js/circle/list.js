@@ -100,12 +100,25 @@ function buildEachCircleRow(index, circle){
 					html += changeNotNullString(getAdminMapValue(circle.adminMap));
 				}
 			html += '</td>'+
-					'<td>'+ circle.circle_desc +'</td>'+
-					'<td width="60">'+ (circle.status == 1? '正常': (circle.status == 2 ? '已删除': '禁用'))+'</td>'+
+					'<td>'+ circle.circle_desc +'</td>';
+			var statusHtml = '';
+			if(circle.status == 1){
+				statusHtml = '正常';
+			}else if(circle.status == 2){
+				statusHtml = '已删除';
+			}else if(circle.status == 5){
+				statusHtml = '私有';
+			}else if(circle.status == 0){
+				statusHtml = '禁用';
+			}
+			html += '<td width="60">'+ statusHtml+'</td>'+
 					'<td width="100">'+ circle.create_time +'</td>'+
 					'<td width="140">';
 		if(circle.create_user_id == loginUserId){
 			html += '<a href="javascript:void(0);" onclick="showAllotAdminList(this, '+ circle.id+');" style="margin-right: 10px;">分配</a><a href="javascript:void(0);" onclick="showEditCircleModal(this, '+ index +');" style="margin-right: 10px;">编辑</a><a href="javascript:void(0);" onclick="doDelete(this, '+ index +');" style="margin-right: 10px;">删除</a>';
+			if(circle.status == 1){
+				html += '<a href="javascript:void(0);" onclick="doSelf(this, '+ index +');" style="margin-right: 10px;">设置私有</a>';
+			}
 		}
 		html += '</td>'+
 			'</tr>';
@@ -256,6 +269,12 @@ function showEditCircleModal(obj, index){
 	$circleEditModal.modal("show");
 	$circleEditModal.attr("data-index", index);
 	var circle = getCircleData(index);
+	/*if(circle.status == 1){
+		$circleEditModal.find('.status-contrainer').html('<button type="button" class="btn circle-status" style="margin-top: 20px;" title="私有圈子不能设置为私有圈子">设置为私有</button>');
+	}else if(circle.status == 2){
+		$circleEditModal.find('.status-contrainer').html('<button type="button" class="btn btn-primary circle-status" style="margin-top: 20px;" disabled="disabled" title="私有圈子不能设置为私有圈子">已是私有圈子</button>');
+	}
+	*/
 	$circleEditModal.find('input[name="name"]').val(circle.name);
 	$circleEditModal.find('textarea[name="circle_desc"]').val(changeNotNullString(circle.circle_desc));
 	$circleEditModal.find('input[name="circle_path"]').val(changeNotNullString(circle.circle_path));
@@ -291,7 +310,7 @@ function doEdit(obj){
 		$.ajax({
 			type : isEmpty(dataId) ? "post" : "put",
 			data : params,
-			url : "/cc/circle",
+			url : "/cc/"+ dataId,
 			dataType: 'json', 
 			beforeSend:function(){
 			},
@@ -345,6 +364,15 @@ function doDelete(obj, index){
 		});
 	}, function(){
 	});
+}
+
+/**
+ * 设置为私有
+ * @param obj
+ * @param index
+ */
+function doSelf(obj, index){
+	
 }
 
 /**

@@ -193,6 +193,8 @@ public class FriendHandler {
 	 */
 	public boolean inFriend(int userId, int toUserId){
 		boolean result = false;
+		if(userId == toUserId || userId < 1 || toUserId < 1)
+			return result;
 		Set<Integer> set = getFromToFriendIds(userId);
 		if(set != null && set.size() >0){
 			result = set.contains(toUserId);

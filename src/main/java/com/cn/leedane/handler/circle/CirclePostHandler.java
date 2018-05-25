@@ -316,16 +316,6 @@ public class CirclePostHandler {
 			userPostsBean = (CircleUserPostsBean)obj;
 		}
 		
-		//由于缓存，这里统一再处理一下时间
-		if(userPostsBean != null && CollectionUtil.isNotEmpty(userPostsBean.getPosts())){
-			for(CircleUserPostBean cUserPostBean: userPostsBean.getPosts()){
-				if(cUserPostBean.getCreateTime().length() == "2017-10-10 10:10:10".length()){
-					cUserPostBean.setCreateTime(RelativeDateFormat.format(DateUtil.stringToDate(cUserPostBean.getCreateTime())));
-				}else{
-					deleteUserPostPosts(circleId, userId);
-				}
-			}
-		}
 		return userPostsBean;
 	}
 	

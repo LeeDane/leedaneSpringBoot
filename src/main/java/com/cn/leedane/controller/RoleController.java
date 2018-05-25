@@ -36,7 +36,15 @@ public class RoleController extends BaseController{
 	@Autowired
 	private RoleService<RoleBean> roleService;
 	
+	/**
+	 * 系统管理员固定角色编码
+	 */
 	public static final String ADMIN_ROLE_CODE = "ADMIN_MANAGER";
+	
+	/**
+	 * 商城管理员固定角色编码
+	 */
+	public static final String MALL_ROLE_CODE = "MALL_MANAGER";
 	
 	/**
 	 * 添加权限

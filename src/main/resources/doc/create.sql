@@ -446,7 +446,7 @@ CREATE TABLE `t_job_manage` (
   `class_name` varchar(25) NOT NULL COMMENT '任务实体类名称 ',
   `job_desc` varchar(255) COMMENT '任务描述 ',
   `job_order` int(5) NOT NULL DEFAULT '0' COMMENT '排序顺序，默认是0' ,
-  `job_params` varchar(255) COMMENT '任务的参数，支持表达式',
+  `job_params` text COMMENT '任务的参数，支持表达式',
   PRIMARY KEY (`id`),
   KEY `FK_job_manage_create_user` (`create_user_id`),
   KEY `FK_job_manage_modify_user` (`modify_user_id`),
@@ -669,10 +669,10 @@ alter table t_category add constraint category_create_user_id_pid_text_unique UN
 
 
 -- ----------------------------
--- Table structure for t_shop_product
+-- Table structure for t_mall_product
 -- ----------------------------
-DROP TABLE IF EXISTS `t_shop_product`;
-CREATE TABLE `t_shop_product` (
+DROP TABLE IF EXISTS `t_mall_product`;
+CREATE TABLE `t_mall_product` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `status` int(11) NOT NULL,
   `create_time` datetime DEFAULT NULL,
@@ -696,21 +696,21 @@ CREATE TABLE `t_shop_product` (
   `category_id` int(11) NOT NULL COMMENT '商品分类ID',
   `main_img_links` varchar(1000) NOT NULL COMMENT '商品的主图片链接，多个用;隔开',
   PRIMARY KEY (`id`),
-  KEY `FK_shop_product_create_user` (`create_user_id`),
-  KEY `FK_shop_product_modify_user` (`modify_user_id`),
-  KEY `FK_shop_product_category` (`category_id`),
-  KEY `FK_shop_name` (`shop_id`),
-  CONSTRAINT `FK_shop_product_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_shop_product_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_shop_product_category` FOREIGN KEY (`category_id`) REFERENCES `t_category` (`id`),
-  CONSTRAINT `FK_shop_name` FOREIGN KEY (`shop_id`) REFERENCES `t_shop` (`id`)
+  KEY `FK_mall_product_create_user` (`create_user_id`),
+  KEY `FK_mall_product_modify_user` (`modify_user_id`),
+  KEY `FK_mall_product_category` (`category_id`),
+  KEY `FK_mall_shop__name` (`shop_id`),
+  CONSTRAINT `FK_mall_product_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_product_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_product_category` FOREIGN KEY (`category_id`) REFERENCES `t_category` (`id`),
+  CONSTRAINT `FK_mall_shop_name` FOREIGN KEY (`shop_id`) REFERENCES `t_mall_shop` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for t_shop_big_event
+-- Table structure for t_mall_big_event
 -- ----------------------------
-DROP TABLE IF EXISTS `t_shop_big_event`;
-CREATE TABLE `t_shop_big_event` (
+DROP TABLE IF EXISTS `t_mall_big_event`;
+CREATE TABLE `t_mall_big_event` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `status` int(11) NOT NULL,
   `create_time` datetime DEFAULT NULL,
@@ -722,19 +722,19 @@ CREATE TABLE `t_shop_big_event` (
   `can_comment` bit(1) DEFAULT b'1' COMMENT '是否能评论',
   `can_transmit` bit(1) DEFAULT b'1' COMMENT '是否能转发',
   PRIMARY KEY (`id`),
-  KEY `FK_shop_big_event_create_user` (`create_user_id`),
-  KEY `FK_shop_big_event_modify_user` (`modify_user_id`),
-  KEY `FK_shop_big_event_product` (`product_id`),
-  CONSTRAINT `FK_shop_big_event_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_shop_big_event_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_shop_big_event_product` FOREIGN KEY (`product_id`) REFERENCES `t_shop_product` (`id`)
+  KEY `FK_mallp_big_event_create_user` (`create_user_id`),
+  KEY `FK_mall_big_event_modify_user` (`modify_user_id`),
+  KEY `FK_mall_big_event_product` (`product_id`),
+  CONSTRAINT `FK_mall_big_event_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_big_event_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_big_event_product` FOREIGN KEY (`product_id`) REFERENCES `t_mall_product` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for t_shop_statistics
+-- Table structure for t_mall_statistics
 -- ----------------------------
-DROP TABLE IF EXISTS `t_shop_statistics`;
-CREATE TABLE `t_shop_statistics` (
+DROP TABLE IF EXISTS `t_mall_statistics`;
+CREATE TABLE `t_mall_statistics` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `status` int(11) NOT NULL,
   `create_time` datetime DEFAULT NULL,
@@ -743,28 +743,27 @@ CREATE TABLE `t_shop_statistics` (
   `modify_user_id` int(11) DEFAULT NULL,
   `product_id` int(11) NOT NULL COMMENT '商品ID',
   `statistics_date` date NOT NULL COMMENT '统计的日期',
-  `statistics_type` int(1) NOT NULL COMMENT '统计的类型，1、心愿单 2、评论 3、访问 4、购买',
   `statistics_text` varchar(50) DEFAULT null COMMENT '统计展示的文本',
   `comment_total` int(11) NOT NULL COMMENT '统计的评论总数',
   `wish_total` int(11) NOT NULL COMMENT '统计的心愿单总数',
   `visitor_total` int(11) NOT NULL COMMENT '统计的访问总数',
   `buy_total` int(11) NOT NULL COMMENT '统计的购买总数',
   PRIMARY KEY (`id`),
-  KEY `FK_shop_statistics_create_user` (`create_user_id`),
-  KEY `FK_shop_statistics_modify_user` (`modify_user_id`),
-  KEY `FK_shop_statistics_product` (`product_id`),
-  CONSTRAINT `FK_shop_statistics_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_shop_statistics_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_shop_statistics_product` FOREIGN KEY (`product_id`) REFERENCES `t_shop_product` (`id`)
+  KEY `FK_mall_statistics_create_user` (`create_user_id`),
+  KEY `FK_mall_statistics_modify_user` (`modify_user_id`),
+  KEY `FK_mall_statistics_product` (`product_id`),
+  CONSTRAINT `FK_mall_statistics_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_statistics_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_statistics_product` FOREIGN KEY (`product_id`) REFERENCES `t_mall_product` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-ALTER TABLE `t_shop_statistics` ADD INDEX t_shop_statistics_index_date ( `statistics_date`);
-ALTER TABLE t_shop_statistics ADD CONSTRAINT shop_statistics_time_type_product_id_unique UNIQUE(statistics_date, statistics_type, product_id);
+ALTER TABLE `t_mall_statistics` ADD INDEX t_mall_statistics_index_date ( `statistics_date`);
+ALTER TABLE t_mall_statistics ADD CONSTRAINT mall_statistics_time_product_id_unique UNIQUE(statistics_date, product_id);
 
 -- ----------------------------
--- Table structure for t_shop_wish
+-- Table structure for t_mall_wish
 -- ----------------------------
-DROP TABLE IF EXISTS `t_shop_wish`;
-CREATE TABLE `t_shop_wish` (
+DROP TABLE IF EXISTS `t_mall_wish`;
+CREATE TABLE `t_mall_wish` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `status` int(11) NOT NULL,
   `create_time` datetime DEFAULT NULL,
@@ -773,20 +772,20 @@ CREATE TABLE `t_shop_wish` (
   `modify_user_id` int(11) DEFAULT NULL,
   `product_id` int(11) NOT NULL COMMENT '商品ID',
   PRIMARY KEY (`id`),
-  KEY `FK_shop_wish_create_user` (`create_user_id`),
-  KEY `FK_shop_wish_modify_user` (`modify_user_id`),
-  KEY `FK_shop_wish_product` (`product_id`),
-  CONSTRAINT `FK_shop_wish_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_shop_wish_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_shop_wish_product` FOREIGN KEY (`product_id`) REFERENCES `t_shop_product` (`id`)
+  KEY `FK_mall_wish_create_user` (`create_user_id`),
+  KEY `FK_mall_wish_modify_user` (`modify_user_id`),
+  KEY `FK_mall_wish_product` (`product_id`),
+  CONSTRAINT `FK_mall_wish_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_wish_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_wish_product` FOREIGN KEY (`product_id`) REFERENCES `t_mall_product` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-alter table t_shop_wish add constraint shop_wish_create_user_product_id_unique UNIQUE(create_user_id, product_id);
+alter table t_mall_wish add constraint mall_wish_create_user_product_id_unique UNIQUE(create_user_id, product_id);
 
 -- ----------------------------
--- Table structure for t_shop
+-- Table structure for t_mall_shop
 -- ----------------------------
-DROP TABLE IF EXISTS `t_shop`;
-CREATE TABLE `t_shop` (
+DROP TABLE IF EXISTS `t_mall_shop`;
+CREATE TABLE `t_mall_shop` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `status` int(11) NOT NULL,
   `create_time` datetime DEFAULT NULL,
@@ -801,18 +800,18 @@ CREATE TABLE `t_shop` (
   `link` text NOT NULL COMMENT '商店的链接',
   `img` text NOT NULL COMMENT '商店的图片',
   PRIMARY KEY (`id`),
-  KEY `FK_shop_create_user` (`create_user_id`),
-  KEY `FK_shop_modify_user` (`modify_user_id`),
-  CONSTRAINT `FK_shop_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_shop_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+  KEY `FK_mall_shop_create_user` (`create_user_id`),
+  KEY `FK_mall_shop_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_mall_shop_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_shop_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-alter table t_shop add constraint shop_name_unique UNIQUE(shop_name);
+alter table t_mall_shop add constraint mall_shop_name_unique UNIQUE(shop_name);
 
 -- ----------------------------
--- Table structure for t_shop_order
+-- Table structure for t_mall_order
 -- ----------------------------
-DROP TABLE IF EXISTS `t_shop_order`;
-CREATE TABLE `t_shop_order` (
+DROP TABLE IF EXISTS `t_mall_order`;
+CREATE TABLE `t_mall_order` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `status` int(11) NOT NULL,
   `create_time` datetime DEFAULT NULL,
@@ -829,9 +828,108 @@ CREATE TABLE `t_shop_order` (
   `cash_back_ratio` float NOT NULL DEFAULT '0.00' COMMENT '商品总的返现比率(百分比)',
   `cash_back` float NOT NULL DEFAULT '0.00' COMMENT '商品返现的价钱',
   PRIMARY KEY (`id`),
-  KEY `FK_shop_order_create_user` (`create_user_id`),
-  KEY `FK_shop_order_modify_user` (`modify_user_id`),
-  CONSTRAINT `FK_order_wish_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_order_wish_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+  KEY `FK_mall_order_create_user` (`create_user_id`),
+  KEY `FK_mall_order_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_mall_order_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_order_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-alter table t_shop_order add constraint shop_order_code_product_unique UNIQUE(order_code, product_code);
+alter table t_mall_order add constraint mall_order_code_product_unique UNIQUE(order_code, product_code);
+
+-- ----------------------------
+-- Table structure for t_mall_home_carousel
+-- ----------------------------
+DROP TABLE IF EXISTS `t_mall_home_carousel`;
+CREATE TABLE `t_mall_home_carousel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `product_id` int(11) NOT NULL COMMENT '商品ID',
+  `carousel_order` int(4) NOT NULL DEFAULT 1 COMMENT '轮播的排序',
+  PRIMARY KEY (`id`),
+  KEY `FK_mall_home_carousel_create_user` (`create_user_id`),
+  KEY `FK_mall_home_carousel_modify_user` (`modify_user_id`),
+  KEY `FK_mall_home_carousel_product` (`product_id`),
+  CONSTRAINT `FK_mall_home_carousel_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_home_carousel_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_home_carousel_product` FOREIGN KEY (`product_id`) REFERENCES `t_mall_product` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
+-- Table structure for t_mall_home_item
+-- ----------------------------
+DROP TABLE IF EXISTS `t_mall_home_item`;
+CREATE TABLE `t_mall_home_item` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `category_id` int(11) NOT NULL COMMENT '分类ID',
+  `children` varchar(255) COMMENT '子分类列表，json字符串',
+  `category_order` int(4) NOT NULL DEFAULT 1 COMMENT '分类展示的排序',
+  `number` int(3) NOT NULL DEFAULT 1 COMMENT '展示的数量',
+  PRIMARY KEY (`id`),
+  KEY `FK_mall_home_item_create_user` (`create_user_id`),
+  KEY `FK_mall_home_item_modify_user` (`modify_user_id`),
+  KEY `FK_mall_home_item_category` (`category_id`),
+  CONSTRAINT `FK_mall_home_item_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_home_item_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_home_item_category` FOREIGN KEY (`category_id`) REFERENCES `t_category` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_mall_home_item add constraint mall_home_item_id_unique UNIQUE(category_id);
+
+
+-- ----------------------------
+-- Table structure for t_mall_home_item_product
+-- ----------------------------
+DROP TABLE IF EXISTS `t_mall_home_item_product`;
+CREATE TABLE `t_mall_home_item_product` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `item_id` int(11) NOT NULL COMMENT '分类ID',
+  `product_id` int(11) NOT NULL COMMENT '商品ID',
+  `product_order` int(4) NOT NULL DEFAULT 1 COMMENT '商品展示的排序',
+  PRIMARY KEY (`id`),
+  KEY `FK_mall_home_item_product_create_user` (`create_user_id`),
+  KEY `FK_mall_home_item_product_modify_user` (`modify_user_id`),
+  KEY `FK_mall_home_item_product_bean` (`product_id`),
+  KEY `FK_mall_home_item_product_item` (`item_id`),
+  CONSTRAINT `FK_mall_home_item_product_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_home_item_product_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_home_item_product_bean` FOREIGN KEY (`product_id`) REFERENCES `t_mall_product` (`id`),
+  CONSTRAINT `FK_mall_home_item_product_item` FOREIGN KEY (`item_id`) REFERENCES `t_mall_home_item` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_mall_home_item_product add constraint mall_home_item_product_category_id_unique UNIQUE(product_id, item_id);
+
+
+-- ----------------------------
+-- Table structure for t_mall_home_shop
+-- ----------------------------
+DROP TABLE IF EXISTS `t_mall_home_shop`;
+CREATE TABLE `t_mall_home_shop` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `shop_id` int(11) NOT NULL COMMENT '店铺ID',
+  `shop_order` int(4) NOT NULL DEFAULT 1 COMMENT '店铺的排序',
+  PRIMARY KEY (`id`),
+  KEY `FK_mall_home_shop_create_user` (`create_user_id`),
+  KEY `FK_mall_home_shop_modify_user` (`modify_user_id`),
+  KEY `FK_mall_home_shop_shop` (`shop_id`),
+  CONSTRAINT `FK_mall_home_shop_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_home_shop_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_home_shop_product` FOREIGN KEY (`shop_id`) REFERENCES `t_mall_shop` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+

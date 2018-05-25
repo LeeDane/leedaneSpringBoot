@@ -191,7 +191,7 @@ public class DesUtils {
           infoMap.put("account", 26);
           infoMap.put("id", "dane");
           String newString = des.encrypt(JSONObject.fromObject(infoMap).toString());
-          String string = newString+ "http://7xnv8i.com1.z0.glb.clouddn.com/10_10_20160430172759_489c15f4d74a11151fa92c53f63acdd8.jpg";
+          String string = newString+ "http://pic.onlyloveu.top/10_10_20160430172759_489c15f4d74a11151fa92c53f63acdd8.jpg";
           System.out.println(des.encrypt(JSONObject.fromObject(infoMap).toString()));
           System.out.println(string.length());
 	    }

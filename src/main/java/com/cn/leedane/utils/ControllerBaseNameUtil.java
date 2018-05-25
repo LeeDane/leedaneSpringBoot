@@ -148,9 +148,9 @@ public class ControllerBaseNameUtil {
 	public static final String pc = "pc";
 	
 	/**
-	 * Redis
+	 * cache
 	 */
-	public static final String rd = "rd";
+	public static final String cache = "cache";
 	
 	/**
 	 * 举报
@@ -307,20 +307,31 @@ public class ControllerBaseNameUtil {
 	public static final String adrl = "ad/rl";
 	
 	/**********************    商城       **********************/
+	
+	/**
+	 * 商城首页管理入口根路径
+	 */
+	public static final String homeManager = "mall/home";
+	
 	/**
 	 * 商城统一入口根路径
 	 */
-	public static final String shop = "shop";
+	public static final String mall = "mall";
+	
+	/**
+	 * 商城推广平台统一入口根路径
+	 */
+	public static final String mall_promotion = "mall/promotion";
 	
 	/**
 	 * 淘宝接口统一入口根路径
 	 */
-	public static final String taobao = "taobao";
+	public static final String taobao = "mall/taobao";
 	
 	/**
 	 * 管理员->商品管理
 	 */
-	public static final String adsh = "ad/shop";
+	public static final String adsh = "ad/mall";
 	
 	
 	/**

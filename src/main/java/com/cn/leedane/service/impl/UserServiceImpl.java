@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,7 @@ import com.cn.leedane.handler.SignInHandler;
 import com.cn.leedane.handler.TransmitHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.lucene.solr.UserSolrHandler;
+import com.cn.leedane.mapper.FanMapper;
 import com.cn.leedane.mapper.FilePathMapper;
 import com.cn.leedane.mapper.UserMapper;
 import com.cn.leedane.message.ISendNotification;
@@ -86,6 +88,8 @@ import com.cn.leedane.utils.StringUtil;
 public class UserServiceImpl extends AdminRoleCheckService implements UserService<UserBean> {
 	
 	Logger logger = Logger.getLogger(getClass());
+	@Autowired
+	private FanMapper fanMapper;
 	
 	@Autowired
 	private UserMapper userMapper;
@@ -1244,6 +1248,22 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 		}
 		
+		//处理登录用户是否关注TA
+		if(JsonUtil.getBooleanValue(jo, "fan")){
+			boolean isFan = fanHandler.inAttention(user.getId(), searchUserId);
+			message.put("fan", isFan);
+			//如果是粉丝，获取粉丝的备注
+			if(isFan){
+				message.put("remark", fanMapper.getRemark(user.getId(), searchUserId, ConstantsUtil.STATUS_NORMAL));
+			}
+			
+		}
+		
+		/*//处理登录用户是否是TA的粉丝
+		if(JsonUtil.getBooleanValue(jo, "attention")){
+			message.put("attention", friendHandler.inFriend(user.getId(), searchUserId));
+		}*/
+		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户名ID"+searchUserId +"的个人基本信息", "searchUserByUserIdOrAccount()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
@@ -1641,6 +1661,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		return message.getMap();
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public Map<String, Object> initSetting(UserBean user,
 			HttpServletRequest request) {

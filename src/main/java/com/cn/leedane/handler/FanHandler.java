@@ -117,7 +117,7 @@ public class FanHandler {
 		if(!redisUtil.hasKey(attentionIDKey)){
 			Map<Double, String> scoreMembers = new HashMap<Double, String>();
 			long count = 1;
-			String sql = "select id, to_user_id from "+DataTableType.粉丝.value+" f where status=? and create_user_id=? order by id";
+			String sql = "select id, to_user_id remark from "+DataTableType.粉丝.value+" f where status=? and create_user_id=? order by id";
 			List<Map<String, Object>> list = fanMapper.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, toUserId);
 			if(list != null && list.size() > 0){
 				for(Map<String, Object> map: list){
@@ -230,7 +230,7 @@ public class FanHandler {
 	 */
 	public Set<String> getMyFansLimit(int toUserId, int start, int end){
 		String fanIDKey = getFanIdsKey(toUserId);
-		
+		//redisUtil.delete(fanIDKey);
 		//关注列表不存在，先获取该对象的列表放在redis缓存中
 		if(!redisUtil.hasKey(fanIDKey)){
 			Map<Double, String> scoreMembers = new HashMap<Double, String>();
@@ -285,6 +285,9 @@ public class FanHandler {
 	 */
 	public boolean inAttention(int userId, int toUserId){
 		boolean result = false;
+		if(userId == toUserId || userId < 1 || toUserId < 1)
+			return result;
+		
 		Set<String> set = getMyAttentions(userId);
 		if(set != null && set.size() >0){
 			result = set.contains(String.valueOf(toUserId));

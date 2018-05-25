@@ -60,21 +60,21 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 		if(exception instanceof org.apache.shiro.authz.UnauthorizedException){//没有授权异常
 			logger.error(EnumUtil.getResponseValue(ResponseCode.没有操作权限.value)); 
 			if(isPageRequest){
-				return new ModelAndView("redirect:/403");
+				return new ModelAndView("forward:/403");
 			}
 			 message.put("message", EnumUtil.getResponseValue(ResponseCode.没有操作权限.value));
 			 message.put("responseCode", ResponseCode.没有操作权限.value);
 		}else if(exception instanceof UnsupportedTokenException){//不支持token异常
 			logger.error(EnumUtil.getResponseValue(ResponseCode.token过期或无效.value)); 
 			if(isPageRequest)
-				return new ModelAndView("redirect:/lg");
+				return new ModelAndView("forward:/lg");
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.token过期或无效.value));
 			message.put("responseCode", ResponseCode.token过期或无效.value);
 			
 		}else if(exception instanceof RE404Exception){//404异常
 			logger.error(EnumUtil.getResponseValue(ResponseCode.资源不存在.value)); 
 			if(isPageRequest)
-				return new ModelAndView("redirect:/404");
+				return new ModelAndView("forward:/404");
 			
 			message.put("message", exception.getMessage());
 			message.put("responseCode", ResponseCode.资源不存在.value);
@@ -82,8 +82,8 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			logger.error("对用户进行登录验证..验证未通过,未知账户");  
 			if(isPageRequest)
 				return new ModelAndView("redirect:/lg");
-			message.put("message", EnumUtil.getResponseValue(ResponseCode.未知账户.value));
-			message.put("responseCode", ResponseCode.未知账户.value);
+			message.put("message", EnumUtil.getResponseValue(ResponseCode.用户名或者密码不匹配.value));
+			message.put("responseCode", ResponseCode.用户名或者密码不匹配.value);
 			
 		}else if(exception instanceof BannedAccountException){//用户已被禁言
 			logger.error("对用户进行登录验证..验证未通过,用户已经被禁言了");
@@ -95,72 +95,73 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 		}else if(exception instanceof CancelAccountException){//用户已经注销
 			logger.error("对用户进行登录验证..验证未通过,用户已经注销了");
 			if(isPageRequest)
-				return new ModelAndView("redirect:/lg");
+				return new ModelAndView("forward:/lg");
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.用户已经注销.value));
 			message.put("responseCode", ResponseCode.用户已经注销.value);
 			
 		}else if(exception instanceof StopUseAccountException){//用户已被禁止使用
 			logger.error("对用户进行登录验证..验证未通过,用户暂时被禁止使用"); 
 			if(isPageRequest)
-				return new ModelAndView("redirect:/lg");
+				return new ModelAndView("forward:/lg");
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.用户已被禁止使用.value));
 			message.put("responseCode", ResponseCode.用户已被禁止使用.value);
 			
 		}else if(exception instanceof NoValidationEmailAccountException){//用户未验证邮箱
 			logger.error("对用户进行登录验证..验证未通过,用户未验证邮箱"); 
 			if(isPageRequest)
-				return new ModelAndView("redirect:/lg");
+				return new ModelAndView("forward:/lg");
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.请先验证邮箱.value));
 			message.put("responseCode", ResponseCode.请先验证邮箱.value);
 			
 		}else if(exception instanceof NoActiveAccountException){//注册未激活账户
 			logger.error("对用户进行登录验证..验证未通过,用户未激活");  
 			if(isPageRequest)
-				return new ModelAndView("redirect:/lg");
+				return new ModelAndView("forward:/lg");
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.注册未激活账户.value));
 			message.put("responseCode", ResponseCode.注册未激活账户.value);
 			
 		}else if(exception instanceof NoCompleteAccountException){//未完善信息
 			logger.error("对用户进行登录验证..验证未通过,用户未完善信息");
 			if(isPageRequest)
-				return new ModelAndView("redirect:/lg");
+				return new ModelAndView("forward:/lg");
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.未完善信息.value));
 			message.put("responseCode", ResponseCode.未完善信息.value);
 			
 		}else if(exception instanceof IncorrectCredentialsException){//密码不正确
 			logger.error("对用户进行登录验证..验证未通过,错误的凭证");
 			if(isPageRequest)
-				return new ModelAndView("redirect:/lg");
+				return new ModelAndView("forward:/lg");
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.密码不正确.value));
 			message.put("responseCode", ResponseCode.密码不正确.value);
 			
 		}else if(exception instanceof LockedAccountException){//账户已锁定
 			logger.error("对用户进行登录验证..验证未通过,账户已锁定");
 			if(isPageRequest)
-				return new ModelAndView("redirect:/lg");
+				return new ModelAndView("forward:/lg");
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.账户已锁定.value));
 			message.put("responseCode", ResponseCode.账户已锁定.value);
 			
 		}else if(exception instanceof ExcessiveAttemptsException){//用户名或密码错误次数过多
 			logger.error("对用户进行登录验证..验证未通过,错误次数过多");
 			if(isPageRequest)
-				return new ModelAndView("redirect:/lg");
+				return new ModelAndView("forward:/lg");
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.用户名或密码错误次数过多.value));
 			message.put("responseCode", ResponseCode.用户名或密码错误次数过多.value);
 			
 		}else if(exception instanceof AuthenticationException){//账号或密码不匹配
 			logger.error("对用户进行登录验证..验证未通过,堆栈轨迹如下");
 			if(isPageRequest)
-				return new ModelAndView("redirect:/lg");
+				return new ModelAndView("forward:/lg");
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.账号或密码不匹配.value));
 			message.put("responseCode", ResponseCode.账号或密码不匹配.value);
 			
 		}else if(exception instanceof NullPointerException){//空指针异常
+			exception.printStackTrace();
 			logger.error("系统报错，空指针异常！！！");
 			//mo
 			if(isPageRequest)
 				try {
-					return new ModelAndView("redirect:/null-pointer?errorMessage="+ URLEncoder.encode(exception.getMessage(), "UTF-8"));
+					return new ModelAndView("forward:/null-pointer?errorMessage="+ URLEncoder.encode(exception.getMessage(), "UTF-8"));
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
@@ -176,7 +177,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 		}else if(exception instanceof DataIntegrityViolationException){
 			logger.error("mysql保存异常，某些字段长度太长！");
 			if(isPageRequest)
-				return new ModelAndView("redirect:/lg");
+				return new ModelAndView("forward:/lg");
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.某些字段超过其存储所需的长度.value));
 			message.put("responseCode", ResponseCode.某些字段超过其存储所需的长度.value);
 		}else if(exception instanceof ParameterUnspecificationException){

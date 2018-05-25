@@ -30,5 +30,5 @@ INSERT INTO `t_circle_create_limit` VALUES ('4', '1', '2017-06-11 17:11:25', nul
 
 /*发布新版本app的执行sql语句*/
 INSERT INTO t_file_path (STATUS, CREATE_TIME, MODIFY_TIME, PIC_ORDER, PATH, QINIU_PATH, PIC_SIZE, TABLE_NAME, TABLE_UUID, IS_UPLOAD_QINIU, CREATE_USER_ID, MODIFY_USER_ID, HEIGHT, WIDTH, LENGHT, FILE_DESC, FILE_VERSION) 
-VALUES(1, CURRENT_DATE(), CURRENT_DATE(), 0, '1_leedane8342cd456ew4t07-1ae03wee95a6_20170803113016_app-release.apk', 'http://7xnv8i.com1.z0.glb.clouddn.com/1_leedane8342cd456ew4t07-1ae03wee95a6_20170803113016_app-release.apk'
+VALUES(1, CURRENT_DATE(), CURRENT_DATE(), 0, '1_leedane8342cd456ew4t07-1ae03wee95a6_20170803113016_app-release.apk', 'http://pic.onlyloveu.top/1_leedane8342cd456ew4t07-1ae03wee95a6_20170803113016_app-release.apk'
 , 'source', 'app_version', 'leedaneba1cc32e-da82-4aa4-b4f0-d43fffd868994', 1, 1, 1, 0, 0, 23520364, '1.支持账号、密码、手机等重要信息的加密传输 2、记账新增今日栏 3、解决记账的地址bug 4、解决记账列表偶尔没有数据和数据没有缓冲的问题', '1.0.5');

@@ -7,12 +7,10 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
-import com.baidu.ueditor.PathFormat;
 import com.baidu.ueditor.define.BaseState;
 import com.baidu.ueditor.define.MultiState;
 import com.baidu.ueditor.define.State;
 import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.StringUtil;
 
 /**
  * 重写百度富文本编辑器的FileManager类
@@ -22,12 +20,12 @@ import com.cn.leedane.utils.StringUtil;
  */
 public class MyFileManager {
 	private String dir = null;
-	private String rootPath = null;
+	//private String rootPath = null;
 	private String[] allowFiles = null;
 	private int count = 0;
 
 	public MyFileManager(Map<String, Object> conf){
-	     this.rootPath = ((String)conf.get("rootPath"));
+	     //this.rootPath = ((String)conf.get("rootPath"));
 	     //this.dir = (this.rootPath + (String)conf.get("dir"));
 	     this.dir = UeditorFolder.getInstance().getFileFolder();
 	     this.allowFiles = getAllowFiles(conf.get("allowFiles"));
@@ -46,7 +44,7 @@ public class MyFileManager {
 			return new BaseState(false, 301);
 		}
 
-		Collection list = FileUtils.listFiles(dir, this.allowFiles, true);
+		Collection<?> list = FileUtils.listFiles(dir, this.allowFiles, true);
 
 		if ((index < 0) || (index > list.size())) {
 			state = new MultiState(true);

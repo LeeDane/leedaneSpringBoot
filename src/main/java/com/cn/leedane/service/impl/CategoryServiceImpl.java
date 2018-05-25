@@ -114,8 +114,8 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 	}
 	
 	@Override
-	public Map<String, Object> shopCategory(int pid){
-		logger.info("CategoryServiceImpl-->shopCategory():pid=" +pid);
+	public Map<String, Object> mallCategory(int pid){
+		logger.info("CategoryServiceImpl-->mallCategory():pid=" +pid);
 		ResponseMap message = new ResponseMap();
 		
 		pid = pid < 1 ? 0: pid;
@@ -132,7 +132,7 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 					String[] relation = new String[3];
 					relation[0] = ct + "";
 					relation[1] = categoryBean != null? categoryBean.getText(): "";
-					relation[2] = categoryBean != null? "/shop/category/"+ ct: "";
+					relation[2] = categoryBean != null? "/mall/category/"+ ct: "";
 					relations.add(relation);
 				}
 			}

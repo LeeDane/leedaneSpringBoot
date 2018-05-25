@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.mall.S_HomeItemProductMapper">
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="getProducts" parameterType="int" resultMap="objectBean">
+		select ip.id, ip.status, ip.create_user_id, date_format(ip.create_time,'%Y-%m-%d %H:%i:%s') create_time 
+		, ip.item_id, ip.product_id, ip.product_order 
+		from t_mall_home_item_product ip 
+		inner join t_mall_home_item i on i.id = ip.item_id 
+		inner join t_mall_product p on p.id = ip.product_id 
+		where ip.status = 1 and ip.item_id = #{itemId} order by ip.product_order desc,ip.create_time desc  limit #{limit}
+	</select>
+	
+	<delete id="deleteProducts" flushCache="true" parameterType="int">
+		delete from t_mall_home_item_product where item_id = #{itemId}
+	</delete>
+	
+	<resultMap type="com.cn.leedane.model.mall.S_HomeItemProductBean" id="objectBean">
+        <id property="id" column="id"/>
+        <result property="status" column="status"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="itemId" column="item_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="productOrder" column="product_order"/>
+        <result property="children" column="children"/>
+   </resultMap>
+</mapper>

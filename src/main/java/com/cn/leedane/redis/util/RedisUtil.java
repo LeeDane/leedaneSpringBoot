@@ -112,6 +112,7 @@ public class RedisUtil{
 		MAX_IDLE = RedisConfig.getMaxIdle();
 		MAX_WAIT = RedisConfig.getMaxWait();
 		TIMEOUT = RedisConfig.getTimeOut();
+		AUTH = RedisConfig.getAuth();
 	}
 
 	/**
@@ -805,6 +806,7 @@ public class RedisUtil{
 			}
 		} catch (Exception e) {
 			logger.error("Redis服务ping不通");
+			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
 		}

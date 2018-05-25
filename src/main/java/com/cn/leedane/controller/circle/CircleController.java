@@ -208,4 +208,22 @@ public class CircleController extends BaseController{
 		message.putAll(circleService.initialize(cid, getUserFromMessage(message), request));
 		return message.getMap();
 	}
+	
+	
+	/**
+	 * 圈子首页的初始化数据(app客户端使用)
+	 * @return
+	 */
+	@RequestMapping(value = "/init", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> init(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(request);
+		message.putAll(circleService.init(getUserFromMessage(message), request));
+		message.put("isSuccess", true);
+		System.out.println(JSONObject.fromObject(message.getMap()).toString());
+		return message.getMap();
+	}
 }

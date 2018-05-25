@@ -563,6 +563,40 @@ public class BaseController {
 			}
 		}
 	}
+
+	/**
+	 * 必须进行检查角色和权限
+	 * 方法只有调用该方法才做权限控制
+	 * @param uri
+	 */
+	protected void checkRoleOrPermission(String uri){
+		LinkManagesBean beans = linkManageHandler.getAllLinks();
+		if(beans != null && CollectionUtil.isNotEmpty(beans.getLinkManageBean())){
+			for(LinkManageBean bean: beans.getLinkManageBean()){
+				if(bean.getLink().equals(uri) || uri.matches(bean.getLink()) || ifStartWithLink(uri, bean.getLink())){
+					String roleOrPermissionCodes = bean.getRoleOrPermissionCodes();
+					if(bean.isRole()){
+						if(StringUtil.isNotNull(roleOrPermissionCodes)){
+							String[] codes = roleOrPermissionCodes.split(",");
+							if(bean.isAll_())
+								checkAllRoleAuthor(codes);
+							else
+								checkAnyRoleAuthor(codes);
+						}
+					}else{
+						if(StringUtil.isNotNull(roleOrPermissionCodes)){
+							String[] codes = roleOrPermissionCodes.split(",");
+							if(bean.isAll_())
+								checkAllPermissionAuthor(codes);
+							else
+								checkAnyPermissionAuthor(codes);
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	
 	/**
 	 * 校验链接是否是模糊匹配的

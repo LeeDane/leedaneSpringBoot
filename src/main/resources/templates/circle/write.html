@@ -64,8 +64,8 @@
 				    <input th:if="${post.pid} == 0" class="form-control" data-toggle="tooltip" title="请输入帖子标题，不能为空，最多100个字" type="text" name="title" placeholder="请输入帖子标题" th:value="${post.title}" empty="false" limit="100"/>
 				 </div>
 				 <div class="form-group">
-				    <label for="content">帖子内容<font class="must-not-null">*</font></label>
-				    <textarea class="form-control" data-provide="markdown-editable" data-width="100%" data-toggle="tooltip" title="请输入帖子内容，支持mardown语法，不能为空，最多1499个字" rows="7" name="content" placeholder="请输入帖子的内容，不能超过255个文字。" th:text="${post.content}" empty="false" limit="100"></textarea>
+				    <label for="content">帖子内容&nbsp;<small>可以为空，为空将自动把标题填充到内容中。</small></label>
+				    <textarea class="form-control" data-provide="markdown-editable" data-width="100%" data-toggle="tooltip" title="请输入帖子内容，支持mardown语法，不能为空，最多1499个字" rows="7" name="content" placeholder="请输入帖子的内容，不能超过255个文字。" th:text="${post.content}" empty="true" limit="100"></textarea>
 				  </div>
 	   		</div>
 	   </div>

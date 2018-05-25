@@ -231,6 +231,16 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		} 
 		//获取该圈子该用户的帖子列表
 		CircleUserPostsBean circleUserPosts = circlePostHandler.getUserPostPosts(circleId, user.getId());
+		//由于缓存，这里统一再处理一下时间
+		if(circleUserPosts != null && CollectionUtil.isNotEmpty(circleUserPosts.getPosts())){
+			for(CircleUserPostBean cUserPostBean: circleUserPosts.getPosts()){
+				if(cUserPostBean.getCreateTime().length() == "2017-10-10 10:10:10".length()){
+					cUserPostBean.setCreateTime(RelativeDateFormat.format(DateUtil.stringToDate(cUserPostBean.getCreateTime())));
+				}else{
+					circlePostHandler.deleteUserPostPosts(circleId, user.getId());
+				}
+			}
+		}
 		message.put("circleUserPosts", circleUserPosts);
 		message.put("setting", circleSettingHandler.getNormalSettingBean(circleId));
 		return message.getMap();

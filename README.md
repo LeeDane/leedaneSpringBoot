@@ -27,23 +27,23 @@
   8. 微信公众号：目前已经支持在线翻译、与机器人聊天、查询博客、发布app心情，获取最新博客列表、获取最新app发布的版本等(2016-06-06日前)
 
 ##效果截图
-![](http://7xnv8i.com1.z0.glb.clouddn.com/leedaneweb-github-001.png?imageView/2/w/800/q/90)
+![](http://pic.onlyloveu.top/leedaneweb-github-001.png?imageView/2/w/800/q/90)
 
-![](http://7xnv8i.com1.z0.glb.clouddn.com/leedaneweb-github-002.png?imageView/2/w/800/q/90)
+![](http://pic.onlyloveu.top/leedaneweb-github-002.png?imageView/2/w/800/q/90)
 
-![](http://7xnv8i.com1.z0.glb.clouddn.com/leedaneweb-github-003.png?imageView/2/w/800/q/90)
+![](http://pic.onlyloveu.top/leedaneweb-github-003.png?imageView/2/w/800/q/90)
 
-![](http://7xnv8i.com1.z0.glb.clouddn.com/leedaneweb-github-004.png?imageView/2/w/800/q/90)
+![](http://pic.onlyloveu.top/leedaneweb-github-004.png?imageView/2/w/800/q/90)
 
-![](http://7xnv8i.com1.z0.glb.clouddn.com/leedaneweb-github-005.png?imageView/2/w/800/q/90)
+![](http://pic.onlyloveu.top/leedaneweb-github-005.png?imageView/2/w/800/q/90)
 
-![](http://7xnv8i.com1.z0.glb.clouddn.com/leedaneweb-github-006.png?imageView/2/w/800/q/90)
+![](http://pic.onlyloveu.top/leedaneweb-github-006.png?imageView/2/w/800/q/90)
 
-![](http://7xnv8i.com1.z0.glb.clouddn.com/leedaneweb-github-007.png?imageView/2/w/800/q/90)
+![](http://pic.onlyloveu.top/leedaneweb-github-007.png?imageView/2/w/800/q/90)
 
-![](http://7xnv8i.com1.z0.glb.clouddn.com/leedaneweb-github-008.png?imageView/2/w/800/q/90)
+![](http://pic.onlyloveu.top/leedaneweb-github-008.png?imageView/2/w/800/q/90)
 
-![](http://7xnv8i.com1.z0.glb.clouddn.com/leedaneweb-github-010.png?imageView/2/w/800/q/90)
+![](http://pic.onlyloveu.top/leedaneweb-github-010.png?imageView/2/w/800/q/90)
 
 
 

@@ -50,7 +50,8 @@ public class RelativeDateFormat {
             return (hours <= 0 ? 1 : hours) + ONE_HOUR_AGO;
         }
         if (delta < 48L * ONE_HOUR) {
-            return "昨天";
+        	long hours = toHours(delta);
+            return hours + ONE_HOUR_AGO;
         }
         if (delta < 30L * ONE_DAY) {
             long days = toDays(delta);

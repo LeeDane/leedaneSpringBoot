@@ -79,7 +79,7 @@ public class EnumUtil {
 		举报("t_report"), 积分("t_score"), 签到("t_sign_in"), 上传("t_upload"), 权限("t_permission"), 角色权限("t_role_permission"),
 		角色("t_role"), 用户角色("t_user_role"), 链接管理("t_link_manage"), 留言("t_message_board"), 素材("t_material"), 
 		任务("t_job_manage"), 贡献值("t_circle_contribution"),圈子("t_circle"), 圈子成员("t_circle_member"), 帖子("t_circle_post"), 
-		不存在的表("t_inexistence"), 分类("t_category"), 商店("t_shop"), 商店商品("t_shop_product"), 商品订单("t_shop_order"), 商品心愿单("t_shop_wish");
+		不存在的表("t_inexistence"), 分类("t_category"), 商店("t_mall_shop"), 商店商品("t_mall_product"), 商品订单("t_mall_order"), 商品心愿单("t_mall_wish");
 	
 		private DataTableType(String value) {
 			this.value = value;
@@ -404,7 +404,7 @@ public class EnumUtil {
 		非正常登录状态(3088),
 		不能访问没有授权的链接(2010),
 		token获取异常(3089),
-		未知账户(3090),
+		用户名或者密码不匹配(3090),
 		账户已锁定(3091),
 		用户名或密码错误次数过多(3092),
 		密码不正确(3093),
@@ -437,7 +437,9 @@ public class EnumUtil {
 		淘宝api请求失败(4004),
 		参数为空或者不符合规范异常(4005),
 		该订单已不存在(4006),
-		完成状态的订单无法删除的异常(4007)
+		完成状态的订单无法删除的异常(4007),
+		请使用有商城管理员权限的账号登录(4008),
+		RSA加密解密异常(4009)
 		;
 		
 		private ResponseCode(int value) {
@@ -567,14 +569,28 @@ public class EnumUtil {
      * 2017年10月25日 下午3:13:31
      * version 1.0
      */
-	public enum ShopStatisticsType {
-		心愿单(1),评论(2), 访问(3), 购买(4);
+	public enum MallProductStatisticsType {
+		心愿单(1),评论数(2), 访问数(3), 购买数(4);
 	
-		private ShopStatisticsType(int value) {
+		private MallProductStatisticsType(int value) {
 			this.value = value;
 		}
 	
 		public final int value;
+	}
+	
+	/**
+	 * 获取MallProductStatisticsType对象
+	 * @param value
+	 * @return
+	 */
+	public static String getMallProductStatisticsType(int value){
+		for(MallProductStatisticsType nt: MallProductStatisticsType.values()){
+			if(nt.value == value){
+				return nt.name();
+			}
+		}
+		return "";
 	}
 	
 	/**
@@ -583,21 +599,21 @@ public class EnumUtil {
 	 * 2017年12月8日 下午3:06:51
 	 * version 1.0
 	 */
-	public enum ShopOrderType {
+	public enum MallOrderType {
 		禁用(0),已完成(1), 已删除(2), 待结算佣金(9), 待支付佣金(10), 已支付佣金 (11);
 	
-		private ShopOrderType(int value) {
+		private MallOrderType(int value) {
 			this.value = value;
 		}
 		public final int value;
 	}
 	/**
-	 * 获取ShopOrderType对象
+	 * 获取MallOrderType对象
 	 * @param value
 	 * @return
 	 */
-	public static String getShopOrderType(int value){
-		for(ReportType nt: ReportType.values()){
+	public static String getMallOrderType(int value){
+		for(MallOrderType nt: MallOrderType.values()){
 			if(nt.value == value){
 				return nt.name();
 			}

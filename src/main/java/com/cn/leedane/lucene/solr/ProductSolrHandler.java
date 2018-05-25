@@ -10,7 +10,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.apache.solr.client.solrj.response.QueryResponse;
 
-import com.cn.leedane.model.shop.S_ProductBean;
+import com.cn.leedane.model.mall.S_ProductBean;
 
 
 /**

@@ -109,5 +109,16 @@ public interface FanService <T extends IDBean>{
 	 * @param params ?对应的值
 	 * @return
 	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<Map<String, Object>> executeSQL(String sql, Object ...params);
+	
+	
+	/**
+	 * 获取标注名称
+	 * @param userId
+	 * @param toUserId
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public String getRemark(int userId, int toUserId, int status);
 }

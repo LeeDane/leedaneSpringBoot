@@ -42,7 +42,7 @@ public interface CategoryService<T extends IDBean>{
 	 * @param pid
 	 * @return
 	 */
-	public Map<String, Object> shopCategory(int pid);
+	public Map<String, Object> mallCategory(int pid);
 	
 	/**
 	 * 修改节点

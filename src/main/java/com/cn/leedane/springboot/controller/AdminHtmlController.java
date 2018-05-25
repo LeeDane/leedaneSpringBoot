@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.shop.S_ProductBean;
+import com.cn.leedane.model.mall.S_ProductBean;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
@@ -127,12 +127,12 @@ public class AdminHtmlController extends BaseController{
 	/****************   商品管理          ***********************/
 	@RequestMapping(ControllerBaseNameUtil.adsh + "/home")
 	public String shHome(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/shop/home", true, model, httpSession, request);
+		return loginRoleCheck("admin/mall/home", true, model, httpSession, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adsh + "/product")
 	public String shProduct(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/shop/product", true, model, httpSession, request);
+		return loginRoleCheck("admin/mall/product", true, model, httpSession, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adsh + "/product-add")
@@ -145,7 +145,7 @@ public class AdminHtmlController extends BaseController{
 			platforms.add(type.value);
 		}
 		model.addAttribute("platforms", platforms);
-		return loginRoleCheck("admin/shop/product-add", true, model, httpSession, request);
+		return loginRoleCheck("admin/mall/product-add", true, model, httpSession, request);
 	}
 	
 	/****************   系统设置--->任务管理          ***********************/

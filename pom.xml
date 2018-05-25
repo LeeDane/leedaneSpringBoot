@@ -223,7 +223,7 @@
 		<dependency>
 		    <groupId>dom4j</groupId>
 		    <artifactId>dom4j</artifactId>
-		    <version>1.6.1</version>
+		    <version>1.6.1</version><!--$NO-MVN-MAN-VER$-->
 		</dependency>
 	  	
 	  	<!-- xstream https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
@@ -237,7 +237,7 @@
 		<dependency>
 		    <groupId>com.google.code.gson</groupId>
 		    <artifactId>gson</artifactId>
-		    <version>1.7.1</version>
+		    <version>1.7.1</version><!--$NO-MVN-MAN-VER$-->
 		</dependency>
 		
 	  	<!-- quartz https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->
@@ -336,6 +336,18 @@
 		    <scope>compile</scope>
 		</dependency>
 		
+		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-core-asl -->
+		<dependency>
+		    <groupId>org.codehaus.jackson</groupId>
+		    <artifactId>jackson-core-asl</artifactId>
+		    <version>1.9.13</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.codehaus.jackson</groupId>
+		  <artifactId>jackson-mapper-asl</artifactId>
+		  <version>1.9.13</version>
+		</dependency>
+		
 		
 		<!-- ****************************************** local-jar ****************************************** -->
 		<!-- axis -->
@@ -407,8 +419,16 @@
 	  	<dependency>
 	     	<groupId>com.leedane.other.taobao</groupId>
 	     	<artifactId>taobaoke</artifactId>
+	     	<version>9.0.1</version>
+	  	</dependency>
+	  	
+	  	<!-- jingdong开放平台 -->
+	  	<dependency>
+	     	<groupId>com.leedane.other.jingdong</groupId>
+	     	<artifactId>openapi</artifactId>
 	     	<version>9.9.9</version>
 	  	</dependency>
+	  	
 	  	<!-- ueditor.jar -->
 	  	<dependency>
 	     	<groupId>com.leedane.other</groupId>

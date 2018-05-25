@@ -39,9 +39,11 @@ public class CircleHandler {
 	 * @param circleId
 	 * @return
 	 */
-	public CircleBean getNormalCircleBean(int circleId){
+	public CircleBean getNormalCircleBean(int circleId, UserBean user){
 		CircleBean circle = getCircleBean(circleId);
-		if(circle == null || circle.getStatus() != ConstantsUtil.STATUS_NORMAL){
+		if(circle == null || user == null
+				||  (circle.getStatus() == ConstantsUtil.STATUS_SELF && circle.getCreateUserId() != user.getId()) 
+				|| (circle.getStatus() != ConstantsUtil.STATUS_SELF && circle.getStatus() != ConstantsUtil.STATUS_NORMAL)){
 			return null;
 		}
 		return circle;

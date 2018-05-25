@@ -659,18 +659,7 @@ public class DateUtil {
 	 * @return
 	 */
 	public static boolean checkDateInRange(Date end, Date start, int range){
-		return (int) ((end.getTime() - start.getTime()) / (1000*60*60*24)) <= range;
+		return Math.abs((int) ((end.getTime() - start.getTime()) / (1000*60*60*24))) <= range;
 	}
 	
-	/*public static void main(String[] args) {
-		try {
-			int i = leftMinutes(stringToDate("2016-11-03 18:59:00"), new Date());
-			logger.info(i);
-			Date date = getOverdueTime(new Date(), "7天");
-			logger.info(DateToString(date));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}*/
 }

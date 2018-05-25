@@ -26,7 +26,7 @@ public class SqlProvider {
 	 * @param bean
 	 * @return
 	 */
-	public String saveClass(Class bean) {
+	public String saveClass(Class<?> bean) {
 		String tableName = getTableName(bean);
 		Field[] fields = getFields(bean);
 		StringBuilder insertSql = new StringBuilder();

@@ -19,7 +19,7 @@ var $tree;
  * @param pid
  */
 function getChildNodes(nodeId, pid){
-	 var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
 		url : "/cg/category/"+ pid +"/children",
 		dataType: 'json', 

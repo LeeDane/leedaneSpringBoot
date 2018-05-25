@@ -2,8 +2,6 @@ package com.cn.leedane.springboot.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,12 +26,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.controller.UserController;
-import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.VisitorBean;
-import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.AddReadSend;
 import com.cn.leedane.rabbitmq.send.ISend;
@@ -46,10 +42,9 @@ import com.cn.leedane.utils.CommonUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.RSAKeyUtil;
-import com.cn.leedane.utils.EnumUtil.BlogCategory;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsoupUtil;
+import com.cn.leedane.utils.RSAKeyUtil;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -457,7 +452,7 @@ public class HtmlController extends BaseController{
 							
 							//添加网络链接
 							if(StringUtil.isLink(imgUrl)){
-								//element.attr("src", "http://7xnv8i.com1.z0.glb.clouddn.com/click_to_look_picture.png");
+								//element.attr("src", "http://pic.onlyloveu.top/click_to_look_picture.png");
 								element.attr("onclick", "clickImg(this, "+i+");");
 								if(StringUtil.isNotNull(device_width)){
 									String style = element.attr("style");

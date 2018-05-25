@@ -1,5 +1,6 @@
-layui.use(['layer'], function(){
+layui.use(['layer', 'laypage'], function(){
 	layer = layui.layer;
+	laypage = layui.laypage;
 	initPage(".pagination", "getMoods");
 	$cOTItemContainer = $("#comment-or-transmit-item");
 	$moodMardownContent = $("#push-mood-text");
@@ -14,6 +15,8 @@ layui.use(['layer'], function(){
 	getMoods();
 	getMessageBoards();//获取留言板列表
 	getVisitors(); //获取访客列表
+	getAttentions();//获取关注列表
+	getFans();//获取粉丝列表
 	
 	$(".edit-user-info-btn").on("click", function(){
 		//检验手机号码
@@ -51,6 +54,32 @@ layui.use(['layer'], function(){
 	    	asynchronousLoadData();
 	    }
 	});  
+	
+  var clipboard = new Clipboard('.do-copy-btn');
+  /**
+   * 当前页面的索引
+   */
+  var currentIndex = 0;
+	  
+  clipboard.on('success', function(e) {
+      //console.info('Action:', e.action);
+      //console.info('Text:', e.text);
+      //console.info('Trigger:', e.trigger);
+      //console.info('Trigger:', e.trigger.previousSibling.id);
+      //$("#"+ e.trigger.previousSibling.id).text(e.text);
+	  $("#operate-item-list").modal("hide");
+	  layer.msg("文字已复制成功！");
+      layer.tips('此文字已复制成功', "#"+ e.trigger.previousSibling.id, {time: 1000});
+      //layer.msg("链接已复制成功");
+      //e.clearSelection();
+  });
+
+  clipboard.on('error', function(e) {
+      //console.error('Action:', e.action);
+      //console.error('Trigger:', e.trigger);
+	  layer.msg("文字复制失败！");
+	  layer.tips('此文字复制失败', "#"+ e.trigger.previousSibling.id, {time: 1000});
+  });
 });
 var userinfo;
 var moods = [];
@@ -67,7 +96,7 @@ var $commentOrTransmitItemContainer;
  */
 function getMessageBoards(){
 	$.ajax({
-		url : "/cm/user/"+ uid+ "/messageBoards?page_size=5&t=" + Math.random(),
+		url : "/cm/user/"+ uid+ "/messageBoards?page_size=15&t=" + Math.random(),
 		dataType: 'json', 
 		beforeSend:function(){
 		},
@@ -76,16 +105,16 @@ function getMessageBoards(){
 			if(data.isSuccess){
 				for(var i = 0; i < data.message.length; i++){
 					var board = data.message[i];
-					var html = '<tr onclick="linkToMy('+ board.create_user_id+');">'+
-									'<td width="40px"><img src="'+ changeNotNullString(board.user_pic_path) +'" width="30" height="30" class="img-rounded img-circle"></td>'+
-									'<td class="cut-text" style="word-break:break-all;" title="'+ board.content+'">'+ board.content+'</td>'+
-								'</tr>';
+					var html = '<div>'+
+									'<img src="'+ changeNotNullString(board.user_pic_path) +'" width="30" height="30" class="img-rounded img-circle" onclick="linkToMy('+ board.create_user_id+');"/>'+
+									'<span style="word-break:break-all; margin-left: 10px;" title="'+ board.content+'">'+ board.content+'</span>'+
+								'</div><hr style="filter: alpha(opacity=100,finishopacity=0,style=2)" width="90%" color="#E6E6FA" size=1 />';
 					$("#message-boards").append(html);
 				}
 			}else{
 				ajaxError(data);
 			}
-			$("#message-boards").append('<tr><td colspan="2" style="text-align: center;"><a type="button" class="btn btn-primary btn-xs" href="/user/'+uid+'/board"><span class="glyphicon glyphicon-pencil"></span> 留言板</a></td></tr>');
+			$("#message-boards").append('<div style="text-align: right;"><a type="button" class="btn btn-primary btn-xs" href="/user/'+uid+'/board"><span class="glyphicon glyphicon-blackboard"></span> 留言板</a></div>');
 		},
 		error : function(data) {
 			ajaxError(data);
@@ -112,17 +141,86 @@ function getVisitors(){
 					
 				for(var i = 0; i < data.message.length; i++){
 					var visitor = data.message[i];
-					var liHtml = '<li class="list-group-item" onclick="linkToMy('+ visitor.create_user_id+');">';
+					var liHtml = '<div class="row" onclick="linkToMy('+ visitor.create_user_id+');">';
 					if(visitor.is_friend){
 						liHtml += '<span class="badge">好友</span>';
 					}
 					if(visitor.is_fan){
 						liHtml += '<span class="badge">粉丝</span>';
 					}
-					 	liHtml +='<img alt="" width="40" height="40" src="'+changeNotNullString(visitor.user_pic_path)+'"/><span>&nbsp;&nbsp;&nbsp;&nbsp;'+ changeNotNullString(visitor.account) +'&nbsp;('+ visitor.create_time +')</span>';
-										
-						liHtml += '</li>';
+					 	liHtml +='<img class="img-circle" style="margin-left: 20px;" alt="" width="30" height="30" src="'+changeNotNullString(visitor.user_pic_path)+'"/><span>&nbsp;&nbsp;&nbsp;&nbsp;'+ changeNotNullString(visitor.account) +'&nbsp;('+ visitor.create_time +')</span>';
+					 	liHtml += '<hr style="filter: alpha(opacity=100,finishopacity=0,style=2)" width="90%" color="#E6E6FA" size=1 />';
+						liHtml += '</div>';
 					$("#visitors-list").append(liHtml);
+				}
+			}else{
+				ajaxError(data);
+			}
+		},
+		error : function(data) {
+			ajaxError(data);
+		}
+	});
+}
+
+/**
+ * 获取关注列表
+ */
+function getAttentions(){
+	$.ajax({
+		url : "/fs/toAttentions?pageSize=5&method=firstloading&toUserId="+ uid  +"&t=" + Math.random(),
+		dataType: 'json', 
+		beforeSend:function(){
+		},
+		success : function(data) {
+			//$("#attentions").remove();
+			if(data.isSuccess){
+				if(data.message.length == 0){
+					$("#attentions").append('<div class="list-group-item">TA暂无关注数据</div>');
+					return;
+				}
+					
+				for(var i = 0; i < data.message.length; i++){
+					var attention = data.message[i];
+					var html = '<div class="row" onclick="linkToMy('+ attention.user_id +');" style="cursor: pointer;">'+
+					   				'<img class="img-circle" style="margin-left: 20px;" alt="" width="30" height="30" src="'+ attention.user_pic_path +'" /><span>&nbsp;&nbsp;&nbsp;&nbsp;'+ attention.account+ (isNotEmpty(attention.remark) ? '('+attention.remark+')&nbsp;&nbsp;': "&nbsp;&nbsp;") + attention.create_time +'</span>'+
+					   			'</div><hr style="filter: alpha(opacity=100,finishopacity=0,style=2)" width="90%" color="#E6E6FA" size=1 />';
+					$("#attentions").append(html);
+				}
+			}else{
+				ajaxError(data);
+			}
+		},
+		error : function(data) {
+			ajaxError(data);
+		}
+	});
+}
+
+/**
+ * 获取粉丝列表
+ */
+function getFans(){
+	$.ajax({
+		url : "/fs/toFans?pageSize=5&method=firstloading&toUserId="+ uid  +"&t=" + Math.random(),
+		dataType: 'json', 
+		beforeSend:function(){
+		},
+		success : function(data) {
+			//$("#visitors-list li").remove();
+			if(data.isSuccess){
+				if(data.message.length == 0){
+					//$("#visitors-list").append('<li class="list-group-item">暂无访客数据</li>');
+					$("#fans").append('<div class="list-group-item">TA暂无粉丝数据</div>');
+					return;
+				}
+					
+				for(var i = 0; i < data.message.length; i++){
+					var fan = data.message[i];
+					var html = '<div class="row" onclick="linkToMy('+ fan.user_id +');" style="cursor: pointer;">'+
+					   				'<img class="img-circle" style="margin-left: 20px;" alt="" width="30" height="30" src="'+ fan.user_pic_path +'" /><span>&nbsp;&nbsp;&nbsp;&nbsp;'+ fan.account + (isNotEmpty(fan.remark) ? '('+fan.remark+'&nbsp;&nbsp;)': "&nbsp;&nbsp;") + fan.create_time +'</span>'+
+					   			'</div><hr style="filter: alpha(opacity=100,finishopacity=0,style=2)" width="90%" color="#E6E6FA" size=1 />';
+					$("#fans").append(html);
 				}
 			}else{
 				ajaxError(data);
@@ -141,7 +239,7 @@ function getVisitors(){
 function loadUserInfo(){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
-		url : "/us/searchByIdOrAccount?searchUserIdOrAccount="+ uid +"&t=" + Math.random(),
+		url : "/us/searchByIdOrAccount?searchUserIdOrAccount="+ uid +"&fan=true&t=" + Math.random(),
 		dataType: 'json', 
 		beforeSend:function(){
 		},
@@ -156,9 +254,13 @@ function loadUserInfo(){
 				
 				var descHtml = '<div>'+ 
 									'<div class="animate three">';
-							if(userinfo.account){
-								for(var i = 0; i < userinfo.account.length; i++){
-									descHtml += '<span>'+ userinfo.account.charAt(i) +'</span>';	
+				var account = userinfo.account;
+				if(isNotEmpty(data.remark)){
+					account = account + "("+ data.remark +")";
+				}
+							if(isNotEmpty(account)){
+								for(var i = 0; i < account.length; i++){
+									descHtml += '<span>'+ account.charAt(i) +'</span>';	
 								}
 							}
 				
@@ -174,12 +276,17 @@ function loadUserInfo(){
 								  
 								'</button>';
 				}else{
-					descHtml +=	'<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#edit-user-info">'+
-								  '<span class="glyphicon glyphicon-pencil" ></span> 关注TA'+
-								'</button>'+
-								'<button id="sign_button" type="button" class="btn btn-primary btn-xs" style="margin-left:5px;" disabled="disabled">'+
-									'<span class="glyphicon glyphicon-pencil" ></span> 粉TA'+
-								'</button>';
+					
+					if(!data.fan){
+						descHtml +=	'<button type="button" class="btn btn-primary btn-xs" onclick="attentionTa();">'+
+									  '关注TA'+
+									'</button>';
+					}else{
+						descHtml +=	'<button type="button" class="btn btn-primary btn-xs" onclick="cancelAttentionTa();">'+
+									  '取消关注TA'+
+									'</button>';
+					}
+					
 				}
 				
 				$("#user-desc").html(descHtml);
@@ -200,6 +307,106 @@ function loadUserInfo(){
 	});
 }
 
+
+/**
+ * 执行关注TA的函数
+ */
+function attentionTa(){
+	layer.prompt({
+		  formType: 0,
+		 // value: '',
+		  title: '可以给TA设置备注名，并确认',
+		  //area: ['800px', '350px'], //自定义文本域宽高
+		  yes: function(index, layero){
+		     //alert(layero.find(".layui-layer-input").val());
+		     layer.close(index);
+		     var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+				$.ajax({
+					type: "POST",
+					url : "/fs/fan?"+ jsonToGetRequestParams({"toUserId": uid, "remark": layero.find(".layui-layer-input").val()}),
+					dataType: 'json', 
+					beforeSend:function(){
+					},
+					success : function(data) {
+						layer.close(loadi);
+						if(data != null && data.isSuccess){
+							layer.msg(data.message);
+							window.location.reload();
+						}else{
+							ajaxError(data);
+						}
+						console.log(data);
+					},
+					error : function(data) {
+						layer.close(loadi);
+						ajaxError(data);
+					}
+				});
+		  }
+		});
+		
+	/*layer.prompt({title: '可以给TA设置备注名，并确认', formType: 0}, function(pass, index){
+		  layer.close(index);
+		  var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+			$.ajax({
+				type: "POST",
+				url : "/fs/fan?"+ jsonToGetRequestParams({"toUserId": uid, "remark": pass}),
+				dataType: 'json', 
+				beforeSend:function(){
+				},
+				success : function(data) {
+					layer.close(loadi);
+					if(data != null && data.isSuccess){
+						layer.msg(data.message);
+						window.location.reload();
+					}else{
+						ajaxError(data);
+					}
+					console.log(data);
+				},
+				error : function(data) {
+					layer.close(loadi);
+					ajaxError(data);
+				}
+			});
+	});*/
+	
+	
+}
+
+/**
+ * 执行取消关注TA的函数
+ */
+function cancelAttentionTa(){
+	
+	layer.confirm('您取消关注TA吗？', {
+		  btn: ['确定','点错了'] //按钮
+	}, function(){
+		var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+		$.ajax({
+			type: "DELETE",
+			url : "/fs/fan?"+ jsonToGetRequestParams({"toUserIds": uid}),
+			dataType: 'json', 
+			beforeSend:function(){
+			},
+			success : function(data) {
+				layer.close(loadi);
+				if(data != null && data.isSuccess){
+					layer.msg(data.message);
+					window.location.reload();
+				}else{
+					ajaxError(data);
+				}
+				console.log(data);
+			},
+			error : function(data) {
+				layer.close(loadi);
+				ajaxError(data);
+			}
+		});
+	}, function(){
+	});
+}
 /**
  * 获取心情请求列表
  */
@@ -233,9 +440,28 @@ function getMoods(){
 					if(i == moods.length -1)
 						last_id = moods[i].id;
 				}
-				pageDivUtil(data.total);
+				//pageDivUtil(data.total);
 				console.log(monthArray);
-				resetSideHeight();
+				//resetSideHeight();
+				
+				//执行一个laypage实例
+				 laypage.render({
+				    elem: 'item-pager' //注意，这里的 test1 是 ID，不用加 # 号
+				    ,layout: ['prev', 'page', 'next', 'count', 'skip']
+				    ,count: data.total //数据总数，从服务端得到
+				    ,limit: pageSize
+				    ,theme: '#337ab7'
+				    , curr: currentIndex + 1
+				    ,jump: function(obj, first){
+					    //obj包含了当前分页的所有参数，比如：
+					    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+					    console.log(obj.limit); //得到每页显示的条数
+					    if(!first){
+					    	currentIndex = obj.curr -1;
+					    	getMoods();
+					    }
+					  }
+				 });
 			}else{
 				ajaxError(data);
 			}
@@ -298,7 +524,7 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 							html += '<span class="label '+ (mood.can_comment? 'label-default' : 'label-success') +'">'+ (mood.can_comment? '可以评论':'禁止评论') +'</span>'+
 							'<span class="label '+ (mood.can_transmit? 'label-default' : 'label-success') +'">'+ (mood.can_transmit? '可以转发':'禁止转发') +'</span>'+
 						'</div>'+
-					    '<div class="list-group-item-text" style="margin-top: 5px;">'+ changeNotNullString(mood.content) +
+					    '<div class="list-group-item-text" style="margin-top: 5px;" id="couponValue-'+ index+'">'+ changeNotNullString(mood.content) +
 					    '</div>';
 				if(isNotEmpty(mood.location)){
 					html += '<p class="location">位置：'+ changeNotNullString(mood.location) +'</p>';
@@ -479,7 +705,7 @@ function showItemListModal(index){
 	var html = '<li class="list-group-item cursor" onclick="goToReadMoodFull('+ mood.id +', '+ uid +');">查看</li>'+
 			    '<li class="list-group-item cursor" onclick="addZan('+ mood.id +')">赞</li>'+
 			    '<li class="list-group-item cursor">翻译</li>'+
-			    '<li class="list-group-item cursor" onclick="copyToClipBoard(\''+ mood.content +'\');">复制文字</li>';
+			    '<li class="list-group-item cursor do-copy-btn" data-clipboard-action="copy" data-clipboard-target="#couponValue-'+ index +'">复制文字</li>';
 	if(isLoginUser){
 		html += '<li class="list-group-item cursor" onclick="deleteMood('+ mood.id +')">删除</li>'+
 				'<li class="list-group-item cursor" onclick="updateIsSelfStatus('+ mood.status +','+ mood.id +');">'+
@@ -891,15 +1117,6 @@ function sendCommentOrTransmit(){
 		}
 	});
 }
-
-/**
- * 复制内容到粘贴板
- * @param text
- */
-function copyToClipBoard(text){
-	window.clipboardData.setData("Text",text); 
-	layer.msg(text +"已经成功复制到粘贴板");
-} 
 
 
 /**发送心情相关的**************************************************************************************************

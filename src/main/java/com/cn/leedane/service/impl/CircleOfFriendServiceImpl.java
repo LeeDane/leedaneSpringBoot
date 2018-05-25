@@ -32,8 +32,10 @@ import com.cn.leedane.service.CircleOfFriendService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
 /**
  * 朋友圈service的实现类
@@ -238,20 +240,6 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 	}
 	
 	/**
-	 * 获取状态的SQL
-	 * @param toUserId
-	 * @param user
-	 * @return
-	 */
-	private String getMoodStatusSQL(int toUserId, UserBean user){
-		if(toUserId == user.getId()){
-			return " (m.status = "+ ConstantsUtil.STATUS_NORMAL +" or m.status = "+ ConstantsUtil.STATUS_SELF +")";
-		}else {
-			return " m.status = "+ ConstantsUtil.STATUS_NORMAL;
-		}
-	}
-	
-	/**
 	 * 构建CreateUser的SQL语句字符串
 	 * @param ids
 	 * @return
@@ -274,6 +262,75 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 		buffer.append(") ");
 		
 		return buffer.toString();
+	}
+
+	@Override
+	public Map<String, Object> paging(int pageSize, int current, int total,
+			UserBean user, HttpServletRequest request) {
+		logger.info("CircleOfFriendServiceImpl-->paging(): current="+ current +", total="+ total + ", user=" +user.getAccount());
+		if(pageSize < 1)
+			pageSize = ConstantsUtil.DEFAULT_PAGE_SIZE;
+		
+		ResponseMap message = new ResponseMap();
+		String picSize = ConstantsUtil.DEFAULT_PIC_SIZE; //JsonUtil.getStringValue(jo, "pic_size"); //图像的规格(大小)		
+		
+		Set<String> fids = fanHandler.getMyAttentions(user.getId());
+		if(fids == null)
+			fids = new HashSet<String>();
+		fids.add(String.valueOf(user.getId()));
+		
+		
+		StringBuffer sql = new StringBuffer();
+		sql.append("select m.id table_id, '"+DataTableType.心情.value+"' table_name, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img,");
+		sql.append(" m.read_number, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account");
+		sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where m.status = ? and ");
+		sql.append(buildCreateUserIdInSQL(fids));
+		sql.append(" order by m.id desc limit ?, ?");
+		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
+		rs = moodMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, SqlUtil.getPageStart(current, pageSize, total), pageSize);
+		if(rs !=null && rs.size() > 0){
+			JSONObject friendObject = friendHandler.getFromToFriends(user.getId());
+			logger.info("friendObject："+friendObject.toString());
+			int createUserId = 0;
+			boolean hasImg ;
+			String uuid;
+			int moodId;
+			//为名字备注赋值
+			for(int i = 0; i < rs.size(); i++){
+				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
+				hasImg = StringUtil.changeObjectToBoolean(rs.get(i).get("has_img"));
+				uuid = StringUtil.changeNotNull(rs.get(i).get("uuid"));
+				moodId = StringUtil.changeObjectToInt(rs.get(i).get("table_id"));
+				if(createUserId> 0){
+					if(createUserId != user.getId()){
+						if(friendObject != null){
+							
+							rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId, user, friendObject));
+						}else{
+							rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId));
+						}
+					}else{
+						rs.get(i).put("account", "本人");
+					}
+					rs.get(i).put("zan_users", zanHandler.getZanUser(moodId, DataTableType.心情.value, user, 6));
+					rs.get(i).put("comment_number", commentHandler.getCommentNumber(moodId, DataTableType.心情.value));
+					rs.get(i).put("transmit_number", transmitHandler.getTransmitNumber(moodId, DataTableType.心情.value));
+					rs.get(i).put("zan_number", zanHandler.getZanNumber(moodId, DataTableType.心情.value));
+				}
+				
+				//有图片的获取图片的路径
+				if(hasImg && !StringUtil.isNull(uuid)){
+					//logger.info("图片地："+moodHandler.getMoodImg(DataTableType.心情.value, uuid, picSize));
+					rs.get(i).put("imgs", moodHandler.getMoodImg(DataTableType.心情.value, uuid, picSize));
+				}
+			}	
+		}
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取朋友圈列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
+				
+		message.put("isSuccess", true);
+		message.put("message", rs);
+		return message.getMap();
 	}
 	
 }

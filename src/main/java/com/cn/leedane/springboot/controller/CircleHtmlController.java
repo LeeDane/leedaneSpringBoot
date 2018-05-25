@@ -178,8 +178,14 @@ public class CircleHtmlController extends BaseController{
 			HttpServletRequest request){
 		checkRoleOrPermission(request);
 		
+		//获取当前的Subject  
+		//获取当前的Subject 
+        UserBean user = (UserBean) SecurityUtils.getSubject().getSession().getAttribute(UserController.USER_INFO_KEY);
+        if(user == null)
+        	throw new UnsupportedTokenException();
+		
 		//postId 不为空表示编辑
-		CircleBean circle = circleHandler.getNormalCircleBean(circleId);
+		CircleBean circle = circleHandler.getNormalCircleBean(circleId, user);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
@@ -188,12 +194,6 @@ public class CircleHtmlController extends BaseController{
 		List<String> imgs = new ArrayList<String>();
 		List<String> tags = new ArrayList<String>();
 		//imgs.add(ConstantsUtil.DEFAULT_NO_PIC_PATH);
-		
-		//获取当前的Subject  
-		//获取当前的Subject 
-        UserBean user = (UserBean) SecurityUtils.getSubject().getSession().getAttribute(UserController.USER_INFO_KEY);
-        if(user == null)
-        	throw new UnsupportedTokenException();
         
     	List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
 		if(!SqlUtil.getBooleanByList(members))
@@ -234,7 +234,6 @@ public class CircleHtmlController extends BaseController{
 	@RequestMapping(value = "/{circleId}/post/{postId}", method = RequestMethod.GET)
 	public String postDetail(@PathVariable(value="circleId") int circleId, @PathVariable(value="postId") int postId, Model model, HttpServletRequest request){
 		checkRoleOrPermission(request);
-		
 		CircleBean circle = circleHandler.getCircleBean(circleId);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
@@ -242,6 +241,34 @@ public class CircleHtmlController extends BaseController{
 		CirclePostBean postBean = circlePostHandler.getNormalCirclePostBean(circle, postId);
 		if(postBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该帖子不存在.value));
+		
+		return toPostDetail(circle, postBean, model, request);
+	}
+	
+	/**
+	 * 帖子详情
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "post/dt/{postId}", method = RequestMethod.GET)
+	public String postDetail1(@PathVariable(value="postId") int postId, Model model, HttpServletRequest request){		
+		
+		CirclePostBean postBean = circlePostHandler.getNormalCirclePostBean(postId);
+		if(postBean == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该帖子不存在.value));
+		
+		CircleBean circle = circleHandler.getCircleBean(postBean.getCircleId());
+		if(circle == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
+		
+		checkRoleOrPermission("/cc/"+ circle.getId()+ "/post/" + postId);
+		
+		return toPostDetail(circle, postBean, model, request);
+	}
+	
+	private String toPostDetail(CircleBean circle, CirclePostBean postBean, Model model, HttpServletRequest request){
+		
 		
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
@@ -252,29 +279,8 @@ public class CircleHtmlController extends BaseController{
         model.addAllAttributes(circlePostService.initDetail(circle, postBean, user, request));
         model.addAttribute("audit", false);
         //保存帖子的访问记录
-        circlePostService.saveVisitLog(postId, user, request);
+        circlePostService.saveVisitLog(postBean.getId(), user, request);
 		return loginRoleCheck("circle/post-detail", true, model, request);
-	}
-	
-	/**
-	 * 帖子详情
-	 * @param model
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(value = "{circleId}/post/dt/{postId}", method = RequestMethod.GET)
-	public String postDetail1(@PathVariable(value="circleId") int circleId, @PathVariable(value="postId") int postId, Model model, HttpServletRequest request){
-		checkRoleOrPermission(request);
-		
-		CircleBean circle = circleHandler.getCircleBean(circleId);
-		if(circle == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
-		
-		CirclePostBean postBean = circlePostHandler.getNormalCirclePostBean(postId);
-		if(postBean == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该帖子不存在.value));
-		
-		return postDetail(postBean.getCircleId(), postId, model, request);
 	}
 	
 	/**

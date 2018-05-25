@@ -22,7 +22,7 @@ public class CollectionUtil {
 	 * @param list
 	 * @return
 	 */
-	public static boolean isEmpty(List list){
+	public static boolean isEmpty(List<?> list){
 		return list == null || list .size() == 0;
 	}
 	
@@ -31,7 +31,7 @@ public class CollectionUtil {
 	 * @param list
 	 * @return
 	 */
-	public static boolean isNotEmpty(List list){
+	public static boolean isNotEmpty(List<?> list){
 		return !isEmpty(list);
 	}
 	

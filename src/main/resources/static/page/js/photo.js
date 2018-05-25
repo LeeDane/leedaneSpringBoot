@@ -1,3 +1,5 @@
+var isFirst = false;
+var $tree;
 layui.use(['layer'], function(){
 	layer = layui.layer;
 	$(window).scroll(function (e) {
@@ -20,7 +22,8 @@ layui.use(['layer'], function(){
 	    	getWebPhotos();
 	    }
 	}); 
-	
+	$tree = $('#tree');
+	getChildNodes(0, 131);//获取分类列表
 	getWebPhotos();  
 });
 var last_id = 0;
@@ -35,6 +38,48 @@ var canLoadData = true;
 //浏览器可视区域页面的高度
 var winH = $(window).height(); 
 var isLoad = false;
+
+/**
+ * 获取直接一级的节点
+ * @param nodeId
+ * @param pid
+ */
+function getChildNodes(nodeId, pid){
+	 var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+	$.ajax({
+		url : "/cg/category/"+ pid +"/children",
+		dataType: 'json', 
+		beforeSend:function(){
+		},
+		success : function(data) {
+			layer.close(loadi);
+			if(data.isSuccess){
+				var treeData = data.message;
+				if(!isFirst){
+					/**
+					 * 展示数据并同时添加展开事件的监听(事件的监听必须在绑定数据之后)
+					 */
+					$tree.treeview({data: treeData, enableLinks: false, onNodeSelected: function(event, data) {
+						
+	
+					}, onNodeExpanded: function(event, data) {
+						getChildNodes(data.nodeId, data.id);
+	
+					}});
+					isFirst = true;
+				}else{
+					$tree.treeview("addNodes", [nodeId, { node: treeData}]); 
+				}
+			}else{
+				ajaxError(data);
+			}
+		},
+		error : function(data) {
+			layer.close(loadi);
+			ajaxError(data);
+		}
+	});
+}
 
 /**
  * 获取网络图片
@@ -127,7 +172,7 @@ function showImg(index){
 		each.alt = photos[i].gallery_desc;
 		each.pid = photos[i].id;//图片id
 		var path = photos[i].path;
-		if(path.indexOf("7xnv8i.com1.z0.glb.clouddn.com") < 0){
+		if(path.indexOf("7xnv8i.com1.z0.glb.clouddn.com") < 0 || path.indexOf("pic.onlyloveu.top") < 0){
 			path = $(".index_"+i).attr("src");
 		}
 		each.src = path;//原图地址
@@ -206,9 +251,8 @@ function findColumnToAdd(photo, index){
 	var img;
 
 	//判断是否是内部链接
-	if(photo.path.indexOf("7xnv8i.com1.z0.glb.clouddn.com") >= 0){
+	if(photo.path.indexOf("7xnv8i.com1.z0.glb.clouddn.com") >= 0 || photo.path.indexOf("pic.onlyloveu.top") >= 0){
 		img = '<img width="100%" title="'+ (isNotEmpty(photo.desc) ? isNotEmpty(photo.desc) : '') +'" title" height="'+height+'" style="margin-top: 10px;" class="img-show img-rounded index_'+index+'" alt="" src="'+ photo.path+'" onclick="showImg('+index+')" onmouseover="imgHandOver(this, '+ index +');" onmouseout="imgHandOut(this, '+ index +');">';
-
 	}else{
 		img = '<img width="100%" title="'+ (isNotEmpty(photo.desc) ? isNotEmpty(photo.desc) : '') +'" height="'+height+'" style="margin-top: 10px;" class="img-show out-link index_'+index+'" alt="" temp-src="'+ photo.path+'" onclick="showImg('+index+')" onmouseover="imgHandOver(this, '+ index +');" onmouseout="imgHandOut(this, '+ index +');">';
 	}

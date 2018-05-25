@@ -697,7 +697,7 @@
 
 	Tree.prototype.template = {
 		list: '<ul class="list-group"></ul>',
-		item: '<li class="list-group-item"></li>',
+		item: '<li class="list-group-item" onclick="alert(3333);"></li>',
 		indent: '<span class="indent"></span>',
 		icon: '<span class="icon"></span>',
 		link: '<a href="#" style="color:inherit;"></a>',

@@ -76,7 +76,7 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 	public Map<String, Object> saveClockIn(int circleId, JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		
-		CircleBean circleBean = circleHandler.getNormalCircleBean(circleId);
+		CircleBean circleBean = circleHandler.getNormalCircleBean(circleId, user);
 		if(circleBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		

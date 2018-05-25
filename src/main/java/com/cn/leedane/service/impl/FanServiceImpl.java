@@ -30,7 +30,9 @@ import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
+import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.RelativeDateFormat;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
 
@@ -121,6 +123,8 @@ public class FanServiceImpl implements FanService<FanBean> {
 				}
 				rs.get(i).put("is_fan", fanHandler.inAttention(toId, toUserId));
 				rs.get(i).put("is_attention", true);
+				String createTime = (String) rs.get(i).get("create_time");
+				rs.get(i).put("create_time", RelativeDateFormat.format(DateUtil.stringToDate(createTime)));
 			}	
 		}
 		//保存操作日志
@@ -146,7 +150,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		
 		ResponseMap message = new ResponseMap();
 		
-		if(toUserId < 1 || toUserId == user.getId())
+		if(toUserId < 1/* || toUserId == user.getId()*/)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 		
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
@@ -187,6 +191,8 @@ public class FanServiceImpl implements FanService<FanBean> {
 				//是否粉和是否关注都相对于我(user)而已展示
 				rs.get(i).put("is_fan", fanHandler.inAttention(user.getId(), createUserId));
 				rs.get(i).put("is_attention", fanHandler.inAttention(user.getId(), createUserId));
+				String createTime = (String) rs.get(i).get("create_time");
+				rs.get(i).put("create_time", RelativeDateFormat.format(DateUtil.stringToDate(createTime)));
 			}	
 		}
 		//保存操作日志
@@ -250,6 +256,8 @@ public class FanServiceImpl implements FanService<FanBean> {
 				}
 				rs.get(i).put("is_fan", true);
 				rs.get(i).put("is_attention", fanHandler.inAttention(toUserId, createUserId));
+				String createTime = (String) rs.get(i).get("create_time");
+				rs.get(i).put("create_time", RelativeDateFormat.format(DateUtil.stringToDate(createTime)));
 			}	
 		}
 		//保存操作日志
@@ -274,7 +282,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		logger.info("FanServiceImpl-->getToFansLimit():jo="+jo.toString());
 		
 		ResponseMap message = new ResponseMap();
-		if(toUserId < 1 || toUserId == user.getId())
+		if(toUserId < 1 /*|| toUserId == user.getId()*/)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 		
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
@@ -315,6 +323,8 @@ public class FanServiceImpl implements FanService<FanBean> {
 				//是否粉和是否关注都相对于我(user)而已展示
 				rs.get(i).put("is_fan", fanHandler.inAttention(user.getId(), createUserId));
 				rs.get(i).put("is_attention", fanHandler.inAttention(user.getId(), createUserId));
+				String createTime = (String) rs.get(i).get("create_time");
+				rs.get(i).put("create_time", RelativeDateFormat.format(DateUtil.stringToDate(createTime)));
 			}	
 		}
 		//保存操作日志
@@ -477,6 +487,11 @@ public class FanServiceImpl implements FanService<FanBean> {
 	@Override
 	public List<Map<String, Object>> executeSQL(String sql, Object... params) {
 		return fanMapper.executeSQL(sql, params);
+	}
+
+	@Override
+	public String getRemark(int userId, int toUserId, int status) {
+		return fanMapper.getRemark(userId, toUserId, status);
 	}
 	
 }

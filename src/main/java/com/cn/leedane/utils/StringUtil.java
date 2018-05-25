@@ -260,7 +260,7 @@ public class StringUtil {
 	public static boolean isLink(String origin){
 		
 		if(!StringUtil.isNull(origin)){
-			Pattern p = Pattern.compile("(http://|ftp://|https://|www){0,1}[^\u4e00-\u9fa5\\s]*?\\.(com|net|cn|me|tw|fr)[^\u4e00-\u9fa5\\s]*");
+			Pattern p = Pattern.compile("(http://|ftp://|https://|www){0,1}[^\u4e00-\u9fa5\\s]*?\\.(com|net|cn|me|tw|fr|top|wang)[^\u4e00-\u9fa5\\s]*");
 	        String group;
 	        Matcher m=p.matcher(origin);
 	        while(m.find()){
@@ -272,6 +272,7 @@ public class StringUtil {
 		}
 		return false;
 	}
+
 	
 	public static String getUTF8StringFromGBKString(String gbkStr) {  
 		try {  

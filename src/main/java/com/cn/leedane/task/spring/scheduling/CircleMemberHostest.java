@@ -96,7 +96,7 @@ public class CircleMemberHostest extends AbstractScheduling{
 	 * 2017年6月20日 下午12:03:54
 	 * version 1.0
 	 */
-	class SingleCalculateTask implements Callable<Boolean>{
+	private class SingleCalculateTask implements Callable<Boolean>{
 		private int mCircleId;
 		
 		public SingleCalculateTask(int circleId){

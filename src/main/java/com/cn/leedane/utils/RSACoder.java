@@ -1,6 +1,11 @@
 package com.cn.leedane.utils;
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
@@ -70,7 +75,7 @@ public class RSACoder {
         return signature.verify(decryptBASE64(sign));
     }
 
-    public static byte[] decryptByPrivateKey(byte[] data, String key) throws Exception{
+    public static byte[] decryptByPrivateKey(byte[] data, String key) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException{
         // 对密钥解密
         byte[] keyBytes = decryptBASE64(key);
         // 取得私钥
@@ -90,10 +95,14 @@ public class RSACoder {
      * @param data
      * @param key
      * @return
-     * @throws Exception
+     * @throws BadPaddingException 
+     * @throws IllegalBlockSizeException 
+     * @throws NoSuchPaddingException 
+     * @throws InvalidKeySpecException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public static byte[] decryptByPrivateKey(String data, String key)
-            throws Exception {
+    public static byte[] decryptByPrivateKey(String data, String key) throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException{
         return decryptByPrivateKey(decryptBASE64(data),key);
     }
 
@@ -203,7 +212,7 @@ public class RSACoder {
                 .getInstance(KEY_ALGORITHM);
         keyPairGen.initialize(1024);
         KeyPair keyPair = keyPairGen.generateKeyPair();
-        Map<String, Key> keyMap = new HashMap(2);
+        Map<String, Key> keyMap = new HashMap<String, Key>(2);
         keyMap.put(PUBLIC_KEY, keyPair.getPublic());// 公钥
         keyMap.put(PRIVATE_KEY, keyPair.getPrivate());// 私钥
         return keyMap;

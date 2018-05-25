@@ -71,7 +71,7 @@ public class CircleSettingServiceImpl extends AdminRoleCheckService implements C
 		logger.info("CircleSettingServiceImpl-->paging():jo="+json.toString());
 		ResponseMap message = new ResponseMap();
 		
-		CircleBean circle = circleHandler.getNormalCircleBean(circleId);
+		CircleBean circle = circleHandler.getNormalCircleBean(circleId, user);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 

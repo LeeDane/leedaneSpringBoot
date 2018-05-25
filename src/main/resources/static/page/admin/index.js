@@ -105,18 +105,18 @@ var config = [{
              menu:[{
                  text:'首页管理',
                  items:[
-                        {id:'home',text:'首页管理',href:'/ad/shop/home'}
+                        {id:'home',text:'首页管理',href:'/ad/mall/home'}
                  ]
              },{
                  text:'商品管理',
                  items:[
-                        {id:'product',text:'商品管理',href:'/ad/shop/product'},
-                        {id:'product',text:'添加商品',href:'/ad/shop/product-add'}
+                        {id:'product',text:'商品管理',href:'/ad/mall/product'},
+                        {id:'product',text:'添加商品',href:'/ad/mall/product-add'}
                  ]
              },{
                  text:'其他',
                  items:[
-                   {id:'other',text:'其他',href:'/ad/shop/other'}
+                   {id:'other',text:'其他',href:'/ad/mall/other'}
                  ]
              }]
          },{

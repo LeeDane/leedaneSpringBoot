@@ -30,4 +30,14 @@ public interface CircleOfFriendService<T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getLimit(JSONObject jo, UserBean user, HttpServletRequest request);
+	
+	/**
+	 * 获取朋友圈列表(分页获取)
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public Map<String, Object> paging(int pageSize, int current, int total, UserBean user, HttpServletRequest request);
 }

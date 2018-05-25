@@ -102,7 +102,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 		ResponseMap message = new ResponseMap();
 		
 		boolean recommend = JsonUtil.getBooleanValue(jsonObject, "recommend");
-		CircleBean circle = circleHandler.getNormalCircleBean(circleId);
+		CircleBean circle = circleHandler.getNormalCircleBean(circleId, user);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
@@ -155,7 +155,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 		if(!SqlUtil.getBooleanByList(membersLoginUser))
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先加入该圈子.value));
 		
-		CircleBean circle = circleHandler.getNormalCircleBean(circleId);
+		CircleBean circle = circleHandler.getNormalCircleBean(circleId, user);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 	

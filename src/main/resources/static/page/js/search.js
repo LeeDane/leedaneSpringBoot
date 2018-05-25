@@ -8,6 +8,7 @@ layui.use(['layer'], function(){
 	}
 	
 	$("#common-search-text").val(searchKey);
+	
 	doSearch();
 });
 var moods;

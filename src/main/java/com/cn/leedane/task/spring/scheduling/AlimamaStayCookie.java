@@ -1,14 +1,12 @@
 package com.cn.leedane.task.spring.scheduling;
 
-import java.io.IOException;
-
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.quartz.SchedulerException;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.taobao.api.Alimama;
+import com.cn.leedane.taobao.api.AlimamaShareLink;
 import com.cn.leedane.utils.JsonUtil;
 
 /**
@@ -19,7 +17,7 @@ import com.cn.leedane.utils.JsonUtil;
  */
 @Component("alimamaStayCookie")
 public class AlimamaStayCookie extends AbstractScheduling{
-	private static Logger logger = Logger.getLogger(FinancialMonth.class);
+	private static Logger logger = Logger.getLogger(AlimamaStayCookie.class);
 	
 	public static long LAST_REQUEST_TIME = System.currentTimeMillis(); //最后一次的请求时间
 	
@@ -28,20 +26,20 @@ public class AlimamaStayCookie extends AbstractScheduling{
  		
 		long start = System.currentTimeMillis();
 		
-		
-		//如果是3分钟内已经发送过的请求，则不做处理
-		if(Alimama.isSuccess && start - LAST_REQUEST_TIME < 3 * 60 * 1000){
-			return;
-		}
-		
 		JSONObject params = getParams();
 		String taobaoId = JsonUtil.getStringValue(params, "taobaoId" , "549091479417");
-		Alimama.cookie2 = JsonUtil.getStringValue(params, "cookie2" );
-		System.out.println("cookie2="+ Alimama.cookie2);
-		Alimama alimama = new Alimama();
+		AlimamaShareLink.cookie2 = JsonUtil.getStringValue(params, "cookie2" );
+		
+		//如果是3分钟内已经发送过的请求，则不做处理
+		if(AlimamaShareLink.isSuccess && start - LAST_REQUEST_TIME < 3 * 60 * 1000){
+			logger.info("不继续执行保持阿里妈妈登录状态任务");
+			return;
+		}
+		System.out.println("cookie2="+ AlimamaShareLink.cookie2);
+		AlimamaShareLink alimama = new AlimamaShareLink();
 		try {
-			System.out.println("保持cookie状态："+ alimama.doParse(taobaoId).toString());;
-		} catch (IOException e) {
+			logger.info("保持cookie状态："+ alimama.doParse(taobaoId).toString());
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		long end = System.currentTimeMillis();

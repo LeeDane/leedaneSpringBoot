@@ -27,10 +27,10 @@ import com.taobao.api.response.AlibabaAliqinFcSmsNumSendResponse;
 public class SendNotificationImpl implements ISendNotification{
 	private Logger logger = Logger.getLogger(getClass());
 	
-	protected static final String URL = "http://gw.api.taobao.com/router/rest";
+	public static final String URL = "http://gw.api.taobao.com/router/rest";
     //正式环境需要设置为:http://gw.api.taobao.com/router/rest
-    protected static final String APPKEY = "23304394";
-    protected static final String SECRET = "2b1f44d4947c82b95b156358aa685972";
+	public static final String APPKEY = "23304394";
+	public static final String SECRET = "2b1f44d4947c82b95b156358aa685972";
 
 	@Override
 	public boolean Send(Notification notification) {

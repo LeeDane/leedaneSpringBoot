@@ -10,21 +10,20 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.handler.NotificationHandler;
-import com.cn.leedane.mapper.shop.S_ProductMapper;
-import com.cn.leedane.mapper.shop.S_StatisticsMapper;
-import com.cn.leedane.mapper.shop.S_WishMapper;
+import com.cn.leedane.mapper.mall.S_ProductMapper;
+import com.cn.leedane.mapper.mall.S_StatisticsMapper;
+import com.cn.leedane.mapper.mall.S_WishMapper;
 import com.cn.leedane.model.CommentBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.VisitorBean;
-import com.cn.leedane.model.shop.S_StatisticsBean;
-import com.cn.leedane.model.shop.S_WishBean;
+import com.cn.leedane.model.mall.S_StatisticsBean;
+import com.cn.leedane.model.mall.S_WishBean;
 import com.cn.leedane.service.CommentService;
 import com.cn.leedane.service.VisitorService;
-import com.cn.leedane.service.shop.S_WishService;
+import com.cn.leedane.service.mall.S_WishService;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
@@ -103,7 +102,7 @@ public class ProductStatistics extends AbstractScheduling{
 		calendar.add(Calendar.DATE, -1);
 		Date yesterDay = calendar.getTime();
 		String yesterDayString = DateUtil.DateToString(yesterDay, "yyyy-MM-dd");
-		String toDayString = DateUtil.DateToString(new Date(), "yyyy-MM-dd");
+		//String toDayString = DateUtil.DateToString(new Date(), "yyyy-MM-dd");
 		
         while(it.hasNext()){  
             Map.Entry<Integer, Integer> entry = it.next();  
@@ -128,20 +127,20 @@ public class ProductStatistics extends AbstractScheduling{
             	//访问数
             	statisticsBean.setVisitorTotal(visitorService.getVisitorsByTime(DataTableType.商店商品.value, productId, yesterDayString));//测试改成今天
 
-            	//计算购买的数量
+            	//查找是否已经存在相同的记录，是的话就删再保存
+            	List<S_StatisticsBean> s_StatisticsBeans = statisticsMapper.findRecord(productId, yesterDayString);
+            	if(CollectionUtil.isNotEmpty(s_StatisticsBeans)){
+            		statisticsMapper.delete(s_StatisticsBeans.get(0));
+            	}
+            	//计算购买的数量statistics_type
             	statisticsMapper.save(statisticsBean);
             	it.remove(); //都处理成功就从map中删除
             }catch(Exception e){
-            	//唯一键约束异常不做处理
-            	if(e instanceof DuplicateKeyException){
-            		it.remove(); //都处理成功就从map中删除
+        		if(value > 2){ //超过3次直接发有信息给管理员账号
+            		notificationHandler.sendErrorNotification("商品统计出错， 商品id是"+ productId +", 原因是："+ e.getMessage(), "t_mall_statistics", productId, null);
+            		it.remove();
             	}else{
-            		if(value > 2){ //超过3次直接发有信息给管理员账号
-                		notificationHandler.sendErrorNotification("商品统计出错， 商品id是"+ productId +", 原因是："+ e.getMessage(), "t_shop_statistics", productId, null);
-                		it.remove();
-                	}else{
-                		entry.setValue(value + 1); //不超过将value加1
-                	}
+            		entry.setValue(value + 1); //不超过将value加1
             	}
             }
         }  

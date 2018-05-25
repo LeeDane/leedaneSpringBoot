@@ -140,7 +140,6 @@ function getComments(bid){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
 		//contentType: "application/x-www-form-urlencoded;charset=UTF-8",
-		contentType:"application/json",
 		url : "/cm/comments?"+ jsonToGetRequestParams(getCommentsRequestParams()),
 		dataType: 'json',
 		beforeSend:function(){

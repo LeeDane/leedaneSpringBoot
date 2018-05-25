@@ -23,4 +23,10 @@ public interface FanMapper extends BaseMapper<FanBean>{
 	 */
 	public List<Map<String, Object>> isFanEachOther(@Param("id")int id, @Param("toUserId")int to_user_id, @Param("status")int status);
 	
+	/**
+	 * 获取标注名称
+	 * @param userId
+	 * @return
+	 */
+	public String getRemark(@Param("userId")int userId, @Param("toUserId")int toUserId, @Param("status")int status);
 }

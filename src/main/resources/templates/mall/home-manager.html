@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" >
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title th:text="'首页管理'"></title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<style type="text/css">
+		/**  大屏样式 **/
+		@media screen and (min-width: 900px){
+			.m-product-item{
+				height: 330px;
+			}
+			
+			.m-product-item-img{
+				width: calc(100% - 20px); 
+				height: calc(300px - 80px);
+			}
+			
+		}
+		
+		/**  小屏样式 **/
+		@media screen and (max-width: 900px){
+			.m-product-item{
+				height: 430px;
+			}
+			
+			.m-product-item-img{
+				width: calc(100% - 0px); 
+				height: calc(400px - 80px);
+			}
+		}
+		
+		.m-product-item{
+			vertical-align:center; 
+			overflow: hidden;
+			border: 1px solid #f5f5f5;
+			text-align: center;
+		}
+		
+		.m-product-item-img{
+			margin-top: 10px;
+		}
+		
+		.m-product-item:hover{
+			border: 1px solid #FF0036;
+		}
+		
+		.m-product-desc{
+			width: calc(100% - 10px); 
+			overflow: hidden; 
+			font-size: 0.9em; 
+			word-wrap: break-word; 
+			text-overflow: ellipsis; 
+			white-space: nowrap;
+			text-align: center;
+			cursor: pointer;
+			display: inline-block;
+		}
+		
+		.m-product-desc:hover{
+			text-decoration: underline;
+		}
+		
+		.m-product-price{
+			color: red;
+			margin-left: 8px;
+		}
+		.m-product-contrainer{
+			height: 40px;
+		}
+		
+		.update-item-input-style{
+			min-width: 200px;
+			height: 30px;
+			line-height: 30px;
+			font-size: 16px;
+			margin: 5px;
+		}
+		
+	</style>
+</head>
+<body>
+<div th:include="mall/commonMall :: helloMall">what?</div>
+<div class="layui-container">
+	<div class="layui-row">
+		<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+		   <legend>轮播商品(只展示最新5个)<button style="" class="layui-btn layui-btn-small" title="添加轮播商品" onclick="createSelectProductModal(this, 1, 'addCarousel');">添加</button></legend>
+		 </fieldset>
+		 <div id="carousel-container">
+		 	
+		 </div>
+	</div>
+	<div class="layui-row">
+		<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+		   <legend>商店展示(只展示最新6个)<button style="" class="layui-btn layui-btn-small" title="添加商店" onclick="createSelectShopModal(this, 1, 'addShop');">添加</button></legend>
+		 </fieldset>
+		 <div id="shop-container">
+		 	
+		 </div>
+	</div>
+	<div class="layui-row">
+		<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+		   <legend>类别展示</legend>
+		 </fieldset>
+		 <div id="category-container">
+		 	<!-- <form action="" class="layui-form">
+			  <div class="layui-form-item">
+			      <div class="layui-input-inline">
+			        <select id="categorysSelect" lay-verify="required" lay-search="" lay-filter="categorys-filter">
+			          <option th:each="category,categoryStat : ${categorys}"  th:value="${category.id}" th:text="${category.text}"></option>
+			        </select>
+			      </div>
+			      
+			  </div>
+			</form> -->
+			<button class="layui-btn" onclick="addItem();">新增项</button>
+			<div class="layui-tab" id="categoryListContainer" lay-filter="categoryListFilter" lay-allowclose="true">
+			  <ul class="layui-tab-title">
+			    <li th:each="homeItemBean,homeItemStat : ${homeItemBeans}" th:text="${homeItemBean.categoryText}"  th:attr="lay-id=${homeItemBean.id}" th:class="${homeItemStat.index} > 0?'':'layui-this'">网站设置</li>
+			  </ul>
+			  <div class="layui-tab-content">
+			  
+			  	<div th:each="homeItemBean,homeItemStat : ${homeItemBeans}" th:class="${homeItemStat.index}> 0?'layui-tab-item':'layui-tab-item layui-show'" th:attr="data-id=${homeItemBean.id}">
+			  		<fieldset class="layui-elem-field">
+					  <legend>基本信息</legend>
+					  <div class="layui-field-box" id="baseInfoCategory">
+					    	<!-- <div>展示的数量： <span>8</span></div>
+					    	<div>排序号： <span>1</span></div> -->
+					  </div>
+					</fieldset>
+			  		<div id="sunCategoryContainer">
+				  		<button style="" class="layui-btn layui-btn-small" title="管理子分类" th:onclick="'javascript:manageCategory(this);'">管理分类</button>
+			    	</div>
+			    	<div id="productContainer" style="margin-top: 8px;">
+				  		<button style="" class="layui-btn layui-btn-small" title="管理商品" onclick="createSelectProductModal(this, 1, 'getItemProduct');">管理商品</button>
+			    		<div id="productListShow"></div>
+			    	</div>
+			  	</div>
+			  
+			    <!-- <div class="layui-tab-item layui-show">
+			    	<button style="" class="layui-btn layui-btn-small" title="管理分类" onclick="manageCategory(42);">管理分类</button>
+			    	<span class="layui-badge layui-bg-orange">橙</span>
+			    	<span class="layui-badge layui-bg-orange">橙</span>
+			    </div>
+			    <div class="layui-tab-item">内容2</div>
+			    <div class="layui-tab-item">内容3</div>
+			    <div class="layui-tab-item">内容4</div>
+			    <div class="layui-tab-item">内容5</div> -->
+			  </div>
+			</div>        
+		 </div>
+	</div>
+</div>
+</body>
+<div th:include="mall/commonMall-js :: mallJs">what?</div>
+<script th:src="@{/page/js/mall/select-product.js}" type="text/javascript"></script>
+<script th:src="@{/page/js/mall/select-shop.js}" type="text/javascript"></script>
+<script th:src="@{/page/js/mall/home-manager.js}" type="text/javascript"></script>
+
+<script th:inline="javascript">
+	  
+</script>
+</html>
