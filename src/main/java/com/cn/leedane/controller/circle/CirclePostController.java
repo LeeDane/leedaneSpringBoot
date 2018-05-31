@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,12 +39,12 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(@PathVariable("circleId") int circleId, HttpServletRequest request){
+	public Map<String, Object> add(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(circlePostService.add(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -53,12 +54,12 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(@PathVariable("circleId") int circleId, HttpServletRequest request){
+	public Map<String, Object> update(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(circlePostService.update(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -68,12 +69,12 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post/{postId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(circlePostService.delete(circleId, postId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -83,12 +84,12 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/posts", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(@PathVariable("circleId") int circleId, HttpServletRequest request){
+	public Map<String, Object> paging(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(circlePostService.paging(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -98,12 +99,12 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post/{postId}/comment", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> comment(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, HttpServletRequest request){
+	public Map<String, Object> comment(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(circlePostService.comment(circleId, postId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -113,12 +114,12 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post/{postId}/transmit", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> transmit(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, HttpServletRequest request){
+	public Map<String, Object> transmit(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(circlePostService.transmit(circleId, postId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -128,12 +129,12 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post/{postId}/zan", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> zan(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, HttpServletRequest request){
+	public Map<String, Object> zan(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(circlePostService.zan(circleId, postId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -143,12 +144,12 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post/nochecktotal", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> noCheckTotal(@PathVariable("circleId") int circleId, HttpServletRequest request){
+	public Map<String, Object> noCheckTotal(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(circlePostService.noCheckTotal(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -158,12 +159,12 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post/nochecks", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> noCheckList(@PathVariable("circleId") int circleId, HttpServletRequest request){
+	public Map<String, Object> noCheckList(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(circlePostService.noCheckList(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -173,12 +174,12 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post/{postId}/check", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> check(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, HttpServletRequest request){
+	public Map<String, Object> check(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(circlePostService.check(circleId, postId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

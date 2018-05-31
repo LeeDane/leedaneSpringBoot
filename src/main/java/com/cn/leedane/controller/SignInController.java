@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,7 +42,7 @@ public class SignInController extends BaseController{
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/signIn", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> signIn(HttpServletRequest request){
+	public Map<String, Object> signIn(Model model, HttpServletRequest request){
 		//保存签到记录
 		//更新积分
 		//更新操作日志
@@ -49,7 +50,7 @@ public class SignInController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.put("isSuccess", signInService.saveSignIn(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -60,12 +61,12 @@ public class SignInController extends BaseController{
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/currentDateIsSignIn", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> currentDateIsSignIn(HttpServletRequest request){
+	public Map<String, Object> currentDateIsSignIn(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.put("isSuccess", true);
 		UserBean user = getUserFromMessage(message);
 		int id = JsonUtil.getIntValue(getJsonFromMessage(message), "id", getUserFromMessage(message).getId());
@@ -83,12 +84,12 @@ public class SignInController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/signIns", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(HttpServletRequest request){
+	public Map<String, Object> paging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		List<Map<String, Object>> result= signInService.getSignInByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
 		logger.info("获得签到的数量：" +result.size());
 		message.put("isSuccess", true);

@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,12 +49,12 @@ public class ShakeController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/user", method=RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> user(HttpServletRequest request){
+	public Map<String, Object> user(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(userService.shakeSearch(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -63,12 +64,12 @@ public class ShakeController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/mood", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> mood(HttpServletRequest request){
+	public Map<String, Object> mood(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(moodService.shakeSearch(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -78,12 +79,12 @@ public class ShakeController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/blog", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> blog(HttpServletRequest request){
+	public Map<String, Object> blog(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(blogService.shakeSearch(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

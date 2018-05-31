@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,12 +49,12 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/carousel", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> addCarousel(HttpServletRequest request){
+	public Map<String, Object> addCarousel(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(homeCarouselService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -63,12 +64,12 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/carousel/{carouselId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deleteCarousel(@PathVariable("carouselId") int carouselId, HttpServletRequest request){
+	public Map<String, Object> deleteCarousel(@PathVariable("carouselId") int carouselId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(homeCarouselService.delete(carouselId, getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -91,12 +92,12 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/item", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> addItem(HttpServletRequest request){
+	public Map<String, Object> addItem(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(homeItemService.addItem(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -107,12 +108,12 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/item/noList", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> noList(HttpServletRequest request){
+	public Map<String, Object> noList(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(homeItemService.noList(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -122,12 +123,12 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/item/{itemId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getItem(@PathVariable("itemId") int itemId, HttpServletRequest request){
+	public Map<String, Object> getItem(@PathVariable("itemId") int itemId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(homeItemService.getItem(itemId, getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -137,12 +138,12 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/item/{itemId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> updateItem(@PathVariable("itemId") int itemId, HttpServletRequest request){
+	public Map<String, Object> updateItem(@PathVariable("itemId") int itemId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(homeItemService.updateItem(itemId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -234,12 +235,12 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/shop", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> addShop(HttpServletRequest request){
+	public Map<String, Object> addShop(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(homeShopService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -249,12 +250,12 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/shop/{shopId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deleteShop(@PathVariable("shopId") int shopId, HttpServletRequest request){
+	public Map<String, Object> deleteShop(@PathVariable("shopId") int shopId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(homeShopService.delete(shopId, getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -264,11 +265,11 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/shops", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> shops(HttpServletRequest request){
+	public Map<String, Object> shops(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(homeShopService.shops());
 		return message.getMap();
 	}

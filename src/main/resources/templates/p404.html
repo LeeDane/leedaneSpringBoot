@@ -15,7 +15,7 @@
 <body>
 	<div th:include="common :: hello">what?</div>
 	<div class="container">
-		404页，您要找的页面已经飞到九霄云外啦！<span th:if="${error}">错误信息是：<span th:utext=" ${errorMessage}"></span></span>
+		404错误码，您要找的内容(页面)已经飞到九霄云外啦！<span th:if="${error}">错误信息是：<span th:utext=" ${errorMessage}"></span></span>
 		
 	</div>
 </body>

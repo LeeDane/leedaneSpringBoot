@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,12 +35,12 @@ public class MaterialController extends BaseController{
 	 * @throws Exception 
 	 */
 	@RequestMapping(value = "/material", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> addMaterials(HttpServletRequest request) throws Exception{
+	public Map<String, Object> addMaterials(Model model, HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request)){
 			return message.getMap();
 		}
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		
 		message.putAll(materialService.save(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
@@ -51,11 +52,11 @@ public class MaterialController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/materials", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"}) 
-	public Map<String, Object> paging(HttpServletRequest request){
+	public Map<String, Object> paging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		
 		message.putAll(materialService.getMaterialByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
@@ -67,11 +68,11 @@ public class MaterialController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/material/{mid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"}) 
-	public Map<String, Object> delete(HttpServletRequest request, @PathVariable("mid") int materialId){
+	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("mid") int materialId){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		
 		message.putAll(materialService.delete(materialId, getUserFromMessage(message), request));
 		return message.getMap();

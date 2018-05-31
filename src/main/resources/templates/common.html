@@ -125,6 +125,7 @@
         <ul class="nav navbar-nav">
             <li class="nav-blog nav-main-li"><a th:href="@{/index}">博客</a></li>
             <li class="nav-msg nav-main-li" th:if="${isLogin}"><a th:href="@{/msg}"><span class="badge pull-right">0</span>消息</a></li>
+            <li class="nav-baby nav-main-li" th:if="${isLogin}"><a th:href="@{/baby}">宝宝</a></li>
             <li class="nav-circle nav-main-li"><a th:href="@{/cc}">圈子</a></li>
             <li class="nav-mall nav-main-li"><a th:href="@{/mall/index}">购物</a></li>
             <li class="dropdown">
@@ -158,8 +159,17 @@
 	             	</div> 
 	            </form>
             </li>
+            <li>
+            	<div th:if="${isTestRole}" class="alert alert-danger alert-dismissible" role="alert" style="margin-bottom: 0!important;">
+				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				  <strong>警告!</strong> 您当前是测试角色，将无法修改和删除数据。
+				</div>
+            </li>
         </ul>
     </div>
     </div>
+    
+    
 </nav>
+
 </html>

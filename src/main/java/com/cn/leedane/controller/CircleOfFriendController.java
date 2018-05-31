@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,12 +32,12 @@ public class CircleOfFriendController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/circleOfFriends", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(HttpServletRequest request){
+	public Map<String, Object> paging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(circleOfFriendService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -50,12 +51,13 @@ public class CircleOfFriendController extends BaseController{
 			@RequestParam(value = "page_size") Integer pageSize, 
 			@RequestParam("current") Integer current, 
 			@RequestParam("total") Integer total, 
+			Model model, 
 			HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(circleOfFriendService.paging(pageSize, current, total, getUserFromMessage(message), request));
 		return message.getMap();
 	}

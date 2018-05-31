@@ -10,6 +10,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,12 +42,12 @@ public class FriendController extends BaseController{
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/friend", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(HttpServletRequest request){
+	public Map<String, Object> delete(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(friendService.deleteFriends(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -55,13 +56,13 @@ public class FriendController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/friend", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(HttpServletRequest request){
+	public Map<String, Object> add(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2, "add_introduce":"你好,我是XX"}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(friendService.addFriend(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -71,13 +72,13 @@ public class FriendController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/friend/agree", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> agreeFriend(HttpServletRequest request){
+	public Map<String, Object> agreeFriend(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"relation_id":100}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(friendService.addAgree(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -87,13 +88,13 @@ public class FriendController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/is", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> isFriend(HttpServletRequest request){
+	public Map<String, Object> isFriend(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		
 		JSONObject json = getJsonFromMessage(message);
 		UserBean user = getUserFromMessage(message);
@@ -118,13 +119,13 @@ public class FriendController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/friends", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> friendsPaging(HttpServletRequest request){
+	public Map<String, Object> friendsPaging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(friendService.friendsAlreadyPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -134,13 +135,13 @@ public class FriendController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/notyetfriends", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> friendsNotyetPaging(HttpServletRequest request){
+	public Map<String, Object> friendsNotyetPaging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(friendService.friendsNotyetPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -151,12 +152,12 @@ public class FriendController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/friends/all", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> friends(HttpServletRequest request){
+	public Map<String, Object> friends(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(friendService.friends(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -166,13 +167,13 @@ public class FriendController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/friends/request", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> requestPaging(HttpServletRequest request){
+	public Map<String, Object> requestPaging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(friendService.requestPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -182,13 +183,13 @@ public class FriendController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/friends/response", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> responsePaging(HttpServletRequest request){
+	public Map<String, Object> responsePaging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(friendService.responsePaging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -198,13 +199,13 @@ public class FriendController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/friends/match", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> matchContact(HttpServletRequest request){
+	public Map<String, Object> matchContact(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(friendService.matchContact(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -214,13 +215,13 @@ public class FriendController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/topic", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> topic(HttpServletRequest request){
+	public Map<String, Object> topic(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(friendService.matchContact(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

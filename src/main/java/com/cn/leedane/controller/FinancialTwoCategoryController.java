@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,12 +33,12 @@ public class FinancialTwoCategoryController extends BaseController{
      * @return 
      */
 	@RequestMapping(value = "/twos", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> getAll(HttpServletRequest request) {
+    public Map<String, Object> getAll(Model model, HttpServletRequest request) {
     	ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(financialTwoCategoryService.getAll(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }

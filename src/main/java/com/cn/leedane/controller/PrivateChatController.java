@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -29,12 +30,12 @@ public class PrivateChatController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/privatechat", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> send(HttpServletRequest request){
+	public Map<String, Object> send(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(privateChatService.send(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -44,12 +45,12 @@ public class PrivateChatController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/privatechats", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(HttpServletRequest request){
+	public Map<String, Object> paging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(privateChatService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

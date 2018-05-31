@@ -23,11 +23,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 
+import com.cn.leedane.exception.TestRoleException;
 import com.cn.leedane.handler.LinkManageHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.model.LinkManageBean;
 import com.cn.leedane.model.LinkManagesBean;
+import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.utils.CollectionUtil;
@@ -50,6 +53,10 @@ public class BaseController {
 	
 	@Resource
 	private LinkManageHandler linkManageHandler;
+	
+
+	@Autowired
+	protected OperateLogService<OperateLogBean> operateLogService;
 	
 
     @Autowired
@@ -125,6 +132,29 @@ public class BaseController {
 	 */
 	protected boolean checkParams(Map<String, Object> message, HttpServletRequest request){
 		return checkLogin(request, message);
+	}
+	
+	/**
+	 * 校验是否有是测试用户在执行新增、修改、删除等操作
+	 * @param roles
+	 * @return
+	 * @throws UnauthorizedException 不成功将抛出“不授权异常”
+	 */
+	protected boolean checkTestRole(Model model, String method) throws UnauthorizedException{//不授权异常
+		boolean isTestRole = false;
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        isTestRole = currentUser.hasRole(ConstantsUtil.TEST_ROLE_TEXT);
+		
+		//测试账号无法执行添加、删除和修改等权限
+		if("GET".equalsIgnoreCase(method) || "POST".equalsIgnoreCase(method)){
+			return true;
+		}
+		
+		if(isTestRole)
+			throw new TestRoleException("您当前是测试角色，无法执行："+ method +"请求操作！");
+		
+       return isTestRole;
 	}
 	
 	/**
@@ -529,13 +559,15 @@ public class BaseController {
 		}
 		return json;
 	}
-	
+
 	/**
 	 * 必须进行检查角色和权限
 	 * 方法只有调用该方法才做权限控制
+	 * @param model
 	 * @param request
 	 */
-	protected void checkRoleOrPermission(HttpServletRequest request){
+	protected void checkRoleOrPermission(Model model, HttpServletRequest request){
+		checkTestRole(model, request.getMethod());
 		LinkManagesBean beans = linkManageHandler.getAllLinks();
 		if(beans != null && CollectionUtil.isNotEmpty(beans.getLinkManageBean())){
 			String uri = request.getRequestURI();
@@ -640,7 +672,9 @@ public class BaseController {
         if(currentUser.isAuthenticated()){
         	o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
         }
-		
+        
+        //设置是否是登录用户
+        model.addAttribute("isTestRole", currentUser.hasRole(ConstantsUtil.TEST_ROLE_TEXT));
 		boolean isLogin = false;
 		boolean isAdmin = false;
 		if(o != null){
@@ -683,6 +717,9 @@ public class BaseController {
 
 			//获取当前的Subject  
 	        Subject currentUser = SecurityUtils.getSubject();
+	        
+	        //设置当前用户是否是登录用户
+	        model.addAttribute("isTestRole", currentUser.hasRole(ConstantsUtil.TEST_ROLE_TEXT));
 			//后台只有管理员权限才能操作
 			if(currentUser.hasRole(RoleController.ADMIN_ROLE_CODE)){
 				isLogin = !isLogin;

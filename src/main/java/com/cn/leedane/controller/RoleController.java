@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,12 +52,12 @@ public class RoleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/role", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(HttpServletRequest request){
+	public Map<String, Object> add(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(roleService.save(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -66,12 +67,12 @@ public class RoleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/role", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(HttpServletRequest request){
+	public Map<String, Object> update(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(roleService.edit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -81,12 +82,12 @@ public class RoleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/role/{rlid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(HttpServletRequest request, @PathVariable("rlid") int rlid){
+	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("rlid") int rlid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(roleService.delete(rlid, getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -96,12 +97,12 @@ public class RoleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/roles", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(HttpServletRequest request){
+	public Map<String, Object> paging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(roleService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -111,12 +112,12 @@ public class RoleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/roles", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deletes(HttpServletRequest request, @Param("rlids") String rlids){
+	public Map<String, Object> deletes(Model model, HttpServletRequest request, @Param("rlids") String rlids){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(roleService.deletes(rlids, getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -126,12 +127,12 @@ public class RoleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/role/{rlid}/users", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> roles(HttpServletRequest request, @PathVariable("rlid") int rlid){
+	public Map<String, Object> roles(Model model, HttpServletRequest request, @PathVariable("rlid") int rlid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(roleService.users(rlid, getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -141,12 +142,12 @@ public class RoleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/role/{rlid}/users/allot", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> allot(HttpServletRequest request, @PathVariable("rlid") int rlid){
+	public Map<String, Object> allot(Model model, HttpServletRequest request, @PathVariable("rlid") int rlid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		JSONObject json = getJsonFromMessage(message);
 		String users = JsonUtil.getStringValue(json, "users");
 		

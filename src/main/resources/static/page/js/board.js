@@ -1,5 +1,6 @@
-layui.use(['layer'], function(){
+layui.use(['layer', 'laypage'], function(){
 	layer = layui.layer;
+	laypage = layui.laypage;
 	initPage(".pagination", "getMessageBoards");
 	$commentListContainer = $("#comment-list-container");
 	$container= $(".container");
@@ -81,7 +82,27 @@ function getMessageBoards(){
 				for(var i = 0; i < messageBoards.length; i++){
 					$commentListContainer.append(buildEachCommentRow(i, messageBoards[i]));
 				}
-				pageDivUtil(data.total);
+				//pageDivUtil(data.total);
+				
+				//执行一个laypage实例
+				 laypage.render({
+				    elem: 'item-pager' //注意，这里的 test1 是 ID，不用加 # 号
+				    ,layout: ['prev', 'page', 'next', 'count', 'skip']
+				    ,count: data.total //数据总数，从服务端得到
+				    ,limit: pageSize
+				    ,theme: '#337ab7'
+				    , curr: currentIndex + 1
+				    ,jump: function(obj, first){
+					    //obj包含了当前分页的所有参数，比如：
+					    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+					    console.log(obj.limit); //得到每页显示的条数
+					    if(!first){
+					    	currentIndex = obj.curr -1;
+					    	getMessageBoards();
+					    }
+					  }
+				 });
+				resetParticlesHeight();
 			}else{
 				ajaxError(data);
 			}
@@ -181,7 +202,7 @@ function addComment(obj){
 	var addCommentObj = $("#comment").find('[name="add-comment"]');
 	if(isEmpty(addCommentObj.val())){
 		addCommentObj.focus();
-		layer.msg("评论内容不能为空");
+		layer.msg("请先说点什么吧");
 		return;
 	}
 	var params = {table_name: "t_message_board", check: false, table_id: uid, content: addCommentObj.val(), froms: "web端", t: Math.random()};
@@ -204,10 +225,10 @@ function doAddComment(params){
 		success : function(data) {
 			layer.close(loadi);
 			if(data.isSuccess){
-				layer.msg("评论成功,1秒钟后自动刷新");
+				layer.msg("留言成功,1秒钟后自动刷新");
 				setTimeout("window.location.reload();", 1000);
 			}else{
-				layer.msg("添加评论失败，"+data.message);
+				layer.msg("留言失败，"+data.message);
 			}
 		},
 		error : function() {

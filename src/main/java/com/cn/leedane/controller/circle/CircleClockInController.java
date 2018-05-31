@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,12 +40,12 @@ public class CircleClockInController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/clockIn/check", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> check(@PathVariable("circleId")int circleId, HttpServletRequest request){
+	public Map<String, Object> check(@PathVariable("circleId")int circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(circleClockInService.isClockIn(getUserFromMessage(message), circleId, new Date()));
 		return message.getMap();
 	}
@@ -54,12 +55,12 @@ public class CircleClockInController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "{circleId}/clockIn", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(@PathVariable("circleId")int circleId, HttpServletRequest request){
+	public Map<String, Object> add(@PathVariable("circleId")int circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(circleClockInService.saveClockIn(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

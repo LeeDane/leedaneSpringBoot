@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,12 +55,12 @@ public class FilePathController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/userImages", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getUserImagePaging(HttpServletRequest request){
+	public Map<String, Object> getUserImagePaging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		List<Map<String, Object>> result= filePathService.getUserImageByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
 		logger.info("获得文件路径的数量：" +result.size());
 		message.put("isSuccess", true);
@@ -74,13 +75,13 @@ public class FilePathController extends BaseController{
 	 * @throws IOException 
      */
 	@RequestMapping(value = "/mergePortFile", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> mergePortFile(HttpServletRequest request) throws IOException {
+    public Map<String, Object> mergePortFile(Model model, HttpServletRequest request) throws IOException {
     	ResponseMap message = new ResponseMap();
         
     	if(!checkParams(message, request))
 			return message.getMap();
 		
-    	checkRoleOrPermission(request);
+    	checkRoleOrPermission(model, request);;
     	
     	JSONObject json = getJsonFromMessage(message);
     	UserBean user = getUserFromMessage(message);
@@ -149,13 +150,13 @@ public class FilePathController extends BaseController{
      * @return
      */
 	@RequestMapping(value = "/portFile", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> deletePortFile(HttpServletRequest request) {
+    public Map<String, Object> deletePortFile(Model model, HttpServletRequest request) {
 		ResponseMap message = new ResponseMap();
         
     	if(!checkParams(message, request))
 			return message.getMap();
 		
-    	checkRoleOrPermission(request);
+    	checkRoleOrPermission(model, request);;
     	
     	JSONObject json = getJsonFromMessage(message);
     	UserBean user = getUserFromMessage(message);
@@ -200,12 +201,12 @@ public class FilePathController extends BaseController{
      * @return
      */
 	@RequestMapping(value = "/paths", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> paging(HttpServletRequest request) {
+    public Map<String, Object> paging(Model model, HttpServletRequest request) {
     	ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		
 		message.putAll(filePathService.getUploadFileByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
@@ -216,12 +217,12 @@ public class FilePathController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/uploadHeadImgLink", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> uploadUserHeadImageLink(HttpServletRequest request){
+	public Map<String, Object> uploadUserHeadImageLink(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		
 		message.putAll(userService.uploadUserHeadImageLink(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();

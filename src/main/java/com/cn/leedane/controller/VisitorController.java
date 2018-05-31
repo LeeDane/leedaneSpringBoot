@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,12 +39,12 @@ public class VisitorController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "user/{tableId}/visitors", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(@PathVariable("tableId") int tableId, HttpServletRequest request){
+	public Map<String, Object> paging(@PathVariable("tableId") int tableId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(visitorService.getVisitorsByLimit(tableId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

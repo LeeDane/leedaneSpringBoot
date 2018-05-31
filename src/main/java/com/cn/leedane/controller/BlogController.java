@@ -17,6 +17,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -60,12 +61,12 @@ public class BlogController extends BaseController{
 	 * @throws Exception 
 	 */
 	@RequestMapping(value = "/blog", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> releaseBlog(HttpServletRequest request){
+	public Map<String, Object> releaseBlog(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		JSONObject json = getJsonFromMessage(message);
 		
 		//获取登录用户，获取不到用管理员账号
@@ -172,12 +173,12 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/blog", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deleteBlog(HttpServletRequest request){
+	public Map<String, Object> deleteBlog(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 				return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(blogService.deleteById(getJsonFromMessage(message), request, getUserFromMessage(message)));
 		return message.getMap();
 	}
@@ -251,12 +252,12 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/info", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getInfo(HttpServletRequest request){
+	public Map<String, Object> getInfo(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(blogService.getInfo(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -360,12 +361,12 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/tag", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> addTag(HttpServletRequest request){
+	public Map<String, Object> addTag(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(blogService.addTag(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -375,12 +376,12 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/drafts", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> draftList(HttpServletRequest request){
+	public Map<String, Object> draftList(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(blogService.draftList(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -390,12 +391,12 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/blog/edit/{blog_id}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> edit(@PathVariable("blog_id") int blogId, HttpServletRequest request){
+	public Map<String, Object> edit(@PathVariable("blog_id") int blogId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(blogService.edit(blogId, getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -405,12 +406,12 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/noChecks", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> noCheckPaging(HttpServletRequest request){
+	public Map<String, Object> noCheckPaging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(blogService.noCheckPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -420,12 +421,12 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/check", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> check(HttpServletRequest request){
+	public Map<String, Object> check(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(blogService.check(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

@@ -28,7 +28,6 @@ import com.cn.leedane.mapper.mall.S_ProductMapper;
 import com.cn.leedane.mapper.mall.S_ShopMapper;
 import com.cn.leedane.model.CategoryBean;
 import com.cn.leedane.model.CommentBean;
-import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.VisitorBean;
 import com.cn.leedane.model.mall.S_HomeCarouselBean;
@@ -37,8 +36,6 @@ import com.cn.leedane.model.mall.S_ProductBean;
 import com.cn.leedane.model.mall.S_ShopBean;
 import com.cn.leedane.service.CategoryService;
 import com.cn.leedane.service.CommentService;
-import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.service.UserService;
 import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.service.mall.S_HomeCarouselService;
 import com.cn.leedane.service.mall.S_HomeItemService;
@@ -61,9 +58,7 @@ import com.cn.leedane.utils.StringUtil;
 @Controller
 @RequestMapping(value = ControllerBaseNameUtil.mall)
 public class MallHtmlController extends BaseController{
-	
-	@Autowired
-	private UserService<UserBean> userService;
+
 	
 	@Autowired
 	private S_ProductService<S_ProductBean> productService;
@@ -96,9 +91,6 @@ public class MallHtmlController extends BaseController{
 	private CategoryService<CategoryBean> categoryService;
 	
 	@Autowired
-	private OperateLogService<OperateLogBean> operateLogService;
-	
-	@Autowired
 	private S_HomeItemService<S_HomeItemBean> homeItemService;
 	
 	@Autowired
@@ -114,7 +106,7 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/")
 	public String index1(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(request);	
+		checkRoleOrPermission(model, request);	
 		
 		//初始化首页的数据
 		/*List<S_HomeItemBean> categoryList = homeItemHandler.showCategoryList();
@@ -135,7 +127,7 @@ public class MallHtmlController extends BaseController{
 	public String productDetail(Model model, 
 			@PathVariable(value="productId") int productId, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(request);	
+		checkRoleOrPermission(model, request);	
 		/*new ThreadUtil().singleTask(new SolrAddThread<S_ShopBean>(ShopSolrHandler.getInstance(), shopMapper.findById(S_ShopBean.class, 1)));
 		new ThreadUtil().singleTask(new SolrAddThread<S_ProductBean>(ProductSolrHandler.getInstance(), productMapper.findById(S_ProductBean.class, 1)));
 		new ThreadUtil().singleTask(new SolrAddThread<S_ProductBean>(ProductSolrHandler.getInstance(), productMapper.findById(S_ProductBean.class, 2)));
@@ -187,7 +179,7 @@ public class MallHtmlController extends BaseController{
 	public String shop(Model model, 
 			@PathVariable(value="shopId") int shopId, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		
 		S_ShopBean shopBean = shopHandler.getNormalShopBean(shopId);
 		if(shopBean == null)
@@ -215,7 +207,7 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/wish")
 	public String wish(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(request);	
+		checkRoleOrPermission(model, request);	
 		
 		return loginRoleCheck("mall/wish", true, model, request);
 	}
@@ -230,7 +222,7 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/order")
 	public String order(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(request);	
+		checkRoleOrPermission(model, request);	
 				
 		return loginRoleCheck("mall/order", true, model, request);
 	}
@@ -245,7 +237,7 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/category/{categoryId}")
 	public String category(Model model, @PathVariable(value="categoryId") int categoryId, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(request);	
+		checkRoleOrPermission(model, request);	
 		
 		//处理分类
         List<String[]> categorys = new ArrayList<String[]>();
@@ -269,7 +261,7 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping(ControllerBaseNameUtil.s)
 	public String search(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(request);	
+		checkRoleOrPermission(model, request);	
 				
 		return loginRoleCheck("mall/search", model, request);
 	}
@@ -283,7 +275,7 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/manager")
 	public String manager(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(request);	
+		checkRoleOrPermission(model, request);	
 				
 		return loginRoleCheck("mall/shop-manager", true, model, request);
 	}
@@ -299,7 +291,7 @@ public class MallHtmlController extends BaseController{
 	public String productManager(Model model, 
 			@PathVariable(value="productId") int productId, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(request);	
+		checkRoleOrPermission(model, request);	
 				
 		S_ProductBean productBean = productHandler.getNormalProductBean(productId);
 		if(productBean == null)
@@ -327,7 +319,7 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/product/select")
 	public String productSelect(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(request);	
+		checkRoleOrPermission(model, request);	
 		
 		String url = loginRoleCheck("mall/product-select", true, model, request);
 		//获取当前的Subject  
@@ -343,7 +335,7 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/shop/select")
 	public String shopSelect(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(request);	
+		checkRoleOrPermission(model, request);	
 				
 		String url = loginRoleCheck("mall/shop-select", true, model, request);
 		//获取当前的Subject  
@@ -360,7 +352,7 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/home/manager")
 	public String homeManager(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(request);	
+		checkRoleOrPermission(model, request);	
 				
 		String url = loginRoleCheck("mall/home-manager", true, model, request);
 		//获取分类列表

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,12 +31,12 @@ public class TransmitController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/transmit", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(HttpServletRequest request){
+	public Map<String, Object> add(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(transmitService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -45,12 +46,12 @@ public class TransmitController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/transmit", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(HttpServletRequest request){
+	public Map<String, Object> delete(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(transmitService.deleteTransmit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -77,12 +78,12 @@ public class TransmitController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/transmit", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> updateTransmitStatus(HttpServletRequest request){
+	public Map<String, Object> updateTransmitStatus(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(transmitService.updateTransmitStatus(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

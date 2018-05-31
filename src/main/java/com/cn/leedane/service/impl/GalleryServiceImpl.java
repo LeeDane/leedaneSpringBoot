@@ -161,6 +161,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
 		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
+		int categoryId = JsonUtil.getIntValue(jo, "category", -1); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		
 		logger.info("GalleryServiceImpl-->getGalleryByLimit():JSONObject="+jo.toString());
@@ -171,6 +172,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 			sql.append(" , g.gallery_desc, u.account");
 			sql.append(" from "+DataTableType.图库.value+" g inner join "+DataTableType.用户.value+" u on u.id = g.create_user_id where g.status = ? ");
 			sql.append(" and g.create_user_id = ?");
+			sql.append(getCategorySql(categoryId));
 			sql.append(" order by g.id desc limit 0,?");
 			rs = galleryMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, uid, pageSize);
 		//下刷新
@@ -179,6 +181,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 			sql.append(" , g.gallery_desc, u.account");
 			sql.append(" from "+DataTableType.图库.value+" g inner join "+DataTableType.用户.value+" u on u.id = g.create_user_id where g.status = ? ");
 			sql.append(" and g.create_user_id = ?");
+			sql.append(getCategorySql(categoryId));
 			sql.append(" and g.id < ? order by g.id desc limit 0,? ");
 			rs = galleryMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, uid, lastId, pageSize);
 		//上刷新
@@ -187,6 +190,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 			sql.append(" , g.gallery_desc, u.account");
 			sql.append(" from "+DataTableType.图库.value+" g inner join "+DataTableType.用户.value+" u on u.id = g.create_user_id where g.status = ? ");
 			sql.append(" and g.create_user_id = ?");
+			sql.append(getCategorySql(categoryId));
 			sql.append(" and g.id > ? limit 0,?  ");
 			rs = galleryMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, uid, firstId, pageSize);
 		}
@@ -199,6 +203,15 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		return rs;
 	}
 
-	
+	/**
+	 * 构建查询分类的sql语句
+	 * @param categoryId
+	 * @return
+	 */
+	public String getCategorySql(int categoryId){
+		if(categoryId < 0)
+			return "";
+		return " and category_id = "+ categoryId +" ";
+	}
 	
 }

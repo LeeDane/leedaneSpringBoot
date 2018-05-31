@@ -933,3 +933,26 @@ CREATE TABLE `t_mall_home_shop` (
   CONSTRAINT `FK_mall_home_shop_product` FOREIGN KEY (`shop_id`) REFERENCES `t_mall_shop` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+-- ----------------------------
+-- Table structure for t_gallery
+-- ----------------------------
+DROP TABLE IF EXISTS `t_gallery`;
+CREATE TABLE `t_gallery` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `gallery_desc` varchar(255) DEFAULT NULL,
+  `height` int(11) NOT NULL,
+  `length` bigint(20) NOT NULL,
+  `path` varchar(255) NOT NULL,
+  `width` int(11) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `category_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_rqkbmgjk89nmwkx0rj7cxfq92` (`create_user_id`),
+  KEY `FK_p3k7ar9k260jv7c7sves4sgax` (`modify_user_id`),
+  CONSTRAINT `FK_p3k7ar9k260jv7c7sves4sgax` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_rqkbmgjk89nmwkx0rj7cxfq92` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=259 DEFAULT CHARSET=utf8;

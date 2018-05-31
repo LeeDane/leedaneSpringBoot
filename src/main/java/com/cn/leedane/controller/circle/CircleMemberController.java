@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,12 +44,12 @@ public class CircleMemberController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/members", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(@PathVariable("circleId") int circleId, HttpServletRequest request){
+	public Map<String, Object> paging(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(circleMemberService.paging(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -59,12 +60,12 @@ public class CircleMemberController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/member/{memberId}/recommend", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> recommend(@PathVariable("circleId") int circleId, @PathVariable("memberId") int memberId, HttpServletRequest request){
+	public Map<String, Object> recommend(@PathVariable("circleId") int circleId, @PathVariable("memberId") int memberId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(circleMemberService.recommend(circleId, memberId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -74,12 +75,12 @@ public class CircleMemberController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/member/{memberId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@PathVariable("circleId") int circleId, @PathVariable("memberId") int memberId, HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("circleId") int circleId, @PathVariable("memberId") int memberId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(circleMemberService.delete(circleId, memberId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -89,12 +90,12 @@ public class CircleMemberController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/setting/{settingId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> setting(@PathVariable("circleId") int circleId, @PathVariable("settingId") int settingId, HttpServletRequest request){
+	public Map<String, Object> setting(@PathVariable("circleId") int circleId, @PathVariable("settingId") int settingId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(circleSettingService.update(circleId, settingId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

@@ -10,6 +10,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,12 +41,12 @@ public class ScoreController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/scores", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(HttpServletRequest request){
+	public Map<String, Object> paging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(scoreService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -56,12 +57,12 @@ public class ScoreController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/score/total", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getTotalScore(HttpServletRequest request){
+	public Map<String, Object> getTotalScore(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(scoreService.getTotalScore(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -71,12 +72,12 @@ public class ScoreController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/score/reduce", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> reduceScore(HttpServletRequest request){
+	public Map<String, Object> reduceScore(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		JSONObject json = getJsonFromMessage(message);
 		UserBean user = getUserFromMessage(message);
 		int score = JsonUtil.getIntValue(json, "score", 0);

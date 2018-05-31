@@ -35,7 +35,6 @@ import com.cn.leedane.rabbitmq.send.AddReadSend;
 import com.cn.leedane.rabbitmq.send.ISend;
 import com.cn.leedane.service.AppVersionService;
 import com.cn.leedane.service.BlogService;
-import com.cn.leedane.service.UserService;
 import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.utils.CommonUtil;
@@ -55,9 +54,6 @@ import com.cn.leedane.utils.StringUtil;
  */
 @Controller
 public class HtmlController extends BaseController{
-	
-	@Autowired
-	private UserService<UserBean> userService;
 	
 	@Autowired
 	private VisitorService<VisitorBean> visitorService;
@@ -192,7 +188,7 @@ public class HtmlController extends BaseController{
 	public String my1(@PathVariable(value="uid") int uid, Model model, HttpServletRequest request){
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        checkRoleOrPermission(request);
+        checkRoleOrPermission(model, request);
         
         if(currentUser.isAuthenticated()){
         	Object o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
@@ -214,7 +210,7 @@ public class HtmlController extends BaseController{
 	public String board(@PathVariable(value="uid") int uid, Model model, HttpServletRequest request){
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        checkRoleOrPermission(request);
+        checkRoleOrPermission(model, request);
         
         if(currentUser.isAuthenticated()){
         	Object o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
@@ -233,7 +229,7 @@ public class HtmlController extends BaseController{
 	public String moodDetail(@PathVariable(value="uid") int uid, @PathVariable(value="mid") int mid, Model model, HttpServletRequest request){
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        checkRoleOrPermission(request);
+        checkRoleOrPermission(model, request);
         
         if(currentUser.isAuthenticated()){
         	Object o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);

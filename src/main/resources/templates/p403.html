@@ -15,7 +15,7 @@
 <body>
 	<div th:include="common :: hello">what?</div>
 	<div class="container">
-		<div class="row">403页，您没有相关操作权限！</div>
+		<div class="row">403错误码，由于用户设置，您还没有相关操作权限！</div>
 		<div class="row" th:if="${not isLogin}">
 			您还未登录，可以尝试使用更高权限的账号登录，<button class="btn btn-xm panel-title" type="button" onclick="linkToLogin();">去登录</button>
 		</div>

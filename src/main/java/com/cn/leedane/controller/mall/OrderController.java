@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,12 +42,12 @@ public class OrderController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/order", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(HttpServletRequest request){
+	public Map<String, Object> add(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(orderService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -56,12 +57,12 @@ public class OrderController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/order/{orderId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(@PathVariable("orderId") int orderId, HttpServletRequest request){
+	public Map<String, Object> update(@PathVariable("orderId") int orderId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(orderService.update(orderId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -71,12 +72,12 @@ public class OrderController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/order/{orderId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@PathVariable("orderId") int orderId, HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("orderId") int orderId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(orderService.delete(orderId, getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -86,12 +87,12 @@ public class OrderController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/order/nodealNumber", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getNumber(HttpServletRequest request){
+	public Map<String, Object> getNumber(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(orderService.getNoDealOrderNumber(getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -101,7 +102,7 @@ public class OrderController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/order/paging", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> mywish(HttpServletRequest request, 
+	public Map<String, Object> mywish(Model model, HttpServletRequest request, 
 			@RequestParam(value="page") Integer current,
 			@RequestParam(value="limit") Integer pageSize){
 		
@@ -110,7 +111,7 @@ public class OrderController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(orderService.paging(current - 1, pageSize, getUserFromMessage(message), request));
 		return message.getMap();
 	}

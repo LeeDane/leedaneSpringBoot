@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,12 +39,12 @@ public class CacheController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/cache", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(HttpServletRequest request){
+	public Map<String, Object> delete(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		String key = getJsonFromMessage(message).getString("key");
 		if(StringUtil.isNull(key)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少参数.value));

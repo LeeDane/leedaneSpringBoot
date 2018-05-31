@@ -30,7 +30,6 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.model.circle.CircleMemberBean;
 import com.cn.leedane.model.circle.CirclePostBean;
-import com.cn.leedane.service.UserService;
 import com.cn.leedane.service.circle.CirclePostService;
 import com.cn.leedane.service.circle.CircleService;
 import com.cn.leedane.service.impl.circle.CircleServiceImpl;
@@ -50,9 +49,6 @@ import com.cn.leedane.utils.StringUtil;
 @Controller
 @RequestMapping(value = ControllerBaseNameUtil.cc)
 public class CircleHtmlController extends BaseController{
-	
-	@Autowired
-	private UserService<UserBean> userService;
 	
 	@Autowired
 	private CircleService<CircleBean> circleService;
@@ -114,7 +110,7 @@ public class CircleHtmlController extends BaseController{
 	
 	@RequestMapping(value = "/{cid}", method = RequestMethod.GET)
 	public String main(@PathVariable(value="cid") int cid, Model model, HttpServletRequest request){
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		CircleBean circle = circleHandler.getCircleBean(cid);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
@@ -140,7 +136,7 @@ public class CircleHtmlController extends BaseController{
 	 */
 	@RequestMapping(value = "/{circleId}/setting", method = RequestMethod.GET)
 	public String setting(@PathVariable(value="circleId") int circleId, Model model, HttpServletRequest request){
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		return memberList(circleId, model, request);
 	}
 	
@@ -152,7 +148,7 @@ public class CircleHtmlController extends BaseController{
 	 */
 	@RequestMapping(value = "/{circleId}/member-list", method = RequestMethod.GET)
 	public String memberList(@PathVariable(value="circleId") int circleId, Model model, HttpServletRequest request){
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		
 		CircleBean circle = circleHandler.getCircleBean(circleId);
 		if(circle == null)
@@ -176,7 +172,7 @@ public class CircleHtmlController extends BaseController{
 			@RequestParam(value="postId", required = false) Integer postId, 
 			Model model, 
 			HttpServletRequest request){
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		
 		//获取当前的Subject  
 		//获取当前的Subject 
@@ -233,7 +229,7 @@ public class CircleHtmlController extends BaseController{
 	 */
 	@RequestMapping(value = "/{circleId}/post/{postId}", method = RequestMethod.GET)
 	public String postDetail(@PathVariable(value="circleId") int circleId, @PathVariable(value="postId") int postId, Model model, HttpServletRequest request){
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		CircleBean circle = circleHandler.getCircleBean(circleId);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
@@ -291,7 +287,7 @@ public class CircleHtmlController extends BaseController{
 	 */
 	@RequestMapping(value = "/{circleId}/post/{postId}/audit", method = RequestMethod.GET)
 	public String postCheckDetail(@PathVariable(value="circleId") int circleId, @PathVariable(value="postId") int postId, Model model, HttpServletRequest request){
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		CircleBean circle = circleHandler.getCircleBean(circleId);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
@@ -334,7 +330,7 @@ public class CircleHtmlController extends BaseController{
 	 */
 	@RequestMapping(value = "/{circleId}/post/check", method = RequestMethod.GET)
 	public String postCheck(@PathVariable(value="circleId") int circleId, Model model, HttpServletRequest request){
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		CircleBean circle = circleHandler.getCircleBean(circleId);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));

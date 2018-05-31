@@ -233,6 +233,11 @@ public class ControllerBaseNameUtil {
 	public static final String msg = "msg";
 	
 	/**
+	 * 宝宝
+	 */
+	public static final String baby = "baby";
+	
+	/**
 	 * 详情
 	 */
 	public static final String dt = "dt";

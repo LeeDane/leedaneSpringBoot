@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,12 +31,12 @@ public class FanController extends BaseController{
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/fan", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> cancel(HttpServletRequest request){
+	public Map<String, Object> cancel(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.put("isSuccess", fanService.cancel(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -44,13 +45,13 @@ public class FanController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/fan", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(HttpServletRequest request){
+	public Map<String, Object> add(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(fanService.addFan(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -60,13 +61,13 @@ public class FanController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/is", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> isFan(HttpServletRequest request){
+	public Map<String, Object> isFan(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(fanService.isFan(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -76,13 +77,13 @@ public class FanController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/myAttentions", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> myAttentionPaging(HttpServletRequest request){
+	public Map<String, Object> myAttentionPaging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(fanService.getMyAttentionsLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -92,13 +93,13 @@ public class FanController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/toAttentions", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> toAttentionPaging(HttpServletRequest request){
+	public Map<String, Object> toAttentionPaging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(fanService.getToAttentionsLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -108,13 +109,13 @@ public class FanController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/myFans", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> myFansPaging(HttpServletRequest request){
+	public Map<String, Object> myFansPaging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(fanService.getMyFansLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -124,13 +125,13 @@ public class FanController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/toFans", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> toFansPaging(HttpServletRequest request){
+	public Map<String, Object> toFansPaging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(fanService.getToFansLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

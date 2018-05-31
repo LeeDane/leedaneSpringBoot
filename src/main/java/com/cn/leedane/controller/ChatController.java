@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,12 +31,12 @@ public class ChatController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/chat", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> send(HttpServletRequest request){
+	public Map<String, Object> send(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(chatService.send(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -45,12 +46,12 @@ public class ChatController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/chat", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(HttpServletRequest request){
+	public Map<String, Object> delete(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(chatService.deleteChat(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -60,12 +61,12 @@ public class ChatController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/chats", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(HttpServletRequest request){
+	public Map<String, Object> paging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(chatService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -75,12 +76,12 @@ public class ChatController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/chat", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> updateRead(HttpServletRequest request){
+	public Map<String, Object> updateRead(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(chatService.updateRead(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -90,12 +91,12 @@ public class ChatController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/noReads", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> noReadList(HttpServletRequest request){
+	public Map<String, Object> noReadList(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(chatService.noReadList(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -107,12 +108,12 @@ public class ChatController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/chat", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getOneChatByAllUser(HttpServletRequest request){
+	public Map<String, Object> getOneChatByAllUser(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(chatService.getOneChatByAllUser(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

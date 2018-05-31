@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,12 +33,12 @@ public class NotificationController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/broadcast", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> sendBroadcast(HttpServletRequest request){
+	public Map<String, Object> sendBroadcast(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(notificationService.sendBroadcast(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -47,12 +48,12 @@ public class NotificationController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/notifications", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> limit(HttpServletRequest request){
+	public Map<String, Object> limit(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(notificationService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -66,13 +67,14 @@ public class NotificationController extends BaseController{
 			@RequestParam("type") String type, 
 			@RequestParam(value = "page_size", required = false) Integer pageSize, 
 			@RequestParam("current") Integer current, 
-			@RequestParam("total") Integer total, 
+			@RequestParam("total") Integer total,
+			Model model, 
 			HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(notificationService.paging(type, pageSize, current, total, getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -82,12 +84,12 @@ public class NotificationController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/notification", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@RequestParam(value = "nid", required = false) Integer nid, HttpServletRequest request){
+	public Map<String, Object> delete(@RequestParam(value = "nid", required = false) Integer nid, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		if(nid < 1)
 			nid = JsonUtil.getIntValue(getJsonFromMessage(message), "nid");
 		message.putAll(notificationService.deleteNotification(nid, getUserFromMessage(message), request));
@@ -99,12 +101,12 @@ public class NotificationController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/notification", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> updateRead(HttpServletRequest request){
+	public Map<String, Object> updateRead(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(notificationService.updateRead(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -114,12 +116,12 @@ public class NotificationController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/notification/all", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> updateAllRead(HttpServletRequest request){
+	public Map<String, Object> updateAllRead(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(notificationService.updateAllRead(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -129,12 +131,12 @@ public class NotificationController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/notification/noread/number", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> noReadNumber(HttpServletRequest request){
+	public Map<String, Object> noReadNumber(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(notificationService.noReadNumber(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

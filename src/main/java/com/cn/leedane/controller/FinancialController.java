@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,12 +33,12 @@ public class FinancialController extends BaseController{
      * @return 返回成功插入数据库的ID
      */
 	@RequestMapping(value = "/financial", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> save(HttpServletRequest request) {
+    public Map<String, Object> save(Model model, HttpServletRequest request) {
     	ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(financialService.save(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -47,12 +48,12 @@ public class FinancialController extends BaseController{
      * @return
      */
 	@RequestMapping(value = "/financial", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> update(HttpServletRequest request) {
+    public Map<String, Object> update(Model model, HttpServletRequest request) {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(financialService.update(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -62,12 +63,12 @@ public class FinancialController extends BaseController{
      * @return
      */
 	@RequestMapping(value = "/financial", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> delete(HttpServletRequest request) {
+    public Map<String, Object> delete(Model model, HttpServletRequest request) {
     	ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(financialService.delete(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -77,12 +78,12 @@ public class FinancialController extends BaseController{
      * @return 返回成功同步的数量和有冲突的数据ID数组
      */
 	@RequestMapping(value = "/synchronous", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> synchronous(HttpServletRequest request) {
+    public Map<String, Object> synchronous(Model model, HttpServletRequest request) {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(financialService.synchronous(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -98,12 +99,12 @@ public class FinancialController extends BaseController{
      * @return
      */
 	@RequestMapping(value = "/force", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> force(HttpServletRequest request) {
+    public Map<String, Object> force(Model model, HttpServletRequest request) {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(financialService.force(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -113,12 +114,12 @@ public class FinancialController extends BaseController{
      * @return
      */
 	@RequestMapping(value = "/byYear", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> getByYear(HttpServletRequest request) {
+    public Map<String, Object> getByYear(Model model, HttpServletRequest request) {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(financialService.getByYear(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -128,12 +129,12 @@ public class FinancialController extends BaseController{
      * @return
      */
 	@RequestMapping(value = "/all", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> getAll(HttpServletRequest request) {
+    public Map<String, Object> getAll(Model model, HttpServletRequest request) {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(financialService.getAll(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -143,12 +144,12 @@ public class FinancialController extends BaseController{
      * @return
      */
 	@RequestMapping(value = "/query", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> query(HttpServletRequest request) {
+    public Map<String, Object> query(Model model, HttpServletRequest request) {
     	ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(financialService.query(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }
@@ -158,12 +159,12 @@ public class FinancialController extends BaseController{
      * @return
      */
 	@RequestMapping(value = "/financials", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-    public Map<String, Object> paging(HttpServletRequest request) {
+    public Map<String, Object> paging(Model model, HttpServletRequest request) {
     	ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(financialService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
     }

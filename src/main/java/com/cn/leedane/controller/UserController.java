@@ -322,13 +322,13 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/searchByIdOrAccount", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> searchUserByUserIdOrAccount(HttpServletRequest request){
+	public Map<String, Object> searchUserByUserIdOrAccount(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request)){
 			return message.getMap();
 		}
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(userService.searchUserByUserIdOrAccount(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -339,7 +339,7 @@ public class UserController extends BaseController{
 	 * @throws Exception
 	 */
 	@RequestMapping(value="/register", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> registerUser(HttpServletRequest request) throws Exception {		
+	public Map<String, Object> registerUser(Model model, HttpServletRequest request) throws Exception {		
 		//判断是否有在线的用户，那就先取消该用户的session
 		/*if(ActionContext.getContext().getSession().get(ConstantsUtil.USER_SESSION) != null) {
 			removeMultSession(ConstantsUtil.USER_SESSION);
@@ -348,7 +348,7 @@ public class UserController extends BaseController{
 		checkParams(message, request);
 			//return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		JSONObject json = getJsonFromMessage(message);
 		UserBean user = new UserBean();
 		user.setAccount(JsonUtil.getStringValue(json, "account"));
@@ -396,12 +396,12 @@ public class UserController extends BaseController{
 	 * @throws Exception 
 	 */
 	@RequestMapping(value="/register/againSend", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> againSendRegisterEmail(HttpServletRequest request) throws Exception{
+	public Map<String, Object> againSendRegisterEmail(Model model, HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		JSONObject json = getJsonFromMessage(message);
 		//根据账号和密码找到该用户(密码需要再进行MD5加密)
 		UserBean user = userService.loginUser(JsonUtil.getStringValue(json, "account"), JsonUtil.getStringValue(json, "password"));
@@ -437,12 +437,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/findPwd", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> findPassword(HttpServletRequest request){
+	public Map<String, Object> findPassword(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		JSONObject json = getJsonFromMessage(message);
 		//获得找回密码的类型(0:邮箱,1:手机)
 		if(JsonUtil.getIntValue(json, "type") == 0){
@@ -543,12 +543,12 @@ public class UserController extends BaseController{
 	 * @throws Exception 
 	 */
 	@RequestMapping(value="/head/img", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getHeadBase64StrById(HttpServletRequest request) throws Exception{
+	public Map<String, Object> getHeadBase64StrById(Model model, HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.put("message", userService.getHeadBase64StrById(getJsonFromMessage(message), getUserFromMessage(message), request));
 		message.put("isSuccess", true);
 		return message.getMap();
@@ -559,12 +559,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/head/path", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getHeadPath(HttpServletRequest request){
+	public Map<String, Object> getHeadPath(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		String picSize = JsonUtil.getStringValue(getJsonFromMessage(message), "picSize", "30x30");
 		message.put("message", userHandler.getUserPicPath(getUserFromMessage(message).getId(), picSize));
 		message.put("isSuccess", true);
@@ -578,12 +578,12 @@ public class UserController extends BaseController{
 	 * @throws Exception 
 	 */
 	@RequestMapping(value="/head", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> uploadHeadBase64Str(HttpServletRequest request) throws Exception{
+	public Map<String, Object> uploadHeadBase64Str(Model model, HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		UserBean user = getUserFromMessage(message);
 		message.put("isSuccess", userService.uploadHeadBase64StrById(getJsonFromMessage(message), user, request));
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"上传头像" + StringUtil.getSuccessOrNoStr(true), "uploadHeadBase64Str", ConstantsUtil.STATUS_NORMAL, 0);
@@ -762,12 +762,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/phone/register/code", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getPhoneRegisterCode(HttpServletRequest request){
+	public Map<String, Object> getPhoneRegisterCode(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(userService.getPhoneRegisterCode(getJsonFromMessage(message), request));
 		return message.getMap();
 	}
@@ -777,12 +777,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/phone/login/code", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getPhoneLoginCode(@RequestParam("mobilePhone") String mobilePhone, HttpServletRequest request){
+	public Map<String, Object> getPhoneLoginCode(@RequestParam("mobilePhone") String mobilePhone, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(userService.getPhoneLoginCode(mobilePhone, request));
 		return message.getMap();
 	}
@@ -792,12 +792,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/phone/register", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> registerByPhone(HttpServletRequest request){
+	public Map<String, Object> registerByPhone(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		UserBean user = userService.registerByPhone(getJsonFromMessage(message), request);
 		if(user == null){
 			message.put("message", "用户不存在或者参数不正确");
@@ -840,11 +840,11 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/phone/login", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> loginByPhone(HttpServletRequest request){
+	public Map<String, Object> loginByPhone(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		
 		UserBean user = userService.loginByPhone(getJsonFromMessage(message), request);
 		if(user == null){
@@ -911,12 +911,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/check/account", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> checkAccount(HttpServletRequest request){
+	public Map<String, Object> checkAccount(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(userService.checkAccount(getJsonFromMessage(message), request, getUserFromMessage(message)));
 		return message.getMap();
 	}
@@ -982,12 +982,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/user/info", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getUserInfoData(HttpServletRequest request){
+	public Map<String, Object> getUserInfoData(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(userService.getUserInfoData(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -997,12 +997,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/user/base", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> updateUserBase(HttpServletRequest request){
+	public Map<String, Object> updateUserBase(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(userService.updateUserBase(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -1012,12 +1012,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/user/pwd", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> updatePassword(HttpServletRequest request){
+	public Map<String, Object> updatePassword(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(userService.updatePassword(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -1027,12 +1027,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/scan/login", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> scanLogin(HttpServletRequest request){
+	public Map<String, Object> scanLogin(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(userService.scanLogin(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -1042,12 +1042,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/scan/check", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> checkToken(HttpServletRequest request){
+	public Map<String, Object> checkToken(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
         if(currentUser.isAuthenticated()){
@@ -1081,12 +1081,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/websearch", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> websearch(HttpServletRequest request){
+	public Map<String, Object> websearch(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(userService.webSearch(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -1096,12 +1096,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/ad/user", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> adminUpdateUserBase(HttpServletRequest request){
+	public Map<String, Object> adminUpdateUserBase(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(userService.adminUpdateUserBase(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -1111,12 +1111,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/ad/resetPwd", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> adminResetPassword(HttpServletRequest request){
+	public Map<String, Object> adminResetPassword(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(userService.adminResetPassword(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -1126,12 +1126,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/user", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deleteUser(HttpServletRequest request){
+	public Map<String, Object> deleteUser(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(userService.deleteUser(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -1141,12 +1141,12 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/user", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"}) 
-	public Map<String, Object> addUser(HttpServletRequest request){
+	public Map<String, Object> addUser(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(userService.addUser(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

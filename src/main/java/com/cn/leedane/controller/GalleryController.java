@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,13 +34,13 @@ public class GalleryController extends BaseController{
 	 * @throws Exception 
 	 */
 	@RequestMapping(value = "/photo", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> addLink(HttpServletRequest request) throws Exception{
+	public Map<String, Object> addLink(Model model, HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request)){
 			return message.getMap();
 		}
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(galleryService.addLink(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 		
@@ -54,12 +55,13 @@ public class GalleryController extends BaseController{
 			@RequestParam(value="last_id", required = false) int lastId,
 			@RequestParam(value="first_id", required = false) int firstId,
 			@RequestParam(value="method", required = true) String method,
+			Model model, 
 			HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		
 		List<Map<String, Object>> result= galleryService.getGalleryByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
 		logger.info("获得图库的数量：" +result.size());
@@ -74,12 +76,12 @@ public class GalleryController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/photo/{gid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"}) 
-	public Map<String, Object> delete(HttpServletRequest request){
+	public Map<String, Object> delete(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(galleryService.delete(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

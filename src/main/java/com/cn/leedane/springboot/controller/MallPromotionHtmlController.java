@@ -28,10 +28,7 @@ import com.cn.leedane.utils.ControllerBaseNameUtil;
 @Controller
 @RequestMapping(value = ControllerBaseNameUtil.mall_promotion)
 public class MallPromotionHtmlController extends BaseController{
-	
-	@Autowired
-	private UserService<UserBean> userService;
-	
+
 	@Autowired
 	private S_PromotionUserHandler promotionUserHandler;
 	
@@ -47,7 +44,7 @@ public class MallPromotionHtmlController extends BaseController{
 	@RequestMapping("/index")
 	public String promotionIndex(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(request);	
+		checkRoleOrPermission(model, request);	
 				
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();

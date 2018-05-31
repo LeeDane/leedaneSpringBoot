@@ -12,6 +12,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -113,13 +114,13 @@ public class DownloadController extends BaseController{
 	 * @throws Exception 
 	 */
 	@RequestMapping(value = "/localBase64Image", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getLocalBase64Image(HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> getLocalBase64Image(Model model, HttpServletRequest request, HttpServletResponse response){
 		ResponseMap message = new ResponseMap();
 		
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		String filename = getJsonFromMessage(message).getString("filename");
 		if(StringUtil.isNull(filename)){
 			message.put("message", "文件名称为空");

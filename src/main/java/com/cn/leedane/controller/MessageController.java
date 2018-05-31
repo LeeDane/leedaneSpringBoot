@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,12 +26,12 @@ public class MessageController extends BaseController{
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/message", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> send(HttpServletRequest request){
+	public Map<String, Object> send(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		/*UserBean user = (UserBean) getSession().get(ConstantsUtil.USER_SESSION);
 		int fromUserID = 1;
 		if(user != null){

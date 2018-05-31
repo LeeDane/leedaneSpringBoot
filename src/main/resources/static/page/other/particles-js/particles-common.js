@@ -2,6 +2,7 @@ function resetParticlesHeight(){
 	var width = $(window).width();
 	if(width > 900){
 		$("#particles-js").css("height", ($(document.body).outerHeight(true) +30) +"px");
+		$("#particles-js").css("z-index", 0);
 		loadParticles();
 	}
 }

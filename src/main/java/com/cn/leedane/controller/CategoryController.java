@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,7 +43,7 @@ public class CategoryController extends BaseController{
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/category", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(HttpServletRequest request){
+	public Map<String, Object> add(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -53,7 +54,7 @@ public class CategoryController extends BaseController{
 		if(pid < 1)
 			//必须是管理员权限才能操作此接口
 			checkAnyRoleAuthor(RoleController.ADMIN_ROLE_CODE);
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		
 		message.putAll(categoryService.add(params, getUserFromMessage(message), request));
 		return message.getMap();
@@ -65,12 +66,12 @@ public class CategoryController extends BaseController{
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/category/{pid}/children", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> children(@PathVariable("pid") int pid, HttpServletRequest request){
+	public Map<String, Object> children(@PathVariable("pid") int pid, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
 		message.putAll(categoryService.children(currentUser.hasRole(RoleController.ADMIN_ROLE_CODE), pid, getUserFromMessage(message), request));
@@ -83,12 +84,12 @@ public class CategoryController extends BaseController{
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/category/{cid}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(@PathVariable("cid") int cid,HttpServletRequest request){
+	public Map<String, Object> update(@PathVariable("cid") int cid, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
@@ -103,12 +104,12 @@ public class CategoryController extends BaseController{
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/category/{cid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@PathVariable("cid") int cid,HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("cid") int cid, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();

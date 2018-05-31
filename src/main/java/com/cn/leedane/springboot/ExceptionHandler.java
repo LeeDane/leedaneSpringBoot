@@ -27,6 +27,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import com.cn.leedane.exception.CompleteOrderDeleteException;
 import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.exception.RE404Exception;
+import com.cn.leedane.exception.TestRoleException;
 import com.cn.leedane.exception.user.BannedAccountException;
 import com.cn.leedane.exception.user.CancelAccountException;
 import com.cn.leedane.exception.user.NoActiveAccountException;
@@ -188,6 +189,10 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			logger.error("已经完成的订单被删除的异常");
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.完成状态的订单无法删除的异常.value));
 			message.put("responseCode", ResponseCode.完成状态的订单无法删除的异常.value);
+		}else if(exception instanceof TestRoleException){
+			logger.error("已经完成的订单被删除的异常");
+			message.put("message", exception.getMessage());
+			message.put("responseCode", ResponseCode.测试角色权限受限异常.value);
 		}/*else if(exception instanceof MobCodeErrorException){
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.验证码验证失败.value));
 			message.put("responseCode", ResponseCode.验证码验证失败.value);

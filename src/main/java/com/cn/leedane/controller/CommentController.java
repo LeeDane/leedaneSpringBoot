@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,12 +33,12 @@ public class CommentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/comment", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(HttpServletRequest request){
+	public Map<String, Object> add(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(commentService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -89,12 +90,12 @@ public class CommentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/items", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getItemsPaging(HttpServletRequest request){
+	public Map<String, Object> getItemsPaging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(commentService.getOneCommentItemsByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -104,12 +105,12 @@ public class CommentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/count", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getCountByObject(HttpServletRequest request){
+	public Map<String, Object> getCountByObject(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(commentService.getCountByObject(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -119,12 +120,12 @@ public class CommentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/countByUser", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getCommentsCountByUser(HttpServletRequest request){
+	public Map<String, Object> getCommentsCountByUser(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(commentService.getCountByUser(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -134,12 +135,12 @@ public class CommentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/comment", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(HttpServletRequest request){
+	public Map<String, Object> delete(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(commentService.deleteComment(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -150,12 +151,12 @@ public class CommentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/comment", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> updateCommentStatus(HttpServletRequest request){
+	public Map<String, Object> updateCommentStatus(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(commentService.updateCommentStatus(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -166,12 +167,12 @@ public class CommentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/user/{uid}/messageBoards", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> messageBoards(HttpServletRequest request, @PathVariable("uid") int uid){
+	public Map<String, Object> messageBoards(Model model, HttpServletRequest request, @PathVariable("uid") int uid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(commentService.getMessageBoards(uid, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

@@ -9,6 +9,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,12 +50,12 @@ public class MoodController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value= "/mood", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> send(HttpServletRequest request){
+	public Map<String, Object> send(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		JSONObject jsonObject = getJsonFromMessage(message);
 		int status = JsonUtil.getIntValue(jsonObject, "status", ConstantsUtil.STATUS_NORMAL);
 		message.putAll(moodService.updateMoodStatus(jsonObject, status, request, getUserFromMessage(message)));
@@ -67,12 +68,12 @@ public class MoodController extends BaseController{
 	 * @throws Exception 
 	 */
 	@RequestMapping(value= "/sendDraft", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> sendDraft(HttpServletRequest request) throws Exception{
+	public Map<String, Object> sendDraft(Model model, HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(moodService.saveMood(getJsonFromMessage(message), getUserFromMessage(message), ConstantsUtil.STATUS_DRAFT, request));
 		return message.getMap();
 	}
@@ -82,12 +83,12 @@ public class MoodController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value= "/sendWord", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> sendWord(HttpServletRequest request){
+	public Map<String, Object> sendWord(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		JSONObject jsObject = getJsonFromMessage(message);
 		int status = JsonUtil.getIntValue(jsObject, "status", ConstantsUtil.STATUS_NORMAL);
 		
@@ -100,12 +101,12 @@ public class MoodController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value= "/wordAndLink", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> sendWordAndLink(HttpServletRequest request){
+	public Map<String, Object> sendWordAndLink(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(moodService.sendWordAndLink(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -115,12 +116,12 @@ public class MoodController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value= "/mood", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(HttpServletRequest request){
+	public Map<String, Object> delete(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(moodService.deleteMood(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -132,12 +133,12 @@ public class MoodController extends BaseController{
 	@RequestMapping(value = "/moods", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	//@RequiresRoles("ADMIN")
 	//@RequiresPermissions("ADMIN_MANAGER")
-	public Map<String, Object> rolling(HttpServletRequest request){
+	public Map<String, Object> rolling(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(moodService.rolling(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -147,12 +148,12 @@ public class MoodController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/moods/paging", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getMoodsPaging(HttpServletRequest request){
+	public Map<String, Object> getMoodsPaging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(moodService.getMoodsPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -169,12 +170,12 @@ public class MoodController extends BaseController{
 	 * @throws Exception 
 	 */
 	@RequestMapping(value = "/img", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> uploadBase64Str(HttpServletRequest request) throws Exception{
+	public Map<String, Object> uploadBase64Str(Model model, HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		JSONObject json = getJsonFromMessage(message);
 		UserBean user = getUserFromMessage(message);
 				
@@ -197,12 +198,12 @@ public class MoodController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/divide", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> sendDivideMood(HttpServletRequest request){
+	public Map<String, Object> sendDivideMood(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(moodService.saveDividedMood(getJsonFromMessage(message), getUserFromMessage(message), ConstantsUtil.STATUS_NORMAL, request));
 		return message.getMap();
 	}
@@ -213,12 +214,12 @@ public class MoodController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/img", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deleteUploadBase64Str(HttpServletRequest request){
+	public Map<String, Object> deleteUploadBase64Str(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		return message.getMap();
 	}
 	
@@ -268,12 +269,12 @@ public class MoodController extends BaseController{
 	 * @return 图片地址列表
 	 */
 	@RequestMapping(value = "/count", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getCountByUser(HttpServletRequest request){
+	public Map<String, Object> getCountByUser(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(moodService.getCountByUser(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -283,12 +284,12 @@ public class MoodController extends BaseController{
 	 * @return 返回心情的内容，图片地址（120x120大小的图像）
 	 */
 	@RequestMapping(value = "/detail", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> detail(HttpServletRequest request){
+	public Map<String, Object> detail(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(moodService.detail(getJsonFromMessage(message), getUserFromMessage(message), request, "120x120"));
 		//printWriter(message, response);
 		return message.getMap();
@@ -299,12 +300,12 @@ public class MoodController extends BaseController{
 	 * @return 返回心情的内容，图片地址（120x120大小的图像）
 	 */
 	@RequestMapping(value = "/detail/imgs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> detailImgs(HttpServletRequest request){
+	public Map<String, Object> detailImgs(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(moodService.detailImgs(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -314,12 +315,12 @@ public class MoodController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/topic", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> topic(HttpServletRequest request){
+	public Map<String, Object> topic(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(moodService.getTopicByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

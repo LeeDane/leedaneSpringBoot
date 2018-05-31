@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,12 +34,12 @@ public class ChatBgController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/bg", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> publish(HttpServletRequest request){
+	public Map<String, Object> publish(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(chatBgService.publish(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -48,12 +49,12 @@ public class ChatBgController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/bgs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(HttpServletRequest request){
+	public Map<String, Object> paging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(chatBgService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -63,12 +64,12 @@ public class ChatBgController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/bg/verify", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> verifyChatBg(HttpServletRequest request){
+	public Map<String, Object> verifyChatBg(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.putAll(chatBgService.addChatBg(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

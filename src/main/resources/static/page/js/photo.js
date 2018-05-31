@@ -1,5 +1,6 @@
 var isFirst = false;
 var $tree;
+var categoryId = -1;
 layui.use(['layer'], function(){
 	layer = layui.layer;
 	$(window).scroll(function (e) {
@@ -154,7 +155,7 @@ function getPhotosRequestParams(){
 	var pageSize = 15;
 	if(method != 'firstloading')
 		pageSize = 10;
-	return {pageSize: pageSize, last_id: last_id, first_id: first_id, method: method, t: Math.random()};
+	return {pageSize: pageSize, last_id: last_id, first_id: first_id, method: method, category: categoryId, t: Math.random()};
 	//return "?page_size="+ pageSize +"&last_id="+ last_id +"&first_id=" + first_id + "&method="+ method+"&t="+Math.random();
 }
 
@@ -350,4 +351,23 @@ function addLink(params){
 function afterSelectMaterial(links){
 	$(".gallery-link").val(links);
 	$(".gallery-desc").val("从素材选择");
+}
+
+/**
+ * 项的点击
+ */
+function customItemClick(node){
+	console.log(node);
+	categoryId = node.id;
+	last_id = 0;
+	first_id = 0;
+	method = 'firstloading';
+	getWebPhotos();
+}
+
+/**
+ * 根tree的选择器类
+ */
+function getTreeRootId(){
+	return "tree";
 }

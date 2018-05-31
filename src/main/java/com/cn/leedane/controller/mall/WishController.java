@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,12 +42,12 @@ public class WishController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/wish", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(HttpServletRequest request){
+	public Map<String, Object> add(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(wishService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -56,12 +57,12 @@ public class WishController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/wish/{wishId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@PathVariable("wishId") int wishId,HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("wishId") int wishId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(wishService.delete(wishId, getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -71,12 +72,12 @@ public class WishController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/wish/number", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getNumber(HttpServletRequest request){
+	public Map<String, Object> getNumber(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(wishService.getWishNumber(getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -86,7 +87,7 @@ public class WishController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/wishs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> mywish(HttpServletRequest request, 
+	public Map<String, Object> mywish(Model model, HttpServletRequest request, 
 			@RequestParam(value="page") Integer current,
 			@RequestParam(value="limit") Integer pageSize){
 		
@@ -95,7 +96,7 @@ public class WishController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(wishService.paging(current - 1, pageSize, getUserFromMessage(message), request));
 		return message.getMap();
 	}

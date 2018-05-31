@@ -697,7 +697,7 @@
 
 	Tree.prototype.template = {
 		list: '<ul class="list-group"></ul>',
-		item: '<li class="list-group-item" onclick="alert(3333);"></li>',
+		item: '<li class="list-group-item" onclick="itemClick(this, \'customItemClick\');"></li>',
 		indent: '<span class="indent"></span>',
 		icon: '<span class="icon"></span>',
 		link: '<a href="#" style="color:inherit;"></a>',
@@ -1413,3 +1413,32 @@
 	};
 
 })(jQuery, window, document);
+
+/**
+ * 项的点击事件
+ * @param obj
+ */
+function itemClick(obj, funcName){
+	try{
+		if(typeof(eval(funcName)) == "function"){
+			//获取根节点的ID
+			try{
+				if(!typeof(eval("getTreeRootId")) == "function"){
+				}
+			}catch(ee){
+				console.log("无法执行函数getTreeRootId();返回根tree的id选择器名称");
+				return;
+			}
+			//找到当前节点id  
+		    var nodeid = $(obj).attr('data-nodeid');  
+		    var tree = $('#tree');  
+		    //获取当前节点对象  
+		    var node = tree.treeview('getNode', nodeid);  
+		    var func = eval(funcName);
+		    //创建函数对象，并调用
+		    new func(node);
+		}
+	}catch(ee){
+		console.log("无法执行函数customItemClick();这是对项的点击触发的函数");
+	}	
+}

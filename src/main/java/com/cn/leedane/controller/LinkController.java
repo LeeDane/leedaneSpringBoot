@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,12 +40,12 @@ public class LinkController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/link", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(HttpServletRequest request){
+	public Map<String, Object> add(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(linkManageService.save(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -54,12 +55,12 @@ public class LinkController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/link", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(HttpServletRequest request){
+	public Map<String, Object> update(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(linkManageService.edit(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -69,12 +70,12 @@ public class LinkController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/link/{lnid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(HttpServletRequest request, @PathVariable("lnid") int lnid){
+	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("lnid") int lnid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(linkManageService.delete(lnid, getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -84,12 +85,12 @@ public class LinkController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/links", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(HttpServletRequest request){
+	public Map<String, Object> paging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(linkManageService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -99,12 +100,12 @@ public class LinkController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/links", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deletes(HttpServletRequest request, @Param("lnids") String lnids){
+	public Map<String, Object> deletes(Model model, HttpServletRequest request, @Param("lnids") String lnids){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(linkManageService.deletes(lnids, getUserFromMessage(message), request));
 		return message.getMap();
 	}
@@ -114,12 +115,12 @@ public class LinkController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/link/{lnid}/roleOrPermissions", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> roleOrPermissions(HttpServletRequest request, @PathVariable("lnid") int lnid){
+	public Map<String, Object> roleOrPermissions(Model model, HttpServletRequest request, @PathVariable("lnid") int lnid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		boolean role = JsonUtil.getBooleanValue(getJsonFromMessage(message), "role");
 		message.putAll(linkManageService.roleOrPermissions(lnid, role, getUserFromMessage(message), request));
 		return message.getMap();
@@ -130,12 +131,12 @@ public class LinkController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/link/{lnid}/roleOrPermissions/allot", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> allot(HttpServletRequest request, @PathVariable("lnid") int lnid){
+	public Map<String, Object> allot(Model model, HttpServletRequest request, @PathVariable("lnid") int lnid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);;
 		message.putAll(linkManageService.allot(lnid, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}

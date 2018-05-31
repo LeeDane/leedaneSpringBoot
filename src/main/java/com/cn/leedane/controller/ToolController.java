@@ -17,6 +17,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,12 +60,12 @@ public class ToolController extends BaseController{
 	 * @throws IOException 
 	 */
 	@RequestMapping(value = "/fanyi", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> fanyi(HttpServletRequest request) throws IOException{
+	public Map<String, Object> fanyi(Model model, HttpServletRequest request) throws IOException{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		String content = JsonUtil.getStringValue(getJsonFromMessage(message), "content");
 		String msg = HttpRequestUtil.sendAndRecieveFromYoudao(content);
 		msg = StringUtil.getYoudaoFanyiContent(msg);
@@ -78,13 +79,13 @@ public class ToolController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/sendEmail", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> sendEmail(HttpServletRequest request){
+	public Map<String, Object> sendEmail(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		JSONObject json = getJsonFromMessage(message);
 		String toUserId = JsonUtil.getStringValue(json, "to_user_id");//接收邮件的用户的Id，必须
 		String content = JsonUtil.getStringValue(json, "content"); //邮件的内容，必须
@@ -139,12 +140,12 @@ public class ToolController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/sendMsg", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> sendMessage(HttpServletRequest request){
+	public Map<String, Object> sendMessage(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		//type: 1为通知，2为邮件，3为私信，4为短信
 		message.putAll(userService.sendMessage(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
@@ -155,12 +156,12 @@ public class ToolController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/qiNiuToken", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getQiNiuToken(HttpServletRequest request){
+	public Map<String, Object> getQiNiuToken(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		checkRoleOrPermission(request);
+		checkRoleOrPermission(model, request);
 		message.put("isSuccess", true);
 		message.put("message", getToken());
 		return message.getMap();
