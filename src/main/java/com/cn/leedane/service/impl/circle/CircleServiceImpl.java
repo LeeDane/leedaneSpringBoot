@@ -410,7 +410,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		
 		//自动填充更新的bean
 		SqlUtil sqlUtil = new SqlUtil();
-		sqlUtil.getUpdateBean(jo, circleBean);
+		circleBean = (CircleBean)sqlUtil.getUpdateBean(jo, circleBean);
 		circleBean.setModifyTime(new Date());
 		circleBean.setModifyUserId(user.getId());
 		

@@ -1,6 +1,7 @@
-layui.use(['layer'], function(){
-  layer = layui.layer;
-  initPage(".pagination", "getMessages");
+layui.use(['layer', 'laypage'], function(){
+   layer = layui.layer;
+   laypage = layui.laypage;
+  /*initPage(".pagination", "getMessages");*/
 	$(".navbar-nav .nav-main-li").each(function(){
 		$(this).removeClass("active");
 	});
@@ -166,14 +167,33 @@ function getMessages(){
 						$("#message-list-content").append('暂时没有更多的数据！');
 					}else{
 						$("#message-list-content").append('已经没有更多的消息啦，请重新选择！');
-						pageDivUtil(data.total);
+						/*pageDivUtil(data.total);*/
 					}
 					return;
 				}
 				for(var i = 0; i < messages.length; i++){
 					$("#message-list-content").append(buildEachMessageRow(i, messages[i]));
 				}
-				pageDivUtil(data.total);
+				/*pageDivUtil(data.total);*/
+				
+				//执行一个laypage实例
+				 laypage.render({
+				    elem: 'item-pager' //注意，这里的 test1 是 ID，不用加 # 号
+				    ,layout: ['prev', 'page', 'next', 'count', 'skip']
+				    ,count: data.total //数据总数，从服务端得到
+				    ,limit: pageSize
+				    ,theme: '#337ab7'
+				    , curr: currentIndex + 1
+				    ,jump: function(obj, first){
+					    //obj包含了当前分页的所有参数，比如：
+					    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+					    console.log(obj.limit); //得到每页显示的条数
+					    if(!first){
+					    	currentIndex = obj.curr -1;
+					    	getMessages();
+					    }
+					  }
+				 });
 			}else{
 				ajaxError(data);
 			}

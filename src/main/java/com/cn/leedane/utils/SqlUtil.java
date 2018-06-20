@@ -7,6 +7,7 @@ import java.util.Map;
 
 import net.sf.json.JSONObject;
 
+import org.apache.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -22,6 +23,7 @@ import com.cn.leedane.mybatis.table.impl.HumpToUnderLineFormat;
  *
  */
 public class SqlUtil {
+	private Logger logger = Logger.getLogger(getClass());
 	
 	public static boolean getBooleanByList(List<?> list) {
 		boolean result = false;
@@ -122,10 +124,12 @@ public class SqlUtil {
 					}else if(typeClass == boolean.class || typeClass == Boolean.class){
 						field.set(obj, StringUtil.changeObjectToBoolean((params.get(columnName.toLowerCase()))));
 					}else if(typeClass == Date.class){
-						field.set(obj, DateUtil.stringToDate(StringUtil.changeNotNull((params.get(columnName.toLowerCase())))));
+						field.set(obj, DateUtil.stringToDateNoFormat(StringUtil.changeNotNull((params.get(columnName.toLowerCase())))));
 					}else{
 						new RuntimeException("无法创建实体bean,原因是未知的字段类型！");	
 					}
+				}else{
+					logger.info("无法处理的字段是："+columnName.toLowerCase());
 				}
 			}
 			return obj;
@@ -188,10 +192,12 @@ public class SqlUtil {
 					}else if(typeClass == boolean.class || typeClass == Boolean.class){
 						field.set(obj, StringUtil.changeObjectToBoolean((params.get(columnName.toLowerCase()))));
 					}else if(typeClass == Date.class){
-						field.set(obj, DateUtil.stringToDate(StringUtil.changeNotNull((params.get(columnName.toLowerCase())))));
+						field.set(obj, DateUtil.stringToDateNoFormat(StringUtil.changeNotNull((params.get(columnName.toLowerCase())))));
 					}else{
 						new RuntimeException("无法创建实体bean,原因是未知的字段类型！");	
 					}
+				}else{
+					logger.info("无法处理的字段是："+columnName.toLowerCase());
 				}
 			}
 			return obj;
@@ -237,6 +243,7 @@ public class SqlUtil {
 				if (StringUtils.isEmpty(columnName)) {
 					columnName = tableFormat.getColumnName(field.getName());
 				}
+				
 				if(params.has(columnName.toLowerCase())){
 					field.setAccessible(true);
 					Class<?> typeClass = field.getType();
@@ -253,10 +260,12 @@ public class SqlUtil {
 					}else if(typeClass == boolean.class || typeClass == Boolean.class){
 						field.set(obj, StringUtil.changeObjectToBoolean((params.get(columnName.toLowerCase()))));
 					}else if(typeClass == Date.class){
-						field.set(obj, DateUtil.stringToDate(StringUtil.changeNotNull((params.get(columnName.toLowerCase())))));
+						field.set(obj, DateUtil.stringToDateNoFormat(StringUtil.changeNotNull((params.get(columnName.toLowerCase())))));
 					}else{
 						new RuntimeException("无法创建实体bean,原因是未知的字段类型！");	
 					}
+				}else{
+					logger.info("无法处理的字段是："+columnName.toLowerCase());
 				}
 			}
 			return obj;

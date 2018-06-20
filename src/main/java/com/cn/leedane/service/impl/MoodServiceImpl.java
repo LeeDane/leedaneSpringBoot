@@ -60,6 +60,7 @@ import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.cn.leedane.utils.FileUtil;
 import com.cn.leedane.utils.FilterUtil;
+import com.cn.leedane.utils.ImageUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.MardownUtil;
 import com.cn.leedane.utils.ResponseMap;
@@ -653,29 +654,45 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		int width = 0, height = 0;
 		long length = 0;
 		for(int i = 0; i< linkArray.length; i++){
-			//获取网络图片
-			widthAndHeight = FileUtil.getNetWorkImgAttr(linkArray[i]);
-			if(widthAndHeight.length == 3){
-				width = (int) widthAndHeight[0];
-				height = (int) widthAndHeight[1];
-				length = widthAndHeight[2];
+			//判断是否是图片
+			if(ImageUtil.isSupportType(linkArray[i])){
+				//获取网络图片
+				widthAndHeight = FileUtil.getNetWorkImgAttr(linkArray[i]);
+				if(widthAndHeight.length == 3){
+					width = (int) widthAndHeight[0];
+					height = (int) widthAndHeight[1];
+					length = widthAndHeight[2];
+				}
+				
+				filePathBean = new FilePathBean();
+				filePathBean.setCreateTime(new Date());
+				filePathBean.setCreateUserId(user.getId());
+				filePathBean.setPicOrder(i);
+				filePathBean.setPath(StringUtil.getFileName(linkArray[i]));
+				filePathBean.setQiniuPath(linkArray[i]);
+				filePathBean.setUploadQiniu(ConstantsUtil.STATUS_NORMAL);
+				filePathBean.setPicSize(ConstantsUtil.DEFAULT_PIC_SIZE); //source
+				filePathBean.setWidth(width);
+				filePathBean.setHeight(height);
+				filePathBean.setLenght(length);
+				filePathBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+				filePathBean.setTableName(DataTableType.心情.value);
+				filePathBean.setTableUuid(uuid);
+				result = filePathMapper.save(filePathBean) > 0;
+			}else{
+				filePathBean = new FilePathBean();
+				filePathBean.setCreateTime(new Date());
+				filePathBean.setCreateUserId(user.getId());
+				filePathBean.setPicOrder(i);
+				filePathBean.setPath(StringUtil.getFileName(linkArray[i]));
+				filePathBean.setQiniuPath(linkArray[i]);
+				filePathBean.setUploadQiniu(ConstantsUtil.STATUS_NORMAL);
+				filePathBean.setPicSize(ConstantsUtil.DEFAULT_PIC_SIZE); //source
+				filePathBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+				filePathBean.setTableName(DataTableType.心情.value);
+				filePathBean.setTableUuid(uuid);
+				result = filePathMapper.save(filePathBean) > 0;
 			}
-			
-			filePathBean = new FilePathBean();
-			filePathBean.setCreateTime(new Date());
-			filePathBean.setCreateUserId(user.getId());
-			filePathBean.setPicOrder(i);
-			filePathBean.setPath(StringUtil.getFileName(linkArray[i]));
-			filePathBean.setQiniuPath(linkArray[i]);
-			filePathBean.setUploadQiniu(ConstantsUtil.STATUS_NORMAL);
-			filePathBean.setPicSize(ConstantsUtil.DEFAULT_PIC_SIZE); //source
-			filePathBean.setWidth(width);
-			filePathBean.setHeight(height);
-			filePathBean.setLenght(length);
-			filePathBean.setStatus(ConstantsUtil.STATUS_NORMAL);
-			filePathBean.setTableName(DataTableType.心情.value);
-			filePathBean.setTableUuid(uuid);
-			result = filePathMapper.save(filePathBean) > 0;
 		}
 		
 		if(result){

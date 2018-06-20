@@ -1,7 +1,7 @@
 layui.use(['layer', 'laypage'], function(){
 	layer = layui.layer;
 	laypage = layui.laypage;
-	initPage(".pagination", "getMoods");
+	/*initPage(".pagination", "getMoods");*/
 	$cOTItemContainer = $("#comment-or-transmit-item");
 	$moodMardownContent = $("#push-mood-text");
 	$(".navbar-nav .nav-main-li").each(function(){
@@ -9,7 +9,7 @@ layui.use(['layer', 'laypage'], function(){
 	});
 	$(".nav-my").addClass("active");
 	
-	initPage(".pagination", "getMoods", 9);
+	/*initPage(".pagination", "getMoods", 9);*/
 	$moodContainer = $("#mood-container");
 	loadUserInfo();
 	getMoods();
@@ -54,12 +54,8 @@ layui.use(['layer', 'laypage'], function(){
 	    	asynchronousLoadData();
 	    }
 	});  
-	
+  
   var clipboard = new Clipboard('.do-copy-btn');
-  /**
-   * 当前页面的索引
-   */
-  var currentIndex = 0;
 	  
   clipboard.on('success', function(e) {
       //console.info('Action:', e.action);
@@ -426,7 +422,7 @@ function getMoods(){
 						$moodContainer.append("还没有发表过任何心情，请发一篇心情吧！");
 					}else{
 						$moodContainer.append("已经没有更多的心情啦，请重新选择！");
-						pageDivUtil(data.total);
+						/*pageDivUtil(data.total);*/
 					}
 					return;
 				}
@@ -533,9 +529,22 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 				if(isNotEmpty(mood.imgs)){
 					var imgs = mood.imgs.split(";");
 					for(var i = 0; i < imgs.length; i++){
-						html += '<div class="col-lg-4 col-sm-4">'+
-					      			'<img src="'+ imgs[i] +'" width="100%" height="180px" class="img-responsive" onClick="showImg('+ index +', '+ i +');" />'+
-						      	'</div>';
+						
+						if(isVideo(imgs[i])){
+							html += '<div class="col-lg-4 col-sm-4">';
+							html += getVideoHtml(imgs[i]);
+							html += '</div>';
+						}else if(isAudio(imgs[i])){
+							html += '<div class="col-lg-4 col-sm-4">';
+							html += getAudioHtml(imgs[i]);
+							html += '</div>';
+						}else if(isImg(imgs[i])){
+							html += '<div class="col-lg-4 col-sm-4">'+
+									'<img src="'+ imgs[i] +'" width="100%" height="180px" class="img-responsive" onClick="showImg('+ index +', '+ i +');" />'+
+									'</div>';
+						}else{
+							layer.msg("目前只处理图片、音频、视频等格式的文件");
+						}
 					}
 				}
 				html += '</div>';
@@ -674,7 +683,7 @@ function editUserinfo(params){
 	$.ajax({
 		type : "put",
 		data : params,
-		url : "us/user/base",
+		url : "/us/user/base",
 		dataType: 'json', 
 		beforeSend:function(){
 		},
@@ -1142,7 +1151,7 @@ function sendMood(){
 	var loadi = layer.load('努力加载中…');
 	
 	var links = '';
-	var $imgs = $(".select-links").find("img"); //获取所有的图片标签
+	var $imgs = $(".select-links").find("img,audio,video"); //获取所有的图片标签
 	if($imgs && $imgs.length > 0){
 		$imgs.each(function(index){
 			links += $(this).attr("src") +';';
@@ -1189,9 +1198,23 @@ function afterSelect(links){
 		var imgs = links.split(";");
 		var html = '';
 		for(var i = 0; i < imgs.length; i++){
-			html += '<div class="col-lg-4 col-sm-4">'+
-		      			'<img src="'+ imgs[i] +'" style="width: 100%; max-height: 200px;" class="img-responsive" />'+
-			      	'</div>';
+			
+			if(isVideo(imgs[i])){
+				html += '<div class="col-lg-4 col-sm-4">';
+				html += getVideoHtml(imgs[i]);
+				html += '</div>';
+			}else if(isAudio(array[i])){
+				html += '<div class="col-lg-4 col-sm-4">';
+				html += getAudioHtml(imgs[i]);
+				html += '</div>';
+			}else if(isImg(imgs[i])){
+				html += '<div class="col-lg-4 col-sm-4">'+
+							'<img src="'+ changeNotNullString(imgs[i])+'" style="width: 100%; max-height: 180px;" class="img-responsive" />'+
+						'</div>';
+			}else{
+				layer.msg("目前只处理图片、音频、视频等格式的文件");
+				return false;
+			}
 		}
 		$(".select-links").html(html);
 	}

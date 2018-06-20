@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.baby.BabyMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="getMyBabys" parameterType="int" resultMap="objectBean">
+		select bb.id id, bb.nickname, bb.name, bb.gregorian_birthday, bb.lunar_birthday, bb.head_pic, 
+		bb.sex, bb.personalized_signature, bb.healthy_state, bb.sorting, bb.introduction, bb.pregnancy_date, bb.pre_production,
+		bb.create_user_id, date_format(bb.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		from t_baby bb where bb.create_user_id = #{createUserId} and bb.status = #{status} order by bb.sorting desc, bb.id desc
+	</select>
+	
+	<resultMap type="com.cn.leedane.model.baby.BabyBean" id="objectBean">
+        <id property="id" column="id"/>
+        <result property="status" column="status"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="nickname" column="nickname"/>
+        <result property="name" column="name"/>
+        <result property="gregorianBirthDay" column="gregorian_birthDay"/>
+        <result property="lunarBirthDay" column="lunar_birthDay"/>
+        <result property="headPic" column="head_pic"/>
+        <result property="sex" column="sex"/>
+        <result property="personalizedSignature" column="personalized_signature"/>
+        <result property="healthyState" column="healthy_state"/>
+        <result property="sorting" column="sorting"/>
+        <result property="introduction" column="introduction"/>
+        <result property="pregnancyDate" column="pregnancy_date"/>
+        <result property="preProduction" column="pre_production"/>
+   </resultMap>
+</mapper>

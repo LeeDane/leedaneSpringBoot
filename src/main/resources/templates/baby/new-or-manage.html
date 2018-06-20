@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<!-- 当该 HTML 页面在手机上浏览时，该标签用于指定是否将网页内容中的手机号码显示为拨号的超链接 -->
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="format-detection" content="telephone=yes"/>
+	
+	<title th:text="(${babyId} > 0 ? '编辑我的宝宝《'+ ${babyName} +'》': '新增我的宝宝')"></title>
+	<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_733gvu39kn265hfr.css" />
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<link rel="stylesheet" href="/page/other/layui-v2.1.5/css/layui.css"  media="all" />
+	<style type="text/css">
+		.clearFloat{
+			clear: both;
+		}
+		body{
+			background-color: #f5f5f5 !important;
+		}
+		.mainContainer{
+			padding-top: 60px;
+		}
+		. mainContainer .row{
+			margin-top: 15px;
+		}
+		.mainContainer .row img{
+			cursor: pointer;
+		}
+		@media screen and (max-width: 900px) {
+			
+		}
+		
+		/**  大屏样式 **/
+		@media screen and (min-width: 900px){
+		}
+	</style>
+</head>
+<body data-spy="scroll" data-target="#myScrollspy" data-offset="90">
+<div th:include="common :: hello">what?</div>
+<div class="container mainContainer clearFloat">
+	   <div class="row">
+	      <div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12">
+	      		<div class="page-header" th:if="${babyId} > 0">
+				    <h1>编辑宝宝《<span th:utext="${babyName}"></span>》基本信息
+				    </h1>
+				</div>
+				<div class="layui-tab layui-tab-brief" lay-filter="resultTabBrief">
+				  <ul th:if="${babyId} gt 0" class="layui-tab-title">
+				    <li th:if="${baby.born}" class="layui-this">已出生</li>
+				    <li th:if="${!baby.born}" class="layui-this">备孕中</li>
+				  </ul>
+				   <ul th:if="${babyId} lt 1" class="layui-tab-title">
+				    <li class="layui-this">已出生</li>
+				    <li>备孕中</li>
+				  </ul>
+				  <div class="layui-tab-content">
+				    <div class="layui-tab-item layui-show">
+				      <form class="form-horizontal" role="form" id="bornForm">
+						  <div class="form-group">
+						    <label class="col-sm-2 control-label">头像地址</label>
+						    <div class="col-sm-4">
+						      <input name="head_pic" class="form-control" type="text" th:attr="value=${babyId} gt 0 ? ${baby.headPic}: ''" placeholder="请输入宝宝头像地址" />
+						    </div>
+						    <label class="col-sm-2 control-label">家中排行<span style="font-size: 10px;"><font color="red">*</font>必填</span></label>
+						    <div class="col-sm-4">
+						      <input name="sorting" class="form-control" type="number" min="1" step="1" th:attr="value=${babyId} gt 0 ? ${baby.sorting}: ''" placeholder="请输入这是你的第几个宝宝" empty="false"/>
+						    </div>
+						  </div>
+						  <div class="form-group">
+						    <label class="col-sm-2 control-label">宝宝名称<span style="font-size: 10px;"><font color="red">*</font>必填</span></label>
+						    <div class="col-sm-4">
+						      <input name="name" class="form-control" type="text" th:attr="value=${babyId} gt 0 ? ${baby.name}: ''" placeholder="请输入宝宝名字" empty="false"/>
+						    </div>
+						    <label class="col-sm-2 control-label">宝宝昵称</label>
+						    <div class="col-sm-4">
+						      <input name="nickname" class="form-control" type="text" th:attr="value=${babyId} gt 0 ? ${baby.nickname}: ''" placeholder="请输入宝宝昵称，不填默认名字"/>
+						    </div>
+						  </div>
+						  <div class="form-group">
+						    <label class="col-sm-2 control-label">新历生日<span style="font-size: 10px;"><font color="red">*</font>必填</span></label>
+						    <div class="col-sm-4">
+						      <input name="gregorian_birthday" class="form-control" type="date" th:attr="value=(${babyId} gt 0 and ${baby.gregorianBirthDay} != null)? ${#dates.format(baby.gregorianBirthDay, 'yyyy-MM-dd')}: ''" placeholder="请选择新历生日" empty="false"/>
+						    </div>
+						    <label class="col-sm-2 control-label">农历生日<span style="font-size: 10px;"><font color="red">*</font>必填</span></label>
+						    <div class="col-sm-4">
+						      <input name="lunar_birthday" class="form-control" type="date" th:attr="value=(${babyId} gt 0 and ${baby.lunarBirthDay} != null)? ${#dates.format(baby.lunarBirthDay, 'yyyy-MM-dd')}: ''" placeholder="请选择农历生日" empty="false"/>
+						    </div>
+						  </div>
+						  <div class="form-group">
+						    <label class="col-sm-2 control-label">怀孕日期</label>
+						    <div class="col-sm-4">
+						      <input name="pregnancy_date" class="form-control" type="date" th:attr="value=(${babyId} gt 0 and ${baby.pregnancyDate} != null)? ${#dates.format(baby.pregnancyDate, 'yyyy-MM-dd')}: ''" placeholder="请选择怀孕日期" />
+						    </div>
+						    <label class="col-sm-2 control-label">预产期</label>
+						    <div class="col-sm-4">
+						      <input name="pre_production" class="form-control" type="date" th:attr="value=(${babyId} gt 0 and ${baby.preProduction} != null)? ${#dates.format(baby.preProduction, 'yyyy-MM-dd')}: ''" placeholder="请选择预产期"/>
+						    </div>
+						  </div>
+						  <div class="form-group">
+						    <label class="col-sm-2 control-label">性别</label>
+						    <div class="col-sm-4">
+						        <select name="sex" class="form-control">
+						          <option value="未知" th:selected="${babyId} gt 0 and ${baby.sex=='未知'}">未知</option>
+						          <option value="男孩" th:selected="${babyId} gt 0 and ${baby.sex=='男孩'}">男孩</option>
+						          <option value="女孩" th:selected="${babyId} gt 0 and ${baby.sex=='女孩'}">女孩</option>
+						        </select>
+						     </div>
+						     <label class="col-sm-2 control-label">健康状态</label>
+						    <div class="col-sm-4">
+						        <select name="healthy_state" class="form-control">
+						          <option value="0" th:selected="${babyId} gt 0 and ${baby.healthyState==0}">非常健康</option>
+						          <option value="1" th:selected="${babyId} gt 0 and ${baby.healthyState==1}">很健康</option>
+						          <option value="2" th:selected="${babyId} gt 0 and ${baby.healthyState==2}">生病了</option>
+						          <option value="3" th:selected="${babyId} gt 0 and ${baby.healthyState==3}">非常糟糕</option>
+						        </select>
+						     </div>
+						  </div>
+						  <div class="form-group">
+						    <label class="col-sm-2 control-label">个性签名</label>
+						    <div class="col-sm-10">
+						        <textarea name="personalized_signature" th:utext="${babyId} gt 0 ? ${baby.personalizedSignature} : ''" class="form-control" rows="5" cols="4"></textarea>
+						     </div>
+						  </div>
+					    <div class="form-group">
+						    <label class="col-sm-2 control-label">宝宝简介</label>
+						    <div class="col-sm-10">
+						        <textarea name="introduction" th:utext="${babyId} gt 0 ? ${baby.introduction}: ''" class="form-control" rows="5" cols="4"></textarea>
+						     </div>
+						  </div>
+					    <div class="form-group" style="text-align: center;">
+					    	<button type="button" class="btn btn-info" style="min-width: 120px;" onclick="submitThis();">提交</button>
+					    	<button th:if="${babyId} > 0" type="button" class="btn btn-info" style="min-width: 120px; margin-left: 40px;" onclick="deleteThis();">删除</button>
+					    </div>
+					   </form>
+				    </div>
+				    <div class="layui-tab-item">
+				    	<form class="form-horizontal" role="form" id="noBornForm">
+						  <div class="form-group">
+						    <label class="col-sm-2 control-label">头像地址</label>
+						    <div class="col-sm-4">
+						      <input name="head_pic" class="form-control" type="text" th:attr="value=${babyId} gt 0 ? ${baby.headPic}: ''" placeholder="请输入宝宝头像地址" />
+						    </div>
+						    <label class="col-sm-2 control-label">家中排行<span style="font-size: 10px;"><font color="red">*</font>必填</span></label>
+						    <div class="col-sm-4">
+						      <input name="sorting" class="form-control" type="number" min="1" step="1" th:attr="value=${babyId} gt 0 ? ${baby.sorting}: ''" placeholder="请输入这是你的第几个宝宝" empty="false"/>
+						    </div>
+						  </div>
+						  <div class="form-group">
+						    <label class="col-sm-2 control-label">宝宝名称<span style="font-size: 10px;"><font color="red">*</font>必填</span></label>
+						    <div class="col-sm-4">
+						      <input name="name" class="form-control" type="text" th:attr="value=${babyId} gt 0 ? ${baby.name}: ''" placeholder="请输入宝宝名字" empty="false"/>
+						    </div>
+						    <label class="col-sm-2 control-label">宝宝昵称</label>
+						    <div class="col-sm-4">
+						      <input name="nickname" class="form-control" type="text" th:attr="value=${babyId} gt 0 ? ${baby.nickname}: ''" placeholder="请输入宝宝昵称，不填默认名字"/>
+						    </div>
+						  </div>
+						  <div class="form-group">
+						    <label class="col-sm-2 control-label">怀孕日期</label>
+						    <div class="col-sm-4">
+						      <input name="pregnancy_date" class="form-control" type="date" th:attr="value=(${babyId} gt 0 and ${baby.pregnancyDate} != null)? ${#dates.format(baby.pregnancyDate, 'yyyy-MM-dd')}: ''" placeholder="请选择怀孕日期" />
+						    </div>
+						    <label class="col-sm-2 control-label">预产期<span style="font-size: 10px;"><font color="red">*</font>必填</span></label>
+						    <div class="col-sm-4">
+						      <input name="pre_production" class="form-control" type="date" th:attr="value=(${babyId} gt 0 and ${baby.preProduction} != null)? ${#dates.format(baby.preProduction, 'yyyy-MM-dd')}: ''" placeholder="请选择预产期" empty="false"/>
+						    </div>
+						  </div>
+						  <div class="form-group">
+						    <label class="col-sm-2 control-label">个性签名</label>
+						    <div class="col-sm-10">
+						        <textarea name="personalized_signature" th:utext="${babyId} gt 0 ? ${baby.personalizedSignature}: ''" class="form-control" rows="5" cols="4"></textarea>
+						     </div>
+						 </div>
+					    <div class="form-group" style="text-align: center;">
+					    	<button type="button" class="btn btn-info" style="min-width: 120px;" onclick="submitThis();">提交</button>
+					    	<button th:if="${babyId} > 0" type="button" class="btn btn-info" style="min-width: 120px; margin-left: 40px;" onclick="deleteThis();">删除</button>
+					    </div>
+					   </form>
+				    </div>
+				  </div>
+				</div>
+				
+	      </div>
+	   </div> 
+</div>
+</body>
+
+<div th:include="common-js :: commJs">what?</div>
+<script th:src="@{/page/js/baby/new-or-manage.js}"></script>
+<script th:inline="javascript">//引用  
+	var isLoginUser = /*[[${isLoginUser}]]*/;//取值 
+	var uid = /*[[${uid}]]*/;//取值
+	var babyId = /*[[${babyId}]]*/;//取值babyId,当编辑的时候才有值
+	var dataId = /*[[${dataId}]]*/;//取值babyId,当编辑的时候才有值
+</script> 
+</html>

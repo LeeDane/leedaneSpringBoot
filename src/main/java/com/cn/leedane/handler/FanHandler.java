@@ -117,7 +117,7 @@ public class FanHandler {
 		if(!redisUtil.hasKey(attentionIDKey)){
 			Map<Double, String> scoreMembers = new HashMap<Double, String>();
 			long count = 1;
-			String sql = "select id, to_user_id remark from "+DataTableType.粉丝.value+" f where status=? and create_user_id=? order by id";
+			String sql = "select id, to_user_id from "+DataTableType.粉丝.value+" f where status=? and create_user_id=? order by id";
 			List<Map<String, Object>> list = fanMapper.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, toUserId);
 			if(list != null && list.size() > 0){
 				for(Map<String, Object> map: list){

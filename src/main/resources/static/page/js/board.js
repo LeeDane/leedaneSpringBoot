@@ -1,7 +1,7 @@
 layui.use(['layer', 'laypage'], function(){
 	layer = layui.layer;
 	laypage = layui.laypage;
-	initPage(".pagination", "getMessageBoards");
+	/*initPage(".pagination", "getMessageBoards");*/
 	$commentListContainer = $("#comment-list-container");
 	$container= $(".container");
 	$container.on("click", ".reply-other-btn", function(){
@@ -75,7 +75,7 @@ function getMessageBoards(){
 						$commentListContainer.append('还没有留言，请给TA留言！');
 					}else{
 						$commentListContainer.append('已经没有更多的留言啦，请重新选择！');
-						pageDivUtil(data.total);
+						/*pageDivUtil(data.total);*/
 					}
 					return;
 				}

@@ -361,7 +361,7 @@ function addOrEditCommit(obj){
 			$(this).focus();
 			layer.msg($(this).attr("placeholder"));
 			flag = false;
-			return;
+			return flag;
 		}
 			
 		params[name] = $(this).val();

@@ -440,7 +440,9 @@ public class EnumUtil {
 		完成状态的订单无法删除的异常(4007),
 		请使用有商城管理员权限的账号登录(4008),
 		RSA加密解密异常(4009),
-		测试角色权限受限异常(4010)
+		测试角色权限受限异常(4010),
+		该宝宝不存在(4011),
+		该宝宝生活方式记录不存在(4012)
 		;
 		
 		private ResponseCode(int value) {
@@ -615,6 +617,92 @@ public class EnumUtil {
 	 */
 	public static String getMallOrderType(int value){
 		for(MallOrderType nt: MallOrderType.values()){
+			if(nt.value == value){
+				return nt.name();
+			}
+		}
+		return "";
+	}
+	
+	
+	/**
+	 * 宝宝的生活方式
+	 * @author LeeDane
+	 * 2018年6月12日 下午5:40:49
+	 * version 1.0
+	 */
+	public enum BabyLifeType {
+		吃喝(1),睡觉(2), 洗刷(3), 臭臭(4);
+	
+		private BabyLifeType(int value) {
+			this.value = value;
+		}
+		public final int value;
+	}
+	/**
+	 * 获取宝宝的生活方式
+	 * @param value
+	 * @return
+	 */
+
+	public static String getBabyLifeType(int value){
+		for(BabyLifeType nt: BabyLifeType.values()){
+			if(nt.value == value){
+				return nt.name();
+			}
+		}
+		return "";
+	}
+	
+	/**
+	 * 宝宝的喂养方式
+	 * @author LeeDane
+	 * 2018年6月12日 下午4:37:55
+	 * version 1.0
+	 */
+	public enum BabyEatType {
+		亲喂养(1),瓶喂养(2), 碗喂养(3);
+	
+		private BabyEatType(int value) {
+			this.value = value;
+		}
+		public final int value;
+	}
+	/**
+	 * 获取宝宝的喂养方式
+	 * @param value
+	 * @return
+	 */
+	public static String getBabyEatType(int value){
+		for(BabyEatType nt: BabyEatType.values()){
+			if(nt.value == value){
+				return nt.name();
+			}
+		}
+		return "";
+	}
+	
+	/**
+	 * 宝宝的反应情况
+	 * @author LeeDane
+	 * 2018年6月12日 下午4:31:50
+	 * version 1.0
+	 */
+	public enum BabyReaction {
+		积极配合(1),一般配合(2), 不怎么配合(3), 不配合(4);
+	
+		private BabyReaction(int value) {
+			this.value = value;
+		}
+		public final int value;
+	}
+	/**
+	 * 获取宝宝的反应情况
+	 * @param value
+	 * @return
+	 */
+	public static String getBabyReaction(int value){
+		for(BabyReaction nt: BabyReaction.values()){
 			if(nt.value == value){
 				return nt.name();
 			}

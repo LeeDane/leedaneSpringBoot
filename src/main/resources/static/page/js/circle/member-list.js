@@ -1,6 +1,7 @@
-layui.use(['layer', 'form'], function(){
-	layer = layui.layer;
-	form = layui.form;
+layui.use(['layer', 'form', 'laypage'], function(){
+	  layer = layui.layer;
+	  form = layui.form;
+	  laypage = layui.laypage;
 	  form.on('switch(has_question)', function(data){
 	  var oo = $(data.elem);
 	  var dd = oo.closest(".layui-input-block");
@@ -41,7 +42,7 @@ layui.use(['layer', 'form'], function(){
 		});
 	  //各种基于事件的操作，下面会有进一步介绍
 	  
-	initPage(".pagination", "getCircleMembers");
+	/*initPage(".pagination", "getCircleMembers");*/
 	$circleEditModal = $("#edit-circle-modal");
 	$("[data-toggle='tooltip']").tooltip();
 	
@@ -132,7 +133,7 @@ function getCircleMembers(){
 						$tableContainer.append('<tr><td colspan="7">该圈子还没有任何的成员！</td></tr>');
 					}else{
 						$tableContainer.append('<tr><td colspan="7">已经没有更多的成员啦，请重新选择！</td></tr>');
-						pageDivUtil(data.total);
+						/*pageDivUtil(data.total);*/
 					}
 					return;
 				}
@@ -140,7 +141,26 @@ function getCircleMembers(){
 					$tableContainer.append(buildEachCircleMemberRow(i, circles[i]));
 					$("#row-index-"+i).data("member", circles[i]);
 				}
-				pageDivUtil(data.total);
+				/*pageDivUtil(data.total);*/
+				
+				//执行一个laypage实例
+				 laypage.render({
+				    elem: 'item-pager' //注意，这里的 test1 是 ID，不用加 # 号
+				    ,layout: ['prev', 'page', 'next', 'count', 'skip']
+				    ,count: data.total //数据总数，从服务端得到
+				    ,limit: pageSize
+				    ,theme: '#337ab7'
+				    , curr: currentIndex + 1
+				    ,jump: function(obj, first){
+					    //obj包含了当前分页的所有参数，比如：
+					    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+					    console.log(obj.limit); //得到每页显示的条数
+					    if(!first){
+					    	currentIndex = obj.curr -1;
+					    	getCircleMembers();
+					    }
+					  }
+				 });
 			}else{
 				ajaxError(data);
 			}
@@ -392,7 +412,7 @@ function doEdit(obj){
 			$(this).focus();
 			layer.msg($(this).attr("placeholder"));
 			flag = false;
-			return;
+			return flag;
 		}
 			
 		params[name] = $(this).val();

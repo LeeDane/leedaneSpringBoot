@@ -57,6 +57,9 @@
 				background-color: #fff;
 			}
 			
+			.layui-laydate-main{
+				width: 260px!important;
+			}
 		}
 		
 		
@@ -250,67 +253,94 @@
 			float: right!important;
 			margin-right: 5px!important;
 		}
+		
+		.current-focus{
+		    position: absolute; 
+		    width: 0; 
+		    margin: 10px auto; 
+		    color: red; 
+		    border: 8px solid transparent;
+        	border-top: 8px solid red; 
+        	box-shadow: 0 -12px 0 -4px;
+		}
+		
+		 .eat-box {
+		 	position: absolute; 
+	        width: 0;
+            height: 0;
+            left: -5px;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 10px solid transparent;
+            border-right: 10px solid #d9edf7;
+	    }
+	    
+	    .sleep-box {
+		 	position: absolute; 
+	        width: 0;
+            height: 0;
+            left: -5px;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 10px solid transparent;
+            border-right: 10px solid #dff0d8;
+	    }
+	    
+	    .swap-box {
+		 	position: absolute; 
+	        width: 0;
+            height: 0;
+            left: -5px;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 10px solid transparent;
+            border-right: 10px solid #fcf8e3;
+	    }
+	    
+	    .sick-box {
+		 	position: absolute; 
+	        width: 0;
+            height: 0;
+            left: -5px;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 10px solid transparent;
+            border-right: 10px solid #f2dede;
+	    }
+	    .table{
+	    	margin-bottom: 0px!important;
+	    }
 	</style>
 </head>
 <body data-spy="scroll" data-target="#myScrollspy" data-offset="90">
 <div th:include="common :: hello">what?</div>
 <div class="container mainContainer clearFloat">
-	   <div class="row">
+		<div class="row" th:if="${babyId} lt 1">
+			<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+				<a href="/baby/add" class="btn btn-primary btn-sm create-circle" role="button" data-toggle="tooltip" title="" data-original-title="添加一个宝宝">您还没有宝宝，点击这里去添加宝宝</a>
+			</div>
+		</div>
+	   <div class="row" th:if="${babyId} gt 0">
 		   <div class="col-lg-3 col-sm-3 col-md-12 col-xs-12">
 		   		<div class="row" style="border: 1px solid #fff;background-color: #fff; margin-bottom: 20px;">
 		   			<div class="col-lg-12">
-		   				<a href="javascript:void(0);" class="btn btn-primary btn-sm create-circle" role="button" data-toggle="tooltip" title="" data-original-title="添加一个宝宝">添加宝宝</a>
+		   				<a href="/baby/add" class="btn btn-primary btn-sm create-circle" role="button" data-toggle="tooltip" title="" data-original-title="添加一个宝宝" style="margin-top: 8px;">添加新宝宝</a>
+		   				<a th:if="${babyId gt 0}" th:href="'/baby/'+${babyId}+'/setting'" class="btn btn-primary btn-sm create-circle" role="button" data-toggle="tooltip" title="" data-original-title="设置" style="margin-top: 8px;">
+		   					 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> 设置
+		   				</a>
 				   		<div class="row" id="user-img">
 				   			<!-- <img src="images/main_content_img.jpg" width="200px" height="200px" class="img-circle"> -->
 				   		</div>
 				   		<div class="row" id="baby-contrainer">
-				   			<div class="col-lg-4 col-sm-4 col-md-4 col-xs-4">
-					   			<div style="display: inline-block; text-align: center;">
-					   				<img src="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_20170623175743timg.jpg" width="60px" height="60px" class="img-circle" />
+				   			<div th:each="mybaby,iterStat : ${babys}" class="col-lg-4 col-sm-4 col-md-4 col-xs-4">
+				   				<div th:if="${mybaby.current}" class="current-focus"></div>
+					   			<div style="display: inline-block; text-align: center;" th:onclick="'window.open(\'/baby/' + ${mybaby.id}+'\', \'_self\')'">
+					   				<img th:src="${mybaby.pic}" width="60px" height="60px" class="img-circle" />
 					   				<br/>
-					   				<label style="margin-top: 5px;">妍妍公主</label>
+					   				<label style="margin-top: 5px; max-width: 64px; height: 20px; overflow: hidden; text-overflow:ellipsis; white-space: nowrap;" th:utext="${mybaby.nickname}" th:title="${mybaby.nickname}"></label>
 					   			</div>
 					   		</div>
 				   			
-				   			<div class="col-lg-4 col-sm-4 col-md-4 col-xs-4">
-					   			<div style="display: inline-block; text-align: center;">
-					   				<img src="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_20170623175743timg.jpg" width="60px" height="60px" class="img-circle" />
-					   				<br/>
-					   				<label style="margin-top: 5px;">小胖子</label>
-					   			</div>
-					   		</div>
-				   			
-				   			<div class="col-lg-4 col-sm-4 col-md-4 col-xs-4">
-					   			<div style="display: inline-block; text-align: center;">
-					   				<img src="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_20170623175743timg.jpg" width="60px" height="60px" class="img-circle" />
-					   				<br/>
-					   				<label style="margin-top: 5px;">妍妍公主</label>
-					   			</div>
-					   		</div>
-				   			
-				   			<div class="col-lg-4 col-sm-4 col-md-4 col-xs-4">
-					   			<div style="display: inline-block; text-align: center;">
-					   				<img src="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_20170623175743timg.jpg" width="60px" height="60px" class="img-circle" />
-					   				<br/>
-					   				<label style="margin-top: 5px;">小胖子</label>
-					   			</div>
-					   		</div>
-					   		
-					   		<div class="col-lg-4 col-sm-4 col-md-4 col-xs-4">
-					   			<div style="display: inline-block; text-align: center;">
-					   				<img src="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_20170623175743timg.jpg" width="60px" height="60px" class="img-circle" />
-					   				<br/>
-					   				<label style="margin-top: 5px;">妍妍公主</label>
-					   			</div>
-					   		</div>
-				   			
-				   			<div class="col-lg-4 col-sm-4 col-md-4 col-xs-4">
-					   			<div style="display: inline-block; text-align: center;">
-					   				<img src="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_20170623175743timg.jpg" width="60px" height="60px" class="img-circle" />
-					   				<br/>
-					   				<label style="margin-top: 5px;">小胖子</label>
-					   			</div>
-					   		</div>
 				   		</div>
 				   	</div>
 		   		</div>
@@ -320,9 +350,20 @@
 					    <div class="panel-heading">
 					        <h3 class="panel-title">
 					            	<span th:utext="${babyName != null ? babyName : '宝宝'}"></span>的基本信息
+					            	<button th:if="${babyId} > 0" th:onclick="'window.open(\'/baby/' + ${babyId} + '/manage\')'" type="button" class="btn btn-info btn-xs" aria-label="Left Align" style="float: right;">
+									  <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+									</button>
 					        </h3>
 					    </div>
-					    <div class="panel-body" id="attentions">
+					    <div class="panel-body" id="base-info">
+					    	<div class="table-responsive">
+					    		<table class="table table-hover table-condensed">
+					    			<tr th:each="babyinfo,iterStat : ${infos}">
+					    				<td th:utext="${babyinfo.key}" width="80px">男性男性性别</td>
+					    				<td th:utext="${babyinfo.value}">男性男性性别男性男性性别男性男性性别男性男性性别男性男性性别</td>
+					    			</tr>
+					    		</table>
+					    	</div>
 					        <!-- <div class="row" >
 					        	<img class="img-circle" style="margin-left: 20px;" alt="" width="30" height="30" src="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_20170623175743timg.jpg" /><span>&nbsp;&nbsp;&nbsp;&nbsp;test&nbsp;(6月前)</span>
 					        </div> -->
@@ -335,6 +376,9 @@
 					    <div class="panel-heading">
 					        <h3 class="panel-title">
 					            	最近吃记录
+					            	<button th:if="${babyId} > 0" th:onclick="'window.open(\'/baby/' + ${babyId} + '/eat\')'" type="button" class="btn btn-primary btn-xs" aria-label="Left Align" style="float: right;">
+									  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+									</button>
 					        </h3>
 					    </div>
 					    <div class="panel-body" id="attentions">
@@ -350,6 +394,9 @@
 					    <div class="panel-heading">
 					        <h3 class="panel-title">
 					            	最近睡记录
+					            	<button th:if="${babyId} > 0" th:onclick="'window.open(\'/baby/' + ${babyId} + '/sleep\')'" type="button" class="btn btn-success btn-xs" aria-label="Left Align" style="float: right;">
+									  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+									</button>
 					        </h3>
 					    </div>
 					    <div class="panel-body" id="fans">
@@ -363,7 +410,10 @@
 		   			<div class="panel panel-info">
 					    <div class="panel-heading">
 					        <h3 class="panel-title">
-					            	最近穿记录
+					            	最近洗记录
+					            	<button th:if="${babyId} > 0" th:onclick="'window.open(\'/baby/' + ${babyId} + '/wash\')'" type="button" class="btn btn-warning btn-xs" aria-label="Left Align" style="float: right;">
+									  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+									</button>
 					        </h3>
 					    </div>
 					    <div class="panel-body" id="visitors-list">
@@ -374,75 +424,265 @@
 					</div>
 		   		</div>
 		   		
+		   		<div class="row">
+		   			<div class="panel panel-info">
+					    <div class="panel-heading">
+					        <h3 class="panel-title">
+					            	最近臭臭记录
+					            	<button th:if="${babyId} > 0" th:onclick="'window.open(\'/baby/' + ${babyId} + '/sick\')'" type="button" class="btn btn-danger btn-xs" aria-label="Left Align" style="float: right;">
+									  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+									</button>
+					        </h3>
+					    </div>
+					    <div class="panel-body" id="attentions">
+					        <!-- <div class="row" >
+					        	<img class="img-circle" style="margin-left: 20px;" alt="" width="30" height="30" src="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_20170623175743timg.jpg" /><span>&nbsp;&nbsp;&nbsp;&nbsp;test&nbsp;(6月前)</span>
+					        </div> -->
+					    </div>
+					</div>
+		   		</div>
+		   		
 		   </div>
 	      <div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">
-				<div class="row">
+				<!-- <div class="row">
 					<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
 			      		 <a href="javascript:void(0);" class="btn btn-success btn-sm" role="button" data-toggle="tooltip" title="">添加吃</a>
 			      		 <a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button" data-toggle="tooltip" title="">添加睡</a>
-			      		 <a href="javascript:void(0);" class="btn btn-warning btn-sm" role="button" data-toggle="tooltip" title="">添加穿</a>
+			      		 <a href="javascript:void(0);" class="btn btn-warning btn-sm" role="button" data-toggle="tooltip" title="">添加洗</a>
 	      			</div>
-	      		</div>
-	      		<div class="row" style="text-align: center; margin-top: 8px;">
+	      		</div> 
+	      		<hr /> -->
+	      		
+	      		<div class="row" style="text-align: center; margin-top: 15px;">
 	      			<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
-	      				<span style="font-size: 18px;" >------------- 2018-05-30 -----------------</span>
+	      				<span style="font-size: 18px;" >------------- <span id="show-occur-date"></span> -----------------</span>
 	      			</div>
 	      		</div>
-	      		<div class="row">
+	      		<hr />
+	      		
+	      		<div class="row" style="margin-top: 15px;">
 	      			<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12"  >
 	      				<div class="row" style="margin-left: 0px;">
-	      					<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12" style="background-color: #4cae4c; ">
+	      					<div class="col-lg-3 col-sm-3 col-md-12 col-xs-12" style="background-color: #337ab7; ">
 	      						<div class="row">
-	      							<div class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="text-align: center; position: relative;  height: 50px; border-right: 1px dotted #d9edf7;">
-	      								<div style="height: 50px; position: absolute; top: 20%; color: #fff; font-size: 20px;" >吃</div>
+	      							<div class="col-lg-4 col-sm-4 col-md-4 col-xs-4" style="text-align: center; position: relative;  height: 50px; border-right: 1px dotted #d9edf7;">
+	      								<div style="width: 20px; height: 50px; position: absolute; top: 20%; color: #fff; font-size: 20px;" >吃</div>
 	      							</div>
-	      							<div class="col-lg-6 col-sm-6 col-md-6 col-xs-6" style="text-align: center; position: relative;  height: 50px;">
-	      								<div style="height: 50px; position: absolute; top: 20%; color: #fff; font-size: 20px;" >10次</div>
+	      							<div class="col-lg-8 col-sm-8 col-md-8 col-xs-8" style="text-align: center; position: relative;  height: 50px;">
+	      								<div style="height: 50px; position: absolute; top: 20%; color: #fff; font-size: 20px;" ><span id="eat-number"></span>次</div>
 	      							</div>
 	      						</div>
 	      					</div>
-	      					<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12" style="background-color: #337ab7; min-height: 50px;">
+	      					<div class="col-lg-3 col-sm-3 col-md-12 col-xs-12" style="background-color: #5cb85c; ">
 	      						<div class="row">
-	      							<div class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="text-align: center; position: relative;  height: 50px; border-right: 1px dotted #d9edf7;">
-	      								<div style="height: 50px; position: absolute; top: 20%; color: #fff; font-size: 20px;" >睡</div>
+	      							<div class="col-lg-4 col-sm-4 col-md-4 col-xs-4" style="text-align: center; position: relative;  height: 50px; border-right: 1px dotted #d9edf7;">
+	      								<div style="width: 20px; height: 50px; position: absolute; top: 20%; color: #fff; font-size: 20px;" >睡</div>
 	      							</div>
-	      							<div class="col-lg-6 col-sm-6 col-md-6 col-xs-6" style="text-align: center; position: relative;  height: 50px;">
-	      								<div style="height: 50px; position: absolute; top: 20%; color: #fff; font-size: 20px;" >10次</div>
+	      							<div class="col-lg-8 col-sm-8 col-md-8 col-xs-8" style="text-align: center; position: relative;  height: 50px;">
+	      								<div style="height: 50px; position: absolute; top: 20%; color: #fff; font-size: 20px;" ><span id="sleep-number"></span>次</div>
 	      							</div>
 	      						</div>
 	      					</div>
-	      					<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12" style="background-color: #f0ad4e; min-height: 50px;">
+	      					<div class="col-lg-3 col-sm-3 col-md-12 col-xs-12" style="background-color: #f0ad4e;">
 	      						<div class="row">
-	      							<div class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="text-align: center; position: relative;  height: 50px; border-right: 1px dotted #d9edf7;">
-	      								<div style="height: 50px; position: absolute; top: 20%; color: #fff; font-size: 20px;" >穿</div>
+	      							<div class="col-lg-4 col-sm-4 col-md-4 col-xs-4" style="text-align: center; position: relative;  height: 50px; border-right: 1px dotted #d9edf7;">
+	      								<div style="width: 20px; height: 50px; position: absolute; top: 20%; color: #fff; font-size: 20px;" >洗</div>
 	      							</div>
-	      							<div class="col-lg-6 col-sm-6 col-md-6 col-xs-6" style="text-align: center; position: relative;  height: 50px;">
-	      								<div style="height: 50px; position: absolute; top: 20%; color: #fff; font-size: 20px;" >10次</div>
+	      							<div class="col-lg-8 col-sm-8 col-md-8 col-xs-8" style="text-align: center; position: relative;  height: 50px;">
+	      								<div style="height: 50px; position: absolute; top: 20%; color: #fff; font-size: 20px;" ><span id="wash-number"></span>次</div>
+	      							</div>
+	      						</div>
+	      					</div>
+	      					<div class="col-lg-3 col-sm-3 col-md-12 col-xs-12" style="background-color: #d9534f;">
+	      						<div class="row">
+	      							<div class="col-lg-4 col-sm-4 col-md-4 col-xs-4" style="text-align: center; position: relative;  height: 50px; border-right: 1px dotted #d9edf7;">
+	      								<div style="width: 20px; height: 50px; position: absolute; top: 20%; color: #fff; font-size: 20px;" >臭</div>
+	      							</div>
+	      							<div class="col-lg-8 col-sm-8 col-md-8 col-xs-8" style="text-align: center; position: relative;  height: 50px;">
+	      								<div style="height: 50px; position: absolute; top: 20%; color: #fff; font-size: 20px;" ><span id="sick-number"></span>次</div>
 	      							</div>
 	      						</div>
 	      					</div>
 	      				</div>
 		      			<!-- 当日统计：<span class="layui-badge layui-bg-green">吃5次</span>
 		      			<span class="layui-badge layui-bg-blue">吃5次</span>
-		      			<span class="layui-badge layui-bg-orange">穿5次</span> -->
+		      			<span class="layui-badge layui-bg-orange">洗5次</span> -->
 		      		</div>
-		      		<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+		      		
+	      		</div>
+	      		<hr />
+	      		
+	      		<div class="row">
+	      			<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
 		      			<div id="echarts" style="width: 100%;height:400px;"></div>
 		      		</div>
 	      		</div>
-	      		<div class="row">
-	      			<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12" style="background: #fff; margin: 5px; margin-right: 10px;">
-	      				吃
-	      			</div>
-	      		</div>
+	      		<hr />
+	      		
+	      		
+	      		<div >
+		      		<div class="row">
+		      			<div id="lifes-contrainer" class="col-lg-12 col-sm-12 col-md-12 col-xs-12" style="margin: 5px; margin-right: 10px;">
+		      				<div class="panel panel-info">
+								<div class="panel-heading">
+									<div class="eat-box"></div>
+									<h3 class="panel-title">
+										吃 
+									</h3>
+								</div>
+								<div class="panel-body">
+									<div style="word-break:break-all; word-wrap:break-all;">
+										<table class="table" >
+										  <tbody>
+										    <tr>
+										      <td width="120" style="border: 0px solid transparent !important;">Tanmay</td>
+										      <td style="border: 0px solid transparent !important;">BangaloreBangv现场v嘘嘘嘘嘘下大概豆腐干豆腐干士大夫沙发上发呆alo</td>
+										      
+										    </tr>
+										    <tr> 
+										      <td style="border: 0px solid transparent !important;">Sachin</td>
+										      <td style="border: 0px solid transparent !important;">Mumbai</td>
+										    </tr>
+										    <tr>
+										      <td style="border: 0px solid transparent !important;">Uma</td>
+										      <td style="border: 0px solid transparent !important;">Pune</td>
+										    </tr>
+										  </tbody>
+										</table>
+									</div>
+								</div>
+								<div class="panel-footer">
+									<button type="button" class="btn btn-default btn-xs">
+									  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> 删除
+									</button>
+									
+									<button type="button" class="btn btn-default btn-xs">
+									  <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 编辑
+									</button>
+								</div>
+							</div>
+							
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<div class="sleep-box"></div>
+									<h3 class="panel-title">睡</h3>
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">时间：2018年5月8日 10时15分</div>
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">方式：测试</div>
+									</div>
+									<div class="row">
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">时间：2018年5月8日 10时15分</div>
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">方式：测试</div>
+									</div>
+									<div class="row">
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">时间：2018年5月8日 10时15分</div>
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">方式：测试</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="panel panel-warning">
+								<div class="panel-heading">
+									<div class="swap-box"></div>
+									<h3 class="panel-title">洗</h3>
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">时间：2018年5月8日 10时15分</div>
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">方式：测试</div>
+									</div>
+									<div class="row">
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">时间：2018年5月8日 10时15分</div>
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">方式：测试</div>
+									</div>
+									<div class="row">
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">时间：2018年5月8日 10时15分</div>
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">方式：测试</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="panel panel-danger">
+								<div class="panel-heading">
+									<div class="sick-box"></div>
+									<h3 class="panel-title">臭臭</h3>
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">时间：2018年5月8日 10时15分</div>
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">方式：测试</div>
+									</div>
+									<div class="row">
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">时间：2018年5月8日 10时15分</div>
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">方式：测试</div>
+									</div>
+									<div class="row">
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">时间：2018年5月8日 10时15分</div>
+										<div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">方式：测试</div>
+									</div>
+								</div>
+							</div>
+		      			</div>
+		      		</div>
+		      	</div>
 	      </div>
 	      <div class="col-lg-3 col-sm-3 col-md-12 col-xs-12">
 	     	<div class="row">
 	     		<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
 	     			<div class="layui-inline" id="test-n2" ></div>
 	     		</div>
+	     		<hr />
 	     		<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
-	     			jffjfjfjf
+	     			<div class="panel panel-info">
+					    <div class="panel-heading">
+					        <h3 class="panel-title">
+					            	高级搜索
+					        </h3>
+					    </div>
+					    <div class="panel-body" id="attentions">
+					        <!-- <div class="row" >
+					        	<img class="img-circle" style="margin-left: 20px;" alt="" width="30" height="30" src="http://7xnv8i.com1.z0.glb.clouddn.com/leedane_20170623175743timg.jpg" /><span>&nbsp;&nbsp;&nbsp;&nbsp;test&nbsp;(6月前)</span>
+					        </div> -->
+					        <form class="form-horizontal" role="form">
+							  <div class="form-group">
+							    <label class="col-sm-4 control-label">开始时间</label>
+							    <div class="col-sm-8">
+							    	<input type="date" class="form-control" id="advanced-start-time" placeholder="start time"/>
+							    </div>
+							  </div>
+							  <div class="form-group" style="margin-top: 8px;">
+							    <label class="col-sm-4 control-label">结束时间</label>
+							    <div class="col-sm-8">
+							    	<input type="date" class="form-control" id="advanced-end-time" placeholder="end time"/>
+							    </div>
+							  </div>
+							  <div class="form-group">
+							    <label class="col-sm-4 control-label">关键字</label>
+							    <div class="col-sm-8">
+							    	<input name="keyword" type="text" class="form-control" id="advanced-keyword" placeholder="关键字"/>
+							    </div>
+							  </div>
+							  <div class="form-group" style="margin-top: 8px;">
+							    <label class="col-sm-4 control-label">类型</label>
+							    <div class="col-sm-8">
+								    <select id="advanced-life-type" class="form-control">
+								      <option value="0">请选择</option>
+									  <option value="1">吃喝</option>
+									  <option value="2">睡觉</option>
+									  <option value="3">洗刷</option>
+									  <option value="4">臭臭</option>
+									</select>
+								</div>
+							  </div>
+							  <div style="text-align: center;">
+							  	<button type="button" class="btn btn-info" style="min-width: 100%;" onclick="advancedSearch();">高级搜索</button>
+							  </div>
+							  
+							</form>
+					    </div>
+					</div>
 	     		</div>
 	      		 
 	      	</div>
@@ -453,11 +693,47 @@
 
 <div th:include="common-js :: commJs">what?</div>
 <script th:src="@{/page/other/echarts.min.js}"></script>
-<script th:src="@{/page/js/select-material.js}"></script>
-<script th:src="@{/page/other/clipboard/dist/clipboard.min.js}" type="text/javascript"></script>
 <script th:src="@{/page/js/baby/index.js}"></script>
 <script th:inline="javascript">//引用  
 	var isLoginUser = /*[[${isLoginUser}]]*/;//取值 
 	var uid = /*[[${uid}]]*/;//取值
+	var babyId = /*[[${babyId}]]*/;//取值babyId,当编辑的时候才有值
+	var mark = /*[[${mark}]]*/;//取值 
 </script> 
+
+<script type="text/javascript">
+  var socket;
+  
+  
+  if(!window.WebSocket){
+ 
+	  window.WebSocket = window.MozWebSocket;
+  }
+ 
+  reset();
+  
+  function reset(){
+	  if(window.WebSocket){
+		  socket = new WebSocket("ws://127.0.0.1:8897/websocket");
+		  
+		  socket.onmessage = function(event){
+	 
+				console.log("socket.onmessage");
+		  };
+	 
+		  socket.onopen = function(event){
+			  console.log("socket.onopen");
+			  socket.send("大家好！！");
+		  };
+	 
+		  socket.onclose = function(event){
+			  console.log("socket.onclose");
+			  reset();
+		  };
+	  }else{
+			alert("您的浏览器不支持WebSocket协议！");
+	  }
+  }
+	  
+  </script>
 </html>

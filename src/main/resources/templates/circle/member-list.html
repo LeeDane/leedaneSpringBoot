@@ -12,7 +12,7 @@
 	<!-- 测试环境下的引用 -->
 	<link rel="stylesheet" th:if="${isDebug}"  th:href="@{/page/other/bootstrap-switch-master/dist/css/bootstrap3/bootstrap-switch.min.css}" />
 	<link rel="stylesheet" href="/page/other/layui-v2.1.5/css/layui.css"  media="all" />
-	<link rel="stylesheet" th:href="@{/page/other/layui/css/layui.css}" media="all" />
+	<!-- <link rel="stylesheet" th:href="@{/page/other/layui/css/layui.css}" media="all" /> -->
 	<style type="text/css">
 		
 		.container{
@@ -62,7 +62,7 @@
 						    <div class="layui-input-inline">
 						      <input type="number" name="limit_number" th:attr="max=${maxNumber},min=${memberNumber}" th:value="${setting.limitNumber}" required="required" lay-verify="required" placeholder="请输入圈子最大成员人数" autocomplete="off" class="layui-input" />
 						    </div>
-						    <div class="layui-form-mid layui-word-aux">最大<span th:text="${maxNumber}">0</span>人，最少<span th:text="${memberNumber}">0</span>人</div>
+						    <div class="layui-form-mid layui-word-aux">最大<span th:text="${maxNumber}">10</span>人，最少<span th:text="${memberNumber}">0</span>人</div>
 						  </div>
 						  <!-- <div class="layui-form-item">
 						    <label class="layui-form-label">选择框</label>
@@ -163,10 +163,11 @@
 							</table>
 				    	</div>
 			    	</div>
-					<div class="col-lg-8 col-lg-offset-2">
-			   			<nav aria-label="Page navigation">
+					<div class="col-lg-12 col-lg-offset-2">
+			   			<!-- <nav aria-label="Page navigation">
 		  					<ul class="pagination"></ul>
-						</nav>
+						</nav> -->
+						<div id="item-pager"></div>
 			   		</div>
 		</div>
 	</div>

@@ -57,6 +57,7 @@ function isLink(link){
     return urlRegExp.test(url);
 }
 
+
 /**
  * 对空的字符串，以""输出
  * @param str
@@ -540,4 +541,74 @@ function leeCloseModal(obj){
  */
 function leeShowModal(obj){
 	$(".lee-modal-bg").css("display", "block");
+}
+
+/**
+ * 校验链接是否是图片链接
+ * @param link
+ */
+function isImg(link){
+	 if(link){
+		 var index = link.lastIndexOf(".");
+		 if(index > 0){
+			 link = link.substring(index + 1, link.length);
+			 if(link && (link == "png" || link == "jpg" || link == "jpeg"))
+				 return true;
+		 }
+	 }
+	return false;
+}
+
+/**
+ * 校验链接是否是视频链接
+ * @param link
+ */
+function isVideo(link){
+	 if(link){
+		 var index = link.lastIndexOf(".");
+		 if(index > 0){
+			 link = link.substring(index + 1, link.length);
+			 if(link && link == "mp4")
+				 return true;
+		 }
+	 }
+	return false;
+}
+
+/**
+ * 校验链接是否是视频链接
+ * @param link
+ */
+function getVideoHtml(link){
+	 if(isVideo){
+		 return '<video style="width: 100%; max-height: 500px; margin-top: 10px; margin-bottom: 10px;" src="'+ changeNotNullString(link) +'" controls="controls">Your browser does not support the video tag.</video>';
+	 }
+	return "";
+}
+
+/**
+ * 校验链接是否是音频链接
+ * @param link
+ */
+function isAudio(link){
+	 if(link){
+		 var index = link.lastIndexOf(".");
+		 if(index > 0){
+			 link = link.substring(index + 1, link.length);
+			 if(link && link == "mp3")
+				 return true;
+		 }
+	 }
+	return false;
+}
+
+/**
+ * 校验链接是否是音频链接
+ * @param link
+ */
+function getAudioHtml(link){
+	 if(isAudio){
+		 return '<audio style="width: 100%; max-height: 500px; margin-top: 10px; margin-bottom: 10px;" src="'+ changeNotNullString(link) +'" controls="controls">Your browser does not support the audio tag.</audio>';
+	 }
+	return "";
 }

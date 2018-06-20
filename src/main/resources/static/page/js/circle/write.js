@@ -189,7 +189,7 @@ function clearTag(obj){
 			$(this).focus();
 			layer.msg($(this).attr("placeholder"));
 			flag = false;
-			return;
+			return flag;
 		}
 		if(name == "content"){
 			var markdown = $contentContainer.data('markdown');
@@ -239,7 +239,7 @@ function clearTag(obj){
  function buildParams(jsonParams){
   	
   	//是否有图
-  	var $img = $('.img-container').find('img');
+  	var $img = $('.img-container').find('img,audio,video');
   	if($img && $img.length > 0){
   		var imgs = "";
   		$img.each(function(index){
@@ -295,9 +295,24 @@ function clearTag(obj){
 	 var array = links.split(";");
 	 var html = '';
 	 for(var i = 0; i < array.length; i++){
-		html += '<div class="col-lg-4">'+
+		 
+		if(isVideo(array[i])){
+			html += '<div class="col-lg-4">';
+			html += getVideoHtml(array[i]);
+			html += '</div>';
+		}else if(isAudio(array[i])){
+			html += '<div class="col-lg-4">';
+			html += getAudioHtml(array[i]);
+			html += '</div>';
+		}else if(isImg(array[i])){
+			html += '<div class="col-lg-4">'+
 						'<img src="'+ changeNotNullString(array[i])+'" style="width: 100%; height: 180px;" class="img-responsive" onClick="" />'+
 					'</div>';
+		}else{
+			layer.msg("目前只处理图片、音频、视频等格式的文件");
+			return false;
+		}
+		
 		//$contentContainer.val($contentContainer.val() + '![]('+ array[i] +')\r\n');
 	 }
 	 $('.img-container').append(html);

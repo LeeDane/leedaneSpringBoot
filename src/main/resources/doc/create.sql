@@ -956,3 +956,71 @@ CREATE TABLE `t_gallery` (
   CONSTRAINT `FK_p3k7ar9k260jv7c7sves4sgax` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_rqkbmgjk89nmwkx0rj7cxfq92` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=259 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_baby
+-- ----------------------------
+DROP TABLE IF EXISTS `t_baby`;
+CREATE TABLE `t_baby` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(2) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `born` bit(1) DEFAULT b'0' COMMENT '宝宝的类型(0:备孕中， 1：已出生)',
+  `name` varchar(8) NOT NULL COMMENT '宝宝的姓名',
+  `nickname` varchar(8) DEFAULT NULL COMMENT '宝宝的昵称',
+  `gregorian_birthDay` datetime DEFAULT NULL COMMENT '宝宝的公历生日',
+  `lunar_birthDay` datetime DEFAULT NULL COMMENT '宝宝的农历生日',
+  `head_pic` varchar(255) DEFAULT NULL COMMENT '宝宝的头像图片地址',
+  `sex` varchar(10) NOT NULL DEFAULT '未知' COMMENT '宝宝的性别',
+  `personalized_signature` varchar(255) DEFAULT NULL COMMENT '宝宝的个性签名',
+  `healthy_state` int(2) NOT NULL DEFAULT 0 COMMENT '宝宝的健康状态',
+  `sorting` int(2) NOT NULL DEFAULT 1 COMMENT '宝宝的排列序号',
+  `introduction` varchar(255) DEFAULT NULL COMMENT '宝宝的简介',
+  `pregnancy_date` datetime DEFAULT NULL COMMENT '宝宝的怀孕时间',
+  `pre_production` datetime DEFAULT NULL COMMENT '宝宝的预产期',
+  PRIMARY KEY (`id`),
+  KEY `FK_baby_create_user` (`create_user_id`),
+  KEY `FK_baby_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_baby_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_baby_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_baby add constraint t_baby_unique UNIQUE(create_user_id, name);
+
+-- ----------------------------
+-- Table structure for t_baby_life
+-- ----------------------------
+DROP TABLE IF EXISTS `t_baby_life`;
+CREATE TABLE `t_baby_life` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(2) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `baby_id` int(11) DEFAULT NULL COMMENT '宝宝的ID',
+  `life_type` int(1) NOT NULL DEFAULT 1 COMMENT '类型(枚举， 1：吃喝、2：睡觉、3：洗刷 4：生病)',
+  `occur_date` date NOT NULL COMMENT '发生日期',
+  `occur_time` datetime NOT NULL COMMENT '发生时间',
+  `reaction` int(1) NOT NULL DEFAULT 1 COMMENT '宝宝反应情况, 1:积极配合, 2:一般配合, 3:不怎么配合, 4:不配合',
+  `baby_desc` text COMMENT '宝宝的描述信息',
+  `occur_place` varchar(255) COMMENT '发生的位置',
+  `eat_type` int(1) NOT NULL DEFAULT 1 COMMENT '喂养类型(1: 亲喂养, 2:瓶喂养，3:碗喂养)',
+  `left_capacity` float NOT NULL DEFAULT '0.00' COMMENT '亲喂养左侧容量',
+  `right_capacity` float NOT NULL DEFAULT '0.00' COMMENT '亲喂养右侧容量',
+  `capacity` float NOT NULL DEFAULT '0.00' COMMENT '总的容量',
+  `temperature` float NOT NULL DEFAULT '0.00' COMMENT '总的温度',
+  `brand` varchar(50) COMMENT '品牌',
+  `wake_up_time` datetime DEFAULT NULL COMMENT '起床时间',
+  `wash_end_time` datetime DEFAULT NULL COMMENT '洗刷结束时间',
+  PRIMARY KEY (`id`),
+  KEY `FK_baby_life_create_user` (`create_user_id`),
+  KEY `FK_baby_life_modify_user` (`modify_user_id`),
+  KEY `FK_baby_baby_id` (`baby_id`),
+  CONSTRAINT `FK_baby_life_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_baby_life_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_baby_baby_id` FOREIGN KEY (`baby_id`) REFERENCES `t_baby` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+ALTER TABLE t_baby_life ADD INDEX index_baby_life_occur_date(occur_date);

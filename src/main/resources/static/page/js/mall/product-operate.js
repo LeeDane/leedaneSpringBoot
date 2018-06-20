@@ -189,7 +189,7 @@ function clearTag(obj){
 			$(this).focus();
 			layer.msg($(this).attr("placeholder"));
 			flag = false;
-			return;
+			return flag;
 		}
 		if(name == "detail_source"){
 			var markdown = $contentContainer.data('markdown');

@@ -277,9 +277,22 @@ function buildEachPostRow(index, post){
 					if(isNotEmpty(post.imgs)){
 						var imgArray = post.imgs.split(";");
 						for(var imgIndex = 0; imgIndex < imgArray.length; imgIndex++){
-					html += '<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12 img-container">'+
-								'<img src="'+ imgArray[imgIndex] +'" class="img-responsive post-item-img hand" onClick="showImgDialog('+ imgIndex+', \''+ post.imgs +'\');" />'+
-							'</div>';		
+							
+							if(isVideo(imgArray[imgIndex])){
+								html += '<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12 img-container">';
+								html += getVideoHtml(imgArray[imgIndex]);
+								html += '</div>';
+							}else if(isAudio(imgArray[imgIndex])){
+								html += '<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12 img-container">';
+								html += getAudioHtml(imgArray[imgIndex]);
+								html += '</div>';
+							}else if(isImg(imgArray[imgIndex])){
+								html += '<div class="col-lg-4 col-sm-4 col-md-12 col-xs-12 img-container">'+
+										'<img src="'+ imgArray[imgIndex] +'" class="img-responsive post-item-img hand" onClick="showImgDialog('+ imgIndex+', \''+ post.imgs +'\');" />'+
+										'</div>';
+							}else{
+								layer.msg("目前只处理图片、音频、视频等格式的文件");
+							}
 						}
 					}
 				html +='</div>'+

@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 
+import com.cn.leedane.exception.MustAdminLoginException;
+import com.cn.leedane.exception.MustLoginException;
 import com.cn.leedane.exception.TestRoleException;
 import com.cn.leedane.handler.LinkManageHandler;
 import com.cn.leedane.handler.UserHandler;
@@ -544,6 +546,64 @@ public class BaseController {
 	}
 	
 	/**
+	 * 从shiro中解析user数据(用户可能没登录，返回null),不建议使用
+	 * 请参考使用{@link BaseController#getMustLoginUserFromShiro}
+	 * @param message
+	 * @return
+	 */
+	protected UserBean getUserFromShiro(){
+		UserBean user = null;
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        if(currentUser.isAuthenticated()){
+        	Object o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        	user = (UserBean)o;
+        }
+		return user;
+	}
+	
+	/**
+	 * 从shiro中解析user数据(用户必须登录，不然抛 {@link MustLoginException} 异常)
+	 * @param message
+	 * @return
+	 */
+	protected UserBean getMustLoginUserFromShiro(){
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+        if(currentUser.isAuthenticated()){
+        	return (UserBean)currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        }
+        throw new MustLoginException();
+	}
+	
+	/**
+	 * 从shiro中解析管理员登录user数据(用户必须登录，不然抛 {@link MustLoginException} 异常)
+	 * @param message
+	 * @return
+	 */
+	protected UserBean getMustAdminLoginUserFromShiro(){
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+      //后台只有管理员权限才能操作
+        if(currentUser.isAuthenticated() && currentUser.hasRole(RoleController.ADMIN_ROLE_CODE)){
+        	return (UserBean)currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        }
+        throw new MustAdminLoginException();
+	}
+	
+	/**
+	 * 从message中解析user数据
+	 * @param message
+	 * @return
+	 */
+	protected int getUserIdFromShiro(){
+		UserBean user = getMustLoginUserFromShiro();
+		if(user == null)
+			throw new MustLoginException();
+		return user.getId();
+	}
+	
+	/**
 	 * 将请求参数转化成json对象
 	 * @param map
 	 * @return
@@ -666,20 +726,15 @@ public class BaseController {
 	protected String loginRoleCheck(String urlParse, boolean mustLogin, Model model, HttpServletRequest request){
 		//设置统一的请求模式
 		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
-		Object o = null;
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        if(currentUser.isAuthenticated()){
-        	o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-        }
-        
+        UserBean user = getUserFromShiro();
         //设置是否是登录用户
         model.addAttribute("isTestRole", currentUser.hasRole(ConstantsUtil.TEST_ROLE_TEXT));
 		boolean isLogin = false;
 		boolean isAdmin = false;
-		if(o != null){
+		if(user != null){
 			isLogin = true;
-			UserBean user = (UserBean)o;
 			isAdmin = currentUser.hasRole(RoleController.ADMIN_ROLE_CODE);
 			model.addAllAttributes(userHandler.getBaseUserInfo(user.getId()));
 			model.addAttribute("loginUserId", user.getId());
@@ -703,40 +758,12 @@ public class BaseController {
 	 * @param httpSession
 	 * @return
 	 */
-	public String loginRoleCheck(String urlParse, boolean mustAdmin, Model model, HttpSession httpSession, HttpServletRequest request){
+	public String adminLoginRoleCheck(String urlParse, Model model, HttpServletRequest request){
 		//设置统一的请求模式
 		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
-		Object obj = httpSession.getAttribute(UserController.USER_INFO_KEY);
-		UserBean userBean = null;
-		String account = "";
-		boolean isLogin = false;
-		if(obj != null){
-			logger.info("obj不为空");
-			isLogin = !isLogin;
-			userBean = (UserBean)obj;
-
-			//获取当前的Subject  
-	        Subject currentUser = SecurityUtils.getSubject();
-	        
-	        //设置当前用户是否是登录用户
-	        model.addAttribute("isTestRole", currentUser.hasRole(ConstantsUtil.TEST_ROLE_TEXT));
-			//后台只有管理员权限才能操作
-			if(currentUser.hasRole(RoleController.ADMIN_ROLE_CODE)){
-				isLogin = !isLogin;
-				account = userBean.getAccount();
-				model.addAttribute("isLogin", isLogin);
-				model.addAttribute("account", account);
-			}else{
-				httpSession.removeAttribute(UserController.USER_INFO_KEY);
-				model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请使用有管理员权限的账号登录.value));
-				return "redirect:/lg?errorcode=" +EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value +"&t="+ UUID.randomUUID().toString() +"&ref="+ CommonUtil.getFullPath(request);
-			}
-		}else{
-			logger.info("obj为空");
-			model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
-			return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();
-		}
-		
+		UserBean userBean = getMustAdminLoginUserFromShiro();
+		model.addAttribute("isLogin", true);
+		model.addAttribute("account", userBean.getAccount());
 		return StringUtil.isNotNull(urlParse) ? urlParse : "404";
 	}
 }

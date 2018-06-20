@@ -168,80 +168,46 @@ public class HtmlController extends BaseController{
 	
 	@RequestMapping(ControllerBaseNameUtil.my)
 	public String my(Model model, HttpServletRequest request){
-		
-		//获取当前的Subject  
-        Subject currentUser = SecurityUtils.getSubject();
-        if(currentUser.isAuthenticated()){
-        	Object o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-        	if(o != null){
-        		UserBean user = (UserBean)o;
-    			model.addAttribute("uid", user.getId());
-    			model.addAttribute("uaccount", userHandler.getUserName(user.getId()));
-    			model.addAttribute("isLoginUser", true);
-    			return loginRoleCheck("my", true, model, request);
-    		}
-        }
-        return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();	
+		UserBean user = getMustLoginUserFromShiro();
+		model.addAttribute("uid", user.getId());
+		model.addAttribute("uaccount", userHandler.getUserName(user.getId()));
+		model.addAttribute("isLoginUser", true);
+		return loginRoleCheck("my", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.my + "/{uid}")
 	public String my1(@PathVariable(value="uid") int uid, Model model, HttpServletRequest request){
-		//获取当前的Subject  
-        Subject currentUser = SecurityUtils.getSubject();
         checkRoleOrPermission(model, request);
-        
-        if(currentUser.isAuthenticated()){
-        	Object o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-        	if(o != null){
-    			UserBean user = (UserBean)o;
-    			model.addAttribute("uid", uid);
-    			model.addAttribute("uaccount", userHandler.getUserName(uid));
-    			model.addAttribute("isLoginUser", uid == user.getId());
-    			//保存访客记录
-    			if(uid != user.getId())
-    				visitorService.saveVisitor(user, "web网页端", DataTableType.心情.value, uid, ConstantsUtil.STATUS_NORMAL);
-    			return loginRoleCheck("my", true, model, request);
-    		}
-        }
-		return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();	
+        UserBean user = getMustLoginUserFromShiro();
+        model.addAttribute("uid", uid);
+		model.addAttribute("uaccount", userHandler.getUserName(uid));
+		model.addAttribute("isLoginUser", uid == user.getId());
+		//保存访客记录
+		if(uid != user.getId())
+			visitorService.saveVisitor(user, "web网页端", DataTableType.心情.value, uid, ConstantsUtil.STATUS_NORMAL);
+		return loginRoleCheck("my", model, request);
 	}
 	
 	@RequestMapping("user/{uid}/"+ ControllerBaseNameUtil.board)
 	public String board(@PathVariable(value="uid") int uid, Model model, HttpServletRequest request){
 		//获取当前的Subject  
-        Subject currentUser = SecurityUtils.getSubject();
+        //Subject currentUser = SecurityUtils.getSubject();
         checkRoleOrPermission(model, request);
-        
-        if(currentUser.isAuthenticated()){
-        	Object o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-        	if(o != null){
-    			UserBean user = (UserBean)o;
-    			model.addAttribute("uid", uid);
-    			model.addAttribute("uaccount", userHandler.getUserName(uid));
-    			model.addAttribute("isLoginUser", uid == user.getId());
-    			return loginRoleCheck("board", true, model, request);
-    		}
-        }
-		return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();	
+        UserBean user = getMustLoginUserFromShiro();
+        model.addAttribute("uid", uid);
+		model.addAttribute("uaccount", userHandler.getUserName(uid));
+		model.addAttribute("isLoginUser", uid == user.getId());
+		return loginRoleCheck("board", model, request);	
 	}
 	
 	@RequestMapping("user/{uid}/mood/{mid}/"+ ControllerBaseNameUtil.dt)
 	public String moodDetail(@PathVariable(value="uid") int uid, @PathVariable(value="mid") int mid, Model model, HttpServletRequest request){
-		//获取当前的Subject  
-        Subject currentUser = SecurityUtils.getSubject();
         checkRoleOrPermission(model, request);
-        
-        if(currentUser.isAuthenticated()){
-        	Object o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-        	if(o != null){
-    			UserBean user = (UserBean)o;
-    			model.addAttribute("uid", uid);
-    			model.addAttribute("mid", mid);
-    			model.addAttribute("isLoginUser", uid == user.getId());
-    			return loginRoleCheck("mood-detail", true, model, request);
-    		}
-        }
-		return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();	
+        UserBean user = getMustLoginUserFromShiro();
+        model.addAttribute("uid", uid);
+		model.addAttribute("mid", mid);
+		model.addAttribute("isLoginUser", uid == user.getId());
+		return loginRoleCheck("mood-detail", true, model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.pb)

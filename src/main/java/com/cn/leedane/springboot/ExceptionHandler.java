@@ -6,11 +6,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -25,6 +27,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import com.cn.leedane.exception.CompleteOrderDeleteException;
+import com.cn.leedane.exception.MustAdminLoginException;
+import com.cn.leedane.exception.MustLoginException;
 import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.exception.TestRoleException;
@@ -193,6 +197,23 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			logger.error("已经完成的订单被删除的异常");
 			message.put("message", exception.getMessage());
 			message.put("responseCode", ResponseCode.测试角色权限受限异常.value);
+		}else if(exception instanceof MustLoginException){
+			logger.error("必须登录才能使用的异常");
+			if(isPageRequest)
+				return new ModelAndView("redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString());
+			message.put("message", exception.getMessage());
+			message.put("responseCode", ResponseCode.请先登录.value);
+		}else if(exception instanceof MustAdminLoginException){
+			logger.error("必须是管理员账号登录才能使用的异常");
+			if(isPageRequest){
+				//使用权限管理工具进行用户的退出，跳出登录，给出提示信息
+		        SecurityUtils.getSubject().logout();
+				ModelAndView model = new ModelAndView("redirect:/lg?errorcode=" +EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value +"&t="+ UUID.randomUUID().toString() +"&ref="+ CommonUtil.getFullPath(request));
+				//model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请使用有管理员权限的账号登录.value));
+				return model;
+			}
+			message.put("message", exception.getMessage());
+			message.put("responseCode", ResponseCode.请使用有管理员权限的账号登录.value);
 		}/*else if(exception instanceof MobCodeErrorException){
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.验证码验证失败.value));
 			message.put("responseCode", ResponseCode.验证码验证失败.value);

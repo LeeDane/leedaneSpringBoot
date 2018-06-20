@@ -12,9 +12,12 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 public class PushServer {
@@ -31,13 +34,22 @@ public class PushServer {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel channel) throws Exception {
-                        ChannelPipeline p = channel.pipeline();
+                    	ChannelPipeline p = channel.pipeline();
+                        // HttpServerCodec：将请求和应答消息解码为HTTP消息
+                        p.addLast("http-codec",new HttpServerCodec());
+                        // HttpObjectAggregator：将HTTP消息的多个部分合成一条完整的HTTP消息
+                        p.addLast("aggregator",new HttpObjectAggregator(65536));
+                        // ChunkedWriteHandler：向客户端发送HTML5文件
+                        p.addLast("http-chunked",new ChunkedWriteHandler());
+                        
                         p.addLast(new ObjectEncoder());
                         p.addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(null)));
                         //心跳超时
                         p.addLast(new ReadTimeoutHandler(100));
                         
                         p.addLast(new HeartBeatHandler());
+                        
+                       // 配置通道处理  来进行业务处理
                         p.addLast(new ConnectHandler());
                     }
                 });

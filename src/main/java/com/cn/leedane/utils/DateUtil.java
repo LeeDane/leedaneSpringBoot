@@ -36,6 +36,8 @@ public class DateUtil {
 	 * @return
 	 */
 	public static String DateToString (Date date,String format){
+		if(date == null)
+			return null;
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		return dateFormat.format(date);
 	}
@@ -48,6 +50,35 @@ public class DateUtil {
 	 */
 	public static Date stringToDate(String stringDate){
 		return DateUtil.stringToDate(stringDate, DEFAULT_DATE_FORMAT);
+	}
+	
+	/**
+	 * 将日期字符串转成日期,没有日期格式，系统自动判断
+	 * @param stringDate 字符串日期，格式要正确，不然会抛异常
+	 * @param 
+	 * @return
+	 */
+	public static Date stringToDateNoFormat(String stringDate){
+		if(StringUtil.isNull(stringDate))
+			return null;
+		int len = stringDate.length();
+		String format = DEFAULT_DATE_FORMAT;
+		switch(len){
+			case 19:
+				format = "yyyy-MM-dd HH:mm:ss";
+				break;
+			case 14:
+				format = "yyyyMMddHHmmss";
+				break;
+			case 10:
+				format = "yyyy-MM-dd";
+				break;
+			case 8:
+				format = "yyyyMMdd";
+				break;
+			
+		}
+		return DateUtil.stringToDate(stringDate, format);
 	}
 	
 	/**

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -39,98 +38,98 @@ public class AdminHtmlController extends BaseController{
 	}*/
 	
 	@RequestMapping(ControllerBaseNameUtil.ad +"/")
-	public String index1(Model model, HttpSession httpSession, HttpServletRequest request){
+	public String index1(Model model, HttpServletRequest request){
 		//首页不需要验证是否登录
-		return loginRoleCheck("admin/index", model, httpSession, request);
+		return adminLoginRoleCheck("admin/index", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.ad + "/index")
-	public String index2(Model model, HttpSession httpSession, HttpServletRequest request){
-		return index1(model, httpSession, request);
+	public String index2(Model model, HttpServletRequest request){
+		return index1(model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adwc + "/welcome")
-	public String wcWelcome(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/welcome/welcome", true, model, httpSession, request);
+	public String wcWelcome(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/welcome/welcome", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adwc + "/loginHistory")
-	public String wcLoginHistory(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/welcome/loginHistory", true, model, httpSession, request);
+	public String wcLoginHistory(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/welcome/loginHistory", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adwc + "/about")
-	public String wcAbout(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/welcome/about", false, model, httpSession, request);
+	public String wcAbout(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/welcome/about", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adwc + "/contact")
-	public String wcContact(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/welcome/contact", false, model, httpSession, request);
+	public String wcContact(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/welcome/contact", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adwc + "/download")
-	public String wcDownload(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/welcome/download", false, model, httpSession, request);
+	public String wcDownload(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/welcome/download", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adus + "/search")
-	public String usSearch(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/user/search", true, model, httpSession, request);
+	public String usSearch(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/user/search", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adus + "/new")
-	public String usNew(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/user/new", true, model, httpSession, request);
+	public String usNew(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/user/new", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adus + "/black")
-	public String usBlack(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/user/black", true, model, httpSession, request);
+	public String usBlack(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/user/black", model, request);
 	}
 	
 	
 	@RequestMapping(ControllerBaseNameUtil.adbg + "/check")
-	public String bgCheck(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/blog/check", true, model, httpSession, request);
+	public String bgCheck(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/blog/check", model, request);
 	}
 	
 	/****************    权限管理          ***********************/
 	@RequestMapping(ControllerBaseNameUtil.adpm + "/permission")
-	public String pmPermission(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/permission/permission", true, model, httpSession, request);
+	public String pmPermission(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/permission/permission", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adpm + "/impowerPermission")
-	public String pmImpowerPermission(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/permission/impowerRole", true, model, httpSession, request);
+	public String pmImpowerPermission(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/permission/impowerRole", model, request);
 	}
 	
 	/****************    角色管理          ***********************/
 	@RequestMapping(ControllerBaseNameUtil.adpm + "/role")
-	public String pmRole(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/permission/role", true, model, httpSession, request);
+	public String pmRole(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/permission/role", model, request);
 	}
 	
 	/****************   链接管理          ***********************/
 	@RequestMapping(ControllerBaseNameUtil.adpm + "/link")
-	public String pmLink(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/permission/link", true, model, httpSession, request);
+	public String pmLink(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/permission/link", model, request);
 	}
 	
 	/****************   商品管理          ***********************/
 	@RequestMapping(ControllerBaseNameUtil.adsh + "/home")
-	public String shHome(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/mall/home", true, model, httpSession, request);
+	public String shHome(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/mall/home", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adsh + "/product")
-	public String shProduct(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/mall/product", true, model, httpSession, request);
+	public String shProduct(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/mall/product", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adsh + "/product-add")
-	public String shProductAdd(Model model, HttpSession httpSession, HttpServletRequest request){
+	public String shProductAdd(Model model, HttpServletRequest request){
 		S_ProductBean productBean = new S_ProductBean();
 		model.addAttribute("product", productBean);
 		
@@ -139,18 +138,18 @@ public class AdminHtmlController extends BaseController{
 			platforms.add(type.value);
 		}
 		model.addAttribute("platforms", platforms);
-		return loginRoleCheck("admin/mall/product-add", true, model, httpSession, request);
+		return adminLoginRoleCheck("admin/mall/product-add", model, request);
 	}
 	
 	/****************   系统设置--->任务管理          ***********************/
 	@RequestMapping(ControllerBaseNameUtil.adst + "/job")
-	public String stJob(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/setting/job", true, model, httpSession, request);
+	public String stJob(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/setting/job", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adst + "/clearCache")
-	public String stClearCache(Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck("admin/setting/clearCache", true, model, httpSession, request);
+	public String stClearCache(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/setting/clearCache", model, request);
 	}
 	
 	/**
@@ -160,8 +159,8 @@ public class AdminHtmlController extends BaseController{
 	 * @param httpSession
 	 * @return
 	 */
-	public String loginRoleCheck(String urlParse, Model model, HttpSession httpSession, HttpServletRequest request){
-		return loginRoleCheck(urlParse, false, model, httpSession, request);
+	public String loginRoleCheck(String urlParse, Model model, HttpServletRequest request){
+		return adminLoginRoleCheck(urlParse, model, request);
 	}
 	
 	
