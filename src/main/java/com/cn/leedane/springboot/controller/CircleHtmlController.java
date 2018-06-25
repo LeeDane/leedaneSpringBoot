@@ -182,8 +182,6 @@ public class CircleHtmlController extends BaseController{
 		
 		//postId 不为空表示编辑
 		CircleBean circle = circleHandler.getNormalCircleBean(circleId, user);
-		if(circle == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
 		CirclePostBean circlePostBean = new CirclePostBean();
 		//circlePostBean.setHasImg(true);
@@ -217,7 +215,7 @@ public class CircleHtmlController extends BaseController{
         model.addAttribute("post", circlePostBean);
         model.addAttribute("imgs", imgs); //这个是有图像的时候转化下的List列表
         model.addAttribute("tags", tags); //这个是有图像的时候转化下的List列表
-        model.addAttribute("setting", circleSettingHandler.getNormalSettingBean(circleId));
+        model.addAttribute("setting", circleSettingHandler.getNormalSettingBean(circleId, user));
 		return loginRoleCheck("circle/write", true, model, request);
 	}
 	
@@ -235,9 +233,6 @@ public class CircleHtmlController extends BaseController{
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
 		CirclePostBean postBean = circlePostHandler.getNormalCirclePostBean(circle, postId);
-		if(postBean == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该帖子不存在.value));
-		
 		return toPostDetail(circle, postBean, model, request);
 	}
 	
@@ -315,7 +310,7 @@ public class CircleHtmlController extends BaseController{
 		model.addAttribute("create_time", DateUtil.DateToString(post.getCreateTime()));
 		model.addAttribute("create_user_account", userHandler.getUserName(post.getCreateUserId()));
 		model.addAttribute("create_user_pic_path", userHandler.getUserPicPath(post.getCreateUserId(), "30x30"));
-		model.addAttribute("setting", circleSettingHandler.getNormalSettingBean(circle.getId()));
+		model.addAttribute("setting", circleSettingHandler.getNormalSettingBean(circle.getId(), user));
 		model.addAttribute("audit", true);
         //保存帖子的访问记录
         circlePostService.saveVisitLog(postId, user, request);
@@ -331,11 +326,9 @@ public class CircleHtmlController extends BaseController{
 	@RequestMapping(value = "/{circleId}/post/check", method = RequestMethod.GET)
 	public String postCheck(@PathVariable(value="circleId") int circleId, Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
-		CircleBean circle = circleHandler.getCircleBean(circleId);
-		if(circle == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
-		
-		model.addAttribute("setting", circleSettingHandler.getNormalSettingBean(circle.getId()));
+		UserBean user = getMustLoginUserFromShiro();
+		CircleBean circle = circleHandler.getNormalCircleBean(circleId, user);
+		model.addAttribute("setting", circleSettingHandler.getNormalSettingBean(circle.getId(), user));
 		model.addAttribute("circle", circle);
 		return loginRoleCheck("circle/post-check", true, model, request);
 	}

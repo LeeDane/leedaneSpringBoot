@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.cache.SystemCache;
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleBean;
@@ -14,6 +15,7 @@ import com.cn.leedane.model.circle.CirclesSerializeBean;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
+import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.OptionUtil;
 import com.cn.leedane.utils.SerializeUtil;
 
@@ -44,7 +46,7 @@ public class CircleHandler {
 		if(circle == null || user == null
 				||  (circle.getStatus() == ConstantsUtil.STATUS_SELF && circle.getCreateUserId() != user.getId()) 
 				|| (circle.getStatus() != ConstantsUtil.STATUS_SELF && circle.getStatus() != ConstantsUtil.STATUS_NORMAL)){
-			return null;
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		}
 		return circle;
 	}
@@ -207,6 +209,37 @@ public class CircleHandler {
 	 */
 	public static String getCircleKey(int circleId){
 		return ConstantsUtil.CIRCLE_REDIS + circleId;
+	}
+	
+	/**
+	 * 删除热门圈子redis缓存
+	 * @return
+	 */
+	public boolean deleteHostest(){
+		String key = getHostestKey();
+		redisUtil.delete(key);
+		return true;
+	}
+	
+	/**
+	 * 删除最新圈子redis缓存
+	 * @return
+	 */
+	public boolean deleteNewest(){
+		String key = getNewestKey();
+		redisUtil.delete(key);
+		return true;
+	}
+	
+	
+	/**
+	 * 删除推荐圈子redis缓存
+	 * @return
+	 */
+	public boolean deleteRecommend(){
+		String key = getRecommendKey();
+		redisUtil.delete(key);
+		return true;
 	}
 	
 

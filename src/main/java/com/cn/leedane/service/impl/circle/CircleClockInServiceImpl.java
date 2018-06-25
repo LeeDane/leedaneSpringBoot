@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.mapper.circle.CircleClockInMapper;
 import com.cn.leedane.model.OperateLogBean;
@@ -77,8 +76,6 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 			HttpServletRequest request) {
 		
 		CircleBean circleBean = circleHandler.getNormalCircleBean(circleId, user);
-		if(circleBean == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
 		logger.info("CircleClockInServiceImpl-->saveClockIn(), user=" +user.getAccount()+", jo="+jo +", circleId="+ circleId);
 		ResponseMap message = new ResponseMap();		

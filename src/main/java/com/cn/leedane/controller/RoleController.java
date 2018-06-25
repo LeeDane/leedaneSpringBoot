@@ -48,6 +48,11 @@ public class RoleController extends BaseController{
 	public static final String MALL_ROLE_CODE = "MALL_MANAGER";
 	
 	/**
+	 *股票模块固定角色编码
+	 */
+	public static final String STOCK_ROLE_CODE = "STOCK_ROLE";
+	
+	/**
 	 * 添加权限
 	 * @return
 	 */

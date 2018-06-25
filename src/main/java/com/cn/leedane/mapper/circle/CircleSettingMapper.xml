@@ -15,7 +15,7 @@
 		, date_format(cs.create_time,'%Y-%m-%d %H:%i:%s') create_time, cs.create_user_id, cs.announce, cs.check_post
 		, cs.background_color, cs.limit_number 
 		from t_circle_setting cs inner join t_circle c on cs.circle_id = c.id
-		where c.id = #{circleId} and cs.status = #{status} and c.status = #{status} limit 1
+		where c.id = #{circleId} limit 1
 	</select>
 	
 	<resultMap type="com.cn.leedane.model.circle.CircleSettingBean" id="objectBean">

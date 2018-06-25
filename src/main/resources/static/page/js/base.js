@@ -544,15 +544,24 @@ function leeShowModal(obj){
 }
 
 /**
+ * 获取目前支持的类型字符串
+ * @param link
+ */
+function getSupportTypeStr(link){
+	return "目前只支持png、jpg、jpeg、gif、mp4、mp3等格式的文件";
+}
+
+/**
  * 校验链接是否是图片链接
  * @param link
  */
 function isImg(link){
 	 if(link){
+		 link = link.replace('?imageslim', '');
 		 var index = link.lastIndexOf(".");
 		 if(index > 0){
 			 link = link.substring(index + 1, link.length);
-			 if(link && (link == "png" || link == "jpg" || link == "jpeg"))
+			 if(link && (link == "png" || link == "jpg" || link == "jpeg" || link == "gif"))
 				 return true;
 		 }
 	 }
@@ -565,6 +574,7 @@ function isImg(link){
  */
 function isVideo(link){
 	 if(link){
+		 link = link.replace('?imageslim', '');
 		 var index = link.lastIndexOf(".");
 		 if(index > 0){
 			 link = link.substring(index + 1, link.length);
@@ -592,6 +602,7 @@ function getVideoHtml(link){
  */
 function isAudio(link){
 	 if(link){
+		 link = link.replace('?imageslim', '');
 		 var index = link.lastIndexOf(".");
 		 if(index > 0){
 			 link = link.substring(index + 1, link.length);

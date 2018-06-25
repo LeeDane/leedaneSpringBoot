@@ -242,7 +242,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			}
 		}
 		message.put("circleUserPosts", circleUserPosts);
-		message.put("setting", circleSettingHandler.getNormalSettingBean(circleId));
+		message.put("setting", circleSettingHandler.getNormalSettingBean(circleId, user));
 		return message.getMap();
 	}
 	
@@ -254,20 +254,14 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		int circleId = circle.getId();
 		if(user.getId() == circle.getCreateUserId()){
 			message.put("isCircleAdmin", true);
-			CircleSettingBean circleSettingBean = circleSettingHandler.getNormalSettingBean(circle.getId());
-			if(circleSettingBean == null)
-				throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
-			
+			CircleSettingBean circleSettingBean = circleSettingHandler.getNormalSettingBean(circle.getId(), user);
 			message.put("setting", circleSettingBean);
     	}else{
     		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
     		boolean isCircleAdmin = SqlUtil.getBooleanByList(members) &&  members.get(0).getRoleType() == CIRCLE_MANAGER;
     		message.put("isCircleAdmin", isCircleAdmin);
     		if(isCircleAdmin){
-    			CircleSettingBean circleSettingBean = circleSettingHandler.getNormalSettingBean(circle.getId());
-    			if(circleSettingBean == null)
-    				throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
-    			
+    			CircleSettingBean circleSettingBean = circleSettingHandler.getNormalSettingBean(circle.getId(), user);
     			message.put("setting", circleSettingBean);
     		}else{
     			message.put("setting", new CircleSettingBean());
@@ -400,9 +394,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			message.put("responseCode", EnumUtil.ResponseCode.缺少请求参数.value);
 			return message.getMap();
 		}
-		CircleBean circleBean = circleHandler.getCircleBean(circleId);
-		if(circleBean == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
+		CircleBean circleBean = circleHandler.getNormalCircleBean(circleId, user);
 		
 		//判断是否是圈主
 		if(circleBean.getCreateUserId() != user.getId()/* && circleHandler.getRoleCode(user, cid) != CIRCLE_MANAGER*/)
@@ -435,9 +427,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		logger.info("CircleServiceImpl-->delete():cid=" +cid +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
-		CircleBean circleBean = circleHandler.getCircleBean(cid);
-		if(circleBean == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
+		CircleBean circleBean = circleHandler.getNormalCircleBean(cid, user);
 		
 		//判断是否是圈主
 		if(circleBean.getCreateUserId() != user.getId()/* && circleHandler.getRoleCode(user, cid) != CIRCLE_MANAGER*/)
@@ -512,9 +502,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			return message.getMap();
 		}
 		
-		CircleSettingBean circleSettingBean = circleSettingHandler.getNormalSettingBean(circleId);
-		if(circleSettingBean == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
+		CircleSettingBean circleSettingBean = circleSettingHandler.getNormalSettingBean(circleId, user);
 		
 		if(SqlUtil.getBooleanByList(circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL))){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.您已经在圈子中.value));
@@ -570,9 +558,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			message.put("responseCode", EnumUtil.ResponseCode.缺少请求参数.value);
 			return message.getMap();
 		}
-		CircleSettingBean circleSettingBean = circleSettingHandler.getNormalSettingBean(circleId);
-		if(circleSettingBean == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
+		CircleSettingBean circleSettingBean = circleSettingHandler.getNormalSettingBean(circleId, user);
 		
 		if(SqlUtil.getBooleanByList(circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL))){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.您已经在圈子中.value));

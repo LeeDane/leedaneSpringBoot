@@ -21,6 +21,6 @@ public interface CircleSettingMapper extends BaseMapper<CircleSettingBean>{
 	 * @param status
 	 * @return
 	 */
-	public List<CircleSettingBean> getSetting(@Param("circleId") int circleId, @Param("status") int status);
+	public List<CircleSettingBean> getSetting(@Param("circleId") int circleId);
 
 }

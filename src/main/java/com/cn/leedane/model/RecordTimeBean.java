@@ -59,7 +59,8 @@ public abstract class RecordTimeBean extends StatusBean{
 	@JSONField(name="create_time", format="yyyy-MM-dd HH:mm:ss")
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
-		setModifyTime(createTime);
+		if(modifyTime == null)
+			setModifyTime(createTime);
 	}
 	
 	//@ManyToOne(targetEntity = UserBean.class)
@@ -98,7 +99,8 @@ public abstract class RecordTimeBean extends StatusBean{
 	@JSONField(name="create_user_id")
 	public void setCreateUserId(int createUserId) {
 		this.createUserId = createUserId;
-		setModifyUserId(createUserId);
+		if(modifyUserId < 1)
+			setModifyUserId(createUserId);
 	}
 	
 	@JSONField(name="modify_user_id")

@@ -258,9 +258,9 @@ function buildEachPostRow(index, post){
 							}
 					html += '</p>';
 						}
-					html += '<div class="pull-right" title="标题" data-container="body" data-toggle="popover" data-content="Popover内容 ">'+
+					html += /*'<div class="pull-right" title="标题" data-container="body" data-toggle="popover" data-content="Popover内容 ">'+
 								'<img src="/page/images/more.png" class="" style="width: 20px; height: 20px" />'+
-							'</div>'+
+							'</div>'+*/
 						'</div>'+
 						'<div class="panel-body panel-table-container">';
 						if(post.pid > 0){
@@ -291,7 +291,7 @@ function buildEachPostRow(index, post){
 										'<img src="'+ imgArray[imgIndex] +'" class="img-responsive post-item-img hand" onClick="showImgDialog('+ imgIndex+', \''+ post.imgs +'\');" />'+
 										'</div>';
 							}else{
-								layer.msg("目前只处理图片、音频、视频等格式的文件");
+								layer.msg(getSupportTypeStr());
 							}
 						}
 					}

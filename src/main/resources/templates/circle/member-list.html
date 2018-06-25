@@ -100,6 +100,12 @@
 						    </div>
 						  </div>
 						  <div class="layui-form-item">
+						    <label class="layui-form-label" title="注意：私有的圈子将无法在首页的热门、推荐、最新等显示">是否私有(*)</label>
+						    <div class="layui-input-block">
+						      <input type="checkbox" name="status" th:checked="${setting.status == 5}" lay-skin="switch" />
+						    </div>
+						  </div>
+						  <div class="layui-form-item">
 						    <label class="layui-form-label">审核帖子</label>
 						    <div class="layui-input-block">
 						      <input type="checkbox" name="check_post" th:checked="${setting.checkPost}" lay-skin="switch"/>

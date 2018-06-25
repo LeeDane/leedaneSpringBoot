@@ -20,7 +20,7 @@ function createSelectMaterialModal(obj, select, selectType, callBackFun){
 								'&times;'+
 							'</button>'+
 							'<h4 class="modal-title" id="uploadImageModalLabel">'+
-								'选择素材 <a href="/mt" class="btn btn-primary btn-sm" role="button">素材管理中心</a>'+
+								'选择素材 <a href="/mt" target="_blank" class="btn btn-primary btn-sm" role="button">素材管理中心</a>'+
 							'</h4>'+
 						'</div>'+
 						'<div class="modal-body modal-body-update-image"  style="height: 600px;">'+

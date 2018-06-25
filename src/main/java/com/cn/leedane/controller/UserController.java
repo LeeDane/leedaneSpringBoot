@@ -249,7 +249,7 @@ public class UserController extends BaseController{
 				if(StringUtil.isNotNull(sessionKey) && activeSessions.get(sessionKey) != null){
 					try{
 						SessionKey key = new DefaultSessionKey(activeSessions.get(sessionKey));
-						SecurityUtils.getSecurityManager().getSession(key).stop();
+						//SecurityUtils.getSecurityManager().getSession(key).stop();
 					}catch(UnknownSessionException e){
 						logger.info("UnknownSessionException ------");
 					}catch(NullPointerException e){

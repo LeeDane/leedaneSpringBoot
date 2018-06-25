@@ -11,16 +11,15 @@ import org.apache.shiro.authz.UnauthenticatedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.circle.CircleHandler;
+import com.cn.leedane.handler.circle.CirclePostHandler;
 import com.cn.leedane.handler.circle.CircleSettingHandler;
 import com.cn.leedane.mapper.circle.CircleMemberMapper;
 import com.cn.leedane.mapper.circle.CircleSettingMapper;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.circle.CircleBean;
 import com.cn.leedane.model.circle.CircleMemberBean;
 import com.cn.leedane.model.circle.CircleSettingBean;
 import com.cn.leedane.service.AdminRoleCheckService;
@@ -64,6 +63,9 @@ public class CircleSettingServiceImpl extends AdminRoleCheckService implements C
 	
 	@Autowired
 	private UserHandler userHandler;
+	
+	@Autowired
+	private CirclePostHandler circlePostHandler;
 
 	@Override
 	public Map<String, Object> update(int circleId, int settingId, JSONObject json, UserBean user,
@@ -71,9 +73,7 @@ public class CircleSettingServiceImpl extends AdminRoleCheckService implements C
 		logger.info("CircleSettingServiceImpl-->paging():jo="+json.toString());
 		ResponseMap message = new ResponseMap();
 		
-		CircleBean circle = circleHandler.getNormalCircleBean(circleId, user);
-		if(circle == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
+		circleHandler.getNormalCircleBean(circleId, user);
 
 		//标记用户是否有修改权限
     	boolean canUpdate = false;
@@ -88,7 +88,7 @@ public class CircleSettingServiceImpl extends AdminRoleCheckService implements C
 		if(!canUpdate)
 			throw new UnauthenticatedException();
 		SqlUtil sqlUtil = new SqlUtil();
-		CircleSettingBean settingBean = (CircleSettingBean) sqlUtil.getUpdateBean(json, circleSettingHandler.getNormalSettingBean(circleId));
+		CircleSettingBean settingBean = (CircleSettingBean) sqlUtil.getUpdateBean(json, circleSettingHandler.getNormalSettingBean(circleId, user));
 		
 		if(settingBean == null || (settingBean.getCircleId() != circleId))
 			throw new UnauthenticatedException();
@@ -99,7 +99,10 @@ public class CircleSettingServiceImpl extends AdminRoleCheckService implements C
 		if(result){
 			//删除缓存
 			circleSettingHandler.deleteSettingBeanCache(circleId);
-			
+			circleHandler.deleteHostest();
+			circleHandler.deleteNewest();
+			circleHandler.deleteRecommend();
+			circlePostHandler.deleteHotestPosts();
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);

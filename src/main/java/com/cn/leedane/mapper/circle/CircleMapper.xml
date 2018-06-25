@@ -55,11 +55,13 @@
 	
 	<select id="getNewests" parameterType="int" resultMap="objectBean">
 		select c.id, c.name name, c.circle_desc, c.circle_path, c.status, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time
-		from t_circle c where c.status = #{status} order by c.id desc limit 0, #{pageSize};
+		from t_circle c inner join t_circle_setting cs on cs.circle_id = c.id 
+		where c.status = #{status} and cs.status = 1 order by c.id desc limit 0, #{pageSize};
 	</select>
 	
 	<select id="getRecommends" parameterType="int" resultMap="objectBean">
 		select c.id, c.name name, c.circle_desc, c.circle_path, c.status, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time
-		from t_circle c where c.status = #{status} and c.circle_recommend = true order by c.id desc limit 0, #{pageSize};
+		from t_circle c inner join t_circle_setting cs on cs.circle_id = c.id 
+		where c.status = #{status} and cs.status = 1 and c.circle_recommend = true order by c.id desc limit 0, #{pageSize};
 	</select>
 </mapper>

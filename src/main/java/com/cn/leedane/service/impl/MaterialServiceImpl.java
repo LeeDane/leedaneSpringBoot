@@ -64,16 +64,20 @@ public class MaterialServiceImpl extends AdminRoleCheckService implements Materi
 		if(CollectionUtil.isNotEmpty(data)){
 			for(int i = 0; i < data.size(); i++){
 				//获取文件的路径
-				String path = StringUtil.changeNotNull(data.get(i).get("path"));
-				if(Base64ImageUtil.isSupportType(path)){
+				String qiniuPath = StringUtil.changeNotNull(data.get(i).get("qiniu_path"));
+				//如果是图像的类型，优先放置到图像分类下
+				if(Base64ImageUtil.isSupportType(qiniuPath)){
 					data.get(i).put("material_type", "图像");
 				}else{
-					data.get(i).put("material_type", "文件");
+					data.get(i).put("material_type", data.get(i).get("type"));
 				}
+				
 				data.get(i).put("create_user_id", user.getId());
 				data.get(i).put("create_time", new Timestamp(new Date().getTime()));
 				data.get(i).put("width", 0);
 				data.get(i).put("height", 0);
+				//使用七牛云存储的图片瘦身 imageslim
+				data.get(i).put("qiniu_path", qiniuPath + "?imageslim");
 				data.get(i).put("status", ConstantsUtil.STATUS_NORMAL);
 			}
 			materialMapper.insertByBatch(data);

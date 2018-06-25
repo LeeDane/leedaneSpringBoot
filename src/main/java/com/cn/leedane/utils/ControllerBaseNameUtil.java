@@ -238,6 +238,11 @@ public class ControllerBaseNameUtil {
 	public static final String baby = "baby";
 	
 	/**
+	 * 股票
+	 */
+	public static final String stock = "stock";
+	
+	/**
 	 * 详情
 	 */
 	public static final String dt = "dt";

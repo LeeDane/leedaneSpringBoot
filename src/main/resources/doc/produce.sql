@@ -224,7 +224,8 @@ BEGIN
 	
 	select c.id, c.name name, c.circle_desc, c.circle_path, c.status, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time 
 	from t_circle c inner join tmp_circle tc on c.id = tc.tmp_circle_id 
-	where `status` = $status order by c.circle_score desc, c.id desc limit $limit;
+	inner join t_circle_setting cs on cs.circle_id = c.id 
+	where c.status = $status and cs.status = 1 order by c.circle_score desc, c.id desc limit $limit;
 	-- 删除临时表
 	drop table if exists tmp_circle;
 END $$

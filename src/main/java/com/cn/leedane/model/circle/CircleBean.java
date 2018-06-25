@@ -23,6 +23,7 @@ public class CircleBean extends RecordTimeBean{
 	/**
 	 * 圈子的名称
 	 */
+	@Field
 	private String name;
 	
 	/**

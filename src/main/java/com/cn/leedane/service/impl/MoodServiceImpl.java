@@ -503,8 +503,15 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 				
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			list = moodHandler.getMoodDetail(mid, user);
-			if(!CollectionUtils.isEmpty(list)){
+			if(!CollectionUtils.isEmpty(list) && list.size() == 1){
 				message.put("isSuccess", true);
+				boolean hasImg = StringUtil.changeObjectToBoolean(list.get(0).get("has_img"));
+				String uuid = StringUtil.changeNotNull(list.get(0).get("uuid"));
+				//有图片的获取图片的路径
+				if(hasImg && !StringUtil.isNull(uuid)){
+					list.get(0).put("imgs", moodHandler.getMoodImg(DataTableType.心情.value, uuid, picSize));
+				}
+				
 				//从Redis缓存直接获取
 				message.put("message", list);
 				

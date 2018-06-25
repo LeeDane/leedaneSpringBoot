@@ -118,8 +118,6 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		CirclePostBean circlePostBean = (CirclePostBean) sqlUtil.getBean(json, CirclePostBean.class);
 		
 		CircleBean circleBean = circleHandler.getNormalCircleBean(circleId, user);
-		if(circleBean == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
 		ResponseMap message = new ResponseMap();
 		if(StringUtil.isNull(circlePostBean.getTitle())){
@@ -139,7 +137,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		String returnMsg = "您的帖子已经发布成功！";
 		//判断用户的身份
 		CircleMemberBean memberBean = members.get(0);
-		CircleSettingBean settingBean = circleSettingHandler.getNormalSettingBean(circleId);
+		CircleSettingBean settingBean = circleSettingHandler.getNormalSettingBean(circleId, user);
 		if(circlePostBean.getPid() == 0 && settingBean.isCheckPost() && memberBean.getRoleType() == CircleServiceImpl.CIRCLE_NORMAL){
 			circlePostBean.setStatus(ConstantsUtil.STATUS_AUDIT);
 			returnMsg = returnMsg + "请等待圈主/圈子管理员审核！";
@@ -198,8 +196,6 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		}
 		
 		CircleBean circleBean = circleHandler.getNormalCircleBean(circleId, user);
-		if(circleBean == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
 		CirclePostBean oldPostBean = circlePostHandler.getNormalCirclePostBean(circleBean, postId, user);
 		if(oldPostBean == null)
@@ -455,7 +451,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleId, "帖子为", postId, "转发，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "transmit()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleId, "帖子为", postId, "转发，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, 0);	
 		return message.getMap();
 	}
 	
@@ -501,7 +497,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			}
 			message.put("blockquote_content", blockquoteContent);
 		}
-		message.put("setting", circleSettingHandler.getNormalSettingBean(circle.getId()));
+		message.put("setting", circleSettingHandler.getNormalSettingBean(circle.getId(), user));
 		return message;
 	}
 
@@ -516,9 +512,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	@Override
 	public Map<String, Object> noCheckTotal(int circleId, JSONObject json, UserBean user, HttpServletRequest request) {
 		logger.info("CirclePostServiceImpl-->noCheckTotal(), circleId= " + circleId +",user=" +user.getAccount());
-		CircleBean circleBean = circleHandler.getNormalCircleBean(circleId, user);
-		if(circleBean == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
+		circleHandler.getNormalCircleBean(circleId, user);
 		
 		//校验是否加入圈子
 		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);
@@ -540,9 +534,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	@Override
 	public Map<String, Object> noCheckList(int circleId, JSONObject json, UserBean user, HttpServletRequest request) {
 		logger.info("CirclePostServiceImpl-->noCheckList(), circleId= " + circleId +",user=" +user.getAccount());
-		CircleBean circleBean = circleHandler.getNormalCircleBean(circleId, user);
-		if(circleBean == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
+		circleHandler.getNormalCircleBean(circleId, user);
 		
 		//校验是否加入圈子
 		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);

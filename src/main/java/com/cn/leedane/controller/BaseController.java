@@ -733,15 +733,18 @@ public class BaseController {
         model.addAttribute("isTestRole", currentUser.hasRole(ConstantsUtil.TEST_ROLE_TEXT));
 		boolean isLogin = false;
 		boolean isAdmin = false;
+		boolean isStock = false; //判断用户是否有股票的权限
 		if(user != null){
 			isLogin = true;
 			isAdmin = currentUser.hasRole(RoleController.ADMIN_ROLE_CODE);
+			isStock = currentUser.hasRole(RoleController.STOCK_ROLE_CODE);
 			model.addAllAttributes(userHandler.getBaseUserInfo(user.getId()));
 			model.addAttribute("loginUserId", user.getId());
 			model.addAttribute("user", user);
 		}
 		model.addAttribute("isLogin",  isLogin);
 		model.addAttribute("isAdmin", isAdmin);
+		model.addAttribute("isStock", isStock);
 		if(mustLogin && !isLogin){
 			model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
 			return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();

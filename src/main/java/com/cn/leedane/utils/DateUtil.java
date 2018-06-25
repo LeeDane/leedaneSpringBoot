@@ -32,12 +32,12 @@ public class DateUtil {
 	/**
 	 * 将Date格式的日期根据format进行格式化
 	 * @param date  原始的日期参数
-	 * @param format  格式：如"yyyy-MM-dd","yyyy-MM-dd HH:mm:ss"
+	 * @param format  格式：如"yyyy-MM-dd","yyyy-MM-dd HH:mm:ss", 为空返回默认的格式
 	 * @return
 	 */
 	public static String DateToString (Date date,String format){
 		if(date == null)
-			return null;
+			return DateToString(date);
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		return dateFormat.format(date);
 	}

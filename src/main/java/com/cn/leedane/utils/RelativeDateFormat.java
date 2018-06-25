@@ -30,11 +30,21 @@ public class RelativeDateFormat {
     }*/
 
     public static String format(Date date) {
+    	return format(date, null);
+    }
+    
+    /**
+     * 
+     * @param date
+     * @param format  当没有时间超过处理的时间时，需要返回的格式
+     * @return
+     */
+    public static String format(Date date, String format) {
         long delta = new Date().getTime() - date.getTime();
         if (delta < 1L * ONE_MINUTE) {
             long seconds = toSeconds(delta);
             if(seconds < -30){
-            	return DateUtil.DateToString(date);
+            	return DateUtil.DateToString(date, format);
             } 
             if(seconds < 10)
             	return JUST_NOW;

@@ -11,6 +11,7 @@ layui.use(['layer', 'laypage'], function(){
 	
 	/*initPage(".pagination", "getMoods", 9);*/
 	$moodContainer = $("#mood-container");
+	$operateItemsContrainer = $("#operate-item-list");
 	loadUserInfo();
 	getMoods();
 	getMessageBoards();//获取留言板列表
@@ -63,7 +64,7 @@ layui.use(['layer', 'laypage'], function(){
       //console.info('Trigger:', e.trigger);
       //console.info('Trigger:', e.trigger.previousSibling.id);
       //$("#"+ e.trigger.previousSibling.id).text(e.text);
-	  $("#operate-item-list").modal("hide");
+	  $operateItemsContrainer.modal("hide");
 	  layer.msg("文字已复制成功！");
       layer.tips('此文字已复制成功', "#"+ e.trigger.previousSibling.id, {time: 1000});
       //layer.msg("链接已复制成功");
@@ -86,6 +87,7 @@ var monthArray = new Array();
 var $moodContainer;
 var $moodMardownContent;
 var $commentOrTransmitItemContainer;
+var $operateItemsContrainer ;
 
 /**
  * 获取留言板列表
@@ -521,6 +523,8 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 							'<span class="label '+ (mood.can_transmit? 'label-default' : 'label-success') +'">'+ (mood.can_transmit? '可以转发':'禁止转发') +'</span>'+
 						'</div>'+
 					    '<div class="list-group-item-text" style="margin-top: 5px;" id="couponValue-'+ index+'">'+ changeNotNullString(mood.content) +
+					    '</div>'+
+					    '<div class="list-group-item-text" style="margin-top: 5px; color: red;" id="fanValue-'+ index+'">'+
 					    '</div>';
 				if(isNotEmpty(mood.location)){
 					html += '<p class="location">位置：'+ changeNotNullString(mood.location) +'</p>';
@@ -543,7 +547,7 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 									'<img src="'+ imgs[i] +'" width="100%" height="180px" class="img-responsive" onClick="showImg('+ index +', '+ i +');" />'+
 									'</div>';
 						}else{
-							layer.msg("目前只处理图片、音频、视频等格式的文件");
+							layer.msg(getSupportTypeStr());
 						}
 					}
 				}
@@ -709,11 +713,11 @@ function editUserinfo(params){
  * @param index
  */
 function showItemListModal(index){
-	$("#operate-item-list").modal("show");
+	$operateItemsContrainer.modal("show");
 	var mood = moods[index];
 	var html = '<li class="list-group-item cursor" onclick="goToReadMoodFull('+ mood.id +', '+ uid +');">查看</li>'+
 			    '<li class="list-group-item cursor" onclick="addZan('+ mood.id +')">赞</li>'+
-			    '<li class="list-group-item cursor">翻译</li>'+
+			    '<li class="list-group-item cursor" onclick="translation('+ index +');">翻译</li>'+
 			    '<li class="list-group-item cursor do-copy-btn" data-clipboard-action="copy" data-clipboard-target="#couponValue-'+ index +'">复制文字</li>';
 	if(isLoginUser){
 		html += '<li class="list-group-item cursor" onclick="deleteMood('+ mood.id +')">删除</li>'+
@@ -749,20 +753,50 @@ function addZan(id){
 		beforeSend:function(){
 		},
 		success : function(data) {
-				
-				layer.close(loadi);
-				if(data.isSuccess){
-					layer.msg("点赞成功");
-					window.location.reload();
-				}else
-					layer.msg(data.message);
-				
+			layer.close(loadi);
+			if(data.isSuccess){
+				layer.msg("点赞成功");
+				window.location.reload();
+			}else
+				layer.msg(data.message);
 		},
 		error : function() {
 			layer.close(loadi);
 			layer.msg("网络请求失败");
 		}
 	});
+}
+
+/**
+ * 翻译
+ * @param id
+ */
+function translation(index){
+	var content = moods[index].content;
+	if(content){
+		var loadi = layer.load('努力加载中…');
+		$.ajax({
+			type : "GET",
+			data: {content: content},
+			url : "/tl/fanyi",
+			dataType: 'json', 
+			beforeSend:function(){
+			},
+			success : function(data) {
+				layer.close(loadi);
+				if(data.isSuccess){
+					$("#fanValue-"+index).text("翻译结果："+data.message);
+					$operateItemsContrainer.modal("hide");
+				}else
+					layer.msg(data.message);
+			},
+			error : function() {
+				layer.close(loadi);
+				layer.msg("网络请求失败");
+			}
+		});
+	}
+	
 }
 
 /**
@@ -1203,7 +1237,7 @@ function afterSelect(links){
 				html += '<div class="col-lg-4 col-sm-4">';
 				html += getVideoHtml(imgs[i]);
 				html += '</div>';
-			}else if(isAudio(array[i])){
+			}else if(isAudio(imgs[i])){
 				html += '<div class="col-lg-4 col-sm-4">';
 				html += getAudioHtml(imgs[i]);
 				html += '</div>';
@@ -1212,7 +1246,7 @@ function afterSelect(links){
 							'<img src="'+ changeNotNullString(imgs[i])+'" style="width: 100%; max-height: 180px;" class="img-responsive" />'+
 						'</div>';
 			}else{
-				layer.msg("目前只处理图片、音频、视频等格式的文件");
+				layer.msg(getSupportTypeStr());
 				return false;
 			}
 		}

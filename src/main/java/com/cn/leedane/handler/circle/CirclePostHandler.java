@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,7 @@ import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.OptionUtil;
 import com.cn.leedane.utils.RelativeDateFormat;
 import com.cn.leedane.utils.SerializeUtil;
@@ -480,7 +482,7 @@ public class CirclePostHandler {
 		if(postId > 0 && circlePostBean != null){
 			//非正常状态
 			if(circlePostBean.getStatus() != ConstantsUtil.STATUS_NORMAL || (circleId > 0 && circlePostBean.getCircleId() != circleId) || (user != null && circlePostBean.getCreateUserId() != user.getId()))
-				return null;
+				throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
 		}
 		return circlePostBean;
 	}

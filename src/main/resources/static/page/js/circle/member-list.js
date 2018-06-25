@@ -37,6 +37,10 @@ layui.use(['layer', 'form', 'laypage'], function(){
 		  if(!inJson(field, "has_question"))
 			  field.has_question = false;
 		  
+		//由于checkbox没有选中就不处理，这里
+		  if(!inJson(field, "status"))
+			  field.status = false;
+		  field.status = field.status? 5: 1;
 		  saveSetting(field);
 		  return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
 		});

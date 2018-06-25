@@ -69,8 +69,8 @@
 	<select id="getHostestPosts" resultMap="objectBean">
 		select cp.id, cp.status, cp.title, cp.has_img, cp.circle_id, cp.pid, cp.digest
 		, date_format(cp.create_time,'%Y-%m-%d %H:%i:%s') create_time, cp.create_user_id, cp.imgs, cp.tag, cp.post_score, cp.post_recommend
-		from t_circle_post cp 
-		where cp.create_time > #{time} and cp.status = #{status} 
+		from t_circle_post cp inner join t_circle c on c.id = cp.circle_id inner join t_circle_setting cs on c.id = cs.circle_id 
+		where cp.create_time > #{time} and cp.status = #{status} and cs.status = 1
 		order by cp.post_score desc, cp.id desc limit #{start}, #{pageSize}
 	</select>
 </mapper>

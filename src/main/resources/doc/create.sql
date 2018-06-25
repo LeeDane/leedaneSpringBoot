@@ -1024,3 +1024,72 @@ CREATE TABLE `t_baby_life` (
   CONSTRAINT `FK_baby_baby_id` FOREIGN KEY (`baby_id`) REFERENCES `t_baby` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 ALTER TABLE t_baby_life ADD INDEX index_baby_life_occur_date(occur_date);
+
+
+-- ----------------------------
+-- Table structure for t_stock
+-- ----------------------------
+DROP TABLE IF EXISTS `t_stock`;
+CREATE TABLE `t_stock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `name` varchar(10) NOT NULL COMMENT '股票的名称',
+  `code` varchar(10) NOT NULL COMMENT '股票编码',
+  PRIMARY KEY (`id`),
+  KEY `FK_stock_create_user` (`create_user_id`),
+  KEY `FK_stock_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_stock_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_stock_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_stock_buy
+-- ----------------------------
+DROP TABLE IF EXISTS `t_stock_buy`;
+CREATE TABLE `t_stock_buy` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `stock_id` int(11) NOT NULL COMMENT '股票的id',
+  `price` float NOT NULL DEFAULT '0.00' COMMENT '买入价格',
+  `number` int(8) NOT NULL DEFAULT 1 COMMENT '买入数量',
+  `sell_out` bit(1) DEFAULT b'0' COMMENT '是否卖光了(0:没有， 1：已卖光)',
+  PRIMARY KEY (`id`),
+  KEY `FK_stock_buy_create_user` (`create_user_id`),
+  KEY `FK_stock_buy_modify_user` (`modify_user_id`),
+  KEY `FK_stock_buy_id` (`stock_id`),
+  CONSTRAINT `FK_stock_buy_create_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_stock_buy_modify_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_stock_buy_id` FOREIGN KEY (`stock_id`) REFERENCES `t_stock` (`id`)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_stock_sell
+-- ----------------------------
+DROP TABLE IF EXISTS `t_stock_sell`;
+CREATE TABLE `t_stock_sell` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `stock_buy_id` int(11) NOT NULL COMMENT '股票买入的id',
+  `price` float NOT NULL DEFAULT '0.00' COMMENT '卖出价格',
+  `number` int(8) NOT NULL DEFAULT 1 COMMENT '卖出数量',
+  `residue_number` int(8) NOT NULL DEFAULT 1 COMMENT '卖出剩余数量(为0表示已经卖完)',
+  PRIMARY KEY (`id`),
+  KEY `FK_stock_sell_create_user` (`create_user_id`),
+  KEY `FK_stock_sell_modify_user` (`modify_user_id`),
+  KEY `FK_stock_sell_id` (`stock_buy_id`),
+  CONSTRAINT `FK_stock_sell_create_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_stock_sell_modify_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_stock_sell_id` FOREIGN KEY (`stock_buy_id`) REFERENCES `t_stock_buy` (`id`)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
