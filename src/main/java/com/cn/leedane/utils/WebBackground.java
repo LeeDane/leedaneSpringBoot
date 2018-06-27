@@ -2,13 +2,20 @@ package com.cn.leedane.utils;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 /**
  * web版本的主图背景
  * @author LeeDane
  * 2016年10月19日 上午10:20:50
  * Version 1.0
  */
+@Component
 public class WebBackground {
+	
+	@Value("${constant.is.debug}")
+    private boolean IS_DEBUG;
 	
 	//七天的图像列表
 	private static final String[] IMAGES = new String[]{
@@ -18,25 +25,17 @@ public class WebBackground {
 	};
 	
 	public String image = null;
-
-	public WebBackground(){
-		init();
-	}
-	
-	/**
-	 * 获取当天的背景
-	 */
-	public void init(){
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
-		int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
-		if (w < 0)
-			w = 0;
-		
-		image = (ConstantsUtil.IS_DEBUG? "page/images/": "http://pic.onlyloveu.top/page_images_") +IMAGES[w];
-	}
 	
 	public synchronized String getImage() {
+		if(image == null){
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+			if (w < 0)
+				w = 0;
+			
+			image = (IS_DEBUG? "page/images/": "http://pic.onlyloveu.top/page_images_") +IMAGES[w];
+		}
 		return image;
 	}
 }

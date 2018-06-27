@@ -12,6 +12,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -96,6 +97,8 @@ public class MallHtmlController extends BaseController{
 	@Autowired
 	private S_HomeItemHandler homeItemHandler;
 	
+	@Value("${constant.mall.home.category.id}")
+    public int MALL_HOME_CATEGORY_ID;
 	
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面
@@ -357,7 +360,7 @@ public class MallHtmlController extends BaseController{
 		String url = loginRoleCheck("mall/home-manager", true, model, request);
 		//获取分类列表
 		List<S_HomeItemBean> homeItemBeans = homeItemHandler.showCategoryList();
-		Map<String, Object> categorys = categoryService.children(true, ConstantsUtil.MALL_HOME_CATEGORY_ID, OptionUtil.adminUser, request);
+		Map<String, Object> categorys = categoryService.children(true, MALL_HOME_CATEGORY_ID, OptionUtil.adminUser, request);
 		
 		List<Map<String, Object>> categoryList = new ArrayList<Map<String,Object>>();
 		if(StringUtil.changeObjectToBoolean(categorys.get("isSuccess"))){

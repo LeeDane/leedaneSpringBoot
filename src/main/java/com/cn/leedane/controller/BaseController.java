@@ -10,7 +10,6 @@ import java.util.UUID;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONObject;
 
@@ -20,6 +19,7 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 
@@ -63,6 +63,12 @@ public class BaseController {
 
     @Autowired
     private SessionDAO sessionDAO;
+    
+    @Value("${constant.is.debug}")
+    public boolean IS_DEBUG;
+    
+    @Value("${constant.test.role.text}")
+    public String TEST_ROLE_TEXT;
 	
 	/**
 	 * 通过原先servlet方式输出json对象。
@@ -146,7 +152,7 @@ public class BaseController {
 		boolean isTestRole = false;
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        isTestRole = currentUser.hasRole(ConstantsUtil.TEST_ROLE_TEXT);
+        isTestRole = currentUser.hasRole(TEST_ROLE_TEXT);
 		
 		//测试账号无法执行添加、删除和修改等权限
 		if("GET".equalsIgnoreCase(method) || "POST".equalsIgnoreCase(method)){
@@ -725,12 +731,12 @@ public class BaseController {
 	 */
 	protected String loginRoleCheck(String urlParse, boolean mustLogin, Model model, HttpServletRequest request){
 		//设置统一的请求模式
-		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
+		model.addAttribute("isDebug", IS_DEBUG);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
         UserBean user = getUserFromShiro();
         //设置是否是登录用户
-        model.addAttribute("isTestRole", currentUser.hasRole(ConstantsUtil.TEST_ROLE_TEXT));
+        model.addAttribute("isTestRole", currentUser.hasRole(TEST_ROLE_TEXT));
 		boolean isLogin = false;
 		boolean isAdmin = false;
 		boolean isStock = false; //判断用户是否有股票的权限
@@ -763,7 +769,7 @@ public class BaseController {
 	 */
 	public String adminLoginRoleCheck(String urlParse, Model model, HttpServletRequest request){
 		//设置统一的请求模式
-		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
+		model.addAttribute("isDebug", IS_DEBUG);
 		UserBean userBean = getMustAdminLoginUserFromShiro();
 		model.addAttribute("isLogin", true);
 		model.addAttribute("account", userBean.getAccount());

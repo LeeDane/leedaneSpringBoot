@@ -88,6 +88,16 @@ public class AdminHtmlController extends BaseController{
 		return adminLoginRoleCheck("admin/user/black", model, request);
 	}
 	
+	/**
+	 * 在线用户
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(ControllerBaseNameUtil.adus + "/active")
+	public String usActive(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/user/active", model, request);
+	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adbg + "/check")
 	public String bgCheck(Model model, HttpServletRequest request){

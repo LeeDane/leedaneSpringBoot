@@ -163,7 +163,7 @@ layui.use(['layer', 'laydate', 'util'], function(){
  			params["modify_time"] = params.modify_time_date + " " + params.modify_time +":00";
  			params["stock_id"] = stockId ;
  			params["stock_buy_id"] = stockBuyId ;
- 			params["modify_time"] = '2018-01-01 10:10:10'
+ 			//params["modify_time"] = '2018-01-01 10:10:10'
  			var loadi = layer.load('努力加载中…');
  			$.ajax({
  				type : dataId > 0 ? "PUT": "post",
@@ -217,8 +217,8 @@ function init(){
 						html += '<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">'+
 									  '<fieldset>'+
 									  '<legend onclick="stockClick(this);">'+ stockDisplay.name +'('+ stockDisplay.code +')&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +'<small>'+ stockDisplay.time +'</small>'+
-									  	'<button type="button" onclick="stockBuyAdd(this, event, '+ i +', -1);" class="btn btn-xs" style="margin-left: 10px;"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>  购买记录</button>'+
-									  	'<button type="button" onclick="stockEdit(this, event, '+ i +');" class="btn btn-info btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>  编辑</button>'+
+									  	'<button type="button" onclick="stockBuyAdd(this, event, '+ i +', -1);" class="btn btn-xs" style="margin-left: 10px;"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>  购买</button>'+
+									  	'<button type="button" onclick="stockEdit(this, event, '+ i +');" class="btn btn-info btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>  编辑</button>'+
 										'<button type="button" onclick="stockDelete(this, event, '+ stockDisplay.id +');" class="btn btn-danger btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  删除</button></legend>'+
 									  '<div '+ (i > 0 ? 'style="display:none"': '') +'>'+
 									    	'<div class="">'+
@@ -250,7 +250,7 @@ function init(){
 											        '<td>'+ buyDisplay.price +'</td>'+
 											        '<td>'+ buyDisplay.time +'</td>'+
 											        '<td>'+ buyDisplay.createTime +'</td>'+
-											        '<td>'+(buyDisplay.sellOut? '': '<button type="button" class="btn btn-xs operate-button" onclick="stockSellAdd(this, event, '+ i +','+ j +', -1);" style="margin-left: 10px;"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>  卖出</button>')+'<button type="button" onclick="stockBuyEdit(this, event, '+ i +', '+ j +');" class="btn btn-info btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>  编辑</button><button type="button" onclick="stockBuyDelete(this, event, '+ stockDisplay.id +', '+ buyDisplay.id +');" class="btn btn-danger btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  删除</button></td>'+
+											        '<td>'+(buyDisplay.sellOut? '': '<button type="button" class="btn btn-xs operate-button" onclick="stockSellAdd(this, event, '+ i +','+ j +', -1);" style="margin-left: 10px;"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>  卖出</button>')+'<button type="button" onclick="stockBuyEdit(this, event, '+ i +', '+ j +');" class="btn btn-info btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>  编辑</button><button type="button" onclick="stockBuyDelete(this, event, '+ stockDisplay.id +', '+ buyDisplay.id +');" class="btn btn-danger btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  删除</button></td>'+
 											      '</tr>'+
 											      '<tr class="sell-contrainer" '+ (i == 0 && j == 0 ? '' : 'style="display: none;"') +'>'+
 											      	'<td colspan="6">'+
@@ -282,7 +282,7 @@ function init(){
 														        '<td><font color="red">'+ (sellDisplay.price > buyDisplay.price? "赚钱": "亏损") +'</font></td>'+
 														        '<td>'+ sellDisplay.time +'</td>'+
 														        '<td>'+ sellDisplay.createTime +'</td>'+
-														        '<td><button type="button" onclick="stockSellEdit(this, event, '+i+','+j+','+x+');" class="btn btn-info btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>  编辑</button><button type="button" onclick="stockSellDelete(this, event, '+ stockDisplay.id +', '+ buyDisplay.id +', '+ sellDisplay.id +');" class="btn btn-danger btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  删除</button></td>'+
+														        '<td><button type="button" onclick="stockSellEdit(this, event, '+i+','+j+','+x+');" class="btn btn-info btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>  编辑</button><button type="button" onclick="stockSellDelete(this, event, '+ stockDisplay.id +', '+ buyDisplay.id +', '+ sellDisplay.id +');" class="btn btn-danger btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  删除</button></td>'+
 														      '</tr>';
 										}
 													html += '</tbody>'+

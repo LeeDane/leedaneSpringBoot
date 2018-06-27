@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +31,9 @@ public class WebConfigController extends BaseController{
 	 */
 	public static final String REQUEST_METHOD_GET = "GET";
 	
+	@Autowired
+	private WebBackground webBackground;
+	
 	/**
 	 * post请求方法名称
 	 */
@@ -40,7 +44,7 @@ public class WebConfigController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
-		message.put("message", new WebBackground().getImage());
+		message.put("message", webBackground.getImage());
 		message.put("isSuccess", true);
 		return message.getMap();
 	}

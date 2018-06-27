@@ -8,6 +8,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -94,7 +95,7 @@ public class UserController extends BaseController{
     /**
      * 存储所有的session信息
      */
-    public static Map<String, Serializable> activeSessions = new HashMap<String, Serializable>();
+    public static Map<String, List<Serializable>> activeSessions = new HashMap<String, List<Serializable>>();
 	
 	/**
 	 * 登录
@@ -246,18 +247,27 @@ public class UserController extends BaseController{
 				message.put("isSuccess", isSuccess);
 				//保证一个用户唯一的session
 				String sessionKey = String.valueOf(SecurityUtils.getSubject().getPrincipal());
+				List<Serializable> serializables = new ArrayList<Serializable>();
 				if(StringUtil.isNotNull(sessionKey) && activeSessions.get(sessionKey) != null){
 					try{
-						SessionKey key = new DefaultSessionKey(activeSessions.get(sessionKey));
-						//SecurityUtils.getSecurityManager().getSession(key).stop();
+						serializables = activeSessions.get(sessionKey);
+						//int deleteIndex = -1;
+						Iterator<Serializable> it = serializables.iterator();
+						while(it.hasNext()){
+							SessionKey key = new DefaultSessionKey(it.next());
+							//SecurityUtils.getSecurityManager().getSession(key).stop();
+		                     it.remove();
+
+		                 }
 					}catch(UnknownSessionException e){
 						logger.info("UnknownSessionException ------");
 					}catch(NullPointerException e){
 						logger.info("NullPointerException ------");
 					}
 				}
+				serializables.add(SecurityUtils.getSubject().getSession().getId());
 				
-				activeSessions.put(sessionKey, SecurityUtils.getSubject().getSession().getId());
+				activeSessions.put(sessionKey, serializables);
 	        }else{  
 	        	authenticationToken.clear(); 
 				number = userHandler.addLoginErrorNumber(username);	
@@ -500,6 +510,16 @@ public class UserController extends BaseController{
 		message.put("responseCode", EnumUtil.ResponseCode.注销成功.value);
 		message.put("isSuccess", true);
 		
+		//移除出缓存的在线用户列表
+		String sessionKey = String.valueOf(SecurityUtils.getSubject().getPrincipal());
+		try{
+			List<Serializable> serializables = activeSessions.get(sessionKey);
+			serializables.remove(SecurityUtils.getSubject().getSession().getId());
+		}catch(UnknownSessionException e){
+			logger.info("UnknownSessionException ------");
+		}catch(NullPointerException e){
+			logger.info("NullPointerException ------");
+		}
 		return message.getMap();
 	}
 	
@@ -1148,6 +1168,21 @@ public class UserController extends BaseController{
 		
 		checkRoleOrPermission(model, request);
 		message.putAll(userService.addUser(getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 在线用户列表
+	 * @return
+	 */
+	@RequestMapping(value = "/actives", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"}) 
+	public Map<String, Object> actives(Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(model, request);
+		message.putAll(userService.actives(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	/*@RequestMapping("/aaa")

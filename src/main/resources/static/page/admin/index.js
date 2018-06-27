@@ -41,6 +41,7 @@ var config = [{
 	          items:[
 	            {id: 'search', text: '查询用户', href: '/ad/us/search', closeable: false},
 	            {id:'new',text:'新增用户',href:'/ad/us/new'},
+	            {id:'active',text:'在线用户',href:'/ad/us/active'},
 	            {id:'black',text:'黑名单用户',href:'/ad/us/black'}
 	          ]
 	        },{

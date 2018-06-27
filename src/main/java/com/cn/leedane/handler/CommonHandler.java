@@ -8,11 +8,11 @@ import java.util.Map;
 import net.sf.json.JSONArray;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.cn.leedane.handler.circle.CirclePostHandler;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.StringUtil;
 
@@ -38,6 +38,8 @@ public class CommonHandler {
 	@Autowired
 	private CirclePostHandler circlePostHandler;
 	
+	@Value("${constant.source.delete.tip}")
+    public String SOURCE_DELETE_TIP;
 
 	/**
 	 * 通过表名和表ID获取该资源对象的展示内容
@@ -60,7 +62,7 @@ public class CommonHandler {
 		}else{
 			return "";
 		}
-		String content = ConstantsUtil.SOURCE_DELETE_TIP;
+		String content = SOURCE_DELETE_TIP;
 		if(StringUtil.isNull(tableName) || tableId < 1){
 			return content;
 		}
@@ -80,7 +82,7 @@ public class CommonHandler {
 			if(oldLength > (length + StringUtil.changeNotNull(account).length()))
 				content += "......";
 		}else{
-			content = ConstantsUtil.SOURCE_DELETE_TIP;
+			content = SOURCE_DELETE_TIP;
 		}
 		
 		//logger.info("tableName:"+tableName+",tableId:"+tableId+",content:"+content);
@@ -109,7 +111,7 @@ public class CommonHandler {
 		}else{
 			return result;
 		}
-		String content = ConstantsUtil.SOURCE_DELETE_TIP;
+		String content = SOURCE_DELETE_TIP;
 		if(StringUtil.isNull(tableName) || tableId < 1){
 			return result;
 		}
@@ -131,7 +133,7 @@ public class CommonHandler {
 			if(oldLength > length)
 				content += "......";
 		}else{
-			content = ConstantsUtil.SOURCE_DELETE_TIP;
+			content = SOURCE_DELETE_TIP;
 		}
 		result.put("source", content);
 		//logger.info("tableName:"+tableName+",tableId:"+tableId+",content:"+content);

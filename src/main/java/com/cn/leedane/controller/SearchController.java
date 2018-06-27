@@ -150,7 +150,7 @@ public class SearchController extends BaseController{
 			int tempId = StringUtil.changeObjectToInt(response1.get("tempId"));
 			QueryResponse response2 = (QueryResponse) response1.get("queryResponse");
 			SolrDocumentList documentList= response2.getResults();			
-			Map<String,Map<String,List<String>>> highlightings = response2.getHighlighting();
+			//Map<String,Map<String,List<String>>> highlightings = response2.getHighlighting();
 			List<Map<String, Object>> ds = new ArrayList<Map<String,Object>>();
 			 
 			
@@ -159,11 +159,11 @@ public class SearchController extends BaseController{
 	        	
 	        	
 	        	//获取ID域（必须，索引要要求所有的实体都有id字段）
-	        	String idField = StringUtil.changeNotNull(solrDocument.getFieldValue("id"));
+	        	//String idField = StringUtil.changeNotNull(solrDocument.getFieldValue("id"));
 	            
 	            Map<String, Object> map = new HashMap<String, Object>();
 	            //设置高亮的字段
-	            Map<String,List<String>> highlightField = highlightings.get(idField);
+	            //Map<String,List<String>> highlightField = highlightings.get(idField);
 	            for(Entry<String, Object> m: solrDocument.entrySet()){
 	            	/*if(highlightField != null && highlightField.containsKey(m.getKey())){
 	            		Set<String> hls = StringUtil.getSearchHighlight(highlightField.get(m.getKey()).get(0));

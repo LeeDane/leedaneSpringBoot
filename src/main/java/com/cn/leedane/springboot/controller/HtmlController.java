@@ -5,7 +5,6 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +36,6 @@ import com.cn.leedane.service.AppVersionService;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.springboot.SpringUtil;
-import com.cn.leedane.utils.CommonUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
@@ -327,14 +325,14 @@ public class HtmlController extends BaseController{
 	@RequestMapping("403")
 	public String unauthorizedRole(Model model, HttpServletRequest request){
 		//设置统一的请求模式
-		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
+		model.addAttribute("isDebug", IS_DEBUG);
 		return loginRoleCheck("p403", model, request);
 	}
 	
 	@RequestMapping("404")
 	public String nonexistence(Model model, HttpServletRequest request){
 		//设置统一的请求模式
-		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
+		model.addAttribute("isDebug", IS_DEBUG);
 		String errorMessage = request.getParameter("errorMessage");
 		if(StringUtil.isNotNull(errorMessage)){
 			model.addAttribute("error", true);
@@ -353,7 +351,7 @@ public class HtmlController extends BaseController{
 	@RequestMapping("null-pointer")
 	public String nullPointer(Model model, HttpServletRequest request) throws UnsupportedEncodingException{
 		//设置统一的请求模式
-		model.addAttribute("isDebug", ConstantsUtil.IS_DEBUG);
+		model.addAttribute("isDebug", IS_DEBUG);
 		String errorMessage = request.getParameter("errorMessage");
 		if(StringUtil.isNotNull(errorMessage)){
 			model.addAttribute("error", true);

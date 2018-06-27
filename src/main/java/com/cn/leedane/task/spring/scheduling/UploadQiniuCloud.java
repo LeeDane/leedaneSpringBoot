@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.handler.CloudStoreHandler;
@@ -32,9 +33,8 @@ public class UploadQiniuCloud extends AbstractScheduling{
 	@Autowired
 	private CloudStoreHandler cloudStoreHandler;
 	
-	public void setCloudStoreHandler(CloudStoreHandler cloudStoreHandler) {
-		this.cloudStoreHandler = cloudStoreHandler;
-	}
+	@Value("${constant.qiniu.server.url}")
+    public String QINIU_SERVER_URL;
 	
 	@Override
 	public void execute() throws SchedulerException{
@@ -59,7 +59,7 @@ public class UploadQiniuCloud extends AbstractScheduling{
 					if(fileBeans != null && fileBeans.size() >0){
 						for(Map<String, Object> m: fileBeans){
 							if(m.containsKey("id")){
-								filePathMapper.updateSql(EnumUtil.getBeanClass(EnumUtil.getTableCNName(DataTableType.文件.value)), " set qiniu_path=? , is_upload_qiniu=?, modify_time=? where id=? ", ConstantsUtil.QINIU_SERVER_URL + StringUtil.changeNotNull(m.get("path")), ConstantsUtil.STATUS_NORMAL, new Date(), StringUtil.changeObjectToInt(m.get("id")));
+								filePathMapper.updateSql(EnumUtil.getBeanClass(EnumUtil.getTableCNName(DataTableType.文件.value)), " set qiniu_path=? , is_upload_qiniu=?, modify_time=? where id=? ", QINIU_SERVER_URL + StringUtil.changeNotNull(m.get("path")), ConstantsUtil.STATUS_NORMAL, new Date(), StringUtil.changeObjectToInt(m.get("id")));
 							}
 						}
 					}

@@ -517,4 +517,15 @@ public interface UserService<T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> initSetting(UserBean user, HttpServletRequest request);
+
+	/**
+	 * 获取在线的用户列表
+	 * @param jsonFromMessage
+	 * @param userFromMessage
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> actives(
+			JSONObject json, UserBean user,
+			HttpServletRequest request);
 }

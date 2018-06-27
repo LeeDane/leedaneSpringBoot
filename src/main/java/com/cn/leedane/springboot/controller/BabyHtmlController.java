@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import net.sf.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,16 +20,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.display.baby.IndexBabyDisplay;
-import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.baby.BabyHandler;
 import com.cn.leedane.model.VisitorBean;
 import com.cn.leedane.model.baby.BabyBean;
 import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.utils.baby.BabyUtil;
 
@@ -67,6 +64,9 @@ public class BabyHtmlController extends BaseController{
 	
 	@Autowired
 	private BabyHandler babyHandler;
+	
+	@Value("${constant.default.no.pic.path}")
+    public String DEFAULT_NO_PIC_PATH;
 	
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面
@@ -112,7 +112,7 @@ public class BabyHtmlController extends BaseController{
 			List<IndexBabyDisplay> babyDisplays = new ArrayList<IndexBabyDisplay>();
 			for(BabyBean baby:  babys){
 				IndexBabyDisplay babyDisplay = new IndexBabyDisplay();
-				babyDisplay.setPic(StringUtil.isNull(baby.getHeadPic())? ConstantsUtil.DEFAULT_NO_PIC_PATH: baby.getHeadPic());
+				babyDisplay.setPic(StringUtil.isNull(baby.getHeadPic())? DEFAULT_NO_PIC_PATH: baby.getHeadPic());
 				babyDisplay.setId(baby.getId());
 				babyDisplay.setNickname(baby.getNickname());
 				babyDisplay.setCurrent(baby.getId() == babyId);

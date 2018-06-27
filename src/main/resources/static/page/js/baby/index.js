@@ -280,22 +280,27 @@ function buildEachRow(life){
 	var colorStyle;
 	var boxColor;
 	var titleText;
+	var titleType;
 	if(life.type == 1){
 		boxColor = 'eat-box';
 		colorStyle = 'panel-info';
 		titleText = '吃';
+		titleType = "eat";
 	}else if(life.type == 2){
 		boxColor = 'sleep-box';
 		colorStyle = 'panel-success';
 		titleText = '睡';
+		titleType = "sleep";
 	}else if(life.type == 3){
 		boxColor = 'swap-box';
 		colorStyle = 'panel-warning';
 		titleText = '洗';
+		titleType = "swap";
 	}else if(life.type == 4){
 		boxColor = 'sick-box';
 		colorStyle = 'panel-danger';
 		titleText = '臭';
+		titleType = "sick";
 	}
 	var html = '<div class="panel '+ colorStyle +'">'+
 					'<div class="panel-heading">'+
@@ -324,12 +329,16 @@ function buildEachRow(life){
 						  '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span> 删除'+
 						'</button>'+
 						
-						'<button type="button" class="btn btn-default btn-xs" style="margin-left: 10px;" onclick="window.open("/baby/'+ babyId +'/eat/manage");">'+
+						'<button type="button" class="btn btn-default btn-xs" style="margin-left: 10px;" onclick="linkToEdit(babyId, \''+ titleType +'\');">'+
 						  '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 编辑'+
 						'</button>'+
 					'</div>'+
 				'</div>';
 	return html;
+}
+
+function linkToEdit(id, type){
+	window.open("/baby/"+ babyId +"/"+ type +"/manage");
 }
 
 /**

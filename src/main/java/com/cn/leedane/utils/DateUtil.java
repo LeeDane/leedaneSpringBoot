@@ -37,6 +37,8 @@ public class DateUtil {
 	 */
 	public static String DateToString (Date date,String format){
 		if(date == null)
+			return null;
+		if(format == null)
 			return DateToString(date);
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		return dateFormat.format(date);

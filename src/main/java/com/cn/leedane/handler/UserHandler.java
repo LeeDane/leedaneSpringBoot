@@ -15,6 +15,7 @@ import org.apache.commons.lang.SerializationUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.cache.SystemCache;
@@ -52,6 +53,8 @@ public class UserHandler {
 	@Autowired
 	private SystemCache systemCache;
 	
+	@Value("${constant.default.no.pic.path}")
+    public String DEFAULT_NO_PIC_PATH;
 	/**
 	 * 获取正常用户设置状态对象
 	 * @param circleId
@@ -190,7 +193,7 @@ public class UserHandler {
 			
 		}
 		if(StringUtil.isNull(userPicPath))
-			userPicPath = ConstantsUtil.DEFAULT_NO_PIC_PATH;
+			userPicPath = DEFAULT_NO_PIC_PATH;
 		return userPicPath;
 	}
 	

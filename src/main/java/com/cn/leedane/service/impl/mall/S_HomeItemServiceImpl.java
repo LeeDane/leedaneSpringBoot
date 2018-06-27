@@ -12,6 +12,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cn.leedane.exception.ParameterUnspecificationException;
@@ -69,6 +70,9 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	@Autowired
 	private S_HomeItemProductMapper homeItemProductMapper;
 
+	@Value("${constant.mall.home.category.id}")
+    public int MALL_HOME_CATEGORY_ID;
+	
 	@Override
 	public Map<String, Object> addItem(JSONObject json, UserBean user,
 			HttpServletRequest request) {
@@ -378,7 +382,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 		
 		List<S_HomeItemBean> s_HomeItemBeans = homeItemHandler.showCategoryList();	
 		//获取总的子分类
-		Map<String, Object>  caMap = categoryService.children(true, ConstantsUtil.MALL_HOME_CATEGORY_ID, user, request);
+		Map<String, Object>  caMap = categoryService.children(true, MALL_HOME_CATEGORY_ID, user, request);
 		
 		//已经分配的分类
 		List<KeyValueBean> already = new ArrayList<KeyValueBean>();

@@ -1,5 +1,6 @@
 package com.cn.leedane.service.impl;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,13 +16,19 @@ import javax.servlet.http.HttpServletRequest;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.UnknownSessionException;
+import org.apache.shiro.session.mgt.DefaultSessionKey;
+import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.chat_room.ScanLoginWebSocket;
+import com.cn.leedane.controller.UserController;
 import com.cn.leedane.enums.NotificationType;
 import com.cn.leedane.exception.ErrorException;
 import com.cn.leedane.exception.MobCodeErrorException;
@@ -133,6 +141,15 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	@Autowired
 	private SessionDAO sessionDAO;
 
+	@Value("${constant.defalult.login.password.string}")
+    private String DEFALULT_LOGIN_PASSWORD_STRING;
+	
+	@Value("${constant.websit.name}")
+    private String WEBSIT_NAME;
+	
+	@Value("${constant.system.server.url}")
+    private String SYSTEM_SERVER_URL;
+	
 	
 	@Override
 	public UserBean findById(int uid) {
@@ -267,7 +284,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	private void afterRegister(UserBean user2){
 		UserBean user = new UserBean();
 		
-		String content = "欢迎您："+user2.getAccount()+"感谢注册！<a href = '"+ConstantsUtil.SYSTEM_SERVER_URL+ "/leedane/user/completeRegister.action?registerCode="+user2.getRegisterCode()+"'>点击完成注册</a>"
+		String content = "欢迎您："+user2.getAccount()+"感谢注册！<a href = '"+SYSTEM_SERVER_URL+ "/leedane/user/completeRegister.action?registerCode="+user2.getRegisterCode()+"'>点击完成注册</a>"
 				+ "<p>请勿回复此邮件，有事联系客服QQ"+ConstantsUtil.DEFAULT_USER_FROM_QQ+"</p>";
 		user.setAccount(ConstantsUtil.DEFAULT_USER_FROM_ACCOUNT);
 		user.setChinaName(ConstantsUtil.DEFAULT_USER_FROM_CHINANAME);
@@ -279,7 +296,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		set.add(user2);	
 		
 		EmailUtil emailUtil = EmailUtil.getInstance();
-		emailUtil.initData(user, set, content, ConstantsUtil.WEBSIT_NAME +"注册验证");
+		emailUtil.initData(user, set, content, WEBSIT_NAME +"注册验证");
 		try {
 			emailUtil.sendMore();
 		} catch (Exception e) {
@@ -1151,7 +1168,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 		
 		//两次MD5加密
-		updateUserBean.setPassword(MD5Util.compute(MD5Util.compute(ConstantsUtil.DEFALULT_LOGIN_PASSWORD_STRING)));
+		updateUserBean.setPassword(MD5Util.compute(MD5Util.compute(DEFALULT_LOGIN_PASSWORD_STRING)));
 		
 		boolean result = userMapper.update(updateUserBean) > 0;
 		if(result){
@@ -1163,7 +1180,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 				
 				@Override
 				public void run() {
-					String content = "您的登录密码已经被管理员重置为"+ ConstantsUtil.DEFALULT_LOGIN_PASSWORD_STRING +",请尽快重新登录修改！";
+					String content = "您的登录密码已经被管理员重置为"+ DEFALULT_LOGIN_PASSWORD_STRING +",请尽快重新登录修改！";
 					notificationHandler.sendNotificationById(false, user, toUserId, content, com.cn.leedane.utils.EnumUtil.NotificationType.通知, EnumUtil.DataTableType.用户.value, toUserId, null);
 				}
 			}).start();
@@ -1674,6 +1691,51 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
 		
 		message.put("setting", circleSettingBean);
+		return message.getMap();
+	}
+
+	@Override
+	public Map<String, Object> actives(JSONObject json, UserBean user,
+			HttpServletRequest request) {
+		logger.info("UserServiceImpl-->actives():jo="+json.toString());
+
+		ResponseMap message = new ResponseMap();
+		
+		//检查是否具有管理员权限
+		checkAdmin(user);
+		
+		//登录的用户列表
+		List<String> userNames = new ArrayList<String>();
+		Iterator<Map.Entry<String,List<Serializable>>> it = UserController.activeSessions.entrySet().iterator();
+		while(it.hasNext()){
+			Entry<String, List<Serializable>> entry = it.next();
+			String userIdStr = entry.getKey();
+			List<Serializable> serializables = entry.getValue();
+			//int deleteIndex = -1;
+			
+			//遍历校验session是否已经注销(过期)，注销就从列表中删除
+			Iterator<Serializable> iterator = serializables.iterator();
+			while(iterator.hasNext()){
+				try{
+					SessionKey key = new DefaultSessionKey(iterator.next());
+					SecurityUtils.getSecurityManager().getSession(key);
+				}catch(UnknownSessionException e){
+					UserController.activeSessions.remove(userIdStr);
+				}
+             }
+			serializables = UserController.activeSessions.get(userIdStr);
+			if(CollectionUtil.isNotEmpty(serializables)){
+				userNames.add(userHandler.getUserName(StringUtil.changeObjectToInt(userIdStr)) +"");
+			}
+			
+		}
+		message.put("isSuccess", true);
+		message.put("message", userNames);
+		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("管理员账号为", user.getAccount() , "获取在线用户列表", StringUtil.getSuccessOrNoStr(true)).toString(), "actives()", StringUtil.changeBooleanToInt(true), 0);	
+		
 		return message.getMap();
 	}
 

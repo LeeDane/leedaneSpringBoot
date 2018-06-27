@@ -15,6 +15,7 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cn.leedane.cache.SystemCache;
@@ -125,6 +126,9 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	@Autowired
 	private VisitorService<VisitorBean> visitorService;
 	
+	@Value("${constant.default.no.pic.path}")
+    public String DEFAULT_NO_PIC_PATH;
+	
 	@Override
 	public Map<String, Object> init(UserBean user, HttpServletRequest request) {
 		logger.info("CircleServiceImpl-->init(), user=" +(user != null ? user.getAccount(): "用户还未登录"));
@@ -144,7 +148,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 					cc.put("id", circleBean.getId());
 					cc.put("name", circleBean.getName());
 					if(StringUtil.isNull(circleBean.getCirclePath())){
-						cc.put("path", ConstantsUtil.DEFAULT_NO_PIC_PATH);
+						cc.put("path", DEFAULT_NO_PIC_PATH);
 					}else{
 						cc.put("path", circleBean.getCirclePath());
 					}
@@ -174,7 +178,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 				if(StringUtil.isNotNull(post.getImgs())){
 					post.setImgs(post.getImgs().split(";")[0]);
 				}else{
-					post.setImgs(ConstantsUtil.DEFAULT_NO_PIC_PATH);
+					post.setImgs(DEFAULT_NO_PIC_PATH);
 				}
 				
 			}
@@ -338,7 +342,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		circleBean.setStatus(ConstantsUtil.STATUS_NORMAL);
 		circleBean.setCircleDesc(describe);
 		circleBean.setName(name);
-		circleBean.setCirclePath(ConstantsUtil.DEFAULT_NO_PIC_PATH);
+		circleBean.setCirclePath(DEFAULT_NO_PIC_PATH);
 		
 		boolean result = circleMapper.save(circleBean) > 0;
 		if(result){

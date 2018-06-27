@@ -13,16 +13,10 @@ import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
-import com.cn.leedane.utils.Base64ImageUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.handler.CloudStoreHandler;
 import com.cn.leedane.mapper.FilePathMapper;
 import com.cn.leedane.mapper.TemporaryBase64Mapper;
@@ -33,6 +27,13 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.FilePathService;
 import com.cn.leedane.service.MoodService;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.utils.Base64ImageUtil;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.StringUtil;
 
 /**
  * 文件路径service实现类
@@ -58,9 +59,9 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 	@Autowired
 	private CloudStoreHandler cloudStoreHandler;
 	
-	public void setCloudStoreHandler(CloudStoreHandler cloudStoreHandler) {
-		this.cloudStoreHandler = cloudStoreHandler;
-	}
+	@Value("${constant.qiniu.server.url}")
+    public String QINIU_SERVER_URL;
+	
 	@Override
 	public boolean saveEachTemporaryBase64ToFilePath(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
@@ -313,7 +314,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 			for(int i = 0; i <filePaths.size(); i++){
 				fid = cloudStoreHandler.executeSingleUpload(filePaths.get(i));
 				if(fid > 0){
-					updateUploadQiniu(fid, ConstantsUtil.QINIU_SERVER_URL + StringUtil.changeNotNull(filePaths.get(i).get("path")));
+					updateUploadQiniu(fid, QINIU_SERVER_URL + StringUtil.changeNotNull(filePaths.get(i).get("path")));
 				}
 			}
 			/*List<Map<String, Object>> fileBeans = cloudStoreHandler.executeUpload(filePaths);

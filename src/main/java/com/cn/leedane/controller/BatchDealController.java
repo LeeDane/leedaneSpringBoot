@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,6 +42,9 @@ public class BatchDealController extends BaseController{
 	
 	@Autowired
 	private CloudStoreHandler cloudStoreHandler;
+	
+	@Value("${constant.qiniu.server.url}")
+    public String QINIU_SERVER_URL;
 	/**
 	 * 执行方法
 	 * @return
@@ -93,7 +97,7 @@ public class BatchDealController extends BaseController{
 			if(fileBeans != null && fileBeans.size() >0){
 				for(Map<String, Object> m: fileBeans){
 					if(m.containsKey("id")){
-						filePathService.updateUploadQiniu(StringUtil.changeObjectToInt(m.get("id")), ConstantsUtil.QINIU_SERVER_URL + StringUtil.changeNotNull(m.get("path")));
+						filePathService.updateUploadQiniu(StringUtil.changeObjectToInt(m.get("id")), QINIU_SERVER_URL + StringUtil.changeNotNull(m.get("path")));
 					}
 				}
 			}

@@ -7,9 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.cn.leedane.utils.ConstantsUtil;
 
 @Service
 public abstract class BaseXMLWechatService {
@@ -47,6 +46,9 @@ public abstract class BaseXMLWechatService {
 	 * 信息的内容
 	 */
 	protected String Content;
+	
+	@Value("${constant.system.server.url}")
+    private String SYSTEM_SERVER_URL;
 	
 	public BaseXMLWechatService() {
 	}
@@ -132,6 +134,6 @@ public abstract class BaseXMLWechatService {
 		 /*this.basePath = request.getScheme()+"://"+request.getServerName()
 				+":"+request.getServerPort()+request.getContextPath()+"/"; 
 		 return basePath;*/
-		return ConstantsUtil.SYSTEM_SERVER_URL;
+		return SYSTEM_SERVER_URL;
 	}
 }

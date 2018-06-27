@@ -350,6 +350,7 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
         ClassPathResource resource = new ClassPathResource("leedane.properties");
         PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer = new PropertySourcesPlaceholderConfigurer();
         propertyPlaceholderConfigurer.setLocation(resource);
+        propertyPlaceholderConfigurer.setIgnoreUnresolvablePlaceholders(true);
         return propertyPlaceholderConfigurer;
     }
 
