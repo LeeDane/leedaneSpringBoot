@@ -16,6 +16,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.cache.SystemCache;
@@ -81,6 +82,9 @@ public class NotificationHandler {
 	
 	private RedisUtil redisUtil = RedisUtil.getInstance();
 	
+	@Value("${constant.robot.id}")
+    public int robotId;
+	
 	/**
 	 * 给管理员发送错误异常的通知
 	 * @param content
@@ -124,7 +128,6 @@ public class NotificationHandler {
 	 * @param objectBean ids没有机器人的Id的时候可以为空
 	 */
 	public void sendNotificationByIds(boolean notifyMySelf, final UserBean user, Set<Integer> ids, String content, NotificationType notificationType, String tableName, int tableId, final Object objectBean){
-		final int robotId = StringUtil.changeObjectToInt(systemCache.getCache("leedane-robot-id"));
 		if(!notifyMySelf){
 			//先把自己过滤掉(自己不需要通知)
 			ids.remove(user.getId());	

@@ -53,7 +53,7 @@ public class SignInTest extends BaseTest {
 	@Test
 	public void save(){
 		SignInBean bean = new SignInBean();
-		int score = 1;
+		//int score = 1;
 		int continuous = 0; //连续天数
 		List<Map<String, Object>> parents = signInService.getNewestRecore(1);
 		if(parents != null && parents.size() > 0){
@@ -63,10 +63,10 @@ public class SignInTest extends BaseTest {
 			if(DateUtil.DateToString(DateUtil.objectToDate(parents.get(0).get("create_time")), "yyyy-MM-dd").equals(DateUtil.DateToString(DateUtil.getYestoday(), "yyyy-MM-dd"))){
 				
 				//根据连续天数计算积分
-				score = StringUtil.getScoreBySignin(StringUtil.changeObjectToInt(parents.get(0).get("continuous")), StringUtil.changeObjectToInt(parents.get(0).get("score")));
+				//score = StringUtil.getScoreBySignin(StringUtil.changeObjectToInt(parents.get(0).get("continuous")), StringUtil.changeObjectToInt(parents.get(0).get("score")));
 				continuous = StringUtil.changeObjectToInt(parents.get(0).get("continuous")) + 1;		
 			}else{
-				score = StringUtil.changeObjectToInt(parents.get(0).get("score")) + 1;
+				//score = StringUtil.changeObjectToInt(parents.get(0).get("score")) + 1;
 			}
 		}
 		

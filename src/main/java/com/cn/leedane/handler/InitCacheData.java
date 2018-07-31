@@ -31,7 +31,6 @@ import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.mapper.BaseMapper;
 import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.model.JobManageBean;
-import com.cn.leedane.model.OptionBean;
 import com.cn.leedane.model.RecordTimeBean;
 import com.cn.leedane.rabbitmq.RecieveMessage;
 import com.cn.leedane.rabbitmq.recieve.DeleteServerFileRecieve;
@@ -338,10 +337,10 @@ public class InitCacheData {
 			List<Map<String, Object>> results = baseMapper.executeSQL("select option_key, option_value from t_option where STATUS = 1");
 			if(CollectionUtil.isNotEmpty(results)){
 				for(Map<String, Object> result: results){
-					OptionBean option = new OptionBean();  
-					option.setOptionKey(StringUtil.changeNotNull(result.get("option_key")));
-					option.setOptionValue(StringUtil.changeNotNull(result.get("option_value")));
-					systemCache.addCache(option.getOptionKey(), option.getOptionValue());
+					//OptionBean option = new OptionBean();  
+					//option.setOptionKey(StringUtil.changeNotNull(result.get("option_key")));
+					//option.setOptionValue(StringUtil.changeNotNull(result.get("option_value")));
+					systemCache.addCache(StringUtil.changeNotNull(result.get("option_key")), StringUtil.changeNotNull(result.get("option_value")));
 				}
 			}
 			long end = System.currentTimeMillis();  

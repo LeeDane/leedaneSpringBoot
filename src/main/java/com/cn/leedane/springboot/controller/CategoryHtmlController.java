@@ -2,6 +2,7 @@ package com.cn.leedane.springboot.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.StringUtil;
 
 /**
  * 分类管理Html页面的控制器
@@ -33,6 +35,7 @@ public class CategoryHtmlController extends BaseController{
 	
 	@RequestMapping("/")
 	public String index1(Model model, HttpServletRequest request){
+		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		return loginRoleCheck("category/index", true, model, request);
 	}
 	
@@ -53,6 +56,7 @@ public class CategoryHtmlController extends BaseController{
 			@RequestParam(value="rootId") int rootId, //根节点的名称
 			HttpServletRequest request){
 		model.addAttribute("rootId", rootId);
+		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		return loginRoleCheck("category/select", true, model, request);
 	}
 }

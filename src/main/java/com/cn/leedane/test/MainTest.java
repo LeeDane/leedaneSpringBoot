@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.StringUtil;
 
@@ -154,7 +153,7 @@ public class MainTest {
         }
         return false;
     }
-	private static void testIntAndInteger() {
+	protected static void testIntAndInteger() {
 		int i = 10;
 		Integer i1 = 10;
 		logger.info(i == i1);
@@ -213,19 +212,19 @@ public class MainTest {
 		        }  
 	}
 	
-	private static void testImages() {
+	protected static void testImages() {
 		Date d1 = DateUtil.stringToDate("2016-11-04 10:53:35");
 		Date d2 = DateUtil.stringToDate("2016-11-04 10:48:01");
 		logger.info(DateUtil.leftMinutes(d1, d2));
 		
 	}
 
-	private static void testStringBuffer() {
+	protected static void testStringBuffer() {
 		/*StringBuffer buffer = new StringBuffer("hhfhfhf可减肥咖啡");
 		buffer.*/
 	}
 
-	private static int getInt(){
+	protected static int getInt(){
 		int i = 80;
 		if(i > 0)
 			return 10;

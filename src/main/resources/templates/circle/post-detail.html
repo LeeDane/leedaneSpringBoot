@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title th:text="${post.title}"></title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<link rel="stylesheet" href="/page/other/layui-v2.1.5/css/layui.css"  media="all" />
 	<style type="text/css">
 		/**  大屏样式 **/
 		@media screen and (min-width: 900px){
@@ -31,7 +32,7 @@
 				margin-right: -8px !important;
 			}
 		}
-		.container{
+		.main-container{
 			margin-top: 50px;
 		}
 		#content-container .row{
@@ -104,7 +105,7 @@
 </head>
 <body th:attr="style='background-color: ' +(${setting.backgroundColor} == '#f5f5f5' ? '' : ${setting.backgroundColor})">
 	<div th:include="common :: hello">what?</div>
-	<div class="container">
+	<div th:class="${nonav == null || nonav == false} ? 'container main-container': 'container' ">
 		<div class="row adapter-row">
 			<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12" id="content-container">
 				<div class="row">
@@ -126,10 +127,10 @@
 			   		<div id="zan-users"></div>
 			   		<div class="row-content" th:utext="${post.content}"></div>
 			   		<div class="row" style="margin-top: 5px;" th:if="${post.imgs != null} and ${post.imgs != ''}">
-				   		<div class="img-container">
-					   		<div class="col-lg-4" th:each="img,imgStat : ${post.imgs.split(';')}">
+				   		<div id="img-container">
+					   		<!-- <div class="col-lg-4" th:each="img,imgStat : ${post.imgs.split(';')}">
 					   			<img th:src="${img}" class="img-responsive post-item-img" onClick="" />
-					   		</div>
+					   		</div> -->
 				   		</div>
 				   </div>
 			   </div>
@@ -164,13 +165,8 @@
 						</div>
 					</div>
 			   </div>
-			   <div class="row" id="comment-list-container">
-			   </div>
-			   <div>
-			    	<nav aria-label="Page navigation">
-	  					<ul class="pagination"></ul>
-					</nav>
-			    </div>
+			   <div class="row" id="comment-list-container"></div>
+			   <div id="item-pager"></div>
 			</div>
 		</div>
 	</div>
@@ -186,6 +182,10 @@
 	var circleId = /*[[${post.circleId}]]*/;//取值
 	var createUserId = /*[[${post.createUserId}]]*/;//取值
 	var audit = /*[[${audit}]]*/;//取值
+	var imgs = /*[[${post.imgs}]]*/;//取值
+	
+	
+	
 	/*]]>*/  
 </script> 
 </html>

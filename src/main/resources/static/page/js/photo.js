@@ -25,7 +25,7 @@ layui.use(['layer'], function(){
 	}); 
 	$tree = $('#tree');
 	getChildNodes(0, 131);//获取分类列表
-	getWebPhotos();  
+	//getWebPhotos();  
 });
 var last_id = 0;
 var first_id = 0;
@@ -253,7 +253,7 @@ function findColumnToAdd(photo, index){
 
 	//判断是否是内部链接
 	if(photo.path.indexOf("7xnv8i.com1.z0.glb.clouddn.com") >= 0 || photo.path.indexOf("pic.onlyloveu.top") >= 0){
-		img = '<img width="100%" title="'+ (isNotEmpty(photo.desc) ? isNotEmpty(photo.desc) : '') +'" title" height="'+height+'" style="margin-top: 10px;" class="img-show img-rounded index_'+index+'" alt="" src="'+ photo.path+'" onclick="showImg('+index+')" onmouseover="imgHandOver(this, '+ index +');" onmouseout="imgHandOut(this, '+ index +');">';
+		img = '<img width="100%" title="'+ (isNotEmpty(photo.desc) ? isNotEmpty(photo.desc) : '') +'" height="'+height+'" style="margin-top: 10px;" class="img-show img-rounded index_'+index+'" alt="" src="'+ photo.path+'" onclick="showImg('+index+')" onmouseover="imgHandOver(this, '+ index +');" onmouseout="imgHandOut(this, '+ index +');">';
 	}else{
 		img = '<img width="100%" title="'+ (isNotEmpty(photo.desc) ? isNotEmpty(photo.desc) : '') +'" height="'+height+'" style="margin-top: 10px;" class="img-show out-link index_'+index+'" alt="" temp-src="'+ photo.path+'" onclick="showImg('+index+')" onmouseover="imgHandOver(this, '+ index +');" onmouseout="imgHandOut(this, '+ index +');">';
 	}
@@ -286,7 +286,7 @@ function imgHandOver(obj, index){
 	if(isNotEmpty(photo['gallery_desc'])){
 		var top = $(obj).offset().top;
 		var left = $(obj).offset().left;
-		$("body").append('<span id="desc_'+ index +'">'+ photo['gallery_desc'] +'</span>');
+		$("body").append('<span id="desc_'+ index +'" >'+ photo['gallery_desc'] +'</span>');
 		var $desc = $("#desc_"+index);
 		$desc.css("position", "absolute");
 		$desc.css("top", top);

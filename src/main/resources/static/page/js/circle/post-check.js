@@ -1,5 +1,6 @@
-layui.use(['layer'], function(){
+layui.use(['layer', 'laypage'], function(){
 	layer = layui.layer;
+	laypage = layui.laypage;
 	initPage(".pagination", "getNoCheckList");
 	$tableContainer = $(".table tbody");
 	
@@ -115,7 +116,7 @@ function getNoCheckList(){
 						$tableContainer.append('<tr><td colspan="7">该圈子已经没有待审核的帖子！</td></tr>');
 					}else{
 						$tableContainer.append('<tr><td colspan="7">已经没有更多的待审核的帖子啦，请重新选择！</td></tr>');
-						pageDivUtil(data.total);
+						//pageDivUtil(data.total);
 					}
 					return;
 				}
@@ -123,7 +124,26 @@ function getNoCheckList(){
 					$tableContainer.append(buildEachPostRow(i, posts[i]));
 					$("#row-index-"+i).data("post", posts[i]);
 				}
-				pageDivUtil(data.total);
+				//pageDivUtil(data.total);
+				
+				//执行一个laypage实例
+				 laypage.render({
+				    elem: 'item-pager' //注意，这里的 test1 是 ID，不用加 # 号
+				    ,layout: ['prev', 'page', 'next', 'count', 'skip']
+				    ,count: data.total //数据总数，从服务端得到
+				    ,limit: pageSize
+				    ,theme: '#337ab7'
+				    , curr: currentIndex + 1
+				    ,jump: function(obj, first){
+					    //obj包含了当前分页的所有参数，比如：
+					    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+					    console.log(obj.limit); //得到每页显示的条数
+					    if(!first){
+					    	currentIndex = obj.curr -1;
+					    	getNoCheckList();
+					    }
+					  }
+				 });
 			}else{
 				ajaxError(data);
 			}

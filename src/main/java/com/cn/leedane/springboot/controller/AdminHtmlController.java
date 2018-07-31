@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +23,7 @@ import com.cn.leedane.utils.EnumUtil.ProductPlatformType;
  */
 @Controller
 public class AdminHtmlController extends BaseController{
-	private Logger logger = Logger.getLogger(getClass());
+	//private Logger logger = Logger.getLogger(getClass());
 	
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面

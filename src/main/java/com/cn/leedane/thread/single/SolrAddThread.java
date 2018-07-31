@@ -1,8 +1,6 @@
 package com.cn.leedane.thread.single;
 
 import com.cn.leedane.lucene.solr.BaseSolrHandler;
-import com.cn.leedane.lucene.solr.BlogSolrHandler;
-import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.IDBean;
 
 /**

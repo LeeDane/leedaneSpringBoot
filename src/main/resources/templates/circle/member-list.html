@@ -15,7 +15,7 @@
 	<!-- <link rel="stylesheet" th:href="@{/page/other/layui/css/layui.css}" media="all" /> -->
 	<style type="text/css">
 		
-		.container{
+		.main-container{
 			margin-top: 50px;
 		}
 		.row{
@@ -33,7 +33,7 @@
 </head>
 <body th:attr="style='background-color: ' +(${setting.backgroundColor} == '#f5f5f5' ? '' : ${setting.backgroundColor})">
 	<div th:include="common :: hello">what?</div>
-	<div class="container">
+	<div th:class="${nonav == null || nonav == false} ? 'container main-container': 'container' " >
 		<div class="row">
 			<div class="col-lg-12">
 				<button type="button" class="btn btn-warning btn-sm" data-placement="left" data-toggle="tooltip" title="点击进入圈子中心" th:text="${circle.name}" th:onclick="'linkToCircle('+ ${circle.id} +')'"></button>

@@ -2,8 +2,6 @@ package com.cn.leedane.upload;
 
 import javax.servlet.http.HttpSession;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.fileupload.ProgressListener;
 import org.springframework.stereotype.Component;
 

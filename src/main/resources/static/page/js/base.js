@@ -54,7 +54,7 @@ function isNotEmpty(str){
  */
 function isLink(link){
 	var urlRegExp=/^((https|http|ftp|rtsp|mms)?:\/\/)+[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/;
-    return urlRegExp.test(url);
+    return urlRegExp.test(link);
 }
 
 

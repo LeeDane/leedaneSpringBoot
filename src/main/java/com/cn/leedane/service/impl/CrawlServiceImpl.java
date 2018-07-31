@@ -22,11 +22,13 @@ public class CrawlServiceImpl implements CrawlService<CrawlBean> {
 	@Autowired
 	private CrawlMapper crawlMapper;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CrawlBean> findAllNotCrawl(int limit, String source) {
 		return SqlUtil.convertMapsToBeans(CrawlBean.class, this.crawlMapper.findAllNotCrawl(limit, source));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CrawlBean> findAllHotNotCrawl(int limit) {
 		return SqlUtil.convertMapsToBeans(CrawlBean.class, this.crawlMapper.findAllHotNotCrawl(limit));

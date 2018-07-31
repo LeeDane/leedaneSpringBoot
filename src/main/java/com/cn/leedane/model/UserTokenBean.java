@@ -1,10 +1,6 @@
 package com.cn.leedane.model;
 import java.util.Date;
 
-import org.apache.solr.client.solrj.beans.Field;
-
-import com.cn.leedane.mybatis.table.annotation.Column;
-
 /**
  * APP用户所对象的token实体bean
  * @author LeeDane

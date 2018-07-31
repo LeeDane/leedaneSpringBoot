@@ -2,8 +2,6 @@ package com.cn.leedane.utils;
 
 import java.util.List;
 import java.util.Map;
-
-import net.sf.json.JSONArray;
 /**
  * 请求响应的Map
  * @author LeeDane

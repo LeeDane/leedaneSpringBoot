@@ -15,7 +15,7 @@
 		.clearFloat{
 			clear: both;
 		}
-		.container{
+		.main-container{
 			margin-top: 50px;
 		}
 		.blog-info{
@@ -42,7 +42,7 @@
 <body th:attr="style='background-color: ' +(${setting.backgroundColor} == '#f5f5f5' ? '' : ${setting.backgroundColor})">
 <div th:include="common :: hello">what?</div>
 <div class="main clearFloat">	
-	<div class="container">
+	<div th:class="${nonav == null || nonav == false} ? 'container main-container': 'container' ">
 		<div class="row" th:if="${not isCircleAdmin} and ${setting.checkPost}">
 			<div class="col-lg-12">
 				<div class="alert alert-warning alert-dismissible" role="alert">

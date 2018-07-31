@@ -35,6 +35,11 @@ public class StockDisplay{
 	private String createTime;
 	
 	/**
+	 * 总的持仓数
+	 */
+	private int holding;
+	
+	/**
 	 * 所有的购买记录，按照时间的倒序排列
 	 */
 	private List<StockBuyDisplay> buys;
@@ -101,6 +106,14 @@ public class StockDisplay{
 
 	public void setModifyTime(String modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+
+	public int getHolding() {
+		return holding;
+	}
+
+	public void setHolding(int holding) {
+		this.holding = holding;
 	}
 	
 	

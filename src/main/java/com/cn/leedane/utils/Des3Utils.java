@@ -15,7 +15,7 @@ import javax.crypto.spec.DESedeKeySpec;
 public class Des3Utils {
   
 	 //字符串默认键值
-	  private static String strDefaultKey = ConstantsUtil.DES_SECRET_KEY;
+	  //private static String strDefaultKey = ConstantsUtil.DES_SECRET_KEY;
 
 	  /**
 	   * 3重DES加密

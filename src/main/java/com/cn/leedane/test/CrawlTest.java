@@ -81,6 +81,7 @@ public class CrawlTest extends BaseTest {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void dealWangyiNews() throws Exception {
 		systemCache = (SystemCache) SpringUtil.getBean("systemCache");
@@ -185,6 +186,7 @@ public class CrawlTest extends BaseTest {
 	/**
 	 * 更新score
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public void updateScore() throws Exception{
 		List<CrawlBean> beans = SqlUtil.convertMapsToBeans(CrawlBean.class, crawlMapper.findAllNotCrawl(0, EnumUtil.WebCrawlType.网易新闻.value));
@@ -229,6 +231,7 @@ public class CrawlTest extends BaseTest {
 	/**
 	 * 执行处理散文网方法
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public void dealSanwenNet() throws Exception{
 		try {

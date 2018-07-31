@@ -54,6 +54,62 @@ public class QuestionBean extends RecordTimeBean{
 	 * 结束时间(为空表示没有限制)
 	 */
 	private Date endTime;
+
+	public int getExaminationId() {
+		return examinationId;
+	}
+
+	public void setExaminationId(int examinationId) {
+		this.examinationId = examinationId;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
+	public boolean isRequested() {
+		return requested;
+	}
+
+	public void setRequested(boolean requested) {
+		this.requested = requested;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public List<UserBean> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<UserBean> users) {
+		this.users = users;
+	}
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
 	
 	
 }

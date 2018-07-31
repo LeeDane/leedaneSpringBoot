@@ -92,6 +92,7 @@ public class CircleHtmlController extends BaseController{
         if(currentUser.isAuthenticated()){
         	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
         }
+        model.addAttribute("nonav", StringUtil.changeObjectToBoolean(currentUser.getSession().getAttribute("nonav")));
     	//获取页面初始化的信息
     	model.addAllAttributes(circleService.init(user, request));
 		//首页不需要验证是否登录
@@ -105,6 +106,7 @@ public class CircleHtmlController extends BaseController{
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String list(Model model, HttpServletRequest request){
+		model.addAttribute("nonav", false);
 		return loginRoleCheck("circle/list", true, model, request);
 	}
 	
@@ -125,6 +127,7 @@ public class CircleHtmlController extends BaseController{
         }
         
         circleService.saveVisitLog(cid, user, request);
+        model.addAttribute("nonav", StringUtil.changeObjectToBoolean(currentUser.getSession().getAttribute("nonav")));
 		return loginRoleCheck("circle/main", true, model, request);
 	}
 	
@@ -164,6 +167,7 @@ public class CircleHtmlController extends BaseController{
         }
 
 		model.addAttribute("circle", circle);
+		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(currentUser.getSession().getAttribute("nonav")));
 		return loginRoleCheck("circle/member-list", true, model, request);
 	}
 	
@@ -216,6 +220,7 @@ public class CircleHtmlController extends BaseController{
         model.addAttribute("imgs", imgs); //这个是有图像的时候转化下的List列表
         model.addAttribute("tags", tags); //这个是有图像的时候转化下的List列表
         model.addAttribute("setting", circleSettingHandler.getNormalSettingBean(circleId, user));
+        model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		return loginRoleCheck("circle/write", true, model, request);
 	}
 	
@@ -233,6 +238,7 @@ public class CircleHtmlController extends BaseController{
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
 		CirclePostBean postBean = circlePostHandler.getNormalCirclePostBean(circle, postId);
+		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		return toPostDetail(circle, postBean, model, request);
 	}
 	
@@ -254,7 +260,7 @@ public class CircleHtmlController extends BaseController{
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
 		checkRoleOrPermission("/cc/"+ circle.getId()+ "/post/" + postId);
-		
+		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		return toPostDetail(circle, postBean, model, request);
 	}
 	
@@ -271,6 +277,7 @@ public class CircleHtmlController extends BaseController{
         model.addAttribute("audit", false);
         //保存帖子的访问记录
         circlePostService.saveVisitLog(postBean.getId(), user, request);
+        model.addAttribute("nonav", StringUtil.changeObjectToBoolean(currentUser.getSession().getAttribute("nonav")));
 		return loginRoleCheck("circle/post-detail", true, model, request);
 	}
 	
@@ -314,6 +321,7 @@ public class CircleHtmlController extends BaseController{
 		model.addAttribute("audit", true);
         //保存帖子的访问记录
         circlePostService.saveVisitLog(postId, user, request);
+        model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		return loginRoleCheck("circle/post-detail-audit", true, model, request);
 	}
 	
@@ -330,6 +338,7 @@ public class CircleHtmlController extends BaseController{
 		CircleBean circle = circleHandler.getNormalCircleBean(circleId, user);
 		model.addAttribute("setting", circleSettingHandler.getNormalSettingBean(circle.getId(), user));
 		model.addAttribute("circle", circle);
+		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		return loginRoleCheck("circle/post-check", true, model, request);
 	}
 }

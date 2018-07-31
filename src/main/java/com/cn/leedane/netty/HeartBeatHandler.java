@@ -1,5 +1,9 @@
 package com.cn.leedane.netty;
 
+import java.util.Date;
+
+import com.cn.leedane.utils.DateUtil;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
@@ -30,7 +34,7 @@ public class HeartBeatHandler extends SimpleChannelInboundHandler<Message>{
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		// 移除
     	ChanneList.channels.remove(ctx.channel());
-		System.out.println("客户端与服务端连接关闭");
+		System.out.println(DateUtil.DateToString(new Date())+ "客户端与服务端连接关闭");
 	}
 
     @Override

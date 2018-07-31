@@ -10,6 +10,10 @@ package com.cn.leedane.model;
  */
 public class TimeLineBean extends IDBean{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int tableId;
 	private String tableName;
 	private String createTime; //避免转化json过程中的出现问题，用字符串yyyy-MM-dd HH:mm:ss字符串

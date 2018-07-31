@@ -89,7 +89,7 @@ public class SolrTest extends BaseTest{
 		}
 	}
 
-	private static void query(){
+	protected static void query(){
 		long start = System.currentTimeMillis();
 		HttpSolrServer server = new HttpSolrServer("http://localhost:8983/solr");
 		server.setMaxRetries(1);

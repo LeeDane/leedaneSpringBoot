@@ -10,6 +10,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cn.leedane.cache.SystemCache;
@@ -51,6 +52,8 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 	@Autowired
 	private SignInHandler signInHandler;
 	
+	@Value("${constant.first.sign.in}")
+    public int firstSignInNumber;
 	/**
 	 * 系统的缓存对象
 	 */
@@ -90,11 +93,7 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 		if(!hasHistorySign){
 			signInBean.setContinuous(1);
 			signInBean.setPid(0);  //上一条记录的id
-			Object object = systemCache.getCache("first-sign-in"); 
-			if(object != null){
-				score = StringUtil.changeObjectToInt(object);
-			}
-			
+			score = firstSignInNumber;
 		}else{
 			if(isSign(uid, dateTime)) return false;
 			

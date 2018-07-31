@@ -216,7 +216,7 @@ function init(){
 					var stockDisplay = data.message[i];
 						html += '<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">'+
 									  '<fieldset>'+
-									  '<legend onclick="stockClick(this);">'+ stockDisplay.name +'('+ stockDisplay.code +')&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +'<small>'+ stockDisplay.time +'</small>'+
+									  '<legend onclick="stockClick(this);">'+ stockDisplay.name +'('+ stockDisplay.code +')&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +'<small>'+ stockDisplay.time +'&nbsp;&nbsp;持仓'+ stockDisplay.holding +'</small>'+
 									  	'<button type="button" onclick="stockBuyAdd(this, event, '+ i +', -1);" class="btn btn-xs" style="margin-left: 10px;"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>  购买</button>'+
 									  	'<button type="button" onclick="stockEdit(this, event, '+ i +');" class="btn btn-info btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>  编辑</button>'+
 										'<button type="button" onclick="stockDelete(this, event, '+ stockDisplay.id +');" class="btn btn-danger btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  删除</button></legend>'+

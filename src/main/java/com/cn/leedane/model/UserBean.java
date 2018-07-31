@@ -1,6 +1,5 @@
 package com.cn.leedane.model;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.solr.client.solrj.beans.Field;
 

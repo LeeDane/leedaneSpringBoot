@@ -64,7 +64,7 @@ public class ShiroConfiguration {
      * @author SHANHY
      * @create  2016年1月13日
      */
-	  @Bean
+	@Bean
 	  public FilterRegistrationBean filterRegistrationBean() {
 	      FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
 	      filterRegistration.setFilter(new DelegatingFilterProxy("shiroFilter"));

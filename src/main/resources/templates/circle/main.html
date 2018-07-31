@@ -30,7 +30,7 @@
 				padding: 1px !important;
 			}
 		}
-		#main-container{
+		.main-container{
 			margin-top: 60px;
 			/* width: 100%; */
 		}
@@ -76,7 +76,7 @@
 </head>
 <body th:attr="style='background-color: ' +(${setting.backgroundColor} == '#f5f5f5' ? '' : ${setting.backgroundColor})">
 <div th:include="common :: hello">what?</div>
-	<div class="container" id="main-container">
+	<div th:class="${nonav == null || nonav == false} ? 'container main-container': 'container' " id="main-container">
 		<div class="row">
 			<div class="col-lg-3">
 					<div class="row">

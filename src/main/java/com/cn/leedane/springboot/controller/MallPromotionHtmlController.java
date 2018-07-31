@@ -16,7 +16,6 @@ import com.cn.leedane.handler.mall.S_PromotionUserHandler;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.mall.promotion.S_PromotionAuditBean;
 import com.cn.leedane.model.mall.promotion.S_PromotionUserBean;
-import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 
 /**

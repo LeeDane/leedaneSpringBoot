@@ -1,7 +1,5 @@
 package com.cn.leedane.mapper;
 
-import java.util.List;
-
 import com.cn.leedane.model.CartBean;
 
 /**

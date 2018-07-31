@@ -1,8 +1,6 @@
 package com.cn.leedane.mapper;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 基础的数据访问层mapper接口类

@@ -61,6 +61,9 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		String path = JsonUtil.getStringValue(jo, "path"); //获取参数中图片路径的值，不能为空
 		String desc = JsonUtil.getStringValue(jo, "desc"); //获取参数中描述信息的值，可以为空
 		
+		//为了配合七牛云存储的文件的压缩获取，自动在链接添加了?imageslim，在此需要处理一下
+		path = path.replace("?imageslim", "");
+		
 		if(StringUtil.isNull(path)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
@@ -100,7 +103,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		bean.setGalleryDesc(desc);
 		bean.setHeight(height);
 		bean.setLength(length);
-		bean.setPath(path);
+		bean.setPath(path+"?imageslim");
 		bean.setStatus(ConstantsUtil.STATUS_NORMAL);
 		bean.setWidth(width);
 		if(galleryMapper.save(bean) > 0){

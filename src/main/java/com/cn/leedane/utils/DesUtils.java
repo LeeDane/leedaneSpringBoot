@@ -1,14 +1,8 @@
 package com.cn.leedane.utils;
 import java.security.Key;
 import java.security.Security;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.crypto.Cipher;
-
-import net.sf.json.JSONObject;
-
-import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * DES加密和解密工具,可以对字符串进行加密和解密操作
@@ -90,7 +84,8 @@ public class DesUtils {
 	   * @param strKey 指定的密钥
 	   * @throws Exception  
 	   */
-	  public DesUtils(String strKey) throws Exception {
+	  @SuppressWarnings("restriction")
+	public DesUtils(String strKey) throws Exception {
 	    Security.addProvider(new com.sun.crypto.provider.SunJCE());
 	    Key key = getKey(strKey.getBytes());
 

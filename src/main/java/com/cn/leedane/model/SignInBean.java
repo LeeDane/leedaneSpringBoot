@@ -29,7 +29,7 @@ public class SignInBean extends RecordTimeBean{
 	/**
 	 * 签到方式
 	 */
-	private String froms;
+	//private String froms;
 	
 	/**
 	 * 创建日期(用于和create_user_id做联合约束记录的唯一性)

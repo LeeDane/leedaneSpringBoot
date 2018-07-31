@@ -8,7 +8,7 @@
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
 	<style type="text/css">
 		
-		.container{
+		.main-container{
 			margin-top: 50px;
 		}
 		#content-container .row{
@@ -81,7 +81,7 @@
 </head>
 <body th:attr="style='background-color: ' +(${setting.backgroundColor} == '#f5f5f5' ? '' : ${setting.backgroundColor})">
 	<div th:include="common :: hello">what?</div>
-	<div class="container">
+	<div th:class="${nonav == null || nonav == false} ? 'container main-container': 'container' ">
 		<div class="row">
 			<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12" id="content-container">
 				<div class="row">

@@ -1,21 +1,13 @@
 package com.cn.leedane.controller;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONArray;
@@ -24,8 +16,6 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.UnknownSessionException;
-import org.apache.shiro.session.mgt.DefaultSessionKey;
-import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -122,18 +112,17 @@ public class UserController extends BaseController{
 			message.put("responseCode", EnumUtil.ResponseCode.账号或密码为空.value);
 		}else{
 			byte[] decodedData;
+			
 			try {
 				decodedData = RSACoder.decryptByPrivateKey(password, RSAKeyUtil.getInstance().getPrivateKey());
 				password = new String(decodedData, "UTF-8");
-			} catch (InvalidKeyException | NoSuchAlgorithmException
-					| InvalidKeySpecException | NoSuchPaddingException
-					| IllegalBlockSizeException | BadPaddingException |UnsupportedEncodingException e) {
-				e.printStackTrace();
+			} catch (Exception e1) {
+				e1.printStackTrace();
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.RSA加密解密异常.value) +", 请刷新当前页面，重新操作！");
 				message.put("responseCode", EnumUtil.ResponseCode.RSA加密解密异常.value);
 				return message.getMap();
 			}
-				
+			
 			//获取登录失败的数量
 			int number = userHandler.getLoginErrorNumber(username);
 			if(number > 5){
@@ -217,6 +206,7 @@ public class UserController extends BaseController{
 	            logger.info("用户[" + username + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)");
 	            
 	            currentUser.getSession().setAttribute(USER_INFO_KEY, user);
+	            currentUser.getSession().setAttribute("hasnav", true);
 	            //获取平台，如果是android就继续获取token
 	            String platform = request.getHeader("platform");
 	            
@@ -252,13 +242,13 @@ public class UserController extends BaseController{
 					try{
 						serializables = activeSessions.get(sessionKey);
 						//int deleteIndex = -1;
-						Iterator<Serializable> it = serializables.iterator();
-						while(it.hasNext()){
-							SessionKey key = new DefaultSessionKey(it.next());
+						//Iterator<Serializable> it = serializables.iterator();
+						//while(it.hasNext()){
+							//SessionKey key = new DefaultSessionKey(it.next());
 							//SecurityUtils.getSecurityManager().getSession(key).stop();
-		                     it.remove();
+		                    // it.remove();
 
-		                 }
+		                // }
 					}catch(UnknownSessionException e){
 						logger.info("UnknownSessionException ------");
 					}catch(NullPointerException e){

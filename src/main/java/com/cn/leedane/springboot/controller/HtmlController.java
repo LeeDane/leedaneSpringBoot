@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.controller.UserController;
+import com.cn.leedane.exception.MustLoginException;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.model.UserBean;
@@ -245,6 +246,7 @@ public class HtmlController extends BaseController{
 	
 	@RequestMapping(ControllerBaseNameUtil.mt)
 	public String materialIndex(Model model, HttpServletRequest request){
+		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		return loginRoleCheck("material/index", true, model, request);
 	}
 	
@@ -262,7 +264,7 @@ public class HtmlController extends BaseController{
 			iframe = true;
 		
 		model.addAttribute("iframe", iframe);
-		
+		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		return loginRoleCheck("material/add", true, model, request);
 	}
 	
@@ -297,7 +299,7 @@ public class HtmlController extends BaseController{
 		model.addAttribute("width", width);
 		model.addAttribute("select", select);
 		model.addAttribute("selectType", selectType);
-		
+		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		return loginRoleCheck("material/select", true, model, request);
 	}
 	
@@ -502,5 +504,29 @@ public class HtmlController extends BaseController{
 		request.setAttribute("content", "抱歉,服务器获取博客失败");
 		return "content-page";
 		
+	}
+	
+	/**
+	 * 页面中转
+	 * @param model
+	 * @param token  
+	 * @param ref
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/transfer")
+	public String transfer(Model model, @RequestParam("userId")int userId, @RequestParam("token")String token, @RequestParam("ref")String ref, HttpServletRequest request){
+		Map<String, Object> message = new HashMap<String, Object>();
+		boolean result = false;
+		//校验tokn
+		UserBean user = checkToken(token, userId, message, result);
+		if(user == null)
+			throw new MustLoginException();
+
+		//获取当前的Subject  
+        Subject currentUser = SecurityUtils.getSubject();
+		currentUser.getSession().setAttribute(UserController.USER_INFO_KEY, user);
+		currentUser.getSession().setAttribute("nonav", true);
+		return "forward:"+ ref;
 	}
 }

@@ -14,7 +14,6 @@ import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.SerializeUtil;
-import com.cn.leedane.utils.StringUtil;
 
 @Component
 public class RolePermissionHandler {

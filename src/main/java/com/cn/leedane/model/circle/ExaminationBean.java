@@ -19,7 +19,7 @@ public class ExaminationBean extends RecordTimeBean{
 	 * 总的积分(由于每个问题都有积分，如果不想计算，最好不填，程序自动计算所有问题获取总积分，
 	 * 否则填写的要是以下方的问题不服，将以填写的为准，问题的积分将作废！最终会导致用户某些问题填写错误无法计算积分。)
 	 */
-	private int score;
+	//private int score;
 
 	//private int 
 }

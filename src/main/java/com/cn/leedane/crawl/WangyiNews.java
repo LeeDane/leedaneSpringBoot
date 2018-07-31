@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.cn.leedane.utils.FileUtil;
 import com.cn.leedane.utils.StringUtil;
 
 /**

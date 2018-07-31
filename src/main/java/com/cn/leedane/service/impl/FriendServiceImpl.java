@@ -3,11 +3,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -22,7 +20,6 @@ import com.cn.leedane.mapper.FriendMapper;
 import com.cn.leedane.model.FriendBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.ShowContactsBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.OperateLogService;
@@ -460,15 +457,14 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			return message.getMap();
 		}	
 		//获取所有通讯录用户
-		JSONObject contactsObj = JSONObject.fromObject(contacts);
-		@SuppressWarnings("unchecked")
-		List<ShowContactsBean> showContactsBeans = (List<ShowContactsBean>) JSONObject.toBean(contactsObj);
+		//JSONObject contactsObj = JSONObject.fromObject(contacts);
+		//List<ShowContactsBean> showContactsBeans = (List<ShowContactsBean>) JSONObject.toBean(contactsObj);
 		
 		//获得所有系统用户的信息
-		JSONArray userInfos = userHandler.getAllUserDetail();
+		//JSONArray userInfos = userHandler.getAllUserDetail();
 		
 		//获取该用户的所有好友ID
-		Set<Integer> ids = friendHandler.getFromToFriendIds(user.getId());
+		//Set<Integer> ids = friendHandler.getFromToFriendIds(user.getId());
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"本地联系人跟服务器上的好友进行匹配").toString(), "matchContact()", ConstantsUtil.STATUS_NORMAL, 0);

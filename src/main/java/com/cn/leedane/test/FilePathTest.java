@@ -1,20 +1,15 @@
 ﻿package com.cn.leedane.test;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.mapper.FilePathMapper;
 import com.cn.leedane.mapper.OperateLogMapper;
 import com.cn.leedane.model.FilePathBean;
-import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.FilePathService;
-import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserService;
+import com.cn.leedane.utils.ConstantsUtil;
 
 /**
  * 文件相关的测试类

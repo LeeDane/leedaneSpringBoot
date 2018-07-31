@@ -9,14 +9,13 @@ import net.sf.json.JSONObject;
 
 import org.junit.Test;
 
-import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.message.JPushMessageNotificationImpl;
 import com.cn.leedane.message.JpushCustomMessage;
 import com.cn.leedane.message.notification.MessageNotification;
 import com.cn.leedane.model.ChatBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.UserService;
-import com.cn.leedane.service.impl.ChatServiceImpl;
+import com.cn.leedane.utils.ConstantsUtil;
 
 /**
  * 极光推送相关的测试类

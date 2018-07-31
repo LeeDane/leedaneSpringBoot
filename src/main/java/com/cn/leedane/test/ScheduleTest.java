@@ -1,7 +1,5 @@
 package com.cn.leedane.test;
 
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * 任务调度相关的测试类

@@ -150,6 +150,9 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	@Value("${constant.system.server.url}")
     private String SYSTEM_SERVER_URL;
 	
+	@Value("${constant.first.sign.in}")
+    public int firstSignInNumber;
+	
 	
 	@Override
 	public UserBean findById(int uid) {
@@ -217,12 +220,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	 * @param u
 	 */
 	private void saveRegisterScore(UserBean u){
-		Object object = systemCache.getCache("first-sign-in"); 
-		int score = 0;
-		if(object != null){
-			score = StringUtil.changeObjectToInt(object);
-		}
-		
+		int score = firstSignInNumber;
 		//分数等于0直接不保存
 		if(score == 0 )
 			return;
@@ -829,12 +827,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		user.setStatus(ConstantsUtil.STATUS_NORMAL);
 		user.setMobilePhone(phone);
 		user.setRegisterTime(new Date());
-		int firstScore = 0;
-		if(systemCache != null){
-			firstScore = StringUtil.changeObjectToInt(systemCache.getCache("first-sign-in"));
-		}
-		
-		user.setScore(firstScore);
+		user.setScore(firstSignInNumber);
 		user.setSecretCode("");
 		boolean result = userMapper.save(user) > 0;
 		if(result){

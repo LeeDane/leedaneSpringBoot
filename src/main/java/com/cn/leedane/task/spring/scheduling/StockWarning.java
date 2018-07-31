@@ -1,7 +1,6 @@
 package com.cn.leedane.task.spring.scheduling;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -19,16 +18,10 @@ import org.jsoup.nodes.Document;
 import org.quartz.SchedulerException;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.message.SendNotificationImpl;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.StringUtil;
-import com.taobao.api.ApiException;
-import com.taobao.api.DefaultTaobaoClient;
-import com.taobao.api.TaobaoClient;
-import com.taobao.api.request.AlibabaAliqinFcSmsNumSendRequest;
-import com.taobao.api.response.AlibabaAliqinFcSmsNumSendResponse;
 
 /**
  * 股票预警的任务
@@ -175,8 +168,8 @@ public class StockWarning extends AbstractScheduling{
 				//发送短信通知
 				if(StringUtil.isNotNull(phone) && phone.length() == 11){
 					msg.append(array.getString(2)+(now >= top? "已经涨到您的预警值:"+ top: "已经跌破您的预警值:"+ low )+ ",当前股价是:"+ array.getDouble(11) +"元");
-					TaobaoClient client = new DefaultTaobaoClient(SendNotificationImpl.URL, SendNotificationImpl.APPKEY, SendNotificationImpl.SECRET);
-					/*AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();
+					/*TaobaoClient client = new DefaultTaobaoClient(SendNotificationImpl.URL, SendNotificationImpl.APPKEY, SendNotificationImpl.SECRET);
+					AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();
 					req.setExtend("123456");
 					req.setSmsType("normal");
 					req.setSmsFreeSignName("LeeDane官方");

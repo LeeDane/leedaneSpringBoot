@@ -17,12 +17,11 @@ package com.cn.leedane.ueditor;
 /*     */ {
 /*     */   private final String rootPath;
 /*     */   private final String originalPath;
-/*     */   private final String contextPath;
-/*     */   private static final String configFileName = "config.json";
+/*     */   //private static final String configFileName = "config.json";
 /*  29 */   private String parentPath = null;
 /*  30 */   private JSONObject jsonConfig = null;
-/*     */   private static final String SCRAWL_FILE_NAME = "scrawl";
-/*     */   private static final String REMOTE_FILE_NAME = "remote";
+/*     */   //private static final String SCRAWL_FILE_NAME = "scrawl";
+/*     */  // private static final String REMOTE_FILE_NAME = "remote";
 /*     */ 
 /*     */   private MyConfigManager(String rootPath, String contextPath, String uri)
 /*     */     throws FileNotFoundException, IOException
@@ -30,7 +29,6 @@ package com.cn.leedane.ueditor;
 /*  41 */     rootPath = rootPath.replace("\\", "/");
 /*     */ 
 /*  43 */     this.rootPath = rootPath;
-/*  44 */     this.contextPath = contextPath;
 /*     */ 
 /*  46 */     if (contextPath.length() > 0)
 /*  47 */       this.originalPath = (this.rootPath + uri.substring(contextPath.length()));
@@ -45,7 +43,6 @@ package com.cn.leedane.ueditor;
 /*     */     throws FileNotFoundException, IOException
 /*     */   {
 /*  41 */     rootPath = rootPath.replace("\\", "/");
-/*     */ 	  this.contextPath = "";
 /*  43 */     this.rootPath = rootPath;
 /*  49 */     this.originalPath = configJspPath;
 /*  52 */     initEnv();

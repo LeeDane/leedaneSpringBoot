@@ -200,7 +200,7 @@ public class LuceneUtil {
 		int totalHits = 0;
 		indexReader = DirectoryReader.open(directory);
 		searcher = new IndexSearcher(indexReader);
-		QueryParser qp = new MultiFieldQueryParser(fields, analyzer); 
+		//QueryParser qp = new MultiFieldQueryParser(fields, analyzer); 
 		
 		/*PhraseQuery query = new PhraseQuery();
 		query.setSlop(1);

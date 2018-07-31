@@ -5,7 +5,6 @@ import org.apache.solr.client.solrj.beans.Field;
 import com.cn.leedane.model.RecordTimeBean;
 import com.cn.leedane.mybatis.table.annotation.Column;
 import com.cn.leedane.mybatis.table.annotation.Table;
-import com.cn.leedane.utils.EnumUtil;
 
 /**
  * 商品大事件实体bean 

@@ -1,8 +1,9 @@
-layui.use(['layer'], function(){
+layui.use(['layer', 'laypage'], function(){
 	layer = layui.layer;
+	laypage = layui.laypage;
 	$container= $(".container");
 	$commentContainer = $("#comment-list-container");
-	initPage(".pagination", "getComments", 10);
+	//initPage(".pagination", "getComments", 10);
 	
 	if(!audit)
 		getComments();
@@ -76,6 +77,30 @@ layui.use(['layer'], function(){
 	});
 	if(!audit)
 		buildZanUser();  
+	
+	if(imgs){
+		var imgArr = imgs.split(";");
+		for(var i = 0; i < imgArr.length; i++){
+			
+			var html = '';
+			if(isVideo(imgArr[i])){
+				html += '<div class="col-lg-4 col-sm-4">';
+				html += getVideoHtml(imgArr[i]);
+				html += '</div>';
+			}else if(isAudio(imgArr[i])){
+				html += '<div class="col-lg-4 col-sm-4">';
+				html += getAudioHtml(imgArr[i]);
+				html += '</div>';
+			}else if(isImg(imgArr[i])){
+				html += '<div class="col-lg-4">' +
+		   					'<img src="'+ imgArr[i] +'" class="img-responsive post-item-img" onClick="showSingleImg(this);" />'+
+				   		'</div>';
+			}else{
+				layer.msg(getSupportTypeStr());
+			}
+			$("#img-container").append(html);
+		}
+	}
 });
 var comments;
 var $container;
@@ -214,7 +239,7 @@ function getComments(bid){
 						$commentContainer.append("还没有发表过任何评论，请给TA评论吧！");
 					}else{
 						$commentContainer.append("已经没有更多的评论啦，请重新选择！");
-						pageDivUtil(data.total);
+						//pageDivUtil(data.total);
 					}
 					return;
 				}
@@ -222,7 +247,26 @@ function getComments(bid){
 				for(var i = 0; i < comments.length; i++){
 					buildEachCommentRow(i, comments[i]);
 				}
-				pageDivUtil(data.total);
+				//pageDivUtil(data.total);
+				
+				//执行一个laypage实例
+				 laypage.render({
+				    elem: 'item-pager' //注意，这里的 test1 是 ID，不用加 # 号
+				    ,layout: ['prev', 'page', 'next', 'count', 'skip']
+				    ,count: data.total //数据总数，从服务端得到
+				    ,limit: pageSize
+				    ,theme: '#337ab7'
+				    , curr: currentIndex + 1
+				    ,jump: function(obj, first){
+					    //obj包含了当前分页的所有参数，比如：
+					    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+					    console.log(obj.limit); //得到每页显示的条数
+					    if(!first){
+					    	currentIndex = obj.curr -1;
+					    	getComments();
+					    }
+					  }
+				 });
 			}else{
 				ajaxError(data);
 			}

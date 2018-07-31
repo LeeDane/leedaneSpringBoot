@@ -129,6 +129,9 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	@Value("${constant.default.no.pic.path}")
     public String DEFAULT_NO_PIC_PATH;
 	
+	@Value("${constant.circle.member.max}")
+    public int memberMax;
+	
 	@Override
 	public Map<String, Object> init(UserBean user, HttpServletRequest request) {
 		logger.info("CircleServiceImpl-->init(), user=" +(user != null ? user.getAccount(): "用户还未登录"));
@@ -272,7 +275,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
     		}
     	}
 		
-		message.put("maxNumber", StringUtil.changeObjectToInt(systemCache.getCache("circle-max-member")));//总的限制人数
+		message.put("maxNumber", memberMax);//总的限制人数
 		message.put("memberNumber", circleMemberMapper.getAllMembers(circleId, ConstantsUtil.STATUS_NORMAL).size());
 		return message.getMap();
 	}
@@ -365,7 +368,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			setting.setStatus(ConstantsUtil.STATUS_NORMAL);
 			setting.setAddMember(true);
 			setting.setCheckPost(true);
-			setting.setLimitNumber(StringUtil.changeObjectToInt(systemCache.getCache("circle-max-member")));//总的限制人数
+			setting.setLimitNumber(memberMax);//总的限制人数
 			result = circleSettingMapper.save(setting) > 0;
 			if(result){
 				message.put("isSuccess", true);
@@ -527,9 +530,8 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		 * 判断是否超出人数
 		 */
 		if(circleSettingBean.getLimitNumber() > 1){
-			int maxNumber = StringUtil.changeObjectToInt(systemCache.getCache("circle-max-member"));//总的限制人数
 			int number = circleMemberMapper.getAllMembers(circleId, ConstantsUtil.STATUS_NORMAL).size();
-			int minNumber = Math.min(circleSettingBean.getLimitNumber(), maxNumber);
+			int minNumber = Math.min(circleSettingBean.getLimitNumber(), memberMax);//总的限制人数
 			//circleSettingBean.getLimitNumber() 圈子自身的限制人数
 			boolean over = number < minNumber;
 			if(!over){
@@ -583,9 +585,8 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		 * 判断是否超出人数
 		 */
 		if(circleSettingBean.getLimitNumber() > 1){
-			int maxNumber = StringUtil.changeObjectToInt(systemCache.getCache("circle-max-member"));//总的限制人数
 			int number = circleMemberMapper.getAllMembers(circleId, ConstantsUtil.STATUS_NORMAL).size();
-			int minNumber = Math.min(circleSettingBean.getLimitNumber(), maxNumber);
+			int minNumber = Math.min(circleSettingBean.getLimitNumber(), memberMax);//总的限制人数
 			//circleSettingBean.getLimitNumber() 圈子自身的限制人数
 			boolean over = number >= minNumber;
 			if(over){

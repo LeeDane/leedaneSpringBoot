@@ -37,7 +37,6 @@ import com.cn.leedane.model.mall.S_BigEventBean;
 import com.cn.leedane.model.mall.S_PlatformProductBean;
 import com.cn.leedane.model.mall.S_ProductBean;
 import com.cn.leedane.model.mall.S_StatisticsBean;
-import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.mall.MallRoleCheckService;
 import com.cn.leedane.service.mall.S_BigEventService;
@@ -302,7 +301,10 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 				recommendJson = recommend.doParse(Long.parseLong(productBean.getCode() +""));
 				message.put("message", getTaoBaoRecommend(recommendJson));
 				message.put("isSuccess", true);
-			} catch (NumberFormatException | ApiException e) {
+			} catch (NumberFormatException e) {
+				message.put("message", "获取淘宝/天猫推荐商品失败");
+				e.printStackTrace();
+			} catch (ApiException e) {
 				message.put("message", "获取淘宝/天猫推荐商品失败");
 				e.printStackTrace();
 			}

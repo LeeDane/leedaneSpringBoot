@@ -11,7 +11,6 @@ import org.quartz.JobExecutionException;
 import com.cn.leedane.model.JobManageBean;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.task.spring.scheduling.AbstractScheduling;
-import com.cn.leedane.task.spring.scheduling.BaseScheduling;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.SchedulingThread;
 import com.cn.leedane.utils.DateUtil;

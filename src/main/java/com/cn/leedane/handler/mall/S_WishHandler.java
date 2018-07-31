@@ -48,7 +48,7 @@ public class S_WishHandler {
 				systemCache.addCache(key, wishNumber);
 			}
 		}else{
-			wishNumber = (int) obj;
+			wishNumber = StringUtil.changeObjectToInt(obj);
 		}
 		return wishNumber;
 	}

@@ -88,7 +88,7 @@ public class MoodTest extends BaseTest {
 	}
 	@Test
 	public void getMoodByLimit(){
-		MoodBean moodBean = moodMapper.findById(MoodBean.class, 279);
+		//MoodBean moodBean = moodMapper.findById(MoodBean.class, 279);
 		UserBean user = userService.findById(1);
 		//String str = "{\"uid\": 1, \"pageSize\": 10, \"method\":\"lowloading\", \"last_id\":19, \"pic_size\":\"30x30\"}";
 		String str = "{\"account\":\"leedane\",\"uid\":2,\"method\":\"firstloading\",\"login_mothod\":\"android\",\"no_login_code\":\"14480951808066e31568670e51be42bc7978cc2066ea060.521926355594616\",\"pageSize\":10}";

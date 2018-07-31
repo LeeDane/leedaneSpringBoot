@@ -1,6 +1,5 @@
 package com.cn.leedane.message.notification;
 
-import java.util.HashMap;
 
 /**
  * 点击需要反馈的通知
@@ -12,5 +11,5 @@ public class FeedbackNotification extends Notification{
 	/**
 	 * 用户点击通知后执行的参数，点击后从中获取
 	 */
-	private HashMap<String, Object> clickLinkParams;
+	//private HashMap<String, Object> clickLinkParams;
 }

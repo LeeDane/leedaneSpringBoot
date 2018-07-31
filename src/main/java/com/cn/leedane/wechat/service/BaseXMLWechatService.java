@@ -20,7 +20,7 @@ public abstract class BaseXMLWechatService {
 	/**
 	 * 项目的基本路径
 	 */
-	private String basePath;
+	//private String basePath;
 	
 	/**
 	 * 返回信息的类型，将决定以什么样的格式返回给用户，所以需要根据实际控制好，默认是text

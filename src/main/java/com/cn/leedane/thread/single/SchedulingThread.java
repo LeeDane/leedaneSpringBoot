@@ -5,7 +5,6 @@ import org.quartz.SchedulerException;
 
 import com.cn.leedane.model.JobManageBean;
 import com.cn.leedane.task.spring.scheduling.AbstractScheduling;
-import com.cn.leedane.task.spring.scheduling.BaseScheduling;
 
 /**
  * 任务调度的线程

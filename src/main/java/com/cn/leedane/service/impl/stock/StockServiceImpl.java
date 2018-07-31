@@ -83,6 +83,7 @@ public class StockServiceImpl implements StockService<StockBean>{
 				stockDisplay.setId(stockBean.getId());
 				List<StockBuyBean> stockBuyBeans = stockBuyHandler.getStockBuys(userId, stockBean.getId());
 				List<StockBuyDisplay> buyDisplays = new ArrayList<StockBuyDisplay>();
+				int stockHolding = 0;
 				if(CollectionUtil.isNotEmpty(stockBuyBeans)){
 					for(StockBuyBean buyBean: stockBuyBeans){
 						StockBuyDisplay buyDisplay = new StockBuyDisplay();
@@ -114,12 +115,14 @@ public class StockServiceImpl implements StockService<StockBean>{
 								sellDisplays.add(sellDisplay);
 							}
 						}
+						stockHolding += holding;
 						buyDisplay.setHolding(holding);
 						buyDisplay.setSellOut(holding < 1);
 						buyDisplay.setSells(sellDisplays);
 						buyDisplays.add(buyDisplay);
 					}
 				}
+				stockDisplay.setHolding(stockHolding);
 				stockDisplay.setBuys(buyDisplays);
 				stockDisplays.add(stockDisplay);
 			}

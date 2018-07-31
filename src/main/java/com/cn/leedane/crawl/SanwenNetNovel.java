@@ -3,17 +3,11 @@ package com.cn.leedane.crawl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.cn.leedane.exception.ErrorException;
-import com.cn.leedane.utils.Base64ImageUtil;
-import com.cn.leedane.utils.HttpUtil;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -24,7 +18,7 @@ import com.cn.leedane.utils.StringUtil;
  */
 public class SanwenNetNovel extends BaseCrawlBean{
 	
-	private String title; //文章的标题
+	//private String title; //文章的标题
 	
 	public SanwenNetNovel() {
 		
@@ -42,9 +36,9 @@ public class SanwenNetNovel extends BaseCrawlBean{
 	public String getTitle() {
 		return html.select("#article .title h1").text();
 	}
-	public void setTitle(String title) {
+/*	public void setTitle(String title) {
 		this.title = title;
-	}
+	}*/
 	/**
 	 * 根据url获取文章ID
 	 * @return

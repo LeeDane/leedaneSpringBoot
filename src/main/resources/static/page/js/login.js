@@ -47,7 +47,7 @@
 	  $.ajax({
 			type : "post",
 			data : params,
-			url : "us/login",
+			url : "/us/login",
 			dataType: 'json',
 			withCredentials:true,
 			beforeSend:function(request){

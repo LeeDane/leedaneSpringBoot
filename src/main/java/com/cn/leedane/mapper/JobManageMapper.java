@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.cn.leedane.model.JobManageBean;
-import com.cn.leedane.model.LinkManageBean;
 
 /**
  * 任务管理mapper接口类

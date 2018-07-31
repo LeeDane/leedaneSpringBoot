@@ -8,7 +8,7 @@
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
 	<style type="text/css">
 		
-		.container{
+		.main-container{
 			margin-top: 50px;
 		}
 		.row{
@@ -107,7 +107,7 @@
 </head>
 <body>
 <div th:include="common :: hello">what?</div>
-	<div class="container">
+	<div th:class="${nonav == null || nonav == false} ? 'container main-container': 'container' " >
 		<div class="row">
 			<div class="col-lg-12" style="margin: 10px;">
     			<div class="table-responsive">

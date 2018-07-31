@@ -18,7 +18,6 @@ import com.cn.leedane.model.mall.S_HomeItemBeans;
 import com.cn.leedane.model.mall.S_HomeItemProductBean;
 import com.cn.leedane.model.mall.S_HomeItemProductShowBean;
 import com.cn.leedane.model.mall.S_HomeItemShowBean;
-import com.cn.leedane.model.mall.S_ProductBean;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;

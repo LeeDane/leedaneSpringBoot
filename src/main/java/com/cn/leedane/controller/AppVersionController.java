@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.service.AppVersionService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
 
 @RestController

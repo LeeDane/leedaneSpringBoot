@@ -12,7 +12,7 @@
 		.clearFloat{
 			clear: both;
 		}
-		#main-container{
+		.main-container{
 			margin-top: 60px;
 		}
 		.material-content{
@@ -47,7 +47,7 @@
 </head>
 <body>
 <div th:include="common :: hello">what?</div>
-<div class="container clearFloat" id="main-container">
+<div th:class="${nonav == null || nonav == false} ? 'container main-container clearFloat': 'container clearFloat'" id="main-container">
 	<div class="row">
 		<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12">
 			<div class="progress progress-striped active">

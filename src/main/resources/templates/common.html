@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html th:fragment="hello">
+<html th:fragment="hello" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
 	<meta charset="utf-8" />
 	<style type="text/css">
@@ -109,7 +110,8 @@
 	</style>
 </head>
 
-<nav class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+<!-- 默认是显示导航栏的，如果某些时候不需要，需要设置hasnav为false即可 -->
+<nav th:if="${nonav == null || nonav == false}" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
     <div class="container-fluid">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse"

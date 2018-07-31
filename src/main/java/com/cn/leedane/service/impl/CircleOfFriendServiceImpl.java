@@ -32,7 +32,6 @@ import com.cn.leedane.service.CircleOfFriendService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.SqlUtil;

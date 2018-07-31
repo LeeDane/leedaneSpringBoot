@@ -48,7 +48,7 @@ public class S_OrderHandler {
 				systemCache.addCache(key, number);
 			}
 		}else{
-			number = (int) obj;
+			number = StringUtil.changeObjectToInt(obj);
 		}
 		return number;
 	}

@@ -17,7 +17,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.display.keyValueDisplay;
 import com.cn.leedane.display.baby.LifesResultDisplay;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.baby.BabyHandler;
@@ -37,10 +36,10 @@ import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.BabyLifeType;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.baby.BabyUtil;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.baby.BabyUtil;
 
 /**
  * 宝宝生活方式service实现类
@@ -212,7 +211,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 			List<String> dates = new ArrayList<String>();
 			boolean day = false;
 			if(!sourceDates.isEmpty()){
-				List<String> sourceList = new ArrayList<>(sourceDates);
+				List<String> sourceList = new ArrayList<String>(sourceDates);
 				Collections.sort(sourceList);
 				String start = sourceList.get(0);
 				String end = sourceList.get(sourceList.size() - 1);

@@ -441,32 +441,32 @@ public class BaseController {
 	 */
 	public UserBean appAuthCheck(HttpServletRequest request, Map<String, Object> message, boolean result){
 		//拿到token码
-		String token = request.getHeader("token");
-		//int useridq = StringUtil.changeObjectToInt(request.getHeader("userid"));
+		return checkToken(request.getHeader("token"), StringUtil.changeObjectToInt(request.getHeader("userid")), message, result);
+	}
+	
+	protected UserBean checkToken(String token, int userId, Map<String, Object> message, boolean result){
 		UserBean user = null;
 		//校验token
 		if(StringUtil.isNotNull(token)){
 			//拿token到shiro进行登录校验
-			//JSONObject js = JSONObject.fromObject(new String(Base64Util.decode(token.toCharArray())));
-	        int userid = StringUtil.changeObjectToInt(request.getHeader("userid"));
-			
+			//JSONObject js = JSONObject.fromObject(new String(Base64Util.decode(token.toCharArray())));			
 	        //从token获取到密码
 			//拿到username用户名称
 	        CustomAuthenticationToken usernamePasswordToken = new CustomAuthenticationToken();
-	        usernamePasswordToken.setUserId(userid);;
+	        usernamePasswordToken.setUserId(userId);;
 	        usernamePasswordToken.setPassword(token.toCharArray());
 	        usernamePasswordToken.setToken(token);
 	        usernamePasswordToken.setRememberMe(true);
 	        usernamePasswordToken.setPlatformType(PlatformType.安卓版);
 	        //这里只负责获取用户，不做校验，校验交给shiro的realm里面去做
-	        user = userHandler.getUserBean(userid);
+	        user = userHandler.getUserBean(userId);
 	        usernamePasswordToken.setUser(user);
 	        
 	        //获取当前的Subject  
 	        Subject currentUser = SecurityUtils.getSubject();
-	        logger.info("对用户[" + userid + "]进行登录验证..验证开始");  
+	        logger.info("对用户[" + userId + "]进行登录验证..验证开始");  
             currentUser.login(usernamePasswordToken);  
-            logger.info("对用户[" + userid + "]进行登录验证..验证通过"); 
+            logger.info("对用户[" + userId + "]进行登录验证..验证通过"); 
 	        /*try {  
 	            //在调用了login方法后,SecurityManager会收到AuthenticationToken,并将其发送给已配置的Realm执行必须的认证检查  
 	            //每个Realm都能在必要时对提交的AuthenticationTokens作出反应  
@@ -512,7 +512,7 @@ public class BaseController {
 	        }  */
 	        //验证是否登录成功  
 	        if(currentUser.isAuthenticated()){  
-	            logger.info("用户[" + userid + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)"); 
+	            logger.info("用户[" + userId + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)"); 
 	            message.put("message", "恭喜您登录成功"); 
 	            result = true;
 	            message.put("isSuccess", result); 
@@ -521,7 +521,6 @@ public class BaseController {
 	        	usernamePasswordToken.clear();  
 	        } 
 		}
-		
 		return null;
 	}
 	

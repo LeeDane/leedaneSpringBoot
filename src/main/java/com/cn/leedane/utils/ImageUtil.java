@@ -139,7 +139,7 @@ public class ImageUtil {
 		if(oldFileName == "" || oldPath == "") return false;
 		
 		//如果文件名的后缀不是支持的类型，也直接返回false
-		if(!this.isSupportType(oldFileName)) return false;
+		if(!ImageUtil.isSupportType(oldFileName)) return false;
 		
 		//拼接成完整的旧图片文件路径
 		String fullOldPath = oldPath + "\\" + oldFileName;
@@ -226,6 +226,7 @@ public class ImageUtil {
 	public static boolean isSupportType(String fileName){ 
 		//获取文件的后缀
 		String suffix = fileName.substring(fileName.lastIndexOf(".")+1 , fileName.length());
+		
 		for(String supportSuffix : ConstantsUtil.SUPPORTIMAGESUFFIXS){
 			//判断是否在支持的类型里面
 			if(supportSuffix.equalsIgnoreCase(suffix)) return true;
