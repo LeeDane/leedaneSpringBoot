@@ -40,6 +40,7 @@ import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
+import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.cn.leedane.utils.JsonUtil;
@@ -191,7 +192,7 @@ public class NotificationHandler {
 			notificationBean.setContent(content);
 			notificationBean.setCreateTime(DateUtil.DateToString(new Date()));
 			notificationBean.setToUserId(id);
-			notificationBean.setType(notificationType.value);
+			notificationBean.setType(notificationType);
 			notification = new SingleSendNotification(notificationBean);
 			notificationBean.setTableName(tableName);
 			notificationBean.setTableId(tableId);
@@ -213,7 +214,7 @@ public class NotificationHandler {
 		}
 		
 		CustomMessage customMessage = new JpushCustomMessage();	
-		customMessage.sendToAlias("leedane_user_"+toUserId, JSONObject.fromObject(chatMap).toString(), "fromUserId", String.valueOf(user.getId()));	
+		customMessage.sendToAlias("leedane_user_"+toUserId, JSONObject.fromObject(chatMap).toString(), EnumUtil.CustomMessageExtraType.聊天.value);	
 	}
 	
 	/**
@@ -380,7 +381,7 @@ public class NotificationHandler {
 				//logger.info("NotificationToUserId:"+mNotificationBean.getToUserId());
 				deleteNoReadMessagesNumber(mNotificationBean.getToUserId());
 				//发送消息不成功
-				if(!messageNotification.sendToAlias("leedane_user_"+mNotificationBean.getToUserId(), mNotificationBean.getType() +":"+ mNotificationBean.getContent())){
+				if(!messageNotification.sendToAlias("leedane_user_"+mNotificationBean.getToUserId(), mNotificationBean.getContent(), mNotificationBean.getType())){
 					mNotificationBean.setPushError(true);
 					return notificationMapper.update(mNotificationBean) > 0;
 

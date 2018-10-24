@@ -1,5 +1,6 @@
 package com.cn.leedane.model;
 
+import com.cn.leedane.utils.EnumUtil.NotificationType;
 
 /**
  * 通知的实体bean
@@ -39,7 +40,7 @@ public class NotificationBean extends StatusBean{
 	/**
 	 * 通知的类型
 	 */
-	private String type;
+	private NotificationType type;
 	
 	/**
 	 * 创建时间
@@ -92,14 +93,6 @@ public class NotificationBean extends StatusBean{
 		this.content = content;
 	}
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 	public String getExtra() {
 		return extra;
 	}
@@ -150,6 +143,14 @@ public class NotificationBean extends StatusBean{
 
 	public void setRead(boolean isRead) {
 		this.isRead = isRead;
+	}
+
+	public NotificationType getType() {
+		return type;
+	}
+
+	public void setType(NotificationType type) {
+		this.type = type;
 	}
 	
 }

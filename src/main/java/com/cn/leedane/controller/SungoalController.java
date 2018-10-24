@@ -884,7 +884,7 @@ public class SungoalController extends BaseController{
 		message.put("data", JSONArray.fromObject(data));
 		return message.getMap();
 	}
-	
+
 	/**
 	 * 支队分局派出所结构
 	 * @param request
@@ -899,6 +899,311 @@ public class SungoalController extends BaseController{
 		message.put("code", "0000");
 		message.put("message", "处理成功");
 		String data = getDataFromFile("common_getDepartmentTree");
+		System.out.println(data);
+		message.put("data", JSONArray.fromObject(data));
+		return message.getMap();
+	}
+	
+	
+	/**
+	 * 流程审批-待审批(我的指令)
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/getProcess", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> messageGetProcess(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		String data = getDataFromFile("Message_getProcess");
+		System.out.println(data);
+		message.put("data", JSONArray.fromObject(data));
+		return message.getMap();
+	}
+	
+	/**
+	 * 流程审批-历史流程
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/getHisProcess", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> messageGetHisProcess(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		String data = getDataFromFile("Message_getHisProcess");
+		System.out.println(data);
+		message.put("data", JSONArray.fromObject(data));
+		return message.getMap();
+	}
+	
+	
+	
+	/**
+	 * 流程审批-新增指令
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/addXiaoXi", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> messageAddXiaoXi(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		return message.getMap();
+	}
+	
+	/**
+	 * 流程审批-显示反馈页面
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/showzhsOrzsld", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> messageShowzhsOrzsld(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		String data = getDataFromFile("Message_showzhsOrzsld");
+		System.out.println(data);
+		message.put("data", JSONObject.fromObject(data));
+		return message.getMap();
+	}
+	
+	/**
+	 * 流程审批-反馈指挥室（直属领导）
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/fkzhsOrzsld", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> messageFkzhsOrzsld(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		return message.getMap();
+	}
+	
+	/**
+	 * 流程审批-显示直属领导（指挥室）审批
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/showsp", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> messageShowsp(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		String data = getDataFromFile("Message_showsp");
+		System.out.println(data);
+		message.put("data", JSONObject.fromObject(data));
+		return message.getMap();
+	}
+	
+	/**
+	 * 流程审批-生成指令
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/qsxx", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> messageQsxx(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		return message.getMap();
+	}
+	
+	/**
+	 * 流程审批-单位列表
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/getJsdw", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> messageGetJsdw(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		String data = getDataFromFile("Message_getJsdw");
+		System.out.println(data);
+		message.put("data", JSONArray.fromObject(data));
+		return message.getMap();
+	}
+	
+	/**
+	 * 流程审批-获取单位人员
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/getryxx", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> messageGetryxx(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		String data = getDataFromFile("Message_getryxx");
+		System.out.println(data);
+		message.put("data", JSONArray.fromObject(data));
+		return message.getMap();
+	}
+	
+	/**
+	 * 流程审批-流程审批
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/getXiaoXiProcess", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> MessageGetXiaoXiProcess(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		String data = getDataFromFile("Message_getXiaoXiProcess");
+		System.out.println(data);
+		message.put("data", JSONObject.fromObject(data));
+		return message.getMap();
+	}
+	
+	/**
+	 * 流程审批-审批通过
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/sp", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> messageSp(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		return message.getMap();
+	}
+	
+	/**
+	 * 流程审批-审批不通过
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/nosp", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> messageNosp(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		return message.getMap();
+	}
+	
+	/**
+	 * 流程审批-指令-不处理消息
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/noqs", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> messageNoqs(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		return message.getMap();
+	}
+	
+	/**
+	 * 流程审批-获取采集信息
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/getcjxx", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> messageGetcjxx(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		String data = getDataFromFile("Message_getcjxx");
+		System.out.println(data);
+		message.put("data", JSONArray.fromObject(data));
+		return message.getMap();
+	}
+	
+	/**
+	 * 添加采集信息
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/cj", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> MessageCj(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		return message.getMap();
+	}
+	
+	/**
+	 * 首页预警
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/HomePageRest/mainPage2", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> mainPage2(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		String data = getDataFromFile("HomePageRest_mainPage2");
+		System.out.println(data);
+		message.put("data", JSONObject.fromObject(data));
+		return message.getMap();
+	}
+	
+	/**
+	 * 查找重点人员
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/Message/getZdryByXmOrSfz", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> messageGetZdryByXmOrSfz(HttpServletRequest request) throws IOException{
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		System.err.println("请求参数："+ getJsonFromMessage(message));
+		message.put("code", "0000");
+		message.put("message", "处理成功");
+		String data = getDataFromFile("Message_getZdryByXmOrSfz");
 		System.out.println(data);
 		message.put("data", JSONArray.fromObject(data));
 		return message.getMap();

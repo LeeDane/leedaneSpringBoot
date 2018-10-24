@@ -11,13 +11,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.model.ReportBean;
 import com.cn.leedane.service.ReportService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
 
-@Controller
+@RestController
 @RequestMapping(value = ControllerBaseNameUtil.rp)
 public class ReportController extends BaseController{
 

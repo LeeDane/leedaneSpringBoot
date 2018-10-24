@@ -1093,3 +1093,149 @@ CREATE TABLE `t_stock_sell` (
   CONSTRAINT `FK_stock_sell_modify_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_stock_sell_id` FOREIGN KEY (`stock_buy_id`) REFERENCES `t_stock_buy` (`id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
+-- Table structure for t_clock
+-- ----------------------------
+DROP TABLE IF EXISTS `t_clock`;
+CREATE TABLE `t_clock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `title` varchar(30) NOT NULL COMMENT '任务的标题，必须字段',
+  `describe_` varchar(255) NOT NULL COMMENT '任务的描述，必须字段(为空将以标题代替)',
+  `icon` varchar(255) NOT NULL DEFAULT 'http://pic.onlyloveu.top/default_no_pic20170613.jpg' COMMENT '任务的图标，必须字段(为空将以显示默认的无图照片)',
+  `share` bit(1) DEFAULT b'0' COMMENT '任务的类型(false:私有默认是false， true：共享)',
+  `apply_end_date` date DEFAULT NULL COMMENT '当是共享模式的情况下，最迟的报名日期，可以为空，为空表示不限制报名日期',
+  `take_part_number` int(4) DEFAULT 0 COMMENT '当是共享模式的情况下，最大参与人数，必须大于1小于当前用户等级的最大数',
+  `reward_score` int(4) DEFAULT 0 COMMENT '当是共享模式的情况下，参与的用户在结束之后，不成功参与的用户将被扣除的积分',
+  `start_date` date NOT NULL COMMENT '任务开始时间（不能为空）',
+  `end_date` date DEFAULT NULL COMMENT '任务结束时间（可以为空, 为空表示无穷）',
+  `clock_in_type` int(1) DEFAULT 1 COMMENT '任务的打卡类型(1：普通打卡， 2：图片打卡 3：位置打卡，4：计步打卡)',
+  `choose_img` bit(1) DEFAULT b'0' COMMENT '任务的打卡是否可以选择图片(false:不可以默认是false， true：可以)',
+  `repeat_` varchar(20) NOT NULL COMMENT '重复规则，如1,2,3,4,5,6,7，表示每周周日是1',
+  `clock_start_time` time NOT NULL COMMENT '任务打卡开始时间（可以为空, 为空表示不限定打卡开始时间）',
+  `clock_end_time` time NOT NULL COMMENT '任务打卡结束时间（可以为空, 为空表示不限定打卡时间）',
+  `category_id` int(11) DEFAULT 0 COMMENT '分类的ID，目前主要用于系统的任务',
+  `parent_id` int(11) DEFAULT 0 COMMENT '父任务的ID，一般只作用于用户行为的任务，不作用系统任务',
+  `must_step` int(6) DEFAULT 0 COMMENT '任务的计步打卡，当clock_in_type为计步打卡的时候，用户计步打卡最低的要求',
+  `share_id` varchar(40) DEFAULT NULL COMMENT '共享任务的ID，只要是共享的任务，系统自动分配共享ID',
+  `total_day` int(3) DEFAULT -1 COMMENT '需要打卡的总天数,如果无穷，默认是-1',
+  PRIMARY KEY (`id`),
+  KEY `FK_clock_create_user` (`create_user_id`),
+  KEY `FK_clock_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_clock_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_clock_member
+-- ----------------------------
+DROP TABLE IF EXISTS `t_clock_member`;
+CREATE TABLE `t_clock_member` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `clock_id` int(11) NOT NULL COMMENT '任务提醒的id',
+  `member_id` int(11) NOT NULL COMMENT '成员的id',
+  `remind` varchar(30) DEFAULT NULL COMMENT '任务的提醒时间',
+  `notification` bit(1) DEFAULT b'1' NOT NULL COMMENT '任务的是否接受其他成员打卡的消息,默认是开启的',
+  PRIMARY KEY (`id`),
+  KEY `FK_clock_member_create_user` (`create_user_id`),
+  KEY `FK_clock_member_modify_user` (`modify_user_id`),
+  KEY `FK_clock_member_clock` (`clock_id`),
+  KEY `FK_clock_member_id` (`member_id`),
+  CONSTRAINT `FK_clock_member_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_member_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_member_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`),
+  CONSTRAINT `FK_clock_member_id` FOREIGN KEY (`member_id`) REFERENCES `t_user` (`id`)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_clock_member add constraint index_t_clock_member_id UNIQUE(clock_id, member_id);
+-- ----------------------------
+-- Table structure for t_clock_in
+-- ----------------------------
+DROP TABLE IF EXISTS `t_clock_in`;
+CREATE TABLE `t_clock_in` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `froms` varchar(30) COMMENT '任务的方式',
+  `clock_id` int(11) NOT NULL COMMENT '任务的ID，必须字段',
+  `clock_date` date NOT NULL COMMENT '打卡的日期',
+  `img` varchar(255) DEFAULT NULL COMMENT '打卡的图片',
+  `location` varchar(255) DEFAULT NULL COMMENT '任务的打卡位置，当任务type为3的时候是必须字段',
+  `step` int(6) DEFAULT 0 COMMENT '任务的计步数，当任务type为4的时候是必须字段',
+  PRIMARY KEY (`id`),
+  KEY `FK_clock_in_create_user` (`create_user_id`),
+  KEY `FK_clock_in_modify_user` (`modify_user_id`),
+  KEY `FK_clock_in_clock` (`clock_id`),
+  CONSTRAINT `FK_clock_in_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_in_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_in_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_clock_in add constraint index_t_clock_in_date UNIQUE(create_user_id, clock_date, clock_id);
+
+-- ----------------------------
+-- Table structure for t_clock_system
+-- ----------------------------
+DROP TABLE IF EXISTS `t_clock_system`;
+CREATE TABLE `t_clock_system` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `title` varchar(30) NOT NULL COMMENT '任务的标题，必须字段',
+  `category_` varchar(10) NOT NULL COMMENT '任务的分类字段',
+  `describe_` varchar(255) NOT NULL COMMENT '任务的描述，必须字段(为空将以标题代替)',
+  `icon` varchar(255) NOT NULL DEFAULT 'http://pic.onlyloveu.top/default_no_pic20170613.jpg' COMMENT '任务的图标，必须字段(为空将以显示默认的无图照片)',
+  `share` bit(1) DEFAULT b'0' COMMENT '任务的类型(false:私有默认是false， true：共享)',
+  `start_date` date NOT NULL COMMENT '任务开始时间（不能为空）',
+  `end_date` date DEFAULT NULL COMMENT '任务结束时间（可以为空, 为空表示无穷）',
+  `must_img` bit(1) DEFAULT b'0' COMMENT '任务的打卡是否需要图片(false:不需要默认是false， true：必须)',
+  `repeat_` varchar(20) NOT NULL COMMENT '重复规则，如1,2,3,4,5,6,7，表示每周周日是1',
+  `clock_start_time` time NOT NULL COMMENT '任务打卡开始时间（可以为空, 为空表示不限定打卡开始时间）',
+  `clock_end_time` time NOT NULL COMMENT '任务打卡结束时间（可以为空, 为空表示不限定打卡时间）',
+  PRIMARY KEY (`id`),
+  KEY `FK_clock_system_create_user` (`create_user_id`),
+  KEY `FK_clock_system_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_clock_system_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_system_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_clock_deal
+-- ----------------------------
+DROP TABLE IF EXISTS `t_clock_deal`;
+CREATE TABLE `t_clock_deal` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `clock_id` int(11) NOT NULL COMMENT '任务提醒的id',
+  `member_id` int(11) NOT NULL COMMENT '成员的id',
+  `new_status` int(3) DEFAULT -10 COMMENT '处理后的最新状态',
+  PRIMARY KEY (`id`),
+  KEY `FK_clock_deal_create_user` (`create_user_id`),
+  KEY `FK_clock_deal_modify_user` (`modify_user_id`),
+  KEY `FK_clock_deal_clock` (`clock_id`),
+  KEY `FK_clock_deal_id` (`member_id`),
+  CONSTRAINT `FK_clock_deal_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_deal_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_deal_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`),
+  CONSTRAINT `FK_clock_deal_id` FOREIGN KEY (`member_id`) REFERENCES `t_user` (`id`)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_clock_deal add constraint index_t_clock_deal_id UNIQUE(create_user_id, clock_id, member_id);

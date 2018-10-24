@@ -51,7 +51,7 @@ public class CircleController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
-		
+//		int i = 10/0;
 		checkRoleOrPermission(model, request);
 		message.putAll(circleService.check(getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();

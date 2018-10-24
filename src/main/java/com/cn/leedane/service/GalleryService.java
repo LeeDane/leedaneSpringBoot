@@ -44,14 +44,14 @@ public interface GalleryService <T extends IDBean>{
 	
 
 	/**
-	 * 取消关注
+	 * 移除图库
 	 * {'gid':1}
 	 * @param jo
 	 * @param user
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(JSONObject jo, UserBean user, HttpServletRequest request) ;
+	public Map<String, Object> delete(int gid, JSONObject jo, UserBean user, HttpServletRequest request) ;
 	
 	/**
 	 * 分页获取指定用户图库的图片的路径列表

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -76,13 +77,13 @@ public class GalleryController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/photo/{gid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"}) 
-	public Map<String, Object> delete(Model model, HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("gid") int gid, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(galleryService.delete(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(galleryService.delete(gid, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 }

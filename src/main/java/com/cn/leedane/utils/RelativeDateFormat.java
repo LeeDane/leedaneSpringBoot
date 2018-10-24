@@ -40,6 +40,9 @@ public class RelativeDateFormat {
      * @return
      */
     public static String format(Date date, String format) {
+    	if(date == null)
+    		return null;
+    	
         long delta = new Date().getTime() - date.getTime();
         if (delta < 1L * ONE_MINUTE) {
             long seconds = toSeconds(delta);

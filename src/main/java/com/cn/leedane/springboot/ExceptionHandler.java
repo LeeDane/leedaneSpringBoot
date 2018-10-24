@@ -27,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import com.cn.leedane.exception.CompleteOrderDeleteException;
+import com.cn.leedane.exception.MobCodeErrorException;
 import com.cn.leedane.exception.MustAdminLoginException;
 import com.cn.leedane.exception.MustLoginException;
 import com.cn.leedane.exception.ParameterUnspecificationException;
@@ -41,6 +42,7 @@ import com.cn.leedane.exception.user.StopUseAccountException;
 import com.cn.leedane.utils.CommonUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.ResponseCode;
+import com.cn.leedane.utils.StringUtil;
 
 /**
  * sprngmvc全局异常的处理类
@@ -170,7 +172,11 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
-			message.put("message", "空指针异常 ");
+			
+			if(StringUtil.isNull(exception.getMessage()))
+				message.put("message", "空指针异常");
+			else
+				message.put("message", exception.getMessage());
 			message.put("detail", exception.getMessage());
 			message.put("responseCode", ResponseCode.空指针异常.value);
 			
@@ -214,10 +220,10 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			}
 			message.put("message", exception.getMessage());
 			message.put("responseCode", ResponseCode.请使用有管理员权限的账号登录.value);
-		}/*else if(exception instanceof MobCodeErrorException){
+		}else if(exception instanceof MobCodeErrorException){
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.验证码验证失败.value));
 			message.put("responseCode", ResponseCode.验证码验证失败.value);
-		}*/else{
+		}else{
 			StringPrintWriter strintPrintWriter = new StringPrintWriter();  
 	        exception.printStackTrace(strintPrintWriter);
 	        logger.error(strintPrintWriter.getString());

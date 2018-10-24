@@ -366,4 +366,26 @@ public class ControllerBaseNameUtil {
 	 * 分类管理统一入口
 	 */
 	public static final String cg = "cg";
+	
+	/**********************    圈子      **********************/
+	/**
+	 * 领灯日常提醒统一入口根路径
+	 */
+	public static final String clock = "clock";
+	
+	
+	/**
+	 * 领灯日常打卡统一入口根路径
+	 */
+	public static final String clockIn = "clock/in";
+	
+	/**
+	 * 领灯日常任务成员统一入口根路径
+	 */
+	public static final String clockMember = "clock/member";
+	
+	/**
+	 * 领灯日常任务成员关系统一入口根路径
+	 */
+	public static final String clockDeal = "clock/deal";
 }

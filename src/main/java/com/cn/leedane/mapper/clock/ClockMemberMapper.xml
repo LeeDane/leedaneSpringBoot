@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.clock.ClockMemberMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
+	<select id="members" resultMap="objectBean">
+		SELECT cm.id, cm.status, cm.create_user_id, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time 
+		, cm.member_id, cm.clock_id, cm.remind
+		 from t_clock_member cm where cm.`status` = 1 and cm.clock_id = #{clockId} ORDER BY cm.create_time desc;
+	</select>
+	
+	<update id="exitClock">
+		update t_clock_member
+		set status = #{status}, modify_user_id = #{modifyUserId}, modify_time = now() 
+		where member_id=#{userId} and clock_id = #{clockId}
+	</update>
+	
+	<update id="updateStatus">
+		update t_clock_member
+		set status = #{status} 
+		where member_id=#{memberId} and clock_id = #{clockId}
+	</update>
+	<resultMap type="com.cn.leedane.model.clock.ClockMemberBean" id="objectBean">
+        <id property="id" column="id"/>
+        <result property="status" column="status"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="memberId" column="member_id"/>
+        <result property="clockId" column="clock_id"/>
+        <result property="remind" column="remind"/>
+   </resultMap>
+</mapper>

@@ -100,4 +100,8 @@ public class Base64Util{
       String strOut2 = new String(Base64Util.decode(strOut.toCharArray()));
       logger.info(strOut2);
     }*/
+    
+    public static void main(String[] args) {
+		System.out.println(encode("http://dwz.wailian.work/".getBytes()));
+	}
 }

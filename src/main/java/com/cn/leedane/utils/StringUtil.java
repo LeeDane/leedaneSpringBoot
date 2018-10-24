@@ -761,6 +761,14 @@ public class StringUtil {
 		}
 	}
 	
+	/**
+	 * 生成shareId
+	 * @return
+	 */
+	public static String getShareId(){
+		return UUID.randomUUID().toString().replace("-", "");
+	}
+	
 	/*public static void main(String[] args) {
 		//logger.info(StringUtil.changeNotNullAndUtf8("赵本山代表作被指\"丑化\"农民 丢弃农村传统底蕴"));
 		//logger.info(StringUtil.isNumeric("-5.00"));

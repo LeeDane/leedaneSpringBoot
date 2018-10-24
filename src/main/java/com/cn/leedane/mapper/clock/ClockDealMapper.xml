@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.clock.ClockDealMapper">
+	<update id="exitClock">
+		update t_clock_deal
+		set status = #{status}, modify_user_id = #{modifyUserId}, modify_time = now() 
+		where member_id=#{userId} and clock_id = #{clockId}
+	</update>
+	
+	<update id="updateStatus">
+		update t_clock_deal
+		set status = #{status} 
+		where member_id=#{memberId} and clock_id = #{clockId}
+	</update>
+	
+	<select id="addClocks" resultMap="objectDealBean">
+		select d.id, d.status, d.create_user_id, c.icon, date_format(d.create_time,'%Y-%m-%d %H:%i:%s') create_time, d.modify_user_id, date_format(d.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
+				,d.member_id, c.id clock_id, c.title clock_title, d.new_status, u.account, u.pic_path, u.id user_id
+			from t_clock_deal d
+			inner join t_user u on u.status = 1 
+			inner join t_clock c on c.id = d.clock_id and c.create_user_id = u.id and c.`status` = 1  
+			where d.status = 11 and d.member_id = #{userId} limit #{start}, #{pageSize}
+	</select>
+	
+	<select id="inviteClocks" resultMap="objectDealBean">
+		select d.id, d.status, d.create_user_id, c.icon, date_format(d.create_time,'%Y-%m-%d %H:%i:%s') create_time, d.modify_user_id, date_format(d.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
+				,d.member_id, c.id clock_id, c.title clock_title, d.new_status, u.account, u.pic_path, u.id user_id 
+			from t_clock_deal d left join t_clock c on d.clock_id = c.id 
+			inner join t_user u on u.id = d.create_user_id and u.status = 1 
+			where d.status = 10 and d.member_id = #{userId} limit #{start}, #{pageSize}
+	</select>
+	
+	<select id="myInviteClocks" resultMap="objectDealBean">
+		select d.id, d.status, d.create_user_id, c.icon, date_format(d.create_time,'%Y-%m-%d %H:%i:%s') create_time, d.modify_user_id, date_format(d.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
+				,d.member_id, c.id clock_id, c.title clock_title, d.new_status, u.account, u.pic_path, u.id user_id 
+			from t_clock_deal d left join t_clock c on d.clock_id = c.id 
+			inner join t_user u on u.id = d.member_id and u.status = 1 
+			where d.status = 10 and d.create_user_id = #{userId} limit #{start}, #{pageSize}
+	</select>
+	
+	<select id="agreeClocks" resultMap="objectDealBean">
+		select d.id, d.status, d.create_user_id, c.icon, date_format(d.create_time,'%Y-%m-%d %H:%i:%s') create_time, d.modify_user_id, date_format(d.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
+				,d.member_id, c.id clock_id, c.title clock_title, d.new_status, u.account, u.pic_path, u.id user_id 
+			from t_clock_deal d left join t_clock c on d.clock_id = c.id inner join t_user u on u.id = d.member_id and u.status = 1
+			where d.status = 11 and c.create_user_id = #{userId} limit #{start}, #{pageSize}
+	</select>
+   
+   <resultMap type="com.cn.leedane.display.clock.ClockMemberDisplay" id="objectDealBean">
+        <id property="id" column="id"/>
+        <result property="status" column="status"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="clockId" column="clock_id"/>
+        <result property="clockTitle" column="clock_title"/>
+        <result property="clockIcon" column="icon"/>
+        <result property="newStatus" column="new_status"/>
+        <result property="memberId" column="member_id"/>
+        <result property="account" column="account"/>
+        <result property="userId" column="user_id"/>
+        <result property="picPath" column="pic_path"/>
+   </resultMap>
+</mapper>

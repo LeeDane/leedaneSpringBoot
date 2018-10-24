@@ -23,14 +23,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cn.leedane.enums.NotificationType;
 import com.cn.leedane.handler.CloudStoreHandler;
 import com.cn.leedane.handler.ZXingCodeHandler;
+import com.cn.leedane.message.ISendNotification;
+import com.cn.leedane.message.SendNotificationImpl;
+import com.cn.leedane.message.notification.Notification;
 import com.cn.leedane.model.EmailBean;
 import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.EmailSend;
 import com.cn.leedane.rabbitmq.send.ISend;
+import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.service.AppVersionService;
 import com.cn.leedane.utils.Base64Util;
 import com.cn.leedane.utils.ConstantsUtil;
@@ -148,6 +153,45 @@ public class ToolController extends BaseController{
 		checkRoleOrPermission(model, request);
 		//type: 1为通知，2为邮件，3为私信，4为短信
 		message.putAll(userService.sendMessage(getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 发送验证码(有效期120秒)
+	 * @param phone  手机号码
+	 * @param type  业务类型（0：验证码 ， 1：通知、）
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@Deprecated
+	@RequestMapping(value = "/sendCode", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> sendCode(@RequestParam("phone") String phone, @RequestParam("type") int type, Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		
+		checkRoleOrPermission(model, request);
+		String key = phone + "_"+ type;
+		RedisUtil redisUtil = RedisUtil.getInstance();
+		if(redisUtil.hasKey(key)){
+			message.put("isSuccess", true);
+			int seconds = (int) (120 - (System.currentTimeMillis() - Long.parseLong(redisUtil.getString(key))));
+			message.put("left", seconds);
+			message.put("message", "您操作太频繁啦！下次操作剩余："+ seconds +"秒");
+		}else{
+			
+			//发送短信
+			ISendNotification sendNotification = new SendNotificationImpl();
+			Notification notification = new Notification();
+			notification.setType(NotificationType.LOGIN_VALIDATION.value);
+			UserBean toUser = new UserBean();
+			toUser.setMobilePhone(phone);
+			notification.setToUser(toUser);
+			sendNotification.Send(notification);
+			
+			redisUtil.addString(key, System.currentTimeMillis() +"");
+			redisUtil.expire(key, 120);
+		}
 		return message.getMap();
 	}
 	

@@ -1004,6 +1004,8 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		if(StringUtil.isNotNull(birthDay)){
 			Date day = DateUtil.stringToDate(birthDay, "yyyy-MM-dd");
 			user.setBirthDay(day);
+		}else{
+			user.setBirthDay(null);
 		}
 		
 		user.setEducationBackground(educationBackground);

@@ -122,13 +122,12 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 	}
 
 	@Override
-	public Map<String, Object> delete(JSONObject jo, UserBean user,
+	public Map<String, Object> delete(int galleryId, JSONObject jo, UserBean user,
 			HttpServletRequest request) {
-		logger.info("GalleryServiceImpl-->delete():JSONObject="+jo.toString());
+		logger.info("GalleryServiceImpl-->delete():JSONObject="+jo.toString() +", gid="+ galleryId);
 		
 		ResponseMap message = new ResponseMap();
 		
-		int galleryId = JsonUtil.getIntValue(jo, "gid"); //获取参数中需要删除的图库的ID
 		if(galleryId == 0){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);

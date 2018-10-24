@@ -2,6 +2,8 @@ package com.cn.leedane.message.notification;
 
 import java.util.Set;
 
+import com.cn.leedane.utils.EnumUtil.NotificationType;
+
 /**
  * 信息发送的接口
  * @author LeeDane
@@ -19,12 +21,13 @@ public interface MessageNotification {
 	public boolean sendToRegistrationIDs(Set<String> registrationIds, String content);
 	
 	/**
-	 * 把通知发送给指定的用户
-	 * @param alias  用户的别名
-	 * @param content  发送的内容
+	 * 把通知发送给指定的用户 
+	 * @param alias 用户的别名
+	 * @param content 发送的内容
+	 * @param type  通知的类型
 	 * @return
 	 */
-	public boolean sendToAlias(String alias, String content);
+	public boolean sendToAlias(String alias, String content, NotificationType type);
 	
 	/**
 	 * 把通知发送给指定的标签(关注该标签的全部用户)

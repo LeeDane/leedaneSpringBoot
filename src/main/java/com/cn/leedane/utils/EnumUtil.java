@@ -56,14 +56,26 @@ public class EnumUtil {
 	 * Version 1.0
 	 */
 	public enum NotificationType {
-		全部("全部"),艾特我("@我"), 评论("评论"),转发("转发"),赞过我("赞过我"),私信("私信"),通知("通知"),留言("留言");
+		全部("全部"),通知("通知"),艾特我("@我"), 评论("评论"),转发("转发"),赞过我("赞过我"),私信("私信"),留言("留言");
 	
 		private NotificationType(String value) {
 			this.value = value;
 		}
 	
 		public final String value;
-	
+	}
+	/**
+	 * 获取NotificationType对象
+	 * @param type
+	 * @return
+	 */
+	public static NotificationType getNotificationType(String type){
+		for(NotificationType nt: NotificationType.values()){
+			if(nt.value.equals(type)){
+				return nt;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -448,7 +460,18 @@ public class EnumUtil {
 		该股票卖出记录不存在(4015),
 		请先删除该股票的全部购买记录(4016),
 		请先删除该股票购买记录所对应的全部卖出记录(4017),
-		请核实是否超额卖出(4018)
+		请核实是否超额卖出(4018),
+		该提醒任务不存在或者不支持共享(4019),
+		请先上传图片才能继续打卡(4020),
+		请先定位才能继续打卡(4021),
+		超出打卡范围(4022),
+		该任务目前不支持共享(4023),
+		已超出任务的参与日期(4024),
+		已超出任务的参与人数(4025),
+		该人员还没有申请加入任务记录(4026),
+		该任务申请记录不是等待创建者审批状态(4027),
+		请先计步才能继续打卡(4028),
+		计步数不足以打卡(4029),
 		;
 		
 		private ResponseCode(int value) {
@@ -470,20 +493,7 @@ public class EnumUtil {
 		}
 		return "";
 	}
-	
-	/**
-	 * 获取NotificationType对象
-	 * @param type
-	 * @return
-	 */
-	public static NotificationType getNotificationType(String type){
-		for(NotificationType nt: NotificationType.values()){
-			if(nt.value.equals(type)){
-				return nt;
-			}
-		}
-		return null;
-	}
+
 	
 	/**
 	 * 获取ReportType对象的key值
@@ -714,5 +724,49 @@ public class EnumUtil {
 			}
 		}
 		return "";
+	}
+	
+	/**
+	 * 打卡类型
+	 * @author LeeDane
+	 * 2018年10月8日 上午10:14:39
+	 * version 1.0
+	 */
+	public enum ClockInType {
+		普通打卡(1),图片打卡(2), 位置打卡(3), 计步打卡(4);
+	
+		private ClockInType(int value) {
+			this.value = value;
+		}
+		public final int value;
+	}
+	/**
+	 * 获取ClockInType对象
+	 * @param value
+	 * @return
+	 */
+	public static String getClockInType(int value){
+		for(ClockInType nt: ClockInType.values()){
+			if(nt.value == value){
+				return nt.name();
+			}
+		}
+		return "";
+	}
+	
+	/**
+	 * 自定义消息的业务类型
+	 * @author LeeDane
+	 * 2018年10月15日 下午3:36:40
+	 * version 1.0
+	 */
+	public enum CustomMessageExtraType {
+		聊天(1), 任务打卡(2), 请求加好友(3), 同意加好友(4)
+		, 请求加入任务(5), 同意加入任务(6), 刷新任务(7), 任务修改(8), 邀请加入任务(9);
+	
+		private CustomMessageExtraType(int value) {
+			this.value = value;
+		}
+		public final int value;
 	}
 }

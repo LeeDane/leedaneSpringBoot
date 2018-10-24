@@ -76,7 +76,11 @@ public class DateUtil {
 				format = "yyyy-MM-dd";
 				break;
 			case 8:
-				format = "yyyyMMdd";
+				if(stringDate.indexOf(":") > -1){
+					format = "HH:mm:ss";
+				}else{
+					format = "yyyyMMdd";
+				}
 				break;
 			
 		}
@@ -90,6 +94,8 @@ public class DateUtil {
 	 * @return
 	 */
 	public static Date stringToDate(String stringDate,String format){
+		if(stringDate == null)
+			return null;
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
 		Date date = null;	   
 		try {
@@ -492,6 +498,8 @@ public class DateUtil {
 	 */
 	public static List<Date> findDates(Date dBegin, Date dEnd) {
 		List<Date> lDate = new ArrayList<Date>();
+		if(dBegin == null || dEnd == null)
+			return lDate;
 		lDate.add(dBegin);
 		Calendar calBegin = Calendar.getInstance();
 		// 使用给定的 Date 设置此 Calendar 的时间
@@ -541,6 +549,28 @@ public class DateUtil {
 		    if(diff < 0) 
 		    	return 1;
 		    int i = StringUtil.changeObjectToInt(diff / (1000 * 60));
+		    return  i == 0? 1 : i;
+		    
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return 1;
+	}
+	
+	/**
+	 * 计算开始时间离结束时间还有多少天
+	 * @param createTime
+	 * @param endTime
+	 * @return
+	 */
+	public static int leftDays(Date createTime, Date endTime){
+		if(endTime == null)
+			return -1; //没有结束时间，返回-1
+		try{
+		    long diff = endTime.getTime() - createTime.getTime();
+		    if(diff < 0) 
+		    	return 1;
+		    int i = StringUtil.changeObjectToInt(diff / (1000 * 60 * 60 * 24));
 		    return  i == 0? 1 : i;
 		    
 		}catch(Exception e){
@@ -695,4 +725,19 @@ public class DateUtil {
 		return Math.abs((int) ((end.getTime() - start.getTime()) / (1000*60*60*24))) <= range;
 	}
 	
+   /**
+    * 判断当前日期是星期几 
+    * @param date
+    * @return
+    * @throws Exception
+    */
+	public static int dayForWeek(Date date){
+//	    Calendar cal = new  GregorianCalendar();  
+//	    cal.set(date.getYear(), date.getMonth(), date.getDay());   
+//	    return  cal.get(Calendar.DAY_OF_WEEK); 
+//	    
+	    Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return cal.get(Calendar.DAY_OF_WEEK);
+	} 
 }

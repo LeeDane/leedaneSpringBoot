@@ -16,6 +16,8 @@ import com.cn.leedane.model.ChatBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.NotificationType;
 
 /**
  * 极光推送相关的测试类
@@ -66,7 +68,7 @@ public class JPushTest extends BaseTest{
 	@Test
 	public void notification() {
 		MessageNotification message= new JPushMessageNotificationImpl();
-		logger.info(message.sendToAlias("leedane_user_"+1, "hello leedane"));
+		logger.info(message.sendToAlias("leedane_user_"+1, "hello leedane", NotificationType.全部));
 	}
 	
 	/**
@@ -90,7 +92,7 @@ public class JPushTest extends BaseTest{
 		
 		Map<String, Object> chatMap = null;
 		JpushCustomMessage message= new JpushCustomMessage();
-		logger.info(message.sendToAlias("leedane_user_1", JSONObject.fromObject(chatMap).toString(), "toUserId", "1"));
+		logger.info(message.sendToAlias("leedane_user_1", JSONObject.fromObject(chatMap).toString(), EnumUtil.CustomMessageExtraType.聊天.value));
 		
 		
 	}

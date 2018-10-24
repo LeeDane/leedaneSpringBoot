@@ -26,16 +26,16 @@ public class JpushCustomMessage implements CustomMessage{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	@Override
-	public boolean sendToRegistrationIDs(Set<String> registrationIds, String content, String key, String value) {
+	public boolean sendToRegistrationIDs(Set<String> registrationIds, String content, String key, int value) {
 		return false;
 	}
 
 	@Override
-	public boolean sendToAlias(String alias, String content, String key, String value) {
+	public boolean sendToAlias(String alias, String content, int businessType) {
 		long timeLive = 7*24*60*60;
 		JPushClient jpushClient = new JPushClient(
 				ConstantsUtil.JPUSH_MASTER_SECRET, ConstantsUtil.JPUSH_APPKEY, false, timeLive);
-		PushPayload payload = buildPushAlias(alias, content, key, value);
+		PushPayload payload = buildPushAlias(alias, content, businessType);
 		try {
 			PushResult result = jpushClient.sendPush(payload);
 			return result.getResponseCode() == 200;
@@ -53,12 +53,12 @@ public class JpushCustomMessage implements CustomMessage{
 	}
 	
 	@Override
-	public boolean sendToTag(String tag, String content, String key, String value) {
+	public boolean sendToTag(String tag, String content, int businessType) {
 		return false;
 	}
 	
 	@Override
-	public boolean sendToAllUser(String content, String key, String value) {
+	public boolean sendToAllUser(String content, int businessType) {
 		return false;
 	}
 	
@@ -68,13 +68,13 @@ public class JpushCustomMessage implements CustomMessage{
 	 * @param content
 	 * @return
 	 */
-	private static PushPayload buildPushAlias(String alias, String content, String key, String value) {
+	private static PushPayload buildPushAlias(String alias, String content, int businessType) {
         return PushPayload.newBuilder()
                 .setPlatform(Platform.all())
                 .setAudience(Audience.alias(alias))
                 .setMessage(Message.newBuilder()
                         .setMsgContent(content)
-                        .addExtra(key, value)
+                        .addExtra("businessType", businessType)
                         .build())
                 .build();
     }
