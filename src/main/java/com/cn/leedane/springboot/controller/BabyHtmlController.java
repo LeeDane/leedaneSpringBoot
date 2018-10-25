@@ -1,6 +1,7 @@
 package com.cn.leedane.springboot.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import com.cn.leedane.model.baby.BabyBean;
 import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.utils.baby.BabyUtil;
 
@@ -93,29 +95,37 @@ public class BabyHtmlController extends BaseController{
 		//首页一进去默认会加载一个默认孩子的信息
 		//获取该用户的第一个孩子
 		List<BabyBean> babys = babyHandler.getBabys(getUserIdFromShiro());
+		BabyBean baby = null;
 		if(babyId > 0){
 			//获取宝宝信息
-			BabyBean baby = babyHandler.getNormalBaby(babyId, getMustLoginUserFromShiro());
-			model.addAttribute("infos", BabyUtil.getInfoDisplay(baby));
-			model.addAttribute("babyName", baby.getNickname());
+			baby = babyHandler.getNormalBaby(babyId, getMustLoginUserFromShiro());
 		}else{
 			if(CollectionUtil.isNotEmpty(babys)){
-				BabyBean baby = babys.get(0);
+				baby = babys.get(0);
 				babyId = baby.getId();
-				model.addAttribute("infos", BabyUtil.getInfoDisplay(baby));
-				model.addAttribute("babyName", baby.getNickname());
 			}
 		}
+		
+		model.addAttribute("infos", BabyUtil.getInfoDisplay(baby));
+		model.addAttribute("babyName", baby.getNickname());
+		model.addAttribute("baby", baby);
+		String lifeDay = null;
+		if(baby.isBorn()){
+			lifeDay = "宝宝出生的第" + DateUtil.getBirthDayFormat(new Date(), baby.getGregorianBirthDay());
+		}else{
+			lifeDay = "距离宝宝出生还有" + DateUtil.getBirthDayFormat(baby.getPreProduction(), new Date());
+		}
+		model.addAttribute("lifeDay", lifeDay);
 		
 		//处理宝宝列表的展示
 		if(CollectionUtil.isNotEmpty(babys)){
 			List<IndexBabyDisplay> babyDisplays = new ArrayList<IndexBabyDisplay>();
-			for(BabyBean baby:  babys){
+			for(BabyBean baby1:  babys){
 				IndexBabyDisplay babyDisplay = new IndexBabyDisplay();
-				babyDisplay.setPic(StringUtil.isNull(baby.getHeadPic())? DEFAULT_NO_PIC_PATH: baby.getHeadPic());
-				babyDisplay.setId(baby.getId());
-				babyDisplay.setNickname(baby.getNickname());
-				babyDisplay.setCurrent(baby.getId() == babyId);
+				babyDisplay.setPic(StringUtil.isNull(baby1.getHeadPic())? DEFAULT_NO_PIC_PATH: baby1.getHeadPic());
+				babyDisplay.setId(baby1.getId());
+				babyDisplay.setNickname(baby1.getNickname());
+				babyDisplay.setCurrent(baby1.getId() == babyId);
 				babyDisplays.add(babyDisplay);
 			}
 			model.addAttribute("babys", babyDisplays);
@@ -124,12 +134,16 @@ public class BabyHtmlController extends BaseController{
 		model.addAttribute("babyId", babyId);
 		JSONObject jso = new JSONObject();
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("0-11-29", "生日");
-		mp.put("0-5-31", "跨年");
-		mp.put("0-0-1", "工资");
-		mp.put("0-6-18", "<span style=\"background:red; color: white;\">爸爸的生日</span>");
-		mp.put("2017-8-20", "预发");
-		mp.put("2017-8-21", "发布");
+		mp.put("0-11-07", "<span style=\"background:white; color: red;\">爸爸的生日</span>");
+		mp.put("0-08-19", "<span style=\"background:white; color: blue;\">妈妈的生日</span>");
+		mp.put("0-11-29", "<span style=\"background:white; color: yellow;\">宝宝的生日</span>");
+		mp.put("0-05-4", "<span style=\"background:white; color: orange;\">爷爷的生日</span>");
+		mp.put("0-09-21", "<span style=\"background:white; color: purple;\">奶奶的生日</span>");
+		mp.put("0-1-1", "元旦");
+		mp.put("0-4-5", "清明");
+		mp.put("0-7-1", "建党");
+		mp.put("0-8-1", "建军");
+		mp.put("0-9-10", "教师");
 		jso.putAll(mp); 
 		model.addAttribute("mark", jso);
 		return loginRoleCheck("baby/index", true, model, request);

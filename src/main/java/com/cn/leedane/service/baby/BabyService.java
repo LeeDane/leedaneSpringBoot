@@ -47,4 +47,15 @@ public interface BabyService <T extends IDBean>{
 	 */
 	public  Map<String,Object> delete(int babyId, UserBean user, HttpServletRequest request);
 
+	/**
+	 * 将宝宝的状态改变成出生状态
+	 * @param babyId
+	 * @param json
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> changeBorn(int babyId,
+			JSONObject json, UserBean user,
+			HttpServletRequest request);
 }	

@@ -127,6 +127,27 @@ public class BabyController extends BaseController{
 	}
 	
 	/**
+	 * 改变宝宝的状态为出生状态
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/{babyId}/changeBorn", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> changeBorn(
+			@PathVariable(value="babyId") int babyId,
+			Model model, 
+			HttpServletRequest request){
+		
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(model, request);
+		message.putAll(babyService.changeBorn(babyId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
 	 * 删除生活方式模板
 	 * @param model
 	 * @param request

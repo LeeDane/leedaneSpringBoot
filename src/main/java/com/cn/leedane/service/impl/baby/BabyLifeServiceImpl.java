@@ -178,6 +178,9 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 		logger.info("BabyLifeServiceImpl-->paging():babyId=" +babyId + ", startDate="+ startDate +", endDate="+ endDate +", keyWord="+ keyWord +", lifeType="+ lifeType +", user="+ user.getAccount());
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		ResponseMap message = new ResponseMap();
+		//获取宝宝信息(校验是否是自己的宝宝)
+		BabyBean baby = babyHandler.getNormalBaby(babyId, user);
+				
 		LifesResultDisplay display = new LifesResultDisplay();
 		List<BabyLifeBean> babyLifes = babyLifeMapper.lifes(user.getId(), babyId, startDate, endDate, keyWord, lifeType, 0, 1000, ConstantsUtil.STATUS_NORMAL);
 		if(CollectionUtil.isNotEmpty(babyLifes)){
@@ -189,7 +192,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 			Set<String> sourceDates = new HashSet<String>();
 			
 			for(BabyLifeBean life: babyLifes){
-				list.add(BabyUtil.transform(life));
+				list.add(BabyUtil.transform(life, baby));
 				if(life.getLifeType() == BabyLifeType.吃喝.value){
 					eat ++;
 				}if(life.getLifeType() == BabyLifeType.睡觉.value){

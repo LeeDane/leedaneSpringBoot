@@ -375,6 +375,40 @@ function advancedSearch(obj){
 }
 
 /**
+ * 改变宝宝的状态为已出生状态
+ */
+function changeBorn(){
+	
+	layer.confirm('恭喜，您的宝宝已经出生啦', {
+		  btn: ['确定','点错了'] //按钮
+	}, function(){
+		var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+		$.ajax({
+			type: "PUT",
+			url : "/baby/"+ babyId +"/changeBorn",
+			dataType: 'json', 
+			beforeSend:function(){
+			},
+			success : function(data) {
+				layer.close(loadi);
+				if(data != null && data.isSuccess){
+					layer.msg(data.message);
+					window.location.reload();
+				}else{
+					ajaxError(data);
+				}
+				console.log(data);
+			},
+			error : function(data) {
+				layer.close(loadi);
+				ajaxError(data);
+			}
+		});
+	}, function(){
+	});
+}
+
+/**
  * 删除生活方式
  * @param lifeId
  */

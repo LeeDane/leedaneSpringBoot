@@ -344,7 +344,14 @@
 				   		</div>
 				   	</div>
 		   		</div>
-		   		
+		   		<div th:if="${lifeDay} != null" class="row" style="border: 1px solid #fff;background-color: #fff; margin-bottom: 20px;">
+		   			<div class="col-lg-12" style="padding-top: 20px; padding-bottom: 10px; padding-left: 10;padding-right: 10px;">
+		   				<label style="color: red; size: 20px;" th:utext="${lifeDay}"></label>
+		   				<button th:if="${!baby.isBorn()}" onclick="changeBorn();" type="button" class="btn btn-warning btn-xs" aria-label="Left Align" style="float: right;">
+						  <span class="glyphicon glyphicon-retweet" aria-hidden="true"></span> 已出生
+						</button>
+				   	</div>
+		   		</div>
 		   		<div class="row">
 		   			<div class="panel panel-info">
 					    <div class="panel-heading">

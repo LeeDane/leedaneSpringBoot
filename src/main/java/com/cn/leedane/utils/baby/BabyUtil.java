@@ -50,9 +50,10 @@ public class BabyUtil {
 	/**
 	 * 宝宝生活方式的key-value格式展示
 	 * @param life
+	 * @param baby
 	 * @return
 	 */
-	public static Map<String, Object> transform(BabyLifeBean life){
+	public static Map<String, Object> transform(BabyLifeBean life, BabyBean baby){
 		Map<String, Object> bean = new HashMap<String, Object>();
 		List<keyValueDisplay> displays = new ArrayList<keyValueDisplay>();
 		if(life != null){
@@ -75,6 +76,10 @@ public class BabyUtil {
 			case 2: //睡觉
 				displays.add(new keyValueDisplay("睡眠时间", DateUtil.DateToString(life.getOccurTime(), "yyyy-MM-dd HH:mm")));
 				displays.add(new keyValueDisplay("睡醒时间", DateUtil.DateToString(life.getWakeUpTime(), "yyyy-MM-dd HH:mm")));
+				
+				String sleepLen = DateUtil.getDatePoor(life.getWakeUpTime(), life.getOccurTime());
+				if(StringUtil.isNotNull(sleepLen))
+					displays.add(new keyValueDisplay("睡眠时长", sleepLen));
 				displays.add(new keyValueDisplay("宝宝反应情况", EnumUtil.getBabyReaction(life.getReaction())));
 				displays.add(new keyValueDisplay("其他描述", StringUtil.changeNotNull(life.getBabyDesc())));
 				displays.add(new keyValueDisplay("地址", StringUtil.changeNotNull(life.getOccurPlace())));

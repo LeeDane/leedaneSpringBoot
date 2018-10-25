@@ -740,4 +740,79 @@ public class DateUtil {
 		cal.setTime(date);
 		return cal.get(Calendar.DAY_OF_WEEK);
 	} 
+	
+	/**
+	 * 返回xx天xx小时xx分等
+	 * @param endDate
+	 * @param nowDate
+	 * @return
+	 */
+	public static String getDatePoor(Date endDate, Date nowDate) {
+		if(endDate == null || nowDate == null){
+			return null;
+		}
+	    long nd = 1000 * 24 * 60 * 60;
+	    long nh = 1000 * 60 * 60;
+	    long nm = 1000 * 60;
+	    // long ns = 1000;
+	    // 获得两个时间的毫秒时间差异
+	    long diff = endDate.getTime() - nowDate.getTime();
+	    // 计算差多少天
+	    // 计算差多少小时
+	    long hour = diff % nd / nh;
+	    // 计算差多少分钟
+	    long min = diff % nd % nh / nm;
+	    // 计算差多少秒//输出结果
+	    // long sec = diff % nd % nh % nm / ns;
+	    return hour + "小时" + min + "分钟";
+	}
+	
+	/**
+	 * 返回xx年xx月xx天等
+	 * @param endDate
+	 * @param nowDate
+	 * @return
+	 */
+	public static String getBirthDayFormat(Date endDate, Date nowDate) {
+		if(endDate == null || nowDate == null){
+			return null;
+		}
+//		long diff = endDate.getTime() - nowDate.getTime();//这样得到的差值是微秒级别
+		Calendar currentTimes = dataToCalendar(endDate);//当前系统时间转Calendar类型
+		Calendar firstTimes =dataToCalendar(nowDate);//查询的数据时间转Calendar类型
+		int year = currentTimes.get(Calendar.YEAR) - firstTimes.get(Calendar.YEAR);//获取年
+		int month = currentTimes.get(Calendar.MONTH) - firstTimes.get(Calendar.MONTH);
+		int day = currentTimes.get(Calendar.DAY_OF_MONTH) - firstTimes.get(Calendar.DAY_OF_MONTH);
+		if (day < 0){
+			month -= 1;
+			currentTimes.add(Calendar.MONTH, -1);
+			day = day + currentTimes.getActualMaximum(Calendar.DAY_OF_MONTH);//获取日
+		}
+		if (month < 0) {
+			month = (month + 12) % 12;//获取月
+			year--;
+		}
+//		long days = diff / (1000 * 60 * 60 * 24);
+//		long hours = (diff-days*(1000 * 60 * 60 * 24))/(1000 * 60 * 60); //获取时 
+//		long minutes = (diff - days * (1000 * 60 * 60 * 24)-hours*(1000 * 60 * 60))/(1000 * 60); //获取分钟
+//		long s = (diff/1000-days*24*60*60-hours*60*60-minutes*60);//获取秒
+		
+		StringBuffer buffer = new StringBuffer();
+		if(year > 0)
+			buffer.append(year+"岁");
+		
+		if(month > 0)
+			buffer.append(month+"月");
+		
+		if(day >= 0)
+			buffer.append(day+"天");
+		return buffer.toString();
+	}
+	
+	//Date类型转Calendar类型
+	public static Calendar dataToCalendar(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+        return calendar;
+	}
 }

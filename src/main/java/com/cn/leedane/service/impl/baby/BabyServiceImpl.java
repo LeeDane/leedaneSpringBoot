@@ -148,4 +148,37 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除宝宝名称ID为：", babyId ,"的宝宝的基本信息：", "，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, 0);	
 		return message.getMap();
 	}
+	
+	@Override
+	public Map<String, Object> changeBorn(int babyId, JSONObject json,
+			UserBean user, HttpServletRequest request) {
+		logger.info("BabyServiceImpl-->changeBorn():jsonObject=" +json.toString() +", user=" +user.getAccount()+", babyId="+ babyId);
+		ResponseMap message = new ResponseMap();
+		//获取宝宝信息(校验是否是自己的宝宝)
+		BabyBean babyBean = babyHandler.getNormalBaby(babyId, user);
+		babyBean.setBorn(true);
+		babyBean.setGregorianBirthDay(new Date());
+		babyBean.setModifyTime(new Date());
+		babyBean.setModifyUserId(user.getId());
+		boolean result = babyMapper.update(babyBean) > 0;
+		if(result){
+			//清除该宝宝的缓存
+			babyHandler.deleteBabyBeanCache(babyBean.getId());
+			//清空该用户的宝宝列表缓存
+			babyHandler.deleteBabyBeansCache(user.getId());
+			message.put("isSuccess", true);
+			String content= "您已成功修改宝宝《"+ babyBean.getNickname() +"》的信息为出生状态！";
+			message.put("message", content);
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+			//通知用户
+			notificationHandler.sendNotificationById(true, user, user.getId(), content, NotificationType.通知, DataTableType.不存在的表.value, -1, null);
+		}else{
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库修改失败.value));
+			message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
+		}
+		
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改宝宝《", babyBean.getNickname() ,"》的信息, 数据是：", json.toString(), "，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "changeBorn()", ConstantsUtil.STATUS_NORMAL, 0);	
+		return message.getMap();
+	}
 }
