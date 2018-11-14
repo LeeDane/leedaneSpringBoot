@@ -10,6 +10,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cn.leedane.handler.UserHandler;
@@ -26,14 +27,20 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.clock.ClockBean;
 import com.cn.leedane.model.clock.ClockInBean;
 import com.cn.leedane.model.clock.ClockMemberBean;
+import com.cn.leedane.model.clock.ClockScoreBean;
+import com.cn.leedane.model.clock.ClockScoreQueueBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.clock.ClockInService;
+import com.cn.leedane.thread.ThreadUtil;
+import com.cn.leedane.thread.single.ClockScoreThread;
+import com.cn.leedane.thread.single.VisitorDeleteThread;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.ClockInType;
+import com.cn.leedane.utils.EnumUtil.ClockScoreBusinessType;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
@@ -66,6 +73,10 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 	@Autowired
 	private ClockMemberMapper clockMemberMapper;
 	
+	@Value("${constant.defalult.clock.in.score}")
+    public int CLOCK_IN_SCORE;
+	
+	
 	@Override
 	public Map<String, Object> add(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
@@ -75,9 +86,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 		ClockInBean clockInBean = (ClockInBean) sqlUtil.getBean(jo, ClockInBean.class);
 		
 		int clockId = clockInBean.getClockId();
-		ClockBean clock = clockMapper.findById(ClockBean.class, clockId);
-		if(clock == null)
-			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该提醒任务不存在或者不支持共享.value));
+		ClockBean clock = clockHandler.getNormalClock(clockId);
 		
 		//判断是否需要图片打卡
 		if(clock.getClockInType() == ClockInType.图片打卡.value && StringUtil.isNull(clockInBean.getImg())){
@@ -112,11 +121,12 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 		
 		//判断当天是否可以打卡
 		
+		Date systemDate = new Date();
 		
 		//判断打卡的时间段是否正确
 		Date clockStartTime = clock.getClockStartTime();
 		Date clockEndTime = clock.getClockEndTime();
-		Date curr = DateUtil.stringToDate(DateUtil.DateToString(new Date(), "HH:mm:ss"), "HH:mm:ss");
+		Date curr = DateUtil.stringToDate(DateUtil.DateToString(systemDate, "HH:mm:ss"), "HH:mm:ss");
 		
 		//开始打卡时间和结束打卡时间要是有一个为空，将不限制打卡时间
 		if(clockStartTime != null && clockEndTime != null)
@@ -128,14 +138,30 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 				return message.getMap();
 			}
 		
-		clockInBean.setCreateTime(new Date());
+		clockInBean.setCreateTime(systemDate);
 		clockInBean.setCreateUserId(userId);
 		clockInBean.setStatus(ConstantsUtil.STATUS_NORMAL);
-		clockInBean.setModifyTime(new Date());
+		clockInBean.setModifyTime(systemDate);
 		clockInBean.setModifyUserId(userId);
-		clockInBean.setClockDate(new Date());
+		clockInBean.setClockDate(systemDate);
 		boolean result = clockInMapper.save(clockInBean) > 0;
 		if(result){
+			
+			ClockScoreQueueBean clockScoreQueueBean = new ClockScoreQueueBean();
+			ClockScoreBean clockScoreBean = new ClockScoreBean();
+			clockScoreBean.setClockId(clockId);
+			clockScoreBean.setCreateTime(systemDate);
+			clockScoreBean.setCreateUserId(userId);
+			clockScoreBean.setModifyTime(systemDate);
+			clockScoreBean.setModifyUserId(userId);
+			clockScoreBean.setScore(CLOCK_IN_SCORE);
+			clockScoreBean.setScoreDate(systemDate);
+			clockScoreBean.setScoreDesc(DateUtil.DateToString(systemDate, "yyyy年MM月dd日")+"对任务《" + clock.getTitle() +"》进行打卡获得"+ CLOCK_IN_SCORE +"积分");
+			clockScoreBean.setBusinessType(ClockScoreBusinessType.每日打卡.value);
+			clockScoreQueueBean.setClockScoreBean(clockScoreBean);
+			clockScoreQueueBean.setOperateType(EnumUtil.ClockScoreOperateType.新增.value);
+			new ThreadUtil().singleTask(new ClockScoreThread(user, clockScoreQueueBean));
+			
 			//清空该用户的提醒任务列表缓存
 			clockHandler.deleteDateClocksCache(userId);
 			

@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.model.clock.ClockDealBean;
-import com.cn.leedane.model.clock.ClockMemberBean;
 import com.cn.leedane.service.clock.ClockDealService;
-import com.cn.leedane.service.clock.ClockMemberService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
 
@@ -55,14 +53,44 @@ public class ClockDealController extends BaseController{
 	 * 同意某人加入任务(必须是共享的任务，并且人数没有超过共享人数，时间不能超过报名时间)
 	 * @return
 	 */
-	@RequestMapping(value = "/request/{clockMemberId}/agree", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> requestAgree(@PathVariable("clockMemberId") int clockMemberId, Model model, HttpServletRequest request){
+	@RequestMapping(value = "/request/{clockId}/agree/{memberId}", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> requestAgree(@PathVariable("clockId") int clockId, @PathVariable("memberId") int memberId,Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockDealService.requestAgree(clockMemberId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(clockDealService.requestAgree(clockId, memberId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 请求加入对方的任务(必须是共享的任务，并且人数没有超过共享人数，时间不能超过报名时间)
+	 * @return
+	 */
+	@RequestMapping(value = "/invite/{clockId}/add/{memberId}", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> inviteAdd(@PathVariable("clockId") int clockId, @PathVariable("memberId") int memberId, Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(model, request);
+		message.putAll(clockDealService.inviteAdd(clockId, memberId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 同意某人加入任务(必须是共享的任务，并且人数没有超过共享人数，时间不能超过报名时间)
+	 * @return
+	 */
+	@RequestMapping(value = "/invite/{clockId}/agree/{memberId}", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> inviteAgree(@PathVariable("clockId") int clockId, @PathVariable("memberId") int memberId, Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(model, request);
+		message.putAll(clockDealService.inviteAgree(clockId, memberId, getJsonFromMessage(message), getUserFromMessage(message), request));
 		return message.getMap();
 	}
 	

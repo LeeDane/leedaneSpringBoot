@@ -41,4 +41,5 @@ public interface ClockMemberMapper extends BaseMapper<ClockMemberBean>{
 	 * @return
 	 */
 	public boolean updateStatus(@Param("clockId")int clockId, @Param("memberId")int memberId, @Param("status")int statu);
+	
 }

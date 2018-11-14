@@ -1125,6 +1125,7 @@ CREATE TABLE `t_clock` (
   `must_step` int(6) DEFAULT 0 COMMENT '任务的计步打卡，当clock_in_type为计步打卡的时候，用户计步打卡最低的要求',
   `share_id` varchar(40) DEFAULT NULL COMMENT '共享任务的ID，只要是共享的任务，系统自动分配共享ID',
   `total_day` int(3) DEFAULT -1 COMMENT '需要打卡的总天数,如果无穷，默认是-1',
+  `auto_add` bit(1) DEFAULT b'1' COMMENT '是否成员自动加入，默认是true，表示共享的任务，其他人员可以不通过创建者自动加入',
   PRIMARY KEY (`id`),
   KEY `FK_clock_create_user` (`create_user_id`),
   KEY `FK_clock_modify_user` (`modify_user_id`),
@@ -1239,3 +1240,30 @@ CREATE TABLE `t_clock_deal` (
   CONSTRAINT `FK_clock_deal_id` FOREIGN KEY (`member_id`) REFERENCES `t_user` (`id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 alter table t_clock_deal add constraint index_t_clock_deal_id UNIQUE(create_user_id, clock_id, member_id);
+
+-- ----------------------------
+-- Table structure for t_clock_score
+-- ----------------------------
+DROP TABLE IF EXISTS `t_clock_score`;
+CREATE TABLE `t_clock_score` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `clock_id` int(11) NOT NULL COMMENT '任务提醒的id',
+  `score` int(11) NOT NULL DEFAULT 0 COMMENT '当前的获得的积分(非总积分)',
+  `total_score` int(11) NOT NULL DEFAULT 0 COMMENT '历史的总积分(冗余字段)',
+  `business_type` int(2) NOT NULL DEFAULT 0 COMMENT '相关联的任务业务类型',
+  `score_desc` varchar(255) DEFAULT NULL COMMENT '描述 信息',
+  `score_date` date NOT NULL COMMENT '记录积分的日期',
+  PRIMARY KEY (`id`),
+  KEY `FK_clock_score_create_user` (`create_user_id`),
+  KEY `FK_clock_score_modify_user` (`modify_user_id`),
+  KEY `FK_clock_score_clock` (`clock_id`),
+  CONSTRAINT `FK_clock_score_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_score_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_score_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+alter table t_clock_score add constraint index_t_clock_score_id UNIQUE(create_user_id, clock_id, business_type, create_time);

@@ -74,5 +74,4 @@ public class ClockMemberBean extends RecordTimeBean{
 		this.notification = notification;
 	}
 
-	
 }

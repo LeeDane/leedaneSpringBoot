@@ -71,4 +71,62 @@ public interface ClockDealMapper extends BaseMapper<ClockDealBean>{
 	 */
 	public List<ClockMemberDisplay> agreeClocks(@Param("userId")int userId, @Param("start")int start, @Param("pageSize")int pageSize);
 	
+	/**
+	 * 获取该任务的管理员对我的邀请我的记录
+	 * @param id
+	 * @param clockId
+	 * @return
+	 */
+	@Deprecated
+	public ClockDealBean createrInviteMes(@Param("userId")int userId, @Param("clockId")int clockId);
+	
+	/**
+	 * 获取该任务目前所有邀请我的记录
+	 * @param id
+	 * @param clockId
+	 * @return
+	 */
+	public ClockDealBean inviteMe(@Param("userId")int userId, @Param("memberId")int memberId, @Param("clockId")int clockId);
+	
+	/**
+	 * 获取用户对我的申请记录
+	 * @param userId
+	 * @param memberId
+	 * @param clockId
+	 * @return
+	 */
+	public ClockDealBean userRequestClockDeal(@Param("userId")int userId, @Param("memberId")int memberId, @Param("clockId")int clockId);
+
+	/**
+	 * 获取该任务目前请求记录
+	 * @param id
+	 * @param clockId
+	 * @return
+	 */
+	public ClockDealBean requestMe(@Param("userId")int userId, @Param("memberId")int memberId, @Param("clockId")int clockId);
+
+	/**
+	 * 获取用户跟任务的关系列表
+	 * @param id
+	 * @param clockId
+	 * @return
+	 */
+//	public List<ClockDealBean> getMemberClockDeals(@Param("userId")int userId, @Param("clockId")int clockId);
+	
+	/**
+	 * 判断用户跟该任务是否有记录
+	 * @param id
+	 * @param clockId
+	 * @return
+	 */
+	public List<ClockDealBean> userClockRecord(@Param("userId")int userId, @Param("clockId")int clockId);
+	
+	/**
+	 * 获取用户的请求加入记录
+	 * @param id
+	 * @param clockId
+	 * @return
+	 */
+	public ClockDealBean getMyRequestAddRecord(@Param("userId")int userId, @Param("clockId")int clockId);
+	
 }

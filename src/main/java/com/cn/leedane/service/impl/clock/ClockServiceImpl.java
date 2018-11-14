@@ -151,10 +151,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 			HttpServletRequest request) {
 		logger.info("ClockServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
-		ClockBean clockBean = clockMapper.findById(ClockBean.class, clockId);
-		if(clockBean == null)
-			throw new NullPointerException("该任务不存在或者已经被删除！");
-		
+		ClockBean clockBean = clockHandler.getNormalClock(clockId);
 		int userId = user.getId();
 		
 		boolean creater = userId == clockBean.getCreateUserId();
@@ -218,9 +215,8 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		logger.info("ClockServiceImpl-->delete():clockId=" +clockId +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
-		ClockBean clockBean = clockMapper.findById(ClockBean.class, clockId);
-		if(clockBean == null)
-			throw new NullPointerException("该任务不存在或者已经被删除！");
+		//校验
+		ClockBean clockBean = clockHandler.getNormalClock(clockId);
 		
 		int userId = user.getId();
 		boolean creater = clockBean.getCreateUserId() == userId;

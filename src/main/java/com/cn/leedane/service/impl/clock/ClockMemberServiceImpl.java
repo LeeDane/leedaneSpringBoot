@@ -21,14 +21,20 @@ import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.clock.ClockBean;
 import com.cn.leedane.model.clock.ClockMemberBean;
+import com.cn.leedane.model.clock.ClockScoreBean;
+import com.cn.leedane.model.clock.ClockScoreQueueBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.clock.ClockMemberService;
+import com.cn.leedane.thread.ThreadUtil;
+import com.cn.leedane.thread.single.ClockScoreThread;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.EnumUtil.ClockScoreBusinessType;
 
 /**
  * 任务提醒service实现类
@@ -63,26 +69,57 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 			HttpServletRequest request) {
 		logger.info("ClockMemberServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		
-		ClockBean clockBean = clockMapper.findById(ClockBean.class, clockId);
 		//校验
-		if(clockBean == null){
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该提醒任务不存在或者不支持共享.value));
-		}
+		ClockBean clockBean = clockHandler.getNormalClock(clockId);
 		
 		if(memberId < 1){
 			throw new ParameterUnspecificationException("成员ID不能为空");
 		}
+		
+		Date systemDate = new Date();
+		int userId = user.getId();
 		ClockMemberBean clockMemberBean = new ClockMemberBean();
 		clockMemberBean.setClockId(clockId);
 		clockMemberBean.setMemberId(memberId);
 		clockMemberBean.setRemind(JsonUtil.getStringValue(jo, "remind")); //设置提醒时间
 		clockMemberBean.setNotification(JsonUtil.getBooleanValue(jo, "notification", true)); //设置是否接受通知
-		clockMemberBean.setCreateTime(new Date());
-		clockMemberBean.setCreateUserId(user.getId());
-		clockMemberBean.setModifyTime(new Date());
-		clockMemberBean.setModifyUserId(user.getId());
+		clockMemberBean.setCreateTime(systemDate);
+		clockMemberBean.setCreateUserId(userId);
+		clockMemberBean.setModifyTime(systemDate);
+		clockMemberBean.setModifyUserId(userId);
 		clockMemberBean.setStatus(ConstantsUtil.STATUS_NORMAL);
 		boolean	result = clockMemberMapper.save(clockMemberBean) > 0;
+		
+		//保存成功
+		if(result){
+			
+			//非创建者请求加入，扣除加入者积分和创建者积分
+			if(clockBean.getCreateUserId() != memberId){
+				
+				//通知创建者
+				ClockScoreQueueBean clockScoreQueueBean = new ClockScoreQueueBean();
+				ClockScoreBean clockScoreBean = new ClockScoreBean();
+				clockScoreBean.setClockId(clockId);
+				clockScoreBean.setCreateTime(systemDate);
+				clockScoreBean.setCreateUserId(userId);
+				clockScoreBean.setModifyTime(systemDate);
+				clockScoreBean.setModifyUserId(userId);
+				clockScoreBean.setScore(-clockBean.getRewardScore());
+				clockScoreBean.setScoreDate(systemDate);
+				clockScoreBean.setScoreDesc(userHandler.getUserName(memberId) +"加入您的任务《" + clockBean.getTitle() +"》，预扣除"+ clockBean.getRewardScore() +"积分");
+				clockScoreBean.setBusinessType(ClockScoreBusinessType.成员加入.value);
+				clockScoreQueueBean.setClockScoreBean(clockScoreBean);
+				clockScoreQueueBean.setOperateType(EnumUtil.ClockScoreOperateType.新增.value);
+				new ThreadUtil().singleTask(new ClockScoreThread(user, clockScoreQueueBean));
+				
+				//通知加入者
+				clockScoreBean.setScore(clockBean.getRewardScore());
+				clockScoreBean.setCreateUserId(memberId);
+				clockScoreBean.setModifyUserId(memberId);
+				clockScoreBean.setScoreDesc("加入任务《" + clockBean.getTitle() +"》，预扣除"+ clockBean.getRewardScore() +"积分");
+				new ThreadUtil().singleTask(new ClockScoreThread(user, clockScoreQueueBean));
+			}
+		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为任务ID为", clockId , "添加新的成员："+ memberId +"，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);		
 		return result;

@@ -26,6 +26,7 @@
 		set status = #{status} 
 		where member_id=#{memberId} and clock_id = #{clockId}
 	</update>
+	
 	<resultMap type="com.cn.leedane.model.clock.ClockMemberBean" id="objectBean">
         <id property="id" column="id"/>
         <result property="status" column="status"/>

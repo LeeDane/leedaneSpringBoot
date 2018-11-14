@@ -65,13 +65,40 @@ public interface ClockDealService <T extends IDBean>{
 
 	/**
 	 * 同意某人加入任务(必须是共享的任务，并且人数没有超过共享人数，时间不能超过报名时间)
-	 * @param clockMemberId  任务成员对象ID
+	 * @param clockId
+	 * @param memberId
 	 * @param json
 	 * @param user
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> requestAgree(int clockMemberId,
+	public Map<String, Object> requestAgree(int clockId, int memberId,
+			JSONObject json, UserBean user,
+			HttpServletRequest request);
+	
+	/**
+	 * 邀请对方的加入任务(必须是共享的任务，并且人数没有超过共享人数，时间不能超过报名时间)
+	 * @param clockId
+	 * @param memberId
+	 * @param json
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> inviteAdd(int clockId, int memberId,
+			JSONObject json, UserBean user,
+			HttpServletRequest request);
+
+	/**
+	 * 同意某人的邀请任务(必须是共享的任务，并且人数没有超过共享人数，时间不能超过报名时间)
+	 * @param clockId
+	 * @param memberId
+	 * @param json
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> inviteAgree(int clockId, int memberId,
 			JSONObject json, UserBean user,
 			HttpServletRequest request);
 	

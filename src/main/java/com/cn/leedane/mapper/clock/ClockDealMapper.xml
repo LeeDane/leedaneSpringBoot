@@ -15,47 +15,90 @@
 	
 	<update id="updateStatus">
 		update t_clock_deal
-		set status = #{status} 
+		set new_status = #{status} 
 		where member_id=#{memberId} and clock_id = #{clockId}
 	</update>
 	
-	<select id="addClocks" resultMap="objectDealBean">
+	<select id="addClocks" resultMap="objectMemberDisplayBean">
 		select d.id, d.status, d.create_user_id, c.icon, date_format(d.create_time,'%Y-%m-%d %H:%i:%s') create_time, d.modify_user_id, date_format(d.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
 				,d.member_id, c.id clock_id, c.title clock_title, d.new_status, u.account, u.pic_path, u.id user_id
 			from t_clock_deal d
 			inner join t_user u on u.status = 1 
 			inner join t_clock c on c.id = d.clock_id and c.create_user_id = u.id and c.`status` = 1  
-			where d.status = 11 and d.member_id = #{userId} limit #{start}, #{pageSize}
+			where d.status = 11 and d.member_id = #{userId} order by d.new_status desc, d.modify_time desc limit #{start}, #{pageSize}
 	</select>
 	
-	<select id="inviteClocks" resultMap="objectDealBean">
+	<select id="inviteClocks" resultMap="objectMemberDisplayBean">
 		select d.id, d.status, d.create_user_id, c.icon, date_format(d.create_time,'%Y-%m-%d %H:%i:%s') create_time, d.modify_user_id, date_format(d.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
 				,d.member_id, c.id clock_id, c.title clock_title, d.new_status, u.account, u.pic_path, u.id user_id 
 			from t_clock_deal d left join t_clock c on d.clock_id = c.id 
 			inner join t_user u on u.id = d.create_user_id and u.status = 1 
-			where d.status = 10 and d.member_id = #{userId} limit #{start}, #{pageSize}
+			where d.status = 10 and d.member_id = #{userId} order by d.new_status desc, d.modify_time desc limit #{start}, #{pageSize}
 	</select>
 	
-	<select id="myInviteClocks" resultMap="objectDealBean">
+	<select id="myInviteClocks" resultMap="objectMemberDisplayBean">
 		select d.id, d.status, d.create_user_id, c.icon, date_format(d.create_time,'%Y-%m-%d %H:%i:%s') create_time, d.modify_user_id, date_format(d.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
 				,d.member_id, c.id clock_id, c.title clock_title, d.new_status, u.account, u.pic_path, u.id user_id 
 			from t_clock_deal d left join t_clock c on d.clock_id = c.id 
 			inner join t_user u on u.id = d.member_id and u.status = 1 
-			where d.status = 10 and d.create_user_id = #{userId} limit #{start}, #{pageSize}
+			where d.status = 10 and d.create_user_id = #{userId} order by d.new_status desc, d.modify_time desc limit #{start}, #{pageSize}
 	</select>
 	
-	<select id="agreeClocks" resultMap="objectDealBean">
+	<select id="agreeClocks" resultMap="objectMemberDisplayBean">
 		select d.id, d.status, d.create_user_id, c.icon, date_format(d.create_time,'%Y-%m-%d %H:%i:%s') create_time, d.modify_user_id, date_format(d.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
 				,d.member_id, c.id clock_id, c.title clock_title, d.new_status, u.account, u.pic_path, u.id user_id 
 			from t_clock_deal d left join t_clock c on d.clock_id = c.id inner join t_user u on u.id = d.member_id and u.status = 1
-			where d.status = 11 and c.create_user_id = #{userId} limit #{start}, #{pageSize}
+			where d.status = 11 and c.create_user_id = #{userId} order by d.new_status desc, d.modify_time desc limit #{start}, #{pageSize}
+	</select>
+	
+	
+	<select id="createrInviteMes" resultMap="objectDealBean">
+		select d.id
+			from t_clock_deal d inner join t_clock c on c.id = d.clock_id
+			where d.create_user_id = c.create_user_id and d.new_status = 10 and d.member_id != #{userId} and d.clock_id = #{clockId}
+	</select>
+	
+	<select id="requestMe" resultMap="objectDealBean">
+		select d.id, d.status, d.create_user_id, date_format(d.create_time,'%Y-%m-%d %H:%i:%s') create_time, d.modify_user_id, date_format(d.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
+				,d.member_id, d.new_status, d.clock_id
+			from t_clock_deal d inner join t_clock c on c.id = d.clock_id
+			where d.new_status = 11 and c.create_user_id = #{userId} and d.member_id = #{memberId} and d.clock_id = #{clockId}
+	</select>
+	
+	<select id="inviteMe" resultMap="objectDealBean">
+		select d.id, d.status, d.create_user_id, date_format(d.create_time,'%Y-%m-%d %H:%i:%s') create_time, d.modify_user_id, date_format(d.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
+				,d.member_id, d.new_status, d.clock_id
+			from t_clock_deal d 
+			where d.new_status = 10 and d.member_id = #{memberId} and d.create_user_id != #{memberId} and d.clock_id = #{clockId}
+	</select>
+	
+	<select id="userRequestClockDeal" resultMap="objectDealBean">
+		select d.id, d.status, d.create_user_id, date_format(d.create_time,'%Y-%m-%d %H:%i:%s') create_time, d.modify_user_id, date_format(d.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
+				,d.member_id, d.new_status, d.clock_id
+			from t_clock_deal d 
+			where d.new_status = 11 and d.create_user_id != #{memberId} and d.memberId = #{userId} and d.clock_id = #{clockId}
+	</select>
+	
+	<select id="userClockRecord" resultMap="objectDealBean">
+		select d.id, d.status, d.create_user_id, date_format(d.create_time,'%Y-%m-%d %H:%i:%s') create_time, d.modify_user_id, date_format(d.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
+				,d.member_id, d.new_status, d.clock_id
+			from t_clock_deal d 
+		 where d.member_id = #{userId} and d.clock_id = #{clockId} limit 1;
+	</select>
+	
+	<select id="getMyRequestAddRecord" resultMap="objectDealBean">
+		select d.id, d.status, d.create_user_id, date_format(d.create_time,'%Y-%m-%d %H:%i:%s') create_time, d.modify_user_id, date_format(d.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
+				,d.member_id, d.new_status, d.clock_id
+			from t_clock_deal d 
+		 where d.new_status = 11 and d.member_id = #{userId} and d.clock_id = #{clockId} limit 1;
 	</select>
    
-   <resultMap type="com.cn.leedane.display.clock.ClockMemberDisplay" id="objectDealBean">
+   <resultMap type="com.cn.leedane.display.clock.ClockMemberDisplay" id="objectMemberDisplayBean">
         <id property="id" column="id"/>
         <result property="status" column="status"/>
         <result property="createUserId" column="create_user_id"/>
         <result property="createTime" column="create_time"/>
+        <result property="modifyTime" column="modify_time"/>
         <result property="clockId" column="clock_id"/>
         <result property="clockTitle" column="clock_title"/>
         <result property="clockIcon" column="icon"/>
@@ -64,5 +107,17 @@
         <result property="account" column="account"/>
         <result property="userId" column="user_id"/>
         <result property="picPath" column="pic_path"/>
+   </resultMap>
+   
+   <resultMap type="com.cn.leedane.model.clock.ClockDealBean" id="objectDealBean">
+        <id property="id" column="id"/>
+        <result property="status" column="status"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyUserId" column="modify_user_id"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="clockTitle" column="clock_title"/>
+        <result property="newStatus" column="new_status"/>
+        <result property="memberId" column="member_id"/>
    </resultMap>
 </mapper>

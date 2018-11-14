@@ -16,14 +16,15 @@ import com.cn.leedane.display.clock.ClockDisplay;
 import com.cn.leedane.display.clock.ClockDisplayGroup;
 import com.cn.leedane.display.clock.ClockDisplayGroups;
 import com.cn.leedane.display.clock.ClockDisplays;
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.mapper.CategoryMapper;
 import com.cn.leedane.mapper.clock.ClockMapper;
-import com.cn.leedane.model.baby.BabyBean;
-import com.cn.leedane.model.baby.BabyBeans;
+import com.cn.leedane.model.clock.ClockBean;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
+import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.SerializeUtil;
 import com.cn.leedane.utils.StringUtil;
 
@@ -50,74 +51,74 @@ public class ClockHandler {
     public int CLOCK_SYSTEM_CATEGORY_ID;
 	
 	
-//	/**
-//	 * 获取正常状态的任务对象
-//	 * @param bookId
-//	 * @return
-//	 */
-//	public ClockBean getNormalClock(int clockId){
-//		ClockBean clock = getClock(clockId);
-//		
-//		//不是自己的任务或者是不属于自己的任务将抛出权限异常
-//		if(clock == null ||  (clock.getStatus() != ConstantsUtil.STATUS_NORMAL)){
-//			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.您要操作的书籍不存在.value));
-//		}
-//		return stock;
-//	}
-//	
-//	/**
-//	 * 获取书籍对象(不去判断是否是正常状态的书籍)
-//	 * @param bookId
-//	 * @return
-//	 */
-//	public BookBean getBook(int bookId){
-//		if(bookId < 1)
-//			return null;
-//		String key = getBookKey(bookId);
-//		Object obj = systemCache.getCache(key);
-//		BookBean bookBean = null;
-//		/*for(int i = 0; i < 22; i++)
-//			deleteStockBeanCache(i);*/
-//		if(obj == ""){
-//			if(redisUtil.hasKey(key)){
-//				try {
-//					bookBean =  (BookBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), BookBean.class);
-//					if(bookBean != null){
-//						systemCache.addCache(key, bookBean);
-//					}else{
-//						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
-//						redisUtil.delete(key);
-//						bookBean = bookMapper.findById(BookBean.class, bookId);
-//						if(bookBean != null){
-//							try {
-//								redisUtil.addSerialize(key, SerializeUtil.serializeObject(bookBean));
-//								systemCache.addCache(key, bookBean);
-//							} catch (IOException e) {
-//								e.printStackTrace();
-//							}
-//						}
-//					}
-//				} catch (ClassNotFoundException e) {
-//					e.printStackTrace();
-//				}catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//			}else{//redis没有的处理
-//				bookBean = bookMapper.findById(BookBean.class, bookId);
-//				if(bookBean != null){
-//					try {
-//						redisUtil.addSerialize(key, SerializeUtil.serializeObject(bookBean));
-//						systemCache.addCache(key, bookBean);
-//					} catch (IOException e) {
-//						e.printStackTrace();
-//					}
-//				}
-//			}
-//		}else{
-//			bookBean = (BookBean)obj;
-//		}
-//		return bookBean;
-//	}
+	/**
+	 * 获取正常状态的任务对象
+	 * @param bookId
+	 * @return
+	 */
+	public ClockBean getNormalClock(int clockId){
+		ClockBean clock = getClock(clockId);
+		
+		//不是自己的任务或者是不属于自己的任务将抛出权限异常
+		if(clock == null ||  (clock.getStatus() != ConstantsUtil.STATUS_NORMAL)){
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该提醒任务不存在或者不支持共享.value));
+		}
+		return clock;
+	}
+	
+	/**
+	 * 获取任务对象(不去判断是否是正常状态的任务对象)
+	 * @param clockId
+	 * @return
+	 */
+	public ClockBean getClock(int clockId){
+		if(clockId < 1)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该提醒任务不存在或者不支持共享.value));
+		String key = getClockKey(clockId);
+		Object obj = systemCache.getCache(key);
+		ClockBean clockBean = null;
+		/*for(int i = 0; i < 22; i++)
+			deleteStockBeanCache(i);*/
+		if(obj == ""){
+			if(redisUtil.hasKey(key)){
+				try {
+					clockBean =  (ClockBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), ClockBean.class);
+					if(clockBean != null){
+						systemCache.addCache(key, clockBean);
+					}else{
+						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
+						redisUtil.delete(key);
+						clockBean = clockMapper.findById(ClockBean.class, clockId);
+						if(clockBean != null){
+							try {
+								redisUtil.addSerialize(key, SerializeUtil.serializeObject(clockBean));
+								systemCache.addCache(key, clockBean);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}catch (IOException e) {
+					e.printStackTrace();
+				}
+			}else{//redis没有的处理
+				clockBean = clockMapper.findById(ClockBean.class, clockId);
+				if(clockBean != null){
+					try {
+						redisUtil.addSerialize(key, SerializeUtil.serializeObject(clockBean));
+						systemCache.addCache(key, clockBean);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}else{
+			clockBean = (ClockBean)obj;
+		}
+		return clockBean;
+	}
 	
 	/**
 	 * 获取该用户的所有进行中的任务对象
@@ -324,6 +325,15 @@ public class ClockHandler {
 		return true;
 	}
 
+	
+	/**
+	 * 获取任务对象在redis的key
+	 * @param clockId
+	 * @return
+	 */
+	public static String getClockKey(int clockId){
+		return ConstantsUtil.CLOCK_REDIS + clockId;
+	}
 	
 	/**
 	 * 获取该用户所有进行中的任务列表在redis的key

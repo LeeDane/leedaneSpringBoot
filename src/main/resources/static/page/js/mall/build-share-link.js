@@ -10,7 +10,7 @@ function initClipBoard(){
 	      //console.info('Trigger:', e.trigger);
 	      //console.info('Trigger:', e.trigger.previousSibling.id);
 	      //$("#"+ e.trigger.previousSibling.id).text(e.text);
-	      layer.tips('此链接已复制成功', "#"+ e.trigger.previousSibling.id, {time: 1000});
+	      layer.tips('已复制成功', "#"+ e.trigger.previousSibling.id, {time: 1000});
 	      //layer.msg("链接已复制成功");
 	      //e.clearSelection();
 	  });
@@ -18,7 +18,7 @@ function initClipBoard(){
 	  clipboard.on('error', function(e) {
 	      //console.error('Action:', e.action);
 	      //console.error('Trigger:', e.trigger);
-		  layer.tips('此链接已复制失败', "#"+ e.trigger.previousSibling.id, {time: 1000});
+		  layer.tips('复制失败', "#"+ e.trigger.previousSibling.id, {time: 1000});
 	  });
 }
 
@@ -138,7 +138,7 @@ function buildTaobaoShareContent(message){
 			
 			if(isNotEmpty(message.couponLink)){
 				html += '<div>'+
-						    '<label style="font-weight: 400; line-height: 20px;">商品链接：</label>'+
+						    '<label style="font-weight: 400; line-height: 20px;">领券链接：</label>'+
 						    '<input id="couponLink" type="text" class="tab-share-input tab-share-input-link" readonly="readonly" value="'+ message.couponLink +'">'+
 						    '<button class="layui-btn layui-btn-danger" data-clipboard-action="copy" data-clipboard-target="#couponLink">复制链接</button>'+
 						    '<button class="layui-btn layui-btn-danger" onclick="openLink(\''+ message.couponLink +'\');">跳转</button>'+
@@ -169,17 +169,17 @@ function buildTaobaoShareContent(message){
 						
 			if(isNotEmpty(message.taoToken)){
 				html += '<div>'+
-						    '<label style="font-weight: 400; line-height: 20px;">商品链接：</label>'+
+						    '<label style="font-weight: 400; line-height: 20px;">商品口令：</label>'+
 						    '<input id="taoToken" type="text" class="tab-share-input" readonly="readonly" value="'+ message.taoToken +'">'+
-						    '<button class="layui-btn layui-btn-danger" data-clipboard-action="copy" data-clipboard-target="#taoToken">复制链接</button>'+
+						    '<button class="layui-btn layui-btn-danger" data-clipboard-action="copy" data-clipboard-target="#taoToken">复制口令</button>'+
 						'</div>';
 			}
 			
 			if(isNotEmpty(message.couponLinkTaoToken)){
 				html += '<div>'+
-						    '<label style="font-weight: 400; line-height: 20px;">商品链接：</label>'+
+						    '<label style="font-weight: 400; line-height: 20px;">领券口令：</label>'+
 						    '<input id="couponLinkTaoToken" type="text" class="tab-share-input" value="'+ message.couponLinkTaoToken +'">'+
-						    '<button class="layui-btn layui-btn-danger" data-clipboard-action="copy" data-clipboard-target="#couponLinkTaoToken">复制链接</button>'+
+						    '<button class="layui-btn layui-btn-danger" data-clipboard-action="copy" data-clipboard-target="#couponLinkTaoToken">复制口令</button>'+
 						'</div>';
 			}
 			

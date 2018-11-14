@@ -78,6 +78,8 @@ public class ClockDisplay implements Serializable{
 	
 	private String shareId;//共享任务的ID，只要是共享的任务，系统自动分配共享ID
 	
+	private boolean autoAdd;//是否成员自动加入，默认是true，表示共享的任务，其他人员可以不通过创建者自动加入
+	
 	public int getId() {
 		return id;
 	}
@@ -319,6 +321,14 @@ public class ClockDisplay implements Serializable{
 
 	public void setShareId(String shareId) {
 		this.shareId = shareId;
+	}
+
+	public boolean isAutoAdd() {
+		return autoAdd;
+	}
+
+	public void setAutoAdd(boolean autoAdd) {
+		this.autoAdd = autoAdd;
 	}
 
 	

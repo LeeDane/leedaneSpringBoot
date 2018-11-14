@@ -9,10 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cn.leedane.display.clock.ClockMemberDisplay;
+import com.cn.leedane.exception.IllegalOperationException;
 import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.NotificationHandler;
@@ -75,16 +78,15 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 	@Autowired
 	private ClockMemberService<ClockMemberBean> clockMemberService;
 	
+	@Value("${constant.defalult.clock.again.request.add.time}")
+    public int CLOCK_AGAIN_REQUEST_ADD_TIME;
+	
 	@Override
 	public Map<String, Object> add(int clockId, int memberId, JSONObject jo, UserBean user,
 			HttpServletRequest request) {
 		logger.info("ClockDealServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		
-		ClockBean clockBean = clockMapper.findById(ClockBean.class, clockId);
 		//校验
-		if(clockBean == null){
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该提醒任务不存在或者不支持共享.value));
-		}
+		ClockBean clockBean = clockHandler.getNormalClock(clockId);
 		
 		if(memberId < 1){
 			throw new ParameterUnspecificationException("成员ID不能为空");
@@ -125,7 +127,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 		
 		
 		boolean result = false;
-		if(newStatus != ConstantsUtil.STATUS_MANAGE_AGREE){//不是管理员同意
+		if(newStatus != ConstantsUtil.STATUS_NORMAL){//不是管理员同意
 			clockDealBean.setClockId(clockId);
 			clockDealBean.setMemberId(memberId);
 			clockDealBean.setCreateTime(new Date());
@@ -146,7 +148,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 			message.put("isSuccess", true);
 			String content = null;
 			String userName = userHandler.getUserName(memberId);
-			if(newStatus != ConstantsUtil.STATUS_MANAGE_AGREE){
+			if(newStatus != ConstantsUtil.STATUS_NORMAL){
 				if(memberId != clockBean.getCreateUserId()){
 					content = "发送成功，等待任务创建者审核！";
 					//给管理员发送有等待审核的任务人员加入信息
@@ -219,32 +221,6 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 	}
 
 	@Override
-	public Map<String, Object> requestAdd(int clockId, JSONObject json,
-			UserBean user, HttpServletRequest request) {
-		logger.info("ClockDealServiceImpl-->requestAdd():clockId = "+ clockId +",userId=" +user.getId() +", json=" +json.toString());
-		json.put("status", ConstantsUtil.STATUS_WAIT_MANAGE_AGREE);
-		return add(clockId, user.getId(), json, user, request);
-	}
-
-
-	@Override
-	public Map<String, Object> requestAgree(int clockMemberId, JSONObject json,
-			UserBean user, HttpServletRequest request) {
-		logger.info("ClockDealServiceImpl-->requestAgree():clockId = "+ clockMemberId +",userId=" +user.getId() +", json=" +json.toString());
-		
-		ClockMemberBean member = clockMemberMapper.findById(ClockMemberBean.class, clockMemberId);
-		if(member == null)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该人员还没有申请加入任务记录.value));
-		
-		if(member.getStatus() != ConstantsUtil.STATUS_WAIT_MANAGE_AGREE)
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该任务申请记录不是等待创建者审批状态.value));
-		
-		json.put("new_status", ConstantsUtil.STATUS_MANAGE_AGREE);
-		return add(member.getClockId(), member.getMemberId(), json, user, request);
-	}
-
-
-	@Override
 	public Map<String, Object> addClocks(JSONObject json, UserBean user,
 			HttpServletRequest request) {
 		logger.info("ClockDealServiceImpl-->addClocks():userId=" +user.getId() +", json=" +json.toString());
@@ -303,5 +279,307 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 		message.put("isSuccess", true);
 		message.put("message", clockMemberDisplays);
 		return message.getMap();
+	}
+
+	@Override
+	public Map<String, Object> requestAdd(int clockId, JSONObject json,
+			UserBean user, HttpServletRequest request) {
+		logger.info("ClockDealServiceImpl-->requestAdd():clockId = "+ clockId +",userId=" +user.getId() +", json=" +json.toString());
+//		json.put("status", ConstantsUtil.STATUS_WAIT_MANAGE_AGREE);
+//		return add(clockId, user.getId(), json, user, request);
+		
+		//校验
+		ClockBean clockBean = clockHandler.getNormalClock(clockId);
+		checkClockCanDo(clockBean, user.getId());
+
+		ResponseMap message = new ResponseMap();
+		//获取请求记录
+		ClockDealBean myClockDealBean = clockDealMapper.getMyRequestAddRecord(user.getId(), clockId);
+		if(myClockDealBean != null){
+			//判断修改时间, 10分钟才能请求一次
+			if(DateUtil.isInMinutes(myClockDealBean.getModifyTime(), new Date(), CLOCK_AGAIN_REQUEST_ADD_TIME))
+				throw new ParameterUnspecificationException("距离上次请求没超过"+ CLOCK_AGAIN_REQUEST_ADD_TIME + "分钟");
+			
+			//更新时间
+			myClockDealBean.setModifyTime(new Date());
+			boolean update = clockDealMapper.update(myClockDealBean) > 0;
+			if(update){
+				Map<String, Object> mp = new HashMap<String, Object>();
+				mp.put("content", user.getAccount() + "再次请求加入任务《"+ clockBean.getTitle() +"》");
+				mp.put("clock_id", clockId);
+				CustomMessage customMessage = new JpushCustomMessage();
+				customMessage.sendToAlias("leedane_user_"+ clockBean.getCreateUserId(),  JSONObject.fromObject(mp).toString(), EnumUtil.CustomMessageExtraType.请求加入任务.value);
+				message.put("isSuccess", true);
+				message.put("message", "您的请求已经发送，请耐心等待管理者审核！");
+				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+				return message.getMap();
+			}else{
+				message.put("isSuccess", false);
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
+				message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
+				return message.getMap();
+			}
+		}else{
+			boolean hasCreaterInvite = false;//判断是否有管理员的邀请记录
+			List<ClockDealBean>  clockDealBeans= clockDealMapper.userClockRecord(user.getId(), clockId);
+			if(CollectionUtil.isNotEmpty(clockDealBeans)){
+				for(ClockDealBean clockDealBean: clockDealBeans){
+					if(clockDealBean.getNewStatus() == ConstantsUtil.STATUS_NORMAL)
+						throw new ParameterUnspecificationException("您已经在任务成员列表中，请勿重复操作！");
+					
+					//判断是否任务是自动加入或者有管理员的邀请记录
+					if((clockBean.isAutoAdd() || clockDealBean.getCreateUserId() == clockBean.getCreateUserId()) && !hasCreaterInvite){
+						hasCreaterInvite = true;
+					}
+				}
+			}
+			
+			ClockDealBean clockDealBean = new ClockDealBean();
+			clockDealBean.setClockId(clockId);
+			clockDealBean.setMemberId(user.getId());
+			clockDealBean.setCreateTime(new Date());
+			clockDealBean.setCreateUserId(user.getId());
+			clockDealBean.setModifyTime(new Date());
+			clockDealBean.setModifyUserId(user.getId());
+			
+			boolean result = false;
+			//有创建者的邀请记录，将直接调用同意加入
+			if(hasCreaterInvite){
+				clockDealBean.setStatus(ConstantsUtil.STATUS_WAIT_MANAGE_AGREE);
+				clockDealBean.setNewStatus(ConstantsUtil.STATUS_NORMAL);
+				//说明有邀请记录，找到是否有管理员邀请记录
+				result = clockDealMapper.save(clockDealBean) > 0;
+				if(result){
+					//调用同意邀请的接口
+					return inviteAgree(clockId, user.getId(), json, user, request);
+				}
+			}else{
+				
+				if(!clockBean.isAutoAdd() && user.getId() != clockBean.getCreateUserId()){
+					throw new IllegalOperationException("您非任务创建者并且任务非自动添加成员，无法邀请！");
+				}
+				clockDealBean.setStatus(ConstantsUtil.STATUS_WAIT_MANAGE_AGREE);
+				clockDealBean.setNewStatus(ConstantsUtil.STATUS_WAIT_MANAGE_AGREE);
+				//说明有邀请记录，找到是否有管理员邀请记录
+				result = clockDealMapper.save(clockDealBean) > 0;
+				if(result){
+					//通知对方有人邀请
+					Map<String, Object> mp = new HashMap<String, Object>();
+					mp.put("content", userHandler.getUserName(user.getId()) +"请求加入您的任务《"+ clockBean.getTitle() +"》");
+					mp.put("clock_id", clockId);
+					CustomMessage customMessage = new JpushCustomMessage();
+					customMessage.sendToAlias("leedane_user_"+ clockBean.getCreateUserId(),  JSONObject.fromObject(mp).toString(), EnumUtil.CustomMessageExtraType.请求加入任务.value);
+					message.put("isSuccess", true);
+					message.put("message", "您的请求已经发送，请耐心等待管理者审核！");
+					message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+					return message.getMap();
+				}
+			}
+			return message.getMap();
+		}
+	}
+
+
+	@Override
+	public Map<String, Object> requestAgree(int clockId, int memberId, JSONObject json,
+			UserBean user, HttpServletRequest request) {
+		logger.info("ClockDealServiceImpl-->requestAgree():clockId = "+ clockId +",userId=" +user.getId() +", json=" +json.toString());
+		//校验
+		ClockBean clockBean = clockHandler.getNormalClock(clockId);
+		checkClockCanDo(clockBean, memberId);
+		
+		if(!clockBean.isAutoAdd() && user.getId() != clockBean.getCreateUserId()){
+			throw new IllegalOperationException("您非任务创建者并且任务非自动添加成员，无法同意请求！");
+		}
+		ResponseMap message = new ResponseMap();
+		//获取目前所有请求加入记录
+		ClockDealBean requestMe = clockDealMapper.requestMe(user.getId(), memberId, clockId);
+		if(requestMe != null){
+			//获取所有跟我和这个任务相关的记录
+//			List<ClockDealBean> memberClocks = clockDealMapper.getMemberClockDeals(user.getId(), clockId);
+			//直接通过
+			clockDealMapper.updateStatus(clockId, memberId, ConstantsUtil.STATUS_NORMAL);
+			clockMemberService.add(clockId, memberId, json, user, request);
+			
+			//删除用户对应的任务缓存
+			clockHandler.deleteDateClocksCache(memberId);
+			
+			//通知用户成功加入任务
+			Map<String, Object> mp = new HashMap<String, Object>();
+			mp.put("content", "您已成功加入任务《"+ clockBean.getTitle() +"》");
+			mp.put("clock_id", clockId);
+			CustomMessage customMessage = new JpushCustomMessage();
+			customMessage.sendToAlias("leedane_user_"+ memberId,  JSONObject.fromObject(mp).toString(), EnumUtil.CustomMessageExtraType.同意加入任务.value);
+			message.put("isSuccess", true);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.操作成功.value);
+			return message.getMap();
+		}else{
+			throw new IllegalOperationException("没有找到请求记录，无法同意请求，请稍后重试！");
+		}
+	}
+
+	@Override
+	public Map<String, Object> inviteAdd(int clockId, int memberId, JSONObject json,
+			UserBean user, HttpServletRequest request) {
+		//邀请加入(对方不在该任务中)
+		ResponseMap message = new ResponseMap();
+		//校验
+		ClockBean clockBean = clockHandler.getNormalClock(clockId);
+		checkClockCanDo(clockBean, memberId);
+		
+		//判断是否是任务创建者
+		if(clockBean.getCreateUserId() != user.getId())
+			throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
+				
+		
+		if(memberId == user.getId())
+			throw new IllegalOperationException("无法执行邀请操作：原因是自己邀请自己！");
+			
+		ClockDealBean myClockDealBean = null;
+		//判断是否已经加入
+		List<ClockDealBean>  clockDealBeans= clockDealMapper.userClockRecord(memberId, clockId);
+		if(CollectionUtil.isNotEmpty(clockDealBeans)){
+			for(ClockDealBean clockDealBean: clockDealBeans){
+				if(clockDealBean.getNewStatus() == ConstantsUtil.STATUS_NORMAL)
+					throw new ParameterUnspecificationException("您已经在任务成员列表中，请勿重复操作！"); 
+				
+				//获取对方对我的邀请记录
+				if(clockDealBean.getMemberId() == memberId && clockDealBean.getNewStatus() == ConstantsUtil.STATUS_WAIT_MEMBER_AGREE && myClockDealBean == null){
+					//判断是否有对方邀请我的创建记录
+					if(clockDealBean.getCreateUserId() == memberId && clockDealBean.getNewStatus() == ConstantsUtil.STATUS_WAIT_MEMBER_AGREE){
+						return inviteAgree(clockId, memberId, json, user, request);
+					}
+					
+					myClockDealBean = clockDealBean;
+				}
+			}
+		}
+		
+		//获取对方对我的邀请记录
+//		ClockDealBean inviteMe = clockDealMapper.userRequestClockDeal(user.getId(), user.getId(), clockId);
+		//没有邀请记录
+		if(myClockDealBean != null){
+			//判断修改时间, 10分钟才能请求一次
+			if(DateUtil.isInMinutes(myClockDealBean.getModifyTime(), new Date(), CLOCK_AGAIN_REQUEST_ADD_TIME))
+				throw new ParameterUnspecificationException("距离上次请求没超过"+ CLOCK_AGAIN_REQUEST_ADD_TIME + "分钟");
+			
+			//更新时间
+			myClockDealBean.setModifyTime(new Date());
+			boolean update = clockDealMapper.update(myClockDealBean) > 0;
+			if(update){
+				Map<String, Object> mp = new HashMap<String, Object>();
+				mp.put("content", "再次邀请"+ userHandler.getUserName(memberId) +"加入任务《"+ clockBean.getTitle() +"》");
+				mp.put("clock_id", clockId);
+				CustomMessage customMessage = new JpushCustomMessage();
+				customMessage.sendToAlias("leedane_user_"+ memberId,  JSONObject.fromObject(mp).toString(), EnumUtil.CustomMessageExtraType.邀请加入任务.value);
+				message.put("isSuccess", true);
+				message.put("message", "您的邀请已经发送，请耐心等待《"+ userHandler.getUserName(memberId) +"》同意！");
+				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+				return message.getMap();
+			}else{
+				message.put("isSuccess", false);
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
+				message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
+				return message.getMap();
+			}
+			
+			//如果我是创建者，将直接更新为同意
+		}else{
+			if(!clockBean.isAutoAdd() && user.getId() != clockBean.getCreateUserId()){
+				throw new IllegalOperationException("您非任务创建者并且任务非自动添加成员，无法邀请！");
+			}
+			
+			ClockDealBean clockDealBean = new ClockDealBean();
+			clockDealBean.setClockId(clockId);
+			clockDealBean.setMemberId(memberId);
+			clockDealBean.setCreateTime(new Date());
+			clockDealBean.setCreateUserId(user.getId());
+			clockDealBean.setModifyTime(new Date());
+			clockDealBean.setModifyUserId(user.getId());
+			boolean result = clockDealMapper.save(clockDealBean) > 0;
+			if(result){
+				//通知对方有人邀请
+				Map<String, Object> mp = new HashMap<String, Object>();
+				mp.put("content", userHandler.getUserName(user.getId()) +"邀请您加入任务《"+ clockBean.getTitle() +"》");
+				mp.put("clock_id", clockId);
+				CustomMessage customMessage = new JpushCustomMessage();
+				customMessage.sendToAlias("leedane_user_"+ memberId,  JSONObject.fromObject(mp).toString(), EnumUtil.CustomMessageExtraType.邀请加入任务.value);
+				message.put("isSuccess", true);
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
+				message.put("responseCode", EnumUtil.ResponseCode.操作成功.value);
+				return message.getMap();
+			}
+		}
+		return message.getMap();
+	}
+
+
+	@Override
+	public Map<String, Object> inviteAgree(int clockId, int memberId, JSONObject json,
+			UserBean user, HttpServletRequest request) {
+		ClockBean clockBean = clockHandler.getNormalClock(clockId);
+		
+		//找出有没有创建者的邀请记录
+		
+		//如果有：直接加入任务并且更新所有的邀请记录为加入任务状态
+			//是否
+		checkClockCanDo(clockBean, memberId);
+		
+		if(!clockBean.isAutoAdd() && user.getId() != clockBean.getCreateUserId()){
+			throw new IllegalOperationException("您非任务创建者并且任务非自动添加成员，无法同意邀请！");
+		}
+		
+		//获取目前邀请记录
+		ClockDealBean inviteMe = clockDealMapper.inviteMe(user.getId(), memberId, clockId);
+		if(inviteMe == null)
+			throw new IllegalOperationException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该任务您还没有邀请记录.value));
+		ResponseMap message = new ResponseMap();
+		boolean result = clockMemberService.add(clockId, memberId, json, user, request);
+				
+		//更新所有的任务的状态为加入状态
+		if(result){
+			List<ClockDealBean>  clockDealBeans = clockDealMapper.userClockRecord(memberId, clockId);
+			//更新所有的任务的状态为加入状态
+			for(ClockDealBean clockDeal: clockDealBeans){
+				clockDealMapper.updateStatus(clockId, clockDeal.getMemberId(), ConstantsUtil.STATUS_NORMAL);
+				
+				//删除用户对应的任务缓存
+				clockHandler.deleteDateClocksCache(clockDeal.getMemberId());
+				
+				//通知用户成功加入任务
+				if(clockDeal.getMemberId() != user.getId()){
+					Map<String, Object> mp = new HashMap<String, Object>();
+					mp.put("content", "您已成功加入任务《"+ clockBean.getTitle() +"》");
+					mp.put("clock_id", clockId);
+					CustomMessage customMessage = new JpushCustomMessage();
+					customMessage.sendToAlias("leedane_user_"+ clockDeal.getMemberId(),  JSONObject.fromObject(mp).toString(), EnumUtil.CustomMessageExtraType.同意加入任务.value);
+				}
+			}
+			
+			message.put("isSuccess", true);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.操作成功.value);
+		}else{
+			//暂时无法同意邀请，可以联系任务管理者处理
+			message.put("isSuccess", false);
+			message.put("message", "您没有权限同意邀请，可以联系该任务管理者处理！");
+		}
+		return message.getMap();
+	}
+	
+	/**
+	 * 
+	 * @param clockBean
+	 * @param memberId
+	 */
+	private void checkClockCanDo(ClockBean clockBean, int memberId){
+		//自己不能加入自己的任务
+		if(memberId == clockBean.getCreateUserId())
+			throw new ParameterUnspecificationException("已经在任务成员列表中，不支持此操作！");
+		
+		//如果没有开启共享，提示用户无法操作
+		if(!clockBean.isShare())
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该任务不支持共享.value));
 	}
 }

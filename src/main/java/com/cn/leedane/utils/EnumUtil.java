@@ -472,6 +472,9 @@ public class EnumUtil {
 		该任务申请记录不是等待创建者审批状态(4027),
 		请先计步才能继续打卡(4028),
 		计步数不足以打卡(4029),
+		该任务您还没有邀请记录(4030),
+		非法操作异常(4031),
+		该任务不支持共享(4032),
 		;
 		
 		private ResponseCode(int value) {
@@ -762,11 +765,45 @@ public class EnumUtil {
 	 */
 	public enum CustomMessageExtraType {
 		聊天(1), 任务打卡(2), 请求加好友(3), 同意加好友(4)
-		, 请求加入任务(5), 同意加入任务(6), 刷新任务(7), 任务修改(8), 邀请加入任务(9);
+		, 请求加入任务(5), 同意加入任务(6), 刷新任务(7), 任务修改(8), 邀请加入任务(9), 任务打卡送积分(10);
 	
 		private CustomMessageExtraType(int value) {
 			this.value = value;
 		}
 		public final int value;
+	}
+	
+	/**
+	 * 任务积分的操作类型
+	 * @author LeeDane
+	 * 2018年11月5日 下午5:20:08
+	 * version 1.0
+	 */
+	public enum ClockScoreOperateType {
+		新增(1),修改(2), 删除(3);
+	
+		private ClockScoreOperateType(int value) {
+			this.value = value;
+		}
+	
+		public final int value;
+	
+	}
+	
+	/**
+	 * 任务积分的业务类型
+	 * @author LeeDane
+	 * 2018年11月13日 下午12:37:35
+	 * version 1.0
+	 */
+	public enum ClockScoreBusinessType {
+		每日打卡(1),结束统计(2), 额外奖励(3), 成员加入(4);
+	
+		private ClockScoreBusinessType(int value) {
+			this.value = value;
+		}
+	
+		public final int value;
+	
 	}
 }

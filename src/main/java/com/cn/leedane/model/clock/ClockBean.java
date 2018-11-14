@@ -159,6 +159,12 @@ public class ClockBean extends RecordTimeBean{
 	 */
 	@Column(value="total_day", required = true)
 	private int totalDay;
+	
+	/**
+	 * 是否成员自动加入，默认是true，表示共享的任务，其他人员可以不通过创建者自动加入
+	 */
+	@Column(value="auto_add", required = true)
+	private boolean autoAdd;
 
 	public String getTitle() {
 		return title;
@@ -319,6 +325,14 @@ public class ClockBean extends RecordTimeBean{
 
 	public void setTotalDay(int totalDay) {
 		this.totalDay = totalDay;
+	}
+
+	public boolean isAutoAdd() {
+		return autoAdd;
+	}
+
+	public void setAutoAdd(boolean autoAdd) {
+		this.autoAdd = autoAdd;
 	}
 	
 	

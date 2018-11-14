@@ -23,6 +23,8 @@ public class ClockMemberDisplay implements Serializable{
 	
 	private String createTime;
 	
+	private String modifyTime; //最终修改时间
+	
 	private int clockId;
 
 	private int memberId;
@@ -153,6 +155,14 @@ public class ClockMemberDisplay implements Serializable{
 
 	public void setNewStatus(int newStatus) {
 		this.newStatus = newStatus;
+	}
+
+	public String getModifyTime() {
+		return modifyTime;
+	}
+
+	public void setModifyTime(String modifyTime) {
+		this.modifyTime = modifyTime;
 	}
 	
 }
