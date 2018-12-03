@@ -18,7 +18,7 @@
 				,cm.member_id, u.pic_path, u.account
 			from t_clock c INNER JOIN t_clock_member cm ON c.id = cm.clock_id and cm.`status` = 1 
 						LEFT JOIN t_user u ON u.id = cm.member_id and u.`status` = 1 
-			where #{createUserId} in (select m.member_id from t_clock_member m where m.clock_id = cm.clock_id and m.`status` = 1) and c.`status` = 1 
+			where EXISTS (select m.member_id from t_clock_member m where m.clock_id = cm.clock_id and m.`status` = 1 and m.member_id = #{createUserId}) and c.`status` = 1 
 			and c.start_date &lt;= date_format(#{date}, '%Y-%m-%d') and (c.end_date is null or c.end_date &gt;= date_format(#{date}, '%Y-%m-%d')) and  c.repeat_ like '%${week}%'
 		ORDER BY clock_in,c.clock_start_time, c.clock_end_time
 	</select>
@@ -31,7 +31,7 @@
 				,cm.member_id, u.pic_path, u.account, (select count(cmb.id) from t_clock_member cmb where cmb.`status` = 1 and cmb.clock_id = c.id) person_number
 			from t_clock c INNER JOIN t_clock_member cm ON c.id = cm.clock_id and cm.`status` = 1 
 						LEFT JOIN t_user u ON u.id = cm.member_id and u.`status` = 1 
-			where #{createUserId} in (select m.member_id from t_clock_member m where m.clock_id = cm.clock_id and m.`status` = 1) and c.`status` = 1 
+			where EXISTS (select m.member_id from t_clock_member m where m.clock_id = cm.clock_id and m.`status` = 1 and cm.member_id = #{createUserId}) and c.`status` = 1 
 			and (c.end_date is null or c.end_date &gt;= date_format(#{date}, '%Y-%m-%d'))
 		ORDER BY c.clock_end_time desc, c.clock_start_time desc limit #{start}, #{pageSize}
 	</select>
@@ -45,7 +45,7 @@
 				,cm.member_id, u.pic_path, u.account, (select count(tci.id) from t_clock_in tci where tci.clock_id = c.id and tci.create_user_id = #{createUserId} and tci.`status` = 1) clock_count
 			from t_clock c INNER JOIN t_clock_member cm ON c.id = cm.clock_id and cm.`status` = 1 
 						LEFT JOIN t_user u ON u.id = cm.member_id and u.`status` = 1 
-			where #{createUserId} in (select m.member_id from t_clock_member m where m.clock_id = cm.clock_id and m.`status` = 1) and c.`status` in (1, 9) 
+			where EXISTS (select m.member_id from t_clock_member m where m.clock_id = cm.clock_id and m.`status` = 1 and m.member_id = #{createUserId}) and c.`status` in (1, 9) 
 			and c.end_date is not null and c.end_date &lt; date_format(#{date}, '%Y-%m-%d')
 		ORDER BY c.clock_end_time desc, c.clock_start_time desc limit #{start}, #{pageSize}
 	</select>
