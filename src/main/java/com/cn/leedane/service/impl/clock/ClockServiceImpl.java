@@ -5,32 +5,38 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cn.leedane.display.clock.ClockDisplay;
 import com.cn.leedane.display.clock.ClockDisplayGroup;
 import com.cn.leedane.display.clock.ClockSearchDisplay;
+import com.cn.leedane.display.clock.ClockStatisticsDisplay;
 import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
+import com.cn.leedane.handler.clock.ClockDynamicHandler;
 import com.cn.leedane.handler.clock.ClockHandler;
+import com.cn.leedane.handler.clock.ClockMemberHandler;
 import com.cn.leedane.mapper.CategoryMapper;
+import com.cn.leedane.mapper.clock.ClockDealMapper;
+import com.cn.leedane.mapper.clock.ClockInMapper;
 import com.cn.leedane.mapper.clock.ClockMapper;
 import com.cn.leedane.mapper.clock.ClockMemberMapper;
 import com.cn.leedane.message.JpushCustomMessage;
 import com.cn.leedane.message.notification.CustomMessage;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.UsersBean;
 import com.cn.leedane.model.clock.ClockBean;
 import com.cn.leedane.model.clock.ClockMemberBean;
 import com.cn.leedane.service.AdminRoleCheckService;
@@ -82,6 +88,18 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 	@Autowired
 	private ClockMemberMapper clockMemberMapper;
 	
+	@Autowired
+	private ClockDynamicHandler clockDynamicHandler;
+	
+	@Autowired
+	private ClockMemberHandler clockMemberHandler;
+	
+	@Autowired
+	private ClockDealMapper clockDealMapper;
+	
+	@Autowired
+	private ClockInMapper clockInMapper;
+	
 	@Override
 	public Map<String, Object> add(JSONObject jo, UserBean user,
 			HttpServletRequest request) {
@@ -126,9 +144,11 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		
 		boolean result = clockMapper.save(clockBean) > 0;
 		if(result){
+			//保存动态信息
+			clockDynamicHandler.saveDynamic(clockBean.getId(), new Date(), user.getId(), userHandler.getUserName(user.getId()) + "创建了任务", true);
+			
 			//添加成员
 			result = clockMemberService.add(clockBean.getId(), user.getId(), jo, user, request);
-			
 			//清空该用户的任务列表缓存
 			if(clockBean.getParentId() > 0 || clockBean.getCategoryId() < 1)
 				clockHandler.deleteDateClocksCache(user.getId());
@@ -177,7 +197,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 				String userName = userHandler.getUserName(userId);
 				//通知创建者和所有的成员
 				if(clockBean.isShare()){
-					List<ClockMemberBean> members = clockMemberMapper.members(clockId);
+					List<ClockMemberBean> members = clockMemberHandler.members(clockId);
 					if(CollectionUtil.isNotEmpty(members)){
 						for(ClockMemberBean member: members){
 							if(member.getMemberId() != userId){
@@ -195,6 +215,10 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 						}
 					}
 				}
+				
+				//保存动态信息
+				clockDynamicHandler.saveDynamic(clockBean.getId(), new Date(), user.getId(), userHandler.getUserName(user.getId()) + "更新了任务", true);
+				
 			}else{
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库修改失败.value));
 				message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
@@ -232,8 +256,12 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		
 		if(result){
 			clockHandler.deleteDateClocksCache(userId);
+			clockMemberHandler.deleteClockMembersCache(clockId);
+			
+			//设置deal表的状态
+			clockDealMapper.updateStatus(clockId, userId, ConstantsUtil.STATUS_DELETE);			
 			//获取成员列表
-			List<ClockMemberBean> members = clockMemberMapper.members(clockId);
+			List<ClockMemberBean> members = clockMemberHandler.members(clockId);
 			for(ClockMemberBean member: members){
 				
 				String content = null;
@@ -252,6 +280,9 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 				notificationHandler.sendNotificationById(false, user, member.getMemberId(), content, NotificationType.通知, DataTableType.不存在的表.value, -1, null);
 				
 			}
+			
+			//保存动态信息
+			clockDynamicHandler.saveDynamic(clockBean.getId(), new Date(), user.getId(), userHandler.getUserName(user.getId()) + "删除了任务", true);
 			
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
@@ -426,6 +457,10 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		List<ClockDisplay> clockDisplays = clockMapper.getMyClock(user.getId(), clockId);
 		if(CollectionUtil.isEmpty(clockDisplays))
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该提醒任务不存在或者不支持共享.value));
+		
+		//保存动态信息
+		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), userHandler.getUserName(user.getId()) + "查看任务信息", false);
+		
 		message.put("isSuccess", true);
 		message.put("message", clockDisplays.get(0));
 		return message.getMap();
@@ -452,22 +487,165 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 			UserBean user, HttpServletRequest request) {
 		logger.info("ClockServiceImpl-->getClockThumbnail():json=" +json.toString() +", clockId=" +clockId);
 		ResponseMap message = new ResponseMap();
+		
+		//先判断任务是否存在
+		clockHandler.getNormalClock(clockId);
+		
 		ClockSearchDisplay clockSearchDisplay = clockMapper.getClockThumbnail(user.getId(), clockId);
 		if(clockSearchDisplay == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该提醒任务不存在或者不支持共享.value));
+		
+		//保存动态信息
+		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), userHandler.getUserName(user.getId()) + "查看任务的缩略信息", false);
+				
+		clockSearchDisplay.setMemberNumber(clockMemberHandler.members(clockId).size());
 		message.put("isSuccess", true);
 		message.put("message", clockSearchDisplay);
 		return message.getMap();
 	}
+
+
+	@Override
+	public Map<String, Object> statistics(int clockId, JSONObject json,
+			UserBean user, HttpServletRequest request) {
+		logger.info("ClockServiceImpl-->getClockThumbnail():json=" +json.toString() +", clockId=" +clockId);
+		ResponseMap message = new ResponseMap();
+		//先判断任务是否存在
+		ClockBean clock = clockHandler.getNormalClock(clockId);
+		
+		//检验是否在成员列表中
+		if(!clockMemberHandler.inMember(user.getId(), clockId))
+			throw new UnauthorizedException("您还未加入该任务，无法查看统计");
+		
+		ClockStatisticsDisplay statisticsDisplay = new ClockStatisticsDisplay();
+		
+		List<ClockMemberBean> meBeans = clockMemberHandler.members(clockId);
+		statisticsDisplay.setClockId(clockId);
+		statisticsDisplay.setCreateTime(DateUtil.DateToString(clock.getCreateTime()));
+		statisticsDisplay.setCreateUserId(clock.getCreateUserId());
+		
+		statisticsDisplay.setCreateAccount(userHandler.getUserName(clock.getCreateUserId()));
+		if(CollectionUtil.isNotEmpty(meBeans)){
+			statisticsDisplay.setMember(meBeans.size());
+			statisticsDisplay.setAges(getAges(meBeans));
+			statisticsDisplay.setSexs(getSexs(meBeans));
+		}
+		
+		//获取任务的时间列表
+		List<Date> allDates = findDates(clock.getStartDate(), clock.getEndDate() == null ? new Date(): clock.getEndDate(), clock.getRepeat_());
+		if(CollectionUtil.isNotEmpty(allDates)){
+			int dayIndex = (allDates.size() - 1) > 7 ? 7: allDates.size() - 1;
+			List<Date> searchDates = new ArrayList<Date>();
+			for(int i = allDates.size() - dayIndex -1; i < allDates.size() -1 ; i++){
+				searchDates.add(allDates.get(i));
+			}
+			//取最近7天的日期
+			String start = DateUtil.DateToString(searchDates.get(0), "yyyy-MM-dd");
+			String end = DateUtil.DateToString(searchDates.get(searchDates.size() - 1), "yyyy-MM-dd");
+			List<Map<String, Object>> data = clockInMapper.getClockInsRangeDate(clockId, start, end);
+//			statisticsDisplay.setClockIns(getClockIns(searchDates, data));
+		}
+		UsersBean users = new UsersBean();
+		users.setName("dane");
+//		Object aa = clockInMapper.addUser(users);
+//		System.out.println("-djdjdd"+ aa);
+		statisticsDisplay.setMembers(clockInMapper.getTopMember(clockId));
+		message.put("isSuccess", true);
+		message.put("message", statisticsDisplay);
+		return message.getMap();
+	}
+
+
+	/**
+	 * 获取任务的打卡情况列表
+	 * @param searchDates
+	 * @param data
+	 * @return
+	 */
+	private List<Map<String, Object>> getClockIns(List<Date> searchDates,
+			List<Map<String, Object>> data) {
+		List<Map<String, Object>> array = new ArrayList<Map<String,Object>>();
+		if(CollectionUtil.isNotEmpty(searchDates)){
+			for(Date date: searchDates){
+				array.add(getObjectByResult(date, data));
+			}
+		}
+		return array;
+	}
 	
-//	public static void main(String[] args) {
-//		System.out.println(StringUtil.getShareId());
-//		System.out.println(StringUtil.getShareId());
-//		System.out.println(StringUtil.getShareId());
-//		System.out.println(StringUtil.getShareId());
-//		System.out.println(StringUtil.getShareId());
-//		System.out.println(StringUtil.getShareId());
-//		System.out.println(StringUtil.getShareId());
-//		System.out.println(StringUtil.getShareId());
-//	}
+	
+
+	/**
+	 * 获得结果对象
+	 * @param date
+	 * @param data
+	 * @return
+	 */
+	private Map<String, Object> getObjectByResult(Date date, List<Map<String, Object>> data) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		String d = DateUtil.DateToString(date, "yyyy-MM-dd");
+		map.put("clock_date", d);
+		map.put("number", 0);
+		if(CollectionUtil.isNotEmpty(data)){
+			for(Map<String, Object> m: data){
+				if(m.containsKey("clock_date") && d.equalsIgnoreCase(StringUtil.changeNotNull(m.get("clock_date")))){
+					return m;
+				}
+			}
+		}
+		return map;
+	}
+
+
+	/**
+	 * 获取性别的统计
+	 * @param meBeans
+	 * @return
+	 */
+	private Map<String, Integer> getSexs(List<ClockMemberBean> meBeans) {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		for(ClockMemberBean member: meBeans){
+			String sex = member.getSex();
+			if(StringUtil.isNotNull(sex) && sex.indexOf("男") > -1){
+				map.put("男", map.get("男") == null ? 1: map.get("男") + 1);
+				continue;
+			}
+			
+			if(StringUtil.isNotNull(sex) && sex.indexOf("女") > -1){
+				map.put("女", map.get("女") == null ? 1: map.get("女") + 1);
+				continue;
+			}
+			
+			map.put("未知", map.get("未知") == null ? 1: map.get("未知") + 1);
+		}
+		return map;
+	}
+
+
+	/**
+	 * 获取年龄的统计
+	 * @param meBeans
+	 * @return
+	 */
+	private Map<String, Integer> getAges(List<ClockMemberBean> meBeans) {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		for(ClockMemberBean member: meBeans){
+			int age = member.getAge();
+			if(age > 0 && age < 20){
+				map.put("20岁以下", map.get("20岁以下") == null ? 1: map.get("20岁以下") + 1);
+			}else if(age >= 20 && age < 30){
+				map.put("20到30岁", map.get("20到30岁") == null ? 1: map.get("20到30岁") + 1);
+			}else if(age >= 30 && age < 40){
+				map.put("30到40岁", map.get("30到40岁") == null ? 1: map.get("30到40岁") + 1);
+			}else if(age >= 40 && age < 50){
+				map.put("40到50岁", map.get("40到50岁") == null ? 1: map.get("40到50岁") + 1);
+			}else if(age >= 50){
+				map.put("50岁以上", map.get("50岁以上") == null ? 1: map.get("50岁以上") + 1);
+			}else{
+				map.put("未填写", map.get("未填写") == null ? 1: map.get("未填写") + 1);
+			}
+		}
+		return map;
+	}
+
 }

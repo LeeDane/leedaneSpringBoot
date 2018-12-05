@@ -46,6 +46,4 @@ public interface ClockInService <T extends IDBean>{
 	 * @return
 	 */
 	public  Map<String,Object> delete(int clockInId, UserBean user, HttpServletRequest request);
-
-
 }	

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.cn.leedane.display.clock.ClockMemberDisplay;
 import com.cn.leedane.mapper.BaseMapper;
 import com.cn.leedane.model.clock.ClockMemberBean;
 
@@ -22,6 +21,16 @@ public interface ClockMemberMapper extends BaseMapper<ClockMemberBean>{
 	 * @return
 	 */
 	public List<ClockMemberBean> members(@Param("clockId")int clockId);
+	
+	/**
+	 * 判断成员是否在任务成员中
+	 * (已取消从这个位置判断的方式，请参考 {@link com.cn.leedane.handler.clock.ClockMemberHandler #inMember(int, int)})
+	 * @param clockId
+	 * @param userId
+	 * @return
+	 */
+	@Deprecated
+	public List<ClockMemberBean> inMember(@Param("clockId")int clockId, @Param("userId")int userId);
 
 	/**
 	 * 退出任务

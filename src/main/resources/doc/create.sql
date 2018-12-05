@@ -1267,3 +1267,26 @@ CREATE TABLE `t_clock_score` (
   CONSTRAINT `FK_clock_score_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 alter table t_clock_score add constraint index_t_clock_score_id UNIQUE(create_user_id, clock_id, business_type, create_time);
+
+-- ----------------------------
+-- Table structure for t_clock_dynamic
+-- ----------------------------
+DROP TABLE IF EXISTS `t_clock_dynamic`;
+CREATE TABLE `t_clock_dynamic` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `clock_id` int(11) NOT NULL COMMENT '任务提醒的id',
+  `dynamic_desc` varchar(255) NOT NULL COMMENT '任务动态的描述信息',
+  `publicity` bit(1) DEFAULT b'0' COMMENT '标记该动态的等级,是否是公开的，默认是false',
+  PRIMARY KEY (`id`),
+  KEY `FK_clock_dynamic_create_user` (`create_user_id`),
+  KEY `FK_clock_dynamic_modify_user` (`modify_user_id`),
+  KEY `FK_clock_dynamic_clock` (`clock_id`),
+  CONSTRAINT `FK_clock_dynamic_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_dynamic_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_dynamic_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

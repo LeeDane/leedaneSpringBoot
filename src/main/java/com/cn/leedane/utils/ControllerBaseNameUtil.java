@@ -388,4 +388,9 @@ public class ControllerBaseNameUtil {
 	 * 领灯日常任务成员关系统一入口根路径
 	 */
 	public static final String clockDeal = "clock/deal";
+	
+	/**
+	 * 领灯日常任务动态统一入口根路径
+	 */
+	public static final String clockDynamic = "clock/dynamic";
 }

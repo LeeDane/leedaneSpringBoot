@@ -27,6 +27,11 @@
 		where member_id=#{memberId} and clock_id = #{clockId}
 	</update>
 	
+	<select id="inMember" resultMap="objectBean">
+		SELECT cm.id
+		 from t_clock_member cm where cm.`status` = 1 and cm.clock_id = #{clockId} and cm.member_id = #{userId};
+	</select>
+	
 	<resultMap type="com.cn.leedane.model.clock.ClockMemberBean" id="objectBean">
         <id property="id" column="id"/>
         <result property="status" column="status"/>

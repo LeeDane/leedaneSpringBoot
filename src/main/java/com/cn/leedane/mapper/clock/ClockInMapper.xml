@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.clock.ClockInMapper">
+	<select id="getClockInsRangeDate" resultType="java.util.Map">
+		SELECT COUNT(id) number, clock_date 
+		from t_clock_in 
+		where clock_id = #{clockId} and `status` = 1 and clock_date &gt;= date_format(#{start}, '%Y-%m-%d') and clock_date &lt;= date_format(#{end}, '%Y-%m-%d')  
+		GROUP BY clock_date 
+		ORDER BY clock_date desc
+	</select>
+	
+	<select id="getTopMember" resultType="java.util.Map">
+		SELECT COUNT(ci.id) number, ci.create_user_id 
+		from t_clock_in ci INNER JOIN t_clock_member cm on ci.create_user_id = cm.member_id and ci.clock_id = cm.clock_id and cm.`status` = 1
+		where ci.clock_id = #{clockId} and ci.`status` = 1 
+		GROUP BY ci.create_user_id 
+		ORDER BY number desc LIMIT 3
+	</select>
+	
+	<insert id="addUser" parameterType="com.cn.leedane.model.UsersBean">
+		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
+			select id
+		</selectKey>
+		insert into users values(uuid(), #{users.name});
+	</insert>
+</mapper>

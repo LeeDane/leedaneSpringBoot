@@ -516,6 +516,7 @@ public class BaseController {
 	            message.put("message", "恭喜您登录成功"); 
 	            result = true;
 	            message.put("isSuccess", result); 
+	            currentUser.getSession().setAttribute(UserController.USER_INFO_KEY, user);
 	            return user;
 	        }else{  
 	        	usernamePasswordToken.clear();  

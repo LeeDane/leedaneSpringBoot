@@ -10,10 +10,10 @@ import com.cn.leedane.rabbitmq.recieve.ClockScoreRecieve;
  * 2017年6月29日 下午4:28:49
  * version 1.0
  */
-public class ClockScore implements ISend{
+public class ClockScoreSend implements ISend{
 	
 	private ClockScoreQueueBean clockScoreQueueBean;
-	public ClockScore(ClockScoreQueueBean clockScoreQueueBean){
+	public ClockScoreSend(ClockScoreQueueBean clockScoreQueueBean){
 		this.clockScoreQueueBean = clockScoreQueueBean;
 	}
 

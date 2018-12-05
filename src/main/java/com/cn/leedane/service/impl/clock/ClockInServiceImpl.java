@@ -9,12 +9,15 @@ import javax.servlet.http.HttpServletRequest;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cn.leedane.handler.UserHandler;
+import com.cn.leedane.handler.clock.ClockDynamicHandler;
 import com.cn.leedane.handler.clock.ClockHandler;
+import com.cn.leedane.handler.clock.ClockMemberHandler;
 import com.cn.leedane.mapper.clock.ClockInMapper;
 import com.cn.leedane.mapper.clock.ClockMapper;
 import com.cn.leedane.mapper.clock.ClockMemberMapper;
@@ -25,6 +28,8 @@ import com.cn.leedane.message.notification.MessageNotification;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.clock.ClockBean;
+import com.cn.leedane.model.clock.ClockDynamicBean;
+import com.cn.leedane.model.clock.ClockDynamicQueueBean;
 import com.cn.leedane.model.clock.ClockInBean;
 import com.cn.leedane.model.clock.ClockMemberBean;
 import com.cn.leedane.model.clock.ClockScoreBean;
@@ -33,9 +38,11 @@ import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.clock.ClockInService;
 import com.cn.leedane.thread.ThreadUtil;
+import com.cn.leedane.thread.single.ClockDynamicThread;
 import com.cn.leedane.thread.single.ClockScoreThread;
 import com.cn.leedane.thread.single.VisitorDeleteThread;
 import com.cn.leedane.utils.CollectionUtil;
+import com.cn.leedane.utils.CommonUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
@@ -51,7 +58,7 @@ import com.cn.leedane.utils.StringUtil;
  * 2018年8月29日 下午5:34:53
  * version 1.0
  */
-@Service("clockInServiceImpl")
+@Service("clockInService")
 public class ClockInServiceImpl extends AdminRoleCheckService implements ClockInService<ClockInBean>{
 	Logger logger = Logger.getLogger(getClass());
 	
@@ -71,7 +78,10 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 	private UserHandler userHandler;
 	
 	@Autowired
-	private ClockMemberMapper clockMemberMapper;
+	private ClockMemberHandler clockMemberHandler;
+	
+	@Autowired
+	private ClockDynamicHandler clockDynamicHandler;
 	
 	@Value("${constant.defalult.clock.in.score}")
     public int CLOCK_IN_SCORE;
@@ -82,11 +92,16 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 			HttpServletRequest request) {
 		logger.info("ClockInServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
+		
 		SqlUtil sqlUtil = new SqlUtil();
 		ClockInBean clockInBean = (ClockInBean) sqlUtil.getBean(jo, ClockInBean.class);
 		
 		int clockId = clockInBean.getClockId();
 		ClockBean clock = clockHandler.getNormalClock(clockId);
+		
+		//检验是否在成员列表中
+		if(!clockMemberHandler.inMember(user.getId(), clockId))
+			throw new UnauthorizedException("您还未加入该任务，无法打卡。");
 		
 		//判断是否需要图片打卡
 		if(clock.getClockInType() == ClockInType.图片打卡.value && StringUtil.isNull(clockInBean.getImg())){
@@ -162,12 +177,14 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 			clockScoreQueueBean.setOperateType(EnumUtil.ClockScoreOperateType.新增.value);
 			new ThreadUtil().singleTask(new ClockScoreThread(user, clockScoreQueueBean));
 			
+			//保存动态信息
+			clockDynamicHandler.saveDynamic(clockId, systemDate, userId, userHandler.getUserName(userId) + "打卡成功", true);
 			//清空该用户的提醒任务列表缓存
 			clockHandler.deleteDateClocksCache(userId);
 			
 			//通知创建者和所有的成员
 			if(clock.isShare()){
-				List<ClockMemberBean> members = clockMemberMapper.members(clockId);
+				List<ClockMemberBean> members = clockMemberHandler.members(clockId);
 				if(CollectionUtil.isNotEmpty(members)){
 					String userName = userHandler.getUserName(userId);
 					for(ClockMemberBean member: members){

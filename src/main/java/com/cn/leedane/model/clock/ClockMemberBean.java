@@ -41,6 +41,18 @@ public class ClockMemberBean extends RecordTimeBean{
 	 */
 	@Column(value="notification", required = true)
 	private boolean notification;
+	
+	/**
+	 * 冗余用户表字段性别字段,不需要存在数据库中，只需要在缓存中同意存储即可
+	 */
+	@Column(required = false)
+	private String sex;
+	
+	/**
+	 * 冗余用户表年龄字段,不需要存在数据库中，只需要在缓存中同意存储即可
+	 */
+	@Column(required = false)
+	private int age;
 
 	public int getMemberId() {
 		return memberId;
@@ -72,6 +84,22 @@ public class ClockMemberBean extends RecordTimeBean{
 
 	public void setNotification(boolean notification) {
 		this.notification = notification;
+	}
+
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
 	}
 
 }

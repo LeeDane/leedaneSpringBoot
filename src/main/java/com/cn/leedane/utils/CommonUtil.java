@@ -1,7 +1,9 @@
 package com.cn.leedane.utils;
 
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -10,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+
+import com.cn.leedane.model.UserBean;
 
 /**
  * 系统中相同部分的工具类
@@ -120,9 +124,37 @@ public class CommonUtil {
         }  
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
             ip = request.getRemoteAddr();  
+            
+            /*if (LOCAL_IP.equals(ip) || LOCAL_IP1.equals(ip)) {
+                InetAddress inet = null;
+                try {
+                    inet = InetAddress.getLocalHost();
+                    ip = inet.getHostAddress();
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+            }*/
         }  
         return StringUtil.isNull(ip)? "无法解析客户端IP": ip;  
 		//return request.getRemoteAddr();
+	}
+	
+	public static String remoteAddr(HttpServletRequest request) {
+		try {
+			// 使用了代理服务器
+//			String ip = request.getHeader("X-Cluster-Client-Ip");
+//			if (ip != null && ip.length() > 0) {
+//				return ip;
+//			} else {
+				InetAddress myip = InetAddress.getLocalHost();
+				String hostAddress = myip.getHostAddress(); // ip地址
+				// String HostName=myip.getHostName(); //主机名
+				return hostAddress;
+//}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -250,5 +282,20 @@ public class CommonUtil {
 			return ((int)total/100000) +"00000+";
 		
 		return total +"";
+	}
+
+	/**
+	 * 从生日中获取年龄
+	 * @param birthDay
+	 * @return
+	 */
+	public static int getAgeByUser(UserBean user) {
+		int age = 0;
+		if(user != null){
+			if(user.getBirthDay() != null)
+				return DateUtil.getAgeByBirthDay(user.getBirthDay());
+			return user.getAge();
+		}
+		return age;
 	}
 }

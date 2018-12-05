@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.model.clock.ClockBean;
 import com.cn.leedane.service.clock.ClockService;
+import com.cn.leedane.utils.CommonUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
 
@@ -45,7 +46,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(clockService.add(getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
 		return message.getMap();
 	}
 	
@@ -60,7 +61,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.update(clockId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(clockService.update(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
 		return message.getMap();
 	}
 	/**
@@ -74,7 +75,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.getClock(clockId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(clockService.getClock(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
 		return message.getMap();
 	}
 	
@@ -89,7 +90,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.getClockThumbnail(clockId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(clockService.getClockThumbnail(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
 		return message.getMap();
 	}
 	
@@ -105,7 +106,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.search(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(clockService.search(getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
 		return message.getMap();
 	}
 //	
@@ -120,7 +121,7 @@ public class ClockController extends BaseController{
 //			return message.getMap();
 //		
 //		checkRoleOrPermission(model, request);
-//		message.putAll(circleService.update(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
+//		message.putAll(circleService.update(circleId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
 //		return message.getMap();
 //	}
 	
@@ -135,7 +136,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.delete(clockId, getUserFromMessage(message), request));
+		message.putAll(clockService.delete(clockId, getMustLoginUserFromShiro(), request));
 		return message.getMap();
 	}
 	
@@ -146,11 +147,13 @@ public class ClockController extends BaseController{
 	@RequestMapping(value = "/date/{date}/clocks", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> dateClocks(@PathVariable("date")String date, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
+		
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.dateClocks(date, getUserFromMessage(message), request));
+		message.putAll(clockService.dateClocks(date, getMustLoginUserFromShiro(), request));
+		
 		return message.getMap();
 	}
 	
@@ -165,7 +168,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.getOngoingClocks(getUserFromMessage(message), getJsonFromMessage(message), request));
+		message.putAll(clockService.getOngoingClocks(getMustLoginUserFromShiro(), getJsonFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -180,7 +183,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.getEndeds(getUserFromMessage(message), getJsonFromMessage(message), request));
+		message.putAll(clockService.getEndeds(getMustLoginUserFromShiro(), getJsonFromMessage(message), request));
 		return message.getMap();
 	}
 	
@@ -195,7 +198,25 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.systemClocks(getUserFromMessage(message), request));
+		message.putAll(clockService.systemClocks(getMustLoginUserFromShiro(), request));
+		return message.getMap();
+	}
+	
+	/**
+	 * 获取任务基本统计信息
+	 * @param clockId
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/{clockId}/statistics", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> dynamics(@PathVariable("clockId") int clockId, Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+		
+		checkRoleOrPermission(model, request);
+		message.putAll(clockService.statistics(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
 		return message.getMap();
 	}
 }

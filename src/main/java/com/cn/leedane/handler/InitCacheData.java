@@ -33,6 +33,7 @@ import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.model.JobManageBean;
 import com.cn.leedane.model.RecordTimeBean;
 import com.cn.leedane.rabbitmq.RecieveMessage;
+import com.cn.leedane.rabbitmq.recieve.ClockDynamicRecieve;
 import com.cn.leedane.rabbitmq.recieve.ClockScoreRecieve;
 import com.cn.leedane.rabbitmq.recieve.DeleteServerFileRecieve;
 import com.cn.leedane.rabbitmq.recieve.EmailRecieve;
@@ -158,6 +159,14 @@ public class InitCacheData {
 			}
 		}).start();
 		
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				startRabbitMqClockDynamicListener(); //异步启动rabbitmq的操作任务动态队列的监听
+			}
+		}).start();
+		
 		SensitiveWordInit.getInstance(); //加载敏感词库
 		
 		FinancialCategoryUtil.getInstance();
@@ -218,6 +227,21 @@ public class InitCacheData {
 		try {
 			//任务积分处理队列的监听
 			IRecieve recieve = new ClockScoreRecieve();
+			RecieveMessage recieveMessage = new RecieveMessage(recieve);
+			recieveMessage.getMsg();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	/**
+	 * 启动rabbitmq任务动态处理的监听
+	 */
+	private void startRabbitMqClockDynamicListener() {
+		
+		try {
+			//任务积分处理队列的监听
+			IRecieve recieve = new ClockDynamicRecieve();
 			RecieveMessage recieveMessage = new RecieveMessage(recieve);
 			recieveMessage.getMsg();
 		} catch (Exception e) {

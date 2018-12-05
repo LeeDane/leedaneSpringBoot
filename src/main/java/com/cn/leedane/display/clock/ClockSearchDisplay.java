@@ -64,6 +64,8 @@ public class ClockSearchDisplay implements Serializable{
 	private int totalDay; //总的日期
 	
 	private int dealStatus;//任务成员关系处理状态， -1表示是创建者，0表示没有处理关系，10表示等待成员确认， 11表示等待管理员确认
+	
+	private int memberNumber; //成员数量
 
 	public int getId() {
 		return id;
@@ -263,6 +265,14 @@ public class ClockSearchDisplay implements Serializable{
 
 	public void setDealStatus(int dealStatus) {
 		this.dealStatus = dealStatus;
+	}
+
+	public int getMemberNumber() {
+		return memberNumber;
+	}
+
+	public void setMemberNumber(int memberNumber) {
+		this.memberNumber = memberNumber;
 	}
 	
 }

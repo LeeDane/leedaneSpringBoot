@@ -117,4 +117,16 @@ public interface ClockService <T extends IDBean>{
 	public Map<String, Object> search(
 			JSONObject json, UserBean user,
 			HttpServletRequest request);
+
+	/**
+	 * 获取任务的统计信息
+	 * @param clockId
+	 * @param json
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> statistics(int clockId,
+			JSONObject json, UserBean user,
+			HttpServletRequest request);
 }	

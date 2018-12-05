@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.clock.ClockScoreQueueBean;
 import com.cn.leedane.rabbitmq.SendMessage;
-import com.cn.leedane.rabbitmq.send.ClockScore;
+import com.cn.leedane.rabbitmq.send.ClockScoreSend;
 import com.cn.leedane.rabbitmq.send.ISend;
 
 /**
@@ -29,7 +29,7 @@ public class ClockScoreThread implements Runnable{
 //		mClockScoreQueueBean.setCreateUserId(mUser.getId());
 //		mClockScoreQueueBean.setCreateTime(DateUtil.getCurrentTime());
 //		mClockScoreQueueBean.setOperateType(mOperateType);
-		ISend send = new ClockScore(mClockScoreQueueBean);
+		ISend send = new ClockScoreSend(mClockScoreQueueBean);
 		SendMessage sendMessage = new SendMessage(send);
 		sendMessage.sendMsg();//发送访客记录到消息队列
 	}

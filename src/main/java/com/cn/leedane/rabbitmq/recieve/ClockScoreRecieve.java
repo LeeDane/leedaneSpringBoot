@@ -52,7 +52,7 @@ public class ClockScoreRecieve implements IRecieve{
 				
 				//更新积分
 				
-				//通知用户
+				//通知用户  
 				if(success){
 					Map<String, Object> mp = new HashMap<String, Object>();
 					mp.put("user_id", clockScoreQueueBean.getClockScoreBean().getCreateUserId());

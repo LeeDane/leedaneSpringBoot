@@ -20,10 +20,11 @@ import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
+import com.cn.leedane.handler.clock.ClockDynamicHandler;
 import com.cn.leedane.handler.clock.ClockHandler;
+import com.cn.leedane.handler.clock.ClockMemberHandler;
 import com.cn.leedane.mapper.clock.ClockDealMapper;
 import com.cn.leedane.mapper.clock.ClockMapper;
-import com.cn.leedane.mapper.clock.ClockMemberMapper;
 import com.cn.leedane.message.JpushCustomMessage;
 import com.cn.leedane.message.notification.CustomMessage;
 import com.cn.leedane.model.OperateLogBean;
@@ -55,7 +56,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 	Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
-	private ClockMemberMapper clockMemberMapper;
+	private ClockMemberHandler clockMemberHandler;
 	
 	@Autowired
 	private ClockDealMapper clockDealMapper;
@@ -80,6 +81,9 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 	
 	@Value("${constant.defalult.clock.again.request.add.time}")
     public int CLOCK_AGAIN_REQUEST_ADD_TIME;
+	
+	@Autowired
+	private ClockDynamicHandler clockDynamicHandler;
 	
 	@Override
 	public Map<String, Object> add(int clockId, int memberId, JSONObject jo, UserBean user,
@@ -114,7 +118,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 			}
 			
 			//判断是否超员
-			List<ClockMemberBean> members = clockMemberMapper.members(clockId);
+			List<ClockMemberBean> members = clockMemberHandler.members(clockId);
 			//
 			if(clockBean.getTakePartNumber() < members.size()){
 				throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.已超出任务的参与人数.value));
@@ -172,7 +176,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 			}else{
 				content = "已经审核通过！";
 				//通知其他成员，其中当前的成员和非当前的成员
-				List<ClockMemberBean> members = clockMemberMapper.members(clockId);
+				List<ClockMemberBean> members = clockMemberHandler.members(clockId);
 				if(CollectionUtil.isNotEmpty(members)){
 					for(ClockMemberBean member: members){
 						//删除所有成员的缓存
@@ -355,14 +359,18 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 				}
 			}else{
 				
-				if(!clockBean.isAutoAdd() && user.getId() != clockBean.getCreateUserId()){
-					throw new IllegalOperationException("您非任务创建者并且任务非自动添加成员，无法邀请！");
-				}
+//				if(!clockBean.isAutoAdd() && user.getId() != clockBean.getCreateUserId()){
+//					throw new IllegalOperationException("您非任务创建者并且任务非自动添加成员，无法邀请！");
+//				}
 				clockDealBean.setStatus(ConstantsUtil.STATUS_WAIT_MANAGE_AGREE);
 				clockDealBean.setNewStatus(ConstantsUtil.STATUS_WAIT_MANAGE_AGREE);
 				//说明有邀请记录，找到是否有管理员邀请记录
 				result = clockDealMapper.save(clockDealBean) > 0;
 				if(result){
+					
+					//保存动态信息
+					clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), userHandler.getUserName(user.getId()) + "请求加入任务", false);
+					
 					//通知对方有人邀请
 					Map<String, Object> mp = new HashMap<String, Object>();
 					mp.put("content", userHandler.getUserName(user.getId()) +"请求加入您的任务《"+ clockBean.getTitle() +"》");
@@ -499,6 +507,10 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 			clockDealBean.setModifyUserId(user.getId());
 			boolean result = clockDealMapper.save(clockDealBean) > 0;
 			if(result){
+				
+				//保存动态信息
+				clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), userHandler.getUserName(user.getId()) + "邀请"+ userHandler.getUserName(memberId) +"加入任务", false);
+				
 				//通知对方有人邀请
 				Map<String, Object> mp = new HashMap<String, Object>();
 				mp.put("content", userHandler.getUserName(user.getId()) +"邀请您加入任务《"+ clockBean.getTitle() +"》");
@@ -576,10 +588,25 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 	private void checkClockCanDo(ClockBean clockBean, int memberId){
 		//自己不能加入自己的任务
 		if(memberId == clockBean.getCreateUserId())
-			throw new ParameterUnspecificationException("已经在任务成员列表中，不支持此操作！");
+			throw new IllegalOperationException("已经在任务成员列表中，不支持此操作！");
+		
+		//校验任务是否已经结束
+		if(clockBean.getEndDate() != null && clockBean.getEndDate().getTime() < DateUtil.stringToDate(DateUtil.DateToString(new Date(), "yyyy-MM-dd"), "yyyy-MM-dd").getTime()){
+			throw new IllegalOperationException("该任务已经结束！");
+		}
 		
 		//如果没有开启共享，提示用户无法操作
 		if(!clockBean.isShare())
-			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该任务不支持共享.value));
+			throw new IllegalOperationException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该任务不支持共享.value));
+	
+		//判断是否过期
+		if(clockBean.getApplyEndDate() != null && clockBean.getApplyEndDate().getTime() < DateUtil.stringToDate(DateUtil.DateToString(new Date(), "yyyy-MM-dd"), "yyyy-MM-dd").getTime()){
+			throw new IllegalOperationException("已超出该任务报名日期！");
+		}
+		List<ClockMemberBean> members = clockMemberHandler.members(clockBean.getId());
+		//判断是否超员
+		if(members.size() >= clockBean.getTakePartNumber()){
+			throw new IllegalOperationException("已超出该任务最大参与人数！");
+		}
 	}
 }

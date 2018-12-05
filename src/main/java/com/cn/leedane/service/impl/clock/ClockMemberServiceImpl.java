@@ -1,5 +1,6 @@
 package com.cn.leedane.service.impl.clock;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -7,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +16,9 @@ import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
+import com.cn.leedane.handler.clock.ClockDynamicHandler;
 import com.cn.leedane.handler.clock.ClockHandler;
+import com.cn.leedane.handler.clock.ClockMemberHandler;
 import com.cn.leedane.mapper.clock.ClockMapper;
 import com.cn.leedane.mapper.clock.ClockMemberMapper;
 import com.cn.leedane.model.OperateLogBean;
@@ -28,6 +32,7 @@ import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.clock.ClockMemberService;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.ClockScoreThread;
+import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
@@ -64,6 +69,12 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 	@Autowired
 	private UserHandler userHandler;
 	
+	@Autowired
+	private ClockDynamicHandler clockDynamicHandler;
+	
+	@Autowired
+	private ClockMemberHandler clockMemberHandler;
+	
 	@Override
 	public boolean add(int clockId, int memberId, JSONObject jo, UserBean user,
 			HttpServletRequest request) {
@@ -92,7 +103,7 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 		
 		//保存成功
 		if(result){
-			
+			clockMemberHandler.deleteClockMembersCache(clockId);
 			//非创建者请求加入，扣除加入者积分和创建者积分
 			if(clockBean.getCreateUserId() != memberId){
 				
@@ -119,6 +130,10 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 				clockScoreBean.setScoreDesc("加入任务《" + clockBean.getTitle() +"》，预扣除"+ clockBean.getRewardScore() +"积分");
 				new ThreadUtil().singleTask(new ClockScoreThread(user, clockScoreQueueBean));
 			}
+			
+			//保存动态信息
+			clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), userHandler.getUserName(memberId) + "加入任务", true);
+				
 		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为任务ID为", clockId , "添加新的成员："+ memberId +"，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);		
@@ -149,8 +164,26 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 			HttpServletRequest request) {
 		logger.info("ClockMemberServiceImpl-->members():clockId = "+ clockId +",userId=" +user.getId() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
-		message.put("isSuccess", true);
-		message.put("message", clockMemberMapper.members(clockId));
+		List<ClockMemberBean> members = clockMemberHandler.members(clockId);
+		boolean canRead = false;
+		if(CollectionUtil.isNotEmpty(members)){
+			for(ClockMemberBean member: members){
+				if(member.getMemberId() != user.getId())
+					continue;
+				else{
+					canRead = true;
+					break;
+				}
+			}
+			message.put("isSuccess", true);
+		}
+		
+		if(!canRead)
+			throw new UnauthorizedException("您还未加入该任务，无法获取成员列表。");
+		message.put("message", members);
+		
+		//保存动态信息
+		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), userHandler.getUserName(user.getId()) + "查看任务成员列表", false);
 		return message.getMap();
 	}
 }

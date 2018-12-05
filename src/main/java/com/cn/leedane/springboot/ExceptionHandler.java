@@ -228,10 +228,21 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			message.put("message", exception.getMessage());
 			message.put("responseCode", ResponseCode.非法操作异常.value);
 		}else{
-			StringPrintWriter strintPrintWriter = new StringPrintWriter();  
-	        exception.printStackTrace(strintPrintWriter);
-	        logger.error(strintPrintWriter.getString());
-	        message.put("message", /*"服务器异常"*/strintPrintWriter.getString());//将错误信息传递给view  
+//			StringPrintWriter strintPrintWriter = new StringPrintWriter();  
+//	        exception.printStackTrace(strintPrintWriter);
+//	        logger.error(strintPrintWriter.getString());
+//	        message.put("message", /*"服务器异常"*/strintPrintWriter.getString());//将错误信息传递给view  
+			
+			try{
+	        	//StringPrintWriter strintPrintWriter = new StringPrintWriter();  
+		        //exception.printStackTrace(strintPrintWriter);
+	        	//logger.error(strintPrintWriter.getString());
+		        message.put("message", "服务器出现异常，请稍后重试！");//将错误信息传递给view  
+	        }catch(Exception e){
+	        	e.printStackTrace();
+	        	logger.error("服务器异常");
+	        	message.put("message", "服务器异常");//将错误信息传递给view  
+	        }
 		}
 		
 		ModelAndView mav = new ModelAndView();

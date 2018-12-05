@@ -46,7 +46,7 @@ public class OperateLogSaveThread implements Runnable{
 		logger.info("OperateLogSaveThread--run()>saveOperateLog():subject="+mSubject+",method="+mMethod+",status="+mStatus+",operateType="+mOperateType);
 		if(mRequest != null){
 			String browserInfo = CommonUtil.getBroswerInfo(mRequest);// 获取浏览器的类型
-			String ip = CommonUtil.getIPAddress(mRequest); //获得IP地址
+			String ip = CommonUtil.remoteAddr(mRequest); //获得IP地址
 			operateLogBean.setIp(ip);
 			operateLogBean.setBrowser(browserInfo);
 		}
