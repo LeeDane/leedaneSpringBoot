@@ -32,7 +32,8 @@ public class ClockDynamicDisplay implements Serializable{
 	private String account; //创建人账号
 	
 	private String picPath;//创建人头像
-		
+
+	private int messageType;
 
 	public int getId() {
 		return id;
@@ -106,5 +107,12 @@ public class ClockDynamicDisplay implements Serializable{
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
-	
+
+	public int getMessageType() {
+		return messageType;
+	}
+
+	public void setMessageType(int messageType) {
+		this.messageType = messageType;
+	}
 }

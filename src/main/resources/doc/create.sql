@@ -1125,7 +1125,10 @@ CREATE TABLE `t_clock` (
   `must_step` int(6) DEFAULT 0 COMMENT '任务的计步打卡，当clock_in_type为计步打卡的时候，用户计步打卡最低的要求',
   `share_id` varchar(40) DEFAULT NULL COMMENT '共享任务的ID，只要是共享的任务，系统自动分配共享ID',
   `total_day` int(3) DEFAULT -1 COMMENT '需要打卡的总天数,如果无穷，默认是-1',
-  `auto_add` bit(1) DEFAULT b'1' COMMENT '是否成员自动加入，默认是true，表示共享的任务，其他人员可以不通过创建者自动加入',
+  `auto_add` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否成员自动加入，默认是false，表示共享的任务，其他人员可以不通过创建者自动加入',
+  `auto_out` bit(1) NOT NULL DEFAULT b'1' COMMENT '是否允许成员自动退出，默认是true，表示共享的任务，其他人员可以自动退出',
+  `see_each_other` bit(1) NOT NULL DEFAULT b'1' COMMENT '是否允许成员在动态中看大家的信息，默认是true，表示共享的任务，其他人员可以看到彼此的信息',
+  `must_check_clock_in` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否成员打卡需要审核，默认是false，表示共享的任务，其他成员打卡不需要审核',
   PRIMARY KEY (`id`),
   KEY `FK_clock_create_user` (`create_user_id`),
   KEY `FK_clock_modify_user` (`modify_user_id`),
@@ -1280,6 +1283,7 @@ CREATE TABLE `t_clock_dynamic` (
   `modify_user_id` int(11) DEFAULT NULL,
   `modify_time` datetime DEFAULT NULL,
   `clock_id` int(11) NOT NULL COMMENT '任务提醒的id',
+  `message_type` int(3) NOT NULL DEFAULT -1 COMMENT '标记的消息类型，如任务打卡、其他等',
   `dynamic_desc` varchar(255) NOT NULL COMMENT '任务动态的描述信息',
   `publicity` bit(1) DEFAULT b'0' COMMENT '标记该动态的等级,是否是公开的，默认是false',
   PRIMARY KEY (`id`),
@@ -1289,4 +1293,28 @@ CREATE TABLE `t_clock_dynamic` (
   CONSTRAINT `FK_clock_dynamic_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_clock_dynamic_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_clock_dynamic_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
+-- Table structure for t_clock_in_image
+-- ----------------------------
+DROP TABLE IF EXISTS `t_clock_in_image`;
+CREATE TABLE `t_clock_in_image` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `clock_in_id` int(11) NOT NULL COMMENT '任务打卡的id',
+  `img` varchar(255) NOT NULL COMMENT '打卡的图片的地址',
+  `main` bit(1) DEFAULT b'0' NOT NULL COMMENT '是否是主图(如果任务是图片打卡任务，main标记的图片是无法删除的，一个任务只能有一张图片)',
+  PRIMARY KEY (`id`),
+  KEY `FK_clock_in_image_create_user` (`create_user_id`),
+  KEY `FK_clock_in_image_modify_user` (`modify_user_id`),
+  KEY `FK_clock_in_image_clock_in` (`clock_in_id`),
+  CONSTRAINT `FK_clock_in_image_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_in_image_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_in_image_clock_in` FOREIGN KEY (`clock_in_id`) REFERENCES `t_clock_in` (`id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

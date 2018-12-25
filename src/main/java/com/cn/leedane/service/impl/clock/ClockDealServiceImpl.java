@@ -369,7 +369,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 				if(result){
 					
 					//保存动态信息
-					clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), userHandler.getUserName(user.getId()) + "请求加入任务", false);
+					clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), clockDynamicHandler.getUserName(user, user.getId()) + "请求加入任务", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 					
 					//通知对方有人邀请
 					Map<String, Object> mp = new HashMap<String, Object>();
@@ -509,7 +509,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 			if(result){
 				
 				//保存动态信息
-				clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), userHandler.getUserName(user.getId()) + "邀请"+ userHandler.getUserName(memberId) +"加入任务", false);
+				clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), "邀请"+ userHandler.getUserName(memberId) +"加入任务", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 				
 				//通知对方有人邀请
 				Map<String, Object> mp = new HashMap<String, Object>();

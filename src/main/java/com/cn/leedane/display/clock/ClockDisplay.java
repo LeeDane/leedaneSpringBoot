@@ -78,7 +78,15 @@ public class ClockDisplay implements Serializable{
 	
 	private String shareId;//共享任务的ID，只要是共享的任务，系统自动分配共享ID
 	
-	private boolean autoAdd;//是否成员自动加入，默认是true，表示共享的任务，其他人员可以不通过创建者自动加入
+	private boolean autoAdd;//是否成员自动加入，默认是false，表示共享的任务，其他人员可以不通过创建者自动加入
+
+	private boolean autoOut; //是否允许成员自动退出
+
+	private boolean seeEachOther; //是否允许成员在动态中看大家的信息
+
+	private boolean mustCheckClockIn; //是否成员打卡需要审核
+
+	private int members; //成员数量
 	
 	public int getId() {
 		return id;
@@ -331,5 +339,35 @@ public class ClockDisplay implements Serializable{
 		this.autoAdd = autoAdd;
 	}
 
-	
+	public int getMembers() {
+		return members;
+	}
+
+	public void setMembers(int members) {
+		this.members = members;
+	}
+
+	public boolean isAutoOut() {
+		return autoOut;
+	}
+
+	public void setAutoOut(boolean autoOut) {
+		this.autoOut = autoOut;
+	}
+
+	public boolean isSeeEachOther() {
+		return seeEachOther;
+	}
+
+	public void setSeeEachOther(boolean seeEachOther) {
+		this.seeEachOther = seeEachOther;
+	}
+
+	public boolean isMustCheckClockIn() {
+		return mustCheckClockIn;
+	}
+
+	public void setMustCheckClockIn(boolean mustCheckClockIn) {
+		this.mustCheckClockIn = mustCheckClockIn;
+	}
 }

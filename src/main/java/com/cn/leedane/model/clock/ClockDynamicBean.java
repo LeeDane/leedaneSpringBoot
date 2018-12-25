@@ -27,6 +27,12 @@ public class ClockDynamicBean extends RecordTimeBean{
 	private int clockId;
 
 	/**
+	 * 标记的消息类型，如任务打卡、其他等
+	 */
+	@Column(value="message_type", required = true)
+	private int messageType;
+
+	/**
 	 * 标记该动态的等级,是否是公开的，默认是false
 	 */
 	@Column(value="publicity", required = true)
@@ -55,6 +61,12 @@ public class ClockDynamicBean extends RecordTimeBean{
 	public void setPublicity(boolean publicity) {
 		this.publicity = publicity;
 	}
-	
-	
+
+	public int getMessageType() {
+		return messageType;
+	}
+
+	public void setMessageType(int messageType) {
+		this.messageType = messageType;
+	}
 }

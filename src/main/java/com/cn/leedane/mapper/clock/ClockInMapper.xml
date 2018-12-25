@@ -8,7 +8,7 @@
  -->
 <mapper namespace="com.cn.leedane.mapper.clock.ClockInMapper">
 	<select id="getClockInsRangeDate" resultType="java.util.Map">
-		SELECT COUNT(id) number, clock_date 
+		SELECT COUNT(id) number, date_format(clock_date, '%Y-%m-%d') clock_date
 		from t_clock_in 
 		where clock_id = #{clockId} and `status` = 1 and clock_date &gt;= date_format(#{start}, '%Y-%m-%d') and clock_date &lt;= date_format(#{end}, '%Y-%m-%d')  
 		GROUP BY clock_date 
@@ -16,17 +16,23 @@
 	</select>
 	
 	<select id="getTopMember" resultType="java.util.Map">
-		SELECT COUNT(ci.id) number, ci.create_user_id 
+		SELECT COUNT(ci.id) number, ci.create_user_id, date_format(cm.create_time, '%Y-%m-%d %H:%i:%s') create_time
 		from t_clock_in ci INNER JOIN t_clock_member cm on ci.create_user_id = cm.member_id and ci.clock_id = cm.clock_id and cm.`status` = 1
 		where ci.clock_id = #{clockId} and ci.`status` = 1 
 		GROUP BY ci.create_user_id 
-		ORDER BY number desc LIMIT 3
+		ORDER BY number desc, cm.create_time
+		<if test="limit > 0">
+			limit #{limit}
+		</if>
 	</select>
-	
-	<insert id="addUser" parameterType="com.cn.leedane.model.UsersBean">
-		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
-			select id
-		</selectKey>
-		insert into users values(uuid(), #{users.name});
-	</insert>
+
+	<select id="membersSortByIns" resultType="java.util.Map">
+		SELECT ci.id inId, cm.create_user_id, cm.member_id, ci.create_time create_time
+		from t_clock_member cm LEFT JOIN t_clock_in ci on ci.create_user_id = cm.member_id and ci.clock_id = cm.clock_id and ci.`status` = 1 and ci.clock_date = #{date}
+		where cm.clock_id = #{clockId} and cm.`status` = 1
+		ORDER BY ci.create_time is null, ci.create_time asc, cm.create_time
+		<if test="limit > 0">
+			limit #{limit}
+		</if>
+	</select>
 </mapper>

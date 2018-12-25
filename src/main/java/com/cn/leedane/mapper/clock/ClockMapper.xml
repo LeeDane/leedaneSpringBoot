@@ -64,7 +64,7 @@
 	<select id="getMyClock" resultMap="objectBean">
 		select c.id, c.status,c.create_user_id, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time, c.modify_user_id, date_format(c.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
 				,c.title, c.describe_, c.icon, c.share, c.start_date, c.end_date, c.clock_in_type, c.choose_img, c.repeat_, cm.remind , cm.notification
-				,c.apply_end_date, c.take_part_number, c.reward_score , c.share_id, c.total_day
+				,c.apply_end_date, c.take_part_number, c.reward_score , c.share_id, c.total_day, c.auto_add, c.auto_out, c.see_each_other, c.must_check_clock_in
 				,date_format(c.clock_start_time,'%H:%i') clock_start_time, date_format(c.clock_end_time,'%H:%i') clock_end_time
 				,category_id
 			from t_clock c inner join t_clock_member cm on c.id = cm.clock_id
@@ -125,6 +125,10 @@
         <result property="categoryId" column="category_id"/>
         <result property="shareId" column="share_id"/>
         <result property="totalDay" column="total_day"/>
+		<result property="autoAdd" column="auto_add"/>
+		<result property="autoOut" column="auto_out"/>
+		<result property="seeEachOther" column="see_each_other"/>
+		<result property="mustCheckClockIn" column="must_check_clock_in"/>
         
         <collection property="users" ofType="com.cn.leedane.display.clock.ClockUserDisplay">
              <!-- id:订单明细唯一标识

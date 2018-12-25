@@ -23,22 +23,27 @@ public interface ClockInMapper extends BaseMapper<ClockInBean>{
 	 * @param end
 	 * @return
 	 */
-	public List<Map<String, Object>> getClockInsRangeDate(
+	public List<Map<String, String>> getClockInsRangeDate(
 			@Param("clockId")int clockId, 
 			@Param("start")String startDate, 
 			@Param("end")String end);
-			
+
 	/**
-	 * 获得任务Top3排行的成员
+	 * 获得任务Top排行的成员(只有打卡记录的成员才会找到)
+	 * 已经取消这个方法的使用，请参考 {@link com.cn.leedane.mapper.clock.ClockMemberMapper #membersSortByIns(int, int)})
 	 * @param clockId
+	 * @param limit 0表示获取全部
 	 * @return
 	 */
-	public List<Map<String, Object>> getTopMember(@Param("clockId")int clockId);
-	
+	@Deprecated
+	public List<Map<String, Object>> getTopMember(@Param("clockId")int clockId, @Param("limit")int limit);
+
 	/**
-	 * 模拟插入成员
-	 * @param users
+	 * 获得任务在指定日期的打卡情况
+	 * @param clockId
+	 * @param date
+	 * @param limit
 	 * @return
 	 */
-	public int addUser(@Param("users")UsersBean users);
+	public List<Map<String, Object>> membersSortByIns(@Param("clockId")int clockId, @Param("date")String date, @Param("limit")int limit);
 }

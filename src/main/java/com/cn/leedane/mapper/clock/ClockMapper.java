@@ -39,13 +39,13 @@ public interface ClockMapper extends BaseMapper<ClockBean>{
 			@Param("start") int start,
 			@Param("pageSize") int pageSize,
 			@Param("date")String date);
-	
+
 	/**
 	 * 获取我当前结束的任务提醒列表
 	 * @param userId
 	 * @param start
 	 * @param pageSize
-	 * @param status
+	 * @param date
 	 * @return
 	 */
 	public List<ClockDisplay> getMyEndedClocks(

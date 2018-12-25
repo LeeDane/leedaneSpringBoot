@@ -35,7 +35,7 @@ public class ClockStatisticsDisplay implements Serializable{
 	
 	private Map<String, Integer> ages; // 年龄烦人统计
 
-//	private List<Map<String, Object>> clockIns; // 最近30天的打卡时间统计
+	private List<Map<String, Object>> results; // 最近30天的打卡时间统计
 //
 	public int getClockId() {
 		return clockId;
@@ -100,7 +100,7 @@ public class ClockStatisticsDisplay implements Serializable{
 	public void setSexs(Map<String, Integer> sexs) {
 		this.sexs = sexs;
 	}
-//
+
 //	public List<Map<String, Object>> getClockIns() {
 //		return clockIns;
 //	}
@@ -108,7 +108,7 @@ public class ClockStatisticsDisplay implements Serializable{
 //	public void setClockIns(List<Map<String, Object>> clockIns) {
 //		this.clockIns = clockIns;
 //	}
-//
+
 	public List<Map<String, Object>> getMembers() {
 		return members;
 	}
@@ -116,5 +116,12 @@ public class ClockStatisticsDisplay implements Serializable{
 	public void setMembers(List<Map<String, Object>> members) {
 		this.members = members;
 	}
-	
+
+	public List<Map<String, Object>> getResults() {
+		return results;
+	}
+
+	public void setResults(List<Map<String, Object>> results) {
+		this.results = results;
+	}
 }

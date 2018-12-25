@@ -83,7 +83,7 @@ public class QiniuTest extends BaseTest{
 	/**
 	 * 将图像转化成base64格式的字符串
 	 * @param inputStream 输入流对象
-	 * @param 图像的类型(png/jpg)可以为空，默认是jpg
+	 * @param type 图像的类型(png/jpg)可以为空，默认是jpg
 	 * @return
 	 * @throws IOException
 	 */

@@ -101,7 +101,7 @@ public class Base64Util{
       logger.info(strOut2);
     }*/
     
-    public static void main(String[] args) {
-		System.out.println(encode("http://dwz.wailian.work/".getBytes()));
-	}
+//    public static void main(String[] args) {
+//		System.out.println(encode("http://dwz.wailian.work/".getBytes()));
+//	}
 }

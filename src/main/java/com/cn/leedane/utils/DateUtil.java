@@ -90,7 +90,7 @@ public class DateUtil {
 	/**
 	 * 将日期字符串根据format转成日期
 	 * @param stringDate 字符串日期，格式要正确，不然会抛异常
-	 * @param 格式：如"yyyy-MM-dd","yyyy-MM-dd HH:mm:ss"
+	 * @param format 格式：如"yyyy-MM-dd","yyyy-MM-dd HH:mm:ss"
 	 * @return
 	 */
 	public static Date stringToDate(String stringDate,String format){

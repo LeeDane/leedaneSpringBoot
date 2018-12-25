@@ -1,24 +1,13 @@
 package com.cn.leedane.service.impl.clock;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import com.cn.leedane.display.clock.ClockMemberDisplay;
 import com.cn.leedane.exception.ParameterUnspecificationException;
-import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.clock.ClockDynamicHandler;
 import com.cn.leedane.handler.clock.ClockHandler;
 import com.cn.leedane.handler.clock.ClockMemberHandler;
+import com.cn.leedane.mapper.clock.ClockInMapper;
 import com.cn.leedane.mapper.clock.ClockMapper;
 import com.cn.leedane.mapper.clock.ClockMemberMapper;
 import com.cn.leedane.model.OperateLogBean;
@@ -32,14 +21,19 @@ import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.clock.ClockMemberService;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.ClockScoreThread;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.ClockScoreBusinessType;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 任务提醒service实现类
@@ -53,6 +47,9 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 	
 	@Autowired
 	private ClockMemberMapper clockMemberMapper;
+
+	@Autowired
+	private ClockInMapper clockInMapper;
 	
 	@Autowired
 	private ClockMapper clockMapper;
@@ -132,7 +129,7 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 			}
 			
 			//保存动态信息
-			clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), userHandler.getUserName(memberId) + "加入任务", true);
+			clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), clockDynamicHandler.getUserName(user, memberId) + "加入任务", true,EnumUtil.CustomMessageExtraType.其他未知类型.value);
 				
 		}
 		//保存操作日志
@@ -164,26 +161,27 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 			HttpServletRequest request) {
 		logger.info("ClockMemberServiceImpl-->members():clockId = "+ clockId +",userId=" +user.getId() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
-		List<ClockMemberBean> members = clockMemberHandler.members(clockId);
-		boolean canRead = false;
-		if(CollectionUtil.isNotEmpty(members)){
-			for(ClockMemberBean member: members){
-				if(member.getMemberId() != user.getId())
-					continue;
-				else{
-					canRead = true;
-					break;
-				}
-			}
-			message.put("isSuccess", true);
-		}
-		
-		if(!canRead)
+		if(!clockMemberHandler.inMember(user.getId(), clockId))
 			throw new UnauthorizedException("您还未加入该任务，无法获取成员列表。");
-		message.put("message", members);
-		
+		List<Map<String, Object>> members = clockMemberMapper.membersSortByIns(clockId, 0);
+		List<ClockMemberDisplay> displays = new ArrayList<ClockMemberDisplay>();
+		if(CollectionUtil.isNotEmpty(members)){
+			ClockMemberDisplay display;
+			for(Map<String, Object> member: members){
+				int memberId = StringUtil.changeObjectToInt(member.get("member_id"));
+				display = new ClockMemberDisplay();
+				display.setAccount(userHandler.getUserName(memberId));
+				display.setCreateUserId(memberId);
+				display.setCreateTime(StringUtil.changeNotNull(member.get("create_time")));
+				display.setPicPath(userHandler.getUserPicPath(memberId, "30x30"));
+				display.setClockInNumber(StringUtil.changeObjectToInt(member.get("number")));
+				displays.add(display);
+			}
+		}
+		message.put("message", displays);
+		message.put("isSuccess", true);
 		//保存动态信息
-		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), userHandler.getUserName(user.getId()) + "查看任务成员列表", false);
+		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), "查看任务成员列表", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 		return message.getMap();
 	}
 }

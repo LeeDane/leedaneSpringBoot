@@ -2,6 +2,10 @@ package com.cn.leedane.handler.clock;
 
 import java.util.Date;
 
+import com.cn.leedane.handler.UserHandler;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.EnumUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.model.clock.ClockDynamicBean;
@@ -18,7 +22,22 @@ import com.cn.leedane.utils.ConstantsUtil;
  */
 @Component
 public class ClockDynamicHandler {
-	
+
+	@Autowired
+	private UserHandler userHandler;
+
+	/**
+	 * 获取用户名(对于自己创建的动态，可以不获取用户名)
+	 * @param user
+	 * @param userId
+	 * @return
+	 */
+	public String getUserName(UserBean user, int userId){
+		String name = "";
+		if(userId < 1 || user.getId() == userId)
+			return name;
+		return userHandler.getUserName(userId);
+	}
 	/**
 	 * 保存动态的信息
 	 * @param clockId
@@ -27,12 +46,13 @@ public class ClockDynamicHandler {
 	 * @param desc
 	 * @param publicity
 	 */
-	public void saveDynamic(int clockId, Date systemDate, int userId, String desc, boolean publicity){
+	public void saveDynamic(int clockId, Date systemDate, int userId, String desc, boolean publicity, int messageType){
 		//设置动态信息
 		ClockDynamicQueueBean clockDynamicQueueBean = new ClockDynamicQueueBean();
 		clockDynamicQueueBean.setError(0);
 		ClockDynamicBean dynamicBean = new ClockDynamicBean();
 		dynamicBean.setClockId(clockId);
+		dynamicBean.setMessageType(messageType);
 		dynamicBean.setCreateTime(systemDate);
 		dynamicBean.setCreateUserId(userId);
 		dynamicBean.setDynamicDesc(desc);

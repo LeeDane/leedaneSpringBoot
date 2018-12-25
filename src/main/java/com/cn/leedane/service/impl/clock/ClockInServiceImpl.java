@@ -1,11 +1,11 @@
 package com.cn.leedane.service.impl.clock;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cn.leedane.display.clock.ClockMemberDisplay;
+import com.cn.leedane.mapper.clock.ClockInImageMapper;
+import com.cn.leedane.model.clock.*;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -27,13 +27,6 @@ import com.cn.leedane.message.notification.CustomMessage;
 import com.cn.leedane.message.notification.MessageNotification;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.clock.ClockBean;
-import com.cn.leedane.model.clock.ClockDynamicBean;
-import com.cn.leedane.model.clock.ClockDynamicQueueBean;
-import com.cn.leedane.model.clock.ClockInBean;
-import com.cn.leedane.model.clock.ClockMemberBean;
-import com.cn.leedane.model.clock.ClockScoreBean;
-import com.cn.leedane.model.clock.ClockScoreQueueBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.clock.ClockInService;
@@ -64,6 +57,9 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 	
 	@Autowired
 	private ClockInMapper clockInMapper;
+
+	@Autowired
+	private ClockInImageMapper clockInImageMapper;
 	
 	@Autowired
 	private ClockMapper clockMapper;
@@ -160,6 +156,20 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 		clockInBean.setModifyUserId(userId);
 		clockInBean.setClockDate(systemDate);
 		boolean result = clockInMapper.save(clockInBean) > 0;
+
+		if(clock.getClockInType() == ClockInType.图片打卡.value){
+			ClockInImageBean inImageBean = new ClockInImageBean();
+			inImageBean.setImg(clockInBean.getImg());
+			inImageBean.setClockInId(clockInBean.getId());
+			inImageBean.setMain(true);
+			inImageBean.setModifyTime(new Date());
+			inImageBean.setModifyUserId(userId);
+			inImageBean.setCreateTime(new Date());
+			inImageBean.setCreateUserId(userId);
+			inImageBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+			result = clockInImageMapper.save(inImageBean) > 0 ;
+		}
+
 		if(result){
 			
 			ClockScoreQueueBean clockScoreQueueBean = new ClockScoreQueueBean();
@@ -178,7 +188,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 			new ThreadUtil().singleTask(new ClockScoreThread(user, clockScoreQueueBean));
 			
 			//保存动态信息
-			clockDynamicHandler.saveDynamic(clockId, systemDate, userId, userHandler.getUserName(userId) + "打卡成功", true);
+			clockDynamicHandler.saveDynamic(clockId, systemDate, userId, "打卡成功", true, EnumUtil.CustomMessageExtraType.任务打卡.value);
 			//清空该用户的提醒任务列表缓存
 			clockHandler.deleteDateClocksCache(userId);
 			
@@ -280,6 +290,35 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 //		}
 		
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除宝宝名称ID为：", babyId ,"的宝宝的基本信息：", "，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, 0);	
+		return message.getMap();
+	}
+
+	@Override
+	public Map<String, Object> clockIns(int clockId, String date, JSONObject json, UserBean user, HttpServletRequest request) {
+		logger.info("ClockInServiceImpl-->clockIns():clockId=" +clockId + ", date="+ date +", user=" +user.getAccount());
+		clockHandler.getNormalClock(clockId);
+		ResponseMap message = new ResponseMap();
+		if(!clockMemberHandler.inMember(user.getId(), clockId))
+			throw new UnauthorizedException("您还未加入该任务，无法获取成员列表。");
+		List<Map<String, Object>> members = clockInMapper.membersSortByIns(clockId, date,0);
+		List<ClockMemberDisplay> displays = new ArrayList<ClockMemberDisplay>();
+		if(CollectionUtil.isNotEmpty(members)){
+			ClockMemberDisplay display;
+			for(Map<String, Object> member: members){
+				int memberId = StringUtil.changeObjectToInt(member.get("member_id"));
+				display = new ClockMemberDisplay();
+				display.setAccount(userHandler.getUserName(memberId));
+				display.setCreateUserId(memberId);
+				display.setCreateTime(StringUtil.changeNotNull(member.get("create_time")));
+				display.setPicPath(userHandler.getUserPicPath(memberId, "30x30"));
+				display.setClockInNumber(StringUtil.changeObjectToInt(member.get("number")));
+				displays.add(display);
+			}
+		}
+		message.put("message", displays);
+		message.put("isSuccess", true);
+		//保存动态信息
+		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), "查看"+date+"的打卡情况", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 		return message.getMap();
 	}
 }

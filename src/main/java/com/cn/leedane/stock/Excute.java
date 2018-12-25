@@ -36,9 +36,9 @@ public class Excute {
 	private static int currIndex;
 
 	public static List<QXStock> allStocks = new ArrayList<QXStock>();
-	private final static int START_CALCULATE_NPER = 18062;  //开始计算的期数,将从此位置开始计算
-	private final static int CURRENT_CALCULATE_NPER = 18082;  //即将开奖的期数
-	private final static int COMBIE_DEPP = 4; //计算组合的时候的深度，必须大于1的整数
+	private final static int START_CALCULATE_NPER = 18126;  //开始计算的期数,将从此位置开始计算
+	private final static int CURRENT_CALCULATE_NPER = 18146;  //即将开奖的期数
+	private final static int COMBIE_DEPP = 8; //计算组合的时候的深度，必须大于1的整数
 	private final static int EACH_DOWN_DEPP = 4;//每次将组合向下最大的移动数量
 	private final static boolean ONLY_COMPARE_END = true;//是否开始只比较最后的数字，如5+5=10，结尾是0，不管是20、30都将看做是相等,这个只有在是整数情况才有效
 	private static List<Point> points = new ArrayList<Point>();
@@ -46,78 +46,82 @@ public class Excute {
 	static{
 		currIndex = allStocks.size();
 		List<Integer> numbers = new ArrayList<Integer>();
-		numbers.add(2);numbers.add(6);numbers.add(8);numbers.add(3);numbers.add(4);numbers.add(7);numbers.add(3);
-		allStocks.add(new QXStock(18062, numbers));
+		numbers.add(5);numbers.add(9);numbers.add(2);numbers.add(0);numbers.add(3);numbers.add(5);numbers.add(0);
+		allStocks.add(new QXStock(18126, numbers));
 		numbers = new ArrayList<Integer>();
 		
-		numbers.add(1);numbers.add(9);numbers.add(5);numbers.add(1);numbers.add(5);numbers.add(8);numbers.add(1);
-		allStocks.add(new QXStock(18063, numbers));
+		numbers.add(1);numbers.add(0);numbers.add(3);numbers.add(3);numbers.add(1);numbers.add(2);numbers.add(1);
+		allStocks.add(new QXStock(18127, numbers));
 		numbers = new ArrayList<Integer>();
 		
-		numbers.add(9);numbers.add(6);numbers.add(1);numbers.add(1);numbers.add(0);numbers.add(3);numbers.add(4);
-		allStocks.add(new QXStock(18064, numbers));
+		numbers.add(1);numbers.add(6);numbers.add(0);numbers.add(3);numbers.add(2);numbers.add(5);numbers.add(4);
+		allStocks.add(new QXStock(18128, numbers));
 		numbers = new ArrayList<Integer>();
 		
-		numbers.add(2);numbers.add(6);numbers.add(4);numbers.add(1);numbers.add(3);numbers.add(0);numbers.add(0);
-		allStocks.add(new QXStock(18065, numbers));
+		numbers.add(6);numbers.add(1);numbers.add(3);numbers.add(5);numbers.add(0);numbers.add(9);numbers.add(9);
+		allStocks.add(new QXStock(18129, numbers));
 		numbers = new ArrayList<Integer>();
 		
-		numbers.add(5);numbers.add(5);numbers.add(0);numbers.add(3);numbers.add(4);numbers.add(5);numbers.add(0);
-		allStocks.add(new QXStock(18066, numbers));
+		numbers.add(0);numbers.add(1);numbers.add(1);numbers.add(6);numbers.add(4);numbers.add(6);numbers.add(6);
+		allStocks.add(new QXStock(18130, numbers));
 		numbers = new ArrayList<Integer>();
 		
-		numbers.add(7);numbers.add(5);numbers.add(4);numbers.add(7);numbers.add(3);numbers.add(5);numbers.add(6);
-		allStocks.add(new QXStock(18067, numbers));
+		numbers.add(1);numbers.add(9);numbers.add(9);numbers.add(1);numbers.add(5);numbers.add(1);numbers.add(9);
+		allStocks.add(new QXStock(18131, numbers));
 		numbers = new ArrayList<Integer>();
 		
-		numbers.add(2);numbers.add(7);numbers.add(7);numbers.add(6);numbers.add(4);numbers.add(4);numbers.add(9);
-		allStocks.add(new QXStock(18068, numbers));
+		numbers.add(1);numbers.add(6);numbers.add(3);numbers.add(3);numbers.add(4);numbers.add(7);numbers.add(7);
+		allStocks.add(new QXStock(18132, numbers));
 		numbers = new ArrayList<Integer>();
-		numbers.add(1);numbers.add(0);numbers.add(0);numbers.add(4);numbers.add(3);numbers.add(0);numbers.add(8);
-		allStocks.add(new QXStock(18069, numbers));
+		numbers.add(9);numbers.add(6);numbers.add(8);numbers.add(7);numbers.add(3);numbers.add(7);numbers.add(1);
+		allStocks.add(new QXStock(18133, numbers));
 		numbers = new ArrayList<Integer>();
-		numbers.add(6);numbers.add(6);numbers.add(5);numbers.add(9);numbers.add(4);numbers.add(2);numbers.add(9);
-		allStocks.add(new QXStock(18070, numbers));
+		numbers.add(3);numbers.add(7);numbers.add(8);numbers.add(4);numbers.add(8);numbers.add(1);numbers.add(9);
+		allStocks.add(new QXStock(18134, numbers));
 		numbers = new ArrayList<Integer>();
-		numbers.add(0);numbers.add(5);numbers.add(0);numbers.add(6);numbers.add(3);numbers.add(6);numbers.add(6);
-		allStocks.add(new QXStock(18071, numbers));
+		numbers.add(5);numbers.add(8);numbers.add(8);numbers.add(1);numbers.add(1);numbers.add(2);numbers.add(2);
+		allStocks.add(new QXStock(18135, numbers));
 		numbers = new ArrayList<Integer>();
-		numbers.add(7);numbers.add(9);numbers.add(6);numbers.add(5);numbers.add(7);numbers.add(5);numbers.add(8);
-		allStocks.add(new QXStock(18072, numbers));
+		numbers.add(2);numbers.add(4);numbers.add(7);numbers.add(6);numbers.add(7);numbers.add(0);numbers.add(0);
+		allStocks.add(new QXStock(18136, numbers));
 		numbers = new ArrayList<Integer>();
-		numbers.add(3);numbers.add(9);numbers.add(6);numbers.add(5);numbers.add(8);numbers.add(0);numbers.add(0);
-		allStocks.add(new QXStock(18073, numbers));
+		numbers.add(5);numbers.add(3);numbers.add(1);numbers.add(0);numbers.add(9);numbers.add(7);numbers.add(6);
+		allStocks.add(new QXStock(18137, numbers));
 		numbers = new ArrayList<Integer>();
-		numbers.add(1);numbers.add(4);numbers.add(8);numbers.add(6);numbers.add(0);numbers.add(9);numbers.add(7);
-		allStocks.add(new QXStock(18074, numbers));
+		numbers.add(8);numbers.add(9);numbers.add(0);numbers.add(2);numbers.add(9);numbers.add(0);numbers.add(0);
+		allStocks.add(new QXStock(18138, numbers));
 		
 		numbers = new ArrayList<Integer>();
-		numbers.add(1);numbers.add(6);numbers.add(6);numbers.add(2);numbers.add(7);numbers.add(3);numbers.add(8);
-		allStocks.add(new QXStock(18075, numbers));
+		numbers.add(7);numbers.add(3);numbers.add(3);numbers.add(5);numbers.add(2);numbers.add(7);numbers.add(8);
+		allStocks.add(new QXStock(18139, numbers));
 		
 		numbers = new ArrayList<Integer>();
-		numbers.add(3);numbers.add(1);numbers.add(1);numbers.add(2);numbers.add(8);numbers.add(2);numbers.add(9);
-		allStocks.add(new QXStock(18076, numbers));
+		numbers.add(5);numbers.add(5);numbers.add(8);numbers.add(0);numbers.add(9);numbers.add(1);numbers.add(4);
+		allStocks.add(new QXStock(18140, numbers));
 		
 		numbers = new ArrayList<Integer>();
-		numbers.add(6);numbers.add(1);numbers.add(5);numbers.add(3);numbers.add(0);numbers.add(4);numbers.add(7);
-		allStocks.add(new QXStock(18077, numbers));	
+		numbers.add(5);numbers.add(3);numbers.add(9);numbers.add(5);numbers.add(3);numbers.add(4);numbers.add(4);
+		allStocks.add(new QXStock(18141, numbers));
 		
 		numbers = new ArrayList<Integer>();
-		numbers.add(3);numbers.add(4);numbers.add(8);numbers.add(8);numbers.add(0);numbers.add(1);numbers.add(4);
-		allStocks.add(new QXStock(18078, numbers));
+		numbers.add(5);numbers.add(0);numbers.add(0);numbers.add(1);numbers.add(4);numbers.add(0);numbers.add(7);
+		allStocks.add(new QXStock(18142, numbers));
 		
 		numbers = new ArrayList<Integer>();
-		numbers.add(1);numbers.add(1);numbers.add(7);numbers.add(5);numbers.add(9);numbers.add(5);numbers.add(1);
-		allStocks.add(new QXStock(18079, numbers));
+		numbers.add(4);numbers.add(2);numbers.add(2);numbers.add(1);numbers.add(6);numbers.add(6);numbers.add(9);
+		allStocks.add(new QXStock(18143, numbers));
 		
 		numbers = new ArrayList<Integer>();
-		numbers.add(8);numbers.add(3);numbers.add(4);numbers.add(4);numbers.add(0);numbers.add(4);numbers.add(9);
-		allStocks.add(new QXStock(18080, numbers));
+		numbers.add(7);numbers.add(1);numbers.add(5);numbers.add(6);numbers.add(6);numbers.add(9);numbers.add(1);
+		allStocks.add(new QXStock(18144, numbers));
 		
 		numbers = new ArrayList<Integer>();
-		numbers.add(5);numbers.add(4);numbers.add(1);numbers.add(8);numbers.add(8);numbers.add(6);numbers.add(4);
-		allStocks.add(new QXStock(18081, numbers));
+		numbers.add(7);numbers.add(2);numbers.add(9);numbers.add(6);numbers.add(2);numbers.add(8);numbers.add(8);
+		allStocks.add(new QXStock(18145, numbers));
+
+//		numbers = new ArrayList<Integer>();
+//		numbers.add(2);numbers.add(6);numbers.add(8);numbers.add(9);numbers.add(9);numbers.add(5);numbers.add(9);
+//		allStocks.add(new QXStock(18146, numbers));
 	}
 	
 	/**
@@ -171,111 +175,111 @@ public class Excute {
 		
 		return end;
 	}
-	public static void main(String[] args) {
-		//单数是乌拉圭，双数是法国，包括负数
-		/*String vv = String.valueOf(Math.random() * 100);
-		vv = vv.substring(0, vv.indexOf("."));
-		System.out.println(vv);*/
-		//List<Integer> iL = new ArrayList<Integer>();
-        //new Excute().combine("", iL,  m);
-        //System.out.println("total : " + total);
-		/*try {
-			getX509CerCate("D:\\201root.cer");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		init();
-		List<Point> startPoints = getStartPoints();
-		int total = 0;
-		
-		//获取第一位的所有有效的集合列表
-		List<Operate> operates = new ArrayList<Operate>();
-		for(Point startPoint: startPoints){
-			//当前是计算哪个位置的数字
-			int index = 0;
-			//根据开始点计算出组合的点
-			List<Point> startCombinePoints = getAllCombilePoints(startPoint, index);
-			List<List<Point>> finalCombilePoints = new ArrayList<List<Point>>();
-			for(int i = 1; i <= COMBIE_DEPP ; i++){
-				//对上面的点跟组合算法
-				List<List<Point>> resultPoints = new ArrayList<List<Point>>();
-				combine(resultPoints, new ArrayList<Point>(), new ArrayList<Point>(), startCombinePoints, i);
-				
-				//过滤不合格的组合
-				filterCombile(finalCombilePoints, startPoint, resultPoints, index);
-			}
-			
-			//System.out.println(finalCombilePoints);
-			
-			//经过向下移动后筛选和过滤后的集合
-			List<Combines> mobileCombiles = new ArrayList<Combines>();
-			
-			//对组合的点每次做向下平移1~EACH_DOWN_DEPP个点，依次直到能找到即将开奖的点刚好是最后的点，获得相应的组合集合，
-			for(List<Point> finalCombilePoint: finalCombilePoints){
-				for(int mobileNumber = 1 ; mobileNumber <= EACH_DOWN_DEPP; mobileNumber++){
-					downCal(mobileCombiles, finalCombilePoint, mobileNumber);
-				}
-			}
-			
-			total += mobileCombiles.size();
-			//对组合做运算、评分、保留下符合以上条件的组合
-			
-			List<Operate> operates0 = new ArrayList<Operate>();
-			for(Combines combine: mobileCombiles){
-				combine.getPoints();
-				operateCal(operates0, combine);
-				
-			}
-			operates.addAll(operates0);
-		}
-		System.out.println("总数是："+ total);
-		System.out.println("总数1是："+ operates.size());
-
-		//最终的开奖结果
-		List<Result> results = new ArrayList<Result>();
-		//对5中的列表做向右一位，根据5的算法计算百位、十位、个位。
-		for(Operate operate: operates){
-			
-			//收集所有成功的点列表
-			List<Operate> successOperates = new ArrayList<Operate>();
-			//是否每次向右移动都能成功
-			boolean success = true;
-			//移动到相应的位置
-			for(int move = 1; move < 4; move++){
-				Operate newOperate = moveRight(operate, move);
-				if(newOperate != null){
-					successOperates.add(newOperate);
-				}else{
-					success = false;
-					break;//调整当前的循环
-				}
-			}
-			
-			if(success){
-				Result result = new Result();
-				successOperates.add(0, operate);
-				//取第一个的算法作为
-				result.setComputeResults(successOperates.get(0).getComputeResults());
-				result.setOperates(successOperates);
-				result.setScore(0);
-				result.setScoreDesc("");
-				String number = "";
-				for(Operate so: successOperates){
-					number += so.getPoints().get(so.getPoints().size() -1).get(so.getPoints().get(so.getPoints().size() -1).size() -1).getValue();
-				}
-				result.setDeep(successOperates.get(0).getPoints().get(0).size());
-				result.setStep(successOperates.get(0).getPoints().size());
-				result.setNumber(number);
-				results.add(result);
-			}
-		}
-		
-		System.out.println("符合的开奖总数是："+ results.size());
-		for(Result rs: results){
-			System.out.println("预测"+ CURRENT_CALCULATE_NPER +"期开奖:步数-->"+ rs.getStep() +", 深度-->"+ rs.getDeep() +", 结果是-->"+ rs.getNumber());
-		}
-	}
+//	public static void main(String[] args) {
+//		//单数是乌拉圭，双数是法国，包括负数
+//		/*String vv = String.valueOf(Math.random() * 100);
+//		vv = vv.substring(0, vv.indexOf("."));
+//		System.out.println(vv);*/
+//		//List<Integer> iL = new ArrayList<Integer>();
+//        //new Excute().combine("", iL,  m);
+//        //System.out.println("total : " + total);
+//		/*try {
+//			getX509CerCate("D:\\201root.cer");
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}*/
+//		init();
+//		List<Point> startPoints = getStartPoints();
+//		int total = 0;
+//
+//		//获取第一位的所有有效的集合列表
+//		List<Operate> operates = new ArrayList<Operate>();
+//		for(Point startPoint: startPoints){
+//			//当前是计算哪个位置的数字
+//			int index = 0;
+//			//根据开始点计算出组合的点
+//			List<Point> startCombinePoints = getAllCombilePoints(startPoint, index);
+//			List<List<Point>> finalCombilePoints = new ArrayList<List<Point>>();
+//			for(int i = 1; i <= COMBIE_DEPP ; i++){
+//				//对上面的点跟组合算法
+//				List<List<Point>> resultPoints = new ArrayList<List<Point>>();
+//				combine(resultPoints, new ArrayList<Point>(), new ArrayList<Point>(), startCombinePoints, i);
+//
+//				//过滤不合格的组合
+//				filterCombile(finalCombilePoints, startPoint, resultPoints, index);
+//			}
+//
+//			//System.out.println(finalCombilePoints);
+//
+//			//经过向下移动后筛选和过滤后的集合
+//			List<Combines> mobileCombiles = new ArrayList<Combines>();
+//
+//			//对组合的点每次做向下平移1~EACH_DOWN_DEPP个点，依次直到能找到即将开奖的点刚好是最后的点，获得相应的组合集合，
+//			for(List<Point> finalCombilePoint: finalCombilePoints){
+//				for(int mobileNumber = 1 ; mobileNumber <= EACH_DOWN_DEPP; mobileNumber++){
+//					downCal(mobileCombiles, finalCombilePoint, mobileNumber);
+//				}
+//			}
+//
+//			total += mobileCombiles.size();
+//			//对组合做运算、评分、保留下符合以上条件的组合
+//
+//			List<Operate> operates0 = new ArrayList<Operate>();
+//			for(Combines combine: mobileCombiles){
+//				combine.getPoints();
+//				operateCal(operates0, combine);
+//
+//			}
+//			operates.addAll(operates0);
+//		}
+//		System.out.println("总数是："+ total);
+//		System.out.println("总数1是："+ operates.size());
+//
+//		//最终的开奖结果
+//		List<Result> results = new ArrayList<Result>();
+//		//对5中的列表做向右一位，根据5的算法计算百位、十位、个位。
+//		for(Operate operate: operates){
+//
+//			//收集所有成功的点列表
+//			List<Operate> successOperates = new ArrayList<Operate>();
+//			//是否每次向右移动都能成功
+//			boolean success = true;
+//			//移动到相应的位置
+//			for(int move = 1; move < 4; move++){
+//				Operate newOperate = moveRight(operate, move);
+//				if(newOperate != null){
+//					successOperates.add(newOperate);
+//				}else{
+//					success = false;
+//					break;//调整当前的循环
+//				}
+//			}
+//
+//			if(success){
+//				Result result = new Result();
+//				successOperates.add(0, operate);
+//				//取第一个的算法作为
+//				result.setComputeResults(successOperates.get(0).getComputeResults());
+//				result.setOperates(successOperates);
+//				result.setScore(0);
+//				result.setScoreDesc("");
+//				String number = "";
+//				for(Operate so: successOperates){
+//					number += so.getPoints().get(so.getPoints().size() -1).get(so.getPoints().get(so.getPoints().size() -1).size() -1).getValue();
+//				}
+//				result.setDeep(successOperates.get(0).getPoints().get(0).size());
+//				result.setStep(successOperates.get(0).getPoints().size());
+//				result.setNumber(number);
+//				results.add(result);
+//			}
+//		}
+//
+//		System.out.println("符合的开奖总数是："+ results.size());
+//		for(Result rs: results){
+//			System.out.println("预测"+ CURRENT_CALCULATE_NPER +"期开奖:步数-->"+ rs.getStep() +", 深度-->"+ rs.getDeep() +", 结果是-->"+ rs.getNumber());
+//		}
+//	}
 	
 	/**
 	 * 将每组集合点向右移动相应的位置

@@ -66,9 +66,9 @@
 		order by cm.create_time desc, cm.id desc limit #{start}, #{pageSize}
 	</select>
 	
-    <select id="addUser" resultType="java.util.Map" statementType="CALLABLE">
+    <select id="calculateHotests" resultType="java.util.Map" statementType="CALLABLE">
 		{
-			call testUser(#{name})
+			call calculateHostestCircleMembersProcedure(#{circleId})
 		}
 	</select>
 	

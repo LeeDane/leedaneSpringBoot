@@ -1,4 +1,4 @@
-﻿package com.cn.leedane.test;
+package com.cn.leedane.test;
 import javax.annotation.Resource;
 
 import net.sf.json.JSONObject;
@@ -20,38 +20,38 @@ import com.cn.leedane.utils.EnumUtil.DataTableType;
  * Version 1.0
  */
 public class CommentTest extends BaseTest {
-	@Resource
-	private OperateLogService<OperateLogBean> operateLogService;
-	
-	@Resource
-	private UserService<UserBean> userService;
-	
-	@Resource
-	private CommentService<CommentBean> commentService;
-	
-	
+    @Resource
+    private OperateLogService<OperateLogBean> operateLogService;
 
-	@Test
-	public void publish() throws Exception{
-		long start = System.currentTimeMillis();
-		UserBean user = userService.findById(1);
-		
-		String str = "{\"table_name\":\""+DataTableType.心情.value+"\", \"table_id\":1104, \"content\":\"谢谢，你也是！\", \"cid\":0}";
-		
-		JSONObject jo = JSONObject.fromObject(str);
-		try {
-			logger.info("isSuccess:" +commentService.add(jo, user, null));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		long end = System.currentTimeMillis();
-		logger.info("最终总耗时：" +(end - start) +"毫秒");
-	}
-	
-	@Test
-	public void getCommentByLimit(){
+    @Resource
+    private UserService<UserBean> userService;
+
+    @Resource
+    private CommentService<CommentBean> commentService;
+
+
+
+    @Test
+    public void publish() throws Exception{
+        long start = System.currentTimeMillis();
+        UserBean user = userService.findById(1);
+
+        String str = "{\"table_name\":\""+DataTableType.心情.value+"\", \"table_id\":1104, \"content\":\"谢谢，你也是！\", \"cid\":0}";
+
+        JSONObject jo = JSONObject.fromObject(str);
+        try {
+            logger.info("isSuccess:" +commentService.add(jo, user, null));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        long end = System.currentTimeMillis();
+        logger.info("最终总耗时：" +(end - start) +"毫秒");
+    }
+
+    @Test
+    public void getCommentByLimit(){
 		/*UserBean user = userService.findById(1);
-		
+
 		String str = "{\"table_name\":\""+DataTableType.心情.value+"\", \"table_id\":1,\"pageSize\":5,\"first_id\": 2, \"last_id\":2, \"method\":\"firstloading\"}";
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
@@ -62,16 +62,16 @@ public class CommentTest extends BaseTest {
 				logger.info("content:" +map.get("content"));
 				logger.info("count:" +map.get("count"));
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
-	}
-	
-	@Test
-	public void getOneCommentItemsByLimit(){
+    }
+
+    @Test
+    public void getOneCommentItemsByLimit(){
 		/*UserBean user = userService.findById(1);
-		
+
 		String str = "{\"table_name\":\""+DataTableType.心情.value+"\", \"cid\":1, \"table_id\":1,\"first_id\": 2, \"last_id\":2, \"method\":\"firstloading\"}";
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
@@ -81,25 +81,25 @@ public class CommentTest extends BaseTest {
 				logger.info("id:" +map.get("id"));
 				logger.info("content:" +map.get("content"));
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
-	}
-	
-	@Test
-	public void getCommentsCount(){
+    }
+
+    @Test
+    public void getCommentsCount(){
 		/*UserBean user = userService.findById(1);
-		
+
 		String str = "{\"table_name\":\""+DataTableType.心情.value+"\", \"table_id\":1}";
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
 			int count = commentService.getCountByObject(jo, user, null);
 			logger.info("总数"+count);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
-	}
-	
+    }
+
 }

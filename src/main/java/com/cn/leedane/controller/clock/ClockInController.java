@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,5 +48,19 @@ public class ClockInController extends BaseController{
 		message.putAll(clockInService.add(getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
 		return message.getMap();
 	}
-	
+
+	/**
+	 * 获取指定日期的打卡任务的列表
+	 * @return
+	 */
+	@RequestMapping(value = "/{clockId}/{date}/ins", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> clockIns(@PathVariable("clockId") int clockId, @PathVariable("date") String date, Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+
+		checkRoleOrPermission(model, request);
+		message.putAll(clockInService.clockIns(clockId, date, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		return message.getMap();
+	}
 }

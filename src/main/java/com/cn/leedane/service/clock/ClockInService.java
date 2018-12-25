@@ -46,4 +46,16 @@ public interface ClockInService <T extends IDBean>{
 	 * @return
 	 */
 	public  Map<String,Object> delete(int clockInId, UserBean user, HttpServletRequest request);
-}	
+
+
+	/**
+	 * 	获取任务在制定日期的打卡情况
+	 * @param clockId
+	 * @param date
+	 * @param json
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+    public Map<String, Object> clockIns(int clockId, String date, JSONObject json, UserBean user, HttpServletRequest request);
+}

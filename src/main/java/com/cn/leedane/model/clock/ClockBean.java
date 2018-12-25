@@ -161,10 +161,28 @@ public class ClockBean extends RecordTimeBean{
 	private int totalDay;
 	
 	/**
-	 * 是否成员自动加入，默认是true，表示共享的任务，其他人员可以不通过创建者自动加入
+	 * 是否成员自动加入，默认是false，表示共享的任务，其他人员可以不通过创建者自动加入
 	 */
 	@Column(value="auto_add", required = true)
 	private boolean autoAdd;
+
+	/**
+	 * 是否允许成员自动退出，默认是true，表示共享的任务，其他人员可以自动退出
+	 */
+	@Column(value="auto_out", required = true)
+	private boolean autoOut;
+
+	/**
+	 * 是否允许成员在动态中看大家的信息，默认是true，表示共享的任务，其他人员可以看到彼此的信息
+	 */
+	@Column(value="see_each_other", required = true)
+	private boolean seeEachOther;
+
+	/**
+	 * 是否成员打卡需要审核，默认是false，表示共享的任务，其他成员打卡不需要审核
+	 */
+	@Column(value="must_check_clock_in", required = true)
+	private boolean mustCheckClockIn;
 
 	public String getTitle() {
 		return title;
@@ -334,10 +352,32 @@ public class ClockBean extends RecordTimeBean{
 	public void setAutoAdd(boolean autoAdd) {
 		this.autoAdd = autoAdd;
 	}
-	
-	
 
-//	public int getPunishmentScore() {
+	public boolean isAutoOut() {
+		return autoOut;
+	}
+
+	public void setAutoOut(boolean autoOut) {
+		this.autoOut = autoOut;
+	}
+
+	public boolean isSeeEachOther() {
+		return seeEachOther;
+	}
+
+	public void setSeeEachOther(boolean seeEachOther) {
+		this.seeEachOther = seeEachOther;
+	}
+
+	public boolean isMustCheckClockIn() {
+		return mustCheckClockIn;
+	}
+
+	public void setMustCheckClockIn(boolean mustCheckClockIn) {
+		this.mustCheckClockIn = mustCheckClockIn;
+	}
+
+	//	public int getPunishmentScore() {
 //		return punishmentScore;
 //	}
 //

@@ -45,6 +45,8 @@ public class ClockMemberDisplay implements Serializable{
 	
 	private int newStatus;//对方处理后的状态
 
+	private int clockInNumber; //打卡次数
+
 	public int getId() {
 		return id;
 	}
@@ -164,5 +166,12 @@ public class ClockMemberDisplay implements Serializable{
 	public void setModifyTime(String modifyTime) {
 		this.modifyTime = modifyTime;
 	}
-	
+
+	public int getClockInNumber() {
+		return clockInNumber;
+	}
+
+	public void setClockInNumber(int clockInNumber) {
+		this.clockInNumber = clockInNumber;
+	}
 }

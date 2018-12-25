@@ -145,7 +145,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		boolean result = clockMapper.save(clockBean) > 0;
 		if(result){
 			//保存动态信息
-			clockDynamicHandler.saveDynamic(clockBean.getId(), new Date(), user.getId(), userHandler.getUserName(user.getId()) + "创建了任务", true);
+			clockDynamicHandler.saveDynamic(clockBean.getId(), new Date(), user.getId(), "创建了任务", true, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 			
 			//添加成员
 			result = clockMemberService.add(clockBean.getId(), user.getId(), jo, user, request);
@@ -217,7 +217,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 				}
 				
 				//保存动态信息
-				clockDynamicHandler.saveDynamic(clockBean.getId(), new Date(), user.getId(), userHandler.getUserName(user.getId()) + "更新了任务", true);
+				clockDynamicHandler.saveDynamic(clockBean.getId(), new Date(), user.getId(), "更新了任务", true, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 				
 			}else{
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库修改失败.value));
@@ -282,7 +282,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 			}
 			
 			//保存动态信息
-			clockDynamicHandler.saveDynamic(clockBean.getId(), new Date(), user.getId(), userHandler.getUserName(user.getId()) + "删除了任务", true);
+			clockDynamicHandler.saveDynamic(clockBean.getId(), new Date(), user.getId(), "删除了任务", true, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 			
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
@@ -459,10 +459,12 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该提醒任务不存在或者不支持共享.value));
 		
 		//保存动态信息
-		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), userHandler.getUserName(user.getId()) + "查看任务信息", false);
-		
+		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), "查看任务信息", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
+
+		ClockDisplay display = clockDisplays.get(0);
+		display.setMembers(clockMemberHandler.members(clockId).size());
 		message.put("isSuccess", true);
-		message.put("message", clockDisplays.get(0));
+		message.put("message", display);
 		return message.getMap();
 	}
 
@@ -496,7 +498,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该提醒任务不存在或者不支持共享.value));
 		
 		//保存动态信息
-		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), userHandler.getUserName(user.getId()) + "查看任务的缩略信息", false);
+		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), "查看任务的缩略信息", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 				
 		clockSearchDisplay.setMemberNumber(clockMemberHandler.members(clockId).size());
 		message.put("isSuccess", true);
@@ -532,7 +534,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		}
 		
 		//获取任务的时间列表
-		List<Date> allDates = findDates(clock.getStartDate(), clock.getEndDate() == null ? new Date(): clock.getEndDate(), clock.getRepeat_());
+		List<Date> allDates = findDates(clock.getStartDate(), clock.getEndDate() == null ? new Date(): (clock.getEndDate().getTime() > new Date().getTime() ?  new Date(): clock.getEndDate()) , clock.getRepeat_());
 		if(CollectionUtil.isNotEmpty(allDates)){
 			int dayIndex = (allDates.size() - 1) > 7 ? 7: allDates.size() - 1;
 			List<Date> searchDates = new ArrayList<Date>();
@@ -542,17 +544,31 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 			//取最近7天的日期
 			String start = DateUtil.DateToString(searchDates.get(0), "yyyy-MM-dd");
 			String end = DateUtil.DateToString(searchDates.get(searchDates.size() - 1), "yyyy-MM-dd");
-			List<Map<String, Object>> data = clockInMapper.getClockInsRangeDate(clockId, start, end);
-//			statisticsDisplay.setClockIns(getClockIns(searchDates, data));
+			List<Map<String, String>> data = clockInMapper.getClockInsRangeDate(clockId, start, end);
+			statisticsDisplay.setResults(getClockIns(searchDates, data));
 		}
-		UsersBean users = new UsersBean();
-		users.setName("dane");
-//		Object aa = clockInMapper.addUser(users);
-//		System.out.println("-djdjdd"+ aa);
-		statisticsDisplay.setMembers(clockInMapper.getTopMember(clockId));
+		statisticsDisplay.setMembers(getTop3Member(clockId));
 		message.put("isSuccess", true);
 		message.put("message", statisticsDisplay);
 		return message.getMap();
+	}
+
+	/**
+	 * 获取排名前三的额用户
+	 * @param clockId
+	 * @return
+	 */
+	private List<Map<String, Object>> getTop3Member(int clockId) {
+		List<Map<String, Object>> members = clockMemberMapper.membersSortByIns(clockId, 3);
+		if(CollectionUtil.isNotEmpty(members)){
+			for(Map<String, Object> mb: members){
+				int userId = StringUtil.changeObjectToInt(mb.get("member_id"));
+				mb.put("account", userHandler.getUserName(userId));
+				mb.put("image", userHandler.getUserPicPath(userId, "30x30"));
+			}
+			return members;
+		}else
+			return new ArrayList<Map<String, Object>>();
 	}
 
 
@@ -563,8 +579,8 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 	 * @return
 	 */
 	private List<Map<String, Object>> getClockIns(List<Date> searchDates,
-			List<Map<String, Object>> data) {
-		List<Map<String, Object>> array = new ArrayList<Map<String,Object>>();
+			List<Map<String, String>> data) {
+		List<Map<String, Object>> array = new ArrayList<Map<String, Object>>();
 		if(CollectionUtil.isNotEmpty(searchDates)){
 			for(Date date: searchDates){
 				array.add(getObjectByResult(date, data));
@@ -581,15 +597,16 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 	 * @param data
 	 * @return
 	 */
-	private Map<String, Object> getObjectByResult(Date date, List<Map<String, Object>> data) {
+	private Map<String, Object> getObjectByResult(Date date, List<Map<String, String>> data) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String d = DateUtil.DateToString(date, "yyyy-MM-dd");
 		map.put("clock_date", d);
 		map.put("number", 0);
 		if(CollectionUtil.isNotEmpty(data)){
-			for(Map<String, Object> m: data){
+			for(Map<String, String> m: data){
 				if(m.containsKey("clock_date") && d.equalsIgnoreCase(StringUtil.changeNotNull(m.get("clock_date")))){
-					return m;
+					map.put("number", StringUtil.changeObjectToInt(m.get("number")));
+					break;
 				}
 			}
 		}

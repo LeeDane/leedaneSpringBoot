@@ -49,18 +49,20 @@ public class ClockHandler {
 	
 	@Value("${constant.clock.system.category.id}")
     public int CLOCK_SYSTEM_CATEGORY_ID;
-	
-	
+
+
 	/**
-	 * 获取正常状态的任务对象
-	 * @param bookId
+	 * 获取正常状态的任务对象(包括正常结束状态)
+	 * @param clockId
 	 * @return
 	 */
 	public ClockBean getNormalClock(int clockId){
 		ClockBean clock = getClock(clockId);
-		
-		//不是自己的任务或者是不属于自己的任务将抛出权限异常
-		if(clock == null ||  (clock.getStatus() != ConstantsUtil.STATUS_NORMAL)){
+
+		if(clock == null ||  (clock.getStatus() != ConstantsUtil.STATUS_NORMAL
+				&& clock.getStatus() != ConstantsUtil.STATUS_END
+				&& (clock.getEndDate() != null
+					&& clock.getEndDate().getTime() < DateUtil.stringToDate(DateUtil.DateToString(new Date(), "yyyy-MM-dd"), "yyyy-MM-dd").getTime()))){
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该提醒任务不存在或者不支持共享.value));
 		}
 		return clock;

@@ -103,6 +103,7 @@ public class ClockDynamicServiceImpl extends AdminRoleCheckService implements Cl
 				display.setModifyTime(DateUtil.DateToString(dynamicBean.getModifyTime()));
 				display.setPicPath(userHandler.getUserPicPath(createUserId, "30x30"));
 				display.setStatus(dynamicBean.getStatus());
+				display.setMessageType(dynamicBean.getMessageType());
 				dynamicDisplays.add(display);
 			}
 		}

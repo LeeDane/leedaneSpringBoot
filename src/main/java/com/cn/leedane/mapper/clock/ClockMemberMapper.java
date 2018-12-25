@@ -1,6 +1,7 @@
 package com.cn.leedane.mapper.clock;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -16,7 +17,7 @@ import com.cn.leedane.model.clock.ClockMemberBean;
 public interface ClockMemberMapper extends BaseMapper<ClockMemberBean>{
 
 	/**
-	 * 获取成员列表
+	 * 获取成员列表(只是按照创建时间做了排序)
 	 * @param clockId
 	 * @return
 	 */
@@ -50,5 +51,13 @@ public interface ClockMemberMapper extends BaseMapper<ClockMemberBean>{
 	 * @return
 	 */
 	public boolean updateStatus(@Param("clockId")int clockId, @Param("memberId")int memberId, @Param("status")int statu);
-	
+
+
+	/**
+	 * 获取任务的成员列表(通过打卡次数进行排序)
+	 * @param clockId
+	 * @param limit
+	 * @return
+	 */
+	public List<Map<String, Object>> membersSortByIns(@Param("clockId")int clockId, @Param("limit")int limit);
 }

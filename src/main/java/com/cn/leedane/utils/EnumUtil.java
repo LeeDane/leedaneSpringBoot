@@ -764,8 +764,9 @@ public class EnumUtil {
 	 * version 1.0
 	 */
 	public enum CustomMessageExtraType {
-		聊天(1), 任务打卡(2), 请求加好友(3), 同意加好友(4)
-		, 请求加入任务(5), 同意加入任务(6), 刷新任务(7), 任务修改(8), 邀请加入任务(9), 任务打卡送积分(10), 动态失败超过三次(11);
+		其他未知类型(-1), 聊天(1), 任务打卡(2), 请求加好友(3), 同意加好友(4)
+		, 请求加入任务(5), 同意加入任务(6), 刷新任务(7), 任务修改(8), 邀请加入任务(9),
+		任务打卡送积分(10), 动态失败超过三次(11);
 	
 		private CustomMessageExtraType(int value) {
 			this.value = value;

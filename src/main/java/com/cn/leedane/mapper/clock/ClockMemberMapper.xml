@@ -12,7 +12,7 @@
 	<select id="members" resultMap="objectBean">
 		SELECT cm.id, cm.status, cm.create_user_id, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time 
 		, cm.member_id, cm.clock_id, cm.remind
-		 from t_clock_member cm where cm.`status` = 1 and cm.clock_id = #{clockId} ORDER BY cm.create_time desc;
+		 from t_clock_member cm where cm.`status` = 1 and cm.clock_id = #{clockId} ORDER BY cm.create_time;
 	</select>
 	
 	<update id="exitClock">
@@ -30,6 +30,17 @@
 	<select id="inMember" resultMap="objectBean">
 		SELECT cm.id
 		 from t_clock_member cm where cm.`status` = 1 and cm.clock_id = #{clockId} and cm.member_id = #{userId};
+	</select>
+
+	<select id="membersSortByIns" resultType="java.util.Map">
+		SELECT COUNT(ci.id) number, cm.create_user_id, cm.member_id, date_format(cm.create_time, '%Y-%m-%d %H:%i:%s') create_time
+		from t_clock_member cm LEFT JOIN t_clock_in ci on ci.create_user_id = cm.member_id and ci.clock_id = cm.clock_id and ci.`status` = 1
+		where cm.clock_id = #{clockId} and cm.`status` = 1
+		GROUP BY cm.member_id
+		ORDER BY number desc
+		<if test="limit > 0">
+			limit #{limit}
+		</if>
 	</select>
 	
 	<resultMap type="com.cn.leedane.model.clock.ClockMemberBean" id="objectBean">
