@@ -33,8 +33,8 @@ public class ClockBean extends RecordTimeBean{
 	/**
 	 * 任务的描述，必须字段(为空将以标题代替)
 	 */
-	@Column(value="describe_", required = true)
-	private String describe_;
+	@Column(value="clock_describe", required = true)
+	private String clockDescribe;
 	
 	/**
 	 * 任务的图标，必须字段(为空将以显示默认的无图照片)
@@ -127,8 +127,8 @@ public class ClockBean extends RecordTimeBean{
 	/**
 	 * 任务的重复规则(必须的)
 	 */
-	@Column(value="repeat_", required = true)
-	private String repeat_; //重复规则
+	@Column(value="clock_repeat", required = true)
+	private String clockRepeat; //重复规则
 	
 	/**
 	 * 任务的计步打卡，当clock_in_type为计步打卡的时候，用户计步打卡最低的要求
@@ -248,20 +248,12 @@ public class ClockBean extends RecordTimeBean{
 		this.endDate = endDate;
 	}
 
-	public String getDescribe_() {
-		return describe_;
+	public String getClockRepeat() {
+		return clockRepeat;
 	}
 
-	public void setDescribe_(String describe_) {
-		this.describe_ = describe_;
-	}
-
-	public String getRepeat_() {
-		return repeat_;
-	}
-
-	public void setRepeat_(String repeat_) {
-		this.repeat_ = repeat_;
+	public void setClockRepeat(String clockRepeat) {
+		this.clockRepeat = clockRepeat;
 	}
 
 	public boolean isChooseImg() {
@@ -376,6 +368,15 @@ public class ClockBean extends RecordTimeBean{
 	public void setMustCheckClockIn(boolean mustCheckClockIn) {
 		this.mustCheckClockIn = mustCheckClockIn;
 	}
+
+	public String getClockDescribe() {
+		return clockDescribe;
+	}
+
+	public void setClockDescribe(String clockDescribe) {
+		this.clockDescribe = clockDescribe;
+	}
+
 
 	//	public int getPunishmentScore() {
 //		return punishmentScore;

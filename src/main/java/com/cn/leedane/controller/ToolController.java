@@ -224,11 +224,12 @@ public class ToolController extends BaseController{
 		message.put("message", RSAKeyUtil.getInstance().getPublicKey());
 		return message.getMap();
 	}
-	
+
 	/**
 	 * 根据图片地址获取网络图片流
+	 * @param imgUrl
 	 * @param request
-	 * @param response
+	 * @return
 	 */
 	@RequestMapping(value = "/networdImage", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getNetwordImage(@RequestParam("url") String imgUrl, HttpServletRequest request){
@@ -277,12 +278,13 @@ public class ToolController extends BaseController{
     	Auth auth = Auth.create(CloudStoreHandler.ACCESSKEY, CloudStoreHandler.SECRETKEY);
     	return auth.uploadToken(CloudStoreHandler.BUCKETNAME);
     }
-    
-    /**
+
+	/**
 	 * 根据图片地址获取网络图片流
+	 * @param cnid
 	 * @param request
-	 * @param response
-     * @throws WriterException 
+	 * @return
+	 * @throws WriterException
 	 */
 	@RequestMapping(value = "/loginQrCode", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> loginQrCode(@RequestParam("cnid") String cnid, HttpServletRequest request) throws WriterException{

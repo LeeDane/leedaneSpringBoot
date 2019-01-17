@@ -321,4 +321,33 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), "查看"+date+"的打卡情况", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 		return message.getMap();
 	}
+
+	@Override
+	public Map<String, Object> userClockIns(int clockId, int toUserId, String date, JSONObject json, UserBean user, HttpServletRequest request) {
+		logger.info("ClockInServiceImpl-->userClockIns():clockId=" +clockId + ", date="+ date +", userId = "+ toUserId +", user=" +user.getAccount());
+		clockHandler.getNormalClock(clockId);
+		ResponseMap message = new ResponseMap();
+		if(!clockMemberHandler.inMember(user.getId(), clockId))
+			throw new UnauthorizedException("您还未加入该任务，无法获取成员列表。");
+		List<Map<String, Object>> members = clockInMapper.membersSortByIns(clockId, date,0);
+		List<ClockMemberDisplay> displays = new ArrayList<ClockMemberDisplay>();
+		if(CollectionUtil.isNotEmpty(members)){
+			ClockMemberDisplay display;
+			for(Map<String, Object> member: members){
+				int memberId = StringUtil.changeObjectToInt(member.get("member_id"));
+				display = new ClockMemberDisplay();
+				display.setAccount(userHandler.getUserName(memberId));
+				display.setCreateUserId(memberId);
+				display.setCreateTime(StringUtil.changeNotNull(member.get("create_time")));
+				display.setPicPath(userHandler.getUserPicPath(memberId, "30x30"));
+				display.setClockInNumber(StringUtil.changeObjectToInt(member.get("number")));
+				displays.add(display);
+			}
+		}
+		message.put("message", displays);
+		message.put("isSuccess", true);
+		//保存动态信息
+		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), "查看"+date+"的打卡情况", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
+		return message.getMap();
+	}
 }

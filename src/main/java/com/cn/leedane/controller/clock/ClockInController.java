@@ -63,4 +63,19 @@ public class ClockInController extends BaseController{
 		message.putAll(clockInService.clockIns(clockId, date, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
 		return message.getMap();
 	}
+
+	/**
+	 * 获取指定日期的用户打卡详情
+	 * @return
+	 */
+	@RequestMapping(value = "/{clockId}/user/{toUserId}/{date}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> userClockIns(@PathVariable("clockId") int clockId, @PathVariable("toUserId") int toUserId, @PathVariable("date") String date, Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+
+		checkRoleOrPermission(model, request);
+		message.putAll(clockInService.userClockIns(clockId, toUserId, date, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		return message.getMap();
+	}
 }

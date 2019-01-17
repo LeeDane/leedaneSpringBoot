@@ -112,7 +112,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		if(StringUtil.isNull(clockBean.getTitle()))
 			throw new NullPointerException("任务标题不能为空！");
 		
-		if(StringUtil.isNull(clockBean.getDescribe_()))
+		if(StringUtil.isNull(clockBean.getClockDescribe()))
 			throw new NullPointerException("任务描述不能为空！");
 		
 		if(clockBean.getStartDate() == null)
@@ -124,7 +124,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 //		if(clockBean.getClockStartTime() == null)
 //			throw new NullPointerException("打卡开始时间不能为空！");
 		
-		if(StringUtil.isNull(clockBean.getRepeat_()))
+		if(StringUtil.isNull(clockBean.getClockRepeat()))
 			throw new NullPointerException("重复周期不能为空！");
 				
 		ResponseMap message = new ResponseMap();
@@ -319,8 +319,8 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 				//没打卡的
 				if(!clockDisplay.isClockIn()){
 					//计算任务结束的天数
-					clockDisplay.setLeftDay(findDates(DateUtil.stringToDate(date, "yyyy-MM-dd"), DateUtil.stringToDate(clockDisplay.getEndDate(), "yyyy-MM-dd"), clockDisplay.getRepeat_()).size() - 1);
-					clockDisplay.setTotalDay(findDates(DateUtil.stringToDate(clockDisplay.getStartDate(), "yyyy-MM-dd"), DateUtil.stringToDate(clockDisplay.getEndDate(), "yyyy-MM-dd"), clockDisplay.getRepeat_()).size());
+					clockDisplay.setLeftDay(findDates(DateUtil.stringToDate(date, "yyyy-MM-dd"), DateUtil.stringToDate(clockDisplay.getEndDate(), "yyyy-MM-dd"), clockDisplay.getClockRepeat()).size() - 1);
+					clockDisplay.setTotalDay(findDates(DateUtil.stringToDate(clockDisplay.getStartDate(), "yyyy-MM-dd"), DateUtil.stringToDate(clockDisplay.getEndDate(), "yyyy-MM-dd"), clockDisplay.getClockRepeat()).size());
 				}
 			}
 		}
@@ -342,8 +342,8 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		if(CollectionUtil.isNotEmpty(clockDisplays)){
 			for(ClockDisplay clockDisplay: clockDisplays){
 				//计算任务结束的天数
-				clockDisplay.setLeftDay(findDates(new Date(), DateUtil.stringToDate(clockDisplay.getEndDate(), "yyyy-MM-dd"), clockDisplay.getRepeat_()).size() - 1);
-				clockDisplay.setTotalDay(findDates(DateUtil.stringToDate(clockDisplay.getStartDate(), "yyyy-MM-dd"), DateUtil.stringToDate(clockDisplay.getEndDate(), "yyyy-MM-dd"), clockDisplay.getRepeat_()).size());
+				clockDisplay.setLeftDay(findDates(new Date(), DateUtil.stringToDate(clockDisplay.getEndDate(), "yyyy-MM-dd"), clockDisplay.getClockRepeat()).size() - 1);
+				clockDisplay.setTotalDay(findDates(DateUtil.stringToDate(clockDisplay.getStartDate(), "yyyy-MM-dd"), DateUtil.stringToDate(clockDisplay.getEndDate(), "yyyy-MM-dd"), clockDisplay.getClockRepeat()).size());
 			}
 		}
 		message.put("isSuccess", true);
@@ -361,11 +361,12 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		int currentIndex = JsonUtil.getIntValue(json, "current", 0); //当前的索引页
 		int total = JsonUtil.getIntValue(json, "total", 0); //当前的索引页
 		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
-		List<ClockDisplay> clockDisplays = clockMapper.getMyEndedClocks(user.getId(), start, pageSize, DateUtil.DateToString(new Date(), "yyyy-MM-dd"));
+		String dd = DateUtil.DateToString(new Date(), "yyyy-MM-dd");
+		List<ClockDisplay> clockDisplays = clockMapper.getMyEndedClocks(user.getId(), start, pageSize, dd);
 		if(CollectionUtil.isNotEmpty(clockDisplays)){
 			for(ClockDisplay clockDisplay: clockDisplays){
 				//计算任务结束
-				int totalDay = findDates(DateUtil.stringToDate(clockDisplay.getStartDate(), "yyyy-MM-dd"), DateUtil.stringToDate(clockDisplay.getEndDate(), "yyyy-MM-dd"), clockDisplay.getRepeat_()).size();
+				int totalDay = findDates(DateUtil.stringToDate(clockDisplay.getStartDate(), "yyyy-MM-dd"), DateUtil.stringToDate(clockDisplay.getEndDate(), "yyyy-MM-dd"), clockDisplay.getClockRepeat()).size();
 				clockDisplay.setTotalDay(totalDay);
 			}
 		}
@@ -534,7 +535,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		}
 		
 		//获取任务的时间列表
-		List<Date> allDates = findDates(clock.getStartDate(), clock.getEndDate() == null ? new Date(): (clock.getEndDate().getTime() > new Date().getTime() ?  new Date(): clock.getEndDate()) , clock.getRepeat_());
+		List<Date> allDates = findDates(clock.getStartDate(), clock.getEndDate() == null ? new Date(): (clock.getEndDate().getTime() > new Date().getTime() ?  new Date(): clock.getEndDate()) , clock.getClockRepeat());
 		if(CollectionUtil.isNotEmpty(allDates)){
 			int dayIndex = (allDates.size() - 1) > 7 ? 7: allDates.size() - 1;
 			List<Date> searchDates = new ArrayList<Date>();

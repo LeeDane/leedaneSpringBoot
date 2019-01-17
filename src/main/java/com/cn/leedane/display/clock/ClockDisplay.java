@@ -28,7 +28,7 @@ public class ClockDisplay implements Serializable{
 	
 	private String title;
 
-	private String describe_;
+	private String clockDescribe;
 
 	private String icon;
 
@@ -66,7 +66,7 @@ public class ClockDisplay implements Serializable{
 	
 	private int totalDay; //总的日期
 	
-	private String repeat_; //重复规则
+	private String clockRepeat; //重复规则
 	
 	private String remind; //提醒时间
 	
@@ -219,20 +219,20 @@ public class ClockDisplay implements Serializable{
 		this.clockCount = clockCount;
 	}
 
-	public String getDescribe_() {
-		return describe_;
+	public String getClockDescribe() {
+		return clockDescribe;
 	}
 
-	public void setDescribe_(String describe_) {
-		this.describe_ = describe_;
+	public void setClockDescribe(String clockDescribe) {
+		this.clockDescribe = clockDescribe;
 	}
 
-	public String getRepeat_() {
-		return repeat_;
+	public String getClockRepeat() {
+		return clockRepeat;
 	}
 
-	public void setRepeat_(String repeat_) {
-		this.repeat_ = repeat_;
+	public void setClockRepeat(String clockRepeat) {
+		this.clockRepeat = clockRepeat;
 	}
 
 	public boolean isChooseImg() {

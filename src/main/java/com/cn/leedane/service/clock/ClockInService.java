@@ -58,4 +58,16 @@ public interface ClockInService <T extends IDBean>{
 	 * @return
 	 */
     public Map<String, Object> clockIns(int clockId, String date, JSONObject json, UserBean user, HttpServletRequest request);
+
+	/**
+	 * 获取用户的打卡详情
+	 * @param clockId
+	 * @param toUserId
+	 * @param date
+	 * @param json
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+    public Map<String, Object> userClockIns(int clockId, int toUserId, String date, JSONObject json, UserBean user, HttpServletRequest request);
 }

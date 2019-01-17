@@ -152,12 +152,12 @@ public class SqlProvider {
 				}
 				field.setAccessible(true);
 				Object beanValue = field.get(bean);
-				if (beanValue != null) {
+				//if (beanValue != null) {
 					updateSql.append(columnName).append("=#{").append(field.getName()).append("}");
 					if (i != fields.length - 1) {
 						updateSql.append(",");
 					}
-				}
+				//}
 			}
 		} catch (Exception e) {
 			new RuntimeException("get update sql is exceptoin:" + e);

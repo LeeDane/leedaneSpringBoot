@@ -25,7 +25,7 @@ public class ClockSearchDisplay implements Serializable{
 	
 	private String title;
 
-	private String describe_;
+	private String clockDescribe;
 
 	private String icon;
 
@@ -51,7 +51,7 @@ public class ClockSearchDisplay implements Serializable{
 			
 	private boolean clockIn;//是否打卡了
 		
-	private String repeat_; //重复规则
+	private String clockRepeat; //重复规则
 
 	private String account; //创建人账号
 	
@@ -107,12 +107,12 @@ public class ClockSearchDisplay implements Serializable{
 		this.title = title;
 	}
 
-	public String getDescribe_() {
-		return describe_;
+	public String getClockDescribe() {
+		return clockDescribe;
 	}
 
-	public void setDescribe_(String describe_) {
-		this.describe_ = describe_;
+	public void setClockDescribe(String clockDescribe) {
+		this.clockDescribe = clockDescribe;
 	}
 
 	public String getIcon() {
@@ -211,12 +211,12 @@ public class ClockSearchDisplay implements Serializable{
 		this.clockIn = clockIn;
 	}
 
-	public String getRepeat_() {
-		return repeat_;
+	public String getClockRepeat() {
+		return clockRepeat;
 	}
 
-	public void setRepeat_(String repeat_) {
-		this.repeat_ = repeat_;
+	public void setClockRepeat(String clockRepeat) {
+		this.clockRepeat = clockRepeat;
 	}
 
 	public String getAccount() {

@@ -82,6 +82,9 @@ public class DateUtil {
 					format = "yyyyMMdd";
 				}
 				break;
+			case 5:
+				format = "HH:mm";
+				break;
 			
 		}
 		return DateUtil.stringToDate(stringDate, format);
