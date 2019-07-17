@@ -1,9 +1,10 @@
 package com.cn.leedane.controller.stock;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.controller.BaseController;
+import com.cn.leedane.model.stock.StockBean;
+import com.cn.leedane.service.stock.StockService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.controller.BaseController;
-import com.cn.leedane.model.stock.StockBean;
-import com.cn.leedane.service.stock.StockService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 股票接口controller
@@ -45,7 +43,7 @@ public class StockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(stockService.init(getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(stockService.init(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		
 		
 		return message.getMap();
@@ -64,7 +62,7 @@ public class StockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(stockService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(stockService.add(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -79,7 +77,7 @@ public class StockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(stockService.update(stockId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(stockService.update(stockId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -94,7 +92,7 @@ public class StockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(stockService.delete(stockId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(stockService.delete(stockId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 		

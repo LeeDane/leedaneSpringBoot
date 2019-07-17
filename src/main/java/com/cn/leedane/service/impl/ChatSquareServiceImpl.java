@@ -1,29 +1,22 @@
 package com.cn.leedane.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.ChatSquareMapper;
 import com.cn.leedane.model.ChatSquareBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.ChatSquareService;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 /**
  * 聊天广场service的实现类
  * @author LeeDane
@@ -44,7 +37,7 @@ public class ChatSquareServiceImpl extends AdminRoleCheckService implements Chat
 	private ChatSquareMapper chatSquareMapper;
 
 	@Override
-	public Map<String, Object> getLimit(JSONObject jo, HttpServletRequest request) {
+	public Map<String, Object> getLimit(JSONObject jo, HttpRequestInfoBean request) {
 		logger.info("ChatSquareServiceImpl-->getLimit():jsonObject=" +jo.toString());
 		return null;
 	}

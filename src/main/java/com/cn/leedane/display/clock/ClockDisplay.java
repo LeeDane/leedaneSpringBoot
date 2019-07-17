@@ -62,7 +62,7 @@ public class ClockDisplay implements Serializable{
 	
 	private int leftDay;//剩余结束的天数
 	
-	private boolean clockIn;//是否打卡了
+	private int clockInStatus;//打卡了状态，空表示未打卡，1表示已经打卡， 3表示待审核
 	
 	private int totalDay; //总的日期
 	
@@ -179,12 +179,12 @@ public class ClockDisplay implements Serializable{
 		this.clockEndTime = clockEndTime;
 	}
 
-	public boolean isClockIn() {
-		return clockIn;
+	public int getClockInStatus() {
+		return clockInStatus;
 	}
 
-	public void setClockIn(boolean clockIn) {
-		this.clockIn = clockIn;
+	public void setClockInStatus(int clockInStatus) {
+		this.clockInStatus = clockInStatus;
 	}
 
 	public int getTotalDay() {

@@ -1,11 +1,11 @@
 package com.cn.leedane.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.RoleBean;
+import com.cn.leedane.service.RoleService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.annotations.Param;
@@ -16,11 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.RoleBean;
-import com.cn.leedane.service.RoleService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 角色管理接口controller
@@ -51,6 +48,22 @@ public class RoleController extends BaseController{
 	 *股票模块固定角色编码
 	 */
 	public static final String STOCK_ROLE_CODE = "STOCK_ROLE";
+
+	/**
+	 *圈子模块固定角色编码
+	 */
+	public static final String CIRCLE_ROLE_CODE = "CIRCLE_ROLE";
+
+	/**
+	 *购物模块固定角色编码
+	 */
+	public static final String SHOPPING_ROLE_CODE = "SHOPPING_ROLE";
+
+
+	/**
+	 *宝宝模块固定角色编码
+	 */
+	public static final String BABY_ROLE_CODE = "BABY_ROLE";
 	
 	/**
 	 * 添加权限
@@ -63,7 +76,7 @@ public class RoleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(roleService.save(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(roleService.save(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -78,7 +91,7 @@ public class RoleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(roleService.edit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(roleService.edit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -93,7 +106,7 @@ public class RoleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(roleService.delete(rlid, getUserFromMessage(message), request));
+		message.putAll(roleService.delete(rlid, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -108,7 +121,7 @@ public class RoleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(roleService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(roleService.paging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -123,7 +136,7 @@ public class RoleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(roleService.deletes(rlids, getUserFromMessage(message), request));
+		message.putAll(roleService.deletes(rlids, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -138,7 +151,7 @@ public class RoleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(roleService.users(rlid, getUserFromMessage(message), request));
+		message.putAll(roleService.users(rlid, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -156,7 +169,7 @@ public class RoleController extends BaseController{
 		JSONObject json = getJsonFromMessage(message);
 		String users = JsonUtil.getStringValue(json, "users");
 		
-		message.putAll(roleService.allot(rlid, users, getUserFromMessage(message), request));
+		message.putAll(roleService.allot(rlid, users, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

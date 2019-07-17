@@ -1,15 +1,12 @@
 package com.cn.leedane.service.stock;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.springframework.transaction.annotation.Transactional;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import net.sf.json.JSONObject;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 /**
  * 股票卖出记录service接口类
@@ -29,7 +26,7 @@ public interface StockSellService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> add(int stockId, int stockBuyId, JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> add(int stockId, int stockBuyId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 更新股票卖出记录
@@ -41,7 +38,7 @@ public interface StockSellService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> update(int stockId, int stockBuyId, int stockSellId, JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> update(int stockId, int stockBuyId, int stockSellId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 删除股票卖出记录
@@ -53,6 +50,6 @@ public interface StockSellService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int stockId, int stockBuyId, int stockSellId, JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> delete(int stockId, int stockBuyId, int stockSellId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 }

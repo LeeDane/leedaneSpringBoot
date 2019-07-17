@@ -1,17 +1,15 @@
 package com.cn.leedane.service;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.MoodBean;
 import com.cn.leedane.model.UserBean;
+import net.sf.json.JSONObject;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 心情service接口类
@@ -29,7 +27,7 @@ public interface MoodService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> saveMood(JSONObject jsonObject, UserBean user, int status, HttpServletRequest request);
+	public Map<String, Object> saveMood(JSONObject jsonObject, UserBean user, int status, HttpRequestInfoBean request);
 	
 	/**
 	 * 保存纯文字的心情
@@ -39,7 +37,7 @@ public interface MoodService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> sendWord(JSONObject jsonObject, UserBean user, int status, HttpServletRequest request);
+	public Map<String, Object> sendWord(JSONObject jsonObject, UserBean user, int status, HttpRequestInfoBean request);
 	
 	
 	/**
@@ -49,7 +47,7 @@ public interface MoodService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> sendWordAndLink(JSONObject jsonObject, UserBean user, HttpServletRequest request);
+	public Map<String, Object> sendWordAndLink(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request);
 	
 	
 	/**
@@ -60,7 +58,7 @@ public interface MoodService <T extends IDBean>{
 	 * @param user
 	 * @return
 	 */
-	public Map<String, Object> updateMoodStatus(JSONObject jsonObject, int status, HttpServletRequest request, UserBean user);
+	public Map<String, Object> updateMoodStatus(JSONObject jsonObject, int status, HttpRequestInfoBean request, UserBean user);
 
 	/**
 	 * 删除心情(逻辑删除)
@@ -69,7 +67,7 @@ public interface MoodService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deleteMood(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> deleteMood(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取登录用户的心情列表
@@ -79,7 +77,7 @@ public interface MoodService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> rolling(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> rolling(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	
 	/**
@@ -90,7 +88,7 @@ public interface MoodService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getMoodsPaging(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getMoodsPaging(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	
 	/**
@@ -100,7 +98,7 @@ public interface MoodService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public boolean saveBase64Str(JSONObject jo, UserBean user, HttpServletRequest request);
+	public boolean saveBase64Str(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 保存心情（应用于已经上传完图片之后的发表）
@@ -110,7 +108,7 @@ public interface MoodService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> saveDividedMood(JSONObject jsonObject, UserBean user, int status, HttpServletRequest request);
+	public Map<String, Object> saveDividedMood(JSONObject jsonObject, UserBean user, int status, HttpRequestInfoBean request);
 
 	/**
 	 * 获取指定用户所有的发表成功的心情总数
@@ -121,7 +119,7 @@ public interface MoodService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getCountByUser(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getCountByUser(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取指定心情的列表
@@ -134,7 +132,7 @@ public interface MoodService <T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> detail(JSONObject jo, UserBean user,
-			HttpServletRequest request, String picSize) ;
+			HttpRequestInfoBean request, String picSize) ;
 	/**
 	 * 获取指定心情的图片列表
 	 * {'table_uuid':'leedane4e2f2684-ac82-4186-97fa-d8807211ef92', 'table_name':'t_mood'},uuid必须
@@ -145,7 +143,7 @@ public interface MoodService <T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> detailImgs(JSONObject jo, UserBean user,
-			HttpServletRequest request) ;
+			HttpRequestInfoBean request) ;
 
 	/**
 	 * 搜索心情
@@ -155,7 +153,7 @@ public interface MoodService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> search(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> search(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	
 	/**
@@ -166,7 +164,7 @@ public interface MoodService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> shakeSearch(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> shakeSearch(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	/**
 	 * 执行SQL对应字段的List<Map<String,Object>
 	 * @param sql sql语句,参数直接写在语句中，存在SQL注入攻击de风险，慎用
@@ -183,7 +181,7 @@ public interface MoodService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getTopicByLimit(JSONObject jo, UserBean user,HttpServletRequest request);
+	public Map<String, Object> getTopicByLimit(JSONObject jo, UserBean user,HttpRequestInfoBean request);
 
 	/**
 	 * 获取博客对象列表

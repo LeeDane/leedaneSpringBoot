@@ -285,7 +285,7 @@ public class Base64ImageUtil {
 	 */
 	public static String buildFolderPath(String folder){		
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER);
+		buffer.append(ConstantsUtil.getDefaultSaveFileFolder());
 		buffer.append(folder);
 		buffer.append("/");
 	    return buffer.toString() ; 

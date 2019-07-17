@@ -1,42 +1,26 @@
 package com.cn.leedane.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.CronTrigger;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.TriggerBuilder;
-import org.quartz.TriggerKey;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.exception.OperateException;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.JobManageMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.JobManageBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.JobManageService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.task.spring.QuartzJobFactory;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.quartz.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 具体任务的管理(增删改查)
@@ -61,7 +45,7 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
 	private UserHandler userHandler;
 	
 	@Override
-    public Map<String, Object> add(JSONObject jo, UserBean user, HttpServletRequest request) throws SchedulerException{
+    public Map<String, Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws SchedulerException{
 		logger.info("JobManageServiceImpl-->add():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		SqlUtil sqlUtil = new SqlUtil();
@@ -119,7 +103,7 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
     }
     
     @Override
-    public Map<String, Object> update(JSONObject jo, UserBean user, HttpServletRequest request) throws SchedulerException{
+    public Map<String, Object> update(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws SchedulerException{
     	logger.info("JobManageServiceImpl-->update():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		
@@ -186,7 +170,7 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
     }
     
     @Override
-    public Map<String, Object> delete(int jid, HttpServletRequest request) throws SchedulerException{
+    public Map<String, Object> delete(int jid, HttpRequestInfoBean request) throws SchedulerException{
     	logger.info("JobManageServiceImpl-->delete():jid="+jid);
 		ResponseMap message = new ResponseMap();
 		
@@ -217,7 +201,7 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
     
     @Override
 	public Map<String, Object> paging(JSONObject jsonObject, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("JobManageServiceImpl-->paging():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(jsonObject, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -235,7 +219,7 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
 		}
 		message.put("total", SqlUtil.getTotalByList(jobManageMapper.getTotal(DataTableType.任务.value, null)));
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取任务列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取任务列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);
@@ -244,7 +228,7 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
 
 	@Override
 	public Map<String, Object> deletes(String jobids, UserBean user,
-			HttpServletRequest request) throws SchedulerException {
+			HttpRequestInfoBean request) throws SchedulerException {
 		logger.info("JobManageServiceImpl-->deletes():jobids="+ jobids);
 		ResponseMap message = new ResponseMap();
 		if(StringUtil.isNull(jobids))

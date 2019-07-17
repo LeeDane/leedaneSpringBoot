@@ -1,16 +1,14 @@
 package com.cn.leedane.service;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.NotificationBean;
 import com.cn.leedane.model.UserBean;
+import net.sf.json.JSONObject;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 /**
  * 通知Service类
  * @author LeeDane
@@ -45,7 +43,7 @@ public interface NotificationService<T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getLimit(JSONObject jo, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 	/**
 	 * 分页获取通知列表
 	 * @param jo
@@ -56,7 +54,7 @@ public interface NotificationService<T extends IDBean>{
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> paging(String type,
 			int pageSize, int current, int total,
-			UserBean userFromMessage, HttpServletRequest request);
+			UserBean userFromMessage, HttpRequestInfoBean request);
 	
 	/**
 	 * 发送广播
@@ -67,7 +65,7 @@ public interface NotificationService<T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> sendBroadcast(JSONObject jo, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 	
 	/**
 	 * 删除通知
@@ -76,7 +74,7 @@ public interface NotificationService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deleteNotification(int nid, UserBean user, HttpServletRequest request);
+	public Map<String, Object> deleteNotification(int nid, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 更新通知为已读状态
@@ -85,7 +83,7 @@ public interface NotificationService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> updateRead(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> updateRead(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	/**
 	 * 全部更新通知为已读状态
 	 * @param jo
@@ -93,7 +91,7 @@ public interface NotificationService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> updateAllRead(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> updateAllRead(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取登录用户未读取消息的数量
@@ -102,6 +100,6 @@ public interface NotificationService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> noReadNumber(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> noReadNumber(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 }

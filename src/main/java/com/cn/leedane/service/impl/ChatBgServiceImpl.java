@@ -1,16 +1,4 @@
 package com.cn.leedane.service.impl;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.ChatBgUserHandler;
@@ -18,23 +6,23 @@ import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.ChatBgMapper;
 import com.cn.leedane.mapper.ChatBgUserMapper;
-import com.cn.leedane.model.ChatBgBean;
-import com.cn.leedane.model.ChatBgUserBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.ScoreBean;
-import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.*;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.service.ChatBgService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.ScoreService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 聊天背景相关service实现类
@@ -70,7 +58,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 
 	@Override
 	public Map<String, Object> paging(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+									  HttpRequestInfoBean request) {
 		logger.info("ChatBgServiceImpl-->paging():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		
@@ -119,7 +107,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 			}
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取聊天背景分页列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取聊天背景分页列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 			
 		message.put("isSuccess", true);
 		message.put("message", rs);
@@ -150,7 +138,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 
 	@Override
 	public Map<String, Object> publish(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ChatBgServiceImpl-->send():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		String desc = JsonUtil.getStringValue(jo, "desc"); //聊天背景的描述
@@ -196,7 +184,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 
 	@Override
 	public Map<String, Object> addChatBg(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ChatBgServiceImpl-->verifyChatBg():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		int cid = JsonUtil.getIntValue(jo, "cid", 0); //聊天背景的ID

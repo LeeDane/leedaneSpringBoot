@@ -69,11 +69,11 @@ public class BabyHtmlController extends BaseController{
 	
 	@Value("${constant.default.no.pic.path}")
     public String DEFAULT_NO_PIC_PATH;
-	
+
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面
 	 * @param model
-	 * @param httpSession
+	 * @param request
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.GET)

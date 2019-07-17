@@ -1,32 +1,25 @@
 package com.cn.leedane.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.exception.RE404Exception;
+import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.FinancialLocationMapper;
 import com.cn.leedane.model.FinancialLocationBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.FinancialLocationService;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 /**
  * 记账位置service的实现类
  * @author LeeDane
@@ -44,10 +37,13 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 	
 	@Autowired
 	private OperateLogService<OperateLogBean> operateLogService;
+
+	@Autowired
+	private UserHandler userHandler;
 	
 	@Override
 	public Map<String, Object> add(JSONObject jo, UserBean user,
-			HttpServletRequest request){
+			HttpRequestInfoBean request){
 		logger.info("FinancialLocationServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String location = JsonUtil.getStringValue(jo, "location");
 		String locationDesc = JsonUtil.getStringValue(jo, "locationDesc");
@@ -76,7 +72,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.添加失败.value));
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"用户ID为：",user.getId() , "添加位置信息为：", location, StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"添加位置信息为：", location, StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);
 					
 		message.put("isSuccess", true);
 		return message.getMap();
@@ -84,7 +80,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 	
 	@Override
 	public Map<String, Object> update(JSONObject jo, UserBean user,
-			HttpServletRequest request){
+			HttpRequestInfoBean request){
 		logger.info("FinancialLocationServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int flid = JsonUtil.getIntValue(jo, "flid"); //记录的ID
 		String location = JsonUtil.getStringValue(jo, "location");
@@ -114,14 +110,14 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改失败.value));
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"用户ID为：",user.getId() , "修改位置信息为：", location, StringUtil.getSuccessOrNoStr(result)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "修改位置信息为：", location, StringUtil.getSuccessOrNoStr(result)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, 0);
 
 		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> paging(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FinancialLocationServiceImpl-->paging():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -151,7 +147,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"用户ID为：",user.getId() , "获取记账位置列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "读取记账位置列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 				
 		message.put("isSuccess", true);
 		message.put("message", rs);
@@ -161,7 +157,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 
 	@Override
 	public Map<String, Object> delete(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FinancialLocationServiceImpl-->delete():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int flid = JsonUtil.getIntValue(jo, "flid");
 		ResponseMap message = new ResponseMap();
@@ -185,14 +181,14 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"用户ID为：",user.getId() , "删除位置信息ID为：", flid, StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "删除位置信息ID为：", flid, StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, 0);
 
 		return message.getMap();
 	}
 	
 	@Override
 	public Map<String, Object> getAll(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FinancialLocationServiceImpl-->getAll():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		StringBuffer sql = new StringBuffer();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
@@ -203,7 +199,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 		sql.append(" order by f.id desc");
 		rs = financialLocationMapper.executeSQL(sql.toString(), user.getId());
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"用户ID为：",user.getId() , "获取所有记账位置列表").toString(), "getAll()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"用户ID为：",user.getId() , "获取所有记账位置列表").toString(), "getAll()", ConstantsUtil.STATUS_NORMAL, 0);
 				
 		message.put("isSuccess", true);
 		message.put("message", rs);

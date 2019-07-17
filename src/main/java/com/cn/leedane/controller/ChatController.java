@@ -1,9 +1,9 @@
 package com.cn.leedane.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.ChatBean;
+import com.cn.leedane.service.ChatService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.ChatBean;
-import com.cn.leedane.service.ChatService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.ct)
@@ -37,7 +35,7 @@ public class ChatController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(chatService.send(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(chatService.send(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -52,7 +50,7 @@ public class ChatController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(chatService.deleteChat(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(chatService.deleteChat(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -67,7 +65,7 @@ public class ChatController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(chatService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(chatService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -82,7 +80,7 @@ public class ChatController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(chatService.updateRead(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(chatService.updateRead(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -97,7 +95,7 @@ public class ChatController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(chatService.noReadList(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(chatService.noReadList(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -114,7 +112,7 @@ public class ChatController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(chatService.getOneChatByAllUser(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(chatService.getOneChatByAllUser(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

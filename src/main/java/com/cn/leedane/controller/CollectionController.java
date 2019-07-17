@@ -1,10 +1,11 @@
 package com.cn.leedane.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.CollectionBean;
+import com.cn.leedane.service.CollectionService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -12,12 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.CollectionBean;
-import com.cn.leedane.service.CollectionService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.cl)
@@ -40,7 +38,7 @@ public class CollectionController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(collectionService.addCollect(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(collectionService.addCollect(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -55,7 +53,7 @@ public class CollectionController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(collectionService.deleteCollection(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(collectionService.deleteCollection(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -78,7 +76,7 @@ public class CollectionController extends BaseController{
 			return message.getMap();
 		}
 		
-		List<Map<String, Object>> result= collectionService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
+		List<Map<String, Object>> result= collectionService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 		logger.info("获得收藏的数量：" +result.size());
 		message.put("isSuccess", true);
 		message.put("message", result);

@@ -475,6 +475,9 @@ public class EnumUtil {
 		该任务您还没有邀请记录(4030),
 		非法操作异常(4031),
 		该任务不支持共享(4032),
+		该心情不存在(4033),
+		ES服务器连接异常(4034),
+		ES索引不存在(4035)
 		;
 		
 		private ResponseCode(int value) {
@@ -766,7 +769,7 @@ public class EnumUtil {
 	public enum CustomMessageExtraType {
 		其他未知类型(-1), 聊天(1), 任务打卡(2), 请求加好友(3), 同意加好友(4)
 		, 请求加入任务(5), 同意加入任务(6), 刷新任务(7), 任务修改(8), 邀请加入任务(9),
-		任务打卡送积分(10), 动态失败超过三次(11);
+		任务打卡送积分(10), 动态失败超过三次(11),打卡等待审核(12);
 	
 		private CustomMessageExtraType(int value) {
 			this.value = value;
@@ -807,4 +810,5 @@ public class EnumUtil {
 		public final int value;
 	
 	}
+
 }

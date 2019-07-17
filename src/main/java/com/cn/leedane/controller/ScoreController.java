@@ -1,12 +1,12 @@
 package com.cn.leedane.controller;
 
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.ScoreBean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.ScoreService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.ScoreBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.ScoreService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.sc)
@@ -47,7 +44,7 @@ public class ScoreController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(scoreService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(scoreService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -63,7 +60,7 @@ public class ScoreController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(scoreService.getTotalScore(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(scoreService.getTotalScore(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	

@@ -1,9 +1,9 @@
 package com.cn.leedane.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.JobManageBean;
+import com.cn.leedane.service.JobManageService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.apache.ibatis.annotations.Param;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.JobManageBean;
-import com.cn.leedane.service.JobManageService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.jm)
@@ -37,7 +35,7 @@ public class JobManageController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(jobManageService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(jobManageService.add(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -53,7 +51,7 @@ public class JobManageController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(jobManageService.update(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(jobManageService.update(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -69,7 +67,7 @@ public class JobManageController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(jobManageService.delete(jid, request));
+		message.putAll(jobManageService.delete(jid, getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -84,7 +82,7 @@ public class JobManageController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(jobManageService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(jobManageService.paging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -100,7 +98,7 @@ public class JobManageController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(jobManageService.deletes(jobids, getUserFromMessage(message), request));
+		message.putAll(jobManageService.deletes(jobids, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

@@ -1,15 +1,4 @@
 package com.cn.leedane.service.impl.circle;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.apache.shiro.authz.UnauthenticatedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
@@ -18,6 +7,7 @@ import com.cn.leedane.handler.circle.CirclePostHandler;
 import com.cn.leedane.handler.circle.CircleSettingHandler;
 import com.cn.leedane.mapper.circle.CircleMemberMapper;
 import com.cn.leedane.mapper.circle.CircleSettingMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleMemberBean;
@@ -25,13 +15,15 @@ import com.cn.leedane.model.circle.CircleSettingBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.circle.CircleSettingService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthenticatedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 圈子设置service实现类
@@ -69,10 +61,10 @@ public class CircleSettingServiceImpl extends AdminRoleCheckService implements C
 
 	@Override
 	public Map<String, Object> update(int circleId, int settingId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleSettingServiceImpl-->paging():jo="+json.toString());
 		ResponseMap message = new ResponseMap();
-		
+
 		circleHandler.getNormalCircleBean(circleId, user);
 
 		//标记用户是否有修改权限
@@ -84,15 +76,15 @@ public class CircleSettingServiceImpl extends AdminRoleCheckService implements C
 				canUpdate = roleType == CircleServiceImpl.CIRCLE_CREATER || roleType == CircleServiceImpl.CIRCLE_MANAGER;
 			}
 		}
-		
+
 		if(!canUpdate)
 			throw new UnauthenticatedException();
 		SqlUtil sqlUtil = new SqlUtil();
 		CircleSettingBean settingBean = (CircleSettingBean) sqlUtil.getUpdateBean(json, circleSettingHandler.getNormalSettingBean(circleId, user));
-		
+
 		if(settingBean == null || (settingBean.getCircleId() != circleId))
 			throw new UnauthenticatedException();
-		
+
 		settingBean.setModifyTime(DateUtil.getCurrentTime());
 		settingBean.setModifyUserId(user.getId());
 		boolean result = circleSettingMapper.update(settingBean) > 0 ;
@@ -111,8 +103,8 @@ public class CircleSettingServiceImpl extends AdminRoleCheckService implements C
 			message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改圈子id为"+ circleId+"的设置").toString(), "update()", ConstantsUtil.STATUS_NORMAL, 0);		
-		
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改圈子id为"+ circleId+"的设置").toString(), "update()", ConstantsUtil.STATUS_NORMAL, 0);
+
 		return message.getMap();
 	}
 }

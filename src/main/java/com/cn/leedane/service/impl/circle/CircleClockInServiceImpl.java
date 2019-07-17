@@ -1,18 +1,8 @@
 package com.cn.leedane.service.impl.circle;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.mapper.circle.CircleClockInMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleBean;
@@ -22,14 +12,16 @@ import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.circle.CircleClockInService;
 import com.cn.leedane.service.circle.CircleContributionService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.PlatformType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 圈子打卡service实现类
@@ -73,7 +65,7 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 
 	@Override
 	public Map<String, Object> saveClockIn(int circleId, JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		CircleBean circleBean = circleHandler.getNormalCircleBean(circleId, user);
 		
@@ -133,7 +125,7 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 
 	@Override
 	public Map<String, Object> paging(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		return null;
 	}

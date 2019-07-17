@@ -5,7 +5,7 @@
  	<meta charset="utf-8" />
    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
    	<!-- 正式环境下的cdn引用-->
-	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css}"/>
+	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{//cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css}"/>
 	<!-- 测试环境下的引用 -->
 	<link rel="stylesheet" th:if="${isDebug}" th:href="@{/page/other/bootstrap-3.3.0/css/bootstrap.min.css}" />
  </head>

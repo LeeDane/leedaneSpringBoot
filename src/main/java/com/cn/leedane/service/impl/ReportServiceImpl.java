@@ -1,36 +1,28 @@
 package com.cn.leedane.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CommonHandler;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.mapper.ReportMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.ReportBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.ReportService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 /**
  * 举报service的实现类
  * @author LeeDane
@@ -54,7 +46,7 @@ public class ReportServiceImpl extends AdminRoleCheckService implements ReportSe
 	private CommonHandler commonHandler;
 	
 	@Override
-	public Map<String, Object> addReport(JSONObject jo, final UserBean user, HttpServletRequest request){
+	public Map<String, Object> addReport(JSONObject jo, final UserBean user, HttpRequestInfoBean request){
 		//{\"table_name\":\"t_mood\", \"table_id\":2334, 'reason':'青色'}
 		logger.info("ReportServiceImpl-->addReport():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		final String tableName = JsonUtil.getStringValue(jo, "table_name");
@@ -123,7 +115,7 @@ public class ReportServiceImpl extends AdminRoleCheckService implements ReportSe
 
 	@Override
 	public Map<String, Object> cancel(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ReportServiceImpl-->cancel():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
 		int tableId = JsonUtil.getIntValue(jo, "table_id");
@@ -150,7 +142,7 @@ public class ReportServiceImpl extends AdminRoleCheckService implements ReportSe
 
 	@Override
 	public List<Map<String, Object>> getLimit(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ReportServiceImpl-->getLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int userId = JsonUtil.getIntValue(jo, "uid", user.getId());
 //		String tableName = JsonUtil.getStringValue(jo, "table_name");

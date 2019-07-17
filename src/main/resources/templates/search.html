@@ -6,12 +6,32 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>搜索</title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+
+	<link th:if="${not isDebug}" rel="stylesheet" href="//www.layuicdn.com/layui-v2.1.5/css/layui.css"  media="all" />
+	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.1.5/css/layui.css"  media="all" />
+
 	<style type="text/css">
+		@media screen and (max-width: 900px) {
+			.notification-list{
+			}
+		}
+
+		/**  大屏样式 **/
+		@media screen and (min-width: 900px){
+			.notification-list{
+				margin-left: 15px!important;
+				margin-right: 15px!important;
+			}
+		}
 		.clearFloat{
 			clear: both;
 		}
 		body{
-			background-color: #f5f5f5 !important;
+			font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+			font-size: 14px;
+			line-height: 1.42857143;
+			color: #333;
+			background-color: #fff;
 		}
 		.mainContainer{
 			padding-top: 60px;
@@ -59,136 +79,248 @@
 			font-size: 14px;
 			font-family: "Pingfang SC",STHeiti,"Lantinghei SC","Open Sans",Arial,"Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",SimSun,sans-serif;
 		}
+
+		.container{
+			margin-top: 50px;
+		}
+
+		.message-content{
+				border: 1px solid #ddd;
+				border-top:none !important;
+		}
+		.message-content{
+			margin-right: 0 !important;
+			margin-left: 0 !important;
+			margin-top: 0 !important;
+		}
+
+		.notification-list{
+			border:1px solid #f5f5f5;
+			box-shadow: 1px 0px 5px #888888;
+			margin-bottom: 10px;
+		}
+		.notification-list-padding{
+			padding-top: 5px;
+			border-radius: 3px;
+		}
+		.notification-list-item{
+			background-color: #fff !important;
+			border-color: #f5f5f5 !important;
+		}
+
+		.row{
+			margin-top: 8px;
+		}
+
+		.publish-time {
+			color: #999;
+			font-weight: bold;
+    		font-family: '微软雅黑';
+		}
+		.marginRight {
+			margin-right: 12px;
+		}
+
+		#notification-tabs .badge{
+			background-color: #428bca !important;
+			color: #fff;
+		}
 	</style>
 </head>
 <body>
-<div th:include="common :: hello">what?</div>
-<div class="container mainContainer">
-	   <div class="row">
-	   		<div class="col-lg-5">
-	   			<div class="input-group">
-		   			<input type="text" id="common-search-text" class="form-control"  onkeypress="if (event.keyCode == 13) search(this);" />
-	                <span class="input-group-btn">
+	<div th:include="common :: hello">what?</div>
+	<div class="container">
+		<div class="row" style="margin-top: 30px;">
+			<div class="col-lg-5">
+				<div class="input-group">
+					<input type="text" id="common-search-text" class="form-control"  onkeypress="if (event.keyCode == 13) search(this);" />
+					<span class="input-group-btn">
 	                    <button class="btn btn-primary btn-default" type="button" onclick="search(this);">Go!</button>
 	                </span>
-                </div>
-	   		</div>
-	   </div>
-	   <div class="row">
-	   		<div class="col-lg-12" style="margin-top: 10px;">
-	   			提示：最多展示最符合条件的10个用户、10条心情、10篇文章，本次检索耗时<span id="search-need-time" class="color-red">0</span>.
-	   		</div>
-	   </div>
-	   
-	   <div class="row">
-	   		<div class="col-lg-12" style="margin-top: 10px;">
-	   			本次检索到<span class="color-blue">用户</span>有&nbsp;<span id="search-user-number" class="color-red">0</span>&nbsp;个：
-	   		</div>
-	   </div>
-	   
-	   <div class="row" >
-	   		<div class="col-lg-12 col-sm-12" style="margin-top: 10px;">
-	   			<div class="row" id="user-result-show">
-	   				<!-- <div class="col-lg-1 col-sm-1">
-    		 			<img class="img-circle" alt="" width="60" height="60" src="http://pic.onlyloveu.top/leedane_app_upload_ec5da83b-4fd9-4924-ad04-3264dfc52a9843d8c1ec-95d3-4cc7-aa12-9379a2196df2_Screenshot_20161216-122520_01.png">
-    		 			<div class="user-account cut-text" title="LeeDane随时随地多多对对对">LeeDane随时随地多多对对对</div>
-    		 		</div>
-    		 		<div class="col-lg-1 col-sm-1">
-    		 			<img class="img-circle" alt="" width="60" height="60" src="http://pic.onlyloveu.top/leedane_app_upload_ec5da83b-4fd9-4924-ad04-3264dfc52a9843d8c1ec-95d3-4cc7-aa12-9379a2196df2_Screenshot_20161216-122520_01.png">
-    		 			<div class="user-account cut-text" title="LeeDane"><a href="JavaScript:void(0);" onclick="linkToMy(1)">LeeDane</a></div>
-    		 		</div>
-    		 		<div class="col-lg-1 col-sm-1">
-    		 			<img class="img-circle" alt="" width="60" height="60" src="http://pic.onlyloveu.top/leedane_app_upload_ec5da83b-4fd9-4924-ad04-3264dfc52a9843d8c1ec-95d3-4cc7-aa12-9379a2196df2_Screenshot_20161216-122520_01.png">
-    		 			<div class="user-account cut-text" title="LeeDane">LeeDane</div>
-    		 		</div>
-    		 		<div class="col-lg-1 col-sm-1">
-    		 			<img class="img-circle" alt="" width="60" height="60" src="http://pic.onlyloveu.top/leedane_app_upload_ec5da83b-4fd9-4924-ad04-3264dfc52a9843d8c1ec-95d3-4cc7-aa12-9379a2196df2_Screenshot_20161216-122520_01.png">
-    		 			<div class="user-account cut-text" title="LeeDane">LeeDane</div>
-    		 		</div> -->
-    		 	</div>
-	   		</div>
-	   	</div>
-	   	
-	   <div class="row">
-	   		<div class="col-lg-12" style="margin-top: 10px;">
-	   			本次检索到<span class="color-blue">心情</span>有&nbsp;<span class="color-red" id="search-mood-number">0</span>&nbsp;个：
-	   		</div>
-	   </div>
-	   <div id="mood-result-show">
-		   <!-- <div class="row mood-list-row">
-		   		<div class="col-lg-1" style="text-align: center;margin-top: 10px;">
-					<img width="60" height="60" class="img-circle hand" alt="" src=""  onclick="showSingleImg(this);" />
 				</div>
-				<div class="col-lg-10">
-					<div class="row" style="font-family: '微软雅黑'; font-size: 15px; margin-top: 10px;">
-						<div class="col-lg-12">
-							<span class="mood-user-name"><a href="JavaScript:void(0);" onclick="linkToMy(1)">leedane</a></span>   
-							<span class="mood-create-time">&nbsp;&nbsp;2017-01-01 00:00</span>   
-							<span class="mood-froms">&nbsp;&nbsp;android</span>
-						</div>
-					</div>
-					<div class="row" style="font-family: '微软雅黑'; font-size: 17px;margin-top: 5px;">
-						<div class="col-lg-12">今天天气不错啊！</div>
-					</div>
-					<div class="row" style="font-family: '宋体'; font-size: 12px;margin-top: 5px; color: gray; margin-bottom: 10px;">
-						<div class="col-lg-12">
-							位置：广州市北京路广百天河城百货百佳店
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-lg-4 col-sm-4" style="margin-top: 5px;">
-							<img width="100%" height="180" class="img-circle hand" alt="" src=""  onclick="showImg(this);"/>
-						</div>
-						<div class="col-lg-4 col-sm-4" style="margin-top: 5px;">
-							<img width="100%" height="180" class="img-circle hand" alt="" src=""  onclick="showImg(this);"/>
-						</div>
-						<div class="col-lg-4 col-sm-4" style="margin-top: 5px;">
-							<img width="100%" height="180" class="img-circle hand" alt="" src=""  onclick="showImg(this);"/>
-						</div>
-					</div>
-				</div>
-			</div> -->
+			</div>
 		</div>
-		<div class="row">
-	   		<div class="col-lg-12" style="margin-top: 10px;">
-	   			本次检索到<span class="color-blue">文章</span>有&nbsp;<span class="color-red" id="search-blog-number">0</span>&nbsp;篇：
-	   		</div>
-	   </div>
-	   <div id="blog-result-show">
-   			<!-- <div class="row blog-list-row">
-		   		<div class="col-lg-1" style="text-align: center;margin-top: 10px;">
-					<img width="60" height="60" class="img-circle hand" alt="" src=""  onclick="showSingleImg(this);"/>
+		<div class="row" style="margin-top: 30px;">
+			<ul class="nav nav-tabs nav-justified" id="notification-tabs">
+				<li class="active" data-type="1"><a href="javascript:void(0);">博客</a></li>
+				<li data-type="2"><a href="javascript:void(0);">心情</a></li>
+				<li data-type="3"><a href="javascript:void(0);">用户</a></li>
+				<li data-type="6"><a href="javascript:void(0);">日志</a></li>
+			</ul>
+			<div class="message-content row">
+				<div class="col-lg-12" style="margin: 10px;">
+					本次检索总计耗时<span id="search-need-time" class="color-red">0</span>.
 				</div>
-				<div class="col-lg-10">
-					<div class="row" style="font-family: '微软雅黑'; font-size: 15px; margin-top: 10px;">
-						<div class="col-lg-12">
-							<span class="blog-user-name"><a href="JavaScript:void(0);" onclick="linkToMy(1)">leedane</a></span>   
-							<span class="blog-create-time">&nbsp;&nbsp;2017-01-01 00:00</span>   
-							<span class="blog-froms">&nbsp;&nbsp;android</span>
+				<div id="content-contrainer">
+
+
+					<!--<div class="col-lg-12" id="message-list-content">
+						<div class="row notification-list notification-list-padding" data-id="">
+							<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;">
+								<img src="http://pic.onlyloveu.top/leedane_2019062718374920140620221531_tAZ3G.thumb.700_0.jpeg" width="40" height="40" class="img-rounded" />
+							</div>
+							<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">
+								<div class="list-group">
+									<div class="list-group-item notification-list-item active">
+										<a href="JavaScript:void(0);" onclick="linkToMy(1)" target="_blank" class="marginRight">LeeDane</a>
+										<span class="marginRight publish-time">发布于: 2019-10-10 10:10:10</span>
+									</div>
+									<div class="list-group-item notification-list-item">
+										<div class="row">
+											<div class="col-lg-12"><h4>中国女排主要对手在欧美 意美塞成东奥最大威胁</h4></div>
+											<div class="col-lg-12 hand" onclick="linkToTable(122)">
+												<blockquote>
+														<small>2019年世界女排联赛落下帷幕，二线阵容参赛的中国女排力克土耳其获得一枚宝贵的铜牌，继一队夺得分站赛冠军后再创佳绩。从整届世联赛来看，亚洲老对手日韩泰已难对中国女排造成威胁，我们的主要对手仍在欧美。除了主力纷纷休战的新科世锦赛冠军塞尔维亚女排，意大利以及美国女排对中国队的威胁最大。</small>
+												</blockquote>
+											</div>
+
+										</div>
+									</div>
+									<div class="list-group-item notification-list-item">
+										<div class="row">
+											<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right">
+												<button class="btn btn-sm btn-primary pull-right tag-read-btn" style="width: 80px;" type="button">查看</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
-					</div>
-					<div class="row" style="font-family: '微软雅黑'; font-size: 17px;margin-top: 5px;">
-						<div class="col-lg-12">文/清澈的蓝挽一缕月光照亮夜晚的轩窗微凉的风摇曳丝丝岸柳似少女般漫妙轻舒弄影( 文章阅读网：www.sanwen.net)飘舞在迷人的曉风琬月下凝眸远望是江南的一帘秋水长天*轻移莲步採一朵清新的茉莉花</div>
-					</div>
-					<div class="row">
-						<div class="col-lg-12 col-sm-12">
-							<span class="label label-default tag" style="font-size: 13px;">MX-5</span>
-							<span class="label label-primary tag" style="font-size: 13px;">马自达</span>
-							<span class="label label-success tag" style="font-size: 13px;">敞篷跑车</span>
+					</div>-->
+
+					<!--<div class="col-lg-12" id="message-list-content">
+						<div class="row notification-list notification-list-padding" data-id="">
+							<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;">
+								<img src="http://pic.onlyloveu.top/leedane_2019062718374920140620221531_tAZ3G.thumb.700_0.jpeg" width="40" height="40" class="img-rounded" />
+							</div>
+							<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">
+								<div class="list-group">
+									<div class="list-group-item notification-list-item active">
+										<a href="JavaScript:void(0);" onclick="linkToMy(1)" target="_blank" class="marginRight">LeeDane</a>
+										<span class="marginRight publish-time">发布于: 2019-10-10 10:10:10</span>
+									</div>
+									<div class="list-group-item notification-list-item">
+										<div class="row">
+											<div class="col-lg-12"><h4>测试多图</h4></div>
+										</div>
+									</div>
+									<div class="list-group-item notification-list-item">
+										<div class="row" style="margin-top: 5px;">
+											<div class="col-lg-4 col-sm-4">
+												<img src="http://pic.onlyloveu.top/leedane_2019062718374920140620221531_tAZ3G.thumb.700_0.jpeg?imageslim" width="100%" height="180px" class="img-rounded" onclick="showImg(0, 0);" />
+											</div>
+											<div class="col-lg-4 col-sm-4">
+												<img src="http://pic.onlyloveu.top/leedane_20190709173918u=3828817893,2198703185&amp;fm=26&amp;gp=0.jpg?imageslim" width="100%" height="180px" class="img-rounded" onclick="showImg(0, 1);"/>
+											</div>
+											<div class="col-lg-4 col-sm-4">
+												<img src="http://pic.onlyloveu.top/leedane_20190709173918u=2960231721,1241541633&amp;fm=26&amp;gp=0.jpg?imageslim" width="100%" height="180px" class="img-rounded" onclick="showImg(0, 2);"/>
+											</div>
+										</div>
+									</div>
+									<div class="list-group-item notification-list-item">
+										<div class="row">
+											<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right">
+												<button class="btn btn-sm btn-primary pull-right tag-read-btn" style="width: 80px;" type="button">查看</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
-					</div>
-					<div class="row" style="font-family: '宋体'; font-size: 12px;margin-top: 5px; color: gray; margin-bottom: 10px;">
-						<div class="col-lg-12">
-							<button type="button" class="btn btn-primary btn-sm" onclick="goToReadFull(366)">查看详细</button>
+					</div>-->
+					<!--<div class="col-lg-12" id="message-list-content">
+						<div class="row notification-list notification-list-padding" data-id="">
+							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+								<div class="list-group">
+									<div class="list-group-item notification-list-item active">
+										<a href="JavaScript:void(0);" onclick="linkToMy(1)" target="_blank" class="marginRight">LeeDane</a>
+										<span class="marginRight publish-time">操作时间: 2019-10-10 10:10:10</span>
+										<span class="publish-time">操作类型：0</span>
+									</div>
+									<div class="list-group-item notification-list-item">
+										<div class="row">
+											<div class="col-lg-12"><h4>leedane获取用户ID为：-1,表名：t_blog，表id为：22396的评论列表</h4></div>
+											<div class="col-lg-12 hand" onclick="linkToTable(122)">
+												<blockquote>
+													<span>ip地址: 127.0.0.1</span>
+													<small>浏览器信息： Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5 UCBrowser/12.2.6.1006</small>
+												</blockquote>
+											</div>
+
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
-					</div>
+					</div>-->
+
+					<!--<div class="col-lg-12" id="message-list-content">
+						<div class="row notification-list notification-list-padding" data-id="">
+							<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;">
+								<img src="http://pic.onlyloveu.top/leedane_2019062718374920140620221531_tAZ3G.thumb.700_0.jpeg" width="60" height="60" class="img-rounded" />
+							</div>
+							<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">
+								<div class="list-group">
+									<div class="list-group-item notification-list-item active">
+										<a href="JavaScript:void(0);" onclick="linkToMy(1)" target="_blank" class="marginRight">LeeDane</a>
+										<span class="badge">管理员</span>
+									</div>
+									<div class="list-group-item notification-list-item">
+										<table class="table table-hover">
+											<caption>基本信息</caption>
+											<tbody>
+											<tr>
+												<td>性别</td>
+												<td>男</td>
+											</tr>
+											<tr>
+												<td>出生日期</td>
+												<td>1990-11-07</td>
+											</tr>
+											<tr>
+												<td>qq</td>
+												<td>825711424</td>
+											</tr>
+											<tr>
+												<td>手机号码</td>
+												<td>13763059195</td>
+											</tr>
+											<tr>
+												<td>邮箱</td>
+												<td>825711424@qq.com</td>
+											</tr>
+											<tr>
+												<td>学历</td>
+												<td>博士</td>
+											</tr>
+											<tr>
+												<td>注册时间	</td>
+												<td>2015-11-25</td>
+											</tr>
+											<tr>
+												<td>最后请求时间</td>
+												<td>2019-07-09 17:24:23</td>
+											</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>-->
 				</div>
-			</div> -->
-	   </div>
-	   
-</div>
+				<div class="col-lg-8 col-lg-offset-2">
+					<!-- <nav aria-label="Page navigation">
+					   <ul class="pagination"></ul>
+				 </nav> -->
+					<div id="item-pager"></div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 
 <div th:include="common-js :: commJs">what?</div>
+<script th:src="@{/page/js/page.js}" type="text/javascript"></script>
 <script th:src="@{/page/js/search.js}" type="text/javascript"></script>
 </html>

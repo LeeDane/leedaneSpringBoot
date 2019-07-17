@@ -66,7 +66,7 @@ public class MoodTest extends BaseTest {
         long start = System.currentTimeMillis();
         for(int i = 0; i < 1000; i++){
             UserBean user = userService.findById(1);
-            String filePath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"liudehua.jpg";
+            String filePath = ConstantsUtil.getDefaultSaveFileFolder() +"liudehua.jpg";
             String base64 = Base64ImageUtil.convertImageToBase64(filePath, null);
             StringBuffer buffer = new StringBuffer();
             buffer.append(base64);

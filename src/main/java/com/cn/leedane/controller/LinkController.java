@@ -1,9 +1,10 @@
 package com.cn.leedane.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.LinkManageBean;
+import com.cn.leedane.service.LinkManageService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.annotations.Param;
@@ -14,11 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.LinkManageBean;
-import com.cn.leedane.service.LinkManageService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 链接管理接口controller
@@ -46,7 +44,7 @@ public class LinkController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(linkManageService.save(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(linkManageService.save(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -61,7 +59,7 @@ public class LinkController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(linkManageService.edit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(linkManageService.edit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -76,7 +74,7 @@ public class LinkController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(linkManageService.delete(lnid, getUserFromMessage(message), request));
+		message.putAll(linkManageService.delete(lnid, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -91,7 +89,7 @@ public class LinkController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(linkManageService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(linkManageService.paging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -106,7 +104,7 @@ public class LinkController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(linkManageService.deletes(lnids, getUserFromMessage(message), request));
+		message.putAll(linkManageService.deletes(lnids, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -122,7 +120,7 @@ public class LinkController extends BaseController{
 		
 		checkRoleOrPermission(model, request);;
 		boolean role = JsonUtil.getBooleanValue(getJsonFromMessage(message), "role");
-		message.putAll(linkManageService.roleOrPermissions(lnid, role, getUserFromMessage(message), request));
+		message.putAll(linkManageService.roleOrPermissions(lnid, role, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -137,7 +135,7 @@ public class LinkController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(linkManageService.allot(lnid, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(linkManageService.allot(lnid, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

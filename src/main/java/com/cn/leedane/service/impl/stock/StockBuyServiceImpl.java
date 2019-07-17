@@ -1,33 +1,25 @@
 package com.cn.leedane.service.impl.stock;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.handler.stock.StockBuyHandler;
 import com.cn.leedane.handler.stock.StockHandler;
 import com.cn.leedane.handler.stock.StockSellHandler;
 import com.cn.leedane.mapper.stock.StockBuyMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.stock.StockBuyBean;
 import com.cn.leedane.model.stock.StockSellBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.stock.StockBuyService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 股票购买记录的service的实现类
@@ -56,7 +48,7 @@ public class StockBuyServiceImpl implements StockBuyService<StockBuyBean>{
 
 	@Override
 	public Map<String, Object> add(int stockId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("StockBuyServiceImpl-->add(), stockId="+ stockId +", user=" +user.getAccount());
 		SqlUtil sqlUtil = new SqlUtil();
 		StockBuyBean stockBuyBean = (StockBuyBean) sqlUtil.getBean(json, StockBuyBean.class);
@@ -82,7 +74,7 @@ public class StockBuyServiceImpl implements StockBuyService<StockBuyBean>{
 	
 	@Override
 	public Map<String, Object> update(int stockId, int stockBuyId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("StockBuyServiceImpl-->update(), stockId= " + stockId +", stockBuyId="+ stockBuyId +",user=" +user.getAccount());
 		int userId = user.getId();
 		StockBuyBean oldStockBuyBean = stockBuyHandler.getNormalStockBuy(stockBuyId, userId, stockId);
@@ -110,7 +102,7 @@ public class StockBuyServiceImpl implements StockBuyService<StockBuyBean>{
 	}
 	
 	@Override
-	public Map<String, Object> delete(int stockId, int stockBuyId, JSONObject json, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> delete(int stockId, int stockBuyId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("StockBuyServiceImpl-->delete(), stockId= " + ", stockBuyId="+ stockBuyId +",user=" +user.getAccount());
 		int userId = user.getId();
 		StockBuyBean stockBuyBean = stockBuyHandler.getNormalStockBuy(stockBuyId, userId, stockId);

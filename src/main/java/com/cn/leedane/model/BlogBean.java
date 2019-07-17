@@ -161,6 +161,13 @@ public class BlogBean extends RecordTimeBean{
 	@Field
 	@Column("is_recommend")
 	private boolean isRecommend;
+
+	/**
+	 * 是否被添加到es索引中
+	 */
+	@Field
+	@Column("es_index")
+	private boolean esIndex;
 	
 	/**
 	 * 分类
@@ -370,5 +377,12 @@ public class BlogBean extends RecordTimeBean{
 	public void setRecommend(boolean isRecommend) {
 		this.isRecommend = isRecommend;
 	}
-	
+
+	public boolean isEsIndex() {
+		return esIndex;
+	}
+
+	public void setEsIndex(boolean esIndex) {
+		this.esIndex = esIndex;
+	}
 }

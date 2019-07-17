@@ -1,15 +1,13 @@
 package com.cn.leedane.service.circle;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 /**
  * 圈子贡献值的Service类
  * @author LeeDane
@@ -27,7 +25,7 @@ public interface CircleContributionService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> paging(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 增加分数(并通知用户)

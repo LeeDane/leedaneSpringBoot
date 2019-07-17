@@ -1,15 +1,12 @@
 package com.cn.leedane.service.mall;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.springframework.transaction.annotation.Transactional;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import net.sf.json.JSONObject;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 /**
  * 首页商品分类service接口类
@@ -26,7 +23,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> addItem(JSONObject json, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> addItem(JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取该分类的数据
@@ -36,7 +33,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> getItem(int categoryId,
-			UserBean user, HttpServletRequest request);
+			UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 修改分类项
@@ -48,7 +45,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 */
 	public Map<String, Object> updateItem(int itemId,
 			JSONObject json, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 	
 	/**
 	 * 删除分类项
@@ -58,7 +55,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> deleteItem(int categoryId,
-			UserBean user, HttpServletRequest request);
+			UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 首页展示的分类列表
@@ -74,7 +71,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> matchingCategory(int itemId,
-			UserBean user, HttpServletRequest request);
+			UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 修改某一项的分类
@@ -84,7 +81,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> updateCategory(int itemId, JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> updateCategory(int itemId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 添加某一项的商品
@@ -96,7 +93,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 */
 	public Map<String, Object> addProduct(int itemId,
 			JSONObject json, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 	
 	/**
 	 * 删除某一项的商品
@@ -108,7 +105,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 */
 	public Map<String, Object> deleteProduct(int itemId,
 			int productId, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 
 	/**
 	 * 获取未添加的项
@@ -119,7 +116,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 */
 	public Map<String, Object> noList(
 			JSONObject json, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 
 	/**
 	 * 获取所有首页分类项的列表
@@ -127,5 +124,5 @@ public interface S_HomeItemService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> getItems(UserBean user, HttpServletRequest request);
+	public Map<String, Object> getItems(UserBean user, HttpRequestInfoBean request);
 }

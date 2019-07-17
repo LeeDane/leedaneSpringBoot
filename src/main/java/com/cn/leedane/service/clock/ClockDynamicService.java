@@ -1,15 +1,12 @@
 package com.cn.leedane.service.clock;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.springframework.transaction.annotation.Transactional;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import net.sf.json.JSONObject;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 /**
  * 任务动态的Service类
@@ -27,5 +24,5 @@ public interface ClockDynamicService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> dynamics(int clockId, JSONObject jo, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> dynamics(int clockId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 }	

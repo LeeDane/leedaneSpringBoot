@@ -45,12 +45,12 @@ public interface BaseMapper<T> {
      */
     @DeleteProvider(type = SqlProvider.class, method = "deleteByIds")
     public int deleteByIds(Class<?> clazz, int ...ids);
-    
+
     /**
      * 批量删除
      * @param clazz
      * @param filed
-     * @param ids
+     * @param values
      * @return
      */
     @DeleteProvider(type = SqlProvider.class, method = "deleteByField")
@@ -95,12 +95,13 @@ public interface BaseMapper<T> {
 	 */
     @SelectProvider(type = SqlProvider.class, method = "recordExists")
 	public List<Map<String, Object>> recordExists(String tableName, int tableId);
-    
+
     /**
-	 * 根据实体表的名称和ID获取其创建人ID
-	 * @param commentId
-	 * @return
-	 */
+     * 根据实体表的名称和ID获取其创建人ID
+     * @param tableName
+     * @param tableId
+     * @return
+     */
     @SelectProvider(type = SqlProvider.class, method = "getObjectCreateUserId")
 	public List<Map<String, Object>> getObjectCreateUserId(String tableName, int tableId);
     

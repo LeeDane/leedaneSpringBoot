@@ -1,44 +1,22 @@
 package com.cn.leedane.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.exception.RE404Exception;
-import com.cn.leedane.handler.CommonHandler;
-import com.cn.leedane.handler.FriendHandler;
-import com.cn.leedane.handler.NotificationHandler;
-import com.cn.leedane.handler.TransmitHandler;
-import com.cn.leedane.handler.UserHandler;
+import com.cn.leedane.handler.*;
 import com.cn.leedane.mapper.TransmitMapper;
-import com.cn.leedane.model.FriendBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.TransmitBean;
-import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.*;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.TransmitService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.FilterUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 /**
  * 转发service的实现类
  * @author LeeDane
@@ -74,7 +52,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 	private OperateLogService<OperateLogBean> operateLogService;
 	
 	@Override
-	public Map<String, Object> add(JSONObject jo, UserBean user, HttpServletRequest request){
+	public Map<String, Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request){
 		//{\"table_name\":\"t_mood\", \"table_id\":1, 'content':'转发信息'}
 		logger.info("TransmitServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
@@ -163,7 +141,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 	
 	@Override
 	public Map<String, Object> deleteTransmit(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("TransmitServiceImpl-->deleteTransmit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int tid = JsonUtil.getIntValue(jo, "tid");
 		int createUserId = JsonUtil.getIntValue(jo, "create_user_id");
@@ -198,7 +176,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 
 	@Override
 	public List<Map<String, Object>> getLimit(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		if(user == null)
 			user = new UserBean();
 		logger.info("TransmitServiceImpl-->getLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
@@ -289,7 +267,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 	
 	@Override
 	public Map<String, Object> updateTransmitStatus(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("TransmitServiceImpl-->updateTransmitStatus():jo="+jo.toString());
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
 		int tableId = JsonUtil.getIntValue(jo, "table_id");

@@ -50,7 +50,7 @@ public class CircleMemberController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleMemberService.paging(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circleMemberService.paging(circleId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -66,7 +66,7 @@ public class CircleMemberController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleMemberService.recommend(circleId, memberId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circleMemberService.recommend(circleId, memberId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -81,7 +81,7 @@ public class CircleMemberController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleMemberService.delete(circleId, memberId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circleMemberService.delete(circleId, memberId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -96,7 +96,7 @@ public class CircleMemberController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleSettingService.update(circleId, settingId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circleSettingService.update(circleId, settingId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

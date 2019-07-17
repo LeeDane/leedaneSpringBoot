@@ -1,5 +1,6 @@
 package com.cn.leedane.handler;
 
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import org.springframework.stereotype.Component;
 
 import com.cn.leedane.redis.config.RedisConfig;
@@ -23,14 +24,14 @@ public class ChatSquareHandler {
 	 */
 	public boolean addChat(String userKey){
 		String chatKey = getChatKey(userKey);
-		redisUtil.expire(chatKey, StringUtil.changeObjectToInt(RedisConfig.properties.get("chatSquareTime")));
+		redisUtil.expire(chatKey, LeedanePropertiesConfig.newInstance().getInt("chatSquareTime"));
 		return true;
 	}
 	
 	
 	/**
 	 * 获取赞在redis的key
-	 * @param id
+	 * @param userKey
 	 * @return
 	 */
 	public static String getChatKey(String userKey){

@@ -151,7 +151,7 @@ public class LuceneUtil {
 		
 		Query query = qp.parse(keyword); //搜索相似度最高的num条记录 
 		TopDocs topDocs = searcher.search(query , num); 
-		totalHits = topDocs.totalHits; //输出结果 
+//		totalHits = topDocs.totalHits; //输出结果
 		
 		//对统计结果数量和用户需要的总数量比较取最小的值
 		//int size = totalHits > num ? num : totalHits;
@@ -216,7 +216,7 @@ public class LuceneUtil {
         ScoreDoc lastSd = getLastScoreDoc(pageIndex, pageSize, query, searcher);
 
 		TopDocs topDocs = searcher.searchAfter(lastSd, query , pageSize); 
-		totalHits = topDocs.totalHits; //输出结果 
+//		totalHits = topDocs.totalHits; //输出结果
 	
 		//对统计结果数量和用户需要的总数量比较取最小的值
 		//int size = totalHits > num ? num : totalHits;
@@ -293,7 +293,6 @@ public class LuceneUtil {
 	 * @param field  更新前的域
 	 * @param text  更新前的域对应的值
 	 * @param doc   更新后的docuent对象
-	 * @param isCreate 更新前的条件不存在的情况下，是否仍然新增该条document,默认是false
 	 * @return
 	 * @throws IOException
 	 */
@@ -340,8 +339,6 @@ public class LuceneUtil {
 	
 	/**
 	 * 删除文档的索引
-	 * @param field
-	 * @param text
 	 * @param docID
 	 * @return
 	 * @throws IOException
@@ -450,8 +447,6 @@ public class LuceneUtil {
 	/** 
 	 * 传入String类型的数据源，智能提取单词放入Set中 
 	 * @param source
-	 * @param keyLength 关键字的长度大于等于(默认是2)
-	 * @param keyNumber 关键字的数量(默认是5)
 	 * @return
 	 * @throws IOException
 	 */

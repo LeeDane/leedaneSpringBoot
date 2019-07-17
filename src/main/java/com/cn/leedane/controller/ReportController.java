@@ -1,22 +1,19 @@
 package com.cn.leedane.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.ReportBean;
+import com.cn.leedane.service.ReportService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.ReportBean;
-import com.cn.leedane.service.ReportService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.rp)
@@ -39,7 +36,7 @@ public class ReportController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(reportService.addReport(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(reportService.addReport(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -54,7 +51,7 @@ public class ReportController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(reportService.cancel(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(reportService.cancel(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -69,7 +66,7 @@ public class ReportController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		List<Map<String, Object>> result= reportService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
+		List<Map<String, Object>> result= reportService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 		logger.info("获得举报的数量：" +result.size());
 		message.put("isSuccess", true);
 		message.put("message", result);

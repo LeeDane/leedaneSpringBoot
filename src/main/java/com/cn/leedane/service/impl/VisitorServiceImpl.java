@@ -1,22 +1,10 @@
 package com.cn.leedane.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.handler.FanHandler;
 import com.cn.leedane.handler.FriendHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.VisitorMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.VisitorBean;
@@ -26,13 +14,16 @@ import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.VisitorDeleteThread;
 import com.cn.leedane.thread.single.VisitorSaveThread;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.RelativeDateFormat;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 /**
  * 访客service的实现类
  * @author LeeDane
@@ -77,7 +68,7 @@ public class VisitorServiceImpl extends AdminRoleCheckService implements Visitor
 	
 	@Override
 	public Map<String, Object> getVisitorsByLimit(int tableId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("VisitorServiceImpl-->getVisitorsByLimit():uid=" +tableId +", json="+json.toString());
 		ResponseMap message = new ResponseMap();
 		
@@ -106,7 +97,7 @@ public class VisitorServiceImpl extends AdminRoleCheckService implements Visitor
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取表名：",tableName,"，表id为：",tableId,"的访客列表").toString(), "getCommentByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取表名：",tableName,"，表id为：",tableId,"的访客列表").toString(), "getCommentByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("isSuccess", true);
 		message.put("message", rs);
 		return message.getMap();

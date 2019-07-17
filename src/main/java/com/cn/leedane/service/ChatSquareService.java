@@ -1,13 +1,12 @@
 package com.cn.leedane.service;
-import java.util.Date;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.Map;
 
 /**
  * 聊天广场的Service类
@@ -46,5 +45,5 @@ public interface ChatSquareService<ChatSquareBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getLimit(JSONObject jo, HttpServletRequest request);
+	public Map<String, Object> getLimit(JSONObject jo, HttpRequestInfoBean request);
 }

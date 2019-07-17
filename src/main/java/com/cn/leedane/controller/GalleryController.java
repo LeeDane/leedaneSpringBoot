@@ -1,23 +1,17 @@
 package com.cn.leedane.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cn.leedane.model.GalleryBean;
 import com.cn.leedane.service.GalleryService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.gl)
@@ -42,7 +36,7 @@ public class GalleryController extends BaseController{
 		}
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(galleryService.addLink(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(galleryService.addLink(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 		
 	}
@@ -64,7 +58,7 @@ public class GalleryController extends BaseController{
 
 		checkRoleOrPermission(model, request);;
 		
-		List<Map<String, Object>> result= galleryService.getGalleryByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
+		List<Map<String, Object>> result= galleryService.getGalleryByLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 		logger.info("获得图库的数量：" +result.size());
 		message.put("isSuccess", true);
 		message.put("message", result);
@@ -83,7 +77,7 @@ public class GalleryController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(galleryService.delete(gid, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(galleryService.delete(gid, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

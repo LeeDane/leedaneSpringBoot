@@ -35,6 +35,8 @@ public class ClockDynamicDisplay implements Serializable{
 
 	private int messageType;
 
+	private boolean seeEachOther;
+
 	public int getId() {
 		return id;
 	}
@@ -114,5 +116,13 @@ public class ClockDynamicDisplay implements Serializable{
 
 	public void setMessageType(int messageType) {
 		this.messageType = messageType;
+	}
+
+	public boolean isSeeEachOther() {
+		return seeEachOther;
+	}
+
+	public void setSeeEachOther(boolean seeEachOther) {
+		this.seeEachOther = seeEachOther;
 	}
 }

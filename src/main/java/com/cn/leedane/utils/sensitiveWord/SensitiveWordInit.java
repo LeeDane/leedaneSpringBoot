@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
+import com.cn.leedane.utils.ConstantsUtil;
 import org.apache.log4j.Logger;
 
 /**
@@ -95,7 +97,7 @@ public class SensitiveWordInit {
 	@SuppressWarnings("resource")
 	private Set<String> readSensitiveWordFile() throws Exception{
 		Set<String> set = null;
-		String path = "C:\\SensitiveWord.txt";
+		String path = ConstantsUtil.getDefaultSaveFileFolder()  + "/SensitiveWord.txt";
 		File file = new File(path);    //读取文件
 		InputStreamReader read = new InputStreamReader(new FileInputStream(file),ENCODING);
 		try {

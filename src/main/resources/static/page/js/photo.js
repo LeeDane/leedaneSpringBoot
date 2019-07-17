@@ -22,10 +22,23 @@ layui.use(['layer'], function(){
 	    	method = 'lowloading';
 	    	getWebPhotos();
 	    }
-	}); 
+	});
+
+    //描述信息的点击
+	$("#fh5co-main").find(".fh5co-desc").on("click", function(index){
+	layer.msg("删除成功!",{ icon: 1, time: 1000 });
+		layer.confirm('是否修改该图片的描述信息!',
+		    {
+                btn: ['确定', '取消']
+            }, function (index, layero) {
+                    layer.msg("删除成功!",{ icon: 1, time: 1000 });
+             }
+         );
+	});
+
 	$tree = $('#tree');
 	getChildNodes(0, 131);//获取分类列表
-	//getWebPhotos();  
+	getWebPhotos();
 });
 var last_id = 0;
 var first_id = 0;
@@ -57,6 +70,8 @@ function getChildNodes(nodeId, pid){
 			if(data.isSuccess){
 				var treeData = data.message;
 				if(!isFirst){
+				    var all = {id: -1, text: "全部"};
+				    treeData.push(all);
 					/**
 					 * 展示数据并同时添加展开事件的监听(事件的监听必须在绑定数据之后)
 					 */
@@ -71,6 +86,12 @@ function getChildNodes(nodeId, pid){
 				}else{
 					$tree.treeview("addNodes", [nodeId, { node: treeData}]); 
 				}
+
+				if($(window).width() < 900)
+                        setTimeout(function(){
+                            $("#fh5co-main").css("margin-top", $("#tree").height() + "px");
+                        }, 500);
+
 			}else{
 				ajaxError(data);
 			}
@@ -86,10 +107,10 @@ function getChildNodes(nodeId, pid){
  * 获取网络图片
  */
 function getWebPhotos(){
-	if(!canLoadData){
+	/*if(!canLoadData){
 		layer.msg("无更多数据");
 		return;
-	}
+	}*/
 	isLoad = true;
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
@@ -99,26 +120,50 @@ function getWebPhotos(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			
+/*
+			for(var i = 0; i < 10; i++){
+			    var html = '<div class="item">'+
+                                  '<div class="animate-box bounceIn animated">'+
+                                      '<a href="http://pic.onlyloveu.top/test_20190627190608mmexport1561555416483.jpg?imageslim" class="image-popup fh5co-board-img" title="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, eos?"><img src="http://pic.onlyloveu.top/test_20190627190608mmexport1561555416483.jpg?imageslim" alt="Free HTML5 Bootstrap template"></a>'+
+                                  '</div>'+
+                                  '<div class="fh5co-desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, eos?</div>'+
+                              '</div>';
+
+                  //找到底的容器元素
+                  var $lowContrainer = findLowContrainer();
+                  $lowContrainer.append(html);
+			}*/
+
+			if(method == 'firstloading'){
+                $(".column-item1").empty();
+                $(".column-item2").empty();
+                $(".column-item3").empty();
+                $(".column-item4").empty();
+            }
 			if(data != null && data.isSuccess){
-				
+                $("#fh5co-board").find(".no-result").remove();
 				if(data.message.length == 0){
 					canLoadData = false;
-					layer.msg("无更多数据");
+//					layer.msg("该分组下还没有找到图片", {time: 2000, icon: 5});
+					$("#fh5co-board").append("<div class='row no-result'>该分组下还没有找到图片。</div>")
 					return;
 				}
-				
+
 				if(method == 'firstloading'){
 					photos = data.message;
-					$("#column-01").empty();
-					$("#column-02").empty();
-					$("#column-03").empty();
-					column1Height = 0;
-					column2Height = 0;
-					column3Height = 0;
-					
 					for(var i = 0; i < photos.length; i++){
-						findColumnToAdd(photos[i], i);
+						 var html = '<div class="item">'+
+                                          '<div class="animate-box">'+
+                                              '<a href="'+ photos[i].path +'" class="image-popup fh5co-board-img" title="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, eos?">'+
+                                              '<img src="'+ photos[i].path +'" alt="'+ photos[i].gallery_desc +'"></a>'+
+                                          '</div>'+
+                                          '<div class="fh5co-desc" onclick="descEdit('+ data.message[i].id + ',\'' + data.message[i].gallery_desc +'\');">'+ photos[i].gallery_desc +'</div>'+
+                                      '</div>';
+
+                         //找到底的容器元素
+                         var $lowContrainer = findLowContrainer();
+                         $lowContrainer.append(html);
+
 						if(i == 0)
 							first_id = photos[i].id;
 						if(i == photos.length -1)
@@ -127,18 +172,38 @@ function getWebPhotos(){
 				}else{
 					var currentIndex = photos.length;
 					for(var i = 0; i < data.message.length; i++){
-						photos.push(data.message[i]);
-						findColumnToAdd(data.message[i], currentIndex +i);
+//						photos.push(data.message[i]);
+
+						var html = '<div class="item">'+
+                                          '<div class="animate-box">'+
+                                              '<a href="'+ data.message[i].path +'" class="image-popup fh5co-board-img" title="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, eos?">'+
+                                              '<img src="'+ data.message[i].path +'" alt="'+ data.message[i].gallery_desc +'"></a>'+
+                                          '</div>'+
+                                          '<div class="fh5co-desc" onclick="descEdit('+ data.message[i].id + ',\'' + data.message[i].gallery_desc +'\');">'+ data.message[i].gallery_desc +'</div>'+
+                                      '</div>';
+
+                         //找到底的容器元素
+                         var $lowContrainer = findLowContrainer();
+                         $lowContrainer.append(html);
+
+//						findColumnToAdd(data.message[i], currentIndex +i);
 						if(i == data.message.length -1)
 							last_id = data.message[i].id;
 					}
 				}
-				resetSideHeight();
-				asynchronousPhotos();
+				/*resetSideHeight();
+				asynchronousPhotos();*/
 			}else{
 				ajaxError(data);
 			}
 			isLoad = false;
+            setTimeout(function(){
+                 magnifPopup();
+                 offCanvass();
+                 mobileMenuOutsideClick();
+                 animateBoxWayPoint();
+             }, 500);
+
 		},
 		error : function(data) {
 			layer.close(loadi);
@@ -148,11 +213,44 @@ function getWebPhotos(){
 	});
 }
 
+/*
+**找出最大的容器
+**
+*/
+function findLowContrainer(){
+    var height1 = $(".column-item1").height();
+    var height2 = $(".column-item2").height();
+    var height3 = $(".column-item3").height();
+    var height4 = $(".column-item4").height();
+
+    var height = height1;
+    if(height >= height2){
+        height = height2;
+    }
+
+    if(height >= height3){
+        height = height3;
+    }
+
+    if(height >= height4){
+        height = height4;
+    }
+
+    if(height == height1)
+        return  $(".column-item1");
+    if(height == height2)
+        return  $(".column-item2");
+    if(height == height3)
+        return  $(".column-item3");
+    if(height == height4)
+        return  $(".column-item4");
+}
+
 /**
  * 获取请求参数
  */
 function getPhotosRequestParams(){
-	var pageSize = 15;
+	var pageSize = 150;
 	if(method != 'firstloading')
 		pageSize = 10;
 	return {pageSize: pageSize, last_id: last_id, first_id: first_id, method: method, category: categoryId, t: Math.random()};
@@ -357,12 +455,21 @@ function afterSelectMaterial(links){
  * 项的点击
  */
 function customItemClick(node){
-	console.log(node);
-	categoryId = node.id;
-	last_id = 0;
-	first_id = 0;
-	method = 'firstloading';
-	getWebPhotos();
+//	console.log(node);
+       //如果是展开或者收起操作就不加载数据了
+    if(node.nodes == null || node.nodes.length == 0){
+        categoryId = node.id;
+        last_id = 0;
+        first_id = 0;
+        method = 'firstloading';
+        getWebPhotos();
+    }
+
+
+	if($(window).width() < 900)
+        setTimeout(function(){
+            $("#fh5co-main").css("margin-top", $("#tree").height() + "px");
+        }, 500);
 }
 
 /**
@@ -370,4 +477,31 @@ function customItemClick(node){
  */
 function getTreeRootId(){
 	return "tree";
+}
+
+/**
+*   描述信息的点击编辑
+*/
+function descEdit(id, desc){
+    layer.prompt({title: '是否修改该图片的描述信息!', formType: 2}, function(pass, index){
+          layer.close(index);
+           if(isNotEmpty(pass)){
+                var loadi = layer.load('更新描述中…'); //需关闭加载层时，执行layer.close(loadi)即可
+                	$.ajax({
+                		url : "/gl/photos?" + jsonToGetRequestParams(getPhotosRequestParams()),
+                		dataType: 'json',
+                		beforeSend:function(){
+                		},
+                		success : function(data) {
+                			layer.close(loadi);
+
+                		},
+                		error : function(data) {
+                			layer.close(loadi);
+                			isLoad = false;
+                			ajaxError(data);
+                		}
+                	});
+           }
+    });
 }

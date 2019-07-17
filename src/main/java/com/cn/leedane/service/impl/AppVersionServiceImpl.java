@@ -1,19 +1,8 @@
 package com.cn.leedane.service.impl;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.mapper.FilePathMapper;
 import com.cn.leedane.model.FilePathBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.AppVersionService;
@@ -23,6 +12,15 @@ import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * App版本service实现类
@@ -46,7 +44,7 @@ public class AppVersionServiceImpl implements AppVersionService<FilePathBean> {
 	
 	@Override
 	public Map<String, Object> getNewest(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+										 HttpRequestInfoBean request) {
 		logger.info("AppVersionServiceImpl-->getNewest():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		String versionName = JsonUtil.getStringValue(jo, "versionName");
@@ -108,7 +106,7 @@ public class AppVersionServiceImpl implements AppVersionService<FilePathBean> {
 
 	@Override
 	public Map<String, Object> paging(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+									  HttpRequestInfoBean request) {
 		logger.info("AppVersionServiceImpl-->paging():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -139,7 +137,7 @@ public class AppVersionServiceImpl implements AppVersionService<FilePathBean> {
 			rs = filePathMapper.executeSQL(sql.toString() , ConstantsUtil.STATUS_NORMAL, true, ConstantsUtil.UPLOAD_APP_VERSION_TABLE_NAME, firstId, pageSize);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取app版本列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取app版本列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 				
 		message.put("isSuccess", true);
 		message.put("message", rs);

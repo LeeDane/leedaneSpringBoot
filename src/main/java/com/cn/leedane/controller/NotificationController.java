@@ -1,9 +1,10 @@
 package com.cn.leedane.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.NotificationBean;
+import com.cn.leedane.service.NotificationService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.NotificationBean;
-import com.cn.leedane.service.NotificationService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.nf)
@@ -39,7 +37,7 @@ public class NotificationController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(notificationService.sendBroadcast(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(notificationService.sendBroadcast(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -54,7 +52,7 @@ public class NotificationController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(notificationService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(notificationService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -75,7 +73,7 @@ public class NotificationController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(notificationService.paging(type, pageSize, current, total, getUserFromMessage(message), request));
+		message.putAll(notificationService.paging(type, pageSize, current, total, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -92,7 +90,7 @@ public class NotificationController extends BaseController{
 		checkRoleOrPermission(model, request);;
 		if(nid < 1)
 			nid = JsonUtil.getIntValue(getJsonFromMessage(message), "nid");
-		message.putAll(notificationService.deleteNotification(nid, getUserFromMessage(message), request));
+		message.putAll(notificationService.deleteNotification(nid, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -107,7 +105,7 @@ public class NotificationController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(notificationService.updateRead(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(notificationService.updateRead(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -122,7 +120,7 @@ public class NotificationController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(notificationService.updateAllRead(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(notificationService.updateAllRead(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -137,7 +135,7 @@ public class NotificationController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(notificationService.noReadNumber(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(notificationService.noReadNumber(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

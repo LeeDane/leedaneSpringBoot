@@ -1,9 +1,10 @@
 package com.cn.leedane.controller.stock;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.controller.BaseController;
+import com.cn.leedane.model.stock.StockSellBean;
+import com.cn.leedane.service.stock.StockSellService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.controller.BaseController;
-import com.cn.leedane.model.stock.StockSellBean;
-import com.cn.leedane.service.stock.StockSellService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 股票卖出接口controller
@@ -48,7 +46,7 @@ public class StockSellController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(stockSellService.add(stockId, stockBuyId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(stockSellService.add(stockId, stockBuyId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -63,7 +61,7 @@ public class StockSellController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(stockSellService.update(stockId, stockBuyId, stockSellId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(stockSellService.update(stockId, stockBuyId, stockSellId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -78,7 +76,7 @@ public class StockSellController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(stockSellService.delete(stockId, stockBuyId, stockSellId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(stockSellService.delete(stockId, stockBuyId, stockSellId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

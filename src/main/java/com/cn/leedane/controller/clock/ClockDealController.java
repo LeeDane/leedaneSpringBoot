@@ -45,7 +45,7 @@ public class ClockDealController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockDealService.requestAdd(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockDealService.requestAdd(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -60,7 +60,7 @@ public class ClockDealController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockDealService.requestAgree(clockId, memberId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockDealService.requestAgree(clockId, memberId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -75,7 +75,7 @@ public class ClockDealController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockDealService.inviteAdd(clockId, memberId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockDealService.inviteAdd(clockId, memberId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -90,7 +90,7 @@ public class ClockDealController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockDealService.inviteAgree(clockId, memberId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockDealService.inviteAgree(clockId, memberId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -105,7 +105,7 @@ public class ClockDealController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockDealService.addClocks(getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockDealService.addClocks(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -120,7 +120,7 @@ public class ClockDealController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockDealService.inviteClocks(getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockDealService.inviteClocks(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -135,7 +135,7 @@ public class ClockDealController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockDealService.myInviteClocks(getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockDealService.myInviteClocks(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -150,7 +150,7 @@ public class ClockDealController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockDealService.agreeClocks(getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockDealService.agreeClocks(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

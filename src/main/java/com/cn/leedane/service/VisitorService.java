@@ -1,15 +1,13 @@
 package com.cn.leedane.service;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 /**
  * 访客的Service类
  * @author LeeDane
@@ -34,14 +32,14 @@ public interface VisitorService<T extends IDBean>{
 	/**
 	 * 获取访客列表
 	 * @param tableId
-	 * @param jo
+	 * @param json
 	 * @param user
 	 * @param request
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getVisitorsByLimit(int tableId,
-			JSONObject json, UserBean user, HttpServletRequest request);
+			JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取今日的访问数

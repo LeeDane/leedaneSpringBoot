@@ -52,6 +52,13 @@ public interface ClockMemberMapper extends BaseMapper<ClockMemberBean>{
 	 */
 	public boolean updateStatus(@Param("clockId")int clockId, @Param("memberId")int memberId, @Param("status")int statu);
 
+	/**
+	 * 获取该成员在任务的记录（不校验状态）
+	 * @param clockId
+	 * @param memberId
+	 * @return
+	 */
+	public ClockMemberBean findClockMember(@Param("clockId")int clockId, @Param("memberId")int memberId);
 
 	/**
 	 * 获取任务的成员列表(通过打卡次数进行排序)

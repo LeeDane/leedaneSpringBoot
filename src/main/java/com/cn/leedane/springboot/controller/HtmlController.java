@@ -1,31 +1,11 @@
 package com.cn.leedane.springboot.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.cn.leedane.controller.BaseController;
+import com.cn.leedane.controller.RoleController;
 import com.cn.leedane.controller.UserController;
 import com.cn.leedane.exception.MustLoginException;
+import com.cn.leedane.exception.RE404Exception;
+import com.cn.leedane.handler.MoodHandler;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.model.UserBean;
@@ -37,13 +17,32 @@ import com.cn.leedane.service.AppVersionService;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.springboot.SpringUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsoupUtil;
-import com.cn.leedane.utils.RSAKeyUtil;
-import com.cn.leedane.utils.StringUtil;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.subject.Subject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Html页面的控制器
@@ -59,11 +58,14 @@ public class HtmlController extends BaseController{
 	
 	@Autowired
 	private AppVersionService<FilePathBean> appVersionService;
+
+	@Autowired
+	private MoodHandler moodHandler;
 	
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面
 	 * @param model
-	 * @param httpSession
+	 * @param request
 	 * @return
 	 */
 	/*@RequestMapping
@@ -74,21 +76,26 @@ public class HtmlController extends BaseController{
 	@RequestMapping(value = {"/", ControllerBaseNameUtil.index})
 	public String index1(Model model, HttpServletRequest request){
 		//首页不需要验证是否登录
+
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入系统首页页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("index", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.pt)
 	public String photo(Model model, HttpServletRequest request){
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入图册模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("photo", true, model, request);
 	}
 	
 	@RequestMapping("/test")
 	public String test(Model model, HttpServletRequest request){
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入测试模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("test", false, model, request);
 	}
 	
 	@RequestMapping("/love")
 	public String love(Model model, HttpServletRequest request){
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入爱情模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("love", false, model, request);
 	}
 	
@@ -102,23 +109,26 @@ public class HtmlController extends BaseController{
 	public String message(Model model, @RequestParam(value = "tab", required = false) String tab, HttpServletRequest request){
 		if(StringUtil.isNotNull(tab))
 			model.addAttribute("tabName", tab);
-			
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入消息管理模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("message", true, model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.fn)
 	public String financial(Model model, HttpServletRequest request){
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入记账模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("financial", true, model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.dl)
 	public String download(Model model, HttpServletRequest request){
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入下载模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("download", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.dlvs)
 	public String downloadVersion(Model model, HttpServletRequest request){
 		model.addAttribute("historys", appVersionService.getAllVersions());
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入下载历史版本页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("downloadVersion", model, request);
 	}
 	
@@ -130,6 +140,7 @@ public class HtmlController extends BaseController{
 		//检查博客id是否存在
 		
 		model.addAttribute("bid", blogId);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入博客详情页面："+ blogId, "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("detail", model, request);
 	}
 	
@@ -161,6 +172,7 @@ public class HtmlController extends BaseController{
 			HttpServletRequest request){
 		model.addAttribute("FromUserName", FromUserName);
 		model.addAttribute("currentType", currentType);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "绑定微信账号", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("bind-wechat", model, request);
 		
 	}
@@ -171,6 +183,7 @@ public class HtmlController extends BaseController{
 		model.addAttribute("uid", user.getId());
 		model.addAttribute("uaccount", userHandler.getUserName(user.getId()));
 		model.addAttribute("isLoginUser", true);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看个人中心", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("my", model, request);
 	}
 	
@@ -184,6 +197,8 @@ public class HtmlController extends BaseController{
 		//保存访客记录
 		if(uid != user.getId())
 			visitorService.saveVisitor(user, "web网页端", DataTableType.心情.value, uid, ConstantsUtil.STATUS_NORMAL);
+
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看"+ userHandler.getUserName(uid) +"个人中心", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("my", model, request);
 	}
 	
@@ -196,6 +211,8 @@ public class HtmlController extends BaseController{
         model.addAttribute("uid", uid);
 		model.addAttribute("uaccount", userHandler.getUserName(uid));
 		model.addAttribute("isLoginUser", uid == user.getId());
+
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看用户"+ userHandler.getUserName(uid) + "的留言板", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("board", model, request);	
 	}
 	
@@ -206,6 +223,27 @@ public class HtmlController extends BaseController{
         model.addAttribute("uid", uid);
 		model.addAttribute("mid", mid);
 		model.addAttribute("isLoginUser", uid == user.getId());
+
+		//校验是否可以查看该心情
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+		list = moodHandler.getMoodDetail(mid, user);
+		if(!CollectionUtils.isEmpty(list) && list.size() == 1) {
+			Map<String, Object> mood = list.get(0);
+			int moodCreateUserId = StringUtil.changeObjectToInt(mood.get("create_user_id"));
+			int status = StringUtil.changeObjectToInt(mood.get("status"));
+			Subject currentUser = SecurityUtils.getSubject();
+			//判断是否是需要验证私有的
+			if (moodCreateUserId != user.getId() && !currentUser.hasRole(RoleController.ADMIN_ROLE_CODE) && status == ConstantsUtil.STATUS_SELF)
+				throw new UnauthorizedException("私有信息，您无法查看！");
+		}else{
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该心情不存在.value));
+		}
+
+		//保存访客记录
+		if(uid != user.getId())
+			visitorService.saveVisitor(user, "web网页端", DataTableType.心情.value, uid, ConstantsUtil.STATUS_NORMAL);
+
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看用户"+ userHandler.getUserName(uid) + "的心情ID为:"+ mid, "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("mood-detail", true, model, request);
 	}
 	
@@ -230,23 +268,26 @@ public class HtmlController extends BaseController{
 		model.addAttribute("categorys", categorys);*/
 		model.addAttribute("blogId", blogId);
 		model.addAttribute("noHeader1", noHeader1);
-		
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入发布博客页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("publish-blog", true, model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.s)
 	public String search(Model model, HttpServletRequest request){
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入搜索页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("search", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.cs)
 	public String chatSquare(Model model, HttpServletRequest request){
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入聊天广场页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("chat-square", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.mt)
 	public String materialIndex(Model model, HttpServletRequest request){
 		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入素材管理模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("material/index", true, model, request);
 	}
 	
@@ -265,6 +306,7 @@ public class HtmlController extends BaseController{
 		
 		model.addAttribute("iframe", iframe);
 		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入素材添加页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("material/add", true, model, request);
 	}
 	
@@ -300,6 +342,7 @@ public class HtmlController extends BaseController{
 		model.addAttribute("select", select);
 		model.addAttribute("selectType", selectType);
 		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入素材选择页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("material/select", true, model, request);
 	}
 	
@@ -318,10 +361,11 @@ public class HtmlController extends BaseController{
         if(currentUser.isAuthenticated()){
         	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
         	//获取页面初始化的信息
-        	model.addAllAttributes(userService.initSetting(user, request));
+        	model.addAllAttributes(userService.initSetting(user, getHttpRequestInfo(request)));
         }
 
 		model.addAttribute("user", user);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入个人设置页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("setting", true, model, request);
 	}
 	@RequestMapping("403")
@@ -362,7 +406,21 @@ public class HtmlController extends BaseController{
 		
 		return loginRoleCheck("pnull-pointer", model, request);
 	}
-	
+
+	/**
+	 *
+	 * @param model
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	/*@RequestMapping("photo-index")
+	public String photoIndex(Model model, HttpServletRequest request) throws UnsupportedEncodingException{
+		//设置统一的请求模式
+		model.addAttribute("isDebug", IS_DEBUG);
+		return loginRoleCheck("photo-index", model, request);
+	}
+	*/
 	/**
 	 * 获取博客的内容
 	 * @return
@@ -373,9 +431,13 @@ public class HtmlController extends BaseController{
 		Map<String, Object> message = new HashMap<String, Object>();
 		long start = System.currentTimeMillis();
 		try{
+
+
 			@SuppressWarnings("unchecked")
 			BlogService<BlogBean> blogService = (BlogService<BlogBean>) SpringUtil.getBean("blogService");
 			checkParams(message, request);
+
+			operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "客户端查看博客详情，博客ID："+ blogId, "", ConstantsUtil.STATUS_NORMAL, 0);
 			String device_width = request.getParameter("device_width");
 			
 			if(blogId < 1){

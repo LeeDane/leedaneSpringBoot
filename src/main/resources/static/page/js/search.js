@@ -1,19 +1,34 @@
-layui.use(['layer'], function(){
-	layer = layui.layer;
-	$(".common-search").remove();
-	searchKey = getURLParam(decodeURI(window.location.href), "q");
-	if(isEmpty(searchKey)){
-		layer.msg("获取不到您要检索的关键字！");
-		return;
-	}
-	
-	$("#common-search-text").val(searchKey);
-	
-	doSearch();
-});
-var moods;
-var searchKey;
+layui.use(['layer', 'laypage'], function(){
+   layer = layui.layer;
+   laypage = layui.laypage;
 
+  $(".common-search").remove();
+  	searchKey = getURLParam(decodeURI(window.location.href), "q");
+  	if(isEmpty(searchKey)){
+  		layer.msg("获取不到您要检索的关键字！");
+//  		return;
+  	}
+
+  	$("#common-search-text").val(searchKey);
+
+  	doSearch();
+
+    $ContentContainer = $("#content-contrainer");
+	//获取类型
+	$("#notification-tabs").find("li").on("click", function(index){
+		$("#notification-tabs").find("li").removeClass("active");
+		$(this).addClass("active");
+		type = parseInt($(this).attr("data-type"));
+		currentIndex = 0;
+		doSearch();
+	});
+});
+var type = 1; //查询类型, 0表示博客
+var accurate = 0;//0表示模糊查询
+var searchKey;
+var $ContentContainer;
+var startDate = '';
+var endDate = "2019-07-25";
 /**
  * 搜索
  * @param obj
@@ -26,13 +41,26 @@ function search(obj){
 		return;
 	}
 	searchKey = searchText;
+	currentIndex = 1;
 	doSearch();
 }
 
+
+function getRequestParams(){
+	//return {pageSize: pageSize, last_id: last_id, first_id: first_id, method: method, toUserId: uid, t: Math.random()};
+	return {page_size: pageSize, current: currentIndex, total: totalPage, keyword: searchKey, type: type, desc: true, accurate: accurate, startDate: startDate, endDate: endDate , t: Math.random()};
+}
+
+/**
+* 执行搜索操作
+*/
 function doSearch(){
+    var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+
+    $("#notification-tabs li").find(".badge").remove();
 	$.ajax({
 		type : "get",
-		url : "/s/s?keyword="+ searchKey +"&t="+ Math.random(),
+		url : "/s/es?" +jsonToGetRequestParams(getRequestParams()),
 		dataType: 'json', 
 		beforeSend:function(){
 			$("#user-result-show").empty();
@@ -43,32 +71,57 @@ function doSearch(){
 			$("#search-blog-number").text(0);
 		},
 		success : function(data) {
+		    layer.close(loadi);
 			if(data.isSuccess && isNotEmpty(data.message)){
 				$("#search-need-time").text(data.consumeTime);
-				
-				var blogs = data.message["1"];
-				if(isNotEmpty(blogs)){
-					$("#search-blog-number").text(blogs.length);
-					if(blogs.length > 0)
-						buildBlogs(blogs);
+
+				var lists = data.message[0];
+				$ContentContainer.empty();
+				var hits = lists.hits;
+				$("#notification-tabs .active").find("a").append('<span class="badge pull-right">'+ lists.total +'</span>');
+				if(hits.length == 0){
+				    if(currentIndex == 0){
+                        $ContentContainer.append('<div class="col-lg-12">没有检索到数据，请换个关键词试试！</div>');
+                    }else{
+                        $ContentContainer.append('<div class="col-lg-12">已经没有更多的数据啦！</div>');
+                        /*pageDivUtil(data.total);*/
+                    }
+                    return;
+				}else{
+				    if(type == 1){
+                        buildBlogs(hits);
+                    }
+
+                    if(type == 2){
+                        buildMoods(hits);
+                    }
+
+                     if(type == 3){
+                        buildUsers(hits);
+                    }
+
+                    if(type == 6){
+                        buildLogs(hits);
+                    }
+                    //执行一个laypage实例
+                     laypage.render({
+                        elem: 'item-pager' //注意，这里的 test1 是 ID，不用加 # 号
+                        ,layout: ['prev', 'page', 'next', 'count', 'skip']
+                        ,count: lists.total //数据总数，从服务端得到
+                        ,limit: pageSize
+                        ,theme: '#337ab7'
+                        , curr: currentIndex + 1
+                        ,jump: function(obj, first){
+                            //obj包含了当前分页的所有参数，比如：
+                            console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                            console.log(obj.limit); //得到每页显示的条数
+                            if(!first){
+                                currentIndex = obj.curr -1;
+                                doSearch();
+                            }
+                          }
+                     });
 				}
-				
-				var moodArrays = data.message["2"];
-				if(isNotEmpty(moodArrays)){
-					$("#search-mood-number").text(moodArrays.length);
-					if(moodArrays.length > 0){
-						moods = moodArrays;
-						buildMoods(moodArrays);
-					}
-				}
-				
-				var users = data.message["3"];
-				if(isNotEmpty(users)){
-					$("#search-user-number").text(users.length);
-					if(users.length > 0)
-						buildUsers(users);
-				}
-				
 			}else{
 				ajaxError(data);
 			}
@@ -81,11 +134,11 @@ function doSearch(){
 
 /**
  * 创建展示用户结果
- * @param users
+ * @param hits
  */
-function buildUsers(users){
-	for(var i = 0 ; i < users.length; i++){
-		$("#user-result-show").append(buildUserEach(users[i]));
+function buildUsers(hits){
+	for(var i = 0 ; i < hits.length; i++){
+		$ContentContainer.append(buildUserEach(hits[i]));
 	}
 }
 
@@ -95,25 +148,78 @@ function buildUsers(users){
  * @returns {String}
  */
 function buildUserEach(user){
-	var html = '<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" onclick="linkToMy('+ user.id+')">';
-		if(isNotEmpty(user.user_pic_path)){
-			html += '<img class="img-circle center-block" alt="" width="40" height="40" src="'+ user.user_pic_path +'">';
-		}else{
-			html += '<img class="img-circle center-block" alt="" width="40" height="40" src="">';
-		}
-		 			
-			html += '<div class="user-account cut-text" title="'+ user.account+'"><a href="JavaScript:void(0);">'+ user.account+'</a></div>'+
-				'</div>';
+	var html = '<div class="col-lg-12" id="message-list-content">'+
+                    '<div class="row notification-list notification-list-padding" data-id="">'+
+                        '<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;">'+
+                            '<img src="'+ user.user_pic_path +'" width="60" height="60" class="img-rounded" />'+
+                        '</div>'+
+                        '<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">'+
+                            '<div class="list-group">'+
+                                '<div class="list-group-item notification-list-item active">'+
+                                    '<a href="JavaScript:void(0);" onclick="linkToMy('+ user.id +')" target="_blank" class="marginRight">'+ changeNotNullString(user.account) +'</a>'+
+                                    '<span class="badge">管理员</span>'+
+                                '</div>'+
+                                '<div class="list-group-item notification-list-item">'+
+                                    '<table class="table table-hover">'+
+                                        '<caption>基本信息</caption>'+
+                                        '<tbody>'+
+                                        '<tr>'+
+                                            '<td>性别</td>'+
+                                            '<td>'+ changeNotNullString(user.sex) +'</td>'+
+                                        '</tr>'+
+                                         '<tr>'+
+                                            '<td>中文名</td>'+
+                                            '<td>'+ changeNotNullString(user.china_name) +'</td>'+
+                                        '</tr>'+
+                                        '<tr>'+
+                                            '<td>出生日期</td>'+
+                                            '<td>'+ changeNotNullString(user.birth_day) +'</td>'+
+                                        '</tr>'+
+                                        '<tr>'+
+                                            '<td>qq</td>'+
+                                            '<td>'+ changeNotNullString(user.qq) +'</td>'+
+                                        '</tr>'+
+                                        '<tr>'+
+                                            '<td>手机号码</td>'+
+                                            '<td>'+ changeNotNullString(user.mobile_phone) +'</td>'+
+                                        '</tr>'+
+                                        '<tr>'+
+                                            '<td>邮箱</td>'+
+                                            '<td>'+ changeNotNullString(user.email) +'</td>'+
+                                        '</tr>'+
+                                        '<tr>'+
+                                            '<td>学历</td>'+
+                                            '<td>'+ changeNotNullString(user.education_background) +'</td>'+
+                                        '</tr>'+
+                                        '<tr>'+
+                                            '<td>注册时间</td>'+
+                                            '<td>'+ changeNotNullString(user.register_time) +'</td>'+
+                                        '</tr>'+
+                                        '<tr>'+
+                                            '<td>简介</td>'+
+                                            '<td>'+ changeNotNullString(user.personal_introduction) +'</td>'+
+                                        '</tr>'+
+                                        '<tr>'+
+                                            '<td>最后请求时间</td>'+
+                                            '<td>'+ changeNotNullString(user.last_request_time) +'</td>'+
+                                        '</tr>'+
+                                        '</tbody>'+
+                                    '</table>'+
+                                '</div>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>';
 	return html;
 }
 
 /**
  * 创建展示文章结果
- * @param blogs
+ * @param hits
  */
-function buildBlogs(blogs){
-	for(var i = 0 ; i < blogs.length; i++){
-		$("#blog-result-show").append(buildBlogEach(blogs[i]));
+function buildBlogs(hits){
+	for(var i = 0 ; i < hits.length; i++){
+		$ContentContainer.append(buildBlogEach(hits[i]));
 	}
 }
 
@@ -123,61 +229,48 @@ function buildBlogs(blogs){
  * @returns {String}
  */
 function buildBlogEach(blog){
-	var html = '<div class="row blog-list-row">'+
-				   	'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;margin-top: 10px;">';
-		   	if(isNotEmpty(blog.imgUrl)){
-		   		html += '<img width="40" height="40" class="img-circle hand center-block" alt="" src="'+ blog.imgUrl +'"  onclick="showSingleImg(this);"/>';
-		   	}else{
-		   		html += '<img class="img-circle hand center-block" alt="" src=""/>';
-		   	}
-						
-			html += '</div>'+
-					'<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">'+
-						'<div class="row" style="font-family: \'微软雅黑\'; font-size: 15px; margin-top: 10px;">'+
-							'<div class="col-lg-12">'+
-								'<span class="blog-user-name"><a href="JavaScript:void(0);" onclick="linkToMy('+ blog.createUserId+')" title="'+ changeNotNullString(blog.account) +'">'+ changeNotNullString(blog.account) +'</a></span>   '+
-								'<span class="blog-create-time">&nbsp;&nbsp;'+ changeNotNullString(blog.createTime)+'</span>   '+
-								'<span class="blog-froms">&nbsp;&nbsp;'+ changeNotNullString(blog.froms) +'</span>'+
-							'</div>'+
-						'</div>'+
-						'<div class="row" style="font-family: \'微软雅黑\'; font-size: 15px;margin-top: 5px; margin-bottom: 5px;">'+
-							'<div class="col-lg-12">'+ blog.digest +'......</div>'+
-						'</div>'+
-						'<div class="row">'+
-							'<div class="col-lg-12 col-sm-12">';
-							if(isNotEmpty(blog.tag)){
-								var t = blog.tag;
-								var tags = t.split(',');
-								for(var i = 0; i < tags.length; i++){
-									if(i == 0)
-										html += '<span class="label label-default tag" style="font-size: 13px;">'+ tags[i]+'</span>';
-										
-									if(i == 1)
-										html += '<span class="label label-primary tag" style="font-size: 13px; margin-left: 8px;">'+ tags[i]+'</span>';
-										
-									if(i == 2)
-										html += '<span class="label label-success tag" style="font-size: 13px; margin-left: 8px;">'+ tags[i]+'</span>';
-								}
-							}
-					html +='</div>'+
-						'</div>'+
-						'<div class="row" style="font-family: \'宋体\'; font-size: 12px;margin-top: 5px; color: gray; margin-bottom: 10px;">'+
-							'<div class="col-lg-12">'+
-								'<button type="button" class="btn btn-primary btn-sm" onclick="goToReadFull('+ blog.id+')">查看详细</button>'+
-							'</div>'+
-						'</div>'+
-					'</div>'+
-				'</div>';
+	var html = '<div class="col-lg-12" id="message-list-content">'+
+                    '<div class="row notification-list notification-list-padding" data-id="">'+
+                        '<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;">'+
+                            '<img src="'+ blog.user_pic_path +'" width="40" height="40" class="img-rounded" />'+
+                        '</div>'+
+                        '<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">'+
+                            '<div class="list-group">'+
+                                '<div class="list-group-item notification-list-item active">'+
+                                    '<a href="JavaScript:void(0);" onclick="linkToMy('+ blog.create_user_id +')" target="_blank" class="marginRight">'+ blog.account +'</a>'+
+                                    '<span class="marginRight publish-time">发布于: '+ blog.modify_time +'</span>'+
+                                '</div>'+
+                                '<div class="list-group-item notification-list-item">'+
+                                    '<div class="row">'+
+                                        '<div class="col-lg-12"><h4>'+ blog.title +'</h4></div>'+
+                                        '<div class="col-lg-12 hand" onclick="linkToTable(122)">'+
+                                            '<blockquote>'+
+                                                    '<small>'+ blog.digest +'</small>'+
+                                            '</blockquote>'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</div>'+
+                                '<div class="list-group-item notification-list-item">'+
+                                    '<div class="row">'+
+                                        '<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right">'+
+                                            '<button class="btn btn-sm btn-primary pull-right tag-read-btn" onclick="goToReadFull('+ blog.id +')" style="width: 80px;" type="button">查看</button>'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>';
 	return html;
 }
 
 /**
  * 创建展示心情结果
- * @param moods
+ * @param hits
  */
-function buildMoods(moods){
-	for(var i = 0 ; i < moods.length; i++){
-		$("#mood-result-show").append(buildMoodEach(i, moods[i]));
+function buildMoods(hits){
+	for(var i = 0 ; i < hits.length; i++){
+		$ContentContainer.append(buildMoodEach(i, hits[i]));
 	}
 }
 
@@ -188,42 +281,90 @@ function buildMoods(moods){
  * @returns {String}
  */
 function buildMoodEach(index, mood){
-	var html = '<div class="row mood-list-row">'+
-			   		'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;margin-top: 10px;">';
-   			if(isNotEmpty(mood.user_pic_path)){
-   				html += '<img width="40" height="40" class="img-circle hand" alt="" src="'+ mood.user_pic_path +'"  onclick="showSingleImg(this);"/>';
-   			}else{
-   				html += '<img width="40" height="40" class="img-circle hand" alt="" src=""/>';
-   			}	
-			html += '</div>'+
-					'<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">'+
-						'<div class="row" style="font-family: \'微软雅黑\'; font-size: 15px; margin-top: 10px;">'+
-							'<div class="col-lg-12">'+
-								'<span class="mood-user-name"><a href="JavaScript:void(0);" onclick="linkToMy('+ mood.createUserId +')">'+ changeNotNullString(mood.account) +'</a></span>  '+ 
-								'<span class="mood-create-time">&nbsp;&nbsp;'+ changeNotNullString(mood.createTime) +'</span>'+
-								'<span class="mood-froms">&nbsp;&nbsp;'+ changeNotNullString(mood.froms) +'</span>'+
-							'</div>'+
-						'</div>'+
-						'<div class="row" style="font-family: \'微软雅黑\'; font-size: 17px;margin-top: 5px;">'+
-							'<div class="col-lg-12">'+ changeNotNullString(mood.content) +'</div>'+
-						'</div>';
-						if(isNotEmpty(mood.location)){
-							html += '<div class="row" style="font-family: \'宋体\'; font-size: 12px;margin-top: 5px; color: gray; margin-bottom: 10px;">'+
-										'<div class="col-lg-12">'+ mood.location +'</div>'+
-									'</div>';
-						}
-				if(mood.hasImg && isNotEmpty(mood.imgs)){
-					html += '<div class="row">';
-					var imgs = mood.imgs.split(";");
-					for(var i = 0; i < imgs.length; i++){
-						html += '<div class="col-lg-4 col-sm-4" style="margin-top: 5px;">'+
-									'<img width="100%" height="180" class="img-rounded hand" alt="" src="'+ imgs[i] +'"  onclick="showImg('+ index+', '+ i +');"/>'+
-								'</div>';
-					}
-					html += '</div>';
-				}
-				html += '</div>'+
-					'</div>';
+	var html = '<div class="col-lg-12" id="message-list-content">'+
+                    '<div class="row notification-list notification-list-padding" data-id="">'+
+                        '<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;">'+
+                            '<img src="'+ mood.user_pic_path +'" width="40" height="40" class="img-rounded" />'+
+                        '</div>'+
+                        '<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">'+
+                            '<div class="list-group">'+
+                                '<div class="list-group-item notification-list-item active">'+
+                                    '<a href="JavaScript:void(0);" onclick="linkToMy('+ mood.create_user_id +')" target="_blank" class="marginRight">'+ changeNotNullString(mood.account) +'</a>'+
+                                    '<span class="marginRight publish-time">发布于: '+ mood.modify_time +'</span>'+
+                                '</div>'+
+                                '<div class="list-group-item notification-list-item">'+
+                                    '<div class="row">'+
+                                        '<div class="col-lg-12"><h4>'+ changeNotNullString(mood.content) +'</h4></div>'+
+                                    '</div>'+
+                                '</div>'+
+                                '<div class="list-group-item notification-list-item">'+
+                                   '<div class="row" style="margin-top: 5px;">';
+                                   if(isNotEmpty(mood.imgs)){
+                                        var imgs = mood.imgs.split(";");
+                                        for(var i = 0; i < imgs.length; i++){
+                                            html +=  '<div class="col-lg-4 col-sm-4">'+
+                                                            '<img src="'+ imgs[i] +'" width="100%" height="180px" class="img-rounded" onclick="showImg(0, 0);" />'+
+                                                        '</div>';
+                                        }
+                                   }
+
+                            html += '</div>'+
+                                '</div>'+
+                                '<div class="list-group-item notification-list-item">'+
+                                    '<div class="row">'+
+                                        '<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right">'+
+                                            '<button class="btn btn-sm btn-primary pull-right tag-read-btn" onclick="goToReadMoodFull('+ mood.id + ',' + mood.create_user_id +')" style="width: 80px;" type="button">查看</button>'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>';
 				
+	return html;
+}
+
+/**
+ * 创建展示日志结果
+ * @param hits
+ */
+function buildLogs(hits){
+	for(var i = 0 ; i < hits.length; i++){
+		$ContentContainer.append(buildLogEach(hits[i]));
+	}
+}
+
+/**
+ * 创建每条日志的展示结果
+ * @param blog
+ * @returns {String}
+ */
+function buildLogEach(log){
+	var html = '<div class="col-lg-12" id="message-list-content">'+
+                    '<div class="row notification-list notification-list-padding" data-id="">'+
+                        '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">'+
+                            '<div class="list-group">'+
+                                '<div class="list-group-item notification-list-item active">'+
+                                    '<a href="JavaScript:void(0);" onclick="linkToMy('+ log.create_user_id +')" target="_blank" class="marginRight">'+ changeNotNullString(log.account) +'</a>'+
+                                    '<span class="marginRight publish-time">操作时间: '+ log.modify_time +'</span>'+
+                                    '<span class="publish-time">操作类型：'+ log.operate_type +'</span>'+
+                                '</div>'+
+                                '<div class="list-group-item notification-list-item">'+
+                                    '<div class="row">'+
+                                        '<div class="col-lg-12"><h4>'+ log.subject +'</h4></div>'+
+                                        '<div class="col-lg-12 hand" onclick="linkToTable(122)">'+
+                                            '<blockquote>'+
+                                                '<span>ip: '+ changeNotNullString(log.ip) +'</span>'+
+                                                '<span>&nbsp;&nbsp;来自: '+ changeNotNullString(log.location) +'</span>'+
+                                                '<small>浏览器信息： '+ changeNotNullString(log.browser) +'</small>'+
+                                            '</blockquote>'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>';
 	return html;
 }

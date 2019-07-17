@@ -1,22 +1,19 @@
 package com.cn.leedane.service.impl;
 
-import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.mapper.TemporaryBase64Mapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.TemporaryBase64Bean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.TemporaryBase64Service;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.JsonUtil;
 import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.mapper.TemporaryBase64Mapper;
-import com.cn.leedane.model.TemporaryBase64Bean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.TemporaryBase64Service;
+import java.util.Date;
 /**
  * base64上传临时文件service的实现类
  * @author LeeDane
@@ -31,7 +28,7 @@ public class TemporaryBase64ServiceImpl implements TemporaryBase64Service<Tempor
 	
 	@Override
 	public boolean saveBase64Str(JSONObject jo, UserBean user,
-			HttpServletRequest request){
+			HttpRequestInfoBean request){
 		logger.info("TemporaryBase64ServiceImpl-->saveBase64Str():jo="+jo.toString());
 		int start = JsonUtil.getIntValue(jo, "start");
 		int end = JsonUtil.getIntValue(jo, "end");

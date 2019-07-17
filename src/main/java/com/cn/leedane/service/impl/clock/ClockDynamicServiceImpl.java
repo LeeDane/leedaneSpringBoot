@@ -1,16 +1,4 @@
 package com.cn.leedane.service.impl.clock;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.display.clock.ClockDynamicDisplay;
 import com.cn.leedane.handler.UserHandler;
@@ -18,23 +6,24 @@ import com.cn.leedane.handler.clock.ClockHandler;
 import com.cn.leedane.handler.clock.ClockMemberHandler;
 import com.cn.leedane.mapper.clock.ClockDynamicMapper;
 import com.cn.leedane.mapper.clock.ClockMapper;
-import com.cn.leedane.mapper.clock.ClockMemberMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.clock.ClockBean;
 import com.cn.leedane.model.clock.ClockDynamicBean;
-import com.cn.leedane.model.clock.ClockMemberBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.clock.ClockDynamicService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 任务打卡service实现类
@@ -66,7 +55,7 @@ public class ClockDynamicServiceImpl extends AdminRoleCheckService implements Cl
 	
 	@Override
 	public Map<String, Object> dynamics(int clockId, JSONObject jsonObject, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockDynamicServiceImpl-->dynamics():jo="+jsonObject.toString());
 		
 		//检验任务是否存在
@@ -104,11 +93,12 @@ public class ClockDynamicServiceImpl extends AdminRoleCheckService implements Cl
 				display.setPicPath(userHandler.getUserPicPath(createUserId, "30x30"));
 				display.setStatus(dynamicBean.getStatus());
 				display.setMessageType(dynamicBean.getMessageType());
+				display.setSeeEachOther(clock.isSeeEachOther());
 				dynamicDisplays.add(display);
 			}
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取任务动态列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取任务动态列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", dynamicDisplays);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);

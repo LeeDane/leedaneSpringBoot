@@ -1,17 +1,14 @@
 package com.cn.leedane.service;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户service接口类
@@ -209,7 +206,7 @@ public interface UserService<T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public String getHeadBase64StrById(JSONObject jo, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 	
 	/**
 	 * 根据用户ID获取其头像的路径
@@ -221,7 +218,7 @@ public interface UserService<T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public String getHeadFilePathStrById(JSONObject jo, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 	/**
 	 * 根据用户的ID上传头像
 	 * {"base64": "jjjhuhfuewudfbnfbbdfs"}
@@ -231,7 +228,7 @@ public interface UserService<T extends IDBean>{
 	 * @return
 	 */
 	public boolean uploadHeadBase64StrById(JSONObject jo, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 
 	/**
 	 * 检查账号是否被占用
@@ -242,7 +239,7 @@ public interface UserService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String,Object> checkAccount(JSONObject jo, HttpServletRequest request,
+	public Map<String,Object> checkAccount(JSONObject jo, HttpRequestInfoBean request,
 			UserBean user);
 	
 	/**
@@ -254,7 +251,7 @@ public interface UserService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public boolean checkMobilePhone(JSONObject jo, HttpServletRequest request,
+	public boolean checkMobilePhone(JSONObject jo, HttpRequestInfoBean request,
 			UserBean user);
 	
 	/**
@@ -266,7 +263,7 @@ public interface UserService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public boolean checkEmail(JSONObject jo, HttpServletRequest request,
+	public boolean checkEmail(JSONObject jo, HttpRequestInfoBean request,
 			UserBean user);
 
 	/**
@@ -277,7 +274,7 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public UserBean registerByPhone(JSONObject jo, HttpServletRequest request);
+	public UserBean registerByPhone(JSONObject jo, HttpRequestInfoBean request);
 
 	/**
 	 * 通过手机号码登录
@@ -286,7 +283,7 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public UserBean loginByPhone(JSONObject jo, HttpServletRequest request);
+	public UserBean loginByPhone(JSONObject jo, HttpRequestInfoBean request);
 	/**
 	 * 获取手机注册的验证码
 	 * {''mobilePhone':172636634664'}
@@ -296,7 +293,7 @@ public interface UserService<T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getPhoneRegisterCode(JSONObject jo,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 	
 	/**
 	 * 获取手机登录的验证码
@@ -306,7 +303,7 @@ public interface UserService<T extends IDBean>{
 	 * @return 
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getPhoneLoginCode(String mobilePhone, HttpServletRequest request);
+	public Map<String, Object> getPhoneLoginCode(String mobilePhone, HttpRequestInfoBean request);
 	
 	/**
 	 * 绑定微信号
@@ -352,7 +349,7 @@ public interface UserService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getUserInfoData(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getUserInfoData(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 通过手机号码注册(不需要校验)
@@ -360,7 +357,7 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> registerByPhoneNoValidate(JSONObject jo, HttpServletRequest request);
+	public Map<String, Object> registerByPhoneNoValidate(JSONObject jo, HttpRequestInfoBean request);
 
 	/**
 	 * 搜索用户
@@ -370,7 +367,7 @@ public interface UserService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> search(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> search(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * web端搜索用户(跟app搜索区别，所以另外写一个)
@@ -380,7 +377,7 @@ public interface UserService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> webSearch(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> webSearch(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 摇一摇搜索用户
@@ -390,7 +387,7 @@ public interface UserService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> shakeSearch(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> shakeSearch(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	
 	/**
@@ -400,7 +397,7 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> updateUserBase(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> updateUserBase(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 管理员更新用户的基本信息
@@ -409,7 +406,7 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> adminUpdateUserBase(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> adminUpdateUserBase(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 更新登录密码
@@ -418,7 +415,7 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> updatePassword(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> updatePassword(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 管理员重置用户登录密码
@@ -427,7 +424,7 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> adminResetPassword(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> adminResetPassword(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 通过微信用户名找到leedane系统绑定的用户对象
@@ -445,7 +442,7 @@ public interface UserService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> searchUserByUserIdOrAccount(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> searchUserByUserIdOrAccount(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取所有用户
@@ -462,7 +459,7 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> scanLogin(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> scanLogin(JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 取消扫码登陆
@@ -471,7 +468,7 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> cancelScanLogin(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> cancelScanLogin(JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 删除（注销）用户
@@ -480,7 +477,7 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deleteUser(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> deleteUser(JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 发送信息//type: 1为通知，2为邮件，3为私信，4为短信
@@ -489,7 +486,7 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> sendMessage(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> sendMessage(JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 添加用户(只能是管理员操作)
@@ -498,7 +495,7 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> addUser(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> addUser(JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 上传用户头像链接
@@ -507,7 +504,7 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> uploadUserHeadImageLink(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> uploadUserHeadImageLink(JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 初始化设置
@@ -515,16 +512,17 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> initSetting(UserBean user, HttpServletRequest request);
+	public Map<String, Object> initSetting(UserBean user, HttpRequestInfoBean request);
+
 
 	/**
 	 * 获取在线的用户列表
-	 * @param jsonFromMessage
-	 * @param userFromMessage
+	 * @param json
+	 * @param user
 	 * @param request
 	 * @return
 	 */
 	public Map<String, Object> actives(
 			JSONObject json, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 }

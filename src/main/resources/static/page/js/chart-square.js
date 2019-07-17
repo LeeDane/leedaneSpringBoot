@@ -69,7 +69,7 @@ var topArray = [100, 130, 170]; //距离顶部的可能数组
 var topIndex = 0;//弹屏距离顶部的距离样式控制
 
 function initWebSocket(){
-	 websocket = new WebSocket("ws://127.0.0.1:8011/websocket?id=123");
+	 websocket = new WebSocket("ws://127.0.0.1:80/websocket?id=123");
 
 	//连接发生错误的回调方法
 	websocket.onerror = function(){

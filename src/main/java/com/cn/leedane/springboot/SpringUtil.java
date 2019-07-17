@@ -31,6 +31,8 @@ public class SpringUtil{
 	
 	//获取applicationContext
     public static ApplicationContext getApplicationContext() {
+        if(applicationContext == null)
+            System.out.println("SpringUtil----getApplicationContext()是空的");
         return applicationContext;
     }
 

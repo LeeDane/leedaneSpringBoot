@@ -1,11 +1,14 @@
 package com.cn.leedane.controller.circle;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.controller.BaseController;
+import com.cn.leedane.model.circle.CircleBean;
+import com.cn.leedane.model.circle.CircleSettingBean;
+import com.cn.leedane.service.circle.CircleService;
+import com.cn.leedane.service.circle.CircleSettingService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.controller.BaseController;
-import com.cn.leedane.model.circle.CircleBean;
-import com.cn.leedane.model.circle.CircleSettingBean;
-import com.cn.leedane.service.circle.CircleService;
-import com.cn.leedane.service.circle.CircleSettingService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 圈子接口controller
@@ -53,7 +50,7 @@ public class CircleController extends BaseController{
 			return message.getMap();
 //		int i = 10/0;
 		checkRoleOrPermission(model, request);
-		message.putAll(circleService.check(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circleService.check(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -68,7 +65,7 @@ public class CircleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleService.create(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circleService.create(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -83,7 +80,7 @@ public class CircleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleService.update(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circleService.update(circleId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -98,7 +95,7 @@ public class CircleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circleService.paging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -113,7 +110,7 @@ public class CircleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleService.delete(circleId, getUserFromMessage(message), request));
+		message.putAll(circleService.delete(circleId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -128,7 +125,7 @@ public class CircleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleService.joinCheck(circleId, getUserFromMessage(message), request));
+		message.putAll(circleService.joinCheck(circleId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -143,7 +140,7 @@ public class CircleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleService.join(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circleService.join(circleId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -158,7 +155,7 @@ public class CircleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleService.leave(circleId, getUserFromMessage(message), request));
+		message.putAll(circleService.leave(circleId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -173,7 +170,7 @@ public class CircleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleService.admins(cid, getUserFromMessage(message), request));
+		message.putAll(circleService.admins(cid, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -191,7 +188,7 @@ public class CircleController extends BaseController{
 		JSONObject json = getJsonFromMessage(message);
 		String admins = JsonUtil.getStringValue(json, "admins");
 		
-		message.putAll(circleService.allot(cid, admins, getUserFromMessage(message), request));
+		message.putAll(circleService.allot(cid, admins, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -206,7 +203,7 @@ public class CircleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleService.initialize(cid, getUserFromMessage(message), request));
+		message.putAll(circleService.initialize(cid, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -222,7 +219,7 @@ public class CircleController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleService.init(getUserFromMessage(message), request));
+		message.putAll(circleService.init(getUserFromMessage(message), getHttpRequestInfo(request)));
 		message.put("isSuccess", true);
 		System.out.println(JSONObject.fromObject(message.getMap()).toString());
 		return message.getMap();

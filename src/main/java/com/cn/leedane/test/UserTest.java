@@ -113,7 +113,7 @@ public class UserTest extends BaseTest {
 	@Test
 	public void uploadHeadBase64StrById(){
 		
-		String filePath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER+"yang.jpg";
+		String filePath = ConstantsUtil.getDefaultSaveFileFolder()+"yang.jpg";
 		String base64;
 		try {
 			base64 = Base64ImageUtil.convertImageToBase64(filePath, null);

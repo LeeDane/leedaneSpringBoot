@@ -1,16 +1,14 @@
 package com.cn.leedane.service;
-import java.util.Date;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Date;
+import java.util.Map;
 /**
  * 操作日志的Service类
  * @author LeeDane
@@ -31,7 +29,7 @@ public interface OperateLogService<T extends IDBean>{
 	 * @param operateType 操作类型
 	 * @return
 	 */
-	public boolean saveOperateLog(UserBean user,HttpServletRequest request,Date createTime,String subject, String method,int status,int operateType);
+	public boolean saveOperateLog(UserBean user, HttpRequestInfoBean request, Date createTime, String subject, String method, int status, int operateType);
 
 	/**
 	 * 分页获取用户登录操作日志列表
@@ -41,6 +39,6 @@ public interface OperateLogService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getUserLoginLimit(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getUserLoginLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 }

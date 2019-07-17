@@ -2,6 +2,7 @@ package com.cn.leedane.springboot.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cn.leedane.utils.ConstantsUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +44,8 @@ public class MallPromotionHtmlController extends BaseController{
 	@RequestMapping("/index")
 	public String promotionIndex(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(model, request);	
-				
+		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入推广平台模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
         UserBean user = null;

@@ -1,15 +1,12 @@
 package com.cn.leedane.service.clock;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.springframework.transaction.annotation.Transactional;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import net.sf.json.JSONObject;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 /**
  * 任务成员的Service类
@@ -28,7 +25,7 @@ public interface ClockMemberService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public boolean add(int clockId, int memberId, JSONObject jo, UserBean user, HttpServletRequest request);
+	public boolean add(int clockId, int memberId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 编辑任务成员
@@ -39,7 +36,7 @@ public interface ClockMemberService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> update(int clockId, int memberId, JSONObject jo, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> update(int clockId, int memberId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除任务成员
@@ -49,7 +46,7 @@ public interface ClockMemberService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(int clockId, int memberId, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> delete(int clockId, int memberId, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取任务的成员列表
@@ -58,5 +55,5 @@ public interface ClockMemberService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> members(int clockId, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> members(int clockId, UserBean user, HttpRequestInfoBean request);
 }	

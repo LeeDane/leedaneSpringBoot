@@ -1,9 +1,10 @@
 package com.cn.leedane.controller.mall;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.controller.BaseController;
+import com.cn.leedane.model.mall.S_ProductBean;
+import com.cn.leedane.service.mall.S_ProductService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.controller.BaseController;
-import com.cn.leedane.model.mall.S_ProductBean;
-import com.cn.leedane.service.mall.S_ProductService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 商品接口controller
@@ -45,7 +43,7 @@ public class ProductController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(circleService.check(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circleService.check(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}*/
 	
@@ -60,7 +58,7 @@ public class ProductController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(productService.save(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(productService.save(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -74,7 +72,7 @@ public class ProductController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
-		message.putAll(productService.statistics(productId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(productService.statistics(productId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -87,7 +85,7 @@ public class ProductController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
-		message.putAll(productService.recommend(productId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(productService.recommend(productId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	

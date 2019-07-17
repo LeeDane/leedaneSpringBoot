@@ -1,25 +1,6 @@
 package com.cn.leedane.service.impl.clock;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.cn.leedane.display.clock.ClockDisplay;
-import com.cn.leedane.display.clock.ClockDisplayGroup;
-import com.cn.leedane.display.clock.ClockSearchDisplay;
-import com.cn.leedane.display.clock.ClockStatisticsDisplay;
+import com.cn.leedane.display.clock.*;
 import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.NotificationHandler;
@@ -28,31 +9,28 @@ import com.cn.leedane.handler.clock.ClockDynamicHandler;
 import com.cn.leedane.handler.clock.ClockHandler;
 import com.cn.leedane.handler.clock.ClockMemberHandler;
 import com.cn.leedane.mapper.CategoryMapper;
-import com.cn.leedane.mapper.clock.ClockDealMapper;
-import com.cn.leedane.mapper.clock.ClockInMapper;
-import com.cn.leedane.mapper.clock.ClockMapper;
-import com.cn.leedane.mapper.clock.ClockMemberMapper;
+import com.cn.leedane.mapper.clock.*;
 import com.cn.leedane.message.JpushCustomMessage;
 import com.cn.leedane.message.notification.CustomMessage;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.UsersBean;
 import com.cn.leedane.model.clock.ClockBean;
 import com.cn.leedane.model.clock.ClockMemberBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.clock.ClockMemberService;
 import com.cn.leedane.service.clock.ClockService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 /**
  * 任务提醒service实现类
@@ -99,34 +77,39 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 	
 	@Autowired
 	private ClockInMapper clockInMapper;
-	
+
+	@Autowired
+	private ClockInResourcesMapper clockInResourcesMapper;
+
 	@Override
 	public Map<String, Object> add(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
-		logger.info("ClockServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		
+								   HttpRequestInfoBean request) {
+
+
+		logger.info("ClockServiceImpl-->add():jsonObject=" + jo.toString() + ", user=" + user.getAccount());
+
 		SqlUtil sqlUtil = new SqlUtil();
 		ClockBean clockBean = (ClockBean) sqlUtil.getBean(jo, ClockBean.class);
-		
+
 		//参数校验
-		if(StringUtil.isNull(clockBean.getTitle()))
+		if (StringUtil.isNull(clockBean.getTitle()))
 			throw new NullPointerException("任务标题不能为空！");
-		
-		if(StringUtil.isNull(clockBean.getClockDescribe()))
+
+		if (StringUtil.isNull(clockBean.getClockDescribe()))
 			throw new NullPointerException("任务描述不能为空！");
-		
-		if(clockBean.getStartDate() == null)
+
+		if (clockBean.getStartDate() == null)
 			throw new NullPointerException("开始日期不能为空！");
-		
-		if(clockBean.getEndDate() != null && clockBean.getStartDate().getTime() >  clockBean.getEndDate().getTime())
+
+		if (clockBean.getEndDate() != null && clockBean.getStartDate().getTime() > clockBean.getEndDate().getTime())
 			throw new ParameterUnspecificationException("开始日期不能大于结束日期！");
-		
+
 //		if(clockBean.getClockStartTime() == null)
 //			throw new NullPointerException("打卡开始时间不能为空！");
-		
-		if(StringUtil.isNull(clockBean.getClockRepeat()))
+
+		if (StringUtil.isNull(clockBean.getClockRepeat()))
 			throw new NullPointerException("重复周期不能为空！");
-				
+
 		ResponseMap message = new ResponseMap();
 		clockBean.setCreateTime(new Date());
 		clockBean.setCreateUserId(user.getId());
@@ -134,41 +117,41 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		clockBean.setModifyTime(new Date());
 		clockBean.setModifyUserId(user.getId());
 		//参与人数必须大于等于1，因为自己本身就是参与人之一
-		if(clockBean.getTakePartNumber() < 1)
+		if (clockBean.getTakePartNumber() < 1)
 			clockBean.setTakePartNumber(1);
-		
+
 		//设置唯一共享ID
-		if(clockBean.isShare()){
+		if (clockBean.isShare()) {
 			clockBean.setShareId(StringUtil.getShareId());
 		}
-		
+
 		boolean result = clockMapper.save(clockBean) > 0;
-		if(result){
+		if (result) {
 			//保存动态信息
 			clockDynamicHandler.saveDynamic(clockBean.getId(), new Date(), user.getId(), "创建了任务", true, EnumUtil.CustomMessageExtraType.其他未知类型.value);
-			
+
 			//添加成员
 			result = clockMemberService.add(clockBean.getId(), user.getId(), jo, user, request);
 			//清空该用户的任务列表缓存
-			if(clockBean.getParentId() > 0 || clockBean.getCategoryId() < 1)
+			if (clockBean.getParentId() > 0 || clockBean.getCategoryId() < 1)
 				clockHandler.deleteDateClocksCache(user.getId());
 			message.put("isSuccess", true);
 			String content = "您已成功创建新的任务，请准时打卡！";
 			message.put("message", content);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
+		} else {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"创建任务名称为：", clockBean.getTitle(),"，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);		
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "创建任务名称为：", clockBean.getTitle(), "，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
 	}
 
 
 	@Override
 	public Map<String, Object> update(int clockId, JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		ClockBean clockBean = clockHandler.getNormalClock(clockId);
@@ -177,6 +160,10 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		boolean creater = userId == clockBean.getCreateUserId();
 		//判断如果是创建人或者是普通成员
 		if(creater){
+			//先保存用户成员信息
+			Map<String, Object> memberUpdate = clockMemberService.update(clockId, user.getId(), jo, user, request);
+			if(!StringUtil.changeObjectToBoolean(memberUpdate.get("isSuccess")))
+				return memberUpdate;
 			//自动填充更新的bean
 			SqlUtil sqlUtil = new SqlUtil();
 			clockBean = (ClockBean)sqlUtil.getUpdateBean(jo, clockBean);
@@ -187,9 +174,12 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 				clockBean.setShareId(StringUtil.getShareId());
 			}
 			boolean result = clockMapper.update(clockBean) > 0;
+
 			if(result){
 				//清除该用户的任务
 				clockHandler.deleteDateClocksCache(userId);
+				//清除任务缓存
+				clockHandler.deleteClockCache(clockId);
 				String content= "修改任务《"+ clockBean.getTitle() +"》成功！";
 				message.put("isSuccess", true);
 				message.put("message", content);
@@ -235,28 +225,38 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 
 	@Override
 	public Map<String, Object> delete(int clockId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->delete():clockId=" +clockId +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
 		//校验
 		ClockBean clockBean = clockHandler.getNormalClock(clockId);
-		
+		//检验是否在成员列表中
+		if(!clockMemberHandler.inMember(user.getId(), clockId))
+			throw new UnauthorizedException("您还未加入该任务");
+
 		int userId = user.getId();
 		boolean creater = clockBean.getCreateUserId() == userId;
 		boolean result = true;
+
+		//创建者直接删除任务
 		if(creater){
 			//这里是逻辑删除
 			clockBean.setStatus(ConstantsUtil.STATUS_DELETE);
 			clockBean.setModifyTime(new Date());
 			result = clockMapper.update(clockBean) > 0;
-		}else{
+		}else{//非创建者退出任务
+			//判断是否可以自动退出
+			if(!clockBean.isAutoOut())
+				throw new UnauthorizedException("该任务不允许自动退出，可以跟任务管理员协商处理或者联系系统管理员介入。");
 			result = clockMemberMapper.exitClock(clockId, userId, userId, ConstantsUtil.STATUS_DELETE);
 		}
 		
 		if(result){
 			clockHandler.deleteDateClocksCache(userId);
 			clockMemberHandler.deleteClockMembersCache(clockId);
+			//清除任务缓存
+			clockHandler.deleteClockCache(clockId);
 			
 			//设置deal表的状态
 			clockDealMapper.updateStatus(clockId, userId, ConstantsUtil.STATUS_DELETE);			
@@ -297,7 +297,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 	}
 	@Override
 	public Map<String, Object> dateClocks(String date, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->dateClocks():userId=" +user.getId() +", user=" +user.getAccount()+", date="+ date);
 		ResponseMap message = new ResponseMap();
 		
@@ -317,7 +317,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		if(CollectionUtil.isNotEmpty(clockDisplays)){
 			for(ClockDisplay clockDisplay: clockDisplays){
 				//没打卡的
-				if(!clockDisplay.isClockIn()){
+				if(clockDisplay.getClockInStatus() == 0){
 					//计算任务结束的天数
 					clockDisplay.setLeftDay(findDates(DateUtil.stringToDate(date, "yyyy-MM-dd"), DateUtil.stringToDate(clockDisplay.getEndDate(), "yyyy-MM-dd"), clockDisplay.getClockRepeat()).size() - 1);
 					clockDisplay.setTotalDay(findDates(DateUtil.stringToDate(clockDisplay.getStartDate(), "yyyy-MM-dd"), DateUtil.stringToDate(clockDisplay.getEndDate(), "yyyy-MM-dd"), clockDisplay.getClockRepeat()).size());
@@ -331,7 +331,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 	
 	@Override
 	public Map<String, Object> getOngoingClocks(UserBean user, JSONObject json,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->getOngoingClocks():userId=" +user.getId() +", user=" +user.getAccount()+",json="+ json);
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(json, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -353,7 +353,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 	
 	@Override
 	public Map<String, Object> getEndeds(UserBean user, JSONObject json,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->getEndeds():userId=" +user.getId() +", user=" +user.getAccount()+", json="+ json);
 		ResponseMap message = new ResponseMap();
 		
@@ -411,7 +411,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 	
 	@Override
 	public Map<String, Object> systemClocks(UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->systemClocks():userId=" +user.getId() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		List<ClockDisplayGroup> groups = clockHandler.systemClocks();
@@ -452,7 +452,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 
 	@Override
 	public Map<String, Object> getClock(int clockId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->getClock():json=" +json.toString() +", clockId=" +clockId);
 		ResponseMap message = new ResponseMap();
 		List<ClockDisplay> clockDisplays = clockMapper.getMyClock(user.getId(), clockId);
@@ -472,7 +472,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 
 	@Override
 	public Map<String, Object> search(JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->search():json=" +json.toString() +", user=" +user.getId());
 		String keyword = JsonUtil.getStringValue(json, "keyword");
 		if(StringUtil.isNull(keyword))
@@ -487,12 +487,19 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 
 	@Override
 	public Map<String, Object> getClockThumbnail(int clockId, JSONObject json,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->getClockThumbnail():json=" +json.toString() +", clockId=" +clockId);
 		ResponseMap message = new ResponseMap();
-		
+
+		//满足某些需要加入任务才能查看的场景使用
+		boolean mustIn = JsonUtil.getBooleanValue(json,"in",  false);
 		//先判断任务是否存在
 		clockHandler.getNormalClock(clockId);
+		if(mustIn){
+			//检验是否在成员列表中
+			if(!clockMemberHandler.inMember(user.getId(), clockId))
+				throw new UnauthorizedException("您还未加入该任务");
+		}
 		
 		ClockSearchDisplay clockSearchDisplay = clockMapper.getClockThumbnail(user.getId(), clockId);
 		if(clockSearchDisplay == null)
@@ -510,7 +517,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 
 	@Override
 	public Map<String, Object> statistics(int clockId, JSONObject json,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->getClockThumbnail():json=" +json.toString() +", clockId=" +clockId);
 		ResponseMap message = new ResponseMap();
 		//先判断任务是否存在
@@ -554,6 +561,36 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		return message.getMap();
 	}
 
+	@Override
+	public Map<String, Object> resources(int clockId, int resourceType, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+		logger.info("ClockServiceImpl-->resources():json=" +json.toString() +", clockId=" +clockId + ", resourceType="+ resourceType);
+		ResponseMap message = new ResponseMap();
+		//先判断任务是否存在
+		ClockBean clockBean = clockHandler.getNormalClock(clockId);
+
+		//检验是否在成员列表中
+		if(!clockMemberHandler.inMember(user.getId(), clockId))
+			throw new UnauthorizedException("您还未加入该任务，无法查看资源列表");
+
+		if(!clockBean.isSeeEachOther() && clockBean.getCreateUserId() != user.getId())
+			throw new UnauthorizedException("已被设置为不能查看资源");
+
+		int pageSize = JsonUtil.getIntValue(json, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
+		int currentIndex = JsonUtil.getIntValue(json, "current", 0); //当前的索引
+		int total = JsonUtil.getIntValue(json, "total", 0); //总数
+		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
+		boolean userPic = JsonUtil.getBooleanValue(json, "userPic"); //标记是否获取创建人头像
+
+		List<ClockInResourceDisplay> resourceDisplays = clockInResourcesMapper.resources(clockId, resourceType, start, pageSize);
+		if(userPic){
+			for(ClockInResourceDisplay clockInResourceDisplay: resourceDisplays)
+				clockInResourceDisplay.setPicPath(userHandler.getUserPicPath(clockInResourceDisplay.getCreateUserId(), "30x30"));
+		}
+		message.put("isSuccess", true);
+		message.put("message", resourceDisplays);
+		return message.getMap();
+	}
+
 	/**
 	 * 获取排名前三的额用户
 	 * @param clockId
@@ -589,8 +626,6 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		}
 		return array;
 	}
-	
-	
 
 	/**
 	 * 获得结果对象

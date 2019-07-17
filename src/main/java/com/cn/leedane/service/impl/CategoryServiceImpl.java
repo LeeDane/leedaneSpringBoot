@@ -1,33 +1,24 @@
 package com.cn.leedane.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.handler.CategoryHandler;
+import com.cn.leedane.mapper.CategoryMapper;
+import com.cn.leedane.model.CategoryBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.OperateLogBean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.CategoryService;
+import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.utils.*;
 import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.handler.CategoryHandler;
-import com.cn.leedane.mapper.CategoryMapper;
-import com.cn.leedane.model.CategoryBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.CategoryService;
-import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 /**
  * 分类管理service的实现类
  * @author LeeDane
@@ -49,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 	
 	@Override
 	public Map<String, Object> add(JSONObject jo, UserBean user,
-			HttpServletRequest request){
+								   HttpRequestInfoBean request){
 		logger.info("CategoryServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String text = JsonUtil.getStringValue(jo, "text");
 		int pid = JsonUtil.getIntValue(jo, "pid", 0);
@@ -78,13 +69,13 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"添加节点， 节点名称是", text,", pid是：", pid).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"添加节点， 节点名称是", text,", 父节点id是：", pid).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
 	}
 	
 	@Override
 	public Map<String, Object> children(boolean isAdmin, int pid, UserBean user,
-			HttpServletRequest request){
+										HttpRequestInfoBean request){
 		logger.info("CategoryServiceImpl-->children():pid=" +pid +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
@@ -145,7 +136,7 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 	
 	@Override
 	public Map<String, Object> update(boolean isAdmin, int cid, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+									  HttpRequestInfoBean request) {
 		logger.info("CategoryServiceImpl-->delete():cid=" +cid + ", json="+ json +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
@@ -176,7 +167,7 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 	
 	@Override
 	public Map<String, Object> delete(boolean isAdmin, int cid, UserBean user,
-			HttpServletRequest request) {
+									  HttpRequestInfoBean request) {
 		logger.info("CategoryServiceImpl-->delete():cid=" +cid +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		

@@ -1,41 +1,22 @@
 package com.cn.leedane.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.cn.leedane.handler.CircleOfFriendsHandler;
-import com.cn.leedane.handler.CommentHandler;
-import com.cn.leedane.handler.CommonHandler;
-import com.cn.leedane.handler.FanHandler;
-import com.cn.leedane.handler.FriendHandler;
-import com.cn.leedane.handler.MoodHandler;
-import com.cn.leedane.handler.TransmitHandler;
-import com.cn.leedane.handler.UserHandler;
-import com.cn.leedane.handler.ZanHandler;
+import com.cn.leedane.handler.*;
 import com.cn.leedane.mapper.MoodMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.TimeLineBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.CircleOfFriendService;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.*;
 /**
  * 朋友圈service的实现类
  * @author LeeDane
@@ -73,35 +54,15 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 	@Autowired
 	private ZanHandler zanHandler;
 	
-	public void setCommentHandler(CommentHandler commentHandler) {
-		this.commentHandler = commentHandler;
-	}
-	
-	public void setTransmitHandler(TransmitHandler transmitHandler) {
-		this.transmitHandler = transmitHandler;
-	}
-	
-	public void setZanHandler(ZanHandler zanHandler) {
-		this.zanHandler = zanHandler;
-	}
-	
 	@Resource
 	private MoodHandler moodHandler;
-	
-	public void setMoodHandler(MoodHandler moodHandler) {
-		this.moodHandler = moodHandler;
-	}
 	
 	@Resource
 	private FanHandler fanHandler;
 	
-	public void setFanHandler(FanHandler fanHandler) {
-		this.fanHandler = fanHandler;
-	}
-	
 	@Override
 	public Map<String, Object> getLimit(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleOfFriendServiceImpl-->getLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		/*String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -231,7 +192,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 			}	
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取朋友圈列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取朋友圈列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 				
 		message.put("message", rs);
 		message.put("isSuccess", true);
@@ -265,7 +226,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 
 	@Override
 	public Map<String, Object> paging(int pageSize, int current, int total,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("CircleOfFriendServiceImpl-->paging(): current="+ current +", total="+ total + ", user=" +user.getAccount());
 		if(pageSize < 1)
 			pageSize = ConstantsUtil.DEFAULT_PAGE_SIZE;
@@ -325,7 +286,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 			}	
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取朋友圈列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取朋友圈列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 				
 		message.put("isSuccess", true);
 		message.put("message", rs);

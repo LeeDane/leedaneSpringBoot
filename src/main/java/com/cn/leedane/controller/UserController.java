@@ -1,30 +1,5 @@
 package com.cn.leedane.controller;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.session.UnknownSessionException;
-import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.WechatHandler;
 import com.cn.leedane.lucene.solr.UserSolrHandler;
@@ -39,21 +14,28 @@ import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.SolrAddThread;
 import com.cn.leedane.thread.single.SolrUpdateThread;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.PlatformType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.MD5Util;
-import com.cn.leedane.utils.OptionUtil;
-import com.cn.leedane.utils.RSACoder;
-import com.cn.leedane.utils.RSAKeyUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.wechat.bean.WeixinCacheBean;
 import com.cn.leedane.wechat.util.WeixinUtil;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.UnknownSessionException;
+import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
+import java.util.*;
 /**
  * 用户管理controller,restful风格接口
  * @author T5-SK
@@ -219,7 +201,7 @@ public class UserController extends BaseController{
 	            	userTokenBean.setCreateUserId(user.getId());
 	            	userTokenBean.setOverdue(overdue);
 	            	userTokenBean.setStatus(ConstantsUtil.STATUS_NORMAL);
-	            	ResponseMap responseMap = userTokenService.addUserToken(user, userTokenBean.getToken(), overdue, request);
+	            	ResponseMap responseMap = userTokenService.addUserToken(user, userTokenBean.getToken(), overdue, getHttpRequestInfo(request));
 	            	if(StringUtil.changeObjectToBoolean(responseMap.get("isSuccess"))){
 	            		userinfo.put("token", userTokenBean.getToken());
 	            	}else{
@@ -271,7 +253,7 @@ public class UserController extends BaseController{
 			
 			// 保存用户登录日志信息
 			String subject = user != null ? user.getAccount()+"登录系统": "账号" + username + "登录系统失败";
-			this.operateLogService.saveOperateLog(user, request, new Date(), subject, "账号登录", (isSuccess ? 1: 0), 0);
+			this.operateLogService.saveOperateLog(user, getHttpRequestInfo(request) , new Date(), subject, "账号登录", (isSuccess ? 1: 0), 0);
 		}
 		return message.getMap();
 	}
@@ -329,7 +311,7 @@ public class UserController extends BaseController{
 		}
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.searchUserByUserIdOrAccount(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.searchUserByUserIdOrAccount(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -361,7 +343,7 @@ public class UserController extends BaseController{
 		user.setSecretCode(UUID.randomUUID().toString());
 		message.putAll(userService.saveUser(user));
 		//保存操作日志
-		this.operateLogService.saveOperateLog(OptionUtil.adminUser, request, null, user.getAccount()+"注册成功", "register", 1, 0);
+		this.operateLogService.saveOperateLog(OptionUtil.adminUser, getHttpRequestInfo(request), null, user.getAccount()+"注册成功", "register", 1, 0);
 		return message.getMap();
 	}
 	
@@ -405,7 +387,7 @@ public class UserController extends BaseController{
 		JSONObject json = getJsonFromMessage(message);
 		//根据账号和密码找到该用户(密码需要再进行MD5加密)
 		UserBean user = userService.loginUser(JsonUtil.getStringValue(json, "account"), JsonUtil.getStringValue(json, "password"));
-		this.operateLogService.saveOperateLog(user, request, null, user.getAccount()+"请求发送邮箱", "againSendRegisterEmail", 1, 0);
+		this.operateLogService.saveOperateLog(user, getHttpRequestInfo(request), null, user.getAccount()+"请求发送邮箱", "againSendRegisterEmail", 1, 0);
 		if(user != null && user.getStatus() == 2){
 			//生成注册码
 			String newRegisterCode = StringUtil.produceRegisterCode(DateUtil.DateToString(new Date(),"YYYYMMDDHHmmss"),
@@ -466,6 +448,7 @@ public class UserController extends BaseController{
 	 */
 	@RequestMapping(value="/logout", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> logout(HttpServletRequest request){
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), new Date(), "安全退出系统", "logout", ConstantsUtil.STATUS_NORMAL, 0);
 		ResponseMap message = new ResponseMap();
 		/*HttpSession session = request.getSession();
 		//判断是否有在线的用户，那就先取消该用户的session
@@ -505,6 +488,7 @@ public class UserController extends BaseController{
 		try{
 			List<Serializable> serializables = activeSessions.get(sessionKey);
 			serializables.remove(SecurityUtils.getSubject().getSession().getId());
+
 		}catch(UnknownSessionException e){
 			logger.info("UnknownSessionException ------");
 		}catch(NullPointerException e){
@@ -559,7 +543,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.put("message", userService.getHeadBase64StrById(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.put("message", userService.getHeadBase64StrById(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		message.put("isSuccess", true);
 		return message.getMap();
 	}
@@ -595,8 +579,8 @@ public class UserController extends BaseController{
 		
 		checkRoleOrPermission(model, request);
 		UserBean user = getUserFromMessage(message);
-		message.put("isSuccess", userService.uploadHeadBase64StrById(getJsonFromMessage(message), user, request));
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"上传头像" + StringUtil.getSuccessOrNoStr(true), "uploadHeadBase64Str", ConstantsUtil.STATUS_NORMAL, 0);
+		message.put("isSuccess", userService.uploadHeadBase64StrById(getJsonFromMessage(message), user, getHttpRequestInfo(request)));
+		operateLogService.saveOperateLog(user, getHttpRequestInfo(request), null, user.getAccount()+"上传头像" + StringUtil.getSuccessOrNoStr(true), "uploadHeadBase64Str", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
 	}
 	
@@ -638,7 +622,7 @@ public class UserController extends BaseController{
 			ls = userService.find4MoreUser(sort + "limit ?,?", s, l);
 			buildGetAllUserResp(ls,total);
 		}
-		this.operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看所有用户", "getAllUsers", 1, 0);
+		this.operateLogService.saveOperateLog(user, getHttpRequestInfo(request), null, user.getAccount()+"查看所有用户", "getAllUsers", 1, 0);
 		return message.getMap();
 	}
 	
@@ -655,7 +639,7 @@ public class UserController extends BaseController{
 		message.put("yaxis", "人数"); //Y轴名称
 		message.put("maximum", getMaximum(ls)); //年龄段人数最多的数字
 		message.put("data", ls);
-		this.operateLogService.saveOperateLog(getUserFromMessage(message), request, null, "统计所有用户的年龄", "getAllUsers", 1, 0);
+//		this.operateLogService.saveOperateLog(getUserFromMessage(message), request, null, "统计所有用户的年龄", "getAllUsers", 1, 0);
 		return message.getMap();
 	}
 	
@@ -778,7 +762,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.getPhoneRegisterCode(getJsonFromMessage(message), request));
+		message.putAll(userService.getPhoneRegisterCode(getJsonFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -793,7 +777,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.getPhoneLoginCode(mobilePhone, request));
+		message.putAll(userService.getPhoneLoginCode(mobilePhone, getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -808,7 +792,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		UserBean user = userService.registerByPhone(getJsonFromMessage(message), request);
+		UserBean user = userService.registerByPhone(getJsonFromMessage(message), getHttpRequestInfo(request));
 		if(user == null){
 			message.put("message", "用户不存在或者参数不正确");
 			return message.getMap();
@@ -842,7 +826,7 @@ public class UserController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
-		message.putAll(userService.registerByPhoneNoValidate(getJsonFromMessage(message), request));
+		message.putAll(userService.registerByPhoneNoValidate(getJsonFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	/**
@@ -856,7 +840,7 @@ public class UserController extends BaseController{
 		
 		checkRoleOrPermission(model, request);
 		
-		UserBean user = userService.loginByPhone(getJsonFromMessage(message), request);
+		UserBean user = userService.loginByPhone(getJsonFromMessage(message), getHttpRequestInfo(request));
 		if(user == null){
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 		}else{
@@ -891,7 +875,7 @@ public class UserController extends BaseController{
 	            	userTokenBean.setCreateUserId(user.getId());
 	            	userTokenBean.setOverdue(overdue);
 	            	userTokenBean.setStatus(ConstantsUtil.STATUS_NORMAL);
-	            	ResponseMap responseMap = userTokenService.addUserToken(user, userTokenBean.getToken(), overdue, request);
+	            	ResponseMap responseMap = userTokenService.addUserToken(user, userTokenBean.getToken(), overdue, getHttpRequestInfo(request));
 	            	if(StringUtil.changeObjectToBoolean(responseMap.get("isSuccess"))){
 	            		userinfo.put("token", userTokenBean.getToken());
 	            	}else{
@@ -927,7 +911,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.checkAccount(getJsonFromMessage(message), request, getUserFromMessage(message)));
+		message.putAll(userService.checkAccount(getJsonFromMessage(message), getHttpRequestInfo(request), getUserFromMessage(message)));
 		return message.getMap();
 	}
 	
@@ -978,8 +962,8 @@ public class UserController extends BaseController{
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			message.put("isSuccess", true);		
 			// 保存用户绑定日志信息
-			String subject = user.getAccount()+"绑定账号微信账号"+ FromUserName +"成功";
-			operateLogService.saveOperateLog(user, request, new Date(), subject, "bingWechat", 1, 0);
+			String subject = user.getAccount()+"绑定账号微信账号："+ FromUserName +"成功";
+//			operateLogService.saveOperateLog(user, request, new Date(), subject, "bingWechat", 1, 0);
         }else{
         	message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.密码不正确.value));
 			message.put("responseCode", EnumUtil.ResponseCode.密码不正确.value);
@@ -998,7 +982,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.getUserInfoData(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.getUserInfoData(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -1013,7 +997,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.updateUserBase(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.updateUserBase(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -1028,7 +1012,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.updatePassword(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.updatePassword(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -1043,7 +1027,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.scanLogin(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.scanLogin(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -1082,7 +1066,7 @@ public class UserController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
-		message.putAll(userService.cancelScanLogin(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.cancelScanLogin(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -1097,7 +1081,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.webSearch(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.webSearch(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -1112,7 +1096,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.adminUpdateUserBase(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.adminUpdateUserBase(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -1127,7 +1111,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.adminResetPassword(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.adminResetPassword(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -1142,7 +1126,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.deleteUser(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.deleteUser(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -1157,7 +1141,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.addUser(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.addUser(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -1172,7 +1156,7 @@ public class UserController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.actives(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.actives(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	/*@RequestMapping("/aaa")

@@ -1,15 +1,12 @@
 package com.cn.leedane.service.baby;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.springframework.transaction.annotation.Transactional;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import net.sf.json.JSONObject;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 /**
  * 宝宝生活方式的Service类
@@ -26,7 +23,7 @@ public interface BabyLifeService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> add(int babyId, JSONObject jo, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> add(int babyId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 编辑生活方式
@@ -37,7 +34,7 @@ public interface BabyLifeService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> update(int babyId, int lifeId, JSONObject jo, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> update(int babyId, int lifeId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除宝宝生活方式
@@ -47,7 +44,7 @@ public interface BabyLifeService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(int babyId, int lifeId, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> delete(int babyId, int lifeId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取宝宝的生活方式列表
@@ -62,6 +59,6 @@ public interface BabyLifeService <T extends IDBean>{
 	 */
 	public Map<String, Object> lifes(int babyId,
 			String startDate, String endDate, String keyWord, int lifeType,
-			UserBean user, HttpServletRequest request);
+			UserBean user, HttpRequestInfoBean request);
 
 }	

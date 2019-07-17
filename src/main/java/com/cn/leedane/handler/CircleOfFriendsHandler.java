@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.cn.leedane.utils.StringUtil;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -41,8 +42,7 @@ public class CircleOfFriendsHandler {
 
 	/**
 	 * 把我发表的动态更新我所有粉丝(包括自己)的TimeLine
-	 * @param mood
-	 * @param userId
+	 * @param timeLineBean
 	 * @return
 	 */
 	public boolean upDateMyAndFansTimeLine(TimeLineBean timeLineBean){
@@ -54,14 +54,17 @@ public class CircleOfFriendsHandler {
 		if(ids != null && ids.size() > 0)
 			for(String id: ids){
 				//循环更新其他粉丝的时间线
-				addTimeLine(Integer.parseInt(id), timeLineBean);
+				if(StringUtil.isNotNull(id))
+					addTimeLine(Integer.parseInt(id), timeLineBean);
 			}
 		return true;
 	}
-	
+
 	/**
 	 * 删除我和我的粉丝关于该TimeLine的记录
-	 * @param timeLineBean
+	 * @param user
+	 * @param tableName
+	 * @param tableId
 	 * @return
 	 */
 	public boolean deleteMyAndFansTimeLine(UserBean user, String tableName, int tableId){

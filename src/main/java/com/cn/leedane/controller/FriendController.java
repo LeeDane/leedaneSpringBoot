@@ -1,12 +1,13 @@
 package com.cn.leedane.controller;
 
-import java.util.Date;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.FriendBean;
+import com.cn.leedane.model.OperateLogBean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.FriendService;
+import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.ResponseMap;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.FriendBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.FriendService;
-import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.fr)
@@ -48,7 +44,7 @@ public class FriendController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(friendService.deleteFriends(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(friendService.deleteFriends(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	/**
@@ -63,7 +59,7 @@ public class FriendController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(friendService.addFriend(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(friendService.addFriend(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -79,7 +75,7 @@ public class FriendController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(friendService.addAgree(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(friendService.addAgree(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -106,7 +102,7 @@ public class FriendController extends BaseController{
 				
 				// 保存操作日志信息
 				String subject = user.getAccount()+"判断跟"+toUser.getAccount()+"是否是朋友";
-				this.operateLogService.saveOperateLog(user, request, new Date(), subject, "isFriend", 1, 0);
+//				this.operateLogService.saveOperateLog(user, request, new Date(), subject, "isFriend", 1, 0);
 				return message.getMap();
 			}	
 				
@@ -126,7 +122,7 @@ public class FriendController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(friendService.friendsAlreadyPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(friendService.friendsAlreadyPaging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -142,7 +138,7 @@ public class FriendController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(friendService.friendsNotyetPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(friendService.friendsNotyetPaging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -158,7 +154,7 @@ public class FriendController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(friendService.friends(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(friendService.friends(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -174,7 +170,7 @@ public class FriendController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(friendService.requestPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(friendService.requestPaging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -190,7 +186,7 @@ public class FriendController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(friendService.responsePaging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(friendService.responsePaging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -206,7 +202,7 @@ public class FriendController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(friendService.matchContact(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(friendService.matchContact(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -222,7 +218,7 @@ public class FriendController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(friendService.matchContact(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(friendService.matchContact(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

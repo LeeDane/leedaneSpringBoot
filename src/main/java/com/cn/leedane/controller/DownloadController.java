@@ -1,5 +1,6 @@
 package com.cn.leedane.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
@@ -129,7 +130,7 @@ public class DownloadController extends BaseController{
 		
 		String suffixs = StringUtil.getSuffixs(filename);	
 		logger.info("suffixs:"+suffixs);
-		filename = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER + "file//" + filename;
+		filename = ConstantsUtil.getDefaultSaveFileFolder() + "file"+ File.separator + filename;
 		try {
 			message.put("message", Base64ImageUtil.convertImageToBase64(filename, suffixs));
 		} catch (IOException e) {

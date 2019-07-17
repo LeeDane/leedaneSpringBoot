@@ -1,18 +1,5 @@
 package com.cn.leedane.service.impl.stock;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.display.stock.StockBuyDisplay;
 import com.cn.leedane.display.stock.StockDisplay;
 import com.cn.leedane.display.stock.StockSellDisplay;
@@ -20,6 +7,7 @@ import com.cn.leedane.handler.stock.StockBuyHandler;
 import com.cn.leedane.handler.stock.StockHandler;
 import com.cn.leedane.handler.stock.StockSellHandler;
 import com.cn.leedane.mapper.stock.StockMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.stock.StockBean;
@@ -27,14 +15,16 @@ import com.cn.leedane.model.stock.StockBuyBean;
 import com.cn.leedane.model.stock.StockSellBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.stock.StockService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.RelativeDateFormat;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 股票的service的实现类
@@ -64,7 +54,7 @@ public class StockServiceImpl implements StockService<StockBean>{
 	
 	@Override
 	public Map<String, Object> init(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("StockServiceImpl-->init():jo="+jo);
 		ResponseMap message = new ResponseMap();
 		List<StockDisplay> stockDisplays = new ArrayList<StockDisplay>();
@@ -135,7 +125,7 @@ public class StockServiceImpl implements StockService<StockBean>{
 	
 	@Override
 	public Map<String, Object> add(JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("StockServiceImpl-->add(), user=" +user.getAccount());
 		SqlUtil sqlUtil = new SqlUtil();
 		StockBean stockBean = (StockBean) sqlUtil.getBean(json, StockBean.class);
@@ -161,7 +151,7 @@ public class StockServiceImpl implements StockService<StockBean>{
 	
 	@Override
 	public Map<String, Object> update(int stockId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("StockServiceImpl-->update(), stockId= " + stockId +",user=" +user.getAccount());
 		int userId = user.getId();
 		StockBean oldStockBean = stockHandler.getNormalStock(stockId, userId);
@@ -189,7 +179,7 @@ public class StockServiceImpl implements StockService<StockBean>{
 	}
 	
 	@Override
-	public Map<String, Object> delete(int stockId, JSONObject json, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> delete(int stockId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("StockServiceImpl-->delete(), stockId= " + ",user=" +user.getAccount());
 		int userId = user.getId();
 		StockBean stockBean = stockHandler.getNormalStock(stockId, userId);

@@ -45,7 +45,7 @@ public class ClockMemberController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockMemberService.members(clockId, getMustLoginUserFromShiro(), request));
+		message.putAll(clockMemberService.members(clockId, getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

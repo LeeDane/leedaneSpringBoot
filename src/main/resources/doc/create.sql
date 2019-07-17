@@ -1158,7 +1158,7 @@ CREATE TABLE `t_clock_member` (
   KEY `FK_clock_member_id` (`member_id`),
   CONSTRAINT `FK_clock_member_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_clock_member_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_clock_member_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`),
+  CONSTRAINT `FK_clock_member_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`) ON DELETE CASCADE,
   CONSTRAINT `FK_clock_member_id` FOREIGN KEY (`member_id`) REFERENCES `t_user` (`id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 alter table t_clock_member add constraint index_t_clock_member_id UNIQUE(clock_id, member_id);
@@ -1185,7 +1185,7 @@ CREATE TABLE `t_clock_in` (
   KEY `FK_clock_in_clock` (`clock_id`),
   CONSTRAINT `FK_clock_in_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_clock_in_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_clock_in_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`)
+  CONSTRAINT `FK_clock_in_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`) ON DELETE CASCADE
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 alter table t_clock_in add constraint index_t_clock_in_date UNIQUE(create_user_id, clock_date, clock_id);
 
@@ -1239,7 +1239,7 @@ CREATE TABLE `t_clock_deal` (
   KEY `FK_clock_deal_id` (`member_id`),
   CONSTRAINT `FK_clock_deal_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_clock_deal_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_clock_deal_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`),
+  CONSTRAINT `FK_clock_deal_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`) ON DELETE CASCADE,
   CONSTRAINT `FK_clock_deal_id` FOREIGN KEY (`member_id`) REFERENCES `t_user` (`id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 alter table t_clock_deal add constraint index_t_clock_deal_id UNIQUE(create_user_id, clock_id, member_id);
@@ -1267,7 +1267,7 @@ CREATE TABLE `t_clock_score` (
   KEY `FK_clock_score_clock` (`clock_id`),
   CONSTRAINT `FK_clock_score_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_clock_score_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_clock_score_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`)
+  CONSTRAINT `FK_clock_score_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`) ON DELETE CASCADE
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 alter table t_clock_score add constraint index_t_clock_score_id UNIQUE(create_user_id, clock_id, business_type, create_time);
 
@@ -1292,15 +1292,15 @@ CREATE TABLE `t_clock_dynamic` (
   KEY `FK_clock_dynamic_clock` (`clock_id`),
   CONSTRAINT `FK_clock_dynamic_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_clock_dynamic_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_clock_dynamic_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`)
+  CONSTRAINT `FK_clock_dynamic_clock` FOREIGN KEY (`clock_id`) REFERENCES `t_clock` (`id`) ON DELETE CASCADE
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
 -- ----------------------------
 -- Table structure for t_clock_in_image
 -- ----------------------------
-DROP TABLE IF EXISTS `t_clock_in_image`;
-CREATE TABLE `t_clock_in_image` (
+DROP TABLE IF EXISTS `t_clock_in_resources`;
+CREATE TABLE `t_clock_in_resources` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `status` int(11) NOT NULL,
   `create_user_id` int(11) DEFAULT NULL,
@@ -1308,13 +1308,14 @@ CREATE TABLE `t_clock_in_image` (
   `modify_user_id` int(11) DEFAULT NULL,
   `modify_time` datetime DEFAULT NULL,
   `clock_in_id` int(11) NOT NULL COMMENT '任务打卡的id',
-  `img` varchar(255) NOT NULL COMMENT '打卡的图片的地址',
+  `resource` varchar(255) NOT NULL COMMENT '打卡的资源信息',
+  `resource_type` varchar(255) NOT NULL COMMENT '打卡的资源类型',
   `main` bit(1) DEFAULT b'0' NOT NULL COMMENT '是否是主图(如果任务是图片打卡任务，main标记的图片是无法删除的，一个任务只能有一张图片)',
   PRIMARY KEY (`id`),
-  KEY `FK_clock_in_image_create_user` (`create_user_id`),
-  KEY `FK_clock_in_image_modify_user` (`modify_user_id`),
-  KEY `FK_clock_in_image_clock_in` (`clock_in_id`),
-  CONSTRAINT `FK_clock_in_image_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_clock_in_image_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_clock_in_image_clock_in` FOREIGN KEY (`clock_in_id`) REFERENCES `t_clock_in` (`id`)
+  KEY `FK_clock_in_resources_create_user` (`create_user_id`),
+  KEY `FK_clock_in_resources_modify_user` (`modify_user_id`),
+  KEY `FK_clock_in_resources_clock_in` (`clock_in_id`),
+  CONSTRAINT `FK_clock_in_resources_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_in_resources_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_clock_in_resources_clock_in` FOREIGN KEY (`clock_in_id`) REFERENCES `t_clock_in` (`id`) ON DELETE CASCADE
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

@@ -9,12 +9,12 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 任务关联的图片实体bean
+ * 任务关联的资源文件实体bean
  * @author LeeDane
  * 2018年8月29日 上午10:40:03
  * version 1.0
  */
-public class ClockInImageBean extends RecordTimeBean{
+public class ClockInResourcesBean extends RecordTimeBean{
 
 	/**
 	 *
@@ -30,16 +30,22 @@ public class ClockInImageBean extends RecordTimeBean{
 	private int clockInId;
 
 	/**
-	 * 打卡的图片的地址
+	 * 资源的名称
 	 */
-	@Column(value="img", required = true)
-	private String img;
+	@Column(value="resource", required = true)
+	private String resource;
 
 	/**
 	 * 是否是主图(如果任务是图片打卡任务，main标记的图片是无法删除的，一个任务只能有一张图片)
 	 */
 	@Column(value="main", required = true)
 	private boolean main;
+
+	/**
+	 * 资源的类型
+	 */
+	@Column(value="resource_type", required = true)
+	private int resourceType;
 
 	public int getClockInId() {
 		return clockInId;
@@ -49,13 +55,6 @@ public class ClockInImageBean extends RecordTimeBean{
 		this.clockInId = clockInId;
 	}
 
-	public String getImg() {
-		return img;
-	}
-
-	public void setImg(String img) {
-		this.img = img;
-	}
 
 	public boolean isMain() {
 		return main;
@@ -63,5 +62,21 @@ public class ClockInImageBean extends RecordTimeBean{
 
 	public void setMain(boolean main) {
 		this.main = main;
+	}
+
+	public String getResource() {
+		return resource;
+	}
+
+	public void setResource(String resource) {
+		this.resource = resource;
+	}
+
+	public int getResourceType() {
+		return resourceType;
+	}
+
+	public void setResourceType(int resourceType) {
+		this.resourceType = resourceType;
 	}
 }

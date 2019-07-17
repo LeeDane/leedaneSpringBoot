@@ -1,25 +1,8 @@
 package com.cn.leedane.service.impl.mall;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.jsoup.Connection;
-import org.jsoup.Connection.Method;
-import org.jsoup.Jsoup;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.handler.mall.S_ProductHandler;
 import com.cn.leedane.mapper.mall.S_ProductMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
@@ -30,11 +13,23 @@ import com.cn.leedane.service.mall.MallRoleCheckService;
 import com.cn.leedane.service.mall.S_BigEventService;
 import com.cn.leedane.service.mall.S_TaobaoService;
 import com.cn.leedane.taobao.api.AlimamaShareLink;
-import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.jsoup.Connection;
+import org.jsoup.Connection.Method;
+import org.jsoup.Jsoup;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 淘宝商品的service的实现类
@@ -60,7 +55,7 @@ public class S_TaobaoServiceImpl extends MallRoleCheckService implements S_Taoba
 	
 	/*@Override
 	public Map<String, Object> search(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		logger.info("S_TaobaoServiceImpl-->search():jo="+jo);
 		ResponseMap message = new ResponseMap();
@@ -104,7 +99,7 @@ public class S_TaobaoServiceImpl extends MallRoleCheckService implements S_Taoba
 
 	@Override
 	public Map<String, Object> search(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		logger.info("S_TaobaoServiceImpl-->search():jo="+jo);
 		ResponseMap message = new ResponseMap();
@@ -170,13 +165,13 @@ public class S_TaobaoServiceImpl extends MallRoleCheckService implements S_Taoba
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user != null ? user.getAccount(): "","对淘宝的商品发起查询", "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "search()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user != null ? user.getAccount(): "","对淘宝的商品发起查询", "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "search()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
 	}
 	
 	@Override
 	public Map<String, Object> buildShare(String taobaoId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("S_TaobaoServiceImpl-->buildShare():taobaoId="+taobaoId);
 		ResponseMap message = new ResponseMap();
 		try {
@@ -204,7 +199,7 @@ public class S_TaobaoServiceImpl extends MallRoleCheckService implements S_Taoba
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"对淘宝的商品ID为", taobaoId, "生成分享链接。", "结果是：", StringUtil.getSuccessOrNoStr(true)).toString(), "buildShare()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"对淘宝的商品ID为", taobaoId, "生成分享链接。", "结果是：", StringUtil.getSuccessOrNoStr(true)).toString(), "buildShare()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
 	}
 	

@@ -1,34 +1,26 @@
 package com.cn.leedane.service.impl;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.ChatMapper;
 import com.cn.leedane.model.ChatBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.ChatService;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.FilterUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 聊天信息列表service实现类
@@ -53,7 +45,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 	
 	@Override
 	public Map<String, Object> getLimit(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ChatServiceImpl-->getLimit():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		int toUserId = JsonUtil.getIntValue(jo, "toUserId"); //发送给对方的用户ID
@@ -92,7 +84,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 			rs = chatMapper.executeSQL(sql.toString(), user.getId(), toUserId, user.getId(), toUserId, lastId, pageSize);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取聊天分页列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取聊天分页列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 			
 		message.put("isSuccess", true);
 		message.put("message", rs);
@@ -101,7 +93,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 
 	@Override
 	public Map<String, Object> send(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ChatServiceImpl-->send():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		int toUserId = JsonUtil.getIntValue(jo, "toUserId"); //发送给对方的用户ID
@@ -135,7 +127,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 		
 		boolean result = chatMapper.save(chatBean) > 0;
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给用户ID为：", toUserId, "发送聊天信息", StringUtil.getSuccessOrNoStr(result)).toString(), "send()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给用户：", userHandler.getUserName(toUserId), "发送聊天信息", StringUtil.getSuccessOrNoStr(result)).toString(), "send()", ConstantsUtil.STATUS_NORMAL, 0);
 		if(result){
 			
 			Map<String, Object> chatMap = chatBeanToMap(chatBean);
@@ -172,7 +164,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 
 	@Override
 	public Map<String, Object> updateRead(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ChatServiceImpl-->updateRead():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		String cids = JsonUtil.getStringValue(jo, "cids"); //聊天信息ID
@@ -207,7 +199,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 
 	@Override
 	public Map<String, Object> noReadList(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ChatServiceImpl-->noReadList():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		
@@ -225,7 +217,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 	
 	@Override
 	public Map<String, Object> deleteChat(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ChatServiceImpl-->deleteChat():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		int cid = JsonUtil.getIntValue(jo, "cid");
@@ -260,7 +252,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 
 	@Override
 	public Map<String, Object> getOneChatByAllUser(JSONObject jo,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("ChatServiceImpl-->getOneChatByAllUser():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		message.put("isSuccess", true);
@@ -273,7 +265,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取全部与其有过聊天记录的用户的最新一条聊天信息").toString(), "getOneChatByAllUser()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取全部与其有过聊天记录的用户的最新一条聊天信息").toString(), "getOneChatByAllUser()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
 	}
 }

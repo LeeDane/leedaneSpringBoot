@@ -1,5 +1,6 @@
 package com.cn.leedane.model;
 
+import com.cn.leedane.mybatis.table.annotation.Column;
 import org.apache.solr.client.solrj.beans.Field;
 
 
@@ -115,6 +116,13 @@ public class MoodBean extends RecordTimeBean{
 	 * 是否被solr索引(冗余字段)
 	 */
 	private boolean isSolrIndex;
+
+	/**
+	 * 是否被添加到es索引中
+	 */
+	@Field
+	@Column("es_index")
+	private boolean esIndex;
 	
 	/**
 	 * 扩展字段1
@@ -265,5 +273,13 @@ public class MoodBean extends RecordTimeBean{
 	}
 	public void setCanTransmit(boolean canTransmit) {
 		this.canTransmit = canTransmit;
+	}
+
+	public boolean isEsIndex() {
+		return esIndex;
+	}
+
+	public void setEsIndex(boolean esIndex) {
+		this.esIndex = esIndex;
 	}
 }

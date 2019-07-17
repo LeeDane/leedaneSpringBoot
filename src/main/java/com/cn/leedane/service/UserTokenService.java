@@ -1,16 +1,14 @@
 package com.cn.leedane.service;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.UserTokenBean;
 import com.cn.leedane.utils.ResponseMap;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 用户与token关系service接口类
@@ -29,7 +27,7 @@ public interface UserTokenService<T extends UserTokenBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<UserTokenBean> getUserToken(UserBean user, String token, HttpServletRequest request);
+	public List<UserTokenBean> getUserToken(UserBean user, String token, HttpRequestInfoBean request);
 	
 	/**
 	 * 添加token
@@ -39,5 +37,5 @@ public interface UserTokenService<T extends UserTokenBean>{
 	 * @param request
 	 * @return
 	 */
-	public ResponseMap addUserToken(UserBean user, String token, Date overdue, HttpServletRequest request);
+	public ResponseMap addUserToken(UserBean user, String token, Date overdue, HttpRequestInfoBean request);
 }

@@ -1,38 +1,24 @@
 package com.cn.leedane.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CommonHandler;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.NotificationMapper;
-import com.cn.leedane.model.KeyValueBean;
-import com.cn.leedane.model.KeyValuesBean;
-import com.cn.leedane.model.NotificationBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.*;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.NotificationService;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 /**
  * 通知service的实现类
  * @author LeeDane
@@ -64,7 +50,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 
 	@Override
 	public Map<String, Object> getLimit(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("NotificationServiceImpl-->getLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String type = JsonUtil.getStringValue(jo, "type"); //通知类型
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
@@ -115,7 +101,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取收到的通知列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取收到的通知列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("isSuccess", true);
 		message.put("message", rs);
 		return message.getMap();
@@ -124,7 +110,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 	@Override
 	public Map<String, Object> paging(String type,
 			int pageSize, int current, int total,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("NotificationServiceImpl-->paging():type=" +type + ", current="+ current +", total="+ total + ", user=" +user.getAccount());
 		if(pageSize < 1)
 			pageSize = ConstantsUtil.DEFAULT_PAGE_SIZE;
@@ -149,7 +135,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		}
 		message.put("total", SqlUtil.getTotalByList(notificationMapper.getTotal(DataTableType.通知.value, "where to_user_id = " + user.getId() +" and status = "+ConstantsUtil.STATUS_NORMAL+" and type ='"+ type +"'")));
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"分页获取收到的通知列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"分页获取收到的通知列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("isSuccess", true);
 		message.put("message", rs);
 		return message.getMap();
@@ -157,7 +143,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 
 	@Override
 	public Map<String, Object> sendBroadcast(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("NotificationServiceImpl-->sendBroadcast():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
@@ -178,7 +164,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 	
 	@Override
 	public Map<String, Object> deleteNotification(int nid, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("NotificationServiceImpl-->deleteNotification():nid=" +nid +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
@@ -209,7 +195,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 	
 	@Override
 	public Map<String, Object> updateRead(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("NotificationServiceImpl-->updateRead():jo=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
@@ -244,7 +230,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 	
 	@Override
 	public Map<String, Object> updateAllRead(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("NotificationServiceImpl-->updateAllRead():jo=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
@@ -270,7 +256,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 	
 	@Override
 	public Map<String, Object> noReadNumber(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("NotificationServiceImpl-->noReadNumber():jo=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
@@ -290,7 +276,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		message.put("message", list);
 		message.put("responseCode", EnumUtil.ResponseCode.修改成功.value);
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取未读的消息列表").toString(), "noReadNumber()", 1, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取未读的消息列表").toString(), "noReadNumber()", 1, 0);
 		message.put("isSuccess", true);
 		return message.getMap();
 	}

@@ -1,6 +1,9 @@
 package com.cn.leedane.model;
 
 
+import com.cn.leedane.mybatis.table.annotation.Column;
+import org.apache.solr.client.solrj.beans.Field;
+
 /**
  * 操作日志实体类
  * @author LeeDane
@@ -35,11 +38,24 @@ public class OperateLogBean extends RecordTimeBean {
 	 * 操作的ip地址
 	 */
 	private String ip;
-	
+
+	/**
+	 * 操作的地址信息
+	 */
+	private String location;
+
 	/**
 	 * 操作的浏览器名称
 	 */
 	private String browser;
+
+	/**
+	 * 是否被添加到es索引中
+	 */
+	@Field
+	@Column("es_index")
+	private boolean esIndex;
+
 	public String getSubject() {
 		return subject;
 	}
@@ -79,5 +95,21 @@ public class OperateLogBean extends RecordTimeBean {
 	}
 	public void setMethod(String method) {
 		this.method = method;
+	}
+
+	public boolean isEsIndex() {
+		return esIndex;
+	}
+
+	public void setEsIndex(boolean esIndex) {
+		this.esIndex = esIndex;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 }

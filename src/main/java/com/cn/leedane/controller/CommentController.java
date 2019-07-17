@@ -1,9 +1,9 @@
 package com.cn.leedane.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.CommentBean;
+import com.cn.leedane.service.CommentService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.CommentBean;
-import com.cn.leedane.service.CommentService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.cm)
@@ -39,7 +37,7 @@ public class CommentController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(commentService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(commentService.add(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 
@@ -60,7 +58,7 @@ public class CommentController extends BaseController{
 		}
 		BlogSolrHandler.getInstance().deleteBeans(list);*/
 		
-		message.putAll(commentService.rolling(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(commentService.rolling(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -81,7 +79,7 @@ public class CommentController extends BaseController{
 		}
 		BlogSolrHandler.getInstance().deleteBeans(list);*/
 		
-		message.putAll(commentService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(commentService.paging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -96,7 +94,7 @@ public class CommentController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(commentService.getOneCommentItemsByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(commentService.getOneCommentItemsByLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -111,7 +109,7 @@ public class CommentController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(commentService.getCountByObject(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(commentService.getCountByObject(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -126,7 +124,7 @@ public class CommentController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(commentService.getCountByUser(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(commentService.getCountByUser(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -141,7 +139,7 @@ public class CommentController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(commentService.deleteComment(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(commentService.deleteComment(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -157,7 +155,7 @@ public class CommentController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(commentService.updateCommentStatus(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(commentService.updateCommentStatus(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -173,7 +171,7 @@ public class CommentController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(commentService.getMessageBoards(uid, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(commentService.getMessageBoards(uid, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

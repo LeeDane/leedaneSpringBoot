@@ -1,19 +1,9 @@
 package com.cn.leedane.service.impl.mall;
 
-import java.util.Date;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.handler.mall.S_HomeShopHandler;
 import com.cn.leedane.handler.mall.S_ShopHandler;
 import com.cn.leedane.mapper.mall.S_HomeShopMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.mall.S_HomeShopBean;
@@ -21,11 +11,14 @@ import com.cn.leedane.model.mall.S_ShopBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.mall.MallRoleCheckService;
 import com.cn.leedane.service.mall.S_HomeShopService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.Map;
 
 /**
  * 首页商店的service的实现类
@@ -51,7 +44,7 @@ public class S_HomeShopServiceImpl extends MallRoleCheckService implements S_Hom
 
 	@Override
 	public Map<String, Object> add(JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("S_HomeShopServiceImpl-->add():json="+json);
 		int shopId = JsonUtil.getIntValue(json, "shop_id");
 		int order = JsonUtil.getIntValue(json, "shop_order", 1);
@@ -88,7 +81,7 @@ public class S_HomeShopServiceImpl extends MallRoleCheckService implements S_Hom
 	
 	@Override
 	public Map<String, Object> delete(int shopId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("S_HomeShopServiceImpl-->delete():shopId="+shopId);
 		
 		//检查权限

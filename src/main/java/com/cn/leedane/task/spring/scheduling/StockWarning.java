@@ -40,7 +40,6 @@ public class StockWarning extends AbstractScheduling{
 	@Override
 	public void execute() throws SchedulerException {
 		try {
-			System.out.println("坎坎坷坷扩=="+DateUtil.DateToString(new Date()));
 			JSONObject params = getParams();
 			//System.out.println("参数："+ params);
 			//String codes = ; 

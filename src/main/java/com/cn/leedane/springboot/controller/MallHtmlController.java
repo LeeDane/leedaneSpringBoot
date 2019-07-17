@@ -1,23 +1,5 @@
 package com.cn.leedane.springboot.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.controller.RoleController;
 import com.cn.leedane.controller.UserController;
@@ -41,14 +23,21 @@ import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.service.mall.S_HomeCarouselService;
 import com.cn.leedane.service.mall.S_HomeItemService;
 import com.cn.leedane.service.mall.S_ProductService;
-import com.cn.leedane.utils.CommonUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.ResponseCode;
-import com.cn.leedane.utils.OptionUtil;
-import com.cn.leedane.utils.StringUtil;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 /**
  * 商城Html页面的控制器
@@ -103,7 +92,7 @@ public class MallHtmlController extends BaseController{
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面
 	 * @param model
-	 * @param httpSession
+	 * @param request
 	 * @return
 	 */
 	@RequestMapping("/")
@@ -117,6 +106,8 @@ public class MallHtmlController extends BaseController{
 		for(S_HomeItemBean category: categoryList)
 			homeItemShowBeans.add(homeItemHandler.getCategory(category.getId()));
 		model.addAttribute("homeItemShowBeans", homeItemShowBeans);*/
+
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商场模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("mall/index", model, request);
 	}
 	
@@ -143,6 +134,9 @@ public class MallHtmlController extends BaseController{
 		new ThreadUtil().singleTask(new SolrAddThread<S_ProductBean>(ProductSolrHandler.getInstance(), productMapper.findById(S_ProductBean.class, 11)));
 		new ThreadUtil().singleTask(new SolrAddThread<S_ProductBean>(ProductSolrHandler.getInstance(), productMapper.findById(S_ProductBean.class, 12)));
 		new ThreadUtil().singleTask(new SolrAddThread<S_ProductBean>(ProductSolrHandler.getInstance(), productMapper.findById(S_ProductBean.class, 13)));*/
+
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看商品详情，商品ID为："+ productId, "", ConstantsUtil.STATUS_NORMAL, 0);
+
 		S_ProductBean productBean = productHandler.getNormalProductBean(productId);
 		if(productBean == null)
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商品不存在或已被删除.value));
@@ -183,7 +177,7 @@ public class MallHtmlController extends BaseController{
 			@PathVariable(value="shopId") int shopId, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
-		
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看商店ID"+ shopId, "", ConstantsUtil.STATUS_NORMAL, 0);
 		S_ShopBean shopBean = shopHandler.getNormalShopBean(shopId);
 		if(shopBean == null)
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商店不存在或已被删除.value));
@@ -210,8 +204,8 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/wish")
 	public String wish(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(model, request);	
-		
+		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入心愿单首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("mall/wish", true, model, request);
 	}
 	
@@ -225,8 +219,9 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/order")
 	public String order(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(model, request);	
-				
+		checkRoleOrPermission(model, request);
+
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入订单模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("mall/order", true, model, request);
 	}
 	
@@ -240,8 +235,8 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/category/{categoryId}")
 	public String category(Model model, @PathVariable(value="categoryId") int categoryId, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(model, request);	
-		
+		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看商品分类ID"+ categoryId, "", ConstantsUtil.STATUS_NORMAL, 0);
 		//处理分类
         List<String[]> categorys = new ArrayList<String[]>();
         categorys.add(new String[]{"-1", "LeeDane", "/"});
@@ -264,8 +259,8 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping(ControllerBaseNameUtil.s)
 	public String search(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(model, request);	
-				
+		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入物品搜索页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("mall/search", model, request);
 	}
 	
@@ -278,8 +273,8 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/manager")
 	public String manager(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(model, request);	
-				
+		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商店管理模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("mall/shop-manager", true, model, request);
 	}
 	
@@ -294,8 +289,8 @@ public class MallHtmlController extends BaseController{
 	public String productManager(Model model, 
 			@PathVariable(value="productId") int productId, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(model, request);	
-				
+		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商品管理模块首页，商品ID"+ productId, "", ConstantsUtil.STATUS_NORMAL, 0);
 		S_ProductBean productBean = productHandler.getNormalProductBean(productId);
 		if(productBean == null)
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商品不存在或已被删除.value));
@@ -313,7 +308,7 @@ public class MallHtmlController extends BaseController{
 		UserBean user = (UserBean)modelMap.get("user");
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"管理商品，该商品ID是", productId, StringUtil.getSuccessOrNoStr(true)).toString(), "productManager()", 1, 0);
+		operateLogService.saveOperateLog(user, getHttpRequestInfo(request), null, StringUtil.getStringBufferStr(user.getAccount(),"管理商品，该商品ID是", productId, StringUtil.getSuccessOrNoStr(true)).toString(), "productManager()", 1, 0);
 		//保存访问记录
 		visitorService.saveVisitor(user, "web网页端", DataTableType.商店商品.value, productId, ConstantsUtil.STATUS_NORMAL);
 		return responseStr;
@@ -322,8 +317,8 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/product/select")
 	public String productSelect(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(model, request);	
-		
+		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商品选择页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		String url = loginRoleCheck("mall/product-select", true, model, request);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
@@ -338,8 +333,8 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/shop/select")
 	public String shopSelect(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(model, request);	
-				
+		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商店选择页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		String url = loginRoleCheck("mall/shop-select", true, model, request);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
@@ -355,12 +350,12 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping("/home/manager")
 	public String homeManager(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(model, request);	
-				
+		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商场管理模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		String url = loginRoleCheck("mall/home-manager", true, model, request);
 		//获取分类列表
 		List<S_HomeItemBean> homeItemBeans = homeItemHandler.showCategoryList();
-		Map<String, Object> categorys = categoryService.children(true, MALL_HOME_CATEGORY_ID, OptionUtil.adminUser, request);
+		Map<String, Object> categorys = categoryService.children(true, MALL_HOME_CATEGORY_ID, OptionUtil.adminUser, getHttpRequestInfo(request));
 		
 		List<Map<String, Object>> categoryList = new ArrayList<Map<String,Object>>();
 		if(StringUtil.changeObjectToBoolean(categorys.get("isSuccess"))){

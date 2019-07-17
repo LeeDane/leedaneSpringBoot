@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.LongField;
+//import org.apache.lucene.document.LongField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.junit.Test;
@@ -169,7 +169,7 @@ public class CrawlTest extends BaseTest {
 		Field f_origin_link = new StringField("origin_link", StringUtil.changeNotNull(blog.getOriginLink()), Store.YES);
 		
 		//时间选择索引，但是不分词，可以存储,日期转化成long类型
-		Field f_createDate = new LongField("create_time", blog.getCreateTime().getTime(), Store.YES);
+		Field f_createDate = null;//new LongField("create_time", blog.getCreateTime().getTime(), Store.YES);
 		
 		doc.add(f_id);
 		doc.add(f_title);

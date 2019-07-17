@@ -1,16 +1,14 @@
 package com.cn.leedane.controller;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.FilePathBean;
+import com.cn.leedane.model.UploadBean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.FilePathService;
+import com.cn.leedane.service.UploadService;
+import com.cn.leedane.utils.*;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.EnumUtil.ResponseCode;
 import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -18,21 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.FilePathBean;
-import com.cn.leedane.model.UploadBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.FilePathService;
-import com.cn.leedane.service.UploadService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.EnumUtil.ResponseCode;
-import com.cn.leedane.utils.FileUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.fp)
@@ -59,7 +49,7 @@ public class FilePathController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		List<Map<String, Object>> result= filePathService.getUserImageByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
+		List<Map<String, Object>> result= filePathService.getUserImageByLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 		logger.info("获得文件路径的数量：" +result.size());
 		message.put("isSuccess", true);
 		message.put("message", result);
@@ -100,12 +90,13 @@ public class FilePathController extends BaseController{
 			}
 		}
         //filePathService.merge(tableUuid, tableName, order, user, request);
-        List<Map<String, Object>> list = uploadService.getOneUpload(tableUuid, tableName, order, user, request);
+        List<Map<String, Object>> list = uploadService.getOneUpload(tableUuid, tableName, order, user, getHttpRequestInfo(request));
         if(list != null && list.size() >0){
         	
         	StringBuffer sourcePath = new StringBuffer();
-        	sourcePath.append(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER);
-        	sourcePath.append("temporary//");
+        	sourcePath.append(ConstantsUtil.getDefaultSaveFileFolder());
+        	sourcePath.append("temporary");
+			sourcePath.append(File.separator);
         	sourcePath.append(user.getId());
         	sourcePath.append("_");
         	sourcePath.append(tableUuid);
@@ -165,7 +156,7 @@ public class FilePathController extends BaseController{
     		userHandler.updateUserPicPath(user.getId(), "30x30");
     	}
     	int order = JsonUtil.getIntValue(json, "order", 0); //多张图片时候的图片的位置，必须，为空默认是0	
-        List<Map<String, Object>> list = uploadService.getOneUpload(tableUuid, tableName, order, user, request);
+        List<Map<String, Object>> list = uploadService.getOneUpload(tableUuid, tableName, order, user, getHttpRequestInfo(request));
         message.put("isSuccess", true);
         
         if(list != null && list.size() >0){   	
@@ -178,7 +169,7 @@ public class FilePathController extends BaseController{
     			upload.setfOrder(order);
     			upload.setSerialNumber(StringUtil.changeObjectToInt(map.get("serial_number")));
     			upload.setPath(String.valueOf(map.get("path")));
-    			if(!uploadService.cancel(upload, user, request))
+    			if(!uploadService.cancel(upload, user, getHttpRequestInfo(request)))
     				return message.getMap();
     			
         	}
@@ -206,7 +197,7 @@ public class FilePathController extends BaseController{
 		
 		checkRoleOrPermission(model, request);;
 		
-		message.putAll(filePathService.getUploadFileByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(filePathService.getUploadFileByLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
     }
 	
@@ -222,7 +213,7 @@ public class FilePathController extends BaseController{
 		
 		checkRoleOrPermission(model, request);;
 		
-		message.putAll(userService.uploadUserHeadImageLink(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.uploadUserHeadImageLink(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

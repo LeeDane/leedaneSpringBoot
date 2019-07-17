@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.cn.leedane.utils.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -26,15 +27,7 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.UserSettingBean;
 import com.cn.leedane.model.UserTokenBean;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.MD5Util;
-import com.cn.leedane.utils.SerializeUtil;
-import com.cn.leedane.utils.StringUtil;
 
 /**
  * 用户的处理类
@@ -57,7 +50,7 @@ public class UserHandler {
     public String DEFAULT_NO_PIC_PATH;
 	/**
 	 * 获取正常用户设置状态对象
-	 * @param circleId
+	 * @param userId
 	 * @return
 	 */
 	public UserSettingBean getNormalSettingBean(int userId){
@@ -118,12 +111,12 @@ public class UserHandler {
 	
 	
 	/**
-	 * 根据圈子设置ID删除该圈子的cache和redis缓存
-	 * @param circleId
+	 * 根据用户ID删除该用户的cache和redis缓存
+	 * @param userId
 	 * @return
 	 */
-	public boolean deleteSettingBeanCache(int circleId){
-		String key = getUserSettingKey(circleId);
+	public boolean deleteSettingBeanCache(int userId){
+		String key = getUserSettingKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
 		return true;
@@ -179,19 +172,43 @@ public class UserHandler {
 	 */
 	public String getUserPicPath(int userId, String picSize){
 		String userPicKey = getRedisUserPicKey(userId, picSize);
+
+		//先从ehCache中读取缓存信息
+		Object obj = systemCache.getCache(userPicKey);
+
 		String userPicPath = null;
-		if(redisUtil.hasKey(userPicKey)){
-			userPicPath = redisUtil.getString(userPicKey);
-		}else{
-			//查找数据库，找到用户的头像
-			List<Map<String, Object>> list = userMapper.executeSQL("select qiniu_path user_pic_path from "+DataTableType.文件.value+" f where is_upload_qiniu=? and f.table_name = '"+DataTableType.用户.value+"' and f.table_uuid = ? and f.pic_order = 0 "+buildPicSizeSQL("30x30")+" order by id desc limit 1", true, userId);
-			if(list != null && list.size()>0){
-				userPicPath = StringUtil.changeNotNull(list.get(0).get("user_pic_path"));
-				if(StringUtil.isNotNull(userPicPath))
-					redisUtil.addString(userPicKey, userPicPath);
+		if(obj == null || obj == ""){
+			if(redisUtil.hasKey(userPicKey)){
+				userPicPath = redisUtil.getString(userPicKey);
+				if(StringUtil.isNotNull(userPicPath)){
+					systemCache.addCache(userPicKey, userPicPath);
+				}else {
+					//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
+					redisUtil.delete(userPicKey);
+					//查找数据库，找到用户的头像
+					List<Map<String, Object>> list = userMapper.executeSQL("select qiniu_path user_pic_path from "+DataTableType.文件.value+" f where is_upload_qiniu=? and f.table_name = '"+DataTableType.用户.value+"' and f.table_uuid = ? and f.pic_order = 0 "+buildPicSizeSQL("30x30")+" order by id desc limit 1", true, userId);
+					if(CollectionUtil.isNotEmpty(list)){
+						userPicPath = StringUtil.changeNotNull(list.get(0).get("user_pic_path"));
+						if(StringUtil.isNotNull(userPicPath)){
+							redisUtil.addString(userPicKey, userPicPath);
+							systemCache.addCache(userPicKey, userPicPath);
+						}
+					}
+				}
+			}else{
+				//查找数据库，找到用户的头像
+				List<Map<String, Object>> list = userMapper.executeSQL("select qiniu_path user_pic_path from "+DataTableType.文件.value+" f where is_upload_qiniu=? and f.table_name = '"+DataTableType.用户.value+"' and f.table_uuid = ? and f.pic_order = 0 "+buildPicSizeSQL("30x30")+" order by id desc limit 1", true, userId);
+				if(CollectionUtil.isNotEmpty(list)){
+					userPicPath = StringUtil.changeNotNull(list.get(0).get("user_pic_path"));
+					if(StringUtil.isNotNull(userPicPath))
+						redisUtil.addString(userPicKey, userPicPath);
+						systemCache.addCache(userPicKey, userPicPath);
+				}
 			}
-			
+		}else{
+			userPicPath = StringUtil.changeNotNull(obj);
 		}
+
 		if(StringUtil.isNull(userPicPath))
 			userPicPath = DEFAULT_NO_PIC_PATH;
 		return userPicPath;
@@ -209,13 +226,16 @@ public class UserHandler {
 		//先把原先的删掉
 		if(redisUtil.hasKey(userPicKey)){
 			redisUtil.delete(userPicKey);
+			systemCache.removeCache(userPicKey);
 		}
 		//查找数据库，找到用户的头像
 		List<Map<String, Object>> list = userMapper.executeSQL("select qiniu_path user_pic_path from "+DataTableType.文件.value+" f where is_upload_qiniu=? and f.table_name = '"+DataTableType.用户.value+"' and f.table_uuid = ? and f.pic_order = 0 "+buildPicSizeSQL("30x30")+" order by id desc limit 1", true, userId);
-		if(list != null && list.size()>0){
+		if(CollectionUtil.isNotEmpty(list)){
 			userPicPath = StringUtil.changeNotNull(list.get(0).get("user_pic_path"));
-			if(StringUtil.isNotNull(userPicPath))
+			if(StringUtil.isNotNull(userPicPath)){
 				redisUtil.addString(userPicKey, userPicPath);
+				systemCache.addCache(userPicKey, userPicPath);
+			}
 		}
 	}
 	
@@ -238,26 +258,47 @@ public class UserHandler {
 	 */
 	public UserBean getUserBean(int userId){
 		String userInfoKey = getRedisUserInfoKey(userId);
-		if(redisUtil.hasKey(userInfoKey)){
-			try {
-				return (UserBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(userInfoKey.getBytes()), UserBean.class);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}catch (IOException e) {
-				e.printStackTrace();
+		UserBean user = null;
+		//先从ehCache中读取缓存信息
+		Object obj = systemCache.getCache(userInfoKey);
+		try {
+			if(obj == null || obj == ""){
+				if(redisUtil.hasKey(userInfoKey)){
+						//从redi缓存中读取
+						user = (UserBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(userInfoKey.getBytes()), UserBean.class);
+						if(user != null){
+							systemCache.addCache(userInfoKey, user);
+						}else{
+							//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
+							redisUtil.delete(userInfoKey);
+							user = userMapper.findById(UserBean.class, userId);
+							if(user != null){
+								redisUtil.addSerialize(userInfoKey, SerializationUtils.serialize(user));
+								systemCache.addCache(userInfoKey, user);
+							}
+						}
+				}else{
+					user = userMapper.findById(UserBean.class, userId);
+					if(user != null){
+						redisUtil.addSerialize(userInfoKey, SerializationUtils.serialize(user));
+						systemCache.addCache(userInfoKey, user);
+					}
+				}
+			}else{
+				user = (UserBean) obj;
 			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}catch (IOException e) {
+			e.printStackTrace();
 		}
-		UserBean user = userMapper.findById(UserBean.class, userId);
-		if(user != null){
-			redisUtil.addSerialize(userInfoKey, SerializationUtils.serialize(user));
-			return user;
-		}
-		return null;
+		return user;
 	}
 	
 	/**
 	 * 获取用户Bean
-	 * @param userId 用户Id
+	 * @param username 用户名
+	 * @param username 密码
 	 * @return
 	 */
 	public UserBean getUserBean(String username, String pwd){
@@ -265,7 +306,9 @@ public class UserHandler {
 		
 		if(user != null){
 			String userInfoKey = getRedisUserInfoKey(user.getId());
+			//登录成功用户信息加入缓存
 			redisUtil.addSerialize(userInfoKey, SerializationUtils.serialize(user));
+			systemCache.addCache(userInfoKey, user);
 			return user;
 		}
 		return null;
@@ -278,6 +321,7 @@ public class UserHandler {
 	public void deleteUserDetail(int userId){
 		String userInfoKey = getRedisUserInfoKey(userId);
 		redisUtil.delete(userInfoKey);
+		systemCache.removeCache(userInfoKey);
 	}
 	
 	/**
@@ -326,9 +370,15 @@ public class UserHandler {
 	public Map<String, Object> getUserInfo(UserBean user2, boolean isSelf) {
 		HashMap<String, Object> infos = new HashMap<String, Object>();
 		if(user2 != null){
+			Subject currentUser = SecurityUtils.getSubject();
+			boolean isAdmin = currentUser.hasRole(RoleController.ADMIN_ROLE_CODE);
 			infos.put("id", user2.getId());
 			infos.put("account", user2.getAccount());
-			infos.put("email", StringUtil.changeNotNull(user2.getEmail()));
+			if(StringUtil.isNotNull(user2.getEmail()))
+				infos.put("email",  (!isAdmin && !isSelf ? (SecurityMessageUtil.left(user2.getEmail(), SecurityMessageUtil.TWO) + "*****"+ SecurityMessageUtil.right(user2.getEmail(), SecurityMessageUtil.THREE)): StringUtil.changeNotNull(user2.getEmail())));
+			else
+				infos.put("email", "");
+
 			infos.put("age", user2.getAge());
 			Date birthDay = user2.getBirthDay();
 			if(birthDay != null){
@@ -336,14 +386,20 @@ public class UserHandler {
 			}else{
 				infos.put("birth_day", "");
 			}
-			
-			Subject currentUser = SecurityUtils.getSubject();
-			
-			infos.put("mobile_phone", StringUtil.changeNotNull(user2.getMobilePhone()));
+
+			if(StringUtil.isNotNull(user2.getMobilePhone()))
+				infos.put("mobile_phone", (!isAdmin && !isSelf ? SecurityMessageUtil.left(user2.getMobilePhone(), SecurityMessageUtil.THREE) + "*****" + SecurityMessageUtil.right(user2.getMobilePhone(), SecurityMessageUtil.FOUR) : StringUtil.changeNotNull(user2.getMobilePhone())));
+			else
+				infos.put("mobile_phone", "");
+
 			//infos.put("pic_path", user2.getPicPath());
-			infos.put("qq", StringUtil.changeNotNull(user2.getQq()));
+			if(StringUtil.isNotNull(user2.getQq()))
+				infos.put("qq", (!isAdmin && !isSelf ? SecurityMessageUtil.left(user2.getQq(), SecurityMessageUtil.TWO) + "*****" + SecurityMessageUtil.right(user2.getQq(), SecurityMessageUtil.TWO) : StringUtil.changeNotNull(user2.getQq())));
+			else
+				infos.put("qq", "");
+
 			infos.put("sex", StringUtil.changeNotNull(user2.getSex()));
-			infos.put("is_admin", currentUser.hasRole(RoleController.ADMIN_ROLE_CODE));
+			infos.put("is_admin", isAdmin);
 			infos.put("education_background", StringUtil.changeNotNull(user2.getEducationBackground()));
 			infos.put("user_pic_path", getUserPicPath(user2.getId(), "30x30"));
 			infos.put("register_time", user2.getRegisterTime() == null ? "" : DateUtil.DateToString(user2.getRegisterTime(), "yyyy-MM-dd"));
@@ -355,12 +411,72 @@ public class UserHandler {
 				e.printStackTrace();
 			}*/
 			
-			if(!isSelf){/*
+			if(!isAdmin && isSelf){/*
 				infos.put("no_login_code", user2.getNoLoginCode());
 			}else{*/
-				infos.put("last_request_time", getLastRequestTime(user2.getId()));//最近操作记录
+				//自己才能看自己的最后操作状态
+				//infos.put("last_request_time", getLastRequestTime(user2.getId()));//最近操作记录
 			}
+			//最后操作状态
+			infos.put("last_request_time", getLastRequestTime(user2.getId()));//最近操作记录
 			infos.put("personal_introduction", StringUtil.changeNotNull(user2.getPersonalIntroduction()));
+		}
+		return infos;
+	}
+	/**
+	 * 获取提供调用使用的用户信息
+	 * @param user2
+	 * @param isSelf  是否是自己，自己的话可以不加载一些信息
+	 * @return
+	 */
+	public Map<String, Object> getUserInfo(Map<String, Object> user2, boolean isSelf) {
+		HashMap<String, Object> infos = new HashMap<String, Object>();
+		if (user2 != null) {
+			Subject currentUser = SecurityUtils.getSubject();
+			boolean isAdmin = currentUser.hasRole(RoleController.ADMIN_ROLE_CODE);
+			String id = StringUtil.changeNotNull(user2.get("id"));
+			infos.put("id", id);
+			infos.put("account", user2.get("account"));
+			String email = StringUtil.changeNotNull(user2.get("email"));
+			if (StringUtil.isNotNull(email))
+				infos.put("email", (!isAdmin && !isSelf ? (SecurityMessageUtil.left(email, SecurityMessageUtil.TWO) + "*****" + SecurityMessageUtil.right(email, SecurityMessageUtil.THREE)) : StringUtil.changeNotNull(email)));
+			else
+				infos.put("email", "");
+
+			infos.put("age", user2.get("age"));
+			String birthDay = StringUtil.changeNotNull(user2.get("birth_day"));
+			if (StringUtil.isNotNull(birthDay)) {
+				infos.put("birth_day", DateUtil.DateToString(DateUtil.stringToDate(birthDay), "yyyy-MM-dd"));
+			} else {
+				infos.put("birth_day", "");
+			}
+
+			String mobilePhone = StringUtil.changeNotNull(user2.get("mobile_phone"));
+			if (StringUtil.isNotNull(mobilePhone))
+				infos.put("mobile_phone", (!isAdmin && !isSelf ? SecurityMessageUtil.left(mobilePhone, SecurityMessageUtil.THREE) + "*****" + SecurityMessageUtil.right(mobilePhone, SecurityMessageUtil.FOUR) : StringUtil.changeNotNull(mobilePhone)));
+			else
+				infos.put("mobile_phone", "");
+
+			//infos.put("pic_path", user2.getPicPath());
+
+			String qq = StringUtil.changeNotNull(user2.get("qq"));
+			if (StringUtil.isNotNull(qq))
+				infos.put("qq", (!isAdmin && !isSelf ? SecurityMessageUtil.left(qq, SecurityMessageUtil.TWO) + "*****" + SecurityMessageUtil.right(qq, SecurityMessageUtil.TWO) : StringUtil.changeNotNull(qq)));
+			else
+				infos.put("qq", "");
+
+			infos.put("sex", StringUtil.changeNotNull(user2.get("sex")));
+			infos.put("is_admin", isAdmin);
+			infos.put("education_background", StringUtil.changeNotNull(user2.get("education_background")));
+			infos.put("user_pic_path", getUserPicPath(StringUtil.changeObjectToInt(id), "30x30"));
+			infos.put("register_time", StringUtil.isNull(StringUtil.changeNotNull(user2.get("register_time"))) ? "" : DateUtil.DateToString(DateUtil.stringToDate(StringUtil.changeNotNull(user2.get("register_time"))), "yyyy-MM-dd"));
+
+
+			if (isAdmin || isSelf) {
+				//最后操作状态
+				infos.put("last_request_time", getLastRequestTime(StringUtil.changeObjectToInt(id)));//最近操作记录
+			}
+			infos.put("personal_introduction", StringUtil.changeNotNull(user2.get("personal_introduction")));
 		}
 		return infos;
 	}
@@ -403,9 +519,7 @@ public class UserHandler {
 	/**
 	 * 获取用户的用户名和头像(30x30)
 	 * 返回{"user_pic_path":"","account":""}集合
-	 * @param createUserId
-	 * @param user
-	 * @param friendObject
+	 * @param toUserId
 	 * @return
 	 */
 	public Map<String, Object> getBaseUserInfo(int toUserId){
@@ -485,7 +599,6 @@ public class UserHandler {
 	/**
 	 * 从redis中获取session
 	 * @param user
-	 * @param sessionId
 	 * @return
 	 */
 	public String getSession(UserBean user){
@@ -496,7 +609,6 @@ public class UserHandler {
 	/**
 	 * 从redis中清除session
 	 * @param user
-	 * @param sessionId
 	 * @return
 	 */
 	public boolean deleteSession(UserBean user){
@@ -608,7 +720,8 @@ public class UserHandler {
 	
 	/**
 	 * 缓存token信息
-	 * @param token
+	 * @param userId
+	 * @param userTokenId
 	 * @return
 	 */
 	public static String getRedisUserTokenKey(int userId, int userTokenId){
@@ -617,7 +730,7 @@ public class UserHandler {
 	
 	/**
 	 * 缓存免登录码信息
-	 * @param username
+	 * @param userid
 	 * @return
 	 */
 	public static String getRedisSessionKey(int userid){

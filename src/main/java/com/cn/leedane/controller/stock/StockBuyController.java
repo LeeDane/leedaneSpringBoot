@@ -1,9 +1,10 @@
 package com.cn.leedane.controller.stock;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.controller.BaseController;
+import com.cn.leedane.model.stock.StockBuyBean;
+import com.cn.leedane.service.stock.StockBuyService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.controller.BaseController;
-import com.cn.leedane.model.stock.StockBuyBean;
-import com.cn.leedane.service.stock.StockBuyService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 股票购买接口controller
@@ -48,7 +46,7 @@ public class StockBuyController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(stockBuyService.add(stockId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(stockBuyService.add(stockId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -63,7 +61,7 @@ public class StockBuyController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(stockBuyService.update(stockId, stockBuyId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(stockBuyService.update(stockId, stockBuyId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -78,7 +76,7 @@ public class StockBuyController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(stockBuyService.delete(stockId, stockBuyId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(stockBuyService.delete(stockId, stockBuyId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 		

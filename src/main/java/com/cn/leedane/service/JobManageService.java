@@ -1,17 +1,14 @@
 package com.cn.leedane.service;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.quartz.SchedulerException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 
 /**
  * 具体任务的管理(增删改查)
@@ -29,7 +26,7 @@ public interface JobManageService <T extends IDBean>{
 	 * @param request
 	 * @throws SchedulerException
 	 */
-    public Map<String, Object> add(JSONObject jo, UserBean user, HttpServletRequest request) throws SchedulerException;
+    public Map<String, Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws SchedulerException;
     
     /**
      * 修改任务
@@ -38,7 +35,7 @@ public interface JobManageService <T extends IDBean>{
      * @param request
      * @throws SchedulerException
      */
-    public Map<String, Object> update(JSONObject jo, UserBean user, HttpServletRequest request) throws SchedulerException;
+    public Map<String, Object> update(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws SchedulerException;
 
     /**
      * 删除任务
@@ -46,7 +43,7 @@ public interface JobManageService <T extends IDBean>{
      * @param request
      * @throws SchedulerException
      */
-    public Map<String, Object> delete(int jid, HttpServletRequest request) throws SchedulerException;
+    public Map<String, Object> delete(int jid, HttpRequestInfoBean request) throws SchedulerException;
     /**
 	 * 分页获取任务列表
 	 * @param jsonObject
@@ -55,7 +52,7 @@ public interface JobManageService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(JSONObject jsonFromMessage, UserBean userFromMessage, HttpServletRequest request);
+	public Map<String, Object> paging(JSONObject jsonFromMessage, UserBean userFromMessage, HttpRequestInfoBean request);
 
 	/**
 	 * 批量删除任务
@@ -64,5 +61,5 @@ public interface JobManageService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deletes(String jobids, UserBean userFromMessage, HttpServletRequest request) throws SchedulerException;
+	public Map<String, Object> deletes(String jobids, UserBean userFromMessage, HttpRequestInfoBean request) throws SchedulerException;
 }

@@ -76,6 +76,7 @@ public class WeixinController extends BaseController{
 			String timestamp = request.getParameter("timestamp");
 			String nonce = request.getParameter("nonce");
 			String echostr = request.getParameter("echostr");
+			logger.error("公众平台校验信息：signature="+ signature+", timestamp="+ timestamp +", nonce="+ nonce+", echostr="+ echostr);
 			if(CheckUtil.checkSignature(signature, timestamp, nonce))
 				out.print(echostr);
 		}else{

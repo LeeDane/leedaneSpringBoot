@@ -1,6 +1,8 @@
 package com.cn.leedane.model;
 import java.util.Date;
+import java.util.UUID;
 
+import com.cn.leedane.utils.StringUtil;
 import org.apache.solr.client.solrj.beans.Field;
 
 import com.cn.leedane.mybatis.table.annotation.Column;
@@ -223,6 +225,13 @@ public class UserBean extends StatusBean{
 	 */
 	@Column("wechat_user_name")
 	private String wechatUserName;
+
+	/**
+	 * 是否被添加到es索引中
+	 */
+	@Field
+	@Column("es_index")
+	private boolean esIndex;
 	
 	/**
 	 * 用户拥有的角色(一对多的关系)
@@ -487,6 +496,8 @@ public class UserBean extends StatusBean{
 	}
 
 	public String getSecretCode() {
+		if(StringUtil.isNull(secretCode))
+			secretCode = "adduser" + UUID.randomUUID().toString();
 		return secretCode;
 	}
 
@@ -512,4 +523,12 @@ public class UserBean extends StatusBean{
 	public void setRoles(Set<RolesBean> roles) {
 		this.roles = roles;
 	}	*/
+
+	public boolean isEsIndex() {
+		return esIndex;
+	}
+
+	public void setEsIndex(boolean esIndex) {
+		this.esIndex = esIndex;
+	}
 }

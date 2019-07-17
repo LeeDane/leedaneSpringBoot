@@ -1,37 +1,14 @@
 package com.cn.leedane.service.impl.mall;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.handler.mall.S_ProductHandler;
 import com.cn.leedane.lucene.solr.ProductSolrHandler;
 import com.cn.leedane.mapper.mall.S_ProductMapper;
 import com.cn.leedane.mapper.mall.S_StatisticsMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.echart.comm.AxisLabel;
-import com.cn.leedane.model.echart.comm.Grid;
-import com.cn.leedane.model.echart.comm.Legend;
-import com.cn.leedane.model.echart.comm.Series;
-import com.cn.leedane.model.echart.comm.Tooltip;
-import com.cn.leedane.model.echart.comm.XAxis;
-import com.cn.leedane.model.echart.comm.YAxis;
+import com.cn.leedane.model.echart.comm.*;
 import com.cn.leedane.model.echart.line.LineOption;
 import com.cn.leedane.model.mall.S_BigEventBean;
 import com.cn.leedane.model.mall.S_PlatformProductBean;
@@ -44,19 +21,20 @@ import com.cn.leedane.service.mall.S_ProductService;
 import com.cn.leedane.taobao.api.AlimamaRecommend;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.SolrAddThread;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.MallProductStatisticsType;
 import com.cn.leedane.utils.EnumUtil.ProductPlatformType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.JsoupUtil;
-import com.cn.leedane.utils.MardownUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
 import com.taobao.api.ApiException;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 /**
  * 购物商品的service的实现类
@@ -85,7 +63,7 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 	
 	@Override
 	public Map<String, Object> save(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		logger.info("S_ProductServiceImpl-->save():jo="+jo);
 		SqlUtil sqlUtil = new SqlUtil();
@@ -156,7 +134,7 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 
 	@Override
 	public Map<String, Object> statistics(int productId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		logger.info("S_ProductServiceImpl-->statistics():productId="+productId);
 		S_ProductBean productBean = productHandler.getNormalProductBean(productId);
@@ -286,7 +264,7 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 	
 	@Override
 	public Map<String, Object> recommend(int productId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		logger.info("S_ProductServiceImpl-->recommend():productId="+productId);
 		S_ProductBean productBean = productHandler.getNormalProductBean(productId);

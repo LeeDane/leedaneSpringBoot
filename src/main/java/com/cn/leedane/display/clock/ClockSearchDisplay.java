@@ -67,6 +67,14 @@ public class ClockSearchDisplay implements Serializable{
 	
 	private int memberNumber; //成员数量
 
+	private boolean autoAdd; //自动加入
+
+	private boolean autoOut; //自动退出
+
+	private boolean seeOther; //成员互看
+
+	private boolean clockInCheck; //打卡审核
+
 	public int getId() {
 		return id;
 	}
@@ -274,5 +282,36 @@ public class ClockSearchDisplay implements Serializable{
 	public void setMemberNumber(int memberNumber) {
 		this.memberNumber = memberNumber;
 	}
-	
+
+	public boolean isAutoAdd() {
+		return autoAdd;
+	}
+
+	public void setAutoAdd(boolean autoAdd) {
+		this.autoAdd = autoAdd;
+	}
+
+	public boolean isAutoOut() {
+		return autoOut;
+	}
+
+	public void setAutoOut(boolean autoOut) {
+		this.autoOut = autoOut;
+	}
+
+	public boolean isSeeOther() {
+		return seeOther;
+	}
+
+	public void setSeeOther(boolean seeOther) {
+		this.seeOther = seeOther;
+	}
+
+	public boolean isClockInCheck() {
+		return clockInCheck;
+	}
+
+	public void setClockInCheck(boolean clockInCheck) {
+		this.clockInCheck = clockInCheck;
+	}
 }

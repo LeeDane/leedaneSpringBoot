@@ -1,18 +1,4 @@
 package com.cn.leedane.service.impl.clock;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.display.clock.ClockMemberDisplay;
 import com.cn.leedane.exception.IllegalOperationException;
@@ -27,6 +13,7 @@ import com.cn.leedane.mapper.clock.ClockDealMapper;
 import com.cn.leedane.mapper.clock.ClockMapper;
 import com.cn.leedane.message.JpushCustomMessage;
 import com.cn.leedane.message.notification.CustomMessage;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.clock.ClockBean;
@@ -36,14 +23,18 @@ import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.clock.ClockDealService;
 import com.cn.leedane.service.clock.ClockMemberService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 任务成员关系service实现类
@@ -87,7 +78,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 	
 	@Override
 	public Map<String, Object> add(int clockId, int memberId, JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockDealServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		//校验
 		ClockBean clockBean = clockHandler.getNormalClock(clockId);
@@ -209,7 +200,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 
 	@Override
 	public Map<String, Object> update(int clockId, int memberId, JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockDealServiceImpl-->update(): clockId="+ clockId +", memberId="+ memberId +",jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		return message.getMap();
@@ -218,7 +209,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 
 	@Override
 	public Map<String, Object> delete(int clockId, int memberId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockDealServiceImpl-->delete():clockId=" +clockId +", memberId="+ memberId +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		return message.getMap();
@@ -226,7 +217,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 
 	@Override
 	public Map<String, Object> addClocks(JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockDealServiceImpl-->addClocks():userId=" +user.getId() +", json=" +json.toString());
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(json, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -241,7 +232,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 	
 	@Override
 	public Map<String, Object> inviteClocks(JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockDealServiceImpl-->inviteClocks():userId=" +user.getId() +", json=" +json.toString());
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(json, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -256,7 +247,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 	
 	@Override
 	public Map<String, Object> myInviteClocks(JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockDealServiceImpl-->myInviteClocks():userId=" +user.getId() +", json=" +json.toString());
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(json, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -272,7 +263,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 
 	@Override
 	public Map<String, Object> agreeClocks(JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockDealServiceImpl-->agreeClocks():userId=" +user.getId() +", json=" +json.toString());
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(json, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -287,7 +278,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 
 	@Override
 	public Map<String, Object> requestAdd(int clockId, JSONObject json,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockDealServiceImpl-->requestAdd():clockId = "+ clockId +",userId=" +user.getId() +", json=" +json.toString());
 //		json.put("status", ConstantsUtil.STATUS_WAIT_MANAGE_AGREE);
 //		return add(clockId, user.getId(), json, user, request);
@@ -390,7 +381,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 
 	@Override
 	public Map<String, Object> requestAgree(int clockId, int memberId, JSONObject json,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockDealServiceImpl-->requestAgree():clockId = "+ clockId +",userId=" +user.getId() +", json=" +json.toString());
 		//校验
 		ClockBean clockBean = clockHandler.getNormalClock(clockId);
@@ -429,7 +420,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 
 	@Override
 	public Map<String, Object> inviteAdd(int clockId, int memberId, JSONObject json,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		//邀请加入(对方不在该任务中)
 		ResponseMap message = new ResponseMap();
 		//校验
@@ -529,7 +520,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 
 	@Override
 	public Map<String, Object> inviteAgree(int clockId, int memberId, JSONObject json,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		ClockBean clockBean = clockHandler.getNormalClock(clockId);
 		
 		//找出有没有创建者的邀请记录

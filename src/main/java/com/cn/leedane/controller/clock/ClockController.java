@@ -1,5 +1,6 @@
 package com.cn.leedane.controller.clock;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +47,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.add(getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockService.add(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -61,7 +62,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.update(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockService.update(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	/**
@@ -75,7 +76,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.getClock(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockService.getClock(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -90,7 +91,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.getClockThumbnail(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockService.getClockThumbnail(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -106,7 +107,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.search(getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockService.search(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 //	
@@ -121,7 +122,7 @@ public class ClockController extends BaseController{
 //			return message.getMap();
 //		
 //		checkRoleOrPermission(model, request);
-//		message.putAll(circleService.update(circleId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+//		message.putAll(circleService.update(circleId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 //		return message.getMap();
 //	}
 	
@@ -136,7 +137,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.delete(clockId, getMustLoginUserFromShiro(), request));
+		message.putAll(clockService.delete(clockId, getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -152,8 +153,8 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.dateClocks(date, getMustLoginUserFromShiro(), request));
-		
+		message.putAll(clockService.dateClocks(date, getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
+		//int i = 10 / 0;
 		return message.getMap();
 	}
 	
@@ -168,7 +169,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.getOngoingClocks(getMustLoginUserFromShiro(), getJsonFromMessage(message), request));
+		message.putAll(clockService.getOngoingClocks(getMustLoginUserFromShiro(), getJsonFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -183,7 +184,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.getEndeds(getMustLoginUserFromShiro(), getJsonFromMessage(message), request));
+		message.putAll(clockService.getEndeds(getMustLoginUserFromShiro(), getJsonFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -198,7 +199,7 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.systemClocks(getMustLoginUserFromShiro(), request));
+		message.putAll(clockService.systemClocks(getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -216,7 +217,47 @@ public class ClockController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockService.statistics(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockService.statistics(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
+		return message.getMap();
+	}
+
+	/**
+	 * 获取任务资源列表
+	 * @param clockId
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/{clockId}/type/{resourceType}/resources", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> resources(@PathVariable("clockId") int clockId, @PathVariable("resourceType") int resourceType, Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+
+		checkRoleOrPermission(model, request);
+		message.putAll(clockService.resources(clockId, resourceType, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
+		return message.getMap();
+	}
+
+	/**
+	 * 捐赠页面
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/donate", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> donate(Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+
+		Map<String, Object> msg = new HashMap<String, Object>();
+		message.put("isSuccess", true);
+		message.put("message", msg);
+		msg.put("tip", "<font color='#ff0000'>官宣</font>：本app是一款致力于解决个人日常提醒事务的助手，再次承诺，本app使用完全免费。管理员、开发者等绝对不会也不能以个人名义向使用者索取非法的资金。由于这个是纯免费的应用， 并且持续开发精力和时间有限，您们对我的鼓励将更大激励我进行版本更新和功能改进。谢谢！为了感谢您的捐赠，请捐赠者在捐赠完成后保留本次捐赠截图，并在问题反馈页面选择捐赠类别提交给管理员，管理员将把您的名字放到捐赠榜中。");
+		msg.put("wxqrcode", "http://pic.onlyloveu.top/leedane_20190128172847%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20190128172814.jpg?imageslim");
+		msg.put("wxtip", "请使用微信扫一扫向我捐赠");
+		msg.put("zfbqrcode", "http://pic.onlyloveu.top/leedane_20190128172906%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20190128172855.jpg?imageslim");
+		msg.put("zfbtip", "请使用支付宝扫一扫向我捐赠");
 		return message.getMap();
 	}
 }

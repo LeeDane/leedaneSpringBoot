@@ -44,7 +44,7 @@ public class QiniuTest extends BaseTest{
 	    String token = auth.uploadToken(bucketName);
 	    //Response r = uploadManager.put("hello world".getBytes(), "yourkey", token);
 	   
-	    Response r = uploadManager.put(getDataOrFile(), "1_82378545124366_20160119184016_myJava.pdf", token, null, StringUtil.getMime(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file//1_82378545124366_20160119184016_myJava.pdf"), false);
+	    Response r = uploadManager.put(getDataOrFile(), "1_82378545124366_20160119184016_myJava.pdf", token, null, StringUtil.getMime(ConstantsUtil.getDefaultSaveFileFolder() +"file/1_82378545124366_20160119184016_myJava.pdf"), false);
 	    MyRet ret = r.jsonToObject(MyRet.class);
 	    logger.info(ret.fname);
 	}
@@ -52,7 +52,7 @@ public class QiniuTest extends BaseTest{
 	private static byte[] getDataOrFile() throws IOException, Base64DecodingException {
 		//leedane_4eebe109-6f8d-48f1-8fc7-fe822461f1b3_20160219-175431-267-676.jpg
 		//leedane_b55c3c7c-4850-4e69-b899-cbb234bad662_20160219-175730-5-227.jpg
-		String filePath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file//1_82378545124366_20160119184016_myJava.pdf";
+		String filePath = ConstantsUtil.getDefaultSaveFileFolder() +"file/1_82378545124366_20160119184016_myJava.pdf";
 		//return convertImageToBase64(filePath, "jpg");
 		//读取图片字节数组  
 		FileInputStream inputStream = new FileInputStream(filePath);
@@ -127,7 +127,7 @@ public class QiniuTest extends BaseTest{
 
 	    private void template(int size1) throws IOException {
 	        final String expectKey = "1_82378545124366_20160119184016_myJava.pdf";
-	        final File f = new File(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"//file//1_82378545124366_20160119184016_myJava.pdf");
+	        final File f = new File(ConstantsUtil.getDefaultSaveFileFolder() +"file//1_82378545124366_20160119184016_myJava.pdf");
 	        final String returnBody = "{\"key\":\"$(key)\",\"hash\":\"$(etag)\",\"fsize\":\"$(fsize)\""
 	                + ",\"fname\":\"$(fname)\",\"mimeType\":\"$(mimeType)\"}";
 	        String token = TestConfig.testAuth.uploadToken(TestConfig.bucket, expectKey, 3600,

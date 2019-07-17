@@ -39,7 +39,7 @@ public class FinancialTwoCategoryController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialTwoCategoryService.getAll(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialTwoCategoryService.getAll(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
     }
 }

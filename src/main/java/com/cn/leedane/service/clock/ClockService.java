@@ -1,15 +1,12 @@
 package com.cn.leedane.service.clock;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.springframework.transaction.annotation.Transactional;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import net.sf.json.JSONObject;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 /**
  * 任务提醒的Service类
@@ -26,7 +23,7 @@ public interface ClockService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> add(JSONObject jo, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 编辑任务提醒
@@ -36,7 +33,7 @@ public interface ClockService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> update(int babyId, JSONObject jo, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> update(int babyId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除任务提醒
@@ -45,7 +42,7 @@ public interface ClockService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(int clockId, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> delete(int clockId, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取指定日期的打卡任务提醒
@@ -54,7 +51,7 @@ public interface ClockService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> dateClocks(String date, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> dateClocks(String date, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取进行中的任务提醒列表
@@ -63,7 +60,7 @@ public interface ClockService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> getOngoingClocks(UserBean user, JSONObject jo, HttpServletRequest request);
+	public  Map<String,Object> getOngoingClocks(UserBean user, JSONObject jo, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取结束的任务提醒列表
@@ -72,7 +69,7 @@ public interface ClockService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> getEndeds(UserBean user, JSONObject jo, HttpServletRequest request);
+	public  Map<String,Object> getEndeds(UserBean user, JSONObject jo, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取系统的默认任务
@@ -81,7 +78,7 @@ public interface ClockService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> systemClocks(UserBean user, HttpServletRequest request);
+	public  Map<String,Object> systemClocks(UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取任务的信息
@@ -93,7 +90,7 @@ public interface ClockService <T extends IDBean>{
 	 */
 	public Map<String, Object> getClock(
 			int clockId, JSONObject json, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 			
 	/**
 	 * 获取任务的缩略信息
@@ -105,7 +102,7 @@ public interface ClockService <T extends IDBean>{
 	 */
 	public Map<String, Object> getClockThumbnail(
 			int clockId, JSONObject json, UserBean user,
-			HttpServletRequest request);		
+			HttpRequestInfoBean request);		
 
 	/**
 	 * 搜索任务(只支持搜索共享的任务或者是自己的任务，返回最多10条记录)
@@ -116,7 +113,7 @@ public interface ClockService <T extends IDBean>{
 	 */
 	public Map<String, Object> search(
 			JSONObject json, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 
 	/**
 	 * 获取任务的统计信息
@@ -128,5 +125,16 @@ public interface ClockService <T extends IDBean>{
 	 */
 	public Map<String, Object> statistics(int clockId,
 			JSONObject json, UserBean user,
-			HttpServletRequest request);
-}	
+			HttpRequestInfoBean request);
+
+	/**
+	 * 获取任务的资源列表
+	 * @param clockId
+	 * @param resourceType
+	 * @param json
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> resources(int clockId, int resourceType, JSONObject json, UserBean user, HttpRequestInfoBean request);
+}

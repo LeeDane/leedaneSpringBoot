@@ -1,16 +1,14 @@
 package com.cn.leedane.service;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.List;
+import java.util.Map;
 /**
  * 赞的Service类
  * @author LeeDane
@@ -28,7 +26,7 @@ public interface ZanService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> addZan(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> addZan(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	
 
@@ -40,7 +38,7 @@ public interface ZanService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deleteZan(JSONObject jo, UserBean user, HttpServletRequest request) ;
+	public Map<String, Object> deleteZan(JSONObject jo, UserBean user, HttpRequestInfoBean request) ;
 
 
 
@@ -57,7 +55,7 @@ public interface ZanService<T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<Map<String, Object>> getLimit(JSONObject jo, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 	
 	/**
 	 * 获取点赞的全部用户
@@ -69,7 +67,7 @@ public interface ZanService<T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getAllZanUser(JSONObject jo, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 	
 	/**
 	 * 执行SQL对应字段的List<Map<String,Object>

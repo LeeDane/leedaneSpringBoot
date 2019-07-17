@@ -78,7 +78,7 @@ public class CloudStoreHandler {
 		
 		String fileFullPath = null;
 		for(Map<String, Object> filePathBean: filePathBeans){	
-			fileFullPath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file" +File.separator +StringUtil.changeNotNull(filePathBean.get("path"));
+			fileFullPath = ConstantsUtil.getDefaultSaveFileFolder() +"file" +File.separator +StringUtil.changeNotNull(filePathBean.get("path"));
 			if(!StringUtil.isNull(fileFullPath)){
 				logger.info("fileFullPath:"+fileFullPath);
 				File file = new File(fileFullPath);
@@ -133,7 +133,7 @@ public class CloudStoreHandler {
     	String path = file.getName();
     	if(StringUtil.isNull(path))
     		return null;
-		//String fileFullPath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file" +File.separator + user.getAccount() + "_upload_" + UUID.randomUUID().toString() + "_" + StringUtil.getFileName(path);
+		//String fileFullPath = ConstantsUtil.getDefaultSaveFileFolder() +"file" +File.separator + user.getAccount() + "_upload_" + UUID.randomUUID().toString() + "_" + StringUtil.getFileName(path);
 		//File file = new File(fileFullPath);
 		if(file.exists()){
 			try {
@@ -176,7 +176,7 @@ public class CloudStoreHandler {
     	if(filePathBean == null || filePathBean.isEmpty())
     		return id;
     	String path = StringUtil.changeNotNull(filePathBean.get("path"));
-		String fileFullPath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file" +File.separator +path;
+		String fileFullPath = ConstantsUtil.getDefaultSaveFileFolder() +"file" +File.separator +path;
 		File file = new File(fileFullPath);
 		if(file.exists()){
 			try {
@@ -232,7 +232,7 @@ public class CloudStoreHandler {
 		public Boolean call() throws Exception {
 			
 			String filePath = StringUtil.changeNotNull(bean.get("path"));
-			String fullPath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file"+ File.separator +filePath;
+			String fullPath = ConstantsUtil.getDefaultSaveFileFolder() +"file"+ File.separator +filePath;
 			Response r = new UploadManager().put(getDataOrFile(fullPath), filePath, token, null, StringUtil.getMime(fullPath), false);
 			/*if(r.isOK() && r.statusCode == 200){
 				
@@ -261,7 +261,7 @@ public class CloudStoreHandler {
 		@Override
 		public Boolean call() throws Exception {
 			String filePath = StringUtil.changeNotNull(bean.get("path"));
-			String fullPath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file" +File.separator +filePath;
+			String fullPath = ConstantsUtil.getDefaultSaveFileFolder() +"file" +File.separator +filePath;
 	        File f = new File(fullPath);
             ResumeUploader up = new ResumeUploader(new Client(), token, filePath, f, null, null, null, null);
             Response r = up.upload();

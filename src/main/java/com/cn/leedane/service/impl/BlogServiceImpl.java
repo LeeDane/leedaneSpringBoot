@@ -1,48 +1,28 @@
 package com.cn.leedane.service.impl;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.exception.RE404Exception;
-import com.cn.leedane.handler.BlogHandler;
-import com.cn.leedane.handler.CommentHandler;
-import com.cn.leedane.handler.NotificationHandler;
-import com.cn.leedane.handler.TransmitHandler;
-import com.cn.leedane.handler.UserHandler;
-import com.cn.leedane.handler.ZanHandler;
-import com.cn.leedane.lucene.solr.BlogSolrHandler;
+import com.cn.leedane.handler.*;
 import com.cn.leedane.mapper.BlogMapper;
 import com.cn.leedane.model.BlogBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.springboot.ElasticSearchUtil;
 import com.cn.leedane.thread.ThreadUtil;
-import com.cn.leedane.thread.single.SolrAddThread;
-import com.cn.leedane.thread.single.SolrDeleteThread;
-import com.cn.leedane.thread.single.SolrUpdateThread;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.thread.single.EsIndexAddThread;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.JsoupUtil;
-import com.cn.leedane.utils.LuceneUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import com.hankcs.hanlp.HanLP;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 /**
  * 博客service实现类
@@ -82,8 +62,9 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	
 	@Autowired
 	private TransmitHandler transmitHandler;
-	
-	
+
+	@Autowired
+	private ElasticSearchUtil elasticSearchUtil;
 	@Override
 	public Map<String,Object> addBlog(BlogBean blog, UserBean user){	
 		logger.info("BlogServiceImpl-->addBlog():blog="+blog);
@@ -107,8 +88,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			result = blogMapper.save(blog);
 		}
 		if(result > 0){
-			new ThreadUtil().singleTask(new SolrAddThread<BlogBean>(BlogSolrHandler.getInstance(), blog));
-			
+			new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(blog));
 			message.put("isSuccess",true);
 			message.put("message","文章发布成功");
 		}else{
@@ -127,7 +107,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 
 	@Override
 	public Map<String, Object> shakeSearch(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->shakeSearch():jo="+jo.toString());
 		int blogId = 0; //获取到的博客的ID
 		ResponseMap message = new ResponseMap();
@@ -147,7 +127,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		}
 			
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "摇一摇搜索，得到文章Id为"+ blogId, StringUtil.getSuccessOrNoStr(blogId > 0)).toString(), "shakeSearch()", StringUtil.changeBooleanToInt(blogId > 0), 0);	
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "摇一摇搜索，得到文章Id为"+ blogId, StringUtil.getSuccessOrNoStr(blogId > 0)).toString(), "shakeSearch()", StringUtil.changeBooleanToInt(blogId > 0), 0);
 		
 		return message.getMap();
 	}
@@ -242,7 +222,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	}
 
 	@Override
-	public Map<String, Object> deleteById(JSONObject jo, HttpServletRequest request, UserBean user){
+	public Map<String, Object> deleteById(JSONObject jo, HttpRequestInfoBean request, UserBean user){
 		int id = JsonUtil.getIntValue(jo, "b_id");
 		logger.info("BlogServiceImpl-->deleteById():id="+id);
 		ResponseMap message = new ResponseMap();
@@ -261,8 +241,12 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		
 		boolean result = this.blogMapper.deleteById(BlogBean.class, id) > 0;
 		if(result){
+
+			//删除es缓存
+			elasticSearchUtil.delete(DataTableType.博客.value, id);
+
 			//异步删除solr
-			new ThreadUtil().singleTask(new SolrDeleteThread<BlogBean>(BlogSolrHandler.getInstance(), String.valueOf(id)));
+//			new ThreadUtil().singleTask(new SolrDeleteThread<BlogBean>(BlogSolrHandler.getInstance(), String.valueOf(id)));
 			
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
@@ -271,7 +255,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
 		}
-		String subject = user.getAccount() + "删除了ID为"+id + "的博客" + StringUtil.getSuccessOrNoStr(result);
+		String subject = user.getAccount() + "删除了博客《"+ oldBean.getTitle() + "》" + StringUtil.getSuccessOrNoStr(result);
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "deleteById()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
 	}
@@ -290,7 +274,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 
 	@Override
 	public Map<String, Object> search(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->search():jo="+jo.toString());
 		String searchKey = JsonUtil.getStringValue(jo, "searchKey");
 		ResponseMap message = new ResponseMap();
@@ -316,7 +300,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	
 	@Override
 	public Map<String, Object> addTag(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+									  HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->addTag():jo="+jo.toString());
 		int bid = JsonUtil.getIntValue(jo, "bid");
 		String tag = JsonUtil.getStringValue(jo, "tag");
@@ -360,15 +344,16 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		
 		boolean result = blogMapper.update(blogBean) > 0;
 		
-		String subject = user.getAccount() + "为博客ID为"+bid + "添加标签" +tag + StringUtil.getSuccessOrNoStr(result);
+		String subject = user.getAccount() + "为博客《"+blogBean.getTitle() + "》添加标签:" + tag + StringUtil.getSuccessOrNoStr(result);
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "addTag()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		if(result){
 			if(cut){
 				message.put("message", "添加成功，标签数量超过3个，已自动删掉第一个");
 			}else{
+				new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(blogBean));
 				//异步修改solr索引
-				new ThreadUtil().singleTask(new SolrUpdateThread<BlogBean>(BlogSolrHandler.getInstance(), blogBean));
+//				new ThreadUtil().singleTask(new SolrUpdateThread<BlogBean>(BlogSolrHandler.getInstance(), blogBean));
 				
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.标签添加成功.value));
 			}
@@ -393,7 +378,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 
 	@Override
 	public Map<String, Object> getInfo(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+									   HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->getInfo():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		int blogId = JsonUtil.getIntValue(jo, "blog_id");
@@ -418,14 +403,14 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取文章ID为：", blogId, ",的基本信息", StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "getInfo()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取文章ID为：", blogId, ",的基本信息", StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "getInfo()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> draftList(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+										 HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->draftList():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();		
 		StringBuffer sql = new StringBuffer();
@@ -439,14 +424,14 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		message.put("isSuccess", true);
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取草稿列表", StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "draftList()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取草稿列表", StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "draftList()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> edit(int blogId, UserBean user,
-			HttpServletRequest request) {
+									HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->edit():blogId=" +blogId +", user=" +user.getAccount());
 		
 		ResponseMap message = new ResponseMap();
@@ -471,7 +456,9 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		
 		//获取当前的Subject  
 		checkAdmin(user, createUserId);
-		
+
+		new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(blogMapper.findById(BlogBean.class, blogId)));
+
 		message.put("message", r);
 		message.put("isSuccess", true);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -479,14 +466,14 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		//new ThreadUtil().task(new BlogSolrUpdateThread(blogBean));
 		//BlogSolrHandler.getInstance().updateBean(blogBean);
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取编辑博客Id为：", blogId, StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "edit()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"编辑博客ID:", blogId, StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "edit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> noCheckPaging(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+											 HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->noCheckPaging():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
@@ -535,13 +522,13 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取未审核文章列表，查询条件是："+jo.toString(), StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "noCheckPaging()", ConstantsUtil.STATUS_NORMAL, 0);	
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取未审核文章列表，查询条件是："+jo.toString(), StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "noCheckPaging()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> check(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+									 HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->check():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
@@ -587,13 +574,13 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"审核文章Id为", blogId, StringUtil.getSuccessOrNoStr(result)).toString(), "check()", StringUtil.changeBooleanToInt(result), 0);	
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"审核文章Id为", blogId, StringUtil.getSuccessOrNoStr(result)).toString(), "check()", StringUtil.changeBooleanToInt(result), 0);
 		return message.getMap();
 	}
 	
 	@Override
 	public Map<String, Object> getOneBlog(int blogId, UserBean user,
-			HttpServletRequest request) {
+										  HttpRequestInfoBean request) {
 		/*logger.info("BlogServiceImpl-->getOneBlog():id="+id);
 		return this.blogMapper.getOneBlog(status , id);*/
 		logger.info("BlogServiceImpl-->getOneBlog():blogId=" +blogId);
@@ -623,8 +610,9 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		try {
 			//获取文章的简要中的关键字
 			String content = JsoupUtil.getInstance().getContentNoTag(StringUtil.changeNotNull(blogMap.get("content")));
-			blogMap.put("keywords", CollectionUtil.getTopKeyword(LuceneUtil.getInstance().extract(content), 2, 5));
-		} catch (IOException e) {
+//			blogMap.put("keywords", CollectionUtil.getTopKeyword(LuceneUtil.getInstance().extract(content), 2, 5));
+			blogMap.put("keywords", CollectionUtil.getTopKeyword(HanLP.extractKeyword(content, 15), 2, 6));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		boolean result = updateReadNum(blogId, readNum + 1) > 0;
@@ -640,7 +628,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			return message.getMap();
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("获取博客ID为", blogId, "详情", StringUtil.getSuccessOrNoStr(result)).toString(), "check()", StringUtil.changeBooleanToInt(result), 0);	
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("获取博客ID为", blogId, "详情", StringUtil.getSuccessOrNoStr(result)).toString(), "check()", StringUtil.changeBooleanToInt(result), 0);
 		return message.getMap();
 	}
 

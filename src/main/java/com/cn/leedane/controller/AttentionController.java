@@ -39,7 +39,7 @@ public class AttentionController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(attentionService.addAttention(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(attentionService.addAttention(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -55,7 +55,7 @@ public class AttentionController extends BaseController{
 		}
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(attentionService.deleteAttention(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(attentionService.deleteAttention(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -77,7 +77,7 @@ public class AttentionController extends BaseController{
 			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);
 			return message.getMap();
 		}
-		List<Map<String, Object>> result= attentionService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
+		List<Map<String, Object>> result= attentionService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 		logger.info("获得关注的数量：" +result.size());
 		message.put("isSuccess", true);
 		message.put("message", result);

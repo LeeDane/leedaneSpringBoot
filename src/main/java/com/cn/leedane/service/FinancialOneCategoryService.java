@@ -1,18 +1,15 @@
 package com.cn.leedane.service;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.FinancialOneLevelCategoryBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.FinancialOneLevelCategoryBean;
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 记账一级分类service接口类
@@ -39,7 +36,7 @@ public interface FinancialOneCategoryService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getAll(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getAll(JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 批量插入数据库

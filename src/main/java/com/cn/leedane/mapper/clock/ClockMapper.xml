@@ -14,20 +14,19 @@
 				,c.title, c.clock_describe, c.icon, c.share, c.start_date, c.end_date, c.clock_in_type, c.choose_img, c.clock_repeat, cm.remind
 				,c.apply_end_date, c.take_part_number, c.reward_score 
 				,date_format(c.clock_start_time,'%H:%i') clock_start_time, date_format(c.clock_end_time,'%H:%i') clock_end_time
-				,(case (select 1 from t_clock_in ci where ci.create_user_id = #{createUserId} and ci.clock_id = c.id and ci.`status` = 1 and DATE_FORMAT(ci.clock_date,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d' )) when 1 then true else false end) clock_in
+				,(select ci.`status` from t_clock_in ci where ci.create_user_id = #{createUserId} and ci.clock_id = c.id and (ci.`status` = 1 or ci.`status` = 3 or ci.`status` = 13) and DATE_FORMAT(ci.clock_date,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d' )) clock_in_status
 				,cm.member_id, u.pic_path, u.account
 			from t_clock c INNER JOIN t_clock_member cm ON c.id = cm.clock_id and cm.`status` = 1 
 						LEFT JOIN t_user u ON u.id = cm.member_id and u.`status` = 1 
 			where EXISTS (select m.member_id from t_clock_member m where m.clock_id = cm.clock_id and m.`status` = 1 and m.member_id = #{createUserId}) and c.`status` = 1 
 			and c.start_date &lt;= date_format(#{date}, '%Y-%m-%d') and (c.end_date is null or c.end_date &gt;= date_format(#{date}, '%Y-%m-%d')) and  c.clock_repeat like '%${week}%'
-		ORDER BY clock_in,c.clock_start_time, c.clock_end_time
+		ORDER BY clock_in_status,c.clock_start_time, c.clock_end_time
 	</select>
 	<select id="getMyOngoingClocks" resultMap="objectBean">
 		select c.id, c.status,c.create_user_id, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time, c.modify_user_id, date_format(c.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
 				,c.title, c.clock_describe, c.icon, c.share, c.start_date, c.end_date, c.clock_in_type, c.choose_img, c.clock_repeat, cm.remind
 				,c.apply_end_date, c.take_part_number, c.reward_score , c.share_id, c.total_day
 				,date_format(c.clock_start_time,'%H:%i') clock_start_time, date_format(c.clock_end_time,'%H:%i') clock_end_time
-				,(case (select 1 from t_clock_in ci where ci.create_user_id = #{createUserId} and ci.clock_id = c.id and ci.`status` = 1 and DATE_FORMAT(ci.clock_date,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d' )) when 1 then true else false end) clock_in
 				,cm.member_id, u.pic_path, u.account, (select count(cmb.id) from t_clock_member cmb where cmb.`status` = 1 and cmb.clock_id = c.id) person_number
 			from t_clock c INNER JOIN t_clock_member cm ON c.id = cm.clock_id and cm.`status` = 1 
 						LEFT JOIN t_user u ON u.id = cm.member_id and u.`status` = 1 
@@ -41,7 +40,6 @@
 				,c.title, c.clock_describe, c.icon, c.share, c.start_date, c.end_date, c.clock_in_type, c.choose_img, c.clock_repeat
 				,c.apply_end_date, c.take_part_number, c.reward_score
 				,date_format(c.clock_start_time,'%H:%i') clock_start_time, date_format(c.clock_end_time,'%H:%i') clock_end_time
-				,(case (select 1 from t_clock_in ci where ci.create_user_id = #{createUserId} and ci.clock_id = c.id and ci.`status` = 1 and DATE_FORMAT(ci.clock_date,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d' )) when 1 then true else false end) clock_in
 				,(select count(tci.id) from t_clock_in tci where tci.clock_id = c.id and tci.create_user_id = #{createUserId} and tci.`status` = 1) clock_count
 			from t_clock c
 			where EXISTS (select m.member_id from t_clock_member m where m.clock_id = c.id and m.`status` = 1 and m.member_id = #{createUserId}) and c.`status` in (1, 9)
@@ -88,7 +86,7 @@
 	<select id="getClockThumbnail" resultMap="objectSearchBean">
 		select c.id, c.status,c.create_user_id, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time, c.modify_user_id, date_format(c.modify_time,'%Y-%m-%d %H:%i:%s') modify_time 
 				,c.title, c.clock_describe, c.icon, c.share, c.start_date, c.end_date, c.clock_in_type, c.choose_img, c.clock_repeat
-				,c.apply_end_date, c.take_part_number, c.reward_score, c.share_id, c.total_day 
+				,c.apply_end_date, c.take_part_number, c.reward_score, c.share_id, c.total_day, c.auto_add, c.auto_out, c.see_each_other, c.must_check_clock_in
 				,date_format(c.clock_start_time,'%H:%i') clock_start_time, date_format(c.clock_end_time,'%H:%i') clock_end_time
 				, u.account, u.id user_id
 			from t_clock c INNER JOIN t_user u on c.create_user_id = u.id AND u.`status` = 1 
@@ -116,7 +114,7 @@
         <result property="mustStep" column="must_step"/>
         <result property="clockStartTime" column="clock_start_time"/>
         <result property="clockEndTime" column="clock_end_time"/>
-        <result property="clockIn" column="clock_in"/>
+        <result property="clockInStatus" column="clock_in_status"/>
         <result property="clockRepeat" column="clock_repeat"/>
         <result property="remind" column="remind"/>
         <result property="notification" column="notification"/>
@@ -163,5 +161,9 @@
         <result property="shareId" column="share_id"/>
         <result property="totalDay" column="total_day"/>
         <result property="dealStatus" column="deal_status"/>
+	   <result property="autoAdd" column="auto_add"/>
+	   <result property="autoOut" column="auto_out"/>
+	   <result property="seeOther" column="see_each_other"/>
+	   <result property="clockInCheck" column="must_check_clock_in"/>
    </resultMap>
 </mapper>

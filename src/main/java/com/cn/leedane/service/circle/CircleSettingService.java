@@ -1,15 +1,12 @@
 package com.cn.leedane.service.circle;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.springframework.transaction.annotation.Transactional;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import net.sf.json.JSONObject;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 /**
  * 圈子设置的Service类
@@ -29,6 +26,6 @@ public interface CircleSettingService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> update(int circleId, int settingId, JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> update(int circleId, int settingId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 }

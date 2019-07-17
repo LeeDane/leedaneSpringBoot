@@ -1,17 +1,14 @@
 package com.cn.leedane.service;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 粉丝service接口类
@@ -29,7 +26,7 @@ public interface FanService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> addFan(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> addFan(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取我的全部的关注的用户的ID和备注
@@ -40,7 +37,7 @@ public interface FanService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getMyAttentionsLimit(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getMyAttentionsLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	
 	/**
@@ -52,7 +49,7 @@ public interface FanService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getToAttentionsLimit(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getToAttentionsLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取全部的关注我的ID和备注
@@ -63,7 +60,7 @@ public interface FanService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getMyFansLimit(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getMyFansLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取全部的关注Ta的ID(是否关注的展示相对我)
@@ -74,7 +71,7 @@ public interface FanService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getToFansLimit(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getToFansLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 取消关注粉丝
@@ -84,7 +81,7 @@ public interface FanService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public boolean cancel(JSONObject jo, UserBean user, HttpServletRequest request);
+	public boolean cancel(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 判断两人是否互粉
@@ -93,7 +90,7 @@ public interface FanService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public boolean isFanEachOther(JSONObject jo, UserBean user, HttpServletRequest request);
+	public boolean isFanEachOther(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	/**
 	 * 是否粉她
 	 * @param id  当前用户的id
@@ -101,7 +98,7 @@ public interface FanService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> isFan(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> isFan(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 执行SQL对应字段的List<Map<String,Object>

@@ -1,42 +1,23 @@
 package com.cn.leedane.service.impl;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.handler.LinkManageHandler;
 import com.cn.leedane.handler.RolePermissionHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.PermissionMapper;
 import com.cn.leedane.mapper.RolePermissionMapper;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.PermissionBean;
-import com.cn.leedane.model.RolePermissionBean;
-import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.*;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.PermissionService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * 权限管理service实现类
@@ -68,7 +49,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 	
 	@Override
 	public Map<String, Object> save(JSONObject jsonObject, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("PermissionServiceImpl-->save():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		//commentService.getCommentsByLimit(jsonObject, user, request);
@@ -93,7 +74,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 
 	@Override
 	public Map<String, Object> edit(JSONObject jsonObject, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("PermissionServiceImpl-->edit():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		PermissionBean permissionBean = new PermissionBean();
@@ -118,7 +99,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 
 	@Override
 	public Map<String, Object> delete(int pmid, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("PermissionServiceImpl-->delete():pmid="+ pmid);
 		ResponseMap message = new ResponseMap();
 		
@@ -143,7 +124,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 
 	@Override
 	public Map<String, Object> paging(JSONObject jsonObject, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("PermissionServiceImpl-->paging():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(jsonObject, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -168,7 +149,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		}
 		message.put("total", SqlUtil.getTotalByList(permissionMapper.getTotal(DataTableType.权限.value, null)));
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取权限列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取权限列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);
@@ -177,7 +158,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 
 	@Override
 	public Map<String, Object> deletes(String pmids, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("PermissionServiceImpl-->deletes():pmids="+ pmids);
 		ResponseMap message = new ResponseMap();
 		if(StringUtil.isNull(pmids))
@@ -217,7 +198,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 
 	@Override
 	public Map<String, Object> roles(int pmid, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("PermissionServiceImpl-->roles():pmid="+pmid);
 		ResponseMap message = new ResponseMap();
 		List<Map<String, Object>> rs = permissionMapper.roles(pmid, ConstantsUtil.STATUS_NORMAL);
@@ -233,7 +214,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 
 	@Override
 	public Map<String, Object> allot(int pmid, String roles, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("PermissionServiceImpl-->allot():pmid="+pmid +", roles="+ roles);
 		
 		ResponseMap message = new ResponseMap();

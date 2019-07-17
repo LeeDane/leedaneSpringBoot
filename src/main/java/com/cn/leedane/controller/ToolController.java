@@ -1,28 +1,5 @@
 package com.cn.leedane.controller;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cn.leedane.enums.NotificationType;
 import com.cn.leedane.handler.CloudStoreHandler;
 import com.cn.leedane.handler.ZXingCodeHandler;
@@ -37,18 +14,31 @@ import com.cn.leedane.rabbitmq.send.EmailSend;
 import com.cn.leedane.rabbitmq.send.ISend;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.service.AppVersionService;
-import com.cn.leedane.utils.Base64Util;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.RSAKeyUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.EmailType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.wechat.util.HttpRequestUtil;
 import com.google.zxing.WriterException;
 import com.qiniu.util.Auth;
+import net.sf.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.tl)
@@ -152,7 +142,7 @@ public class ToolController extends BaseController{
 		
 		checkRoleOrPermission(model, request);
 		//type: 1为通知，2为邮件，3为私信，4为短信
-		message.putAll(userService.sendMessage(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.sendMessage(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -313,7 +303,7 @@ public class ToolController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		message.put("message", "获取最新版本失败");
-		message.putAll(appVersionService.getNewest(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(appVersionService.getNewest(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();	
 	}
 }

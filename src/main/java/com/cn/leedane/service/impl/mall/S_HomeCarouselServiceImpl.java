@@ -1,19 +1,9 @@
 package com.cn.leedane.service.impl.mall;
 
-import java.util.Date;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.handler.mall.S_HomeCarouselHandler;
 import com.cn.leedane.handler.mall.S_ProductHandler;
 import com.cn.leedane.mapper.mall.S_HomeCarouselMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.mall.S_HomeCarouselBean;
@@ -21,11 +11,14 @@ import com.cn.leedane.model.mall.S_ProductBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.mall.MallRoleCheckService;
 import com.cn.leedane.service.mall.S_HomeCarouselService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.Map;
 
 /**
  * 首页轮播商品的service的实现类
@@ -51,7 +44,7 @@ public class S_HomeCarouselServiceImpl extends MallRoleCheckService implements S
 
 	@Override
 	public Map<String, Object> add(JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("S_CarouselServiceImpl-->add():json="+json);
 		int productId = JsonUtil.getIntValue(json, "product_id");
 		int order = JsonUtil.getIntValue(json, "order", 1);
@@ -89,7 +82,7 @@ public class S_HomeCarouselServiceImpl extends MallRoleCheckService implements S
 	
 	@Override
 	public Map<String, Object> delete(int carouselId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("S_CarouselServiceImpl-->delete():carouselId="+carouselId);
 		
 		//检查权限

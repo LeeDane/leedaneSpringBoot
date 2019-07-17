@@ -48,7 +48,7 @@ public class ClockDynamicController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockDynamicService.dynamics(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockDynamicService.dynamics(clockId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

@@ -1,25 +1,19 @@
 package com.cn.leedane.controller.mall;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.model.mall.S_WishBean;
 import com.cn.leedane.service.mall.S_WishService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.LayuiTableResponseMap;
 import com.cn.leedane.utils.ResponseMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 商品心愿单接口controller
@@ -48,7 +42,7 @@ public class WishController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(wishService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(wishService.add(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -63,7 +57,7 @@ public class WishController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(wishService.delete(wishId, getUserFromMessage(message), request));
+		message.putAll(wishService.delete(wishId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 
@@ -78,7 +72,7 @@ public class WishController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(wishService.getWishNumber(getUserFromMessage(message), request));
+		message.putAll(wishService.getWishNumber(getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -97,7 +91,7 @@ public class WishController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(wishService.paging(current - 1, pageSize, getUserFromMessage(message), request));
+		message.putAll(wishService.paging(current - 1, pageSize, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

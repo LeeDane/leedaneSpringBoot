@@ -1,45 +1,24 @@
 package com.cn.leedane.service.impl.mall;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.handler.mall.S_HomeItemHandler;
 import com.cn.leedane.handler.mall.S_ProductHandler;
 import com.cn.leedane.mapper.mall.S_HomeItemMapper;
 import com.cn.leedane.mapper.mall.S_HomeItemProductMapper;
-import com.cn.leedane.model.CategoryBean;
-import com.cn.leedane.model.KeyValueBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.mall.S_HomeItemBean;
-import com.cn.leedane.model.mall.S_HomeItemBeans;
-import com.cn.leedane.model.mall.S_HomeItemProductBean;
-import com.cn.leedane.model.mall.S_HomeItemShowBean;
-import com.cn.leedane.model.mall.S_ProductBean;
+import com.cn.leedane.model.*;
+import com.cn.leedane.model.mall.*;
 import com.cn.leedane.service.CategoryService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.mall.MallRoleCheckService;
 import com.cn.leedane.service.mall.S_HomeItemService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 /**
  * 首页分类商品的service的实现类
@@ -75,7 +54,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	
 	@Override
 	public Map<String, Object> addItem(JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->addItem():json="+json);
 		SqlUtil sqlUtil = new SqlUtil();
 		S_HomeItemBean homeItemBean = (S_HomeItemBean) sqlUtil.getBean(json, S_HomeItemBean.class);
@@ -110,7 +89,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	
 	@Override
 	public Map<String, Object> updateItem(int itemId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->updateItem():json="+json +", itemId="+ itemId);
 		S_HomeItemBean homeItemBean = homeItemMapper.findById(S_HomeItemBean.class, itemId);
 		if(homeItemBean == null)
@@ -144,7 +123,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	
 	@Override
 	public Map<String, Object> getItem(int categoryId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->getItem():categoryId="+categoryId);
 		ResponseMap message = new ResponseMap();
 		
@@ -161,7 +140,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	
 	@Override
 	public Map<String, Object> deleteItem(int itemId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->deleteItem():itemId="+itemId);
 		
 		S_HomeItemShowBean homeItemShowBean = homeItemHandler.getCategory(itemId);
@@ -204,7 +183,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	}
 	
 	@Override
-	public Map<String, Object> matchingCategory(int itemId, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> matchingCategory(int itemId, UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->showCategoryList()");
 		ResponseMap message = new ResponseMap();
 		
@@ -279,7 +258,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	}
 	
 	@Override
-	public Map<String, Object> updateCategory(int itemId, JSONObject json, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> updateCategory(int itemId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->updateCategory()");
 		ResponseMap message = new ResponseMap();
 		
@@ -314,7 +293,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	@Override
 	public Map<String, Object> addProduct(int itemId,
 			JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		int productId = JsonUtil.getIntValue(json, "product_id");
 		S_ProductBean productBean = productHandler.getNormalProductBean(productId);
 		if(productBean == null)
@@ -350,7 +329,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 
 	@Override
 	public Map<String, Object> deleteProduct(int itemId, int productId,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->deleteProduct():itemId="+itemId +", productId="+ productId);
 		ResponseMap message = new ResponseMap();
 		checMallkAdmin(user);
@@ -376,7 +355,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 
 	@Override
 	public Map<String, Object> noList(JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->showCategoryList()");
 		ResponseMap message = new ResponseMap();
 		
@@ -421,7 +400,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 
 	@Override
 	public Map<String, Object> getItems(UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		logger.info("S_HomeItemServiceImpl-->getItems()");
 		ResponseMap message = new ResponseMap();

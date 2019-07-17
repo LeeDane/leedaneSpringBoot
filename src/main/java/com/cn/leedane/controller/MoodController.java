@@ -1,19 +1,5 @@
 package com.cn.leedane.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.model.MoodBean;
 import com.cn.leedane.model.TemporaryBase64Bean;
@@ -25,6 +11,17 @@ import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
+import net.sf.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.md)
@@ -58,7 +55,7 @@ public class MoodController extends BaseController{
 		checkRoleOrPermission(model, request);;
 		JSONObject jsonObject = getJsonFromMessage(message);
 		int status = JsonUtil.getIntValue(jsonObject, "status", ConstantsUtil.STATUS_NORMAL);
-		message.putAll(moodService.updateMoodStatus(jsonObject, status, request, getUserFromMessage(message)));
+		message.putAll(moodService.updateMoodStatus(jsonObject, status, getHttpRequestInfo(request), getUserFromMessage(message)));
 		return message.getMap();
 	}
 	
@@ -74,7 +71,7 @@ public class MoodController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(moodService.saveMood(getJsonFromMessage(message), getUserFromMessage(message), ConstantsUtil.STATUS_DRAFT, request));
+		message.putAll(moodService.saveMood(getJsonFromMessage(message), getUserFromMessage(message), ConstantsUtil.STATUS_DRAFT, getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -92,7 +89,7 @@ public class MoodController extends BaseController{
 		JSONObject jsObject = getJsonFromMessage(message);
 		int status = JsonUtil.getIntValue(jsObject, "status", ConstantsUtil.STATUS_NORMAL);
 		
-		message.putAll(moodService.sendWord(jsObject, getUserFromMessage(message), status, request));
+		message.putAll(moodService.sendWord(jsObject, getUserFromMessage(message), status, getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -107,7 +104,7 @@ public class MoodController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(moodService.sendWordAndLink(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(moodService.sendWordAndLink(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -122,7 +119,7 @@ public class MoodController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(moodService.deleteMood(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(moodService.deleteMood(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -139,7 +136,7 @@ public class MoodController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(moodService.rolling(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(moodService.rolling(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -154,7 +151,7 @@ public class MoodController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(moodService.getMoodsPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(moodService.getMoodsPaging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -183,11 +180,11 @@ public class MoodController extends BaseController{
 		
 		//上传该base64字符串结束
 		if(isEnd){
-			filePathService.saveEachTemporaryBase64ToFilePath(json, user, request);
+			filePathService.saveEachTemporaryBase64ToFilePath(json, user, getHttpRequestInfo(request));
 			message.put("isSuccess", true);
 		//直接保存上传记录
 		}else{
-			message.put("isSuccess", temporaryBase64Service.saveBase64Str(json, user, request));
+			message.put("isSuccess", temporaryBase64Service.saveBase64Str(json, user, getHttpRequestInfo(request)));
 		}
 		return message.getMap();
 	}
@@ -204,7 +201,7 @@ public class MoodController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(moodService.saveDividedMood(getJsonFromMessage(message), getUserFromMessage(message), ConstantsUtil.STATUS_NORMAL, request));
+		message.putAll(moodService.saveDividedMood(getJsonFromMessage(message), getUserFromMessage(message), ConstantsUtil.STATUS_NORMAL, getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -236,7 +233,7 @@ public class MoodController extends BaseController{
 			return message.getMap();
 		
 		message.put("isSuccess", true);
-		message.put("message", filePathService.downloadBase64Str(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.put("message", filePathService.downloadBase64Str(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -275,7 +272,7 @@ public class MoodController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(moodService.getCountByUser(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(moodService.getCountByUser(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	/**
@@ -290,7 +287,7 @@ public class MoodController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(moodService.detail(getJsonFromMessage(message), getUserFromMessage(message), request, "120x120"));
+		message.putAll(moodService.detail(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request), "120x120"));
 		//printWriter(message, response);
 		return message.getMap();
 	}
@@ -306,7 +303,7 @@ public class MoodController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(moodService.detailImgs(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(moodService.detailImgs(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -321,7 +318,7 @@ public class MoodController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(moodService.getTopicByLimit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(moodService.getTopicByLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

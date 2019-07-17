@@ -31,7 +31,7 @@ public class QuartzJobFactory implements Job{
     public void execute(JobExecutionContext context) throws JobExecutionException {
          final JobManageBean scheduleJob = (JobManageBean)context.getMergedJobDataMap().get("scheduleJob");
          if(StringUtil.isNotNull(scheduleJob.getClassName())){
-        	 logger.error(DateUtil.DateToString(new Date())+ "--->任务名称 = [" + scheduleJob.getJobName() + "]");
+        	 logger.info(DateUtil.DateToString(new Date())+ "--->任务名称 = [" + scheduleJob.getJobName() + "]");
         	 Object obj = SpringUtil.getBean(scheduleJob.getClassName());
         	 if(null != obj){
         		new ThreadUtil().singleTask(new SchedulingThread((AbstractScheduling) obj, scheduleJob));

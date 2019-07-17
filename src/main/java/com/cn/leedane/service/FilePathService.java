@@ -1,17 +1,14 @@
 package com.cn.leedane.service;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 文件路径service接口类
@@ -29,7 +26,7 @@ public interface FilePathService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public boolean saveEachTemporaryBase64ToFilePath(JSONObject jo, UserBean user, HttpServletRequest request);
+	public boolean saveEachTemporaryBase64ToFilePath(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取单张图片的base64字符串
@@ -39,7 +36,7 @@ public interface FilePathService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public String downloadBase64Str(JSONObject jo, UserBean user, HttpServletRequest request);
+	public String downloadBase64Str(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取单张图片的图片列表信息
@@ -50,7 +47,7 @@ public interface FilePathService <T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public String getOneMoodImgs(JSONObject jo, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 	
 	/**
 	 * 保存每一个filePath对象
@@ -84,7 +81,7 @@ public interface FilePathService <T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<Map<String, Object>> getUserImageByLimit(JSONObject jo,
-			UserBean user, HttpServletRequest request);
+			UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 保存源文件和其他不同分辨率大小的文件(filePath最好不要存放在file文件夹下)
@@ -116,7 +113,7 @@ public interface FilePathService <T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getUploadFileByLimit(JSONObject jo,
-			UserBean user, HttpServletRequest request);
+			UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 更新标记该文件已经上传到存储服务器

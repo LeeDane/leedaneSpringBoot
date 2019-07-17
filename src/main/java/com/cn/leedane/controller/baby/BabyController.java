@@ -1,17 +1,5 @@
 package com.cn.leedane.controller.baby;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.model.baby.BabyBean;
 import com.cn.leedane.model.baby.BabyLifeBean;
@@ -19,6 +7,12 @@ import com.cn.leedane.service.baby.BabyLifeService;
 import com.cn.leedane.service.baby.BabyService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 宝宝接口controller
@@ -48,7 +42,7 @@ public class BabyController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(babyService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(babyService.add(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -63,7 +57,7 @@ public class BabyController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(babyService.update(babyId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(babyService.update(babyId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -79,7 +73,7 @@ public class BabyController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(babyService.delete(babyId, getUserFromMessage(message), request));
+		message.putAll(babyService.delete(babyId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -100,7 +94,7 @@ public class BabyController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(babyLifeService.add(babyId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(babyLifeService.add(babyId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -122,7 +116,7 @@ public class BabyController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(babyLifeService.update(babyId, lifeId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(babyLifeService.update(babyId, lifeId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -143,7 +137,7 @@ public class BabyController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(babyService.changeBorn(babyId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(babyService.changeBorn(babyId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -165,7 +159,7 @@ public class BabyController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(babyLifeService.delete(babyId, lifeId, getUserFromMessage(message), request));
+		message.putAll(babyLifeService.delete(babyId, lifeId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -196,7 +190,7 @@ public class BabyController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(babyLifeService.lifes(babyId, startDate, endDate, keyWord, lifeType, getUserFromMessage(message), request));
+		message.putAll(babyLifeService.lifes(babyId, startDate, endDate, keyWord, lifeType, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

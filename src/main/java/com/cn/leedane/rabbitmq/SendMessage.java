@@ -43,6 +43,7 @@ public class SendMessage {
 			channel.close();
 			//RabbitConnection.getInstance().close();
 		} catch (Exception e) {
+			logger.error("发送消息"+ send.getQueueName() +"队列出现异常", e);
 			e.printStackTrace();
 		}
 		return success;

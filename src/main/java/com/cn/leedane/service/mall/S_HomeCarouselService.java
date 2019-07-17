@@ -1,16 +1,13 @@
 package com.cn.leedane.service.mall;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 
 /**
  * 首页商品轮播service接口类
@@ -27,7 +24,7 @@ public interface S_HomeCarouselService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> add(JSONObject json, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> add(JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除轮播
@@ -36,7 +33,7 @@ public interface S_HomeCarouselService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(int carouselId, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> delete(int carouselId, UserBean user, HttpRequestInfoBean request);
 	
 	
 	/**

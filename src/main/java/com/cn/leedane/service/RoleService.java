@@ -1,16 +1,13 @@
 package com.cn.leedane.service;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 
 /**
  * 角色service接口类
@@ -27,7 +24,7 @@ public interface RoleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> save(JSONObject jsonObject, UserBean user, HttpServletRequest request);
+	public Map<String, Object> save(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 编辑角色
@@ -36,7 +33,7 @@ public interface RoleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> edit(JSONObject jsonObject, UserBean user, HttpServletRequest request);
+	public Map<String, Object> edit(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除角色
@@ -45,7 +42,7 @@ public interface RoleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int rlid, UserBean user, HttpServletRequest request);
+	public Map<String, Object> delete(int rlid, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 分页获取角色列表
@@ -55,7 +52,7 @@ public interface RoleService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(JSONObject jsonObject, UserBean user, HttpServletRequest request);
+	public Map<String, Object> paging(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 批量删除角色
@@ -64,7 +61,7 @@ public interface RoleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deletes(String rlids, UserBean user, HttpServletRequest request);
+	public Map<String, Object> deletes(String rlids, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 根据角色ID获取用户列表
@@ -74,7 +71,7 @@ public interface RoleService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> users(int rlid, UserBean user, HttpServletRequest request);
+	public Map<String, Object> users(int rlid, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 给用户分配角色
@@ -84,5 +81,5 @@ public interface RoleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> allot(int rlid,String users, UserBean user, HttpServletRequest request);
+	public Map<String, Object> allot(int rlid,String users, UserBean user, HttpRequestInfoBean request);
 }

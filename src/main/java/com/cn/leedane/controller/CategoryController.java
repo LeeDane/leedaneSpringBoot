@@ -1,11 +1,11 @@
 package com.cn.leedane.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.CategoryBean;
+import com.cn.leedane.service.CategoryService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.SecurityUtils;
@@ -17,11 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.CategoryBean;
-import com.cn.leedane.service.CategoryService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 分类管理的controller类
@@ -56,7 +53,7 @@ public class CategoryController extends BaseController{
 			checkAnyRoleAuthor(RoleController.ADMIN_ROLE_CODE);
 		checkRoleOrPermission(model, request);
 		
-		message.putAll(categoryService.add(params, getUserFromMessage(message), request));
+		message.putAll(categoryService.add(params, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -74,7 +71,7 @@ public class CategoryController extends BaseController{
 		checkRoleOrPermission(model, request);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-		message.putAll(categoryService.children(currentUser.hasRole(RoleController.ADMIN_ROLE_CODE), pid, getUserFromMessage(message), request));
+		message.putAll(categoryService.children(currentUser.hasRole(RoleController.ADMIN_ROLE_CODE), pid, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -94,7 +91,7 @@ public class CategoryController extends BaseController{
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
         
-		message.putAll(categoryService.update(currentUser.hasRole(RoleController.ADMIN_ROLE_CODE), cid, getJsonFromMessage(message) , getUserFromMessage(message), request));
+		message.putAll(categoryService.update(currentUser.hasRole(RoleController.ADMIN_ROLE_CODE), cid, getJsonFromMessage(message) , getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -114,7 +111,7 @@ public class CategoryController extends BaseController{
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
         
-		message.putAll(categoryService.delete(currentUser.hasRole(RoleController.ADMIN_ROLE_CODE), cid, getUserFromMessage(message), request));
+		message.putAll(categoryService.delete(currentUser.hasRole(RoleController.ADMIN_ROLE_CODE), cid, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

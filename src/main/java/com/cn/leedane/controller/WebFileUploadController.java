@@ -98,7 +98,7 @@ public class WebFileUploadController extends BaseController{
        		message.put("isSuccess", true);
         	return message.getMap();
         } catch (Exception e) {
-        	logger.error("上传文件发生异常,错误原因 : " + e.getMessage());
+        	logger.error("上传文件发生异常,错误原因 : ", e);
         }
         message.put("message", EnumUtil.getResponseValue(ResponseCode.服务器处理异常.value));
    		message.put("responseCode", ResponseCode.服务器处理异常.value);
@@ -226,12 +226,11 @@ public class WebFileUploadController extends BaseController{
    		message.put("responseCode", ResponseCode.服务器处理异常.value);
 		return message.getMap();
     }
-	
-	
+
+
 	/**
 	 * 获取进度条的进度
 	 * @param request
-	 * @param itemId
 	 * @return
 	 */
 	@RequestMapping(value = "/getQiNiuPath/{item}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
@@ -267,7 +266,7 @@ public class WebFileUploadController extends BaseController{
     	//新的文件名，为了避免冲突
 		String newFileName = user.getAccount() + "_"+DateUtil.DateToString(new Date(), "yyyyMMddHHmmss") + file.getOriginalFilename();
         StringBuffer rootPath = new StringBuffer();
-		rootPath.append(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER);
+		rootPath.append(ConstantsUtil.getDefaultSaveFileFolder());
 		rootPath.append(com.cn.leedane.enums.FileType.TEMPORARY.value);
 		rootPath.append(File.separator);
 		rootPath.append(newFileName);

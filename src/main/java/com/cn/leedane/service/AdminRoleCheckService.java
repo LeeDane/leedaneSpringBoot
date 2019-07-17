@@ -43,4 +43,14 @@ public class AdminRoleCheckService {
 			throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value));
 		}	
 	}
+
+	/**
+	 * 判断是否有管理员的权限
+	 * @return
+	 */
+	public boolean isAdmin(){
+		//获取当前的Subject
+		Subject currentUser = SecurityUtils.getSubject();
+		return currentUser.hasRole(RoleController.ADMIN_ROLE_CODE);
+	}
 }

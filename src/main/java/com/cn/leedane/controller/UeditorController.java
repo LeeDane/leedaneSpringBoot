@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cn.leedane.utils.ConstantsUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,7 @@ public class UeditorController extends BaseController{
 	
 	@Value("${ueditor.base.contextPath}")
 	private String contextPath;
-	
+
 	@Value("${ueditor.base.configJspPath}")
 	private String configJspPath;
 
@@ -49,9 +50,9 @@ public class UeditorController extends BaseController{
 		response.setHeader("Content-Type" , "text/html");
 		MyActionEnter actionEnter;
 		if(file != null){
-			actionEnter = new MyActionEnter(request, file, rootPath, configJspPath);
+			actionEnter = new MyActionEnter(request, file, ConstantsUtil.getDefaultSaveFileFolder() + rootPath, ConstantsUtil.getDefaultSaveFileFolder() + configJspPath);
 		}else{
-			actionEnter = new MyActionEnter(request, rootPath, configJspPath);
+			actionEnter = new MyActionEnter(request, ConstantsUtil.getDefaultSaveFileFolder() + rootPath, ConstantsUtil.getDefaultSaveFileFolder() + configJspPath);
 		}
 		response.getWriter().write(actionEnter.exec());
 	}

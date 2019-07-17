@@ -33,9 +33,11 @@ public class ClockInController extends BaseController{
 
 	@Autowired
 	private ClockInService<ClockInBean> clockInService;
-	
+
 	/**
 	 * 获取指定日期的打卡任务的列表
+	 * @param model
+	 * @param request
 	 * @return
 	 */
 	@RequestMapping(value = "", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
@@ -45,12 +47,16 @@ public class ClockInController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(clockInService.add(getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockInService.add(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 
 	/**
 	 * 获取指定日期的打卡任务的列表
+	 * @param clockId
+	 * @param date
+	 * @param model
+	 * @param request
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/{date}/ins", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
@@ -60,12 +66,17 @@ public class ClockInController extends BaseController{
 			return message.getMap();
 
 		checkRoleOrPermission(model, request);
-		message.putAll(clockInService.clockIns(clockId, date, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockInService.clockIns(clockId, date, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 
 	/**
 	 * 获取指定日期的用户打卡详情
+	 * @param clockId
+	 * @param toUserId
+	 * @param date
+	 * @param model
+	 * @param request
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/user/{toUserId}/{date}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
@@ -75,7 +86,102 @@ public class ClockInController extends BaseController{
 			return message.getMap();
 
 		checkRoleOrPermission(model, request);
-		message.putAll(clockInService.userClockIns(clockId, toUserId, date, getJsonFromMessage(message), getMustLoginUserFromShiro(), request));
+		message.putAll(clockInService.getUserClockIn(clockId, toUserId, date, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
+		return message.getMap();
+	}
+
+	/**
+	 * 通知管理员
+	 * @param clockId
+	 * @param clockInId
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/{clockId}/{clockInId}/notification", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> userClockInNotification(@PathVariable("clockId") int clockId, @PathVariable("clockInId") int clockInId, Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+
+		checkRoleOrPermission(model, request);
+		message.putAll(clockInService.userClockInNotification(clockId, clockInId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
+		return message.getMap();
+	}
+
+	/**
+	 * 打卡审核
+	 * @param clockId
+	 * @param clockInId
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/{clockId}/{clockInId}/check", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> userClockInCheck(@PathVariable("clockId") int clockId, @PathVariable("clockInId") int clockInId, Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+
+		checkRoleOrPermission(model, request);
+		message.putAll(clockInService.clockInCheck(clockId, clockInId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
+		return message.getMap();
+	}
+
+	/**
+	 * 添加位置信息
+	 * @param clockId
+	 * @param clockInId
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/{clockId}/{clockInId}/add/location", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> clockInAddLocation(@PathVariable("clockId") int clockId, @PathVariable("clockInId") int clockInId, Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+
+		checkRoleOrPermission(model, request);
+		message.putAll(clockInService.clockInAddLocation(clockId, clockInId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
+		return message.getMap();
+	}
+
+	/**
+	 * 添加图片信息
+	 * @param clockId
+	 * @param clockInId
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/{clockId}/{clockInId}/add/image", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> clockInAddImage(@PathVariable("clockId") int clockId, @PathVariable("clockInId") int clockInId, Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+
+		checkRoleOrPermission(model, request);
+		message.putAll(clockInService.clockInAddImage(clockId, clockInId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
+		return message.getMap();
+	}
+
+	/**
+	 * 删除打卡的资源
+	 * @param clockId
+	 * @param clockInId
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/{clockId}/{clockInId}/{resourceId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> deleteResource(@PathVariable("clockId") int clockId, @PathVariable("clockInId") int clockInId, @PathVariable("resourceId") int resourceId, Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+
+		checkRoleOrPermission(model, request);
+		message.putAll(clockInService.deleteResource(clockId, clockInId, resourceId, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

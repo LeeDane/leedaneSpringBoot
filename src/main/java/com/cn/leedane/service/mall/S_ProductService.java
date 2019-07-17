@@ -1,16 +1,13 @@
 package com.cn.leedane.service.mall;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 
 /**
  * 购物商品service接口类
@@ -27,7 +24,7 @@ public interface S_ProductService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> save(JSONObject jo, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> save(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 统计商品
@@ -39,20 +36,20 @@ public interface S_ProductService <T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> statistics(int productId, JSONObject json,
-			UserBean user, HttpServletRequest request);
+			UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 商品的推荐
 	 * @param productId
-	 * @param jsonFromMessage
-	 * @param userFromMessage
+	 * @param json
+	 * @param user
 	 * @param request
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> recommend(int productId,
 			JSONObject json, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 	
 	
 	

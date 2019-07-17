@@ -19,7 +19,7 @@ public interface RolePermissionService<T extends IDBean>{
 	
 	/**
 	 * 获取该用户的全部角色
-	 * @param user
+	 * @param userid
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)

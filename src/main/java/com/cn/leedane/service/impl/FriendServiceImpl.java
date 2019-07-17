@@ -1,38 +1,27 @@
 package com.cn.leedane.service.impl;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.FriendHandler;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.FriendMapper;
-import com.cn.leedane.model.FriendBean;
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.*;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.SqlBaseService;
 import com.cn.leedane.service.UserService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 好友service实现类
@@ -70,7 +59,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 	
 	
 	@Override
-	public Map<String, Object> deleteFriends(JSONObject jo, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> deleteFriends(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->deleteFriends():jo="+jo.toString());
 		
 		ResponseMap message = new ResponseMap();
@@ -115,7 +104,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 
 	@Override
 	public Map<String, Object> addFriend(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->addFriend():jo="+jo.toString());
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id");
 		ResponseMap message = new ResponseMap();
@@ -174,7 +163,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 
 	@Override
 	public Map<String, Object> addAgree(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->addAgree():jo="+jo.toString());
 		int fid = JsonUtil.getIntValue(jo, "fid");
 		ResponseMap message = new ResponseMap();
@@ -242,7 +231,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 
 	@Override
 	public Map<String, Object> friendsAlreadyPaging(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->friendsAlreadyPaging():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
@@ -285,7 +274,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取已经跟我成为好友关系的分页列表").toString(), "friendsAlreadyPaging()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"读取已经跟我成为好友关系的分页列表").toString(), "friendsAlreadyPaging()", ConstantsUtil.STATUS_NORMAL, 0);
 			
 		message.put("isSuccess", true);
 		message.put("message", rs);
@@ -294,7 +283,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 	
 	@Override
 	public Map<String, Object> friendsNotyetPaging(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->friendsNotyetPaging():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
@@ -337,7 +326,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取暂时未跟我成为好友关系的分页列表").toString(), "friendsNotyetPaging()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取暂时未跟我成为好友关系的分页列表").toString(), "friendsNotyetPaging()", ConstantsUtil.STATUS_NORMAL, 0);
 			
 		message.put("isSuccess", true);
 		message.put("message", rs);
@@ -346,7 +335,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 
 	@Override
 	public Map<String, Object> requestPaging(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->requestPaging():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		
@@ -387,7 +376,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取我发送的好友请求列表").toString(), "requestPaging()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取我发送的好友请求列表").toString(), "requestPaging()", ConstantsUtil.STATUS_NORMAL, 0);
 			
 		message.put("isSuccess", true);
 		message.put("message", rs);
@@ -396,7 +385,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 
 	@Override
 	public Map<String, Object> responsePaging(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->responsePaging():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		
@@ -437,7 +426,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取等待我同意的好友关系列表").toString(), "responsePaging()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取等待我同意的好友关系列表").toString(), "responsePaging()", ConstantsUtil.STATUS_NORMAL, 0);
 			
 		message.put("isSuccess", true);
 		message.put("message", rs);
@@ -446,7 +435,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 
 	@Override
 	public Map<String, Object> matchContact(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->matchContact():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		
@@ -467,7 +456,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		//Set<Integer> ids = friendHandler.getFromToFriendIds(user.getId());
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"本地联系人跟服务器上的好友进行匹配").toString(), "matchContact()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"本地联系人跟服务器上的好友进行匹配").toString(), "matchContact()", ConstantsUtil.STATUS_NORMAL, 0);
 			
 		message.put("isSuccess", true);
 		message.put("message", null);
@@ -476,7 +465,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 
 	@Override
 	public Map<String, Object> friends(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->matchContact():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));

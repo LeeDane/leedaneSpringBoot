@@ -61,7 +61,7 @@ public class CircleClockInController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(circleClockInService.saveClockIn(circleId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(circleClockInService.saveClockIn(circleId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

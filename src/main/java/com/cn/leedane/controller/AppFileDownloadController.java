@@ -79,7 +79,7 @@ public class AppFileDownloadController extends BaseController{
             	}
         	}
         	
-        	String fileFullPath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +FileType.FILE.value +"//" +fileName;
+        	String fileFullPath = ConstantsUtil.getDefaultSaveFileFolder() +FileType.FILE.value + File.separator +fileName;
             File file = new File(fileFullPath); 
             //判断文件存在
             if(!file.exists() || !file.isFile()){
@@ -144,7 +144,7 @@ public class AppFileDownloadController extends BaseController{
 			return null;
     	}
         
-        String fileFullPath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +FileType.FILE.value +"//" +fileName;
+        String fileFullPath = ConstantsUtil.getDefaultSaveFileFolder() +FileType.FILE.value + File.separator +fileName;
         File file = new File(fileFullPath);
         
         //判断文件存在

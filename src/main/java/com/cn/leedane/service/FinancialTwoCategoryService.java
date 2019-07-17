@@ -1,18 +1,15 @@
 package com.cn.leedane.service;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.FinancialTwoLevelCategoryBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.FinancialTwoLevelCategoryBean;
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 记账二级分类service接口类
@@ -33,11 +30,11 @@ public interface FinancialTwoCategoryService<T extends IDBean>{
 	
 	/**
 	 * 获取用户所有的二级分类
-	 * @param userId
+	 * @param json
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getAll(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getAll(JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 批量插入数据库
@@ -54,5 +51,5 @@ public interface FinancialTwoCategoryService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getOneAndTwoCategorys(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getOneAndTwoCategorys(JSONObject json, UserBean user, HttpRequestInfoBean request);
 }

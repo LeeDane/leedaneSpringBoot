@@ -14,11 +14,9 @@ public class RecieveMessage {
 	public RecieveMessage(IRecieve recieve) {
 		this.recieve = recieve;
 	}
-	
+
 	/**
 	 * 获取消息
-	 * @param queueName 队列的名称
-	 * @return
 	 * @throws Exception
 	 */
 	public void getMsg() throws Exception{
@@ -42,7 +40,7 @@ public class RecieveMessage {
 		try {
 			channel.basicConsume(recieve.getQueueName(), false, consumer);
 		} catch (Exception e) {
-			System.out.println(recieve.getQueueName()+"队列还没有创建");
+			logger.error(recieve.getQueueName()+"队列还没有创建", e);
 		}
 		
 		//String message = null;

@@ -1,19 +1,17 @@
 package com.cn.leedane.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.FinancialBean;
+import com.cn.leedane.service.FinancialService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.FinancialBean;
-import com.cn.leedane.service.FinancialService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 记账控制器
@@ -39,7 +37,7 @@ public class FinancialController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialService.save(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialService.save(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
     }
 	
@@ -54,7 +52,7 @@ public class FinancialController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialService.update(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialService.update(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
     }
 	
@@ -69,7 +67,7 @@ public class FinancialController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialService.delete(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialService.delete(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
     }
 	
@@ -84,7 +82,7 @@ public class FinancialController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialService.synchronous(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialService.synchronous(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
     }
     
@@ -105,7 +103,7 @@ public class FinancialController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialService.force(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialService.force(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
     }
 	
@@ -120,7 +118,7 @@ public class FinancialController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialService.getByYear(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialService.getByYear(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
     }
 	
@@ -135,7 +133,7 @@ public class FinancialController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialService.getAll(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialService.getAll(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
     }
 	
@@ -150,7 +148,7 @@ public class FinancialController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialService.query(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialService.query(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
     }
 	
@@ -165,7 +163,7 @@ public class FinancialController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialService.paging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
     }
 }

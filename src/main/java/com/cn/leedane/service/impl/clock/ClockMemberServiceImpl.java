@@ -10,6 +10,7 @@ import com.cn.leedane.handler.clock.ClockMemberHandler;
 import com.cn.leedane.mapper.clock.ClockInMapper;
 import com.cn.leedane.mapper.clock.ClockMapper;
 import com.cn.leedane.mapper.clock.ClockMemberMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.clock.ClockBean;
@@ -29,7 +30,6 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -74,7 +74,7 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 	
 	@Override
 	public boolean add(int clockId, int memberId, JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockMemberServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		
 		//校验
@@ -140,16 +140,36 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 
 	@Override
 	public Map<String, Object> update(int clockId, int memberId, JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockMemberServiceImpl-->update(): clockId="+ clockId +", memberId="+ memberId +",jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
+		ClockMemberBean clockMemberBean = clockMemberMapper.findClockMember(clockId, memberId);
+		if(clockMemberBean.getStatus() != ConstantsUtil.STATUS_NORMAL){
+			message.put("message", "还不是该任务的成员，无法修改信息！");
+			message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
+			return message.getMap();
+		}
+
+		clockMemberBean.setRemind(jo.optString("remind"));
+		clockMemberBean.setNotification(jo.optBoolean("notification"));
+		clockMemberBean.setModifyUserId(user.getId());
+		clockMemberBean.setModifyTime(new Date());
+		boolean result = clockMemberMapper.update(clockMemberBean) > 0;
+		if(result){
+			message.put("isSuccess", true);
+			message.put("message", "信息修改成功！");
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		}else{
+			message.put("message", "信息修改失败！");
+			message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
+		}
 		return message.getMap();
 	}
 
 
 	@Override
 	public Map<String, Object> delete(int clockId, int memberId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockMemberServiceImpl-->delete():clockId=" +clockId +", memberId="+ memberId +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		return message.getMap();
@@ -158,7 +178,7 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 	
 	@Override
 	public Map<String, Object> members(int clockId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ClockMemberServiceImpl-->members():clockId = "+ clockId +",userId=" +user.getId() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		if(!clockMemberHandler.inMember(user.getId(), clockId))

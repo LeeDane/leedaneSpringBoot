@@ -1,36 +1,23 @@
 package com.cn.leedane.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.cn.leedane.mapper.FinancialMapper;
 import com.cn.leedane.model.FinancialBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.FinancialService;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.FinancialWebImeiUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.*;
 /**
  * 记账相关service的实现类
  * @author LeeDane
@@ -49,7 +36,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 
 	@Override
 	public Map<String, Object> save(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FinancialServiceImpl-->save():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		FinancialBean financialBean = getValue(jo, "data", user);
 		
@@ -112,7 +99,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 	
 	@Override
 	public Map<String, Object> update(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FinancialServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		FinancialBean financialBean = getValue(jo, "data", user);
 		
@@ -138,7 +125,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 	
 	@Override
 	public Map<String, Object> delete(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FinancialServiceImpl-->delete():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int fid = JsonUtil.getIntValue(jo, "fid");
 		
@@ -167,7 +154,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 	
 	@Override
 	public Map<String, Object> synchronous(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FinancialServiceImpl-->synchronous():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		List<FinancialBean> appFinancialBeans = getListValue(jo, "datas");
 		
@@ -248,7 +235,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 
 	@Override
 	public Map<String, Object> force(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FinancialServiceImpl-->force():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		
 		int type = JsonUtil.getIntValue(jo, "type"); //1表示强制以客户端数据为主，2表示强制以服务器端数据为主
@@ -287,7 +274,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 			}
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"强制更新数据").toString(), "force()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"强制同步记录").toString(), "force()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", returnBeans);
 		message.put("isSuccess", true);
 		return message.getMap();
@@ -376,7 +363,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 
 	@Override
 	public Map<String, Object> getByYear(JSONObject jsonObject,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("FinancialServiceImpl-->getByYear():jsonObject=" +jsonObject.toString() +", user=" +user.getAccount());
 		
 		int year = JsonUtil.getIntValue(jsonObject, "year"); //年份
@@ -398,7 +385,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 	
 	@Override
 	public Map<String, Object> getAll(JSONObject jsonObject,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("FinancialServiceImpl-->getAll():jsonObject=" +jsonObject.toString() +", user=" +user.getAccount());
 		
 		ResponseMap message = new ResponseMap();
@@ -419,7 +406,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 
 	@Override
 	public Map<String, Object> query(JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FinancialServiceImpl-->query():jsonObject=" +json.toString() +", user=" +user.getAccount());
 		
 		String key = JsonUtil.getStringValue(json, "key");
@@ -462,7 +449,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 
 	@Override
 	public Map<String, Object> paging(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FinancialServiceImpl-->paging():jo=" +jo.toString());
 		long start = System.currentTimeMillis();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
@@ -522,7 +509,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 		}
 
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取记账列表：", "paging()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取记账列表：", "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
 		logger.info("获取记账列表总计耗时：" +(end - start) +"毫秒, 总数是："+rs.size());

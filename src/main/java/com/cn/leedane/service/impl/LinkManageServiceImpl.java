@@ -1,22 +1,4 @@
 package com.cn.leedane.service.impl;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.exception.OperateException;
 import com.cn.leedane.exception.RE404Exception;
@@ -25,21 +7,20 @@ import com.cn.leedane.handler.RolePermissionHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.LinkManageMapper;
 import com.cn.leedane.mapper.LinkRoleOrPermissionMapper;
-import com.cn.leedane.model.LinkManageBean;
-import com.cn.leedane.model.LinkRoleOrPermissionBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.*;
 import com.cn.leedane.service.LinkManageService;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * 链接权限管理service实现类
@@ -79,7 +60,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 	*/
 	@Override
 	public Map<String, Object> save(JSONObject jsonObject, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("LinkManageServiceImpl-->save():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		LinkManageBean linkManageBean = new LinkManageBean();
@@ -108,7 +89,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 
 	@Override
 	public Map<String, Object> edit(JSONObject jsonObject, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("LinkManageServiceImpl-->edit():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		int lnid = JsonUtil.getIntValue(jsonObject, "id");
@@ -152,7 +133,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 
 	@Override
 	public Map<String, Object> delete(int lnid, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("LinkManageServiceImpl-->delete():lnid="+ lnid);
 		ResponseMap message = new ResponseMap();
 				
@@ -175,7 +156,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 
 	@Override
 	public Map<String, Object> paging(JSONObject jsonObject, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("LinkManageServiceImpl-->paging():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(jsonObject, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -193,7 +174,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		}
 		message.put("total", SqlUtil.getTotalByList(linkManageMapper.getTotal(DataTableType.链接管理.value, null)));
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取链接管理列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取链接管理列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);
@@ -203,7 +184,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 
 	@Override
 	public Map<String, Object> deletes(String lnids, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("LinkManageServiceImpl-->deletes():lnids="+ lnids);
 		ResponseMap message = new ResponseMap();
 		if(StringUtil.isNull(lnids))
@@ -243,7 +224,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 
 	@Override
 	public Map<String, Object> roleOrPermissions(int lnid, boolean role, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("LinkManageServiceImpl-->roleOrPermissions():lnid="+lnid);
 		ResponseMap message = new ResponseMap();
 		List<Map<String, Object>> rs;
@@ -253,7 +234,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 			rs = linkManageMapper.permissions(lnid, ConstantsUtil.STATUS_NORMAL);
 				
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取角色权限列表").toString(), "users()", ConstantsUtil.STATUS_NORMAL, 0);		
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取角色权限列表").toString(), "users()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);
@@ -263,7 +244,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 
 	@Override
 	public Map<String, Object> allot(int lnid, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("LinkManageServiceImpl-->allot():lnid="+lnid +", json="+ json);
 		
 		ResponseMap message = new ResponseMap();

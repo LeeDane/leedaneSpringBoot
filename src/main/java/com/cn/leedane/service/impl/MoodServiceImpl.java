@@ -1,39 +1,11 @@
 package com.cn.leedane.service.impl;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import com.cn.leedane.exception.RE404Exception;
-import com.cn.leedane.handler.CircleOfFriendsHandler;
-import com.cn.leedane.handler.CommentHandler;
-import com.cn.leedane.handler.FriendHandler;
-import com.cn.leedane.handler.MoodHandler;
-import com.cn.leedane.handler.NotificationHandler;
-import com.cn.leedane.handler.TransmitHandler;
-import com.cn.leedane.handler.UserHandler;
-import com.cn.leedane.handler.ZanHandler;
+import com.cn.leedane.handler.*;
 import com.cn.leedane.lucene.solr.MoodSolrHandler;
 import com.cn.leedane.mapper.FilePathMapper;
 import com.cn.leedane.mapper.MoodMapper;
-import com.cn.leedane.model.FilePathBean;
-import com.cn.leedane.model.FriendBean;
-import com.cn.leedane.model.MoodBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.TimeLineBean;
-import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.*;
 import com.cn.leedane.observer.ConcreteWatched;
 import com.cn.leedane.observer.ConcreteWatcher;
 import com.cn.leedane.observer.Watched;
@@ -42,30 +14,22 @@ import com.cn.leedane.observer.template.UpdateMoodTemplate;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.AddReadSend;
 import com.cn.leedane.rabbitmq.send.ISend;
-import com.cn.leedane.service.AdminRoleCheckService;
-import com.cn.leedane.service.FilePathService;
-import com.cn.leedane.service.FriendService;
-import com.cn.leedane.service.MoodService;
-import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.service.UserService;
+import com.cn.leedane.service.*;
+import com.cn.leedane.springboot.ElasticSearchUtil;
 import com.cn.leedane.thread.ThreadUtil;
+import com.cn.leedane.thread.single.EsIndexAddThread;
 import com.cn.leedane.thread.single.SolrAddThread;
-import com.cn.leedane.thread.single.SolrDeleteThread;
-import com.cn.leedane.thread.single.SolrUpdateThread;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.FileUtil;
-import com.cn.leedane.utils.FilterUtil;
-import com.cn.leedane.utils.ImageUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.MardownUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.*;
 
 /**
  * 心情service实现类
@@ -121,13 +85,16 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 
 	@Autowired
 	private NotificationHandler notificationHandler;
+
+	@Autowired
+	private ElasticSearchUtil elasticSearchUtil;
 	
 	public void setNotificationHandler(NotificationHandler notificationHandler) {
 		this.notificationHandler = notificationHandler;
 	}
 	
 	@Override
-	public Map<String, Object> saveMood(JSONObject jsonObject, UserBean user, int status, HttpServletRequest request){
+	public Map<String, Object> saveMood(JSONObject jsonObject, UserBean user, int status, HttpRequestInfoBean request){
 		logger.info("MoodServiceImpl-->saveMood():jsonObject=" +jsonObject.toString() +", status=" +status);
 		String content = JsonUtil.getStringValue(jsonObject, "content");
 		ResponseMap message = new ResponseMap();
@@ -183,8 +150,11 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	        	message.put("message", i);
 		        message.put("isSuccess", true);
 	        }
+
+			new ThreadUtil().singleTask(new EsIndexAddThread<MoodBean>(moodBean));
+
 	        //异步添加心情solr索引
-	        new ThreadUtil().singleTask(new SolrAddThread<MoodBean>(MoodSolrHandler.getInstance(), moodBean));
+//	        new ThreadUtil().singleTask(new SolrAddThread<MoodBean>(MoodSolrHandler.getInstance(), moodBean));
 	        //MoodSolrHandler.getInstance().addBean(moodBean);
 	        
 		}else{
@@ -199,7 +169,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 
 	
 	@Override
-	public Map<String, Object> updateMoodStatus(JSONObject jsonObject, int status, HttpServletRequest request, UserBean user) {
+	public Map<String, Object> updateMoodStatus(JSONObject jsonObject, int status, HttpRequestInfoBean request, UserBean user) {
 		int mid = JsonUtil.getIntValue(jsonObject, "mid");
 		logger.info("MoodServiceImpl-->updateMoodStatus():mid=" +mid +", status=" +status + ",jsonObject="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
@@ -210,7 +180,9 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		MoodBean oldMoodBean = moodMapper.findById(MoodBean.class, mid);
 		
 		checkAdmin(user, oldMoodBean.getCreateUserId());
-		
+
+		//设置es缓存为false
+		oldMoodBean.setEsIndex(false);
 		oldMoodBean.setStatus(status);
 		try {
 			//moodMapper.executeSQL("update "+DataTableType.心情.value+" set status = ? where id = ? ", status, mid);
@@ -226,9 +198,15 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			e.printStackTrace();
 		}
 		if(result){
+			//删除该心情的缓存
+			moodHandler.delete(mid, null, null);
 			message.put("isSuccess", result);
 			//异步修改心情solr索引
-	        new ThreadUtil().singleTask(new SolrUpdateThread<MoodBean>(MoodSolrHandler.getInstance(), oldMoodBean));
+//	        new ThreadUtil().singleTask(new SolrUpdateThread<MoodBean>(MoodSolrHandler.getInstance(), oldMoodBean));
+
+			//删除es缓存
+			elasticSearchUtil.delete(DataTableType.心情.value, mid);
+			new ThreadUtil().singleTask(new EsIndexAddThread<MoodBean>(oldMoodBean));
 			//MoodSolrHandler.getInstance().updateBean(oldMoodBean);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
@@ -238,7 +216,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	}
 
 	@Override
-	public Map<String, Object> deleteMood(JSONObject jo, UserBean user, HttpServletRequest request){
+	public Map<String, Object> deleteMood(JSONObject jo, UserBean user, HttpRequestInfoBean request){
 		int mid = JsonUtil.getIntValue(jo, "mid");
 		logger.info("MoodServiceImpl-->deleteMood():mid=" +mid +",jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
@@ -271,13 +249,18 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "deleteMood()", StringUtil.changeBooleanToInt(result) , 0);
 	
 		if(result){
+
+			//删除es缓存
+			elasticSearchUtil.delete(DataTableType.心情.value, mid);
+
 			moodHandler.delete(mid, DataTableType.心情.value, tableUuid);
 			//同时删除朋友圈的数据
 			circleOfFriendsHandler.deleteMyAndFansTimeLine(user, EnumUtil.DataTableType.心情.value, mid);
 			
 			//异步删除心情solr索引
-	        new ThreadUtil().singleTask(new SolrDeleteThread<MoodBean>(MoodSolrHandler.getInstance(), String.valueOf(mid)));
+//	        new ThreadUtil().singleTask(new SolrDeleteThread<MoodBean>(MoodSolrHandler.getInstance(), String.valueOf(mid)));
 			//MoodSolrHandler.getInstance().deleteBean(String.valueOf(mid));
+			message.put("message", "该心情删除成功");
 			message.put("isSuccess", result);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
@@ -288,7 +271,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 
 	@Override
 	public Map<String, Object> rolling(JSONObject jo,
-			UserBean user, HttpServletRequest request){
+			UserBean user, HttpRequestInfoBean request){
 		logger.info("MoodServiceImpl-->rolling():jo=" +jo.toString());
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id", user.getId()); //
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
@@ -349,7 +332,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			}	
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户id为"+toUserId+"个人中心", "rolling()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户id为"+toUserId+"个人中心", "rolling()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("isSuccess", true);
 		return message.getMap();
@@ -357,7 +340,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	
 	@Override
 	public Map<String, Object> getMoodsPaging(JSONObject jo,
-			UserBean user, HttpServletRequest request){
+			UserBean user, HttpRequestInfoBean request){
 		logger.info("MoodServiceImpl-->getMoodPaging():jo=" +jo.toString());
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id", user.getId()); //
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
@@ -389,7 +372,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		}
 		message.put("total", SqlUtil.getTotalByList(moodMapper.getTotal(DataTableType.心情.value, " m where create_user_id="+ toUserId +" and "+ getMoodStatusSQL(toUserId, user))));
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户id为"+toUserId+"个人中心", "getMoodPaging()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户id为"+toUserId+"个人中心", "getMoodPaging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("isSuccess", true);
 		return message.getMap();
@@ -412,14 +395,14 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	
 	@Override
 	public boolean saveBase64Str(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		boolean result = false;
 		logger.info("MoodServiceImpl-->saveBase64Str():jo=" +jo.toString());
 		return result;
 	}
 
 	@Override
-	public Map<String, Object> saveDividedMood(JSONObject jsonObject, UserBean user, int status, HttpServletRequest request){
+	public Map<String, Object> saveDividedMood(JSONObject jsonObject, UserBean user, int status, HttpRequestInfoBean request){
 		logger.info("MoodServiceImpl-->saveDividedMood():status=" +status +",jsonObject="+jsonObject.toString());
 		String content = JsonUtil.getStringValue(jsonObject, "content");
 		String uuid = JsonUtil.getStringValue(jsonObject, "uuid");
@@ -474,7 +457,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	
 
 	@Override
-	public Map<String, Object> getCountByUser(JSONObject jo, UserBean user, HttpServletRequest request){
+	public Map<String, Object> getCountByUser(JSONObject jo, UserBean user, HttpRequestInfoBean request){
 		logger.info("MoodServiceImpl-->getCountByUser():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		
 		int uid = JsonUtil.getIntValue(jo, "uid", user.getId()); //计算的用户id
@@ -484,7 +467,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		int count = 0;
 		count = SqlUtil.getTotalByList(moodMapper.getTotal(DataTableType.心情.value, sql.toString()));
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"查询用户ID为：", uid, "得到其已经发表成功的心情总数是：", count, "条").toString(), "getCountByUser()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"查询用户ID为：", uid, "得到其已经发表成功的心情总数是：", count, "条").toString(), "getCountByUser()", ConstantsUtil.STATUS_NORMAL, 0);
 		ResponseMap message = new ResponseMap();
 		message.put("isSuccess", true);
 		message.put("message", count);
@@ -493,57 +476,59 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 
 	@Override
 	public Map<String, Object> detail(JSONObject jo, UserBean user,
-			HttpServletRequest request, String picSize){
+			HttpRequestInfoBean request, String picSize){
 		logger.info("MoodServiceImpl-->detail():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		final int mid = JsonUtil.getIntValue(jo, "mid", 0); //心情ID
 		ResponseMap message = new ResponseMap();
-		try {
-			if(mid < 1)
-				throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-				
-			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
-			list = moodHandler.getMoodDetail(mid, user);
-			if(!CollectionUtils.isEmpty(list) && list.size() == 1){
-				message.put("isSuccess", true);
-				boolean hasImg = StringUtil.changeObjectToBoolean(list.get(0).get("has_img"));
-				String uuid = StringUtil.changeNotNull(list.get(0).get("uuid"));
-				//有图片的获取图片的路径
-				if(hasImg && !StringUtil.isNull(uuid)){
-					list.get(0).put("imgs", moodHandler.getMoodImg(DataTableType.心情.value, uuid, picSize));
-				}
-				
-				//从Redis缓存直接获取
-				message.put("message", list);
-				
-				//把更新读的信息提交到Rabbitmq队列处理
-				new Thread(new Runnable() {
-					
-					@Override
-					public void run() {
-						ISend send = new AddReadSend(moodMapper.findById(MoodBean.class, mid));
-						SendMessage sendMessage = new SendMessage(send);
-						sendMessage.sendMsg();
-					}
-				}).start();
-			}else{
-				//再次清空redis缓存
-				moodHandler.delete(mid, null, null);
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-				message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
+		if(mid < 1)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
+
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+		list = moodHandler.getMoodDetail(mid, user);
+		if(!CollectionUtils.isEmpty(list) && list.size() == 1){
+			Map<String, Object> mood = list.get(0);
+			int moodCreateUserId = StringUtil.changeObjectToInt(mood.get("create_user_id"));
+			int status = StringUtil.changeObjectToInt(mood.get("status"));
+			//判断是否是需要验证私有的
+			if(moodCreateUserId != user.getId() && !isAdmin() && status == ConstantsUtil.STATUS_SELF)
+				throw new UnauthorizedException("私有信息，您无法查看！");
+
+			message.put("isSuccess", true);
+			boolean hasImg = StringUtil.changeObjectToBoolean(mood.get("has_img"));
+			String uuid = StringUtil.changeNotNull(mood.get("uuid"));
+			//有图片的获取图片的路径
+			if(hasImg && !StringUtil.isNull(uuid)){
+				mood.put("imgs", moodHandler.getMoodImg(DataTableType.心情.value, uuid, picSize));
 			}
-			
-			//保存操作日志
-			operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取心情ID为", mid, "的详情").toString(), "detail()", ConstantsUtil.STATUS_NORMAL, 0);
-					
-		} catch (Exception e) {
-			e.printStackTrace();
+
+			//从Redis缓存直接获取
+			message.put("message", list);
+
+			//把更新读的信息提交到Rabbitmq队列处理
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					ISend send = new AddReadSend(moodMapper.findById(MoodBean.class, mid));
+					SendMessage sendMessage = new SendMessage(send);
+					sendMessage.sendMsg();
+				}
+			}).start();
+		}else{
+			//再次清空redis缓存
+			moodHandler.delete(mid, null, null);
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
+			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
 		}
-		
+
+		//保存操作日志
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取心情ID为", mid, "的详情").toString(), "detail()", ConstantsUtil.STATUS_NORMAL, 0);
+
 		return message.getMap();
 	}
 
 	@Override
-	public Map<String, Object> sendWord(JSONObject jsonObject, UserBean user, int status,HttpServletRequest request) {
+	public Map<String, Object> sendWord(JSONObject jsonObject, UserBean user, int status,HttpRequestInfoBean request) {
 		logger.info("MoodServiceImpl-->sendWord():jsonObject=" +jsonObject.toString());
 		String content = JsonUtil.getStringValue(jsonObject, "content");
 		//从客户端获取uuid(有图片的情况下)，为空表示无图，有图就有值
@@ -587,9 +572,10 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		
 		boolean result = moodMapper.save(moodBean) > 0;
 		if(result){
-			
+			new ThreadUtil().singleTask(new EsIndexAddThread<MoodBean>(moodBean));
+
 			//异步添加心情solr索引
-	        new ThreadUtil().singleTask(new SolrAddThread<MoodBean>(MoodSolrHandler.getInstance(), moodBean));
+//	        new ThreadUtil().singleTask(new SolrAddThread<MoodBean>(MoodSolrHandler.getInstance(), moodBean));
 			//MoodSolrHandler.getInstance().addBean(moodBean);
 			
 			/*//通过观察者的模式发送消息通知
@@ -631,7 +617,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	
 	@SuppressWarnings("deprecation")
 	@Override
-	public Map<String, Object> sendWordAndLink(JSONObject jsonObject, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> sendWordAndLink(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request) {
 		logger.info("MoodServiceImpl-->sendWordAndLink():jsonObject=" +jsonObject.toString());
 		String content = JsonUtil.getStringValue(jsonObject, "content");
 		String links = JsonUtil.getStringValue(jsonObject, "links"); //多张以“;”分开,必须
@@ -725,11 +711,12 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			
 			result = moodMapper.save(moodBean) > 0;
 			if(result){
-				
+				new ThreadUtil().singleTask(new EsIndexAddThread<MoodBean>(moodBean));
+
 				//异步添加心情solr索引
-		        new ThreadUtil().singleTask(new SolrAddThread<MoodBean>(MoodSolrHandler.getInstance(), moodBean));
+//		        new ThreadUtil().singleTask(new SolrAddThread<MoodBean>(MoodSolrHandler.getInstance(), moodBean));
 				//MoodSolrHandler.getInstance().addBean(moodBean);
-				
+
 				TimeLineBean timeLineBean = new TimeLineBean();
 				timeLineBean.setContent(moodBean.getContent());
 				timeLineBean.setCreateTime(DateUtil.DateToString(new Date()));
@@ -741,7 +728,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 				timeLineBean.setTableName(EnumUtil.DataTableType.心情.value);
 				//更新用户的时间线
 				circleOfFriendsHandler.upDateMyAndFansTimeLine(timeLineBean);
-				
+
 				//有@人通知相关人员
 				Set<String> usernames = StringUtil.getAtUserName(content);
 				if(usernames.size() > 0){
@@ -767,7 +754,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	}
 	
 	@Override
-	public Map<String, Object> detailImgs(JSONObject jo, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> detailImgs(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		logger.info("MoodServiceImpl-->detailImgs():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int mid = JsonUtil.getIntValue(jo, "mid", 0); //心情ID
 		ResponseMap message = new ResponseMap();
@@ -780,13 +767,13 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		message.put("isSuccess", true);
 		//list = moodHandler.getMoodIms(tableName, tableUuid);
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取心情ID为", mid, "的图像列表").toString(), "detailImgs()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取心情ID为", mid, "的图像列表").toString(), "detailImgs()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
 	}
 
 	@Override
 	public Map<String, Object> search(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("MoodServiceImpl-->search():jo="+jo.toString());
 		String searchKey = JsonUtil.getStringValue(jo, "searchKey");
 		ResponseMap message = new ResponseMap();
@@ -821,7 +808,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 
 	@Override
 	public Map<String, Object> shakeSearch(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("MoodServiceImpl-->shakeSearch():jo="+jo.toString());
 		int moodId = 0; //获取到的心情的ID
 		ResponseMap message = new ResponseMap();
@@ -848,7 +835,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		}
 			
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "摇一摇搜索，得到心情Id为"+ moodId, StringUtil.getSuccessOrNoStr(moodId > 0)).toString(), "shakeSearch()", StringUtil.changeBooleanToInt(moodId > 0), 0);		
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "摇一摇搜索，得到心情Id为"+ moodId, StringUtil.getSuccessOrNoStr(moodId > 0)).toString(), "shakeSearch()", StringUtil.changeBooleanToInt(moodId > 0), 0);
 		return message.getMap();
 	}
 	
@@ -859,7 +846,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 
 	@Override
 	public Map<String, Object> getTopicByLimit(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("MoodServiceImpl-->getTopicByLimit():jo=" +jo.toString());
 		long start = System.currentTimeMillis();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
@@ -934,7 +921,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			}	
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看话题"+topic, "getTopicByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看话题"+topic, "getTopicByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
 		logger.info("获取话题列表总计耗时：" +(end - start) +"毫秒，总数是："+rs.size());

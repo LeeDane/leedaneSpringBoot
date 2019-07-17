@@ -10,7 +10,7 @@
 	<link rel="stylesheet" th:if="${isDebug}" th:href="@{/page/other/bootstrap-treeview/css/bootstrap-treeview.css}" />
 	
 	<!-- 正式环境下的cdn引用-->
-	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{https://cdn.bootcss.com/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css}"/>
+	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{//cdn.staticfile.org/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css}"/>
 	
 	<style type="text/css">
 		.clearFloat{
@@ -75,7 +75,7 @@
 <div th:include="common-js :: commJs">what?</div>
 <script th:src="@{/page/other/bootstrap-treeview/js/bootstrap-treeview.js}" type="text/javascript"></script>
 <!-- <script th:if="${isDebug}" th:src="@{/page/other/bootstrap-treeview/js/bootstrap-treeview.js}" type="text/javascript"></script>
-<script th:if="${not isDebug}" th:src="@{https://cdn.bootcss.com/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js}" type="text/javascript"></script> -->
+<script th:if="${not isDebug}" th:src="@{//cdn.staticfile.org/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js}" type="text/javascript"></script> -->
 <script th:src="@{/page/js/category/index.js}"></script>
 <script th:src="@{/page/js/page.js}" type="text/javascript"></script>
 </html>

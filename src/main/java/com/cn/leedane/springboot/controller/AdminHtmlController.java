@@ -24,11 +24,11 @@ import com.cn.leedane.utils.EnumUtil.ProductPlatformType;
 @Controller
 public class AdminHtmlController extends BaseController{
 	//private Logger logger = Logger.getLogger(getClass());
-	
+
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面
 	 * @param model
-	 * @param httpSession
+	 * @param request
 	 * @return
 	 */
 	/*@RequestMapping
@@ -160,12 +160,12 @@ public class AdminHtmlController extends BaseController{
 	public String stClearCache(Model model, HttpServletRequest request){
 		return adminLoginRoleCheck("admin/setting/clearCache", model, request);
 	}
-	
+
 	/**
 	 * 校验地址，不校验是否登录
 	 * @param urlParse
 	 * @param model
-	 * @param httpSession
+	 * @param request
 	 * @return
 	 */
 	public String loginRoleCheck(String urlParse, Model model, HttpServletRequest request){

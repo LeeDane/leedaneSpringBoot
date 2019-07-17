@@ -1,14 +1,14 @@
 package com.cn.leedane.service.impl;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.mapper.FinancialTwoCategoryMapper;
+import com.cn.leedane.model.FinancialTwoLevelCategoryBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.OperateLogBean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.FinancialTwoCategoryService;
+import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.utils.*;
 import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -16,18 +16,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.mapper.FinancialTwoCategoryMapper;
-import com.cn.leedane.model.FinancialTwoLevelCategoryBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.FinancialTwoCategoryService;
-import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.FinancialCategoryUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 记账二级分类service实现类
@@ -93,7 +86,7 @@ public class FinancialTwoCategoryServiceImpl implements FinancialTwoCategoryServ
 
 	@Override
 	public Map<String, Object> getOneAndTwoCategorys(JSONObject json,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("FinancialTwoCategoryServiceImpl-->getOneAndTwoCategorys():json=" +json.toString());
 		
 		ResponseMap message = new ResponseMap();
@@ -112,7 +105,7 @@ public class FinancialTwoCategoryServiceImpl implements FinancialTwoCategoryServ
 
 	@Override
 	public Map<String, Object> getAll(JSONObject jo,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("FinancialTwoCategoryServiceImpl-->getAll():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		boolean result = false;
@@ -139,7 +132,7 @@ public class FinancialTwoCategoryServiceImpl implements FinancialTwoCategoryServ
 		message.put("message", r);
 		message.put("isSuccess", true);
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取全部二级分类列表", StringUtil.getSuccessOrNoStr(result)).toString(), "getAll()", StringUtil.changeBooleanToInt(result), 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取全部二级分类列表", StringUtil.getSuccessOrNoStr(result)).toString(), "getAll()", StringUtil.changeBooleanToInt(result), 0);
 		return message.getMap();
 	}
 }

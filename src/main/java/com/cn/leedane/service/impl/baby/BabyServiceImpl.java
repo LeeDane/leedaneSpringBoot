@@ -1,31 +1,25 @@
 package com.cn.leedane.service.impl.baby;
-import java.util.Date;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.baby.BabyHandler;
 import com.cn.leedane.mapper.baby.BabyMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.baby.BabyBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.baby.BabyService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.Map;
 
 /**
  * 宝宝service实现类
@@ -51,7 +45,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 	
 	@Override
 	public Map<String, Object> add(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("BabyServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		
 		SqlUtil sqlUtil = new SqlUtil();
@@ -84,7 +78,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 
 	@Override
 	public Map<String, Object> update(int babyId, JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("BabyServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		BabyBean baby = babyHandler.getNormalBaby(babyId, user);
@@ -120,7 +114,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 
 	@Override
 	public Map<String, Object> delete(int babyId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("BabyServiceImpl-->delete():babyId=" +babyId +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
@@ -151,7 +145,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 	
 	@Override
 	public Map<String, Object> changeBorn(int babyId, JSONObject json,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("BabyServiceImpl-->changeBorn():jsonObject=" +json.toString() +", user=" +user.getAccount()+", babyId="+ babyId);
 		ResponseMap message = new ResponseMap();
 		//获取宝宝信息(校验是否是自己的宝宝)

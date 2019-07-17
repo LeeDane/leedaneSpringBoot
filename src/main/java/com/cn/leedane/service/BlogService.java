@@ -1,18 +1,15 @@
 package com.cn.leedane.service;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.BlogBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.BlogBean;
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 博客service接口类
@@ -131,7 +128,7 @@ public interface BlogService <T extends IDBean>{
 	 * @param user
 	 * @return
 	 */
-	public Map<String, Object> deleteById(JSONObject jo, HttpServletRequest request, UserBean user);
+	public Map<String, Object> deleteById(JSONObject jo, HttpRequestInfoBean request, UserBean user);
 
 	/**
 	 * 搜索博客
@@ -141,7 +138,7 @@ public interface BlogService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> search(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> search(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 摇一摇搜索文章
@@ -151,7 +148,7 @@ public interface BlogService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> shakeSearch(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> shakeSearch(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	/**
 	 * 添加标签
 	 * @param jo
@@ -159,7 +156,7 @@ public interface BlogService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> addTag(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> addTag(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取博客对象列表
@@ -178,7 +175,7 @@ public interface BlogService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getInfo(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getInfo(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取草稿列表
@@ -188,7 +185,7 @@ public interface BlogService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> draftList(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> draftList(JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 编辑文章
@@ -197,7 +194,7 @@ public interface BlogService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> edit(int blogId, UserBean user, HttpServletRequest request);
+	public Map<String, Object> edit(int blogId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 未审核文章列表
@@ -207,7 +204,7 @@ public interface BlogService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> noCheckPaging(JSONObject json, UserBean user,HttpServletRequest request);
+	public Map<String, Object> noCheckPaging(JSONObject json, UserBean user,HttpRequestInfoBean request);
 
 	/**
 	 * 审核文章(管理员操作)
@@ -216,7 +213,7 @@ public interface BlogService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> check(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> check(JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 查找一条博客信息(跟findById的区别是字段可以自定义显示，去掉冗余字段)
@@ -226,6 +223,6 @@ public interface BlogService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getOneBlog(int blogId, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getOneBlog(int blogId, UserBean user, HttpRequestInfoBean request);
 
 }

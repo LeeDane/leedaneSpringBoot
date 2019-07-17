@@ -1,17 +1,14 @@
 package com.cn.leedane.service;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.List;
+import java.util.Map;
 
 /**
  * App版本管理service接口类
@@ -29,7 +26,7 @@ public interface AppVersionService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getNewest(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getNewest(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取数据库中上传的最新版本
@@ -46,7 +43,7 @@ public interface AppVersionService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(JSONObject json, UserBean user, HttpServletRequest request);	
+	public Map<String, Object> paging(JSONObject json, UserBean user, HttpRequestInfoBean request);	
 	
 	/**
 	 * 获取数据库中上传的全部版本

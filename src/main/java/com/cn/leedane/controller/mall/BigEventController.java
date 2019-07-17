@@ -41,7 +41,7 @@ public class BigEventController extends BaseController{
 	public Map<String, Object> paging(@PathVariable("productId") int productId , HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
-		message.putAll(bigEventService.paging(productId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(bigEventService.paging(productId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	

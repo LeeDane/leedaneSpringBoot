@@ -1,15 +1,12 @@
 package com.cn.leedane.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.cache.SystemCache;
+import com.cn.leedane.model.BlogBean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.BlogService;
+import com.cn.leedane.utils.*;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
 import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -18,24 +15,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.cn.leedane.cache.SystemCache;
-import com.cn.leedane.model.BlogBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.BlogService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.JsoupUtil;
-import com.cn.leedane.utils.OptionUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.bg)
@@ -179,7 +162,7 @@ public class BlogController extends BaseController{
 				return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.deleteById(getJsonFromMessage(message), request, getUserFromMessage(message)));
+		message.putAll(blogService.deleteById(getJsonFromMessage(message), getHttpRequestInfo(request), getUserFromMessage(message)));
 		return message.getMap();
 	}
 	
@@ -258,7 +241,7 @@ public class BlogController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.getInfo(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(blogService.getInfo(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -274,7 +257,7 @@ public class BlogController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
-		message.putAll(blogService.getOneBlog(blogId, getUserFromMessage(message), request));
+		message.putAll(blogService.getOneBlog(blogId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -367,7 +350,7 @@ public class BlogController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.addTag(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(blogService.addTag(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -382,7 +365,7 @@ public class BlogController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.draftList(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(blogService.draftList(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -397,7 +380,7 @@ public class BlogController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.edit(blogId, getUserFromMessage(message), request));
+		message.putAll(blogService.edit(blogId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -412,7 +395,7 @@ public class BlogController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.noCheckPaging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(blogService.noCheckPaging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -427,7 +410,7 @@ public class BlogController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.check(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(blogService.check(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

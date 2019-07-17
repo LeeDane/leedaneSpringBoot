@@ -1,9 +1,9 @@
 package com.cn.leedane.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.FinancialLocationBean;
+import com.cn.leedane.service.FinancialLocationService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.FinancialLocationBean;
-import com.cn.leedane.service.FinancialLocationService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 记账位置信息控制器
@@ -43,7 +41,7 @@ public class FinancialLocationController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialLocationService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialLocationService.add(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -58,7 +56,7 @@ public class FinancialLocationController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialLocationService.update(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialLocationService.update(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -73,7 +71,7 @@ public class FinancialLocationController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialLocationService.delete(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialLocationService.delete(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -88,7 +86,7 @@ public class FinancialLocationController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialLocationService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialLocationService.paging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -103,7 +101,7 @@ public class FinancialLocationController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialLocationService.getAll(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialLocationService.getAll(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

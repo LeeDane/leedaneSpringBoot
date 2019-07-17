@@ -79,8 +79,9 @@ public class AppFileUploadController extends BaseController{
              * 说明启用的是断点上传的方式（建议断点上传每次的文件不要超过1M）
              */
             if(serialNumber > 0){
-            	fileFullPath.append(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER);
-                fileFullPath.append("appUpload//");
+            	fileFullPath.append(ConstantsUtil.getDefaultSaveFileFolder());
+                fileFullPath.append("appUpload");
+                fileFullPath.append(File.separator);
                 fileFullPath.append(uid);
                 fileFullPath.append("_");
                 fileFullPath.append(tableUuid);
@@ -99,8 +100,9 @@ public class AppFileUploadController extends BaseController{
             		return message.getMap();
             	}
             	
-            	fileFullPath.append(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER);
-                fileFullPath.append("temporary//");
+            	fileFullPath.append(ConstantsUtil.getDefaultSaveFileFolder());
+                fileFullPath.append("temporary");
+                fileFullPath.append(File.separator);
                 fileFullPath.append(uid);
                 fileFullPath.append("_");
                 fileFullPath.append(tableUuid);
@@ -143,7 +145,7 @@ public class AppFileUploadController extends BaseController{
         	   upload.setStatus(ConstantsUtil.STATUS_NORMAL);
         	   upload.setTableName(tableName);
         	   upload.setTableUuid(tableUuid);
-        	   if(uploadService.addUpload(upload, user, request)){
+        	   if(uploadService.addUpload(upload, user, getHttpRequestInfo(request))){
         		   	message.put("isSuccess", true);
         	   }else{
         		   	message.put("message", EnumUtil.getResponseValue(ResponseCode.文件上传失败.value));

@@ -1,15 +1,13 @@
 package com.cn.leedane.service;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 /**
  * 记账位置信息的Service类
  * @author LeeDane
@@ -26,7 +24,7 @@ public interface FinancialLocationService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> add(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 更新记账位置
@@ -35,7 +33,7 @@ public interface FinancialLocationService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> update(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> update(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 删除记账位置
@@ -44,7 +42,7 @@ public interface FinancialLocationService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(JSONObject jo, UserBean user, HttpServletRequest request) ;
+	public Map<String, Object> delete(JSONObject jo, UserBean user, HttpRequestInfoBean request) ;
 
 
 
@@ -57,7 +55,7 @@ public interface FinancialLocationService<T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> paging(JSONObject jo, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 
 	/**
 	 * 获取所有记账位置列表
@@ -67,6 +65,6 @@ public interface FinancialLocationService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getAll(JSONObject jsone, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getAll(JSONObject jsone, UserBean user, HttpRequestInfoBean request);
 	
 }

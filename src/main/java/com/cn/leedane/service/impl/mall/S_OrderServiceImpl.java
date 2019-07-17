@@ -1,39 +1,30 @@
 package com.cn.leedane.service.impl.mall;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.exception.CompleteOrderDeleteException;
 import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.mall.S_OrderHandler;
 import com.cn.leedane.mapper.mall.S_OrderMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.mall.S_OrderBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.mall.MallRoleCheckService;
 import com.cn.leedane.service.mall.S_OrderService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.MallOrderType;
-import com.cn.leedane.utils.LayuiTableResponseMap;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 订单的service的实现类
@@ -56,7 +47,7 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 	
 	@Override
 	public Map<String, Object> add(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		logger.info("S_OrderServiceImpl-->add():jo="+jo);
 		SqlUtil sqlUtil = new SqlUtil();
@@ -98,7 +89,7 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 	
 	@Override
 	public Map<String, Object> update(int orderId, JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		logger.info("S_OrderServiceImpl-->update(): orderId = "+ orderId +",jo="+jo);
 		SqlUtil sqlUtil = new SqlUtil();
@@ -151,7 +142,7 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 	
 	@Override
 	public Map<String, Object> getNoDealOrderNumber(UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		logger.info("S_OrderServiceImpl-->getNoDealOrderNumber():user="+user.getId());
 		ResponseMap message = new ResponseMap();
@@ -165,7 +156,7 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 	
 	
 	@Override
-	public Map<String, Object> paging(int current, int pageSize, UserBean user, HttpServletRequest request){
+	public Map<String, Object> paging(int current, int pageSize, UserBean user, HttpRequestInfoBean request){
 		logger.info("S_OrderServiceImpl-->paging():current=" +current +", pageSize="+ pageSize);
 		LayuiTableResponseMap message = new LayuiTableResponseMap();
 		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
@@ -181,14 +172,14 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 		message.setCode(0);
 		message.setCount(SqlUtil.getTotalByList(orderMapper.getTotal(DataTableType.商品订单.value, "")));
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取订单列表，current="+ current, ", pageSize=", pageSize).toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取订单列表，current="+ current, ", pageSize=", pageSize).toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("isSuccess", true);
 		message.put("data", rs);
 		return message.getMap();
 	}
 	
 	@Override
-	public Map<String, Object> delete(int orderId, UserBean user, HttpServletRequest request){
+	public Map<String, Object> delete(int orderId, UserBean user, HttpRequestInfoBean request){
 		logger.info("S_OrderServiceImpl-->delete():orderId=" +orderId);
 		ResponseMap message = new ResponseMap();
 		S_OrderBean orderBean = orderMapper.findById(S_OrderBean.class, orderId);

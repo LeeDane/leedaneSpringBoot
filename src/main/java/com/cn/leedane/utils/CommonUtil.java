@@ -2,6 +2,7 @@ package com.cn.leedane.utils;
 
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,9 @@ import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import eu.bitwalker.useragentutils.Browser;
+import eu.bitwalker.useragentutils.OperatingSystem;
+import eu.bitwalker.useragentutils.UserAgent;
 import org.apache.log4j.Logger;
 
 import com.cn.leedane.model.UserBean;
@@ -146,10 +150,38 @@ public class CommonUtil {
 //			if (ip != null && ip.length() > 0) {
 //				return ip;
 //			} else {
-				InetAddress myip = InetAddress.getLocalHost();
+				/*InetAddress myip = InetAddress.getLocalHost();
 				String hostAddress = myip.getHostAddress(); // ip地址
 				// String HostName=myip.getHostName(); //主机名
-				return hostAddress;
+				return hostAddress;*/
+
+			String ipAddress = request.getHeader("x-forwarded-for");
+			if(ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+				ipAddress = request.getHeader("Proxy-Client-IP");
+			}
+			if(ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+				ipAddress = request.getHeader("WL-Proxy-Client-IP");
+			}
+			if(ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+				ipAddress = request.getRemoteAddr();
+				if(ipAddress.equals("127.0.0.1") || ipAddress.equals("0:0:0:0:0:0:0:1")){
+					//根据网卡取本机配置的IP
+					InetAddress inet = null;
+					try {
+						inet = InetAddress.getLocalHost();
+					} catch (UnknownHostException e) {
+						e.printStackTrace();
+					}
+					ipAddress= inet.getHostAddress();
+				}
+			}
+			//对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
+			if(ipAddress!=null && ipAddress.length()>15){ //"***.***.***.***".length() = 15
+				if(ipAddress.indexOf(",")>0){
+					ipAddress = ipAddress.substring(0,ipAddress.indexOf(","));
+				}
+			}
+			return ipAddress;
 //}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -163,7 +195,17 @@ public class CommonUtil {
 	 * @return
 	 */
 	public static String getBroswerInfo(HttpServletRequest request){
-		return request.getHeader("User-Agent") == null || "".equals(request.getHeader("User-Agent")) ? "无法解析请求的浏览器信息" : request.getHeader("User-Agent");
+		UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));
+		Browser browser = userAgent.getBrowser();
+		OperatingSystem os = userAgent.getOperatingSystem();
+		String message = "浏览器名称："+ browser.getName() +
+				", 版本："+ browser.getVersion(request.getHeader("User-Agent")) +
+				", 类型："+ browser.getBrowserType() +
+				", 制造商："+ browser.getManufacturer() +
+				", 渲染引擎：" + browser.getRenderingEngine() +
+				", 操作系统： "+ os.getName();
+		logger.info(message);
+		return  message;
 	}
 	
 	/**
@@ -212,7 +254,7 @@ public class CommonUtil {
 	
 	/**
 	 * 判断某个类是否实现了该接口
-	 * @param class
+	 * @param clazz
 	 * @param szInterface 接口的名称(全类名：包括包名)
 	 * @return
 	 */
@@ -238,28 +280,7 @@ public class CommonUtil {
 		}
 		return false;
 	}
-	
-	/**
-	 * 测试
-	 * @param args
-	 */
-	/*public static void main(String[] args) {
-		InputStream in = CommonUtil.getResourceAsStream("leedane.properties");  
-		 // 创建Properties实例
-       Properties prop = new Properties();
-       // 将Properties和流关联
-       try {
-		prop.load(in);
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-     Set<Object> set = prop.keySet();
-     Iterator<Object> it = set.iterator();
-     while(it.hasNext()) {
-    	 logger.info(it.next());
-     }
-	}*/
-	
+
 	/**
 	 * 获得格式化的总数
 	 * @param total
@@ -286,7 +307,7 @@ public class CommonUtil {
 
 	/**
 	 * 从生日中获取年龄
-	 * @param birthDay
+	 * @param user
 	 * @return
 	 */
 	public static int getAgeByUser(UserBean user) {

@@ -7,6 +7,7 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
+import com.cn.leedane.utils.ConstantsUtil;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
 import org.apache.lucene.index.IndexWriter;
@@ -254,10 +255,10 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
         return new SystemCache();  
     }
 	
-	@Bean(name= "directory")
+	/*@Bean(name= "directory")
     public SimpleFSDirectory getSimpleFSDirectory(){
         try {
-			return new SimpleFSDirectory(new File("C:\\index\\leedaneLuceneIndex"));
+			return new SimpleFSDirectory(new File(ConstantsUtil.getDefaultSaveFileFolder() + "index/leedaneLuceneIndex"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
@@ -283,7 +284,7 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
 			e.printStackTrace();
 		}  
         return null;
-    }
+    }*/
 	
 	/*@Bean(name= "exceptionHandler")
 	public ExceptionHandler getExceptionHandler(){
@@ -345,9 +346,10 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
 		return new DataSourceTransactionManager(dataSource());
 	}*/
     
-    @Bean
+    @Bean(name = "propertySourcesPlaceholderConfigurer")
     public PropertySourcesPlaceholderConfigurer createPropertySourcesPlaceholderConfigurer() {
         ClassPathResource resource = new ClassPathResource("leedane.properties");
+        logger.warn("项目开始加载leedane.properties文件");
         PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer = new PropertySourcesPlaceholderConfigurer();
         propertyPlaceholderConfigurer.setLocation(resource);
         propertyPlaceholderConfigurer.setIgnoreUnresolvablePlaceholders(true);
@@ -356,6 +358,7 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
 
     
     public static void main(String[] args) {
+//        System.setProperty("es.set.netty.runtime.available.processors", "false");
 		logger.warn( "项目开始启动。。。" );
         //SpringApplication.run("classpath:spring-common.xml", args);
 		ApplicationContext ctx = (ApplicationContext)SpringApplication.run(StartUpApplication.class, args);
@@ -367,9 +370,10 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
 	
         //InitCacheData initCacheData = new InitCacheData();
         //initCacheData.init();
+        logger.warn( "开始读取数据到缓存中。。。" );
 		InitCacheData initCacheData = (InitCacheData) ctx.getBean("initCacheData");
 		initCacheData.init();
-		
+        logger.warn( "结束读取数据到缓存中。。。" );
 		/*TaobaoClient client = new DefaultTaobaoClient("https://eco.taobao.com/router/rest", "24712175", "a34e8aaca4b223fc8382a6b88205821b");
 		TbkRebateOrderGetRequest req = new TbkRebateOrderGetRequest();
 		req.setFields("tb_trade_parent_id,tb_trade_id,num_iid,item_title,item_num,price,pay_price,seller_nick,seller_shop_title,commission,commission_rate,unid,create_time,earning_time");
@@ -386,13 +390,13 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
 			e1.printStackTrace();
 		}*/
 		
-		
-		PushServer pushServer = new PushServer();
+		//netty部分，暂时关闭
+        /*PushServer pushServer = new PushServer();
         try {
 			pushServer.bind();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
     
     

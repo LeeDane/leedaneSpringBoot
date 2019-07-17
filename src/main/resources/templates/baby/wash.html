@@ -11,7 +11,9 @@
 	<title th:text="我的宝宝-生病"></title>
 	<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_733gvu39kn265hfr.css" />
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
-	<link rel="stylesheet" href="/page/other/layui-v2.1.5/css/layui.css"  media="all" />
+
+	<link th:if="${not isDebug}" rel="stylesheet" href="//www.layuicdn.com/layui-v2.1.5/css/layui.css"  media="all" />
+	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.1.5/css/layui.css"  media="all" />
 	<style type="text/css">
 		.clearFloat{
 			clear: both;

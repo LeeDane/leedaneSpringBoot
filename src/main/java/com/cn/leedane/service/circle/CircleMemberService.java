@@ -1,16 +1,13 @@
 package com.cn.leedane.service.circle;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 
 /**
  * 圈子成员的Service类
@@ -22,13 +19,13 @@ import com.cn.leedane.model.UserBean;
 public interface CircleMemberService <T extends IDBean>{
 	 /**
 	 * 分页获取成员列表
-	 * @param jsonObject
+	 * @param json
 	 * @param user
 	 * @param request
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(int circleId, JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> paging(int circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 推荐/取消推荐(必须是圈主或者圈子管理员才能操作)
@@ -38,7 +35,7 @@ public interface CircleMemberService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> recommend(int circleId, int memberId, JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> recommend(int circleId, int memberId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除某个成员(必须是圈主或者圈子管理员才能操作)，圈主不能删除
@@ -48,6 +45,6 @@ public interface CircleMemberService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int circleId, int memberId, JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> delete(int circleId, int memberId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 }

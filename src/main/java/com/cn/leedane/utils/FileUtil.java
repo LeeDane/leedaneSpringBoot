@@ -178,7 +178,7 @@ public class FileUtil {
         if(StringUtil.isNotNull(imgUrl) && ImageUtil.isSupportType(StringUtil.getFileName(imgUrl))){
         	
         	StringBuffer tempFilePath = new StringBuffer();
-        	tempFilePath.append(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER);
+        	tempFilePath.append(ConstantsUtil.getDefaultSaveFileFolder());
         	tempFilePath.append("temporary");
         	tempFilePath.append(File.separator);
         	tempFilePath.append(UUID.randomUUID().toString());
@@ -245,7 +245,7 @@ public class FileUtil {
         if(StringUtil.isNotNull(imgUrl) && ImageUtil.isSupportType(StringUtil.getFileName(imgUrl))){
         	
         	StringBuffer tempFilePath = new StringBuffer();
-        	tempFilePath.append(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER);
+        	tempFilePath.append(ConstantsUtil.getDefaultSaveFileFolder());
         	tempFilePath.append("temporary");
         	tempFilePath.append(File.separator);
         	tempFilePath.append(UUID.randomUUID().toString());

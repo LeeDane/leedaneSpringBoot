@@ -1,18 +1,5 @@
 package com.cn.leedane.controller.mall;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.model.mall.S_HomeCarouselBean;
 import com.cn.leedane.model.mall.S_HomeItemBean;
@@ -22,6 +9,17 @@ import com.cn.leedane.service.mall.S_HomeItemService;
 import com.cn.leedane.service.mall.S_HomeShopService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 商品接口controller
@@ -55,7 +53,7 @@ public class HomeManagerController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(homeCarouselService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(homeCarouselService.add(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -70,7 +68,7 @@ public class HomeManagerController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(homeCarouselService.delete(carouselId, getUserFromMessage(message), request));
+		message.putAll(homeCarouselService.delete(carouselId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -98,7 +96,7 @@ public class HomeManagerController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(homeItemService.addItem(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(homeItemService.addItem(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -114,7 +112,7 @@ public class HomeManagerController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(homeItemService.noList(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(homeItemService.noList(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -129,7 +127,7 @@ public class HomeManagerController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(homeItemService.getItem(itemId, getUserFromMessage(message), request));
+		message.putAll(homeItemService.getItem(itemId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -144,7 +142,7 @@ public class HomeManagerController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(homeItemService.updateItem(itemId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(homeItemService.updateItem(itemId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -158,7 +156,7 @@ public class HomeManagerController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		message.putAll(homeItemService.deleteItem(itemId, getUserFromMessage(message), request));
+		message.putAll(homeItemService.deleteItem(itemId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -172,7 +170,7 @@ public class HomeManagerController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		message.putAll(homeItemService.matchingCategory(itemId, getUserFromMessage(message), request));
+		message.putAll(homeItemService.matchingCategory(itemId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	/**
@@ -185,7 +183,7 @@ public class HomeManagerController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		message.putAll(homeItemService.updateCategory(itemId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(homeItemService.updateCategory(itemId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -199,7 +197,7 @@ public class HomeManagerController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		message.putAll(homeItemService.addProduct(itemId, getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(homeItemService.addProduct(itemId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -213,7 +211,7 @@ public class HomeManagerController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		message.putAll(homeItemService.deleteProduct(itemId, productId, getUserFromMessage(message), request));
+		message.putAll(homeItemService.deleteProduct(itemId, productId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -226,7 +224,7 @@ public class HomeManagerController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
-		message.putAll(homeItemService.getItems(getUserFromMessage(message), request));
+		message.putAll(homeItemService.getItems(getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -241,7 +239,7 @@ public class HomeManagerController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(homeShopService.add(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(homeShopService.add(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -256,7 +254,7 @@ public class HomeManagerController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(homeShopService.delete(shopId, getUserFromMessage(message), request));
+		message.putAll(homeShopService.delete(shopId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	

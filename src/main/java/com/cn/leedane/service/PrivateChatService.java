@@ -1,16 +1,13 @@
 package com.cn.leedane.service;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 
 /**
  * 私信相关service接口类
@@ -29,7 +26,7 @@ public interface PrivateChatService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getLimit(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 发送私信信息
@@ -38,5 +35,5 @@ public interface PrivateChatService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> send(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> send(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 }

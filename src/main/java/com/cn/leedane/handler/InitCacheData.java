@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.cn.leedane.rabbitmq.recieve.*;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -33,15 +34,6 @@ import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.model.JobManageBean;
 import com.cn.leedane.model.RecordTimeBean;
 import com.cn.leedane.rabbitmq.RecieveMessage;
-import com.cn.leedane.rabbitmq.recieve.ClockDynamicRecieve;
-import com.cn.leedane.rabbitmq.recieve.ClockScoreRecieve;
-import com.cn.leedane.rabbitmq.recieve.DeleteServerFileRecieve;
-import com.cn.leedane.rabbitmq.recieve.EmailRecieve;
-import com.cn.leedane.rabbitmq.recieve.FinancialMonthReportRecieve;
-import com.cn.leedane.rabbitmq.recieve.IRecieve;
-import com.cn.leedane.rabbitmq.recieve.LogRecieve;
-import com.cn.leedane.rabbitmq.recieve.VisitorDeleteRecieve;
-import com.cn.leedane.rabbitmq.recieve.VisitorRecieve;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.task.spring.QuartzJobFactory;
@@ -101,13 +93,22 @@ public class InitCacheData {
 		new OptionUtil();//加载选项到内存中
 		
 		loadFilterUrls(); //加载过滤的url地址
-		loadLeeDaneProperties(); // 加载leedane.properties文件
+//		loadLeeDaneProperties(); // 加载leedane.properties文件
 		
 		new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
 				startRabbitMqLogListener(); //异步启动rabbitmq的操作日志队列的监听
+			}
+		}).start();
+
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				startRabbitMqAddEsIndexListener(); //异步启动rabbitmq的操加入Es索引队列的监听
 			}
 		}).start();
 		
@@ -119,13 +120,13 @@ public class InitCacheData {
 			}
 		}).start();
 		
-		new Thread(new Runnable() {
+		/*new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
 				startRabbitMqEmailListener(); //异步启动rabbitmq的操作邮件队列的监听
 			}
-		}).start();
+		}).start();*/
 		
 		new Thread(new Runnable() {
 			
@@ -263,7 +264,22 @@ public class InitCacheData {
 			e.printStackTrace();
 		}		
 	}
-	
+
+
+	/**
+	 * 启动rabbitmq日志队列的监听
+	 */
+	private void startRabbitMqAddEsIndexListener() {
+
+		try {
+			//加入es索引的监听
+			IRecieve recieve = new AddEsIndexRecieve();
+			RecieveMessage recieveMessage = new RecieveMessage(recieve);
+			recieveMessage.getMsg();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * 启动rabbitmq删除临时文件的监听
 	 */
@@ -308,7 +324,8 @@ public class InitCacheData {
 	/**
 	 * 加载leedane.properties文件
 	 */
-	private void loadLeeDaneProperties() {
+	/*private void loadLeeDaneProperties() {
+		System.out.println("读取loadLeeDaneProperties");
 		long begin = System.currentTimeMillis();  
 		try {
 			Map<String,Object> properties = new HashMap<String, Object>();
@@ -330,7 +347,7 @@ public class InitCacheData {
 			//e.printStackTrace();
 			System.err.println("加载leedane.properties属性配置文件出错");
 		}
-	}
+	}*/
 
 	/**
 	 * 加载需要过滤掉的url地址

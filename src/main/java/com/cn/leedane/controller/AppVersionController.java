@@ -35,7 +35,7 @@ public class AppVersionController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
-		message.putAll(appVersionService.getNewest(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(appVersionService.getNewest(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();	
 	}
 	
@@ -48,7 +48,7 @@ public class AppVersionController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
-		message.putAll(appVersionService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(appVersionService.paging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

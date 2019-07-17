@@ -1,33 +1,25 @@
 package com.cn.leedane.service.impl;
-import java.util.Date;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.PrivateChatMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.PrivateChatBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.PrivateChatService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.FilterUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.Map;
 
 /**
  * 私信信息列表service实现类
@@ -52,7 +44,7 @@ public class PrivateChatServiceImpl implements PrivateChatService<PrivateChatBea
 
 	@Override
 	public Map<String, Object> getLimit(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ChatServiceImpl-->getLimit():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		return message.getMap();
@@ -61,7 +53,7 @@ public class PrivateChatServiceImpl implements PrivateChatService<PrivateChatBea
 
 	@Override
 	public Map<String, Object> send(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("PrivateChatServiceImpl-->send():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id"); //发送给对方的用户ID

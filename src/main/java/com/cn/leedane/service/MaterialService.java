@@ -1,16 +1,13 @@
 package com.cn.leedane.service;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 
 /**
  * 素材service接口类
@@ -28,7 +25,7 @@ public interface MaterialService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> save(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> save(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	
 	/**
@@ -49,7 +46,7 @@ public interface MaterialService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int materialId, UserBean user, HttpServletRequest request) ;
+	public Map<String, Object> delete(int materialId, UserBean user, HttpRequestInfoBean request) ;
 	
 	/**
 	 * 分页获取指定用户素材的图片的路径列表
@@ -60,6 +57,6 @@ public interface MaterialService <T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getMaterialByLimit(JSONObject jo,
-			UserBean user, HttpServletRequest request);
+			UserBean user, HttpRequestInfoBean request);
 	
 }

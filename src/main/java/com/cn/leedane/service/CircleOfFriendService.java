@@ -1,15 +1,13 @@
 package com.cn.leedane.service;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 /**
  * 朋友圈的Service类
  * @author LeeDane
@@ -29,7 +27,7 @@ public interface CircleOfFriendService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getLimit(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取朋友圈列表(分页获取)
@@ -39,5 +37,5 @@ public interface CircleOfFriendService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(int pageSize, int current, int total, UserBean user, HttpServletRequest request);
+	public Map<String, Object> paging(int pageSize, int current, int total, UserBean user, HttpRequestInfoBean request);
 }

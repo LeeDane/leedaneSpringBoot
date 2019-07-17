@@ -1,13 +1,12 @@
 package com.cn.leedane.mapper.clock;
 
-import java.util.List;
-import java.util.Map;
-
+import com.cn.leedane.display.clock.ClockInDisplay;
+import com.cn.leedane.mapper.BaseMapper;
+import com.cn.leedane.model.clock.ClockInBean;
 import org.apache.ibatis.annotations.Param;
 
-import com.cn.leedane.mapper.BaseMapper;
-import com.cn.leedane.model.UsersBean;
-import com.cn.leedane.model.clock.ClockInBean;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 任务打卡mapper接口类
@@ -46,4 +45,13 @@ public interface ClockInMapper extends BaseMapper<ClockInBean>{
 	 * @return
 	 */
 	public List<Map<String, Object>> membersSortByIns(@Param("clockId")int clockId, @Param("date")String date, @Param("limit")int limit);
+
+	/**
+	 * 获取用户打卡信息(不校验状态)
+	 * @param clockId
+	 * @param toUserId
+	 * @param date
+	 * @return
+	 */
+	public ClockInDisplay getUserClockIn(@Param("clockId")int clockId, @Param("toUserId")int toUserId, @Param("date")String date);
 }

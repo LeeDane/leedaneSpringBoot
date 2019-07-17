@@ -1,16 +1,13 @@
 package com.cn.leedane.service.mall;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 
 /**
  * 淘宝相关service接口类
@@ -28,7 +25,7 @@ public interface S_TaobaoService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> search(JSONObject jo, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> search(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 构建淘宝分享的链接
@@ -38,6 +35,6 @@ public interface S_TaobaoService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> buildShare(String taobaoId,UserBean user, HttpServletRequest request);
+	public Map<String, Object> buildShare(String taobaoId,UserBean user, HttpRequestInfoBean request);
 	
 }

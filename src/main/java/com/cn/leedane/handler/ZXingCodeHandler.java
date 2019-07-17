@@ -51,7 +51,7 @@ public class ZXingCodeHandler {
 		
 		String base64 = null;
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER);
+		buffer.append(ConstantsUtil.getDefaultSaveFileFolder());
 		buffer.append(FileType.TEMPORARY.value);
 		buffer.append(File.separator);
 		buffer.append(DateUtil.DateToString(new Date(), "yyyyMMddHHmmss"));

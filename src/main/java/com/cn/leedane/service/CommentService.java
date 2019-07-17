@@ -1,17 +1,15 @@
 package com.cn.leedane.service;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.CommentBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.CommentBean;
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.List;
+import java.util.Map;
 /**
  * 评论的Service类
  * @author LeeDane
@@ -45,7 +43,7 @@ public interface CommentService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> add(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取分页的评论
@@ -57,7 +55,7 @@ public interface CommentService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> rolling(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> rolling(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 分页获取评论列表
@@ -67,7 +65,7 @@ public interface CommentService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> paging(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获得当个评论的所有子评论列表
@@ -79,7 +77,7 @@ public interface CommentService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getOneCommentItemsByLimit(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getOneCommentItemsByLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取每个评论对象所有的评论数
@@ -90,7 +88,7 @@ public interface CommentService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getCountByObject(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getCountByObject(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取每个用户的评论数量
@@ -101,7 +99,7 @@ public interface CommentService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getCountByUser(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getCountByUser(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 删除评论
@@ -111,7 +109,7 @@ public interface CommentService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deleteComment(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> deleteComment(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 更改评论编辑状态
@@ -120,7 +118,7 @@ public interface CommentService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> updateCommentStatus(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> updateCommentStatus(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 执行SQL对应字段的List<Map<String,Object>
@@ -149,6 +147,6 @@ public interface CommentService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getMessageBoards(int userId, JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getMessageBoards(int userId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 }

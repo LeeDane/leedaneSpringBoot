@@ -1,15 +1,4 @@
 package com.cn.leedane.service.impl.circle;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.NotificationHandler;
@@ -17,6 +6,7 @@ import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.handler.circle.CircleMemberHandler;
 import com.cn.leedane.mapper.circle.CircleMemberMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleBean;
@@ -25,17 +15,17 @@ import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.circle.CircleMemberService;
 import com.cn.leedane.service.circle.CircleService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.RelativeDateFormat;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 圈子成员service实现类
@@ -70,7 +60,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 
 	@Override
 	public Map<String, Object> paging(int circleId, JSONObject jsonObject, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleMemberServiceImpl-->paging():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(jsonObject, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -88,7 +78,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 		}
 		message.put("total", circleMemberMapper.getAllMembers(circleId, ConstantsUtil.STATUS_NORMAL).size());
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取圈子id为"+ circleId+"成员列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取圈子id为"+ circleId+"成员列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);
@@ -97,7 +87,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 
 	@Override
 	public Map<String, Object> recommend(int circleId, int memberId, JSONObject jsonObject,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("CircleMemberServiceImpl-->recommend():circleId="+circleId +", memberId="+ memberId);
 		ResponseMap message = new ResponseMap();
 		
@@ -137,7 +127,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 	
 	@Override
 	public Map<String, Object> delete(int circleId, int memberId, JSONObject json,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("CircleMemberServiceImpl-->delete():circleId="+circleId +", memberId="+ memberId);
 		ResponseMap message = new ResponseMap();
 		//判断是否是自己，不能删除自己

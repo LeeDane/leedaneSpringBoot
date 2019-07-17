@@ -1,23 +1,5 @@
 package com.cn.leedane.springboot.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.pam.UnsupportedTokenException;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.controller.UserController;
 import com.cn.leedane.exception.RE404Exception;
@@ -33,12 +15,23 @@ import com.cn.leedane.model.circle.CirclePostBean;
 import com.cn.leedane.service.circle.CirclePostService;
 import com.cn.leedane.service.circle.CircleService;
 import com.cn.leedane.service.impl.circle.CircleServiceImpl;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.pam.UnsupportedTokenException;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 圈子Html页面的控制器
@@ -74,7 +67,7 @@ public class CircleHtmlController extends BaseController{
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面
 	 * @param model
-	 * @param httpSession
+	 * @param request
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.GET)
@@ -94,7 +87,7 @@ public class CircleHtmlController extends BaseController{
         }
         model.addAttribute("nonav", StringUtil.changeObjectToBoolean(currentUser.getSession().getAttribute("nonav")));
     	//获取页面初始化的信息
-    	model.addAllAttributes(circleService.init(user, request));
+    	model.addAllAttributes(circleService.init(user, getHttpRequestInfo(request)));
 		//首页不需要验证是否登录
 		return loginRoleCheck("circle/index", model, request);
 	}
@@ -123,10 +116,10 @@ public class CircleHtmlController extends BaseController{
         if(currentUser.isAuthenticated()){
         	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
         	//获取页面初始化的信息
-        	model.addAllAttributes(circleService.main(circle, user, request));
+        	model.addAllAttributes(circleService.main(circle, user, getHttpRequestInfo(request)));
         }
         
-        circleService.saveVisitLog(cid, user, request);
+        circleService.saveVisitLog(cid, user, getHttpRequestInfo(request));
         model.addAttribute("nonav", StringUtil.changeObjectToBoolean(currentUser.getSession().getAttribute("nonav")));
 		return loginRoleCheck("circle/main", true, model, request);
 	}
@@ -163,7 +156,7 @@ public class CircleHtmlController extends BaseController{
         if(currentUser.isAuthenticated()){
         	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
         	//获取页面初始化的信息
-        	model.addAllAttributes(circleService.memberListInit(circle, user, request));
+        	model.addAllAttributes(circleService.memberListInit(circle, user, getHttpRequestInfo(request)));
         }
 
 		model.addAttribute("circle", circle);
@@ -273,10 +266,10 @@ public class CircleHtmlController extends BaseController{
         if(currentUser.isAuthenticated()){
         	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
         }
-        model.addAllAttributes(circlePostService.initDetail(circle, postBean, user, request));
+        model.addAllAttributes(circlePostService.initDetail(circle, postBean, user, getHttpRequestInfo(request)));
         model.addAttribute("audit", false);
         //保存帖子的访问记录
-        circlePostService.saveVisitLog(postBean.getId(), user, request);
+        circlePostService.saveVisitLog(postBean.getId(), user, getHttpRequestInfo(request));
         model.addAttribute("nonav", StringUtil.changeObjectToBoolean(currentUser.getSession().getAttribute("nonav")));
 		return loginRoleCheck("circle/post-detail", true, model, request);
 	}
@@ -320,7 +313,7 @@ public class CircleHtmlController extends BaseController{
 		model.addAttribute("setting", circleSettingHandler.getNormalSettingBean(circle.getId(), user));
 		model.addAttribute("audit", true);
         //保存帖子的访问记录
-        circlePostService.saveVisitLog(postId, user, request);
+        circlePostService.saveVisitLog(postId, user, getHttpRequestInfo(request));
         model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		return loginRoleCheck("circle/post-detail-audit", true, model, request);
 	}

@@ -18,3 +18,18 @@ ALTER TABLE t_blog ADD UNIQUE blog_source_origin_link(source, origin_link);
 
 /*为访客表的tableName, tableId以及创建时间添加唯一性约束*/
 alter table t_visitor add constraint visitor_all_unique UNIQUE(table_name, table_id, create_time);
+
+/*修改博客表，添加是否加入es的标记字段, 0:false表示未加入*/
+alter table t_blog add COLUMN `es_index` bit(1) DEFAULT b'0';
+
+/*修改用户表，添加是否加入es的标记字段, 0:false表示未加入*/
+alter table t_user add COLUMN `es_index` bit(1) DEFAULT b'0';
+
+/*修改心情表，添加是否加入es的标记字段, 0:false表示未加入*/
+alter table t_mood add COLUMN `es_index` bit(1) DEFAULT b'0';
+
+/*修改日志表，添加是否加入es的标记字段, 0:false表示未加入*/
+alter table t_operate_log add COLUMN `es_index` bit(1) DEFAULT b'0';
+
+/*修改日志表，添加位置信息字段*/
+alter table t_operate_log add COLUMN `location` varchar(100) DEFAULT NULL;

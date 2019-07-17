@@ -1,23 +1,9 @@
 package com.cn.leedane.service.impl.mall;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.handler.mall.S_ProductHandler;
 import com.cn.leedane.handler.mall.S_WishHandler;
 import com.cn.leedane.mapper.mall.S_WishMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.mall.S_ProductBean;
@@ -25,15 +11,19 @@ import com.cn.leedane.model.mall.S_WishBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.mall.MallRoleCheckService;
 import com.cn.leedane.service.mall.S_WishService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.LayuiTableResponseMap;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 购物商品的service的实现类
@@ -59,7 +49,7 @@ public class S_WishServiceImpl extends MallRoleCheckService implements S_WishSer
 	
 	@Override
 	public Map<String, Object> add(JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		logger.info("S_WishServiceImpl-->add():json="+json);
 		int productId = JsonUtil.getIntValue(json, "product_id");
@@ -101,7 +91,7 @@ public class S_WishServiceImpl extends MallRoleCheckService implements S_WishSer
 	
 	@Override
 	public Map<String, Object> getWishNumber(UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		logger.info("S_WishServiceImpl-->getWishNumber():user="+user.getId());
 		ResponseMap message = new ResponseMap();
@@ -115,7 +105,7 @@ public class S_WishServiceImpl extends MallRoleCheckService implements S_WishSer
 	
 	@Override
 	public Map<String, Object> delete(int wishId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		logger.info("S_WishServiceImpl-->delete():wishId="+wishId);
 		ResponseMap message = new ResponseMap();
@@ -139,7 +129,7 @@ public class S_WishServiceImpl extends MallRoleCheckService implements S_WishSer
 	
 	
 	@Override
-	public Map<String, Object> paging(int current, int pageSize, UserBean user, HttpServletRequest request){
+	public Map<String, Object> paging(int current, int pageSize, UserBean user, HttpRequestInfoBean request){
 		logger.info("S_WishServiceImpl-->paging():current=" +current +", pageSize="+ pageSize);
 		LayuiTableResponseMap message = new LayuiTableResponseMap();
 		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
@@ -175,7 +165,7 @@ public class S_WishServiceImpl extends MallRoleCheckService implements S_WishSer
 		message.setCode(0);
 		message.setCount(wishHandler.getWishNumber(user.getId()));
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取心愿单列表，current="+ current, ", pageSize=", pageSize).toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取心愿单列表，current="+ current, ", pageSize=", pageSize).toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("isSuccess", true);
 		message.put("data", rs);
 		return message.getMap();

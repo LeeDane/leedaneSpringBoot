@@ -17,8 +17,6 @@ import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.StringUtil;
 
 public class SqlProvider {
-	
-	
 	private TableFormat tableFormat = new HumpToUnderLineFormat();
 
 	/**

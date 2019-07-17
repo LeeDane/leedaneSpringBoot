@@ -1,15 +1,12 @@
 package com.cn.leedane.service;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 
 /**
  * 链接权限管理service接口类
@@ -35,7 +32,7 @@ public interface LinkManageService<LinkManageBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> save(JSONObject jsonObject, UserBean user, HttpServletRequest request);
+	public Map<String, Object> save(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 编辑链接
@@ -44,7 +41,7 @@ public interface LinkManageService<LinkManageBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> edit(JSONObject jsonObject, UserBean user, HttpServletRequest request);
+	public Map<String, Object> edit(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除链接
@@ -53,7 +50,7 @@ public interface LinkManageService<LinkManageBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int lnid, UserBean user, HttpServletRequest request);
+	public Map<String, Object> delete(int lnid, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 分页获取链接列表
@@ -63,7 +60,7 @@ public interface LinkManageService<LinkManageBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(JSONObject jsonObject, UserBean user, HttpServletRequest request);
+	public Map<String, Object> paging(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 批量删除链接
@@ -72,7 +69,7 @@ public interface LinkManageService<LinkManageBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deletes(String lnids, UserBean user, HttpServletRequest request);
+	public Map<String, Object> deletes(String lnids, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 根据链接ID获取权限或者角色列表
@@ -83,7 +80,7 @@ public interface LinkManageService<LinkManageBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> roleOrPermissions(int lnid, boolean role, UserBean user, HttpServletRequest request);
+	public Map<String, Object> roleOrPermissions(int lnid, boolean role, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 角色、权限的分配
@@ -93,5 +90,5 @@ public interface LinkManageService<LinkManageBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> allot(int lnid,JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> allot(int lnid,JSONObject json, UserBean user, HttpRequestInfoBean request);
 }

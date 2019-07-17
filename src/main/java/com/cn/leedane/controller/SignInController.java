@@ -1,18 +1,5 @@
 package com.cn.leedane.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.SignInBean;
 import com.cn.leedane.model.UserBean;
@@ -22,6 +9,17 @@ import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.si)
@@ -51,7 +49,7 @@ public class SignInController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.put("isSuccess", signInService.saveSignIn(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.put("isSuccess", signInService.saveSignIn(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -75,7 +73,7 @@ public class SignInController extends BaseController{
 		
 		// 保存操作日志信息
 		String subject = user.getAccount()+"判断当天是否签到";
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "currentDateIsSignIn", 1, 0);
+//		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "currentDateIsSignIn", 1, 0);
 		return message.getMap();
 	}
 	
@@ -90,7 +88,7 @@ public class SignInController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		List<Map<String, Object>> result= signInService.getSignInByLimit(getJsonFromMessage(message), getUserFromMessage(message), request);
+		List<Map<String, Object>> result= signInService.getSignInByLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 		logger.info("获得签到的数量：" +result.size());
 		message.put("isSuccess", true);
 		message.put("message", result);

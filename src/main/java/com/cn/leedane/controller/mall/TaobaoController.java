@@ -1,10 +1,10 @@
 package com.cn.leedane.controller.mall;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
-
+import com.cn.leedane.controller.BaseController;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.service.mall.S_TaobaoService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.controller.BaseController;
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.service.mall.S_TaobaoService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import javax.websocket.server.PathParam;
+import java.util.Map;
 
 /**
  * 淘宝接口controller
@@ -43,7 +41,7 @@ public class TaobaoController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
-		message.putAll(taobaoService.search(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(taobaoService.search(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -58,7 +56,7 @@ public class TaobaoController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		message.putAll(taobaoService.buildShare(taobaoId, getUserFromMessage(message), request));
+		message.putAll(taobaoService.buildShare(taobaoId, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

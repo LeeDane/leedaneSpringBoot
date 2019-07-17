@@ -9,12 +9,12 @@ import javax.annotation.Resource;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.LongField;
+//import org.apache.lucene.document.LongField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.search.NumericRangeQuery;
+//import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.junit.Test;
@@ -49,7 +49,7 @@ public class LuceneTest extends BaseTest{
 		//analyzer.setUseSmart(false);
 		try {
 			analyzer.tokenStream("bookcontent", "不是#我#做#的");
-		} catch (IOException e1) {
+		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -60,7 +60,7 @@ public class LuceneTest extends BaseTest{
 		 */
 		Document bookdoc  = new Document();
 		//标题选择索引+分词，可以存储
-		Field bookNo = new LongField("booktitle", 344333, Store.YES);
+		Field bookNo = null;//new LongField("booktitle", 344333, Store.YES);
 		//文章内容一般很大，索引选择分词+索引，网上说一般不存储，可是不存储的话就显示不了这些内容
 		Field bookName = new TextField("bookcontent", "不知道为什么", Store.YES);
 		//作者名应该保持完整索引，不需要分词。可以存储
@@ -74,7 +74,7 @@ public class LuceneTest extends BaseTest{
 		
 		Document bookdoc1  = new Document();
 		//标题选择索引+分词，可以存储
-		Field bookNo1 = new LongField("booktitle", 423233, Store.YES);
+		Field bookNo1 = null; //new LongField("booktitle", 423233, Store.YES);
 		//文章内容一般很大，索引选择分词+索引，网上说一般不存储，可是不存储的话就显示不了这些内容
 		Field bookName1 = new TextField("bookcontent", "不是我做的", Store.YES);
 		bookdoc1.add(bookNo1);
@@ -129,7 +129,7 @@ public class LuceneTest extends BaseTest{
 	public void deleteDocument() throws IOException, ParseException{
 		
 		//删除文档的时候，如果Term中的字段是TextField类型，将删除不成功
-		Query qp = NumericRangeQuery.newLongRange("booktitle", new Long(17277233), new Long(17277233), true, true);
+		Query qp = null;//NumericRangeQuery.newLongRange("booktitle", new Long(17277233), new Long(17277233), true, true);
 		//NumericRangeQuery.
 		//qp.setDefaultOperator(QueryParser.AND_OPERATOR); 
 		//Query query = qp.parse(""); //搜索相似度最高的5条记录 
@@ -156,7 +156,7 @@ public class LuceneTest extends BaseTest{
 		//indexReader = DirectoryReader.open(directory);
 		Document bookdoc  = new Document();
 		//标题选择索引+分词，可以存储
-		Field bookNo = new LongField("booktitle", 17277233, Store.YES);
+		Field bookNo = null;//new LongField("booktitle", 17277233, Store.YES);
 		//文章内容一般很大，索引选择分词+索引，网上说一般不存储，可是不存储的话就显示不了这些内容
 		Field bookName = new TextField("bookcontent", "我是外星人9", Store.YES);
 		bookdoc.add(bookNo);

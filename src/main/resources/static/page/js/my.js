@@ -8,16 +8,12 @@ layui.use(['layer', 'laypage'], function(){
 		$(this).removeClass("active");
 	});
 	$(".nav-my").addClass("active");
-	
+
+	$('[data-toggle="tooltip"]').tooltip();
+
 	/*initPage(".pagination", "getMoods", 9);*/
 	$moodContainer = $("#mood-container");
 	$operateItemsContrainer = $("#operate-item-list");
-	loadUserInfo();
-	getMoods();
-	getMessageBoards();//获取留言板列表
-	getVisitors(); //获取访客列表
-	getAttentions();//获取关注列表
-	getFans();//获取粉丝列表
 	
 	$(".edit-user-info-btn").on("click", function(){
 		//检验手机号码
@@ -77,6 +73,13 @@ layui.use(['layer', 'laypage'], function(){
 	  layer.msg("文字复制失败！");
 	  layer.tips('此文字复制失败', "#"+ e.trigger.previousSibling.id, {time: 1000});
   });
+
+  loadUserInfo();
+  getMoods();
+  getMessageBoards();//获取留言板列表
+  getVisitors(); //获取访客列表
+  getAttentions();//获取关注列表
+  getFans();//获取粉丝列表
 });
 var userinfo;
 var moods = [];
@@ -509,7 +512,7 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 							'<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-right cut-text" style="text-align: right;">'+
 								'<span class="list-group-item-heading" style="margin-right: 5px;">'+ changeNotNullString(mood.create_time).substring(0, 16) +
 						        '</span>'+
-						        '<span class="list-group-item-heading glyphicon glyphicon-option-vertical cursor" onclick="showItemListModal('+ index +')">'+
+						        '<span class="list-group-item-heading glyphicon glyphicon-option-vertical cursor" onclick="showItemListModal('+ index +')" data-toggle="tooltip" data-placement="left" title="点击，查看更多操作" onMouseOver="$(this).tooltip(\'show\')">'+
 						        '</span> '+
 							'</div>'+
 						'</div>'+
@@ -517,10 +520,10 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 					'<div class="list-group-item">'+
 						'<div class="list-group-item-text tip-list">';
 						if(isLoginUser && mood.status == 5){
-							html += '<span class="label label-warning">私有</span>';
+							html += '<span class="label label-warning" data-toggle="tooltip" data-placement="right" title="该心情是私有的，其他人无法查看" onMouseOver="$(this).tooltip(\'show\')">私有</span>';
 						}
-							html += '<span class="label '+ (mood.can_comment? 'label-default' : 'label-success') +'">'+ (mood.can_comment? '可以评论':'禁止评论') +'</span>'+
-							'<span class="label '+ (mood.can_transmit? 'label-default' : 'label-success') +'">'+ (mood.can_transmit? '可以转发':'禁止转发') +'</span>'+
+							html += '<span class="label '+ (mood.can_comment? 'label-default' : 'label-success') +'"  '+ (mood.can_comment ? '': 'data-toggle="tooltip" data-placement="right" title="该心情禁止任何人评论" onMouseOver="$(this).tooltip(\'show\')"') + '>'+ (mood.can_comment? '可以评论':'禁止评论') +'</span>'+
+							'<span class="label '+ (mood.can_transmit? 'label-default' : 'label-success') +'" '+ (mood.can_transmit ? '': 'data-toggle="tooltip" data-placement="right" title="该心情禁止任何人转发" onMouseOver="$(this).tooltip(\'show\')"') + '>'+ (mood.can_transmit? '可以转发':'禁止转发') +'</span>'+
 						'</div>'+
 					    '<div class="list-group-item-text" style="margin-top: 5px;" id="couponValue-'+ index+'">'+ changeNotNullString(mood.content) +
 					    '</div>'+
@@ -571,7 +574,7 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 					'<div class="list-group-item list-group-item-operate">'+
 					     '<button type="button" class="btn btn-primary btn-sm" onclick="showCommentOrTransmit(1, '+ index +')">评论('+ mood.comment_number+')</button>'+
 					     '<button type="button" class="btn btn-primary btn-sm" onclick="showCommentOrTransmit(2, '+ index +')">转发('+ mood.transmit_number+')</button>'+
-					     '<button type="button" class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="goToReadMoodFull('+ mood.id +', '+ uid +');">查看详细</button>'+
+					     '<button type="button" class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="goToReadMoodFull('+ mood.id +', '+ uid +');" >查看详细</button>'+
 					'</div>'+
 				'</div>';
 	return html;

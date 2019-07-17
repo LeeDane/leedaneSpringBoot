@@ -36,7 +36,7 @@ public class DeleteTemporaryFiles extends AbstractScheduling{
 	public void execute() throws SchedulerException {
 
 		long start = System.currentTimeMillis();
-		String folder = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER + "temporary";	
+		String folder = ConstantsUtil.getDefaultSaveFileFolder() + "temporary";
 		
 		File file = new File(folder);
 		if(!file.exists()){
@@ -54,7 +54,7 @@ public class DeleteTemporaryFiles extends AbstractScheduling{
 			//派发5个线程执行
 			ExecutorService threadpool = Executors.newFixedThreadPool(5);
 			for(String filePath: filePaths){
-				deleteTask = new SingleDeleteTask(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"temporary//"+ filePath);
+				deleteTask = new SingleDeleteTask(ConstantsUtil.getDefaultSaveFileFolder() +"temporary"+ File.separator+ filePath);
 				futures.add(threadpool.submit(deleteTask));
 			}
 			threadpool.shutdown();

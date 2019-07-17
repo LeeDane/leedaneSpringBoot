@@ -1,42 +1,23 @@
 package com.cn.leedane.service.impl;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.handler.LinkManageHandler;
 import com.cn.leedane.handler.RolePermissionHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.RoleMapper;
 import com.cn.leedane.mapper.UserRoleMapper;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.RoleBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.UserRoleBean;
+import com.cn.leedane.model.*;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.RoleService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * 用户角色service实现类
@@ -68,7 +49,7 @@ private Logger logger = Logger.getLogger(getClass());
 
 	@Override
 	public Map<String, Object> save(JSONObject jsonObject, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("RoleServiceImpl-->save():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		RoleBean roleBean = new RoleBean();
@@ -92,7 +73,7 @@ private Logger logger = Logger.getLogger(getClass());
 
 	@Override
 	public Map<String, Object> edit(JSONObject jsonObject, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("RoleServiceImpl-->edit():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		RoleBean roleBean = new RoleBean();
@@ -117,7 +98,7 @@ private Logger logger = Logger.getLogger(getClass());
 
 	@Override
 	public Map<String, Object> delete(int rlid, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("RoleServiceImpl-->delete():rlid="+ rlid);
 		ResponseMap message = new ResponseMap();
 				
@@ -142,7 +123,7 @@ private Logger logger = Logger.getLogger(getClass());
 
 	@Override
 	public Map<String, Object> paging(JSONObject jsonObject, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("RoleServiceImpl-->paging():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(jsonObject, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -167,7 +148,7 @@ private Logger logger = Logger.getLogger(getClass());
 		}
 		message.put("total", SqlUtil.getTotalByList(roleMapper.getTotal(DataTableType.角色.value, null)));
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取角色列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取角色列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);
@@ -177,7 +158,7 @@ private Logger logger = Logger.getLogger(getClass());
 	
 	@Override
 	public Map<String, Object> deletes(String rlids, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("RoleServiceImpl-->deletes():rlids="+ rlids);
 		ResponseMap message = new ResponseMap();
 		if(StringUtil.isNull(rlids))
@@ -218,13 +199,13 @@ private Logger logger = Logger.getLogger(getClass());
 
 	@Override
 	public Map<String, Object> users(int rlid, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("RoleServiceImpl-->users():rlid="+rlid);
 		ResponseMap message = new ResponseMap();
 		List<Map<String, Object>> rs = roleMapper.users(rlid, ConstantsUtil.STATUS_NORMAL);
 				
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户列表").toString(), "users()", ConstantsUtil.STATUS_NORMAL, 0);		
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户列表").toString(), "users()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);
@@ -234,7 +215,7 @@ private Logger logger = Logger.getLogger(getClass());
 
 	@Override
 	public Map<String, Object> allot(int rlid, String users, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("RoleServiceImpl-->allot():rlid="+rlid +", users="+ users);
 		
 		ResponseMap message = new ResponseMap();

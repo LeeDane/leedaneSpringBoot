@@ -39,7 +39,7 @@ public class FinancialOneCategoryController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(financialOneCategoryService.getAll(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(financialOneCategoryService.getAll(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
     }
 }

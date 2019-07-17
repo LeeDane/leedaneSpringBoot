@@ -71,11 +71,11 @@ public class StringUtil {
 		return new String(Base64Util.encode(value.getBytes()));
 		//return new String(Des3Utils.EncryptBy3DES(value, secretCode));
 	}
-	
+
 	/***
 	 * 获取免登陆验证码
-	 * @param account
-	 * @param pwd
+	 * @param userid
+	 * @param secretCode
 	 * @param overdue
 	 * @return
 	 * @throws ErrorException
@@ -185,7 +185,7 @@ public class StringUtil {
 	 */
 	public static boolean isNull(String origin) {
 		
-		return origin == null || origin.trim() == "" || origin.trim().equals("") ? true : false;
+		return origin == null || origin.trim() == "" || origin.trim().equals("") || "null".equalsIgnoreCase(origin) ? true : false;
 	}
 	
 	/**
@@ -794,4 +794,22 @@ public class StringUtil {
 		Set<String> ss = getTopic(content);
 		System.out.println(ss);
 	}*/
+
+
+	/**
+	 * unicode转中文
+	 * @param str
+	 * @return
+	 */
+	public static String unicodeToString(String str) {
+		Pattern pattern = Pattern.compile("(\\\\u(\\p{XDigit}{4}))");
+		Matcher matcher = pattern.matcher(str);
+		char ch;
+		while (matcher.find()) {
+			ch = (char) Integer.parseInt(matcher.group(2), 16);
+			str = str.replace(matcher.group(1), ch+"" );
+
+		}
+		return str;
+	}
 }

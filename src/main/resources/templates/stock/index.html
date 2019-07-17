@@ -11,7 +11,10 @@
 	<title th:text="我的股票"></title>
 	<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_733gvu39kn265hfr.css" />
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
-	<link rel="stylesheet" href="/page/other/layui-v2.1.5/css/layui.css"  media="all" />
+
+	<link th:if="${not isDebug}" rel="stylesheet" href="//www.layuicdn.com/layui-v2.1.5/css/layui.css"  media="all" />
+	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.1.5/css/layui.css"  media="all" />
+
 	<style type="text/css">
 		.clearFloat{
 			clear: both;
@@ -428,7 +431,10 @@
 </body>
 
 <div th:include="common-js :: commJs">what?</div>
-<script th:src="@{/page/other/echarts.min.js}"></script>
+
+<script th:if="${not isDebug}" th:src="@{//cdn.staticfile.org/echarts/4.0.4/echarts.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/other/echarts.min.js}" type="text/javascript"></script>
+
 <script th:src="@{/page/js/stock/index.js}"></script>
 <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script> -->
 <script th:inline="javascript">//引用  

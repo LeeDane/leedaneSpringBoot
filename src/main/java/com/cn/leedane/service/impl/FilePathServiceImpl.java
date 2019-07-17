@@ -1,39 +1,24 @@
 package com.cn.leedane.service.impl;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.handler.CloudStoreHandler;
+import com.cn.leedane.mapper.FilePathMapper;
+import com.cn.leedane.mapper.TemporaryBase64Mapper;
+import com.cn.leedane.model.*;
+import com.cn.leedane.service.FilePathService;
+import com.cn.leedane.service.MoodService;
+import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.utils.*;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
 import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
-import com.cn.leedane.handler.CloudStoreHandler;
-import com.cn.leedane.mapper.FilePathMapper;
-import com.cn.leedane.mapper.TemporaryBase64Mapper;
-import com.cn.leedane.model.FilePathBean;
-import com.cn.leedane.model.MoodBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.FilePathService;
-import com.cn.leedane.service.MoodService;
-import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.utils.Base64ImageUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * 文件路径service实现类
@@ -64,7 +49,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 	
 	@Override
 	public boolean saveEachTemporaryBase64ToFilePath(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FilePathServiceImpl-->saveEachTemporaryBase64ToFilePath():jo="+jo.toString());
 		String uuid = JsonUtil.getStringValue(jo, "uuid");
 		int order = JsonUtil.getIntValue(jo, "order");
@@ -110,7 +95,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 			filePathBean.setPicOrder(order);
 			filePathBean.setPath(sourcePath);
 			filePathBean.setPicSize(ConstantsUtil.DEFAULT_PIC_SIZE);//source
-			f = new File(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file" +File.separator+sourcePath);
+			f = new File(ConstantsUtil.getDefaultSaveFileFolder() +"file" +File.separator+sourcePath);
 			int[] defaultWidthAndHeight = Base64ImageUtil.getImgWidthAndHeight(f);
 			filePathBean.setWidth(defaultWidthAndHeight[0]);
 			filePathBean.setHeight(defaultWidthAndHeight[1]);
@@ -136,7 +121,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 			filePathBean.setOrder(order);
 			filePathBean.setPath(fileName);
 			filePathBean.setSize("default");
-			f = new File(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file" +File.separator+fileName);
+			f = new File(ConstantsUtil.getDefaultSaveFileFolder() +"file" +File.separator+fileName);
 			int[] defaultWidthAndHeight = Base64ImageUtil.getImgWidthAndHeight(f);
 			filePathBean.setWidth(defaultWidthAndHeight[0]);
 			filePathBean.setHeight(defaultWidthAndHeight[1]);
@@ -157,7 +142,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 		try {
 			fileName = Base64ImageUtil.base64ImgTo30x30(base64, account);
 			if(StringUtil.isNotNull(fileName)){
-				f = new File(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file" +File.separator+fileName);
+				f = new File(ConstantsUtil.getDefaultSaveFileFolder() +"file" +File.separator+fileName);
 				filePathBean.setCreateTime(new Date());
 				filePathBean.setCreateUser(user);
 				filePathBean.setOrder(order);
@@ -186,7 +171,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 		try {
 			fileName = Base64ImageUtil.base64ImgTo60x60(base64, account);
 			if(StringUtil.isNotNull(fileName)){
-				f = new File(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file" +File.separator+fileName);
+				f = new File(ConstantsUtil.getDefaultSaveFileFolder() +"file" +File.separator+fileName);
 				filePathBean.setCreateTime(new Date());
 				filePathBean.setCreateUser(user);
 				filePathBean.setOrder(order);
@@ -211,7 +196,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 		try {
 			fileName = Base64ImageUtil.base64ImgTo80x80(base64, account);
 			if(StringUtil.isNotNull(fileName)){
-				f = new File(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file" +File.separator+fileName);
+				f = new File(ConstantsUtil.getDefaultSaveFileFolder() +"file" +File.separator+fileName);
 				filePathBean.setCreateTime(new Date());
 				filePathBean.setCreateUser(user);
 				filePathBean.setOrder(order);
@@ -236,7 +221,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 		try {
 			fileName = Base64ImageUtil.base64ImgTo100x100(base64, account);
 			if(StringUtil.isNotNull(fileName)){
-				f = new File(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file" +File.separator+fileName);
+				f = new File(ConstantsUtil.getDefaultSaveFileFolder() +"file" +File.separator+fileName);
 				filePathBean.setCreateTime(new Date());
 				filePathBean.setCreateUser(user);
 				filePathBean.setOrder(order);
@@ -261,7 +246,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 		try {
 			fileName = Base64ImageUtil.base64ImgTo120x120(base64, account);
 			if(StringUtil.isNotNull(fileName)){
-				f = new File(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file" +File.separator+fileName);
+				f = new File(ConstantsUtil.getDefaultSaveFileFolder() +"file" +File.separator+fileName);
 				filePathBean.setCreateTime(new Date());
 				filePathBean.setCreateUser(user);
 				filePathBean.setOrder(order);
@@ -290,7 +275,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 		try {
 			fileName = Base64ImageUtil.base64ImgTo320x400(base64, account);
 			if(StringUtil.isNotNull(fileName)){
-				f = new File(ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file" +File.separator+fileName);
+				f = new File(ConstantsUtil.getDefaultSaveFileFolder() +"file" +File.separator+fileName);
 				filePathBean.setCreateTime(new Date());
 				filePathBean.setCreateUser(user);
 				filePathBean.setOrder(order);
@@ -345,21 +330,21 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 
 	@Override
 	public String downloadBase64Str(JSONObject jo, UserBean user,
-			HttpServletRequest request){
+			HttpRequestInfoBean request){
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getOneMoodImgs(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<Map<String, Object>> getUserImageByLimit(JSONObject jo,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		
 		return null;
 	}
@@ -378,7 +363,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 		
 		String fileName = filePath.substring(filePath.lastIndexOf("/")+ 1, filePath.length());
 		//对源图，从temporary文件夹移动到File文件夹中
-		String newPath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER +"file" + File.separator+fileName;
+		String newPath = ConstantsUtil.getDefaultSaveFileFolder() +"file" + File.separator+fileName;
 		File fileNew = new File(newPath);
 		if(fileNew.exists()){
 			fileNew.deleteOnExit();
@@ -443,7 +428,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 
 	@Override
 	public Map<String, Object> getUploadFileByLimit(JSONObject jo,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("FilePathServiceImpl-->getUploadFileByLimit():jo="+jo.toString());
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", 10); //每页的大小
 		int lastId = JsonUtil.getIntValue(jo, "last_id");

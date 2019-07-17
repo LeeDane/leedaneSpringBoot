@@ -1,40 +1,23 @@
 package com.cn.leedane.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.cn.leedane.handler.CommonHandler;
-import com.cn.leedane.handler.FriendHandler;
-import com.cn.leedane.handler.NotificationHandler;
-import com.cn.leedane.handler.UserHandler;
-import com.cn.leedane.handler.ZanHandler;
+import com.cn.leedane.handler.*;
 import com.cn.leedane.mapper.ZanMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.ZanBean;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.ZanService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 /**
  * 赞service的实现类
  * @author LeeDane
@@ -68,7 +51,7 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 	
 	@Override
 	public Map<String, Object> addZan(JSONObject jo, UserBean user,
-			HttpServletRequest request){
+			HttpRequestInfoBean request){
 		//{\"table_name\":\"t_mood\", \"table_id\":1}
 		logger.info("ZanServiceImpl-->addZan():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
@@ -125,7 +108,7 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 
 	@Override
 	public List<Map<String, Object>> getLimit(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ZanServiceImpl-->getLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int toUserId = JsonUtil.getIntValue(jo, "toUserId");
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
@@ -201,14 +184,14 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户ID为：",toUserId , ",表名为：", tableName,"，表id为：",tableId,"的赞列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户ID为：",toUserId , ",表名为：", tableName,"，表id为：",tableId,"的赞列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 				
 		return rs;
 	}
 
 	@Override
 	public Map<String, Object> deleteZan(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ZanServiceImpl-->deleteZan():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int zid = JsonUtil.getIntValue(jo, "zid");
 		int createUserId = JsonUtil.getIntValue(jo, "create_user_id");
@@ -254,7 +237,7 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 
 	@Override
 	public Map<String, Object> getAllZanUser(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("ZanServiceImpl-->getAllZanUser():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		int tableId = JsonUtil.getIntValue(jo, "table_id");
@@ -290,7 +273,7 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取表ID为：", tableId, ",表名为：", tableName, "的全部赞用户", StringUtil.getSuccessOrNoStr(true)).toString(), "getAllZanUser()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取表ID为：", tableId, ",表名为：", tableName, "的全部赞用户", StringUtil.getSuccessOrNoStr(true)).toString(), "getAllZanUser()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
 	}
 

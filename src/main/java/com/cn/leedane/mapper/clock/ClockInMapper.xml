@@ -35,4 +35,38 @@
 			limit #{limit}
 		</if>
 	</select>
+
+	<select id="getUserClockIn" resultMap="objectBean">
+		SELECT i.id, i.`status`, i.create_user_id, date_format(i.create_time, '%Y-%m-%d %H:%i:%s') create_time, i.modify_user_id, date_format(i.modify_time, '%Y-%m-%d %H:%i:%s') create_time,
+		i.froms, i.clock_id, i.clock_date, i.location, i.step ,
+		ii.id resource_id, ii.resource, ii.main resource_main, ii.resource_type resource_type,
+		c.create_user_id clock_create_user_id
+		FROM t_clock_in i
+		INNER JOIN t_clock c on c.id = i.clock_id and c.`status` = 1
+		LEFT JOIN t_clock_in_resources ii ON ii.clock_in_id = i.id and ii.`status` = 1
+		WHERE i.clock_id = #{clockId} AND i.clock_date = date_format(#{date}, '%Y-%m-%d') AND i.create_user_id = #{toUserId}
+	</select>
+
+	<resultMap type="com.cn.leedane.display.clock.ClockInDisplay" id="objectBean">
+		<id property="id" column="id"/>
+		<result property="status" column="status"/>
+		<result property="createUserId" column="create_user_id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="modifyUserId" column="modify_user_id"/>
+		<result property="modifyTime" column="modify_time"/>
+		<result property="froms" column="froms"/>
+		<result property="clockId" column="clock_id"/>
+		<result property="clockDate" column="clock_date"/>
+		<result property="clockCreateUserId" column="clock_create_user_id"/>
+		<result property="location" column="location"/>
+		<result property="step" column="step"/>
+		<collection property="resources" ofType="com.cn.leedane.display.clock.ClockInResourceDisplay">
+			<!-- id:订单明细唯一标识
+                property:要将订单明细的唯一标识映射到cn.higgin.mybatis.po.Orderdetail的对应属性 -->
+			<id property="id" column="resource_id"/>
+			<result property="resource" column="resource"/>
+			<result property="main" column="resource_main"/>
+			<result property="resourceType" column="resource_type"/>
+		</collection>
+	</resultMap>
 </mapper>

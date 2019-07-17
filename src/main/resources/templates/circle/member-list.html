@@ -8,10 +8,14 @@
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
 	
 	<!-- 正式环境下的cdn引用-->
-	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{//cdn.bootcss.com/bootstrap-switch/3.3.4/css/bootstrap3/bootstrap-switch.min.css}"/>
+	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{//cdn.staticfile.org/bootstrap-switch/3.3.4/css/bootstrap3/bootstrap-switch.min.css}"/>
 	<!-- 测试环境下的引用 -->
 	<link rel="stylesheet" th:if="${isDebug}"  th:href="@{/page/other/bootstrap-switch-master/dist/css/bootstrap3/bootstrap-switch.min.css}" />
-	<link rel="stylesheet" href="/page/other/layui-v2.1.5/css/layui.css"  media="all" />
+
+
+	<link th:if="${not isDebug}" rel="stylesheet" href="//www.layuicdn.com/layui-v2.1.5/css/layui.css"  media="all" />
+	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.1.5/css/layui.css"  media="all" />
+
 	<!-- <link rel="stylesheet" th:href="@{/page/other/layui/css/layui.css}" media="all" /> -->
 	<style type="text/css">
 		

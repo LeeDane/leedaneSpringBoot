@@ -1,15 +1,14 @@
 package com.cn.leedane.service;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UploadBean;
 import com.cn.leedane.model.UserBean;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
 /**
  * 断点续传Service类
  * @author LeeDane
@@ -26,7 +25,7 @@ public interface UploadService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public boolean addUpload(UploadBean upload, UserBean user, HttpServletRequest request);
+	public boolean addUpload(UploadBean upload, UserBean user, HttpRequestInfoBean request);
 
 	
 
@@ -37,7 +36,7 @@ public interface UploadService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public boolean cancel(UploadBean upload, UserBean user, HttpServletRequest request) ;
+	public boolean cancel(UploadBean upload, UserBean user, HttpRequestInfoBean request) ;
 
 
 
@@ -52,5 +51,5 @@ public interface UploadService<T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<Map<String, Object>> getOneUpload(String tableUuid, String tableName, int order, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 }

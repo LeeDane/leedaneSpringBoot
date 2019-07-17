@@ -1,8 +1,11 @@
 package com.cn.leedane.rabbitmq.recieve;
 
 import com.cn.leedane.mapper.OperateLogMapper;
+import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.springboot.SpringUtil;
+import com.cn.leedane.thread.ThreadUtil;
+import com.cn.leedane.thread.single.EsIndexAddThread;
 
 /**
  * 日志消费者
@@ -31,6 +34,10 @@ public class LogRecieve implements IRecieve{
 			OperateLogBean opLogBean = (OperateLogBean)obj;
 			OperateLogMapper operateLogMapper = (OperateLogMapper) SpringUtil.getBean("operateLogMapper");
 			success = operateLogMapper.save(opLogBean) > 0;
+			if(success){
+				//再次异步去添加ES索引
+				new ThreadUtil().singleTask(new EsIndexAddThread<OperateLogBean>(opLogBean));
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}

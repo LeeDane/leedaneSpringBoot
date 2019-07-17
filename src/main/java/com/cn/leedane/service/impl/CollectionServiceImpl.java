@@ -1,36 +1,28 @@
 package com.cn.leedane.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CommonHandler;
 import com.cn.leedane.handler.FriendHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.CollectionMapper;
 import com.cn.leedane.model.CollectionBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.CollectionService;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 /**
  * 收藏夹service的实现类
  * @author LeeDane
@@ -58,7 +50,7 @@ public class CollectionServiceImpl extends AdminRoleCheckService implements Coll
 	
 	@Override
 	public Map<String, Object> addCollect(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+										  HttpRequestInfoBean request) {
 		//{\"table_name\":\""+DataTableType.心情.value+"\", \"table_id\":123}
 		logger.info("CollectionServiceImpl-->addCollect():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
@@ -92,7 +84,7 @@ public class CollectionServiceImpl extends AdminRoleCheckService implements Coll
 	
 	@Override
 	public Map<String, Object> deleteCollection(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CollectionServiceImpl-->deleteCollection():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int cid = JsonUtil.getIntValue(jo, "cid");
 		//int createUserId = JsonUtil.getIntValue(jo, "create_user_id");
@@ -121,7 +113,7 @@ public class CollectionServiceImpl extends AdminRoleCheckService implements Coll
 
 	@Override
 	public List<Map<String, Object>> getLimit(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CollectionServiceImpl-->getLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		int toUserId = JsonUtil.getIntValue(jo, "toUserId");
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
@@ -196,7 +188,7 @@ public class CollectionServiceImpl extends AdminRoleCheckService implements Coll
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户ID为：",toUserId, "的收藏列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"读取用户：", userHandler.getUserName(toUserId), "的收藏列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 				
 		return rs;
 	}

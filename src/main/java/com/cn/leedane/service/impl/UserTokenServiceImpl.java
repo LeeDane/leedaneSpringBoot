@@ -1,17 +1,8 @@
 package com.cn.leedane.service.impl;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.UserTokenMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.UserTokenBean;
@@ -21,6 +12,14 @@ import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.ResponseMap;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 用户与token关系service实现类
@@ -45,7 +44,7 @@ public class UserTokenServiceImpl implements UserTokenService<UserTokenBean> {
 	private OperateLogService<OperateLogBean> operateLogService;
 
 	@Override
-	public List<UserTokenBean> getUserToken(UserBean user, String token, HttpServletRequest request) {
+	public List<UserTokenBean> getUserToken(UserBean user, String token, HttpRequestInfoBean request) {
 		logger.info("UserTokenServiceImpl-->getUserToken():createUserId="+ user.getId() +",token="+token);
 		if(!userHandler.hasToken(user.getId(), token)){
 			return userTokenMapper.getUserToken(user.getId(), ConstantsUtil.STATUS_NORMAL, token, DateUtil.getCurrentTime());
@@ -60,7 +59,7 @@ public class UserTokenServiceImpl implements UserTokenService<UserTokenBean> {
 
 	@Override
 	public ResponseMap addUserToken(UserBean user, String token,
-			Date overdue, HttpServletRequest request) {
+			Date overdue, HttpRequestInfoBean request) {
 		logger.info("UserTokenServiceImpl-->addUserToken():createUserId="+user.getId()+",token="+token);
 		ResponseMap message = new ResponseMap();
 		UserTokenBean userTokenBean = new UserTokenBean();
@@ -75,7 +74,7 @@ public class UserTokenServiceImpl implements UserTokenService<UserTokenBean> {
 			if(userHandler.addTokenCode(userTokenBean)){
 				message.put("isSuccess", true);
 				//保存操作日志
-				operateLogService.saveOperateLog(user, request, null, "用户id为"+ user.getId()+"添加token成功", "addUserToken()", ConstantsUtil.STATUS_NORMAL, 0);
+//				operateLogService.saveOperateLog(user, request, null, "用户id为"+ user.getId()+"添加token成功", "addUserToken()", ConstantsUtil.STATUS_NORMAL, 0);
 				message.put("message", "添加token成功！");
 				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);	
 				return message;
@@ -83,7 +82,7 @@ public class UserTokenServiceImpl implements UserTokenService<UserTokenBean> {
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, "用户id为"+ user.getId()+"添加token失败", "addUserToken()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, "用户id为"+ user.getId()+"添加token失败", "addUserToken()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		return message;

@@ -1,22 +1,4 @@
 package com.cn.leedane.service.impl.circle;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.exception.RE404Exception;
@@ -26,35 +8,28 @@ import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.handler.circle.CircleMemberHandler;
 import com.cn.leedane.handler.circle.CirclePostHandler;
 import com.cn.leedane.handler.circle.CircleSettingHandler;
-import com.cn.leedane.mapper.circle.CircleClockInMapper;
-import com.cn.leedane.mapper.circle.CircleContributionMapper;
-import com.cn.leedane.mapper.circle.CircleCreateLimitMapper;
-import com.cn.leedane.mapper.circle.CircleMapper;
-import com.cn.leedane.mapper.circle.CircleMemberMapper;
-import com.cn.leedane.mapper.circle.CircleSettingMapper;
+import com.cn.leedane.mapper.circle.*;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.VisitorBean;
-import com.cn.leedane.model.circle.CircleBean;
-import com.cn.leedane.model.circle.CircleMemberBean;
-import com.cn.leedane.model.circle.CircleSettingBean;
-import com.cn.leedane.model.circle.CircleUserPostBean;
-import com.cn.leedane.model.circle.CircleUserPostsBean;
+import com.cn.leedane.model.circle.*;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.service.circle.CircleService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.RelativeDateFormat;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * 圈子service实现类
@@ -131,18 +106,18 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	@Value("${constant.circle.member.max}")
     public int memberMax;
-	
+
 	@Override
-	public Map<String, Object> init(UserBean user, HttpServletRequest request) {
+	public Map<String, Object> init(UserBean user, HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->init(), user=" +(user != null ? user.getAccount(): "用户还未登录"));
 		ResponseMap message = new ResponseMap();
 		message.put("score", 10003); //获取总的贡献值
-		
+
 		if(user != null){
 			List<CircleBean> circleBeans = circleHandler.getAllCircles(user);
 			List<Map<String, Object>> allCircles = new ArrayList<Map<String,Object>>(4);
 			int myCircleNumber = 0, allCircleNumber = 0;
-			
+
 			if(CollectionUtil.isNotEmpty(circleBeans)){
 				allCircleNumber = circleBeans.size();
 				int count = 0;
@@ -160,20 +135,20 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 					}
 					if(count < 4)
 						allCircles.add(cc);
-					
+
 					count++;
 				}
 			}
-			
+
 			message.put("myCircleNumber", myCircleNumber); //获取我的圈子数量		
 			message.put("allCircleNumber", allCircleNumber); //获取所有的圈子数量
 			message.put("allCircles", allCircles); //获取所有的圈子
-			
+
 			//获取该用户的帖子列表
 			CircleUserPostsBean circleUserPosts = circlePostHandler.getUserCirclePosts(user.getId());
 			message.put("circleUserPosts", circleUserPosts);
 		}
-		
+
 		//获取热门帖子
 		CircleUserPostsBean hotestPosts = circlePostHandler.getHotestPosts();
 		if(hotestPosts != null && CollectionUtil.isNotEmpty(hotestPosts.getPosts())){
@@ -183,11 +158,11 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 				}else{
 					post.setImgs(DEFAULT_NO_PIC_PATH);
 				}
-				
+
 			}
 		}
 		message.put("hotestPosts", hotestPosts);
-		
+
 		try {
 			message.put("hotests", circleHandler.getHostest().getCircleBeans());//获取热门的圈子
 			message.put("newests", circleHandler.getNestest().getCircleBeans()); //获取最新的圈子
@@ -197,15 +172,15 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-				
+
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr((user != null ? user.getAccount(): "用户还未登录"), "获取自己所有圈子的初始化数据"), "init()", ConstantsUtil.STATUS_NORMAL, 0);
-				
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr((user != null ? user.getAccount(): "用户还未登录"), "获取自己所有圈子的初始化数据"), "init()", ConstantsUtil.STATUS_NORMAL, 0);
+
 		return message.getMap();
 	}
 	
 	@Override
-	public Map<String, Object> main(CircleBean circle, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> main(CircleBean circle, UserBean user, HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->main(), user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
@@ -254,7 +229,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	}
 	
 	@Override
-	public Map<String, Object> memberListInit(CircleBean circle, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> memberListInit(CircleBean circle, UserBean user, HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->memberListInit(), user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
@@ -299,7 +274,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	@Override
 	public Map<String, Object> check(JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->check(), user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		int number = circleCreateLimitMapper.getNumber(user.getId(), ConstantsUtil.STATUS_NORMAL);
@@ -317,7 +292,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	@Override
 	public Map<String, Object> create(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->create():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		
 		String name = JsonUtil.getStringValue(jo, "name"); //圈子的名称
@@ -392,7 +367,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 
 	@Override
 	public Map<String, Object> update(int circleId, JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
@@ -430,7 +405,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 
 	@Override
 	public Map<String, Object> delete(int cid, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->delete():cid=" +cid +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		
@@ -461,7 +436,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	@Override
 	public Map<String, Object> paging(JSONObject jsonObject, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->paging():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		int pageSize = JsonUtil.getIntValue(jsonObject, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -491,7 +466,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		message.put("total", circleMapper.getAllCircles(user.getId(), ConstantsUtil.STATUS_NORMAL).size());
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取圈子列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取圈子列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);
@@ -500,7 +475,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	@Override
 	public Map<String, Object> joinCheck(int circleId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->joinCheck():circleId="+circleId);
 		ResponseMap message = new ResponseMap();
 		if(circleId < 1){
@@ -556,7 +531,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	@Override
 	public Map<String, Object> join(int circleId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->join():circleId="+circleId +", json="+ json);
 		ResponseMap message = new ResponseMap();
 		if(circleId < 1){
@@ -638,14 +613,14 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	@Override
 	public void saveVisitLog(int circleId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->saveVisitLog() , circleId= "+ circleId +", --" + (user == null ? "" : user.getAccount()));
 		visitorService.saveVisitor(user, "web网页端", DataTableType.圈子.value, circleId, ConstantsUtil.STATUS_NORMAL);
 	}
 	
 	@Override
 	public Map<String, Object> leave(int circleId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->leave():circleId="+circleId);
 		ResponseMap message = new ResponseMap();
 		
@@ -681,13 +656,13 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	@Override
 	public Map<String, Object> admins(int cid, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->admins():cid="+cid);
 		ResponseMap message = new ResponseMap();
 		List<Map<String, Object>> rs = circleMemberMapper.getAllMembers(cid, ConstantsUtil.STATUS_NORMAL);
 				
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取圈子id为", cid, "的管理员列表").toString(), "roles()", ConstantsUtil.STATUS_NORMAL, 0);		
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取圈子id为", cid, "的管理员列表").toString(), "roles()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);
@@ -697,7 +672,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 
 	@Override
 	public Map<String, Object> allot(int circleId, String admins, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->allot():circleId="+circleId +", admins="+ admins);
 		
 		ResponseMap message = new ResponseMap();
@@ -753,7 +728,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	@Override
 	public Map<String, Object> initialize(int circleId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->initialize():circleId="+circleId);
 		
 		ResponseMap message = new ResponseMap();

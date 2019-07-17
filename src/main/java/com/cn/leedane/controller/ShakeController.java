@@ -1,12 +1,13 @@
 package com.cn.leedane.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.lucene.solr.UserSolrHandler;
+import com.cn.leedane.model.BlogBean;
+import com.cn.leedane.model.MoodBean;
+import com.cn.leedane.service.BlogService;
+import com.cn.leedane.service.MoodService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.ResponseMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -17,14 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.lucene.solr.UserSolrHandler;
-import com.cn.leedane.model.BlogBean;
-import com.cn.leedane.model.MoodBean;
-import com.cn.leedane.service.BlogService;
-import com.cn.leedane.service.MoodService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * 摇一摇相关的controller处理类
@@ -55,7 +53,7 @@ public class ShakeController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(userService.shakeSearch(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(userService.shakeSearch(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -70,7 +68,7 @@ public class ShakeController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(moodService.shakeSearch(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(moodService.shakeSearch(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -85,7 +83,7 @@ public class ShakeController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.shakeSearch(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(blogService.shakeSearch(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -121,7 +119,7 @@ public class ShakeController extends BaseController{
 	/**
 	 * 获取指定类型搜索的数量
 	 * 查询的类型，目前支持0、全部，1、博客（正文和标题），2、说说(正文)，3、用户(姓名，中文名，邮件，手机号码,证件号码)
-	 * @param type
+	 * @param tempId
 	 * @return
 	 */
 	private int getSearchRows(int tempId){

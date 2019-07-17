@@ -1,17 +1,4 @@
 package com.cn.leedane.service.impl.circle;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CommentHandler;
@@ -24,36 +11,24 @@ import com.cn.leedane.handler.circle.CircleSettingHandler;
 import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.mapper.circle.CircleMemberMapper;
 import com.cn.leedane.mapper.circle.CirclePostMapper;
-import com.cn.leedane.model.CommentBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.VisitorBean;
-import com.cn.leedane.model.ZanBean;
-import com.cn.leedane.model.circle.CircleBean;
-import com.cn.leedane.model.circle.CircleContributionBean;
-import com.cn.leedane.model.circle.CircleMemberBean;
-import com.cn.leedane.model.circle.CirclePostBean;
-import com.cn.leedane.model.circle.CircleSettingBean;
-import com.cn.leedane.service.AdminRoleCheckService;
-import com.cn.leedane.service.CommentService;
-import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.service.VisitorService;
-import com.cn.leedane.service.ZanService;
+import com.cn.leedane.model.*;
+import com.cn.leedane.model.circle.*;
+import com.cn.leedane.service.*;
 import com.cn.leedane.service.circle.CircleContributionService;
 import com.cn.leedane.service.circle.CirclePostService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.JsoupUtil;
-import com.cn.leedane.utils.MardownUtil;
-import com.cn.leedane.utils.RelativeDateFormat;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 帖子service实现类
@@ -112,7 +87,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	
 	@Override
 	public Map<String, Object> add(int circleId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->add(), circleId= " + circleId +",user=" +user.getAccount());
 		SqlUtil sqlUtil = new SqlUtil();
 		CirclePostBean circlePostBean = (CirclePostBean) sqlUtil.getBean(json, CirclePostBean.class);
@@ -184,7 +159,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	
 	@Override
 	public Map<String, Object> update(int circleId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->update(), circleId= " + circleId +",user=" +user.getAccount());
 		
 		ResponseMap message = new ResponseMap();
@@ -230,7 +205,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 
 	@Override
 	public Map<String, Object> paging(int circleId, JSONObject json,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->paging():json=" +json.toString());
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		int pageSize = JsonUtil.getIntValue(json, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -273,7 +248,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		message.put("total", SqlUtil.getTotalByList(circlePostMapper.getTotal(DataTableType.帖子.value, " m where circle_id="+ circleId)));
 
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看圈子id为"+circleId+"的帖子", "paging()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看圈子id为"+circleId+"的帖子", "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("isSuccess", true);
 		return message.getMap();
@@ -281,7 +256,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	
 	@Override
 	public Map<String, Object> comment(int circleId, int postId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->comment(), postId= " + postId +",user=" +user.getAccount());
 		CirclePostBean oldCirclePostBean = circlePostHandler.getNormalCirclePostBean(circleId, postId);
 		if(oldCirclePostBean == null)
@@ -311,7 +286,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	
 	@Override
 	public Map<String, Object> transmit(int circleId, int postId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->transmit(), postId= " + postId +",user=" +user.getAccount());
 		CirclePostBean oldCirclePostBean = circlePostHandler.getNormalCirclePostBean(circleId, postId);
 		if(oldCirclePostBean == null)
@@ -370,7 +345,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 
 	@Override
 	public Map<String, Object> zan(int circleId, int postId, JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->zan(), postId= " + postId +",user=" +user.getAccount());
 		CirclePostBean oldCirclePostBean = circlePostHandler.getNormalCirclePostBean(circleId, postId);
 		if(oldCirclePostBean == null)
@@ -400,7 +375,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	}
 	
 	@Override
-	public Map<String, Object> delete(int circleId, int postId, JSONObject json, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> delete(int circleId, int postId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->delete(), postId= " + postId +",user=" +user.getAccount());
 		CirclePostBean circlePostBean = circlePostHandler.getNormalCirclePostBean(circleId, postId);
 		if(circlePostBean == null)
@@ -457,7 +432,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	
 	@Override
 	public Map<String, Object> initDetail(CircleBean circle, CirclePostBean post,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->initDetail(), user=" +(user != null ? user.getAccount(): "用户还未登录"));
 		ResponseMap message = new ResponseMap();
 		message.put("circle", circle);
@@ -503,14 +478,14 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 
 	@Override
 	public void saveVisitLog(int postId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->saveVisitLog() , postId= "+ postId +", --" + (user == null ? "" : user.getAccount()));
 		
 		visitorService.saveVisitor(user, "web网页端", DataTableType.帖子.value, postId, ConstantsUtil.STATUS_NORMAL);
 	}
 	
 	@Override
-	public Map<String, Object> noCheckTotal(int circleId, JSONObject json, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> noCheckTotal(int circleId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->noCheckTotal(), circleId= " + circleId +",user=" +user.getAccount());
 		circleHandler.getNormalCircleBean(circleId, user);
 		
@@ -532,7 +507,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	}
 	
 	@Override
-	public Map<String, Object> noCheckList(int circleId, JSONObject json, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> noCheckList(int circleId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->noCheckList(), circleId= " + circleId +",user=" +user.getAccount());
 		circleHandler.getNormalCircleBean(circleId, user);
 		
@@ -570,7 +545,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	}
 	
 	@Override
-	public Map<String, Object> check(int circleId, int postId, JSONObject json, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> check(int circleId, int postId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->check(), circleId= " + circleId +", postId= "+ postId +",user=" +user.getAccount());
 		CirclePostBean circlePostBean = circlePostHandler.getCirclePostBean(postId, user);
 		if(circlePostBean == null)

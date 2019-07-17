@@ -1,20 +1,34 @@
 package com.cn.leedane.service.impl;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.cache.SystemCache;
+import com.cn.leedane.chat_room.ScanLoginWebSocket;
+import com.cn.leedane.controller.UserController;
+import com.cn.leedane.enums.NotificationType;
+import com.cn.leedane.exception.ErrorException;
+import com.cn.leedane.exception.MobCodeErrorException;
+import com.cn.leedane.exception.RE404Exception;
+import com.cn.leedane.handler.*;
+import com.cn.leedane.mapper.FanMapper;
+import com.cn.leedane.mapper.FilePathMapper;
+import com.cn.leedane.mapper.UserMapper;
+import com.cn.leedane.message.ISendNotification;
+import com.cn.leedane.message.SendNotificationImpl;
+import com.cn.leedane.message.notification.Notification;
+import com.cn.leedane.mob.sms.utils.MobClient;
+import com.cn.leedane.model.*;
+import com.cn.leedane.model.circle.CircleSettingBean;
+import com.cn.leedane.rabbitmq.SendMessage;
+import com.cn.leedane.rabbitmq.send.EmailSend;
+import com.cn.leedane.rabbitmq.send.ISend;
+import com.cn.leedane.redis.util.RedisUtil;
+import com.cn.leedane.service.*;
+import com.cn.leedane.springboot.ElasticSearchUtil;
+import com.cn.leedane.thread.ThreadUtil;
+import com.cn.leedane.thread.single.EsIndexAddThread;
+import com.cn.leedane.utils.*;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.EnumUtil.EmailType;
 import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.UnknownSessionException;
@@ -26,63 +40,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.cache.SystemCache;
-import com.cn.leedane.chat_room.ScanLoginWebSocket;
-import com.cn.leedane.controller.UserController;
-import com.cn.leedane.enums.NotificationType;
-import com.cn.leedane.exception.ErrorException;
-import com.cn.leedane.exception.MobCodeErrorException;
-import com.cn.leedane.exception.RE404Exception;
-import com.cn.leedane.handler.CommentHandler;
-import com.cn.leedane.handler.FanHandler;
-import com.cn.leedane.handler.FriendHandler;
-import com.cn.leedane.handler.NotificationHandler;
-import com.cn.leedane.handler.SignInHandler;
-import com.cn.leedane.handler.TransmitHandler;
-import com.cn.leedane.handler.UserHandler;
-import com.cn.leedane.lucene.solr.UserSolrHandler;
-import com.cn.leedane.mapper.FanMapper;
-import com.cn.leedane.mapper.FilePathMapper;
-import com.cn.leedane.mapper.UserMapper;
-import com.cn.leedane.message.ISendNotification;
-import com.cn.leedane.message.SendNotificationImpl;
-import com.cn.leedane.message.notification.Notification;
-import com.cn.leedane.mob.sms.utils.MobClient;
-import com.cn.leedane.model.EmailBean;
-import com.cn.leedane.model.FilePathBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.ScoreBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.circle.CircleSettingBean;
-import com.cn.leedane.rabbitmq.SendMessage;
-import com.cn.leedane.rabbitmq.send.EmailSend;
-import com.cn.leedane.rabbitmq.send.ISend;
-import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.service.AdminRoleCheckService;
-import com.cn.leedane.service.FilePathService;
-import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.service.ScoreService;
-import com.cn.leedane.service.UserService;
-import com.cn.leedane.thread.ThreadUtil;
-import com.cn.leedane.thread.single.SolrAddThread;
-import com.cn.leedane.thread.single.SolrDeleteThread;
-import com.cn.leedane.thread.single.SolrUpdateThread;
-import com.cn.leedane.utils.Base64ImageUtil;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EmailUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.EnumUtil.EmailType;
-import com.cn.leedane.utils.FileUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.MD5Util;
-import com.cn.leedane.utils.RSACoder;
-import com.cn.leedane.utils.RSAKeyUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SessionManagerUtil;
-import com.cn.leedane.utils.StringUtil;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * 用户service实现类
@@ -152,8 +114,9 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	
 	@Value("${constant.first.sign.in}")
     public int firstSignInNumber;
-	
-	
+
+	@Autowired
+	private ElasticSearchUtil elasticSearchUtil;
 	@Override
 	public UserBean findById(int uid) {
 		return userMapper.findById(UserBean.class, uid);
@@ -196,9 +159,11 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}else{
 			boolean isSave = userMapper.save(user) > 0;
 			if(isSave){
-				
+				//添加ES缓存
+				new ThreadUtil().singleTask(new EsIndexAddThread<UserBean>(user));
+
 				//异步添加用户solr索引
-				new ThreadUtil().singleTask(new SolrAddThread<UserBean>(UserSolrHandler.getInstance(), user));
+//				new ThreadUtil().singleTask(new SolrAddThread<UserBean>(UserSolrHandler.getInstance(), user));
 				//UserSolrHandler.getInstance().addBean(user);
 				
 				saveRegisterScore(user);
@@ -253,10 +218,13 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 				 user.setStatus(ConstantsUtil.STATUS_NORMAL);
 				 boolean result = updateUserState(user);
 				 
-				 if(result)
-					//异步更新用户solr索引
-					new ThreadUtil().singleTask(new SolrUpdateThread<UserBean>(UserSolrHandler.getInstance(), user));
+				 if(result){
+					 //添加ES缓存
+					 new ThreadUtil().singleTask(new EsIndexAddThread<UserBean>(user));
+					 //异步更新用户solr索引
+//					new ThreadUtil().singleTask(new SolrUpdateThread<UserBean>(UserSolrHandler.getInstance(), user));
 					 //UserSolrHandler.getInstance().updateBean(user);
+				 }
 				 return result;
 			 }else
 				 return false;
@@ -266,7 +234,15 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	@Override
 	public boolean updateUserState(UserBean user) {		
 		logger.info("UserServiceImpl-->updateUserState()");
-		return userMapper.update(user) > 0;
+		if(userMapper.update(user) > 0){
+			//删除ES缓存
+			elasticSearchUtil.delete(DataTableType.用户.value, user.getId());
+			//添加ES缓存
+			new ThreadUtil().singleTask(new EsIndexAddThread<UserBean>(user));
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -373,15 +349,15 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public String getHeadBase64StrById(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		
 		logger.info("UserServiceImpl-->获取用户头像字符串:jo="+jo.toString()+",user_Account="+user.getAccount());
 		String filePath = getHeadFilePathStrById(jo, user, request);;
 		//根据路径获取base64字符串
 		if(!StringUtil.isNull(filePath)){
-			filePath = ConstantsUtil.DEFAULT_SAVE_FILE_FOLDER + "file//" + filePath;
+			filePath = ConstantsUtil.getDefaultSaveFileFolder() + "file"+ File.separator + filePath;
 			//保存操作日志
-			operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取头像base64字符串", "getHeadBase64StrById", ConstantsUtil.STATUS_NORMAL, 0);
+//			operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取头像base64字符串", "getHeadBase64StrById", ConstantsUtil.STATUS_NORMAL, 0);
 			try {
 				return Base64ImageUtil.convertImageToBase64(filePath, null);
 			} catch (IOException e) {
@@ -394,7 +370,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public boolean uploadHeadBase64StrById(JSONObject jo, UserBean user,
-			HttpServletRequest request){
+			HttpRequestInfoBean request){
 		logger.info("UserServiceImpl-->用户上传头像():jo="+jo.toString()+",user_Account="+user.getAccount());
 		String base64 = JsonUtil.getStringValue(jo, "base64");
 		if(StringUtil.isNull(base64))
@@ -405,7 +381,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public String getHeadFilePathStrById(JSONObject jo, UserBean user,
-			HttpServletRequest request){
+			HttpRequestInfoBean request){
 		logger.info("UserServiceImpl-->获取用户头像路径:jo="+jo.toString()+",user_Account="+user.getAccount());
 		int uid = JsonUtil.getIntValue(jo, "uid");
 		String size = JsonUtil.getStringValue(jo, "pic_size");
@@ -419,7 +395,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	}
 
 	@Override
-	public Map<String,Object> checkAccount(JSONObject jo, HttpServletRequest request,
+	public Map<String,Object> checkAccount(JSONObject jo, HttpRequestInfoBean request,
 			UserBean user) {
 		logger.info("UserServiceImpl-->checkAccount():jo="+jo.toString());
 		String account = JsonUtil.getStringValue(jo, "account");
@@ -444,7 +420,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	}
 	
 	@Override
-	public boolean checkMobilePhone(JSONObject jo, HttpServletRequest request,
+	public boolean checkMobilePhone(JSONObject jo, HttpRequestInfoBean request,
 			UserBean user) {
 		logger.info("UserServiceImpl-->checkPhone():jo="+jo.toString());
 		String mobilePhone = JsonUtil.getStringValue(jo, "mobilePhone");
@@ -456,7 +432,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	}
 	
 	@Override
-	public boolean checkEmail(JSONObject jo, HttpServletRequest request,
+	public boolean checkEmail(JSONObject jo, HttpRequestInfoBean request,
 			UserBean user) {
 		logger.info("UserServiceImpl-->checkEmail():jo="+jo.toString());
 		String email = JsonUtil.getStringValue(jo, "email");
@@ -471,7 +447,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public Map<String, Object> getPhoneRegisterCode(JSONObject jo,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->getPhoneRegisterCode():jo="+jo.toString());
 		String mobilePhone = JsonUtil.getStringValue(jo, "mobilePhone");
 		
@@ -492,7 +468,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(null, request, null, "手机号码："+mobilePhone+"用户获取注册验证码", "getPhoneRegisterCode", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(null, request, null, "手机号码："+mobilePhone+"用户获取注册验证码", "getPhoneRegisterCode", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		List<String> list = RedisUtil.getInstance().getMap("register_"+mobilePhone, "validationCode", "createTime", "endTime");
 		if(list.size() > 0){
@@ -533,7 +509,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		return message.getMap();
 	}
 	@Override
-	public Map<String, Object> getPhoneLoginCode(String mobilePhone, HttpServletRequest request) {
+	public Map<String, Object> getPhoneLoginCode(String mobilePhone, HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->getPhoneLoginCode():mobilePhone="+mobilePhone);
 		ResponseMap message = new ResponseMap();
 		boolean result = false;
@@ -545,7 +521,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(null, request, null, "手机号码："+mobilePhone+"用户获取手机登录验证码", "getPhoneLoginCode", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(null, request, null, "手机号码："+mobilePhone+"用户获取手机登录验证码", "getPhoneLoginCode", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		List<String> list = RedisUtil.getInstance().getMap("login_"+mobilePhone, "validationCode", "createTime", "endTime");
 		if(list.size() > 0){
@@ -592,7 +568,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		return message.getMap();
 	}
 	@Override
-	public UserBean registerByPhone(JSONObject jo, HttpServletRequest request) {
+	public UserBean registerByPhone(JSONObject jo, HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->registerByPhone():jo="+jo.toString());
 		//{'validationCode':253432,'mobilePhone':172636634664,'account':'leedane','email':'825711424@qq.com','password':'123'}
 		String validationCode = JsonUtil.getStringValue(jo, "validationCode");
@@ -629,7 +605,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	}
 	
 	@Override
-	public UserBean loginByPhone(JSONObject jo, HttpServletRequest request) {
+	public UserBean loginByPhone(JSONObject jo, HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->loginByPhone():jo="+jo.toString());
 		//{'validationCode':253432,'mobilePhone':172636634664}
 		String validationCode = JsonUtil.getStringValue(jo, "validationCode");
@@ -734,7 +710,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public Map<String, Object> getUserInfoData(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->getUserInfoData():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		
@@ -751,7 +727,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			map.put("fans", fans.size());
 		rs.add(map);
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取自己的基本数据").toString(), "getUserInfoData()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取自己的基本数据").toString(), "getUserInfoData()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("isSuccess", true);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -760,7 +736,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public Map<String, Object> registerByPhoneNoValidate(JSONObject jo,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->registerByPhoneNoValidate():jo="+jo.toString());
 		String account = JsonUtil.getStringValue(jo, "account");
 		String password = JsonUtil.getStringValue(jo, "password");
@@ -828,13 +804,15 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		user.setMobilePhone(phone);
 		user.setRegisterTime(new Date());
 		user.setScore(firstSignInNumber);
-		user.setSecretCode("");
+		user.setSecretCode("register"+UUID.randomUUID().toString());
 		boolean result = userMapper.save(user) > 0;
 		if(result){
 			saveRegisterScore(user);
-			
+			//添加ES缓存
+			new ThreadUtil().singleTask(new EsIndexAddThread<UserBean>(user));
+
 			//异步添加用户solr索引
-			new ThreadUtil().singleTask(new SolrAddThread<UserBean>(UserSolrHandler.getInstance(), user));
+//			new ThreadUtil().singleTask(new SolrAddThread<UserBean>(UserSolrHandler.getInstance(), user));
 			//UserSolrHandler.getInstance().addBean(user);
 			
 			message.put("isSuccess", result);
@@ -853,7 +831,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public Map<String, Object> search(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->search():jo="+jo.toString());
 		String searchKey = JsonUtil.getStringValue(jo, "searchKey");
 		ResponseMap message = new ResponseMap();
@@ -886,7 +864,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	
 	@Override
 	public Map<String, Object> webSearch(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->webSearch():jo="+jo.toString());
 		String searchKey = JsonUtil.getStringValue(jo, "search_key");
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", 25); //默认获取25条最符合条件的记录
@@ -961,7 +939,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	
 	@Override
 	public Map<String, Object> shakeSearch(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->shakeSearch():jo="+jo.toString());
 		int userId = 0; //获取到的用户的ID
 		ResponseMap message = new ResponseMap();
@@ -979,7 +957,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 			
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "摇一摇搜索，得到用户Id为"+ userId, StringUtil.getSuccessOrNoStr(userId > 0)).toString(), "shakeSearch()", StringUtil.changeBooleanToInt(userId > 0), 0);	
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "摇一摇搜索，得到用户Id为"+ userId, StringUtil.getSuccessOrNoStr(userId > 0)).toString(), "shakeSearch()", StringUtil.changeBooleanToInt(userId > 0), 0);
 		
 		return message.getMap();
 	}
@@ -987,7 +965,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public Map<String, Object> updateUserBase(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->updateUserBase():jo="+jo.toString());
 		String sex = JsonUtil.getStringValue(jo, "sex");
 		String mobilePhone = JsonUtil.getStringValue(jo, "mobile_phone");
@@ -1013,9 +991,12 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		
 		boolean result = userMapper.update(user) > 0;
 		if(result){
-			
+
+			//添加ES缓存
+			new ThreadUtil().singleTask(new EsIndexAddThread<UserBean>(user));
+
 			//异步修改用户solr索引
-			new ThreadUtil().singleTask(new SolrUpdateThread<UserBean>(UserSolrHandler.getInstance(), user));
+//			new ThreadUtil().singleTask(new SolrUpdateThread<UserBean>(UserSolrHandler.getInstance(), user));
 			//UserSolrHandler.getInstance().updateBean(user);
 			
 			message.put("isSuccess", result);
@@ -1037,7 +1018,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	
 	@Override
 	public Map<String, Object> adminUpdateUserBase(JSONObject jo, final UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->adminUpdateUserBase():jo="+jo.toString());
 
 		ResponseMap message = new ResponseMap();
@@ -1073,9 +1054,11 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			if(status != ConstantsUtil.STATUS_NORMAL){
 				SessionManagerUtil.getInstance().removeSession(updateUserBean.getId());
 			}
-			
+
+			//添加ES缓存
+			new ThreadUtil().singleTask(new EsIndexAddThread<UserBean>(user));
 			//异步修改用户solr索引
-			new ThreadUtil().singleTask(new SolrUpdateThread<UserBean>(UserSolrHandler.getInstance(), user));
+//			new ThreadUtil().singleTask(new SolrUpdateThread<UserBean>(UserSolrHandler.getInstance(), user));
 			//UserSolrHandler.getInstance().updateBean(updateUserBean);
 			
 			//通知相关用户
@@ -1099,7 +1082,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public Map<String, Object> updatePassword(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->updatePassword():jo="+jo.toString());
 		
 		//都是经过第一次MD5加密后的字符串
@@ -1145,7 +1128,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	
 	@Override
 	public Map<String, Object> adminResetPassword(JSONObject jo, final UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->adminResetPassword():jo="+jo.toString());
 
 		ResponseMap message = new ResponseMap();
@@ -1227,7 +1210,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public Map<String, Object> searchUserByUserIdOrAccount(JSONObject jo,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->searchUserByUserIdOrAccount():jo=" +jo.toString());
 		
 		int type = JsonUtil.getIntValue(jo, "type", 0);// 0表示ID，1表示名称
@@ -1242,24 +1225,24 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 				message.put("responseCode", EnumUtil.ResponseCode.用户名不能为空.value);
 				return message.getMap();
 			}
-			searchUserId = getUserIdByName(account);
+			searchUserId = userHandler.getUserIdByName(account);
 		}
 		
 		if(searchUserId < 1){
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 		}
 		
-		//执行密码等信息的验证
-		UserBean searchUser = findById(searchUserId);
+		//获取用户信息
+		UserBean searchUser = userHandler.getUserBean(searchUserId);
 
-		if (searchUser != null) {			
+		if (searchUser != null) {
 			// 保存操作日志信息
-			message.put("userinfo", userHandler.getUserInfo(searchUser, false));
+			message.put("userinfo", userHandler.getUserInfo(searchUser, user.getId() == searchUserId));
 			message.put("isSuccess", true);
 		}else{
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 		}
-		
+
 		//处理登录用户是否关注TA
 		if(JsonUtil.getBooleanValue(jo, "fan")){
 			boolean isFan = fanHandler.inAttention(user.getId(), searchUserId);
@@ -1277,7 +1260,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}*/
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户名ID"+searchUserId +"的个人基本信息", "searchUserByUserIdOrAccount()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户名ID"+searchUserId +"的个人基本信息", "searchUserByUserIdOrAccount()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
 	}
 
@@ -1288,7 +1271,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public Map<String, Object> scanLogin(JSONObject jo,
-			final UserBean user, HttpServletRequest request) {
+			final UserBean user, HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->scanLogin():jo=" +jo.toString());		
 		final String cid = JsonUtil.getStringValue(jo, "cid");//获取连接ID
 		ResponseMap message = new ResponseMap();
@@ -1336,8 +1319,8 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			map.put("message", "login");
 			
 			//拿到token码
-			String token = request.getHeader("token");
-			int useridq = StringUtil.changeObjectToInt(request.getHeader("userid"));
+			String token = request.getRequest().getHeader("token");
+			int useridq = StringUtil.changeObjectToInt(request.getRequest().getHeader("userid"));
 			//校验token
 			if(StringUtil.isNotNull(token)){
 				map.put("token", token);
@@ -1361,7 +1344,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	
 	@Override
 	public Map<String, Object> cancelScanLogin(JSONObject jo,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->cancelScanLogin():jo=" +jo.toString());		
 		String cid = JsonUtil.getStringValue(jo, "cid");//获取连接ID
 		ResponseMap message = new ResponseMap();
@@ -1392,7 +1375,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public Map<String, Object> deleteUser(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->deleteUser():jo=" +jo.toString());
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id", user.getId());// 0表示ID，1表示名称
 		ResponseMap message = new ResponseMap();
@@ -1416,9 +1399,11 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户注销成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			message.put("isSuccess", true);
-			
+
+			//删除ES缓存
+			elasticSearchUtil.delete(DataTableType.用户.value, user.getId());
 			//异步删除用户solr索引
-			new ThreadUtil().singleTask(new SolrDeleteThread<UserBean>(UserSolrHandler.getInstance(), String.valueOf(toUserId)));
+//			new ThreadUtil().singleTask(new SolrDeleteThread<UserBean>(UserSolrHandler.getInstance(), String.valueOf(toUserId)));
 			//UserSolrHandler.getInstance().deleteBean(String.valueOf(toUserId));
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
@@ -1432,7 +1417,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public Map<String, Object> sendMessage(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->sendMessage():jo=" +jo.toString());
 		//type: 1为通知，2为邮件，3为私信，4为短信
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id");
@@ -1521,7 +1506,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public Map<String, Object> addUser(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->addUser():jo="+jo.toString());
 
 		ResponseMap message = new ResponseMap();
@@ -1567,8 +1552,12 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		addUserBean.setStatus(ConstantsUtil.STATUS_NORMAL);
 		boolean result = userMapper.insert(addUserBean) > 0;
 		if(result){
+
+			//添加ES缓存
+			new ThreadUtil().singleTask(new EsIndexAddThread<UserBean>(user));
+
 			//异步添加用户solr索引
-			new ThreadUtil().singleTask(new SolrAddThread<UserBean>(UserSolrHandler.getInstance(), user));
+//			new ThreadUtil().singleTask(new SolrAddThread<UserBean>(UserSolrHandler.getInstance(), user));
 			//UserSolrHandler.getInstance().addBean(addUserBean);
 			
 			message.put("isSuccess", result);
@@ -1588,7 +1577,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	@SuppressWarnings("deprecation")
 	@Override
 	public Map<String, Object> uploadUserHeadImageLink(JSONObject jo,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->uploadUserHeadImageLink():jo=" +jo.toString());
 		String link = JsonUtil.getStringValue(jo, "link"); //必须
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id"); //必须
@@ -1676,7 +1665,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	@SuppressWarnings("unused")
 	@Override
 	public Map<String, Object> initSetting(UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->initSetting(), user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 
@@ -1691,7 +1680,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Override
 	public Map<String, Object> actives(JSONObject json, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->actives():jo="+json.toString());
 
 		ResponseMap message = new ResponseMap();
@@ -1729,7 +1718,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("管理员账号为", user.getAccount() , "获取在线用户列表", StringUtil.getSuccessOrNoStr(true)).toString(), "actives()", StringUtil.changeBooleanToInt(true), 0);	
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("管理员账号为", user.getAccount() , "获取在线用户列表", StringUtil.getSuccessOrNoStr(true)).toString(), "actives()", StringUtil.changeBooleanToInt(true), 0);
 		
 		return message.getMap();
 	}

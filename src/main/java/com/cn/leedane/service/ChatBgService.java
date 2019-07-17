@@ -1,16 +1,13 @@
 package com.cn.leedane.service;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 
 /**
  * 聊天背景相关service接口类
@@ -30,7 +27,7 @@ public interface ChatBgService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> paging(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 发布聊天背景
@@ -39,7 +36,7 @@ public interface ChatBgService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> publish(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> publish(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 下载付费版本的聊天背景
@@ -48,5 +45,5 @@ public interface ChatBgService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> addChatBg(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> addChatBg(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 }

@@ -1,16 +1,13 @@
 package com.cn.leedane.service;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 
 /**
  * 聊天相关service接口类
@@ -30,7 +27,7 @@ public interface ChatService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getLimit(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 发送聊天信息
@@ -39,7 +36,7 @@ public interface ChatService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> send(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> send(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 更新聊天信息为已读状态
@@ -48,7 +45,7 @@ public interface ChatService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> updateRead(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> updateRead(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取用户全部未读的信息
@@ -58,7 +55,7 @@ public interface ChatService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> noReadList(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> noReadList(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 删除聊天记录
@@ -67,7 +64,7 @@ public interface ChatService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deleteChat(JSONObject jo, UserBean user, HttpServletRequest request);
+	public Map<String, Object> deleteChat(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取登录用户的全部与其有过聊天记录的用户的最新一条聊天信息
@@ -77,5 +74,5 @@ public interface ChatService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getOneChatByAllUser(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> getOneChatByAllUser(JSONObject json, UserBean user, HttpRequestInfoBean request);
 }

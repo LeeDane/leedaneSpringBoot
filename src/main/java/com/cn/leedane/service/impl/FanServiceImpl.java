@@ -1,18 +1,4 @@
 package com.cn.leedane.service.impl;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CircleOfFriendsHandler;
@@ -21,20 +7,26 @@ import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.FanMapper;
 import com.cn.leedane.model.FanBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.FanService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.RelativeDateFormat;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 粉丝service实现类
@@ -71,7 +63,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 	private NotificationHandler notificationHandler;
 	
 	@Override
-	public Map<String, Object> getMyAttentionsLimit(JSONObject jo, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> getMyAttentionsLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		long start = System.currentTimeMillis();
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
@@ -128,7 +120,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 			}	
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取所关注的对象的列表", "getMyAttentionFansLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取所关注的对象的列表", "getMyAttentionFansLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
 		logger.info("获取我关注对象列表总计耗时：" +(end - start) +"毫秒");
@@ -138,7 +130,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 	}
 	
 	@Override
-	public Map<String, Object> getToAttentionsLimit(JSONObject jo, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> getToAttentionsLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		long start = System.currentTimeMillis();
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
@@ -196,7 +188,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 			}	
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取ID为"+toUserId+"的用户所关注的对象的列表", "getToAttentionsLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取ID为"+toUserId+"的用户所关注的对象的列表", "getToAttentionsLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
 		logger.info("获取TA关注对象列表总计耗时：" +(end - start) +"毫秒");
@@ -206,7 +198,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 	}
 	
 	@Override
-	public Map<String, Object> getMyFansLimit(JSONObject jo, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> getMyFansLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		long start = System.currentTimeMillis();
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
@@ -261,7 +253,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 			}	
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取粉丝列表", "getMyFansLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取粉丝列表", "getMyFansLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
 		logger.info("获取我的粉丝列表总计耗时：" +(end - start) +"毫秒");
@@ -271,7 +263,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 	}
 	
 	@Override
-	public Map<String, Object> getToFansLimit(JSONObject jo, UserBean user, HttpServletRequest request) {
+	public Map<String, Object> getToFansLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		long start = System.currentTimeMillis();
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
@@ -328,7 +320,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 			}	
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取用户ID为："+toUserId+"的粉丝列表", "getToFansLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取用户ID为："+toUserId+"的粉丝列表", "getToFansLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
 		logger.info("获取TA的粉丝列表总计耗时：" +(end - start) +"毫秒");
@@ -338,7 +330,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 	}
 
 	@Override
-	public boolean cancel(JSONObject jo, UserBean user, HttpServletRequest request) {
+	public boolean cancel(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		String toUserIds = JsonUtil.getStringValue(jo, "toUserIds");
 		logger.info("FanServiceImpl-->cancel():id="+user.getId()+",toUserIds="+toUserIds);
 		boolean result = false;
@@ -377,7 +369,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 	}
 
 	@Override
-	public boolean isFanEachOther(JSONObject jo, UserBean user, HttpServletRequest request) {
+	public boolean isFanEachOther(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		int toUserId = JsonUtil.getIntValue(jo, "toUserId");
 		logger.info("FanServiceImpl-->isFanEachOther():id="+user.getId()+",toUserId="+toUserId);
 		List<Map<String, Object>> list = this.fanMapper.isFanEachOther(user.getId(), toUserId, ConstantsUtil.STATUS_NORMAL);
@@ -388,7 +380,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 
 	@Override
 	public Map<String, Object> addFan(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FanServiceImpl-->addFan():jo="+jo.toString());
 		int toUserId = JsonUtil.getIntValue(jo, "toUserId");
 		String remark = JsonUtil.getStringValue(jo, "remark");
@@ -439,7 +431,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		message.put("message", "恭喜您成为"+toUser.getAccount()+"的粉丝，今后他/她的动态将在您的朋友圈出现"); 
 		message.put("isSuccess", true);
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"成为："+toUser.getAccount()+"为粉丝", "addFan()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"成为："+toUser.getAccount()+"的粉丝", "addFan()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
 	}
 
@@ -455,7 +447,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 
 	@Override
 	public Map<String, Object> isFan(JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("FanServiceImpl-->isFan():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		int toUserId = JsonUtil.getIntValue(jo, "toUserId");

@@ -1,12 +1,10 @@
 package com.cn.leedane.service;
-import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.transaction.annotation.Transactional;
-
-import net.sf.json.JSONObject;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import net.sf.json.JSONObject;
+import org.springframework.transaction.annotation.Transactional;
 /**
  * base64上传临时文件的Service类
  * @author LeeDane
@@ -23,5 +21,5 @@ public interface TemporaryBase64Service<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public boolean saveBase64Str(JSONObject jo, UserBean user, HttpServletRequest request);
+	public boolean saveBase64Str(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 }

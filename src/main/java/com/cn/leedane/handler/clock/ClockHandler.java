@@ -315,6 +315,18 @@ public class ClockHandler {
 		systemCache.removeCache(key);
 		return true;
 	}
+
+	/**
+	 * 删除任务的缓存
+	 * @param clockId
+	 * @return
+	 */
+	public boolean deleteClockCache(int clockId){
+		String key = getClockKey(clockId);
+		redisUtil.delete(key);
+		systemCache.removeCache(key);
+		return true;
+	}
 	
 	/**
 	 * 删除系统任务列表的cache和redis缓存

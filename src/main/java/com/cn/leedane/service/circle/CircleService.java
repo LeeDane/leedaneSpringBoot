@@ -1,17 +1,14 @@
 package com.cn.leedane.service.circle;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.circle.CircleBean;
+import net.sf.json.JSONObject;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 /**
  * 圈子的Service类
@@ -29,7 +26,7 @@ public interface CircleService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> init(UserBean user, HttpServletRequest request);
+	public  Map<String,Object> init(UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 单个圈子的初始化
@@ -39,7 +36,7 @@ public interface CircleService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String,Object> main(CircleBean circle, UserBean user, HttpServletRequest request);
+	public Map<String,Object> main(CircleBean circle, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 圈子成员列表的初始化
@@ -49,7 +46,7 @@ public interface CircleService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String,Object> memberListInit(CircleBean circle, UserBean user, HttpServletRequest request);
+	public Map<String,Object> memberListInit(CircleBean circle, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 创建圈子
@@ -58,7 +55,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> create(JSONObject jo, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> create(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 编辑圈子
@@ -67,7 +64,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> update(int circleId, JSONObject jo, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> update(int circleId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除圈子
@@ -76,7 +73,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(int cid, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> delete(int cid, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 检查是否能创建圈子
@@ -87,7 +84,7 @@ public interface CircleService <T extends IDBean>{
 	 */
 	
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> check(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> check(JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	 /**
 	 * 分页获取任务列表
@@ -97,7 +94,7 @@ public interface CircleService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> paging(JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 对是否能申请加入圈子的检查
@@ -106,7 +103,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> joinCheck(int circleId, UserBean user, HttpServletRequest request);
+	public Map<String, Object> joinCheck(int circleId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 申请加入圈子
@@ -116,7 +113,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> join(int circleId, JSONObject json, UserBean user, HttpServletRequest request);
+	public Map<String, Object> join(int circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 保存访问圈子记录
@@ -124,7 +121,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param user
 	 * @param request
 	 */
-	public void saveVisitLog(int circleId, UserBean user, HttpServletRequest request);
+	public void saveVisitLog(int circleId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 退出该圈子
@@ -133,7 +130,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> leave(int circleId, UserBean user, HttpServletRequest request);
+	public Map<String, Object> leave(int circleId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取最新的圈子
@@ -143,7 +140,7 @@ public interface CircleService <T extends IDBean>{
 	 * @return
 	 *//*
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<CircleBean> newest(UserBean user, int limit, HttpServletRequest request);
+	public List<CircleBean> newest(UserBean user, int limit, HttpRequestInfoBean request);
 
 	*//**
 	 * 获取最热门的圈子
@@ -153,7 +150,7 @@ public interface CircleService <T extends IDBean>{
 	 * @return
 	 *//*
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<CircleBean> hotest(UserBean user, int limit, HttpServletRequest request);*/
+	public List<CircleBean> hotest(UserBean user, int limit, HttpRequestInfoBean request);*/
 	
 	/**
 	 * 获取已经分配的管理员列表
@@ -162,7 +159,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> admins(int cid, UserBean user, HttpServletRequest request);
+	public Map<String, Object> admins(int cid, UserBean user, HttpRequestInfoBean request);
 
 	
 	/**
@@ -173,7 +170,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> allot(int cid, String admins, UserBean user, HttpServletRequest request);
+	public Map<String, Object> allot(int cid, String admins, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取圈子首页的初始化
@@ -184,5 +181,5 @@ public interface CircleService <T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> initialize(int cid,
-			UserBean userFromMessage, HttpServletRequest request);
+			UserBean userFromMessage, HttpRequestInfoBean request);
 }

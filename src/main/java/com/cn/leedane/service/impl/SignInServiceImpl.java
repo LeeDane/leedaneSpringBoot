@@ -1,35 +1,24 @@
 package com.cn.leedane.service.impl;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.cache.SystemCache;
+import com.cn.leedane.handler.SignInHandler;
+import com.cn.leedane.mapper.SignInMapper;
+import com.cn.leedane.model.*;
+import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.service.ScoreService;
+import com.cn.leedane.service.SignInService;
+import com.cn.leedane.utils.*;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
 import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.cn.leedane.cache.SystemCache;
-import com.cn.leedane.handler.SignInHandler;
-import com.cn.leedane.mapper.SignInMapper;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.ScoreBean;
-import com.cn.leedane.model.SignInBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.service.ScoreService;
-import com.cn.leedane.service.SignInService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 签到service实现类
@@ -78,7 +67,7 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 	
 	@Override
 	public boolean saveSignIn(JSONObject jo, UserBean user,
-			HttpServletRequest request){
+			HttpRequestInfoBean request){
 		
 		int uid = user.getId();
 		String dateTime = DateUtil.DateToString(new Date(), "yyyy-MM-dd");
@@ -146,7 +135,7 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 
 	@Override
 	public List<Map<String, Object>> getSignInByLimit(JSONObject jo,
-			UserBean user, HttpServletRequest request) {
+			UserBean user, HttpRequestInfoBean request) {
 		long start = System.currentTimeMillis();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		int uid = JsonUtil.getIntValue(jo, "uid", user.getId()); //操作的用户的id
@@ -176,7 +165,7 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 		rs = signInMapper.executeSQL(sql.toString(), uid, ConstantsUtil.STATUS_NORMAL, startDate, endDate);
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看签到列表", "getSignInByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看签到列表", "getSignInByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		long end = System.currentTimeMillis();
 		logger.info("获取签到列表总计耗时：" +(end - start) +"毫秒");
 		return rs;

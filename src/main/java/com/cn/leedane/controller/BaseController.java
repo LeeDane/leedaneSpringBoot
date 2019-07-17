@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cn.leedane.model.*;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -28,10 +29,6 @@ import com.cn.leedane.exception.MustLoginException;
 import com.cn.leedane.exception.TestRoleException;
 import com.cn.leedane.handler.LinkManageHandler;
 import com.cn.leedane.handler.UserHandler;
-import com.cn.leedane.model.LinkManageBean;
-import com.cn.leedane.model.LinkManagesBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.shiro.CustomAuthenticationToken;
@@ -69,6 +66,11 @@ public class BaseController {
     
     @Value("${constant.test.role.text}")
     public String TEST_ROLE_TEXT;
+
+	/**
+	 * 保存该次请求的信息
+	 */
+	private HttpRequestInfoBean httpRequestInfoBean;
 	
 	/**
 	 * 通过原先servlet方式输出json对象。
@@ -141,12 +143,13 @@ public class BaseController {
 	protected boolean checkParams(Map<String, Object> message, HttpServletRequest request){
 		return checkLogin(request, message);
 	}
-	
+
 	/**
 	 * 校验是否有是测试用户在执行新增、修改、删除等操作
-	 * @param roles
+	 * @param model
+	 * @param method
 	 * @return
-	 * @throws UnauthorizedException 不成功将抛出“不授权异常”
+	 * @throws UnauthorizedException  不成功将抛出“不授权异常”
 	 */
 	protected boolean checkTestRole(Model model, String method) throws UnauthorizedException{//不授权异常
 		boolean isTestRole = false;
@@ -164,10 +167,10 @@ public class BaseController {
 		
        return isTestRole;
 	}
-	
+
 	/**
 	 * 校验是否有单个角色
-	 * @param permission
+	 * @param role
 	 * @return
 	 * @throws UnauthorizedException
 	 */
@@ -180,11 +183,12 @@ public class BaseController {
 		
         throw new UnauthorizedException();
 	}
-	
+
 	/**
 	 * 校验是否有角色(全部角色都要满足)
-	 * @param request
+	 * @param roles
 	 * @return
+	 * @throws UnauthorizedException
 	 */
 	protected boolean checkAllRoleAuthor(String ... roles) throws UnauthorizedException{//不授权异常
 		//获取当前的Subject  
@@ -247,11 +251,12 @@ public class BaseController {
 		
         throw new UnauthorizedException();
 	}
-	
+
 	/**
 	 * 校验是否有权限(全部权限都要满足)
-	 * @param request
+	 * @param permissions
 	 * @return
+	 * @throws UnauthorizedException
 	 */
 	protected boolean checkAllPermissionAuthor(String ... permissions) throws UnauthorizedException{//不授权异常
 		//获取当前的Subject  
@@ -278,13 +283,12 @@ public class BaseController {
 	        	throw new UnauthorizedException();
         return true;
 	}
-	
 	/**
 	 * 校验是否有权限(只要一个满足就行,这种方式按照顺序遍历permission，验证成功将直接返回)
 	 * @param traverse
-	 * @param roles
+	 * @param permissions
 	 * @return
-	 * @throws UnauthorizedException 不成功将抛出“不授权异常”
+	 * @throws UnauthorizedException  不成功将抛出“不授权异常”
 	 */
 	@Deprecated
 	protected boolean checkAnyPermissionAuthor(boolean traverse, String ... permissions) throws UnauthorizedException{//不授权异常
@@ -301,7 +305,13 @@ public class BaseController {
 	
 	public boolean checkLogin(HttpServletRequest request, Map<String, Object> message){
 		boolean result = false;
-		
+
+		//获取http请求信息
+		httpRequestInfoBean = new HttpRequestInfoBean();
+		httpRequestInfoBean.setIp(CommonUtil.getIPAddress(request));
+		httpRequestInfoBean.setBrowerInfo(CommonUtil.getBroswerInfo(request));
+		httpRequestInfoBean.setRequest(request);
+
 		//获取session
 		Object sessionUserInfo = null;
 		//获取当前的Subject  
@@ -431,12 +441,12 @@ public class BaseController {
 		message.put("json", json == null ? new JSONObject(): json);
 		return result;
 	}
-	
+
 	/**
 	 * 统一App登录验证检查
 	 * @param request
 	 * @param message
-	 * @param user
+	 * @param result
 	 * @return
 	 */
 	public UserBean appAuthCheck(HttpServletRequest request, Map<String, Object> message, boolean result){
@@ -537,7 +547,29 @@ public class BaseController {
 		}
 		return json;
 	}
-	
+
+
+	/**
+	 * 获取该次网络请求浏览器的信息
+	 * @param request
+	 * @return
+	 */
+	protected HttpRequestInfoBean getHttpRequestInfo(HttpServletRequest request){
+		if(httpRequestInfoBean != null){
+			return httpRequestInfoBean;
+		}
+
+		if(request != null){
+			httpRequestInfoBean = new HttpRequestInfoBean();
+			httpRequestInfoBean.setIp(CommonUtil.getIPAddress(request));
+			httpRequestInfoBean.setBrowerInfo(CommonUtil.getBroswerInfo(request));
+			httpRequestInfoBean.setRequest(request);
+			return httpRequestInfoBean;
+		}
+
+		return null;
+	}
+
 	/**
 	 * 从message中解析user数据
 	 * @param message
@@ -550,11 +582,10 @@ public class BaseController {
 		}
 		return user;
 	}
-	
+
 	/**
 	 * 从shiro中解析user数据(用户可能没登录，返回null),不建议使用
 	 * 请参考使用{@link BaseController#getMustLoginUserFromShiro}
-	 * @param message
 	 * @return
 	 */
 	protected UserBean getUserFromShiro(){
@@ -567,10 +598,9 @@ public class BaseController {
         }
 		return user;
 	}
-	
+
 	/**
 	 * 从shiro中解析user数据(用户必须登录，不然抛 {@link MustLoginException} 异常)
-	 * @param message
 	 * @return
 	 */
 	protected UserBean getMustLoginUserFromShiro(){
@@ -581,10 +611,9 @@ public class BaseController {
         }
         throw new MustLoginException();
 	}
-	
+
 	/**
 	 * 从shiro中解析管理员登录user数据(用户必须登录，不然抛 {@link MustLoginException} 异常)
-	 * @param message
 	 * @return
 	 */
 	protected UserBean getMustAdminLoginUserFromShiro(){
@@ -596,10 +625,9 @@ public class BaseController {
         }
         throw new MustAdminLoginException();
 	}
-	
+
 	/**
 	 * 从message中解析user数据
-	 * @param message
 	 * @return
 	 */
 	protected int getUserIdFromShiro(){
@@ -709,24 +737,24 @@ public class BaseController {
 		
 		return requestLink.startsWith(manageLink);
 	}
-	
+
 	/**
 	 * 校验地址，不校验是否登录
 	 * @param urlParse
 	 * @param model
-	 * @param httpSession
+	 * @param request
 	 * @return
 	 */
 	protected String loginRoleCheck(String urlParse, Model model, HttpServletRequest request){
 		return loginRoleCheck(urlParse, false, model, request);
 	}
-	
+
 	/**
 	 * 校验地址，校验是否登录
 	 * @param urlParse
-	 * @param mustLogin 为true表示必须登录，不然就跳转到登录页面
+	 * @param mustLogin
 	 * @param model
-	 * @param httpSession
+	 * @param request
 	 * @return
 	 */
 	protected String loginRoleCheck(String urlParse, boolean mustLogin, Model model, HttpServletRequest request){
@@ -740,10 +768,16 @@ public class BaseController {
 		boolean isLogin = false;
 		boolean isAdmin = false;
 		boolean isStock = false; //判断用户是否有股票的权限
+		boolean isCircle = false; //判断用户是否有圈子的权限
+		boolean isShopping = false; //判断用户是否有购物的权限
+		boolean isBaby = false; //判断用户是否有宝宝的权限
 		if(user != null){
 			isLogin = true;
 			isAdmin = currentUser.hasRole(RoleController.ADMIN_ROLE_CODE);
 			isStock = currentUser.hasRole(RoleController.STOCK_ROLE_CODE);
+			isCircle = currentUser.hasRole(RoleController.CIRCLE_ROLE_CODE);
+			isShopping = currentUser.hasRole(RoleController.SHOPPING_ROLE_CODE);
+			isBaby = currentUser.hasRole(RoleController.BABY_ROLE_CODE);
 			model.addAllAttributes(userHandler.getBaseUserInfo(user.getId()));
 			model.addAttribute("loginUserId", user.getId());
 			model.addAttribute("user", user);
@@ -751,6 +785,9 @@ public class BaseController {
 		model.addAttribute("isLogin",  isLogin);
 		model.addAttribute("isAdmin", isAdmin);
 		model.addAttribute("isStock", isStock);
+		model.addAttribute("isCircle", isCircle);
+		model.addAttribute("isShopping", isShopping);
+		model.addAttribute("isBaby", isBaby);
 		if(mustLogin && !isLogin){
 			model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
 			return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();
@@ -758,13 +795,12 @@ public class BaseController {
 		
 		return StringUtil.isNotNull(urlParse) ? urlParse : "404";
 	}
-	
+
 	/**
 	 * 校验地址，校验是否登录
 	 * @param urlParse
-	 * @param mustAdmin 为true表示必须是管理员身份登录，不然就跳转到登录页面
 	 * @param model
-	 * @param httpSession
+	 * @param request
 	 * @return
 	 */
 	public String adminLoginRoleCheck(String urlParse, Model model, HttpServletRequest request){

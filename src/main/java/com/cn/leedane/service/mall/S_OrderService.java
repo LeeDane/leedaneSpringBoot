@@ -1,16 +1,13 @@
 package com.cn.leedane.service.mall;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.IDBean;
+import com.cn.leedane.model.UserBean;
 import net.sf.json.JSONObject;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cn.leedane.model.IDBean;
-import com.cn.leedane.model.UserBean;
+import java.util.Map;
 
 /**
  * 订单service接口类
@@ -27,7 +24,7 @@ public interface S_OrderService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> add(JSONObject jo, UserBean user, HttpServletRequest request);
+	public  Map<String,Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取用户的未处理订单数量
@@ -36,7 +33,7 @@ public interface S_OrderService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> getNoDealOrderNumber(UserBean user, HttpServletRequest request);
+	public  Map<String,Object> getNoDealOrderNumber(UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 分页获取订列表
@@ -49,7 +46,7 @@ public interface S_OrderService <T extends IDBean>{
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> paging(int current,
 			int pageSize, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 
 	/**
 	 * 删除订单
@@ -59,7 +56,7 @@ public interface S_OrderService <T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> delete(int orderId,
-			UserBean user, HttpServletRequest request);
+			UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 修改订单
@@ -71,7 +68,7 @@ public interface S_OrderService <T extends IDBean>{
 	public Map<String, Object> update(
 			int orderId, 
 			JSONObject json, UserBean user,
-			HttpServletRequest request);
+			HttpRequestInfoBean request);
 	
 	
 }

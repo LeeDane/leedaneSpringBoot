@@ -1,27 +1,11 @@
 package com.cn.leedane.service.impl.baby;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.display.baby.LifesResultDisplay;
 import com.cn.leedane.handler.NotificationHandler;
 import com.cn.leedane.handler.baby.BabyHandler;
 import com.cn.leedane.handler.baby.BabyLifeHandler;
 import com.cn.leedane.mapper.baby.BabyLifeMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.baby.BabyBean;
@@ -29,17 +13,18 @@ import com.cn.leedane.model.baby.BabyLifeBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.baby.BabyLifeService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.BabyLifeType;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
 import com.cn.leedane.utils.baby.BabyUtil;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 /**
  * 宝宝生活方式service实现类
@@ -68,7 +53,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 	
 	@Override
 	public Map<String, Object> add(int babyId, JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("BabyLifeServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount() +", babyId="+ babyId);
 		
 		//获取宝宝信息(校验是否是自己的宝宝)
@@ -105,7 +90,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 
 	@Override
 	public Map<String, Object> update(int babyId, int lifeId, JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("BabyLifeServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount()+", babyId="+ babyId +", lifeId="+ lifeId);
 		ResponseMap message = new ResponseMap();
 		//获取宝宝信息(校验是否是自己的宝宝)
@@ -141,7 +126,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 
 	@Override
 	public Map<String, Object> delete(int babyId, int lifeId, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("BabyLifeServiceImpl-->delete():babyId=" +babyId +", user=" +user.getAccount()+", lifeId="+ lifeId);
 		ResponseMap message = new ResponseMap();
 		//获取宝宝信息(校验是否是自己的宝宝)
@@ -174,7 +159,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 	@Override
 	public Map<String, Object> lifes(int babyId, String startDate,
 			String endDate, String keyWord, int lifeType, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("BabyLifeServiceImpl-->paging():babyId=" +babyId + ", startDate="+ startDate +", endDate="+ endDate +", keyWord="+ keyWord +", lifeType="+ lifeType +", user="+ user.getAccount());
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		ResponseMap message = new ResponseMap();
@@ -295,7 +280,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 			display.setOccurDate(startDate + (StringUtil.isNotNull(endDate) && !startDate.equals(endDate)? "至" + endDate: ""));
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看宝宝id为"+babyId+"的生活方式列表", "lifes()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看宝宝id为"+babyId+"的生活方式列表", "lifes()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", display);
 		message.put("isSuccess", true);
 		return message.getMap();

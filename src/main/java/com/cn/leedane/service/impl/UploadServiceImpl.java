@@ -1,26 +1,24 @@
 package com.cn.leedane.service.impl;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.mapper.UploadMapper;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UploadBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UploadService;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.SqlUtil;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 /**
  * 断点续传service的实现类
  * @author LeeDane
@@ -38,7 +36,7 @@ public class UploadServiceImpl implements UploadService<UploadBean>{
 	private OperateLogService<OperateLogBean> operateLogService;
 
 	@Override
-	public boolean addUpload(UploadBean upload, UserBean user, HttpServletRequest request){
+	public boolean addUpload(UploadBean upload, UserBean user, HttpRequestInfoBean request){
 		logger.info("UploadServiceImpl-->addUpload():upload=" +upload.toString() +", user=" +user.getAccount());
 		
 		if(SqlUtil.getBooleanByList(uploadMapper.hasUpload(upload.getTableName(), upload.getTableUuid(), upload.getfOrder(), upload.getSerialNumber(), user.getId()))){
@@ -48,7 +46,7 @@ public class UploadServiceImpl implements UploadService<UploadBean>{
 	}
 
 	@Override
-	public boolean cancel(UploadBean upload, UserBean user, HttpServletRequest request) {
+	public boolean cancel(UploadBean upload, UserBean user, HttpRequestInfoBean request) {
 		logger.info("UploadServiceImpl-->cancel():upload=" +upload.toString() +", user=" +user.getAccount());
 		try {
 			boolean result = uploadMapper.deleteSql(EnumUtil.getBeanClass(EnumUtil.getTableCNName(DataTableType.上传.value)), " where table_uuid = ? and table_name = ? and f_order = ? and create_user_id = ? and serial_number= ? ", upload.getTableUuid(), upload.getTableName(), upload.getfOrder(), user.getId(), upload.getSerialNumber()) > 0;
@@ -67,7 +65,7 @@ public class UploadServiceImpl implements UploadService<UploadBean>{
 
 	@Override
 	public List<Map<String, Object>> getOneUpload(String tableUuid, String tableName, int order, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("UploadServiceImpl-->getOneUpload():tableUuid=" +tableUuid + ",tableName="+tableName+",order="+ order+", user=" +user.getAccount());
 			
 		StringBuffer sql = new StringBuffer();

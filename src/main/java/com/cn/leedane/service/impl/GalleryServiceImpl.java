@@ -1,32 +1,24 @@
 package com.cn.leedane.service.impl;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.cn.leedane.mapper.GalleryMapper;
 import com.cn.leedane.model.GalleryBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.GalleryService;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.FileUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 图库service实现类
@@ -50,7 +42,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 	
 	@Override
 	public Map<String, Object> addLink(JSONObject jo, UserBean user,
-			HttpServletRequest request){
+			HttpRequestInfoBean request){
 		logger.info("GalleryServiceImpl-->add():JSONObject="+jo.toString());
 		
 		ResponseMap message = new ResponseMap();
@@ -123,7 +115,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 
 	@Override
 	public Map<String, Object> delete(int galleryId, JSONObject jo, UserBean user,
-			HttpServletRequest request) {
+			HttpRequestInfoBean request) {
 		logger.info("GalleryServiceImpl-->delete():JSONObject="+jo.toString() +", gid="+ galleryId);
 		
 		ResponseMap message = new ResponseMap();
@@ -156,7 +148,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 	
 	@Override
 	public List<Map<String, Object>> getGalleryByLimit(JSONObject jo,
-			UserBean user, HttpServletRequest request) {	
+			UserBean user, HttpRequestInfoBean request) {	
 		long start = System.currentTimeMillis();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		int uid = JsonUtil.getIntValue(jo, "uid", user.getId()); //操作的用户的id
@@ -198,7 +190,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取用户ID为"+uid +"的用户的图库列表", "getGalleryByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
+//		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取用户ID为"+uid +"的用户的图库列表", "getGalleryByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
 		logger.info("获取图库列表总计耗时：" +(end - start) +"毫秒");

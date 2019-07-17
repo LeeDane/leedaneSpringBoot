@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>搜索</title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<style type="text/css">
+		.clearFloat{
+			clear: both;
+		}
+		body{
+			background-color: #f5f5f5 !important;
+		}
+		.mainContainer{
+			padding-top: 60px;
+		}
+		
+		.user-account{
+			text-align: center;
+			margin-top: 5px;
+			cursor: pointer;
+		}
+		.mood-list-row {
+		    margin-top: 16px;
+		    border: 1px solid #ddd;
+		    background-color: #fff !important;
+		    border-radius: 4px;
+		    padding-bottom: 8px;
+		    padding-top: 8px;
+		}
+		
+		.blog-list-row {
+		    margin-top: 16px;
+		    border: 1px solid #ddd;
+		    background-color: #fff !important;
+		    border-radius: 4px;
+		    padding-bottom: 8px;
+		    padding-top: 8px;
+		    margin-bottom: 10px;
+		}
+		.mood-create-time{
+			font-size: 14px;
+			font-family: "Pingfang SC",STHeiti,"Lantinghei SC","Open Sans",Arial,"Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",SimSun,sans-serif;
+		}
+		
+		.mood-froms{
+			font-size: 14px;
+			font-family: "Pingfang SC",STHeiti,"Lantinghei SC","Open Sans",Arial,"Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",SimSun,sans-serif;
+		}
+		
+		.blog-create-time{
+			font-size: 14px;
+			font-family: "Pingfang SC",STHeiti,"Lantinghei SC","Open Sans",Arial,"Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",SimSun,sans-serif;
+		}
+		
+		.blog-froms{
+			font-size: 14px;
+			font-family: "Pingfang SC",STHeiti,"Lantinghei SC","Open Sans",Arial,"Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",SimSun,sans-serif;
+		}
+	</style>
+</head>
+<body>
+<div th:include="common :: hello">what?</div>
+<div class="container mainContainer">
+	   <div class="row">
+	   		<div class="col-lg-5">
+	   			<div class="input-group">
+		   			<input type="text" id="common-search-text" class="form-control"  onkeypress="if (event.keyCode == 13) search(this);" />
+	                <span class="input-group-btn">
+	                    <button class="btn btn-primary btn-default" type="button" onclick="search(this);">Go!</button>
+	                </span>
+                </div>
+	   		</div>
+	   </div>
+	   <div class="row">
+	   		<div class="col-lg-12" style="margin-top: 10px;">
+	   			提示：最多展示最符合条件的10个用户、10条心情、10篇文章，本次检索耗时<span id="search-need-time" class="color-red">0</span>.
+	   		</div>
+	   </div>
+	   
+	   <div class="row">
+	   		<div class="col-lg-12" style="margin-top: 10px;">
+	   			本次检索到<span class="color-blue">用户</span>有&nbsp;<span id="search-user-number" class="color-red">0</span>&nbsp;个：
+	   		</div>
+	   </div>
+	   
+	   <div class="row" >
+	   		<div class="col-lg-12 col-sm-12" style="margin-top: 10px;">
+	   			<div class="row" id="user-result-show">
+	   				<!-- <div class="col-lg-1 col-sm-1">
+    		 			<img class="img-circle" alt="" width="60" height="60" src="http://pic.onlyloveu.top/leedane_app_upload_ec5da83b-4fd9-4924-ad04-3264dfc52a9843d8c1ec-95d3-4cc7-aa12-9379a2196df2_Screenshot_20161216-122520_01.png">
+    		 			<div class="user-account cut-text" title="LeeDane随时随地多多对对对">LeeDane随时随地多多对对对</div>
+    		 		</div>
+    		 		<div class="col-lg-1 col-sm-1">
+    		 			<img class="img-circle" alt="" width="60" height="60" src="http://pic.onlyloveu.top/leedane_app_upload_ec5da83b-4fd9-4924-ad04-3264dfc52a9843d8c1ec-95d3-4cc7-aa12-9379a2196df2_Screenshot_20161216-122520_01.png">
+    		 			<div class="user-account cut-text" title="LeeDane"><a href="JavaScript:void(0);" onclick="linkToMy(1)">LeeDane</a></div>
+    		 		</div>
+    		 		<div class="col-lg-1 col-sm-1">
+    		 			<img class="img-circle" alt="" width="60" height="60" src="http://pic.onlyloveu.top/leedane_app_upload_ec5da83b-4fd9-4924-ad04-3264dfc52a9843d8c1ec-95d3-4cc7-aa12-9379a2196df2_Screenshot_20161216-122520_01.png">
+    		 			<div class="user-account cut-text" title="LeeDane">LeeDane</div>
+    		 		</div>
+    		 		<div class="col-lg-1 col-sm-1">
+    		 			<img class="img-circle" alt="" width="60" height="60" src="http://pic.onlyloveu.top/leedane_app_upload_ec5da83b-4fd9-4924-ad04-3264dfc52a9843d8c1ec-95d3-4cc7-aa12-9379a2196df2_Screenshot_20161216-122520_01.png">
+    		 			<div class="user-account cut-text" title="LeeDane">LeeDane</div>
+    		 		</div> -->
+    		 	</div>
+	   		</div>
+	   	</div>
+	   	
+	   <div class="row">
+	   		<div class="col-lg-12" style="margin-top: 10px;">
+	   			本次检索到<span class="color-blue">心情</span>有&nbsp;<span class="color-red" id="search-mood-number">0</span>&nbsp;个：
+	   		</div>
+	   </div>
+	   <div id="mood-result-show">
+		   <!-- <div class="row mood-list-row">
+		   		<div class="col-lg-1" style="text-align: center;margin-top: 10px;">
+					<img width="60" height="60" class="img-circle hand" alt="" src=""  onclick="showSingleImg(this);" />
+				</div>
+				<div class="col-lg-10">
+					<div class="row" style="font-family: '微软雅黑'; font-size: 15px; margin-top: 10px;">
+						<div class="col-lg-12">
+							<span class="mood-user-name"><a href="JavaScript:void(0);" onclick="linkToMy(1)">leedane</a></span>   
+							<span class="mood-create-time">&nbsp;&nbsp;2017-01-01 00:00</span>   
+							<span class="mood-froms">&nbsp;&nbsp;android</span>
+						</div>
+					</div>
+					<div class="row" style="font-family: '微软雅黑'; font-size: 17px;margin-top: 5px;">
+						<div class="col-lg-12">今天天气不错啊！</div>
+					</div>
+					<div class="row" style="font-family: '宋体'; font-size: 12px;margin-top: 5px; color: gray; margin-bottom: 10px;">
+						<div class="col-lg-12">
+							位置：广州市北京路广百天河城百货百佳店
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-4 col-sm-4" style="margin-top: 5px;">
+							<img width="100%" height="180" class="img-circle hand" alt="" src=""  onclick="showImg(this);"/>
+						</div>
+						<div class="col-lg-4 col-sm-4" style="margin-top: 5px;">
+							<img width="100%" height="180" class="img-circle hand" alt="" src=""  onclick="showImg(this);"/>
+						</div>
+						<div class="col-lg-4 col-sm-4" style="margin-top: 5px;">
+							<img width="100%" height="180" class="img-circle hand" alt="" src=""  onclick="showImg(this);"/>
+						</div>
+					</div>
+				</div>
+			</div> -->
+		</div>
+		<div class="row">
+	   		<div class="col-lg-12" style="margin-top: 10px;">
+	   			本次检索到<span class="color-blue">文章</span>有&nbsp;<span class="color-red" id="search-blog-number">0</span>&nbsp;篇：
+	   		</div>
+	   </div>
+	   <div id="blog-result-show">
+   			<!-- <div class="row blog-list-row">
+		   		<div class="col-lg-1" style="text-align: center;margin-top: 10px;">
+					<img width="60" height="60" class="img-circle hand" alt="" src=""  onclick="showSingleImg(this);"/>
+				</div>
+				<div class="col-lg-10">
+					<div class="row" style="font-family: '微软雅黑'; font-size: 15px; margin-top: 10px;">
+						<div class="col-lg-12">
+							<span class="blog-user-name"><a href="JavaScript:void(0);" onclick="linkToMy(1)">leedane</a></span>   
+							<span class="blog-create-time">&nbsp;&nbsp;2017-01-01 00:00</span>   
+							<span class="blog-froms">&nbsp;&nbsp;android</span>
+						</div>
+					</div>
+					<div class="row" style="font-family: '微软雅黑'; font-size: 17px;margin-top: 5px;">
+						<div class="col-lg-12">文/清澈的蓝挽一缕月光照亮夜晚的轩窗微凉的风摇曳丝丝岸柳似少女般漫妙轻舒弄影( 文章阅读网：www.sanwen.net)飘舞在迷人的曉风琬月下凝眸远望是江南的一帘秋水长天*轻移莲步採一朵清新的茉莉花</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12 col-sm-12">
+							<span class="label label-default tag" style="font-size: 13px;">MX-5</span>
+							<span class="label label-primary tag" style="font-size: 13px;">马自达</span>
+							<span class="label label-success tag" style="font-size: 13px;">敞篷跑车</span>
+						</div>
+					</div>
+					<div class="row" style="font-family: '宋体'; font-size: 12px;margin-top: 5px; color: gray; margin-bottom: 10px;">
+						<div class="col-lg-12">
+							<button type="button" class="btn btn-primary btn-sm" onclick="goToReadFull(366)">查看详细</button>
+						</div>
+					</div>
+				</div>
+			</div> -->
+	   </div>
+	   
+</div>
+</body>
+
+<div th:include="common-js :: commJs">what?</div>
+<script th:src="@{/page/js/search.js}" type="text/javascript"></script>
+</html>

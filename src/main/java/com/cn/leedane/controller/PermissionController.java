@@ -1,11 +1,11 @@
 package com.cn.leedane.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.PermissionBean;
+import com.cn.leedane.service.PermissionService;
+import com.cn.leedane.utils.ControllerBaseNameUtil;
+import com.cn.leedane.utils.JsonUtil;
+import com.cn.leedane.utils.ResponseMap;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.annotations.Param;
@@ -16,11 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cn.leedane.model.PermissionBean;
-import com.cn.leedane.service.PermissionService;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 权限管理接口controller
@@ -48,7 +45,7 @@ public class PermissionController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(permissionService.save(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(permissionService.save(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -63,7 +60,7 @@ public class PermissionController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(permissionService.edit(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(permissionService.edit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -78,7 +75,7 @@ public class PermissionController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(permissionService.delete(pmid, getUserFromMessage(message), request));
+		message.putAll(permissionService.delete(pmid, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -93,7 +90,7 @@ public class PermissionController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(permissionService.paging(getJsonFromMessage(message), getUserFromMessage(message), request));
+		message.putAll(permissionService.paging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -108,7 +105,7 @@ public class PermissionController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(permissionService.deletes(pmids, getUserFromMessage(message), request));
+		message.putAll(permissionService.deletes(pmids, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -123,7 +120,7 @@ public class PermissionController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(permissionService.roles(pmid, getUserFromMessage(message), request));
+		message.putAll(permissionService.roles(pmid, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -141,7 +138,7 @@ public class PermissionController extends BaseController{
 		JSONObject json = getJsonFromMessage(message);
 		String roles = JsonUtil.getStringValue(json, "roles");
 		
-		message.putAll(permissionService.allot(pmid, roles, getUserFromMessage(message), request));
+		message.putAll(permissionService.allot(pmid, roles, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }
