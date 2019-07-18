@@ -38,6 +38,9 @@
         <shiro.version>1.2.5</shiro.version>
 
 		<java-version>1.8</java-version>
+
+		<!--   es  -->
+		<elasticSearch.version>6.3.1</elasticSearch.version>
     </properties>
 
     <!-- Add typical dependencies for a web application -->
@@ -79,7 +82,7 @@
                <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <!--
-        		JSTL（JSP Standard TagLibrary，JSP标准标签库)是一个不断完善的开放源代码的JSP标签库，是由apache的jakarta小组来维护的。JSTL只能运行在支持JSP1.2和Servlet2.3规范的容器上，如tomcat 4.x。在JSP2.0中也是作为标准支持的。
+        		JSTL（JSP Standard TagLibrary，JSP标io.netty准标签库)是一个不断完善的开放源代码的JSP标签库，是由apache的jakarta小组来维护的。JSTL只能运行在支持JSP1.2和Servlet2.3规范的容器上，如tomcat 4.x。在JSP2.0中也是作为标准支持的。
                                  不然报异常信息：javax.servlet.ServletException:Circular view path [/helloJsp]: would dispatch back to the current handler URL[/helloJsp] again. Check your ViewResolver setup! (Hint: This may be the resultof an unspecified view, due to default view name generation.)
          -->
 
@@ -188,17 +191,17 @@
 		
 		<!-- Lucene -->
 	  	<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-core -->
-		<dependency>
+		<!--<dependency>
 		    <groupId>org.apache.lucene</groupId>
 		    <artifactId>lucene-core</artifactId>
 		    <version>4.10.2</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-queryparser -->
+		&lt;!&ndash; https://mvnrepository.com/artifact/org.apache.lucene/lucene-queryparser &ndash;&gt;
 		<dependency>
 		    <groupId>org.apache.lucene</groupId>
 		    <artifactId>lucene-queryparser</artifactId>
 		    <version>4.10.2</version>
-		</dependency>
+		</dependency>-->
 	  	
 	  	<!-- Jsoup https://mvnrepository.com/artifact/org.jsoup/jsoup -->
 		<dependency>
@@ -305,7 +308,42 @@
 		<dependency>  
 		    <groupId>org.springframework.boot</groupId>  
 		    <artifactId>spring-boot-starter-actuator</artifactId>  
-		</dependency>	
+		</dependency>
+
+		<!-- elasticsearch -->
+		<!-- https://mvnrepository.com/artifact/org.elasticsearch/elasticsearch -->
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>${elasticSearch.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>transport</artifactId>
+			<version>${elasticSearch.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.elasticsearch</groupId>
+					<artifactId>elasticsearch</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>elasticsearch-rest-high-level-client</artifactId>
+			<version>${elasticSearch.version}</version>
+		</dependency>
+		<!--<dependency>
+			<groupId>org.elasticsearch.plugin</groupId>
+			<artifactId>transport-netty4-client</artifactId>
+			<version>${elasticSearch.version}</version>
+		</dependency>-->
+
+		<!--<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+			<version>2.1.6.RELEASE</version>
+		</dependency>-->
 		
 		<!-- 静态文件实现修改不重启 -->
 		<!-- <dependency>
@@ -334,7 +372,7 @@
         <dependency>
 		    <groupId>io.netty</groupId>
 		    <artifactId>netty-all</artifactId>
-		    <version>4.0.0.Final</version>
+		    <version>4.1.16.Final</version>
 		    <scope>compile</scope>
 		</dependency>
 		
@@ -349,8 +387,24 @@
 		  <artifactId>jackson-mapper-asl</artifactId>
 		  <version>1.9.13</version>
 		</dependency>
-		
-		
+
+
+		<!--  HanLP是一系列模型与算法组成的NLP工具包，由大快搜索主导并完全开源，目标是普及自然语言处理在生产环境中的应用。HanLP具备功能完善、性能高效、架构清晰、语料时新、可自定义的特点。   https://github.com/hankcs/HanLP#14-%E5%85%B3%E9%94%AE%E8%AF%8D%E6%8F%90%E5%8F%96  -->
+		<dependency>
+			<groupId>com.hankcs</groupId>
+			<artifactId>hanlp</artifactId>
+			<version>portable-1.7.4</version>
+		</dependency>
+
+		<!-- 获取浏览器相关信息 https://mvnrepository.com/artifact/eu.bitwalker/UserAgentUtils -->
+		<dependency>
+			<groupId>eu.bitwalker</groupId>
+			<artifactId>UserAgentUtils</artifactId>
+			<version>1.15</version>
+		</dependency>
+
+
+
 		<!-- ****************************************** local-jar ****************************************** -->
 		<!-- axis -->
 	  	<dependency>
