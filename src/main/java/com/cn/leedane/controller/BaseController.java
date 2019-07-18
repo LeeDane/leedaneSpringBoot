@@ -661,7 +661,7 @@ public class BaseController {
 	 * @param request
 	 */
 	protected void checkRoleOrPermission(Model model, HttpServletRequest request){
-		//checkTestRole(model, request.getMethod());
+		checkTestRole(model, request.getMethod());
 		LinkManagesBean beans = linkManageHandler.getAllLinks();
 		if(beans != null && CollectionUtil.isNotEmpty(beans.getLinkManageBean())){
 			String uri = request.getRequestURI();

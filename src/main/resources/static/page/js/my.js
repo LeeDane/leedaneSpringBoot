@@ -538,13 +538,13 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 					for(var i = 0; i < imgs.length; i++){
 						
 						if(isVideo(imgs[i])){
-							html += '<div class="col-lg-4 col-sm-4">';
+							/*html += '<div class="col-lg-9 col-sm-9">';*/
 							html += getVideoHtml(imgs[i]);
-							html += '</div>';
+							/*html += '</div>';*/
 						}else if(isAudio(imgs[i])){
-							html += '<div class="col-lg-4 col-sm-4">';
+							/*html += '<div class="col-lg-9 col-sm-9">';*/
 							html += getAudioHtml(imgs[i]);
-							html += '</div>';
+							/*html += '</div>';*/
 						}else if(isImg(imgs[i])){
 							html += '<div class="col-lg-4 col-sm-4">'+
 									'<img src="'+ imgs[i] +'" width="100%" height="180px" class="img-responsive" onClick="showImg('+ index +', '+ i +');" />'+
@@ -1237,13 +1237,13 @@ function afterSelect(links){
 		for(var i = 0; i < imgs.length; i++){
 			
 			if(isVideo(imgs[i])){
-				html += '<div class="col-lg-4 col-sm-4">';
+				/*html += '<div class="col-lg-9 col-sm-9">';*/
 				html += getVideoHtml(imgs[i]);
-				html += '</div>';
+				/*html += '</div>';*/
 			}else if(isAudio(imgs[i])){
-				html += '<div class="col-lg-4 col-sm-4">';
+				/*html += '<div class="col-lg-9 col-sm-9">';*/
 				html += getAudioHtml(imgs[i]);
-				html += '</div>';
+				/*html += '</div>';*/
 			}else if(isImg(imgs[i])){
 				html += '<div class="col-lg-4 col-sm-4">'+
 							'<img src="'+ changeNotNullString(imgs[i])+'" style="width: 100%; max-height: 180px;" class="img-responsive" />'+

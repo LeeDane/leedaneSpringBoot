@@ -1,4 +1,4 @@
-layui.use(['layer'], function(){
+/*layui.use(['layer'], function(){
 	layer = layui.layer;
 	if(isNotEmpty(tabName)){
 		$("#material-tabs").find("li").each(function(index){
@@ -24,7 +24,7 @@ layui.use(['layer'], function(){
 		type = $(this).attr("data-value");
 		showTab();
 	});  
-});
+});*/
 var type;
 var fileIndex = 1;
 var $image;

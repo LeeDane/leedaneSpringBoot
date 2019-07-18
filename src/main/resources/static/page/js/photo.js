@@ -145,7 +145,11 @@ function getWebPhotos(){
 				if(data.message.length == 0){
 					canLoadData = false;
 //					layer.msg("该分组下还没有找到图片", {time: 2000, icon: 5});
-					$("#fh5co-board").append("<div class='row no-result'>该分组下还没有找到图片。</div>")
+                    if(method == 'firstloading'){
+					    $("#fh5co-board").append("<div class='row no-result'>该分组下还没有找到图片。</div>");
+					 }else{
+					    $("#fh5co-board").append("<div class='row no-result'>已经没有更多图片。</div>");
+					 }
 					return;
 				}
 

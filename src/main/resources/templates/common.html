@@ -81,19 +81,15 @@
 		.color-red{
 			color: red;
 		}
-		
 		.color-blue{
 			color: #428bca;
 		}
-		
 		body {
 			  font-family: "Helvetica Neue",Helvetica,"Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
 		}
-		
 		.nav-msg .badge {
 		    background-color: #d9534f !important;
 		}
-		
 		.pagination ul{
    			list-style:none; /* 去掉ul前面的符号 */
    			margin: 0px; /* 与外界元素的距离为0 */
@@ -109,7 +105,6 @@
    		}
 	</style>
 </head>
-
 <!-- 默认是显示导航栏的，如果某些时候不需要，需要设置hasnav为false即可 -->
 <nav th:if="${nonav == null || nonav == false}" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
     <div class="container-fluid">
@@ -175,8 +170,6 @@
         </ul>
     </div>
     </div>
-    
-    
 </nav>
 
 </html>

@@ -36,8 +36,8 @@ function showTab(){
 	    $('#target').Jcrop({
 	      onChange:   showCoords,
 	      onSelect:   showCoords,
-	      onRelease:  clearCoords,
-	      onDblClick: 
+	      onRelease:  clearCoords
+//	      onDblClick:
 	    },function(){
 	      jcrop_api = this;
 	      jcrop_api.setOptions({ allowResize: true});

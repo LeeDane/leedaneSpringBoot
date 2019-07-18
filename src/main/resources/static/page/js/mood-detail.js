@@ -112,7 +112,7 @@ function getDetail(){
 								userStr += '<a href="JavaScript:void(0);" onclick="linkToMy('+ user.split(",")[0] +')">'+ changeNotNullString(user.split(",")[1]) +'</a>';
 						}
 					}
-					$("#zan-users").html('<div class="zan_user">'+ userStr +'等'+ users.length +'人觉得很赞</div>');
+					$("#zan-users").html('<div class="zan_user">'+ userStr +'等'+ mood.zan_number +'人觉得很赞</div>');
 				}
 				
 				$(".row-content").html(data.message[0].content);
@@ -122,13 +122,13 @@ function getDetail(){
 					for(var i = 0; i < imgs.length; i++){
 						var html = '';
 						if(isVideo(imgs[i])){
-							html += '<div class="col-lg-4 col-sm-4">';
+							/*html += '<div class="col-lg-4 col-sm-4">';*/
 							html += getVideoHtml(imgs[i]);
-							html += '</div>';
+							/*html += '</div>';*/
 						}else if(isAudio(imgs[i])){
-							html += '<div class="col-lg-4 col-sm-4">';
+							/*html += '<div class="col-lg-9 col-sm-9">';*/
 							html += getAudioHtml(imgs[i]);
-							html += '</div>';
+							/*html += '</div>';*/
 						}else if(isImg(imgs[i])){
 							html += '<div class="col-lg-4 col-sm-4">'+
 									'<img src="'+ imgs[i] +'" width="100%" height="180px" class="img-responsive" onClick="showSingleImg(this);" />'+

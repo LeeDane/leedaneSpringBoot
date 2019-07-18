@@ -6,89 +6,26 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title th:text="${account}+'的相册'"></title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
-	
 	<!-- 测试环境下的引用 -->
-	<link rel="stylesheet" th:if="${isDebug}" th:href="@{/page/other/bootstrap-treeview/css/bootstrap-treeview.css}" />
-	
+	<link rel="stylesheet" th:if="${isDebug}" th:href="@{/page/other/bootstrap-treeview/css/bootstrap-treeview.min.css}" />
 	<!-- 正式环境下的cdn引用-->
 	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{//cdn.staticfile.org/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css}"/>
-
-
 	<!-- Animate.css -->
-	<link rel="stylesheet" th:href="@{/page/css/animate.css}"/>
+	<link rel="stylesheet" th:href="@{/page/css/photo/animate.min.css}"/>
 	<!-- Magnific Popup -->
-	<link rel="stylesheet" th:href="@{/page/css/magnific-popup.css}"/>
+	<link rel="stylesheet" th:href="@{/page/css/photo/magnific-popup.min.css}"/>
 	<!-- Salvattore -->
-	<link rel="stylesheet" href="/page/css/salvattore.css" />
+	<link rel="stylesheet" href="/page/css/photo/salvattore.min.css" />
 	<!-- Theme Style -->
-	<link rel="stylesheet" href="/page/css/style.css" />
+	<link rel="stylesheet" href="/page/css/photo/style.min.css" />
 	<!-- Modernizr JS -->
 	<script th:src="@{/page/js/photo/modernizr-2.6.2.min.js}"></script>
 	<!-- FOR IE9 below -->
 	<!--[if lt IE 9]>
 	<script src="js/respond.min.js"></script>
 	<![endif]-->
-
-	<style type="text/css">
-
-
-
-		[data-columns]::before{display:block;visibility:hidden;position:absolute;font-size:1px;}
-		.column-item{
-			width: 100%;
-		}
-		body{
-			background-color: #f5f5f5 !important;
-		}
-		.container{
-			margin-top: 50px;
-			background-color: #fff !important;
-		}
-		.row{
-			margin-top: 15px;
-		}
-		.row img{
-			cursor: pointer;
-		}
-		.panel-footer button{
-			margin-top: 5px;
-			margin-right: 5px;
-		}
-		
-		.add-link{
-			z-index: 2000;
-			position: absolute;
-			right: 0;
-		}
-		.right-col{
-			margin-top: 12px;
-		}
-		#add-grallery{
-			padding-top:200px;
-		}
-		img{
-			transition: .1s transform;
-  			transform: translateZ(0);
-  			
-  			z-index: 0;
-		}
-		/*  .img-show:before{
-			border-top:10px solid #00ff00 !important;border-bottom:10px solid #00ff00 !important;transform:scale(0,1);-webkit-transform-origin:0 0;transform-origin:0 0;
-		}
-		
-		.img-show:after{
-			border-right:10px solid #00ff00 !important;border-left:10px solid #00ff00 !important;transform:scale(1,0);transform-origin:100% 0;
-		}  */
-		/* img:hover{
-			transform: scale(1.1, 1);
-  			transition: all .3s;
-  			z-index: 2000;
-		} */
-
-		.row{
-			margin-top: 0!important;
-		}
-	</style>
+	<link rel="stylesheet" th:href="@{/page/css/photo.min.css}" />
+	<style type="text/css"></style>
 </head>
 <body>
 <div th:include="common :: hello">what?</div>
@@ -103,7 +40,6 @@
 				        	本站为免费交流社区。意图为大家提供一个心灵交互的方式，根据国家的法律法规，禁止传播一切色情，暴力，反动等等违法的信息。欢迎加入我们的大家庭！
 				    </div>
 				</div>
-				
 				<div class="panel panel-default">
 					<div class="panel-body text-center">
 						<button class="btn btn-success" data-toggle="modal" data-target="#add-grallery">添加图库</button>
@@ -114,214 +50,21 @@
 				</div>
 	      </div>
 	   	  <div class="col-lg-9 col-sm-12">
-	   	  		<!--<div class="row">
-	   	  			<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" style="/* border: 1px solid #ff0000;  */padding-left: 5px; padding-right: 5px;">
-	   	  				<div style="margin-top: 10px;">
-	   	  					<img width="100%" style="height: 240px;" class="img-show img-rounded index_0" alt="" src="" onclick="showImg(0)" />
-			      		</div>
-	   	  			</div>
-	      				
-			      	<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" style="padding-left: 5px; padding-right: 5px;">
-			      		<div style="margin-top: 10px;">
-	   	  					<img width="100%" style="height: 240px;" class="img-show img-rounded index_0" alt="" src="" onclick="showImg(0)" />
-			      		</div>
-			      	</div>     
-			      	<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" style="padding-left: 5px; padding-right: 5px;">
-			      		<div style="margin-top: 10px;">
-	   	  					<img width="100%" style="height: 240px;" class="img-show img-rounded index_0" alt="" src="" onclick="showImg(0)" />
-			      		</div>
-			      	</div>
-			      	
-			      	<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" style="padding-left: 5px; padding-right: 5px;">
-			      		<div style="margin-top: 10px;">
-	   	  					<img width="100%" style="height: 240px;" class="img-show img-rounded index_0" alt="" src="" onclick="showImg(0)" />
-			      		</div>
-			      	</div>
-			      	
-			      	<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" style="padding-left: 5px; padding-right: 5px;">
-			      		<div style="margin-top: 10px;">
-	   	  					<img width="100%" style="height: 240px;" class="img-show img-rounded index_0" alt="" src="" onclick="showImg(0)" />
-			      		</div>
-			      	</div>
-	   	  		</div>-->
-
 			  <div id="fh5co-main">
 				  <div class="my-container">
-
 					  <div class="row">
-
 						  <div id="fh5co-board" data-columns="4">
-							  <div class="column size-1of4 column-item column-item1">
-								  <!--<div class="item">
-									  <div class="animate-box bounceIn animated">
-										  <a href="http://pic.onlyloveu.top/test_20190627190608mmexport1561555416483.jpg?imageslim" class="image-popup fh5co-board-img" title="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, eos?"><img src="http://pic.onlyloveu.top/test_20190627190608mmexport1561555416483.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-									  </div>
-									  <div class="fh5co-desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, eos?</div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712105437img_5.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712105437img_5.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Tempora distinctio inventore, nisi excepturi pariatur tempore sit quasi animi.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712105437img_9.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712105437img_9.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Maxime qui eius quisquam quidem quos unde consectetur accusamus adipisci!</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712110126img_12.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712110126img_12.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Sit, quis nulla amet numquam fugit, in reiciendis laboriosam dolor.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712110127img_16.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712110127img_16.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Qui nisi error dolorum dolor delectus, alias doloremque perspiciatis nemo.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712112321img_20.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712112321img_20.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Harum repellat labore est cum ipsa, nesciunt neque mollitia adipisci?</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712112322img_25.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712112322img_25.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Quos repellendus repudiandae debitis reprehenderit cupiditate cumque accusamus exercitationem, harum.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712112322img_29.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712112322img_29.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Adipisci consequuntur ipsa fugit perspiciatis eligendi. Omnis blanditiis, totam placeat.</div>
-							  </div>
-						  </div>-->
-						  </div>
-							  <div class="column size-1of4 column-item column-item2">
-								  <!--<div class="item">
-							  <div class="animate-box bounceIn animated">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712105436img_2.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712105436img_2.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Veniam voluptatum voluptas tempora debitis harum totam vitae hic quos.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box bounceIn animated">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712105437img_6.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712105437img_6.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Sequi, eaque suscipit accusamus. Necessitatibus libero, unde a nesciunt repellendus!</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712112321img_21.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712112321img_21.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Deleniti aliquid, accusantium, consectetur harum eligendi vitae quaerat reiciendis sit?</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712110126img_13.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712110126img_13.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Possimus explicabo voluptatem natus nisi similique ipsa repudiandae? Quibusdam, fuga.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712110127img_18.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712110127img_18.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Neque porro vero cumque natus nam voluptatibus, ratione, commodi labore.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712112321img_22.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712112321img_22.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Quos repellendus repudiandae debitis reprehenderit cupiditate cumque accusamus exercitationem, harum.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712112322img_26.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712112322img_26.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Sunt numquam itaque delectus, dignissimos dolorem obcaecati vel, atque eos.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712112322img_30.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712112322img_30.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Adipisci consequuntur ipsa fugit perspiciatis eligendi. Omnis blanditiis, totam placeat.</div>
-							  </div>
-						  </div>-->
-						  </div>
-								  <div class="column size-1of4 column-item column-item3">
-									  <!--<div class="item">
-							  <div class="animate-box bounceIn animated">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712105436img_3.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712105436img_3.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Optio commodi quod vitae, vel, officiis similique quaerat odit dicta.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712105437img_7.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712105437img_7.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Necessitatibus distinctio eos ipsam cum hic temporibus assumenda deleniti, soluta.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712105437img_10.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712105437img_10.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Incidunt, eaque et. Et odio excepturi, eveniet facilis explicabo assumenda.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712110126img_14.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712110126img_14.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Magni repellendus iusto mollitia, quibusdam facilis incidunt. Sunt, repellat, voluptatem.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712110127img_17.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712110127img_17.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Quisquam quia totam, sit ea maxime sint sed excepturi quod.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712112321img_23.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712112321img_23.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Sunt numquam itaque delectus, dignissimos dolorem obcaecati vel, atque eos.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712112322img_27.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712112322img_27.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Adipisci consequuntur ipsa fugit perspiciatis eligendi. Omnis blanditiis, totam placeat.</div>
-							  </div>
-						  </div>-->
-								  </div>
-								  <div class="column size-1of4 column-item column-item4" >
-									  <!--<div class="item">
-							  <div class="animate-box bounceIn animated">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712105436img_4.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712105436img_4.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Dolore itaque deserunt sit, at exercitationem delectus, consequuntur quaerat sapiente.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712105437img_8.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712105437img_8.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Debitis voluptatum est error nulla voluptate eum maiores animi quasi?</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712110126img_11.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712110126img_11.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Laborum dolores nihil voluptates quas alias distinctio fugiat tempora sit.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712110127img_15.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712110127img_15.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Unde iure rerum cupiditate explicabo quam aut vel earum numquam.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712110127img_19.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712110127img_19.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Nesciunt non iste ex nemo sapiente eum, provident nam corporis.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712112321img_24.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712112321img_24.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Adipisci consequuntur ipsa fugit perspiciatis eligendi. Omnis blanditiis, totam placeat.</div>
-							  </div>
-						  </div><div class="item">
-							  <div class="animate-box">
-								  <a href="http://pic.onlyloveu.top/leedane_20190712112322img_28.jpg?imageslim" class="image-popup fh5co-board-img"><img src="http://pic.onlyloveu.top/leedane_20190712112322img_28.jpg?imageslim" alt="Free HTML5 Bootstrap template" /></a>
-								  <div class="fh5co-desc">Adipisci consequuntur ipsa fugit perspiciatis eligendi. Omnis blanditiis, totam placeat.</div>
-							  </div>
-						  </div>-->
-								  </div>
+							  <div class="column size-1of4 column-item column-item1"></div>
+							  <div class="column size-1of4 column-item column-item2"></div>
+							  <div class="column size-1of4 column-item column-item3"></div>
+							  <div class="column size-1of4 column-item column-item4"></div>
 						  </div>
 					  </div>
 				  </div>
 			  </div>
-
 	   	  </div>
 	   </div> 
 </div>
-
 <!-- 模态框（Modal） -->
 <div class="modal fade" id="add-grallery" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -372,17 +115,13 @@
 	</div><!-- /.modal -->
 </div>
 </body>
-
 <div th:include="common-js :: commJs">what?</div>
-<script th:src="@{/page/js/photo.js}" type="text/javascript"></script>
-<script th:src="@{/page/js/select-material.js}"></script>
-<script th:src="@{/page/other/bootstrap-treeview/js/bootstrap-treeview.js}" type="text/javascript"></script>
-
-
+<script th:src="@{/page/js/select-material.min.js}"></script>
+<script th:src="@{/page/other/bootstrap-treeview/js/bootstrap-treeview.min.js}" type="text/javascript"></script>
 <!-- jQuery -->
 <!--<script th:src="@{/page/js/photo/jquery.min.js}"></script>-->
 <!-- jQuery Easing -->
-<script th:src="@{/page/js/photo/jquery.easing.1.3.js}"></script>
+<script th:src="@{/page/js/photo/jquery.easing.1.3.min.js}"></script>
 <!-- Bootstrap -->
 <!--<script th:src="@{/page/js/photo/bootstrap.min.js}"></script>-->
 <!-- Waypoints -->
@@ -392,8 +131,8 @@
 <!-- Salvattore -->
 <script th:src="@{/page/js/photo/salvattore.min.js}"></script>
 <!-- Main JS -->
-<script th:src="@{/page/js/photo/main.js}"></script>
-
+<script th:src="@{/page/js/photo/main.min.js}"></script>
+<script th:src="@{/page/js/photo.min.js}" type="text/javascript"></script>
 <!-- <script th:if="${isDebug}" th:src="@{/page/other/bootstrap-treeview/js/bootstrap-treeview.js}" type="text/javascript"></script>
 <script th:if="${not isDebug}" th:src="@{//cdn.staticfile.org/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js}" type="text/javascript"></script> -->
 <script type="text/javascript">

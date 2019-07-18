@@ -6,78 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>LeeDane官网首页</title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
-	<style type="text/css">
-		.clearFloat{
-			clear: both;
-		}
-		.main{
-			margin-top: 50px;
-			background-color: #f5f5f5;
-			
-		}
-		.main_bg{
-			width: 100%;
-			height: 200px;
-		}
-		.container{
-			margin-top: -150px;
-		}
-		.row{
-			margin-top: 15px;
-		}
-		.panel-footer button{
-			margin-top: 5px;
-			margin-right: 5px;
-		}
-		.tag{
-			margin-right: 5px;
-		}
-		#main-container .page-header{
-			padding-bottom: 0px !important;
-			margin: 0 0 0 !important;
-			border-bottom: 0px !important;
-		}
-		#main-container .breadcrumb{
-			margin-bottom: 10px !important;
-		}
-		#main-container .panel{
-			margin-bottom: 2px !important;
-		}
-		#main-container .panel-info{
-			border-color: #f5f5f5 !important;
-		}
-		#main-container .has-img-panel-info{
-			min-height: 324px;
-		}
-		#main-container .panel-footer{
-			background-color: #fff !important;
-		}
-		#main-container .panel-info>.panel-heading{
-			background-color: #fff !important;
-			border-color: #f5f5f5 !important;
-		}
-		.col-padding-eight{
-			padding-right: 8px !important;
-			padding-left: 8px !important;
-		}
-		#main-container .panel-body{
-			overflow: hidden;
-		}
-		
-		#report-blog{
-			margin-top: 60px;
-		}
-		.checkbox-inline{
-			padding-left: 0px !important;
-		}
-		.background-white{
-			background-color: #fff !important;
-		}
-		.carousel-img{
-			width: 100% !important;
-			height: 400px !important;
-		}
-	</style>
+	<link rel="stylesheet" th:href="@{/page/css/index.min.css}" />
+	<style type="text/css"></style>
 </head>
 <body>
 <div th:include="common :: hello">what?</div>
@@ -93,17 +23,7 @@
 			            <li data-target="#carousel-example-generic" data-slide-to="1"></li>
 			            <li data-target="#carousel-example-generic" data-slide-to="2"></li>
 			          </ol>
-			
-			        <div class="carousel-inner" role="listbox">
-			            <!-- <div class="item active">
-			              <img class="carousel-img" src="http://pic.onlyloveu.top/ueditor_20170207_1486456405549057707.jpg" alt="九寨沟"/>
-			              <div class="carousel-caption">
-			                <h1>九寨沟</h1>
-			                <p>九寨沟国家级自然保护区位于四川省阿坝藏族羌族自治州九寨沟县境内，是中国第一个以保护自然风景为主要目的的自然保护区，同时，也是中国著名风景名胜区和全国文明风景旅游区示范点。</p>
-			              </div>
-			            </div> -->
-			          </div>
-			
+			          <div class="carousel-inner" role="listbox"></div>
 			          <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
 			            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
 			            <span class="sr-only">Previous</span>
@@ -115,177 +35,15 @@
 				</div>
 			</div>
 		</div>
-	   <!-- <div class="row">
-	      <div class="col-lg-4">
-	      	  	<img width="100%" height="100%" class="img-rounded" alt="" src="images/main_content_img.jpg">
-	      </div>
-	      <div class="col-lg-8" style="height:424px;">
-				<div class="panel panel-info">
-					<div class="panel-heading">
-						<div class="page-header">
-						    <h1>问个人博客的重要性问个人博客的重要性问个人博客的重要性
-						        <small>
-						        	
-								</small>
-						    </h1>
-						    <ol class="breadcrumb">
-						    	<li>文章</li>
-								<li class="active">2016-10-10 10:10:08</li>
-								<li>10</li>
-								<li class="active">18</li>
-							</ol>
-							<span class="label label-default">默认标签</span>
-							<span class="label label-primary">主要标签</span>
-							<span class="label label-success">成功标签</span>
-						</div>
-					</div>
-					<div class="panel-body">
-						母亲说如今社会基本不可能喝上手工茶了，我该学会如何好好珍惜与品味… 母亲是在我要出发广州工作的离家前一天制作好的新茶，虽说不是特意为我准备的，但这份茶情却浓而不烈，绵延不断。我也不确保多年以后是否还能享受这份浓情，于是珍惜当下才是重要的！
-					</div>
-					<div class="panel-footer">
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-heart"></span> 关注
-										</button>
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-edit"></span> Edit
-										</button>
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-trash"></span> Delete
-										</button>
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-phone"></span> Android
-										</button>
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-user"></span> LeeDane
-										</button>
-						<button type="button" class="btn btn-primary">阅读全文</button>
-						<div class="btn-group">
-							<button type="button" class="btn btn-primary dropdown-toggle btn-default" 
-									data-toggle="dropdown">
-								原始 <span class="caret"></span>
-							</button>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="#">功能</a></li>
-								<li><a href="#">另一个功能</a></li>
-								<li><a href="#">其他</a></li>
-								<li class="divider"></li>
-								<li><a href="#">分离的链接</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-	      		
-	      </div>      
-	   </div>
-	   <div class="row">
-	      <div class="col-lg-12">
-	      	  	<div class="panel panel-info">
-					<div class="panel-heading">
-						<div class="page-header">
-						    <h1>问个人博客的重要性问个人博客的重要性问个人博客的重要性
-						        <small>
-						        	
-								</small>
-						    </h1>
-						    <ol class="breadcrumb">
-						    	<li>文章</li>
-								<li class="active">2016-10-10 10:10:08</li>
-								<li>10</li>
-								<li class="active">18</li>
-							</ol>
-							<span class="label label-default">默认标签</span>
-							<span class="label label-primary">主要标签</span>
-							<span class="label label-success">成功标签</span>
-						</div>
-					</div>
-					<div class="panel-body">
-						母亲说如今社会基本不可能喝上手工茶了，我该学会如何好好珍惜与品味… 母亲是在我要出发广州工作的离家前一天制作好的新茶，虽说不是特意为我准备的，但这份茶情却浓而不烈，绵延不断。我也不确保多年以后是否还能享受这份浓情，于是珍惜当下才是重要的！
-					</div>
-					<div class="panel-footer">
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-heart"></span> 关注
-										</button>
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-edit"></span> Edit
-										</button>
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-trash"></span> Delete
-										</button>
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-phone"></span> Android
-										</button>
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-user"></span> LeeDane
-										</button>
-						<button type="button" class="btn btn-primary">阅读全文</button>
-						
-					</div>
-				</div>
-	      </div>     
-	   </div>
-	   <div class="row">
-	      <div class="col-lg-4">
-	      	  	<img width="100%" height="100%" class="img-rounded" alt="" src="images/main_content_img.jpg">
-	      </div>
-	      <div class="col-lg-8" style="height:424px;">
-				<div class="panel panel-info">
-					<div class="panel-heading">
-						<div class="page-header">
-						    <h1>问个人博客的重要性问个人博客的重要性问个人博客的重要性
-						        <small>
-						        	
-								</small>
-						    </h1>
-						    <ol class="breadcrumb">
-						    	<li>文章</li>
-								<li class="active">2016-10-10 10:10:08</li>
-								<li>10</li>
-								<li class="active">18</li>
-							</ol>
-							<span class="label label-default">默认标签</span>
-							<span class="label label-primary">主要标签</span>
-							<span class="label label-success">成功标签</span>
-						</div>
-					</div>
-					<div class="panel-body">
-						母亲说如今社会基本不可能喝上手工茶了，我该学会如何好好珍惜与品味… 母亲是在我要出发广州工作的离家前一天制作好的新茶，虽说不是特意为我准备的，但这份茶情却浓而不烈，绵延不断。我也不确保多年以后是否还能享受这份浓情，于是珍惜当下才是重要的！
-					</div>
-					<div class="panel-footer">
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-heart"></span> 关注
-										</button>
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-edit"></span> Edit
-										</button>
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-trash"></span> Delete
-										</button>
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-phone"></span> Android
-										</button>
-						<button type="button" class="btn btn-primary btn-default ">
-							  			<span class="glyphicon glyphicon-user"></span> LeeDane
-										</button>
-						<button type="button" class="btn btn-primary">阅读全文</button>
-					</div>
-				</div>
-	      		
-	      </div>      
-	   </div> -->
 	</div>
-	<!-- <i class="layui-icon layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 30px; color: #1E9FFF;">&#xe63e;</i>  --> 
 </div>
 <!-- 模态框举报列表 -->
 <div class="modal fade" id="report-blog" tabindex="-1" role="dialog" aria-labelledby="reportBlogModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-					&times;
-				</button>
-				<h4 class="modal-title" id="reportBlogModalLabel">
-					举报
-				</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="reportBlogModalLabel">举报</h4>
 			</div>
 			<div class="modal-body" id="report-modal-body">
 				<div class="row">
@@ -301,13 +59,13 @@
 								<input type="radio" name="options" id="option3" type-value="3" /> 政治敏感
 							</label>
 							<label class="btn btn-primary report-btn">
-								<input type="radio" name="options" id="option3" type-value="4" /> 违法
+								<input type="radio" name="options" id="option4" type-value="4" /> 违法
 							</label>
 							<label class="btn btn-primary report-btn">
-								<input type="radio" name="options" id="option3" type-value="5" /> 倾诉投诉
+								<input type="radio" name="options" id="option5" type-value="5" /> 倾诉投诉
 							</label>
 							<label class="btn btn-primary report-btn default-report-btn active">
-								<input type="radio" name="options" id="option3" type-value="0" /> 其他
+								<input type="radio" name="options" id="option6" type-value="0" /> 其他
 							</label>
 						</div>
 					</div>
@@ -338,18 +96,17 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-				<button type="button" class="btn btn-primary " onclick="doReport(this);">
-					举报
-				</button>
+				<button type="button" class="btn btn-primary " onclick="doReport(this);">举报</button>
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal -->
 </div>
 <div th:include="common-js :: commJs">what?</div>
-
-<script th:if="${not isDebug}" th:src="@{http://pic.onlyloveu.top/page_js_index.js}" type="text/javascript"></script>
-<script th:if="${isDebug}" th:src="@{/page/js/index.js}" type="text/javascript"></script>
-<script th:if="${not isDebug}" th:src="@{http://pic.onlyloveu.top/default_jquery.md5.js}" type="text/javascript"></script>
+<!--<script th:if="${not isDebug}" th:src="@{http://pic.onlyloveu.top/default_jquery.md5.js}" type="text/javascript"></script>-->
+<script th:if="${not isDebug}" th:src="@{/page/other/jquery.md5.min.js}" type="text/javascript"></script>
 <script th:if="${isDebug}" th:src="@{/page/other/jquery.md5.js}" type="text/javascript"></script>
+<!--<script th:if="${not isDebug}" th:src="@{http://pic.onlyloveu.top/page_js_index.js}" type="text/javascript"></script>-->
+<script th:if="${not isDebug}" th:src="@{/page/js/index.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/index.js}" type="text/javascript"></script>
 </body>
 </html>

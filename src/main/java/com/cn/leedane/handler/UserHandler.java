@@ -411,15 +411,12 @@ public class UserHandler {
 				e.printStackTrace();
 			}*/
 			
-			if(!isAdmin && isSelf){/*
-				infos.put("no_login_code", user2.getNoLoginCode());
-			}else{*/
-				//自己才能看自己的最后操作状态
-				//infos.put("last_request_time", getLastRequestTime(user2.getId()));//最近操作记录
+			if(isAdmin || isSelf){
+				//最后操作状态
+				infos.put("last_request_time", getLastRequestTime(user2.getId()));//最近操作记录
+				infos.put("personal_introduction", StringUtil.changeNotNull(user2.getPersonalIntroduction()));
 			}
-			//最后操作状态
-			infos.put("last_request_time", getLastRequestTime(user2.getId()));//最近操作记录
-			infos.put("personal_introduction", StringUtil.changeNotNull(user2.getPersonalIntroduction()));
+
 		}
 		return infos;
 	}
