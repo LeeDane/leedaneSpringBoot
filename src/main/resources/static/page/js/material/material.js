@@ -405,7 +405,7 @@ function buildEachMaterialFileRow(index, material){
 					'<div class="thumbnail">'+
 					      '<div class="cut-text" style="margin-left: 10px; margin-right: 10px;">文件路径：<a href="'+ material.qiniu_path +'" title="'+ material.qiniu_path +'">'+ material.path +'</a></div>'+
 					      '<div class="caption">'+
-					        	'<div class="cut-text">时间：'+ changeNotNullString(material.create_time) + '&nbsp;&nbsp;&nbsp;&nbsp; 文件大小：'+ parseFloat(material.length/ 1024/ 1024).toFixed(2) +'M</div>';
+					        	'<div class="cut-text">时间：'+ changeNotNullString(material.create_time) + '&nbsp;&nbsp;&nbsp;&nbsp; 文件大小：'+ formatFileSize(material.length)+'</div>';
 					if(isEmpty(material.material_desc)){
 						html += '<h5 class="cut-text">暂无描述</h5>';   	
 					}else{
@@ -432,16 +432,16 @@ function buildEachMaterialVideoOrAudioRow(index, material){
 					'<div class="thumbnail">'+
 					      '<div class="cut-text" style="margin-left: 10px; margin-right: 10px;">文件路径：<a href="'+ material.qiniu_path +'" title="'+ material.qiniu_path +'">'+ path +'</a></div>'+
 					      '<div class="caption">'+
-					        	'<div class="cut-text">时间：'+ changeNotNullString(material.create_time) + '&nbsp;&nbsp;&nbsp;&nbsp; 文件大小：'+ parseFloat(material.length/ 1024/ 1024).toFixed(2) +'M</div>';
+					        	'<div class="cut-text">时间：'+ changeNotNullString(material.create_time) + '&nbsp;&nbsp;&nbsp;&nbsp; 文件大小：'+ formatFileSize(material.length) +'</div>';
 					
 				if(isVideo(path)){
-					html += '<div class="row"><div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">';
+					html += '<div class="row"><div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">';
 					html += getVideoHtml(material.qiniu_path);
 					html += '</div></div>';
 				}
 				
 				if(isAudio(path)){
-					html += '<div class="row"><div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">';
+					html += '<div class="row"><div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">';
 					html += getAudioHtml(material.qiniu_path);
 					html += '</div></div>';
 				}

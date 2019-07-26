@@ -1,0 +1,18 @@
+.layui-table-cell a{
+    height: auto!important;
+    line-height: normal!important;
+    padding: 2px 6px!important;
+    font-size: 12px!important;
+}
+
+#imgTooltip{
+    position: absolute;
+    z-index: 999;
+    background-color: #eee;
+    border: 1px solid #999;
+    width: 220px;
+    height: 220px;
+    -webkit-border-radius: 8px;
+    font-family: "微软雅黑";
+    padding: 20px;
+}

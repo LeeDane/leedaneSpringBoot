@@ -1,87 +1,22 @@
-layui.use(['layer'], function(){
+var $blogContainer;
+layui.use(['layer', 'laypage'], function(){
 	layer = layui.layer;
-	  
-	//layer.msg($('.main_bg').offset().top)
-	//getLogin();
-	//getScore();
+	laypage = layui.laypage;
 	$("[data-toggle='tooltip']").tooltip();
 	$(".navbar-nav .nav-main-li").each(function(){
 		$(this).removeClass("active");
 	});
 	$(".nav-blog").addClass("active");
-	
+    $blogContainer = $("#blog-container");
 	getWebBackgroud();
-	$(window).scroll(function (e) {
-		e = e || window.event;
-	    if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件             
-	        if (e.wheelDelta > 0) { //当滑轮向上滚动时
-	            return;
-	        }
-	    } else if (e.detail) {  //Firefox滑轮事件
-	        if (e.detail> 0) { //当滑轮向上滚动时
-	            return;
-	        }
-	    }
-	    var pageH = $(document.body).height(); //页面总高度 
-	    var scrollT = $(window).scrollTop(); //滚动条top 
-	    var height = (pageH-winH-scrollT)/winH;
-	    if(!isLoad && height < 0.20){
-	    	isLoad = true;
-	    	method = 'lowloading';
-	    	getMainContentData();
-	    }
-	}); 
 	getMainContentData();
 	getCarouselImgs();//获取推荐的轮播图信息
 });
-var last_id = 0;
-var first_id = 0;
-var method = 'firstloading';
 var imgs = [];
-
 var blogs;
 //浏览器可视区域页面的高度
-var winH = $(window).height(); 
+var winH = $(window).height();
 var isLoad = false;
-
-/*function getLogin(){
-	var params = {account: 'leedane', password: $.md5("456"), t: Math.random()};
-	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
-	$.ajax({
-		type : "post",
-		data : params,
-		url : getBasePath() +"leedane/user/login.action",
-		dataType: 'json', 
-		beforeSend:function(){
-		},
-		success : function(data) {
-			layer.close(loadi);
-			layer.msg(data);
-		},
-		error : function(data) {
-			ajaxError(data);
-		}
-	});
-}*/
-
-/*function getScore(){
-	var params = {account: 'leedane', password: $.md5("456"), t: Math.random()};
-	$.ajax({
-		type : "post",
-		data : params,
-		url : getBasePath() +"leedane/score/paging.action",
-		dataType: 'json', 
-		beforeSend:function(){
-		},
-		success : function(data) {
-				layer.msg(data);
-		},
-		error : function(data) {
-			ajaxError(data);
-		}
-	});
-}*/
-
 //获取背景图
 function getWebBackgroud(){
 	 $.ajax({
@@ -107,50 +42,49 @@ function getWebBackgroud(){
 function getMainContentData(){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
-		dataType: 'json',  
-		url : "/bg/blogs?" +jsonToGetRequestParams(getMainContentRequestParams()),
+		dataType: 'json',
+		url : "/bg/blogs/paging?" +jsonToGetRequestParams(getMainContentRequestParams()),
 		beforeSend:function(){
 		},
 		success : function(data) {
 			layer.close(loadi);
+			$blogContainer.empty();
 			if(data != null && data.isSuccess){
-				if(method == 'firstloading')
-					$(".container").find(".row-list").remove();
-				
+				/*if(method == 'firstloading')
+					$blogContainer.find(".row-list").remove();*/
 				if(data.message.length == 0){
 					canLoadData = false;
-					layer.msg("无更多数据");
+					$blogContainer.append('<div class="row row-list">没有更多数据</div>');
 					return;
 				}
-				
-				if(method == 'firstloading'){
-					blogs = data.message;
-					for(var i = 0; i < blogs.length; i++){
-						//判断是否有图
-						if(data.message[i].has_img)
-							$(".container").append(buildHasImgRow(i, blogs[i]));
-						else
-							$(".container").append(buildNotHasImgRow(i, blogs[i]));
-						if(i == 0)
-							first_id = blogs[i].id;
-						if(i == blogs.length -1)
-							last_id = blogs[i].id;
-					}
-				}else{
-					var currentIndex = blogs.length;
-					for(var i = 0; i < data.message.length; i++){
-						blogs.push(data.message[i]);
-						//判断是否有图
-						if(data.message[i].has_img)
-							$(".container").append(buildHasImgRow(currentIndex + i, data.message[i]));
-						else
-							$(".container").append(buildNotHasImgRow(currentIndex + i, data.message[i]));
-						
-						if(i == data.message.length -1)
-							last_id = data.message[i].id;
-					}
-				}
-				resetSideHeight();
+
+                blogs = data.message;
+                for(var i = 0; i < blogs.length; i++){
+                    //判断是否有图
+                    if(data.message[i].has_img)
+                        $blogContainer.append(buildHasImgRow(i, blogs[i]));
+                    else
+                        $blogContainer.append(buildNotHasImgRow(i, blogs[i]));
+                }
+                scrollToPageTop(1000);
+				//执行一个laypage实例
+                 laypage.render({
+                    elem: 'item-pager' //注意，这里的 test1 是 ID，不用加 # 号
+                    ,layout: ['prev', 'page', 'next', 'count', 'skip']
+                    ,count: data.total //数据总数，从服务端得到
+                    ,limit: pageSize
+                    ,theme: '#337ab7'
+                    , curr: currentIndex + 1
+                    ,jump: function(obj, first){
+                        //obj包含了当前分页的所有参数，比如：
+                        console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                        console.log(obj.limit); //得到每页显示的条数
+                        if(!first){
+                            currentIndex = obj.curr -1;
+                            getMainContentData();
+                        }
+                      }
+                 });
 			}else{
 				ajaxError(data);
 			}
@@ -309,11 +243,8 @@ function buildNotHasImgRow(index, blog){
 
 //获取请求参数
 function getMainContentRequestParams(){
-	var pageSize = 5;
-	if(method != 'firstloading')
-		pageSize = 5;
-	return {pageSize: pageSize, last_id: last_id, first_id: first_id, method: method, t: Math.random()};
-	//return "?page_size="+ pageSize +"&last_id="+ last_id +"&first_id="+ first_id+"&method="+ method+"&t="+Math.random();
+	pageSize = 10;
+    return {page_size: pageSize, current: currentIndex, total: totalPage, t: Math.random()};
 }
 
 /**

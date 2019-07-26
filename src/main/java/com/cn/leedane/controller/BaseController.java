@@ -808,6 +808,14 @@ public class BaseController {
 		model.addAttribute("isDebug", IS_DEBUG);
 		UserBean userBean = getMustAdminLoginUserFromShiro();
 		model.addAttribute("isLogin", true);
+		//获取当前的Subject
+		Subject currentUser = SecurityUtils.getSubject();
+		model.addAttribute("isAdmin", currentUser.hasRole(RoleController.ADMIN_ROLE_CODE));
+		model.addAttribute("isStock", currentUser.hasRole(RoleController.STOCK_ROLE_CODE));
+		model.addAttribute("isCircle", currentUser.hasRole(RoleController.CIRCLE_ROLE_CODE));
+		model.addAttribute("isShopping", currentUser.hasRole(RoleController.SHOPPING_ROLE_CODE));
+		model.addAttribute("isBaby", currentUser.hasRole(RoleController.BABY_ROLE_CODE));
+
 		model.addAttribute("account", userBean.getAccount());
 		return StringUtil.isNotNull(urlParse) ? urlParse : "404";
 	}

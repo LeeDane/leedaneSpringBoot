@@ -1319,3 +1319,25 @@ CREATE TABLE `t_clock_in_resources` (
   CONSTRAINT `FK_clock_in_resources_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_clock_in_resources_clock_in` FOREIGN KEY (`clock_in_id`) REFERENCES `t_clock_in` (`id`) ON DELETE CASCADE
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_event
+-- ----------------------------
+DROP TABLE IF EXISTS `t_event`;
+CREATE TABLE `t_event` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `content` longtext NOT NULL COMMENT 'markdown语法的html数据',
+  `source` longtext NOT NULL COMMENT 'markdown语法的源数据',
+  `str1` varchar(255) DEFAULT NULL,
+  `str2` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+   KEY `FK_event_create_user` (`create_user_id`),
+   KEY `FK_event_modify_user` (`modify_user_id`),
+   CONSTRAINT `FK_event_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+   CONSTRAINT `FK_event_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

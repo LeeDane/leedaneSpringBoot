@@ -967,6 +967,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	public Map<String, Object> updateUserBase(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->updateUserBase():jo="+jo.toString());
+		String head = JsonUtil.getStringValue(jo, "head");
 		String sex = JsonUtil.getStringValue(jo, "sex");
 		String mobilePhone = JsonUtil.getStringValue(jo, "mobile_phone");
 		String qq = JsonUtil.getStringValue(jo, "qq");
@@ -979,19 +980,69 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		user.setMobilePhone(mobilePhone);
 		user.setQq(qq);
 		user.setEmail(email);
+		user.setEducationBackground(StringUtil.changeNotNull(educationBackground));
+		user.setPersonalIntroduction(StringUtil.changeNotNull(personalIntroduction));
 		if(StringUtil.isNotNull(birthDay)){
 			Date day = DateUtil.stringToDate(birthDay, "yyyy-MM-dd");
 			user.setBirthDay(day);
 		}else{
 			user.setBirthDay(null);
 		}
-		
-		user.setEducationBackground(educationBackground);
-		user.setPersonalIntroduction(personalIntroduction);
-		
-		boolean result = userMapper.update(user) > 0;
-		if(result){
 
+		boolean result = false;
+		String oldHead = userHandler.getUserPicPath(user.getId(), "30x30");
+		//头像有变化才更新
+		if(StringUtil.isNotNull(head) && !head.equalsIgnoreCase(oldHead)){
+			FilePathBean filePathBean = null;
+			long[] widthAndHeight;
+			int width = 0, height = 0;
+			long length = 0;
+			//获取网络图片
+			widthAndHeight = FileUtil.getNetWorkImgAttr(head);
+			if(widthAndHeight.length == 3){
+				width = (int) widthAndHeight[0];
+				height = (int) widthAndHeight[1];
+				length = widthAndHeight[2];
+			}
+
+			if(length < 1){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.链接操作失败.value));
+				message.put("responseCode", EnumUtil.ResponseCode.链接操作失败.value);
+				return message.getMap();
+			}
+
+			if(length > 1024* 1024* 500){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.上传的文件过大.value));
+				message.put("responseCode", EnumUtil.ResponseCode.上传的文件过大.value);
+				return message.getMap();
+			}
+
+			filePathBean = new FilePathBean();
+			filePathBean.setCreateTime(new Date());
+			filePathBean.setCreateUserId(user.getId());
+			filePathBean.setPicOrder(0);
+			filePathBean.setPath(StringUtil.getFileName(head));
+			filePathBean.setQiniuPath(head);
+			filePathBean.setUploadQiniu(ConstantsUtil.STATUS_NORMAL);
+			filePathBean.setPicSize(ConstantsUtil.DEFAULT_PIC_SIZE); //source
+			filePathBean.setWidth(width);
+			filePathBean.setHeight(height);
+			filePathBean.setLenght(length);
+			filePathBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+			filePathBean.setTableName(DataTableType.用户.value);
+			filePathBean.setTableUuid(String.valueOf(user.getId()));
+			result = filePathMapper.save(filePathBean) > 0;
+			if(!result){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.头像上传失败.value));
+				message.put("responseCode", EnumUtil.ResponseCode.头像上传失败.value);
+				return message.getMap();
+			}
+			//更新头像的缓存
+			userHandler.updateUserPicPath(user.getId(), "30x30");
+		}
+
+		result = userMapper.update(user) > 0;
+		if(result){
 			//添加ES缓存
 			new ThreadUtil().singleTask(new EsIndexAddThread<UserBean>(user));
 

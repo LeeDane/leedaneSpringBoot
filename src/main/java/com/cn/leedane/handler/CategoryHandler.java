@@ -46,6 +46,9 @@ public class CategoryHandler {
 	 * @return
 	 */
 	public CategoryBean getCategoryBean(int categoryId){
+		if(categoryId < 1)
+			return null;
+
 		String key = getCategoryKey(categoryId);
 		Object obj = systemCache.getCache(key);
 		CategoryBean categoryBean = null;

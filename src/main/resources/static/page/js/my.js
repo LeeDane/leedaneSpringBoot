@@ -1,6 +1,7 @@
-layui.use(['layer', 'laypage'], function(){
+layui.use(['layer', 'laypage', 'util'], function(){
 	layer = layui.layer;
 	laypage = layui.laypage;
+	util = layui.util;
 	/*initPage(".pagination", "getMoods");*/
 	$cOTItemContainer = $("#comment-or-transmit-item");
 	$moodMardownContent = $("#push-mood-text");
@@ -266,8 +267,9 @@ function loadUserInfo(){
 							}
 				
 						descHtml +=	'</div>'+
-								'</div>'+
-								'<div class="h4" style="max-height: 38px;overflow-y:auto;">'+ userinfo.personal_introduction+'</div>';
+								'</div>';
+								if(isNotEmpty(userinfo.personal_introduction))
+                    descHtml +='<div class="h4" style="max-height: 38px;overflow-y:auto;">'+ userinfo.personal_introduction+'</div>';
 								
 				if(isLoginUser){
 					descHtml +=	'<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#edit-user-info">'+
@@ -436,15 +438,11 @@ function getMoods(){
 				for(var i = 0; i < moods.length; i++){
 					//添加每一行到心情容器
 					$moodContainer.append(buildMoodRow(i, moods[i]/*, ifFlagNew, flagMonth*/));
-					if(i == 0)
-						first_id = moods[i].id;
-					if(i == moods.length -1)
-						last_id = moods[i].id;
 				}
 				//pageDivUtil(data.total);
 				console.log(monthArray);
 				//resetSideHeight();
-				
+				scrollToPageTop(1000);
 				//执行一个laypage实例
 				 laypage.render({
 				    elem: 'item-pager' //注意，这里的 test1 是 ID，不用加 # 号
@@ -502,6 +500,11 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 					'<h1>'+ mood.content+'</h1>'+
 					'<p>Try to scroll this section and look at the navigation list while scrolling!</p>'+
 				'</div>';*/
+
+	var moodTime = new Date(changeNotNullString(mood.create_time));
+	/*moodTime = setTimeAgo(moodTime.getFullYear(), moodTime.getMonth(), moodTime.getDate(),
+	                    moodTime.getHours(), moodTime.getMinutes(), moodTime.getSeconds());*/
+    moodTime = setTimeAgo(moodTime);
 	var html = '<div class="list-group" id="'+(ifFlagNew? 'month-'+flagMonth: '')+'">'+
 				    '<div class="list-group-item active">'+
 						'<div class="row">'+
@@ -510,7 +513,7 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 						        '</span>'+
 							'</div>'+
 							'<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-right cut-text" style="text-align: right;">'+
-								'<span class="list-group-item-heading" style="margin-right: 5px;">'+ changeNotNullString(mood.create_time).substring(0, 16) +
+								'<span class="list-group-item-heading" style="margin-right: 5px;">'+ moodTime +
 						        '</span>'+
 						        '<span class="list-group-item-heading glyphicon glyphicon-option-vertical cursor" onclick="showItemListModal('+ index +')" data-toggle="tooltip" data-placement="left" title="点击，查看更多操作" onMouseOver="$(this).tooltip(\'show\')">'+
 						        '</span> '+
@@ -522,8 +525,8 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 						if(isLoginUser && mood.status == 5){
 							html += '<span class="label label-warning" data-toggle="tooltip" data-placement="right" title="该心情是私有的，其他人无法查看" onMouseOver="$(this).tooltip(\'show\')">私有</span>';
 						}
-							html += '<span class="label '+ (mood.can_comment? 'label-default' : 'label-success') +'"  '+ (mood.can_comment ? '': 'data-toggle="tooltip" data-placement="right" title="该心情禁止任何人评论" onMouseOver="$(this).tooltip(\'show\')"') + '>'+ (mood.can_comment? '可以评论':'禁止评论') +'</span>'+
-							'<span class="label '+ (mood.can_transmit? 'label-default' : 'label-success') +'" '+ (mood.can_transmit ? '': 'data-toggle="tooltip" data-placement="right" title="该心情禁止任何人转发" onMouseOver="$(this).tooltip(\'show\')"') + '>'+ (mood.can_transmit? '可以转发':'禁止转发') +'</span>'+
+							html += '<span class="label '+ (mood.can_comment? 'label-default' : 'label-danger') +'"  '+ (mood.can_comment ? '': 'data-toggle="tooltip" data-placement="right" title="该心情禁止任何人评论" onMouseOver="$(this).tooltip(\'show\')"') + '>'+ (mood.can_comment? '可以评论':'禁止评论') +'</span>'+
+							'<span class="label '+ (mood.can_transmit? 'label-default' : 'label-danger') +'" '+ (mood.can_transmit ? '': 'data-toggle="tooltip" data-placement="right" title="该心情禁止任何人转发" onMouseOver="$(this).tooltip(\'show\')"') + '>'+ (mood.can_transmit? '可以转发':'禁止转发') +'</span>'+
 						'</div>'+
 					    '<div class="list-group-item-text" style="margin-top: 5px;" id="couponValue-'+ index+'">'+ changeNotNullString(mood.content) +
 					    '</div>'+
@@ -567,7 +570,7 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 									userStr += '<a href="JavaScript:void(0);" onclick="linkToMy('+ user.split(",")[0] +')">'+ changeNotNullString(user.split(",")[1]) +'</a>';
 							}
 						}
-					html += '<div class="zan_user">'+ userStr +'等'+ users.length +'人觉得很赞</div>';
+					html += '<div class="zan_user">'+ userStr +'等'+ mood.zan_number +'人觉得很赞</div>';
 					}
 					
 			html +=	'</div>'+
@@ -591,6 +594,12 @@ function getMoodRequestParams(){
  * 页面展示的用户基本信息
  */
 function buildShowUserinfo(){
+
+    //处理最后请求时间
+    var requestTime = "";
+    if(isNotEmpty(userinfo.last_request_time)){
+        requestTime = setTimeAgo(new Date(userinfo.last_request_time));
+    }
 	var infoHtml = '<div class="table-responsive">'+
 						'<table class="table table-striped">'+
 						  '<tr>'+
@@ -623,7 +632,7 @@ function buildShowUserinfo(){
 						  '</tr>'+
 						  '<tr>'+
 						     '<td>最后请求时间</td>'+
-						     '<td>'+ changeNotNullString(userinfo.last_request_time) +'</td>'+
+						     '<td>'+ requestTime +'</td>'+
 						  '</tr>'+
 						'</tbody>'+
 						'</table>'+
@@ -635,7 +644,12 @@ function buildShowUserinfo(){
  */
 function buildEditUserinfo(){
 	//添加编辑用户信息的弹出模块html
-	var editHtml = '<form role="form" class="myForm"><div class="form-group">'+
+	var editHtml = '<form role="form" class="myForm">'+
+	                '<div class="form-group">'+
+                      '<label for="head">头像(点击下方文本框选择新头像)</label>'+
+                      '<input type="text" class="form-control" name="head" placeholder="请选择个人头像" onclick="createSelectMaterialModal(this, 1, 1, \'afterSelectHead\');" readonly="readonly" value="'+changeNotNullString(userinfo.user_pic_path)+'">'+
+                    '</div>'+
+	                '<div class="form-group">'+
 					  '<label for="sex">性别</label>'+
 					  '<select class="form-control" name="sex">'+
 						'<option value="男"'+ (userinfo.sex == '男'? ' selected="selected" ': '')+'>男</option>'+
@@ -725,15 +739,15 @@ function showItemListModal(index){
 	if(isLoginUser){
 		html += '<li class="list-group-item cursor" onclick="deleteMood('+ mood.id +')">删除</li>'+
 				'<li class="list-group-item cursor" onclick="updateIsSelfStatus('+ mood.status +','+ mood.id +');">'+
-			        '<span class="badge">'+ (mood.status == 5? '私有': '非私有') +'</span>'+
-			        	'设置转为私有'+
+			        '<span class="badge '+ (mood.status == 5? 'badge-warning': '') +'">'+ (mood.status == 5? '私有': '非私有') +'</span>'+
+			        	'设置是否私有'+
 			    '</li>'+
 			    '<li class="list-group-item cursor" onclick="updateCommentStatus('+ mood.can_comment +','+ mood.id +');">'+
-			        '<span class="badge">'+ (mood.can_comment? '已启用': '已禁用') +'</span>'+
+			        '<span class="badge '+ (mood.can_comment? '': 'badge-danger') +'">'+ (mood.can_comment? '已启用': '已禁用') +'</span>'+
 			        	'设置是否能评论'+
 			    '</li>'+
 			    '<li class="list-group-item cursor" onclick="updateTransmitStatus('+ mood.can_transmit+','+ mood.id+')">'+
-			        '<span class="badge">'+ (mood.can_transmit? '已启用': '已禁用') +'</span>'+
+			        '<span class="badge '+ (mood.can_transmit? '': 'badge-danger') +'">'+ (mood.can_transmit? '已启用': '已禁用') +'</span>'+
 			        	'设置是否能转发'+
 			    '</li>';
 	}
@@ -978,6 +992,7 @@ var ct_type = 0;
 var ct_id = 0; //当前心情的ID
 var ct_canLoadData = true;//标记是否还能下拉请求
 var ct_click_index = -1;  //点击的评论/转发的索引
+var $commentOrTransmitText = $('#comment-or-transmit-text');
 /**
  * 展示评论或者转发列表
  * @param type 1表示评论，2表示转发
@@ -985,10 +1000,29 @@ var ct_click_index = -1;  //点击的评论/转发的索引
  */
 function showCommentOrTransmit(type, index){
 	$("#comment-or-transmit-list").modal("show");
+	$commentOrTransmitText.text("");
 	if(type == 1){
 		$("#commentOrTransmitListModalLabel").text("评论列表");
+		if(!moods[index].can_comment){
+		    $commentOrTransmitText.attr('placeholder','由于用户设置，无法评论');
+		    $commentOrTransmitText.attr('readonly','readonly');
+		    $commentOrTransmitText.parent().find("button").prop('disabled', true); // 按钮灰掉，且不可点击。
+		}else{
+		     $commentOrTransmitText.attr('placeholder','评论点什么吧');
+		     $commentOrTransmitText.removeAttr('readonly');
+		     $commentOrTransmitText.parent().find("button").prop('disabled', false);
+		}
 	}else{
 		$("#commentOrTransmitListModalLabel").text("转发列表");
+		if(!moods[index].can_transmit){
+            $commentOrTransmitText.attr('placeholder','由于用户设置，无法转发');
+            $commentOrTransmitText.attr('readonly','readonly');
+            $commentOrTransmitText.parent().find("button").prop('disabled', true); // 按钮灰掉，且不可点击。
+        }else{
+             $commentOrTransmitText.attr('placeholder','说点什么吧');
+             $commentOrTransmitText.removeAttr('readonly');
+             $commentOrTransmitText.parent().find("button").prop('disabled', false);
+        }
 	}
 	var id = moods[index].id;
 	ct_type = type;
@@ -1000,7 +1034,7 @@ function showCommentOrTransmit(type, index){
 	ct_isLoad = false;
 	ct_canLoadData = true;
 	ct_click_index = -1;
-	$('#comment-or-transmit-text').attr('placeholder','请说点什么吧');
+
 	asynchronousLoadData();
 }
 
@@ -1010,7 +1044,7 @@ function showCommentOrTransmit(type, index){
  * @returns {___anonymous20849_20964}
  */
 function getCTRequestParams(table_id){
-	var pageSize = 15;
+	pageSize = 15;
 	if(ct_method != 'firstloading')
 		pageSize = 10;
 	//return {pageSize: pageSize, last_id: ct_last_id, first_id: ct_first_id, method: ct_method, table_name: 't_mood', showUserInfo: true, table_id: table_id, t: Math.random()};
@@ -1120,18 +1154,18 @@ function buildCommentOrTransmitRow(index, ct){
  */
 function reply(index){
 	ct_click_index = index;
-	$('#comment-or-transmit-text').attr('placeholder','@'+ changeNotNullString(cts[ct_click_index].account));
-	$('#comment-or-transmit-text').focus();
+	$commentOrTransmitText.attr('placeholder','@'+ changeNotNullString(cts[ct_click_index].account));
+	$commentOrTransmitText.focus();
 }
 
 /**
  * 发送评论或者转发
  */
 function sendCommentOrTransmit(){
-	var text = $('#comment-or-transmit-text').val();
+	var text = $commentOrTransmitText.val();
 	if(isEmpty(text)){
 		layer.msg("请说点什么吧");
-		$('#comment-or-transmit-text').focus();
+		$commentOrTransmitText.focus();
 		return;
 	}
 	
@@ -1223,6 +1257,17 @@ function sendMood(){
 			layer.msg("网络请求失败");
 		}
 	});
+}
+
+
+
+/**
+ * 选择头像后之后的回调函数
+ */
+function afterSelectHead(links){
+	if(isNotEmpty(links)){
+		$(".myForm").find("input[name = 'head']").val(links);
+	}
 }
 
 /**

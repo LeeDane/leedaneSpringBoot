@@ -37,6 +37,14 @@ function createSelectMaterialModal(obj, select, selectType, callBackFun){
 				'</div>'+
 			'</div>';
 	$("body").append(html);
+	/*$("body").attr("SCROLLBAR-FACE-COLOR", "rgb(10,236,209)");//滚动条凸出部分的颜色
+	$("body").attr("SCROLLBAR-HIGHLIGHT-COLOR", "rgb(23,255,155)");//滚动条空白部分的颜色
+	$("body").attr("SCROLLBAR-SHADOW-COLOR", "rgb(255,116,23)");//立体滚动条阴影的颜色
+	$("body").attr("SCROLLBAR-3DLIGHT-COLOR", "rgb(66,93,127)");//滚动条亮边的颜色
+	$("body").attr("SCROLLBAR-ARROW-COLOR", "rgb(93,232,255)");//上下按钮上三角箭头的颜色
+	$("body").attr("SCROLLBAR-TRACK-COLOR", "rgb(255,70,130)");//滚动条的背景颜色
+	$("body").attr("SCROLLBAR-DARKSHADOW-COLOR", "rgb(10,0,209)");//滚动条强阴影的颜
+	$("body").attr("SCROLLBAR-BASE-COLOR", "rgb(66,93,128)");//滚动条的基本颜色*/
 	var $container = $("#"+modalId);
 	$container.modal({backdrop: 'static', keyboard: false});
 	var width = $container.find(".modal-body").height();

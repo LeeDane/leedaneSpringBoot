@@ -61,6 +61,8 @@ public class BlogController extends BaseController{
 		 * 是否有主图
 		 */
 		boolean hasImg = JsonUtil.getBooleanValue(json, "has_img");
+
+		int blogId = JsonUtil.getIntValue(json, "bid");
 		
 		/**
 		 * 是否要自动截取摘要摘要
@@ -132,9 +134,6 @@ public class BlogController extends BaseController{
 			
 		}
 		
-		blog.setCreateUserId(JsonUtil.getIntValue(json, "create_user_id", user.getId()));
-		blog.setCreateTime(new Date());
-		
 		if(hasDigest){
 			digest = JsoupUtil.getInstance().getDigest(content, 0, 100);
 		}else{
@@ -144,9 +143,12 @@ public class BlogController extends BaseController{
 		blog.setRecommend(JsonUtil.getBooleanValue(json, "is_recommend"));
 		
 		blog.setDigest(digest);
-		if(JsonUtil.getIntValue(json, "bid") > 0){
-			blog.setId(JsonUtil.getIntValue(json, "bid"));
+		if(blogId > 0){
+			blog.setId(blogId);
 		}
+		blog.setCreateUserId(JsonUtil.getIntValue(json, "create_user_id", user.getId()));
+		blog.setCreateTime(new Date());
+
 		message.putAll(blogService.addBlog(blog, user));   
 		return message.getMap();
 	}
@@ -178,12 +180,12 @@ public class BlogController extends BaseController{
 				HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
-		
+
 		/*JSONObject json = getJsonFromMessage(message);
 		int pageSize = JsonUtil.getIntValue(json, "pageSize"); //每页的大小
 		int lastId = JsonUtil.getIntValue(json, "last_id");
 		int firstId = JsonUtil.getIntValue(json, "first_id");
-		
+
 		//执行的方式，现在支持：uploading(向上刷新)，lowloading(向下刷新)，firstloading(第一次刷新)
 		String method = JsonUtil.getStringValue(json, "method");*/
 		List<Map<String,Object>> r = new ArrayList<Map<String,Object>>();
@@ -227,8 +229,15 @@ public class BlogController extends BaseController{
 		message.put("message", r);
 		return message.getMap();
 	}
-	
-	
+
+	@RequestMapping(value = "/blogs/paging", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> blogPaging(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		message.putAll(blogService.paging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
+		return message.getMap();
+	}
+
 	
 	/**
 	 * 获取博客的的基本信息(不包括内容)

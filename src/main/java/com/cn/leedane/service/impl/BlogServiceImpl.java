@@ -1,5 +1,8 @@
 package com.cn.leedane.service.impl;
 
+import com.cn.leedane.controller.RoleController;
+import com.cn.leedane.exception.MustLoginException;
+import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.*;
 import com.cn.leedane.mapper.BlogMapper;
@@ -19,6 +22,19 @@ import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.hankcs.hanlp.HanLP;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +81,9 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 
 	@Autowired
 	private ElasticSearchUtil elasticSearchUtil;
+
+	@Autowired
+	private TransportClient transportClient;
 	@Override
 	public Map<String,Object> addBlog(BlogBean blog, UserBean user){	
 		logger.info("BlogServiceImpl-->addBlog():blog="+blog);
@@ -629,6 +648,51 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		}
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("获取博客ID为", blogId, "详情", StringUtil.getSuccessOrNoStr(result)).toString(), "check()", StringUtil.changeBooleanToInt(result), 0);
+		return message.getMap();
+	}
+
+	@Override
+	public Map<String, Object> paging(JSONObject jo,
+									  UserBean user, HttpRequestInfoBean request){
+		logger.info("BlogServiceImpl-->paging():jo=" +jo.toString());
+		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
+		int currentIndex = JsonUtil.getIntValue(jo, "current", 0); //当前的索引页
+		int total = JsonUtil.getIntValue(jo, "total", 0); //当前的索引页
+		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
+
+		ResponseMap message = new ResponseMap();
+
+		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+		boolQuery.must(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_NORMAL));
+		SearchRequestBuilder builder = transportClient.prepareSearch(ElasticSearchUtil.getDefaultIndexName(DataTableType.博客.value)).setTypes(DataTableType.博客.value)
+				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+				.setQuery(boolQuery)
+				.setFrom(start)
+				//为0表示只获取统计数，不获取详细的文档数据
+				.setSize(pageSize)
+				.setFetchSource(new String[]{"account", "category", "create_time", "create_user_id", "digest", "has_img", "img_url", "title", "id"}, null);
+		//控制是否新增排序
+		builder.addSort("create_time", SortOrder.DESC);
+
+		logger.info(builder.toString());
+
+		SearchResponse response = builder.get();
+
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		for (SearchHit hit : response.getHits()) {
+			Map<String, HighlightField> fieldMap = hit.getHighlightFields();
+			result.add(hit.getSourceAsMap());
+		}
+
+		if(CollectionUtil.isNotEmpty(result)){
+			for(Map<String, Object> map: result){
+//				map.put("account", userHandler.getUserName(StringUtil.changeObjectToInt(map.get("create_user_id"))));
+//				map.put("content", JsoupUtil.getInstance().getContentNoTag(StringUtil.changeNotNull(map.get("content"))));
+			}
+		}
+		message.put("total", response.getHits().totalHits);
+		message.put("message", result);
+		message.put("isSuccess", true);
 		return message.getMap();
 	}
 

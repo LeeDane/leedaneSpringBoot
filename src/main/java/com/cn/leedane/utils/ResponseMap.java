@@ -33,12 +33,14 @@ public class ResponseMap extends HashMap<String, Object>{
 		
 		if(containsKey("user"))
 			remove("user");
-		
+
+		logger.info("服务器返回:"+ JSONObject.fromObject(this).toString());
+
 		if(start > 0){
 			long end = System.currentTimeMillis();
 			this.put("consumeTime", (end - start) +"ms");
 		}
-		logger.info("服务器返回:"+ JSONObject.fromObject(this).toString());
+
 		return this;
 	}
 

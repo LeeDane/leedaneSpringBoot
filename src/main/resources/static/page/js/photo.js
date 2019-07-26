@@ -1,3 +1,9 @@
+$(function(){
+    $(".navbar-nav .nav-main-li").each(function(){
+        $(this).removeClass("active");
+    });
+    $(".nav-photo").addClass("active");
+});
 var isFirst = false;
 var $tree;
 var categoryId = -1;
@@ -114,7 +120,7 @@ function getWebPhotos(){
 	isLoad = true;
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
-		url : "/gl/photos?" + jsonToGetRequestParams(getPhotosRequestParams()),
+		url : "/gl/all?" + jsonToGetRequestParams(getPhotosRequestParams()),
 		dataType: 'json', 
 		beforeSend:function(){
 		},
@@ -410,52 +416,6 @@ function imgHandOut(obj, index){
 }
 
 /**
- * 添加图片链接
- * @param params
- */
-function addLink(params){
-	var loadi = layer.load('努力加载中…');
-	$.ajax({
-		type : "post",
-		data: params,
-		url : "gl/photo",
-		dataType: 'json', 
-		beforeSend:function(){
-		},
-		success : function(data) {
-				layer.msg(data.message);
-				layer.close(loadi);
-				if(data.isSuccess){
-					$(".gallery-link").val("");
-					$(".gallery-desc").val("");
-					$(".gallery-width").val("");
-					$(".gallery-height").val("");
-					$(".gallery-length").val("");
-					$("#add-grallery").modal("hide");
-					//重新刷新一下整个列表
-					canLoadData = true;
-					method = 'firstloading';
-					getWebPhotos();
-				}
-		},
-		error : function() {
-			layer.close(loadi);
-			layer.msg("网络请求失败");
-		}
-	});
-	
-}
-
-/**
- * 获取素材的回调函数
- * @param links
- */
-function afterSelectMaterial(links){
-	$(".gallery-link").val(links);
-	$(".gallery-desc").val("从素材选择");
-}
-
-/**
  * 项的点击
  */
 function customItemClick(node){
@@ -492,7 +452,7 @@ function descEdit(id, desc){
            if(isNotEmpty(pass)){
                 var loadi = layer.load('更新描述中…'); //需关闭加载层时，执行layer.close(loadi)即可
                 	$.ajax({
-                		url : "/gl/photos?" + jsonToGetRequestParams(getPhotosRequestParams()),
+                		url : "/gl/all?" + jsonToGetRequestParams(getPhotosRequestParams()),
                 		dataType: 'json',
                 		beforeSend:function(){
                 		},
@@ -508,4 +468,11 @@ function descEdit(id, desc){
                 	});
            }
     });
+}
+
+/**
+** 跳转到图库管理界面
+*/
+function toManage(){
+    window.open("/pt/manage", "_self");
 }

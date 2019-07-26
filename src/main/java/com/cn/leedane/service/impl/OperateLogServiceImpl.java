@@ -40,13 +40,16 @@ public class OperateLogServiceImpl implements OperateLogService<OperateLogBean>{
 	@Override
 	public boolean saveOperateLog(UserBean user, HttpRequestInfoBean request,
 			Date createTime, String subject, String method, int status, int operateType){
-		if(user == null)
-			return false;
+		/*if(user == null)
+			return false;*/
 
 		//如果标题中还没有用户姓名
-		if(!subject.contains(user.getAccount())){
+		if(user != null && !subject.contains(user.getAccount())){
 			subject = user.getAccount() + subject;
 		}
+
+		if(null == user)
+			status = ConstantsUtil.STATUS_SELF; //未登录的用户状态统一改成私有的
 
 		//异步添加用户solr索引
 		new ThreadUtil().singleTask(new OperateLogSaveThread(user, request, createTime, subject, method, status, operateType));

@@ -33,3 +33,6 @@ alter table t_operate_log add COLUMN `es_index` bit(1) DEFAULT b'0';
 
 /*修改日志表，添加位置信息字段*/
 alter table t_operate_log add COLUMN `location` varchar(100) DEFAULT NULL;
+
+/*修改图库表，添加路径的唯一索引*/
+alter table t_gallery add constraint gallery_user_unique UNIQUE(create_user_id, category_id, path);

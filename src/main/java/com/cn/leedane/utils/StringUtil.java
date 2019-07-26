@@ -311,11 +311,12 @@ public class StringUtil {
 	 */
 	public static int changeObjectToInt(Object obj) {
 		try {
-			return Integer.parseInt(String.valueOf(obj));
+			if(obj != null)
+				return Integer.parseInt(String.valueOf(obj));
 		} catch (Exception e) {
 			logger.error(obj +"转换成int失败");
-			return 0;
 		}
+		return 0;
 	}
 	
 	/**
@@ -325,11 +326,12 @@ public class StringUtil {
 	 */
 	public static float changeObjectToFloat(Object obj) {
 		try {
-			return Float.parseFloat(String.valueOf(obj));
+			if(obj != null)
+				return Float.parseFloat(String.valueOf(obj));
 		} catch (Exception e) {
 			logger.error(obj +"转换成long失败");
-			return 0f;
 		}
+		return 0f;
 	}
 	
 	/**
@@ -339,11 +341,12 @@ public class StringUtil {
 	 */
 	public static double changeObjectToDouble(Object obj) {
 		try {
-			return Double.parseDouble(String.valueOf(obj));
+			if(obj != null)
+				return Double.parseDouble(String.valueOf(obj));
 		} catch (Exception e) {
 			logger.error(obj +"转换成Double失败");
-			return 0d;
 		}
+		return 0d;
 	}
 	
 	/**
@@ -362,11 +365,12 @@ public class StringUtil {
      */
     public static long changeObjectToLong(Object obj) {
         try {
-            return Long.parseLong(String.valueOf(obj));
+			if(obj != null)
+            	return Long.parseLong(String.valueOf(obj));
         } catch (Exception e) {
         	logger.error(obj +"转换成long失败");
-            return 0;
         }
+		return 0;
     }
 	/**
 	 * 将对象转化成boolean类型,出错为false
@@ -375,11 +379,12 @@ public class StringUtil {
 	 */
 	public static boolean changeObjectToBoolean(Object obj) {
 		try {
-			return Boolean.parseBoolean(String.valueOf(obj));
+			if(obj != null)
+				return Boolean.parseBoolean(String.valueOf(obj));
 		} catch (Exception e) {
 			logger.error(obj +"转换成boolean失败");
-			return false;
 		}
+		return false;
 	}
 	
 	/**
@@ -402,7 +407,10 @@ public class StringUtil {
 	public static String getFileName(String name){
 		if(StringUtil.isNull(name)){
 			return null;
-		}	
+		}
+
+		//对于七牛云的链接加速需要带上的标志做了过滤处理
+		name = name.replaceAll("\\?imageslim", "");
 		return name.substring(name.lastIndexOf("/") + 1, name.length());
 	}
 	

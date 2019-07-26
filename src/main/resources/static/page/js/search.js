@@ -103,6 +103,8 @@ function doSearch(){
                     if(type == 6){
                         buildLogs(hits);
                     }
+
+                    scrollToPageTop(1000);
                     //执行一个laypage实例
                      laypage.render({
                         elem: 'item-pager' //注意，这里的 test1 是 ID，不用加 # 号

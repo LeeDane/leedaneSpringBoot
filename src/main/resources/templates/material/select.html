@@ -11,17 +11,39 @@
 	<!-- 测试环境下的引用 -->
 	<link rel="stylesheet" th:if="${isDebug}" th:href="@{/page/other/cropper-master/dist/cropper.min.css}" />
 	<link href="/page/other/cropper-master/assets/css/main.min.css" rel="stylesheet" />
-	<link th:if="${not isDebug}" rel="stylesheet" href="//www.layuicdn.com/layui-v2.1.5/css/layui.css"  media="all" />
-	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.1.5/css/layui.css"  media="all" />
+	<link th:if="${not isDebug}" rel="stylesheet" href="//www.layuicdn.com/layui-v2.5.4/css/layui.css"  media="all" />
+	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.5.4/css/layui.css"  media="all" />
 	<link rel="stylesheet" th:href="@{/page/css/material/select.min.css}" />
-	<style type="text/css"></style>
+	<style type="text/css">
+		::-webkit-scrollbar {
+			  width: 5px;
+		} /* 这是针对缺省样式 (必须的) */
+		::-webkit-scrollbar-track {
+		  background-color: #f5f5f5;
+		} /* 滚动条的滑轨背景颜色 */
+
+		::-webkit-scrollbar-thumb {
+			  background-color: rgba(0, 0, 0, 0.2);
+		} /* 滑块颜色 */
+
+		/* ::-webkit-scrollbar-button {
+			  background-color: #7c2929;
+		} */ /* 滑轨两头的监听按钮颜色 */
+
+		::-webkit-scrollbar-corner {
+			  background-color: black;
+		} /* 横向滚动条和纵向滚动条相交处尖角的颜色 */
+		.has-select-file{
+    		padding-left: 10px;
+		}
+	</style>
 </head>
 <body>
 	<div th:include="common-nonav :: hello">what?</div>
 	<div class="container">
 		<div class="row">
-			<div id="select-list" style="padding-bottom: 10px; position: fixed; z-index: 1111;">
-				<div>已选择的文件(最多选择<span th:utext="${select}"></span>个)</div>
+			<div id="select-list" style="padding-bottom: 10px; position: fixed; z-index: 1111; width: 100%;">
+				<div style="padding: 8px 0 0 10px;">已选择的文件(最多选择<span th:utext="${select}"></span>个)</div>
 			</div>
 			<ul class="nav nav-tabs nav-justified" id="material-tabs">
 				<li th:if="${selectType == 0 or selectType == 1}" class="active" data-value="图像"><a href="javascript:void(0);">图像</a></li>
@@ -29,7 +51,7 @@
 				<li th:if="${selectType == 0 or selectType == 3}" data-value="音频"><a href="javascript:void(0);">音频</a></li>
 			</ul>
 			<div class="material-content row">
-					<div class="row" id="material-row-container" style="margin-top: 10px; width: 100%;"></div>
+					<div id="material-row-container" style="margin-top: 10px; width: 100%;"></div>
 			</div>
 			<div id="list-pager"></div>
 		</div>

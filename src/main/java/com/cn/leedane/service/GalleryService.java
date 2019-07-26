@@ -59,7 +59,19 @@ public interface GalleryService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<Map<String, Object>> getGalleryByLimit(JSONObject jo,
+	public List<Map<String, Object>> all(JSONObject jo,
 			UserBean user, HttpRequestInfoBean request);
+
+	/**
+	 * 分页获取指定用户图库的图片的路径列表
+	 * "{'uid':1, 'pageSize':5, 'last_id': 1, 'first_id':1, 'method':'lowloading'}"(uploading, firstloading)
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public Map<String, Object> paging(JSONObject jo,
+										 UserBean user, HttpRequestInfoBean request);
 	
 }

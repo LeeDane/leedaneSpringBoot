@@ -234,3 +234,13 @@ div.col-sm-9 div {
     float: right!important;
     margin-right: 5px!important;
 }
+
+.badge-danger {
+    color: #fff!important;
+    background-color: #dc3545!important;
+}
+
+.badge-warning {
+    color: #fff!important;
+    background-color: #ffc107!important;
+}

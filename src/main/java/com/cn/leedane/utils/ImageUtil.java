@@ -223,7 +223,8 @@ public class ImageUtil {
 	 * @param fileName
 	 * @return
 	 */
-	public static boolean isSupportType(String fileName){ 
+	public static boolean isSupportType(String fileName){
+		fileName = fileName.replaceAll("\\?imageslim", "");
 		//获取文件的后缀
 		String suffix = fileName.substring(fileName.lastIndexOf(".")+1 , fileName.length());
 		

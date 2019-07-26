@@ -16,9 +16,15 @@ public interface GalleryMapper extends BaseMapper<GalleryBean>{
 	
 	/**
 	 * 检查该图片是否已经加入图库
-	 * @param user
+	 * @param userId
 	 * @param path
 	 * @return
 	 */
 	public List<Map<String, Object>> isExist(@Param("userId")int userId, @Param("path")String path);
+
+	public List<Map<String, Object>> paging(
+			@Param("createUserId")int createUserId,
+			@Param("start")int start,
+			@Param("pageSize")int pageSize,
+			@Param("status") int status);
 }

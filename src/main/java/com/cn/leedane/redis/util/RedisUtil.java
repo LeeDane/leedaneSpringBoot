@@ -165,6 +165,7 @@ public class RedisUtil{
 				result = true;
 			}
 		} catch (Exception e) {
+			logger.error("addString()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -185,6 +186,7 @@ public class RedisUtil{
 			if(jedis != null)
 				return jedis.get(key);
 		} catch (Exception e) {
+			logger.error("getString()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -207,6 +209,7 @@ public class RedisUtil{
 				result = true;
 			}
 		} catch (Exception e) {
+			logger.error("addSerialize()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -227,6 +230,7 @@ public class RedisUtil{
 			if(jedis != null)
 				return jedis.get(key);
 		} catch (Exception e) {
+			logger.error("getSerialize()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -247,6 +251,7 @@ public class RedisUtil{
 			if(jedis != null)
 				return jedis.exists(key);
 		} catch (Exception e) {
+			logger.error("hasKey()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -271,6 +276,7 @@ public class RedisUtil{
 				result = true;
 			}
 		} catch (Exception e) {
+			logger.error("addMap()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -294,6 +300,7 @@ public class RedisUtil{
 				result = true;
 			}
 		} catch (Exception e) {
+			logger.error("deleteMapField()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -314,6 +321,7 @@ public class RedisUtil{
 			if(jedis != null)
 				return jedis.hmget(key, fileds);
 		} catch (Exception e) {
+			logger.error("getMap()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -340,6 +348,7 @@ public class RedisUtil{
 				total = jedis.lpush(key, listToArray(strs));
 			}
 		} catch (Exception e) {
+			logger.error("addList()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -368,6 +377,7 @@ public class RedisUtil{
 			if(jedis != null)
 				return jedis.lrange(key, start, end);
 		} catch (Exception e) {
+			logger.error("getListByRange()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -398,6 +408,7 @@ public class RedisUtil{
 				total = jedis.llen(key);
 			}
 		} catch (Exception e) {
+			logger.error("getListTotal()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -418,6 +429,7 @@ public class RedisUtil{
 				value = jedis.lindex(key, index);
 			}
 		} catch (Exception e) {
+			logger.error("getListByIndex()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -442,6 +454,7 @@ public class RedisUtil{
 				result = true;
 			}
 		} catch (Exception e) {
+			logger.error("addSet()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -463,6 +476,7 @@ public class RedisUtil{
 				value = jedis.smembers(key);
 			}
 		} catch (Exception e) {
+			logger.error("getSet()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -484,6 +498,7 @@ public class RedisUtil{
 				result = jedis.sismember(key, member);
 			}
 		} catch (Exception e) {
+			logger.error("isInSet()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -507,6 +522,7 @@ public class RedisUtil{
 				}
 			}
 		} catch (Exception e) {
+			logger.error("getSetTotal()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -529,6 +545,7 @@ public class RedisUtil{
 				total = jedis.smove(srckey, dstkey, member);
 			}
 		} catch (Exception e) {
+			logger.error("setMove()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -551,6 +568,7 @@ public class RedisUtil{
 				result = true;
 			}
 		} catch (Exception e) {
+			logger.error("deleteSetField()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -576,6 +594,7 @@ public class RedisUtil{
 				result = true;
 			}
 		} catch (Exception e) {
+			logger.error("zadd()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -602,6 +621,7 @@ public class RedisUtil{
 					set = jedis.zrange(key, start, end);
 			}
 		} catch (Exception e) {
+			logger.error("getLimit()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -634,6 +654,7 @@ public class RedisUtil{
 				}
 			}
 		} catch (Exception e) {
+			logger.error("sort()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -654,6 +675,7 @@ public class RedisUtil{
 				count = jedis.zcard(key);
 			}
 		} catch (Exception e) {
+			logger.error("getZSetCard()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -679,6 +701,7 @@ public class RedisUtil{
 				keys = jedis.keys(pattern);
 			}
 		} catch (Exception e) {
+			logger.error("keys()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -703,6 +726,7 @@ public class RedisUtil{
 				result = true;
 			}
 		} catch (Exception e) {
+			logger.error("expire()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -725,6 +749,7 @@ public class RedisUtil{
 				result = true;
 			}
 		} catch (Exception e) {
+			logger.error("expire()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -745,6 +770,7 @@ public class RedisUtil{
 				result = true;
 			}
 		} catch (Exception e) {
+			logger.error("clearAll()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -765,6 +791,7 @@ public class RedisUtil{
 				result = true;
 			}
 		} catch (Exception e) {
+			logger.error("setex()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -775,7 +802,6 @@ public class RedisUtil{
 	/**
 	 * 删除指定key
 	 * @param key
-	 * @param field
 	 * @return 返回剩余的总数
 	 */
 	public boolean delete(String ... key){
@@ -785,6 +811,7 @@ public class RedisUtil{
 			jedis.del(key);
 			result = true;
 		} catch (Exception e) {
+			logger.error("delete()", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);
@@ -805,7 +832,7 @@ public class RedisUtil{
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error("Redis服务ping不通");
+			logger.error("Redis服务ping不通", e);
 			e.printStackTrace();
 		}finally{
 			RedisUtil.returnResource(jedis);

@@ -21,6 +21,19 @@ Date.prototype.Format = function (fmt) { //author: meizz
 }
 
 /**
+** 设置时间前
+** 要是layui工具没有启动，就返回格式好的时间，没有秒数
+*/
+function setTimeAgo(time){
+    if(time == null)
+        return '';
+
+    //要是layui工具没有启动，就返回格式好的时间，没有秒数
+     if(!util)
+        return time.format("yyyy-MM-dd hh:mm");;
+    return util.timeAgo(time);
+};
+/**
  * 判断json是否为空
  * @param e
  * @returns {Number}
@@ -622,4 +635,22 @@ function getAudioHtml(link){
 		 return '<audio style="width: 100%; max-height: 500px; margin-top: 10px; margin-bottom: 10px;" src="'+ changeNotNullString(link) +'" controls="controls">Your browser does not support the audio tag.</audio>';
 	 }
 	return "";
+}
+
+/**
+* 滚动到页面顶部
+*/
+function scrollToPageTop(time){
+    $("html,body").animate({
+        scrollTop: 0
+    }, time ? time: 500);
+}
+
+/**
+** 格式化文件的大小
+*/
+function formatFileSize(length){
+    if(length && length > 0)
+        return parseFloat(length/ 1024/ 1024).toFixed(2) + "M";
+    return length;
 }

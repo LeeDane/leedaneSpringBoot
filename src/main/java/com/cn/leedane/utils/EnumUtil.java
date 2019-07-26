@@ -91,7 +91,8 @@ public class EnumUtil {
 		举报("t_report"), 积分("t_score"), 签到("t_sign_in"), 上传("t_upload"), 权限("t_permission"), 角色权限("t_role_permission"),
 		角色("t_role"), 用户角色("t_user_role"), 链接管理("t_link_manage"), 留言("t_message_board"), 素材("t_material"), 
 		任务("t_job_manage"), 贡献值("t_circle_contribution"),圈子("t_circle"), 圈子成员("t_circle_member"), 帖子("t_circle_post"), 
-		不存在的表("t_inexistence"), 分类("t_category"), 商店("t_mall_shop"), 商店商品("t_mall_product"), 商品订单("t_mall_order"), 商品心愿单("t_mall_wish");
+		不存在的表("t_inexistence"), 分类("t_category"), 商店("t_mall_shop"), 商店商品("t_mall_product"), 商品订单("t_mall_order"),
+		商品心愿单("t_mall_wish"), 大事件("t_event");
 	
 		private DataTableType(String value) {
 			this.value = value;
@@ -477,7 +478,9 @@ public class EnumUtil {
 		该任务不支持共享(4032),
 		该心情不存在(4033),
 		ES服务器连接异常(4034),
-		ES索引不存在(4035)
+		ES索引不存在(4035),
+		头像上传失败(4036),
+		该事件不存在(4037),
 		;
 		
 		private ResponseCode(int value) {

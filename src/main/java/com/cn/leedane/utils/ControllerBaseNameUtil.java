@@ -121,6 +121,11 @@ public class ControllerBaseNameUtil {
 	 * 素材
 	 */
 	public static final String mt = "mt";
+
+	/**
+	 * 大事件
+	 */
+	public static final String ev = "ev";
 	
 	/**
 	 * 消息

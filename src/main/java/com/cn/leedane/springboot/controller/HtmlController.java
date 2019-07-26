@@ -86,6 +86,12 @@ public class HtmlController extends BaseController{
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入图册模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("photo", true, model, request);
 	}
+
+	@RequestMapping(ControllerBaseNameUtil.pt +"/manage")
+	public String photoManage(Model model, HttpServletRequest request){
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入图册管理模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		return loginRoleCheck("photo-manage", true, model, request);
+	}
 	
 	@RequestMapping("/test")
 	public String test(Model model, HttpServletRequest request){
@@ -289,6 +295,30 @@ public class HtmlController extends BaseController{
 		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入素材管理模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("material/index", true, model, request);
+	}
+
+	/**
+	 * 大事件入口
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(ControllerBaseNameUtil.ev)
+	public String eventIndex(Model model, HttpServletRequest request){
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入大事件模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		return loginRoleCheck("event",  model, request);
+	}
+
+	/**
+	 * 大事件管理
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(ControllerBaseNameUtil.ev + "/manage")
+	public String eventManage(Model model, HttpServletRequest request){
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入大事件管理模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		return adminLoginRoleCheck("event-manage",  model, request);
 	}
 	
 	/**

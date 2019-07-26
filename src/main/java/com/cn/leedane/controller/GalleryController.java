@@ -45,8 +45,8 @@ public class GalleryController extends BaseController{
 	 * 获取图库的照片列表
 	 * @return
 	 */
-	@RequestMapping(value = "/photos", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"}) 
-	public Map<String, Object> paging(@RequestParam(value="pageSize", required = false) int pageSize,
+	@RequestMapping(value = "/all", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> all(@RequestParam(value="pageSize", required = false) int pageSize,
 			@RequestParam(value="last_id", required = false) int lastId,
 			@RequestParam(value="first_id", required = false) int firstId,
 			@RequestParam(value="method", required = true) String method,
@@ -58,10 +58,25 @@ public class GalleryController extends BaseController{
 
 		checkRoleOrPermission(model, request);;
 		
-		List<Map<String, Object>> result= galleryService.getGalleryByLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
+		List<Map<String, Object>> result= galleryService.all(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 		logger.info("获得图库的数量：" +result.size());
 		message.put("isSuccess", true);
 		message.put("message", result);
+		return message.getMap();
+	}
+
+	/**
+	 * 获取图库的照片列表
+	 * @return
+	 */
+	@RequestMapping(value = "/photos", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> paging(Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+
+		checkRoleOrPermission(model, request);;
+		message.putAll(galleryService.paging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	

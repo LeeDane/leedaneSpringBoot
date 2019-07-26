@@ -1,6 +1,8 @@
 package com.cn.leedane.model;
 
 
+import com.cn.leedane.mybatis.table.annotation.Column;
+
 /**
  * 图库实体类
  * @author LeeDane
@@ -35,6 +37,9 @@ public class GalleryBean extends RecordTimeBean{
 	private long length;
 
 	private String galleryDesc;
+
+	@Column("category_id")
+	private int categoryId;
 
 	//@Column(length=255, nullable=false)
 	public String getPath() {
@@ -77,5 +82,12 @@ public class GalleryBean extends RecordTimeBean{
 	public void setLength(long length) {
 		this.length = length;
 	}
-	
+
+	public int getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
+	}
 }

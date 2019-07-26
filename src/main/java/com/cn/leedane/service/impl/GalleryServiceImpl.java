@@ -1,10 +1,8 @@
 package com.cn.leedane.service.impl;
 
+import com.cn.leedane.handler.CategoryHandler;
 import com.cn.leedane.mapper.GalleryMapper;
-import com.cn.leedane.model.GalleryBean;
-import com.cn.leedane.model.HttpRequestInfoBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.*;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.GalleryService;
 import com.cn.leedane.service.OperateLogService;
@@ -34,7 +32,9 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 	
 	@Autowired
 	private OperateLogService<OperateLogBean> operateLogService;
-	
+
+	@Autowired
+	private CategoryHandler categoryHandler;
 	@Override
 	public boolean isExist(UserBean user, String path) {
 		return SqlUtil.getBooleanByList(galleryMapper.isExist(user.getId(), path));
@@ -52,6 +52,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		long length = JsonUtil.getLongValue(jo, "length", 0); //获取参数中高度的值,可以为空
 		String path = JsonUtil.getStringValue(jo, "path"); //获取参数中图片路径的值，不能为空
 		String desc = JsonUtil.getStringValue(jo, "desc"); //获取参数中描述信息的值，可以为空
+		int category = JsonUtil.getIntValue(jo, "category"); //获取参数中描述信息的值，可以为空
 		
 		//为了配合七牛云存储的文件的压缩获取，自动在链接添加了?imageslim，在此需要处理一下
 		path = path.replace("?imageslim", "");
@@ -98,6 +99,8 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		bean.setPath(path+"?imageslim");
 		bean.setStatus(ConstantsUtil.STATUS_NORMAL);
 		bean.setWidth(width);
+		if(category > 0)
+			bean.setCategoryId(category);
 		if(galleryMapper.save(bean) > 0){
 			message.put("isSuccess", true);
 			message.put("message", "添加到图库成功");
@@ -147,7 +150,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 	}
 	
 	@Override
-	public List<Map<String, Object>> getGalleryByLimit(JSONObject jo,
+	public List<Map<String, Object>> all(JSONObject jo,
 			UserBean user, HttpRequestInfoBean request) {	
 		long start = System.currentTimeMillis();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
@@ -195,6 +198,33 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		long end = System.currentTimeMillis();
 		logger.info("获取图库列表总计耗时：" +(end - start) +"毫秒");
 		return rs;
+	}
+
+	@Override
+	public Map<String, Object> paging(JSONObject jo,
+									  UserBean user, HttpRequestInfoBean request){
+		logger.info("EventServiceImpl-->paging():jo=" +jo.toString());
+		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
+		int pageSize = JsonUtil.getIntValue(jo, "limit", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
+		int currentIndex = JsonUtil.getIntValue(jo, "page", 0); //当前的索引页
+		int total = JsonUtil.getIntValue(jo, "total", 0); //当前的索引页
+		int start = SqlUtil.getPageStart(currentIndex -1, pageSize, total);
+		ResponseMap message = new ResponseMap();
+		rs = galleryMapper.paging(user.getId(), start, pageSize, ConstantsUtil.STATUS_NORMAL);
+		if(CollectionUtil.isNotEmpty(rs)){
+			for(Map<String, Object> map: rs){
+//				map.put("path", "<img src='"+ StringUtil.changeNotNull(map.get("path")) +"'/>");
+				map.put("length", FileUtil.fileSizeFormat(StringUtil.changeNotNull(map.get("length"))));
+				CategoryBean categoryBean = categoryHandler.getCategoryBean(StringUtil.changeObjectToInt(map.get("category_id")));
+				map.put("category", categoryBean != null ? categoryBean.getText(): "");
+			}
+
+		}
+		message.put("data", rs);
+		message.put("count", SqlUtil.getTotalByList(galleryMapper.getTotal(DataTableType.图库.value, " e where create_user_id="+ user.getId())));
+		message.put("msg", "");
+		message.put("code", 0);
+		return message.getMap();
 	}
 
 	/**

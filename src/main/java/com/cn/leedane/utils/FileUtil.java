@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import com.cn.leedane.handler.CloudStoreHandler;
@@ -318,5 +319,21 @@ public class FileUtil {
 		PrintWriter pw = new PrintWriter( new FileWriter(file) );
         pw.print(text);
         pw.close();
+	}
+
+	/**
+	 * 格式文件大小
+	 * @param size
+	 * @return
+	 */
+	public static String fileSizeFormat(String size){
+		if(StringUtil.isNotNull(size)){
+			double intSize = Double.parseDouble(size);
+			double value = intSize * 1.000 / (1024 * 1024);
+			BigDecimal bd = new BigDecimal(value);
+			bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+			return bd.floatValue()  + "M";
+		}
+		return null;
 	}
 }

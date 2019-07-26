@@ -5,8 +5,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 
 import com.cn.leedane.model.HttpRequestInfoBean;
-import com.cn.leedane.utils.IpLocationUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
 import org.apache.log4j.Logger;
 
 import com.cn.leedane.model.OperateLogBean;
@@ -14,8 +13,6 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.ISend;
 import com.cn.leedane.rabbitmq.send.LogSend;
-import com.cn.leedane.utils.CommonUtil;
-import com.cn.leedane.utils.DateUtil;
 
 /**
  * 保存操作日志异步任务
@@ -74,6 +71,13 @@ public class OperateLogSaveThread implements Runnable{
 		if(mUser != null){
 			operateLogBean.setCreateUserId(mUser.getId());
 			operateLogBean.setModifyUserId(mUser.getId());
+			operateLogBean.setCreateTime(mCreateTime == null ? DateUtil.stringToDate(
+					DateUtil.getSystemCurrentTime(DateUtil.DEFAULT_DATE_FORMAT),
+					DateUtil.DEFAULT_DATE_FORMAT) : mCreateTime);
+		}else{
+			//未登录的用户，用系统管理员的账号创建私有状态方便查看
+			operateLogBean.setCreateUserId(OptionUtil.adminUser.getId());
+			operateLogBean.setModifyUserId(OptionUtil.adminUser.getId());
 			operateLogBean.setCreateTime(mCreateTime == null ? DateUtil.stringToDate(
 					DateUtil.getSystemCurrentTime(DateUtil.DEFAULT_DATE_FORMAT),
 					DateUtil.DEFAULT_DATE_FORMAT) : mCreateTime);

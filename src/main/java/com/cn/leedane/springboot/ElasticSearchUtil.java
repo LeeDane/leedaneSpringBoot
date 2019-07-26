@@ -339,7 +339,7 @@ public class ElasticSearchUtil {
 			result.add(hit.getSourceAsMap());
 		}
 
-		logger.error(boolQuery.toString());
+		logger.info(boolQuery.toString());
 		return response;
 	}
 
@@ -349,7 +349,7 @@ public class ElasticSearchUtil {
 	 * @param table
      * @return
      */
-	private String getDefaultIndexName(String table){
+	public static String getDefaultIndexName(String table){
 		if(StringUtil.isNotNull(table))
 			return "index_"+ table;
 

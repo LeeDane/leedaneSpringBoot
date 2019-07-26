@@ -225,4 +225,13 @@ public interface BlogService <T extends IDBean>{
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getOneBlog(int blogId, UserBean user, HttpRequestInfoBean request);
 
+	/**
+	 * 分页获取博客列表列表
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public Map<String, Object> paging(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 }

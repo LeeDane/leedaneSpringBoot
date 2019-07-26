@@ -2,6 +2,8 @@
 var last_id = 0;
 var first_id = 0;
 var maxCommentNumber = 250; //最大的评论数量
+var $commentListContainer = null;
+var commentPageSize = 0;
 layui.use(['layer'], function(){
 	layer = layui.layer;
 	if(isEmpty(mid)){
@@ -9,6 +11,8 @@ layui.use(['layer'], function(){
 		return;
 	}
 	getDetail();
+
+	$commentListContainer = $("#comment-list-container");
 	getComments();
 	$container= $(".container");
 	$container.on("click", ".reply-other-btn", function(){
@@ -139,7 +143,13 @@ function getDetail(){
 						$moodMediaContrainer.append(html);
 					}
 				}
-				
+
+				//不能评论
+				if(!mood.can_comnent){
+				     $("#comment").find('[name="add-comment"]').attr('placeholder','由于用户设置，无法评论');
+				     $("#comment").find('[name="add-comment"]').attr('readonly','readonly');
+				     $("#comment").find("button").prop('disabled', true); // 按钮灰掉，且不可点击。
+				}
 			}else{
 				ajaxError(data);
 			}
@@ -154,10 +164,10 @@ function getDetail(){
  * 获取评论请求列表参数
  */
 function getCommentsRequestParams(){
-	var pageSize = 15;
+	commentPageSize = 15;
 	if(method != 'firstloading')
-		pageSize = 5;
-	return {table_name: "t_mood", table_id: mid, showUserInfo: true, pageSize: pageSize, last_id: last_id, first_id: first_id, method: method, t: Math.random()};
+		commentPageSize = 5;
+	return {table_name: "t_mood", table_id: mid, showUserInfo: true, pageSize: commentPageSize, last_id: last_id, first_id: first_id, method: method, t: Math.random()};
 }
 
 /**
@@ -178,9 +188,10 @@ function getComments(bid){
 				if(method == 'firstloading')
 					$(".comment-list").remove();
 				
-				if(data.message.length == 0 && method != 'firstloading'){
+				if(data.message.length == 0){
 					canLoadData = false;
-					layer.msg("已无更多评论数据");
+					var html = '<div class="row comment-list comment-list-padding">已无更多评论数据</div>';
+					$commentListContainer.append(html);
 					return;
 				}
 				
@@ -193,6 +204,13 @@ function getComments(bid){
 						if(i == comments.length -1)
 							last_id = comments[i].id;
 					}
+
+					if(comments.length < commentPageSize){
+					    canLoadData = false;
+                        var html = '<div class="row comment-list comment-list-padding">已无更多评论数据</div>';
+                        $commentListContainer.append(html);
+					}
+                    return;
 				}else{
 					var currentIndex = comments.length;
 					for(var i = 0; i < data.message.length; i++){
@@ -281,7 +299,7 @@ function buildEachCommentRow(index, comment){
 					'</div>'+
 			'</div>';
 	
-	$("#comment-list-container").append(html);
+	$commentListContainer.append(html);
 }
 
 /**

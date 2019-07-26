@@ -318,7 +318,7 @@ public class GalleryTest extends BaseTest {
 		String str = "{'uid':1,'method':'firstloading','pageSize':10}";
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
-			List<Map<String, Object>> ls = galleryService.getGalleryByLimit(jo, user, null);
+			List<Map<String, Object>> ls = galleryService.all(jo, user, null);
 			logger.info("总数:" +ls.size());
 			for(Map<String, Object> m: ls){
 				logger.info("ID:" +m.get("id"));
