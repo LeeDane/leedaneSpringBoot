@@ -145,7 +145,7 @@ function getDetail(){
 				}
 
 				//不能评论
-				if(!mood.can_comnent){
+				if(!mood.can_comment){
 				     $("#comment").find('[name="add-comment"]').attr('placeholder','由于用户设置，无法评论');
 				     $("#comment").find('[name="add-comment"]').attr('readonly','readonly');
 				     $("#comment").find("button").prop('disabled', true); // 按钮灰掉，且不可点击。

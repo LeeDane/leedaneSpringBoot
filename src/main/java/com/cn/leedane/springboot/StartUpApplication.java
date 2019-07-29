@@ -1,19 +1,13 @@
 package com.cn.leedane.springboot;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
-
-import javax.servlet.ServletContext;
-import javax.sql.DataSource;
-
-import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.cache.SystemCache;
+import com.cn.leedane.handler.*;
+import com.cn.leedane.handler.circle.CircleHandler;
+import com.cn.leedane.handler.circle.CircleMemberHandler;
+import com.cn.leedane.handler.circle.CirclePostHandler;
+import com.cn.leedane.handler.circle.CircleSettingHandler;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.store.SimpleFSDirectory;
-import org.apache.lucene.util.Version;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.quartz.Scheduler;
@@ -22,10 +16,8 @@ import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
-import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
@@ -34,7 +26,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
@@ -42,37 +33,11 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.MultipartFilter;
-import org.wltea.analyzer.lucene.IKAnalyzer;
 
-import com.cn.leedane.cache.SystemCache;
-import com.cn.leedane.handler.BlogHandler;
-import com.cn.leedane.handler.ChatBgUserHandler;
-import com.cn.leedane.handler.ChatSquareHandler;
-import com.cn.leedane.handler.CircleOfFriendsHandler;
-import com.cn.leedane.handler.CloudStoreHandler;
-import com.cn.leedane.handler.CommentHandler;
-import com.cn.leedane.handler.CommonHandler;
-import com.cn.leedane.handler.FanHandler;
-import com.cn.leedane.handler.FriendHandler;
-import com.cn.leedane.handler.InitCacheData;
-import com.cn.leedane.handler.MoodHandler;
-import com.cn.leedane.handler.NotificationHandler;
-import com.cn.leedane.handler.SignInHandler;
-import com.cn.leedane.handler.TransmitHandler;
-import com.cn.leedane.handler.UserHandler;
-import com.cn.leedane.handler.WechatHandler;
-import com.cn.leedane.handler.ZanHandler;
-import com.cn.leedane.handler.circle.CircleHandler;
-import com.cn.leedane.handler.circle.CircleMemberHandler;
-import com.cn.leedane.handler.circle.CirclePostHandler;
-import com.cn.leedane.handler.circle.CircleSettingHandler;
-import com.cn.leedane.netty.PushServer;
-import com.cn.leedane.taobao.api.TbkRebateOrderGetRequest;
-import com.cn.leedane.taobao.api.TbkRebateOrderGetResponse;
-import com.taobao.api.ApiException;
-import com.taobao.api.DefaultTaobaoClient;
-import com.taobao.api.TaobaoClient;
-import com.taobao.api.internal.util.StringUtils;
+import javax.servlet.ServletContext;
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * 项目启动的入口
@@ -80,7 +45,7 @@ import com.taobao.api.internal.util.StringUtils;
  * 2017年3月13日 上午11:35:00
  * Version 1.0
  */
-@EnableAutoConfiguration(exclude={MultipartAutoConfiguration.class})
+//@EnableAutoConfiguration(exclude={MultipartAutoConfiguration.class})
 @SpringBootApplication  //全局controller控制
 @MapperScan("com.cn.leedane.mapper")
 @EnableTransactionManagement

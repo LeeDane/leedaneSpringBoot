@@ -58,7 +58,7 @@ public class RedisUtil{
 	* 初始化Redis连接池
 	*/
 	static {
-		
+
 		initData();
 		try {
 				JedisPoolConfig config = new JedisPoolConfig();

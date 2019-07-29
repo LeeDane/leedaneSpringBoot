@@ -1,21 +1,5 @@
 package com.cn.leedane.handler;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.utils.ConstantsUtil;
@@ -26,7 +10,17 @@ import com.qiniu.http.Response;
 import com.qiniu.storage.ResumeUploader;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
-import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.*;
 
 
 /**
@@ -125,7 +119,7 @@ public class CloudStoreHandler {
     
     /**
      * 执行上传操作
-     * @param fileMap
+     * @param file
      * @return
      */
     public static String uploadFile(UserBean user, File file){
@@ -168,7 +162,7 @@ public class CloudStoreHandler {
     
     /**
      * 执行单个文件上传操作
-     * @param filePathBeans
+     * @param filePathBean
      */
     public int executeSingleUpload(Map<String, Object> filePathBean){
     	logger.info("Single开始执行上传操作...............");
@@ -278,7 +272,7 @@ public class CloudStoreHandler {
 		
 	}
 	
-	private byte[] getDataOrFile(String filePath) throws IOException, Base64DecodingException {
+	private byte[] getDataOrFile(String filePath) throws IOException {
 		if(StringUtil.isNull(filePath))
 			return null;
 		//读取图片字节数组  

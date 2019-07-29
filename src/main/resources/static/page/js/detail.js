@@ -1,3 +1,4 @@
+var maxCommentNumber = 250; //最大的评论数量
 layui.use(['layer'], function(){
 	layer = layui.layer;
 	if(isEmpty(bid)){
@@ -63,7 +64,10 @@ layui.use(['layer'], function(){
 	    	method = 'lowloading';
 	    	getComments(bid);
 	    }
-	}); 
+	});
+
+	$(".can-comment-number").html(maxCommentNumber);
+    $("#comment").find('[name="add-comment"]').attr("placeholder", "评论这篇文章，最多"+ maxCommentNumber +"个文字。");
 });
 var last_id = 0;
 var first_id = 0;
@@ -248,15 +252,16 @@ function buildEachCommentRow(index, comment){
 							       		'</div>'+
 							       		'<div class="row">'+
 								       		'<div class="col-lg-12 reply-container" table-id="'+ comment.table_id+'" table-name="'+ comment.table_name +'" style="display: none;">'+
-									    		'<div class="row">'+
+									    		'<div class="row to-comment-contrainer">'+
 									    			'<div class="col-lg-12">'+
 									    				'<form class="form-signin" role="form">'+
 										    			     '<fieldset>'+
-										    				     '<textarea class="form-control reply-comment-text" placeholder="回复TA，最多250个文字。"> </textarea>'+
+										    				     '<textarea class="form-control reply-comment-text" onkeyup="updateNumber(this);" placeholder="回复TA，最多'+ maxCommentNumber +'个文字。"></textarea>'+
 										    			     '</fieldset>'+
 										    			 '</form>'+
 									    			'</div>'+
 									    			'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right" style="margin-top: 10px;">'+
+									    			     '<span style="font-family: \'微软雅黑\'; font-size: 0.8em;">您还可以输入<font class="can-comment-number" color="red">'+ maxCommentNumber +'</font>个文字</span>'+
 									    				'<button class="btn btn-sm btn-info btn-block pull-right" style="width: 60px;" type="button" onclick="commentItem(this, '+ comment.id +', '+ comment.table_id +');">评论</button>'+
 									    			'</div>'+
 									    		'</div>'+
@@ -276,9 +281,40 @@ function buildEachCommentRow(index, comment){
  * @param obj
  */
 function commentItem(obj, pid, bid){
-	var content = $(obj).closest(".reply-container").find(".reply-comment-text").val();
+	var $content = $(obj).closest(".reply-container").find(".reply-comment-text");
+	var content = $content.val();
+	if(isEmpty(content)){
+        $content.focus();
+        layer.msg("评论内容不能为空");
+        return;
+    }
+
+    if(content.length > maxCommentNumber){
+        $content.focus();
+        layer.msg("评论字数不能超过"+ maxCommentNumber +"个");
+        return;
+    }
 	var params = {table_name: "t_blog", table_id: bid, content: content, pid: pid, froms: "web端", t: Math.random()};
 	doAddComment(params);
+}
+
+/**
+**对评论输入字数的监听
+*/
+function updateNumber(obj){
+    var addCommentObj = $(obj);
+    if(!isEmpty(addCommentObj.val())){
+        var left = maxCommentNumber - addCommentObj.val().length;
+        addCommentObj.closest(".to-comment-contrainer").find(".can-comment-number").html(left);
+        if(left >= 0){
+            $(obj).closest("div").removeClass("has-error");
+        }else{
+            $(obj).closest("div").addClass("has-error");
+        }
+    }else{
+        $("#can-comment-number").html(maxCommentNumber);
+        $(obj).closest("div").removeClass("has-error");
+    }
 }
 
 /**
@@ -292,6 +328,12 @@ function addComment(obj){
 		layer.msg("评论内容不能为空");
 		return;
 	}
+
+	if(addCommentObj.val().length > maxCommentNumber){
+        addCommentObj.focus();
+        layer.msg("评论字数不能超过"+ maxCommentNumber +"个");
+        return;
+    }
 	var params = {table_name: "t_blog", table_id: bid, content: addCommentObj.val(), froms: "web端", t: Math.random()};
 	doAddComment(params);
 }

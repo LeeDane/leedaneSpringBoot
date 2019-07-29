@@ -22,13 +22,17 @@ layui.use(['layer', 'laypage'], function(){
 		currentIndex = 0;
 		doSearch();
 	});
+
+	$(".senior-condition-btn").click(function(){
+        $(".senior-condition").toggle("fast");
+    });
 });
 var type = 1; //查询类型, 0表示博客
 var accurate = 0;//0表示模糊查询
 var searchKey;
 var $ContentContainer;
 var startDate = '';
-var endDate = "2019-07-25";
+var endDate = "";
 /**
  * 搜索
  * @param obj
@@ -40,14 +44,20 @@ function search(obj){
 		$("#common-search-text").focus();
 		return;
 	}
+
+	//获取地址栏的信息
+    var url = window.location.href;
+//    window.location.href = url = url.replace("q="+ searchKey, "q="+ searchText);
 	searchKey = searchText;
-	currentIndex = 1;
+	currentIndex = 0;
 	doSearch();
 }
 
 
 function getRequestParams(){
 	//return {pageSize: pageSize, last_id: last_id, first_id: first_id, method: method, toUserId: uid, t: Math.random()};
+	startDate = $('[name="startTime"]').val();
+    endDate = $('[name="endTime"]').val();
 	return {page_size: pageSize, current: currentIndex, total: totalPage, keyword: searchKey, type: type, desc: true, accurate: accurate, startDate: startDate, endDate: endDate , t: Math.random()};
 }
 

@@ -112,3 +112,8 @@ body{
     background-color: #428bca !important;
     color: #fff;
 }
+
+.senior-condition{
+    margin-top: 8px;
+    display: none;
+}

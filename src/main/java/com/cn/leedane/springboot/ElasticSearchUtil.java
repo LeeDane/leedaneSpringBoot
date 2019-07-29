@@ -329,7 +329,7 @@ public class ElasticSearchUtil {
 			builder.setSize(0);
 		else
 			builder.setSize(elasticSearchRequestBean.getNumber());
-		logger.debug(builder.toString());
+		logger.error(builder.toString());
 
 		SearchResponse response = builder.get();
 
@@ -339,7 +339,7 @@ public class ElasticSearchUtil {
 			result.add(hit.getSourceAsMap());
 		}
 
-		logger.info(boolQuery.toString());
+		logger.error(boolQuery.toString());
 		return response;
 	}
 
