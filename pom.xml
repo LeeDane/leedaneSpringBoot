@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.0.RELEASE</version>
+        <version>1.5.19.RELEASE</version>
     </parent>
     
     <properties>
@@ -74,9 +74,14 @@
         <dependency>  
             <groupId>org.springframework.boot</groupId>  
             <artifactId>spring-boot-starter-thymeleaf</artifactId>  
-        </dependency>  
-     
-     <!-- servlet依赖. -->
+        </dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+
+		<!-- servlet依赖. -->
         <dependency>
                <groupId>javax.servlet</groupId>
                <artifactId>javax.servlet-api</artifactId>
@@ -569,6 +574,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+				<version>1.4.0.RELEASE</version>
 	            <!-- <dependencies>    修改代码后自动生效，Reload Java classes without restarting the container  
 	                <dependency>  
 	                    <groupId>org.springframework</groupId>  
