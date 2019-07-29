@@ -155,7 +155,6 @@ function addFile(acceptHtml, type){
 
 /**
  * 添加单个音频文件
- * @param acceptHtml
  */
 function addVideoOrAudio(){
 	addFile(' accept="audio/mp4, video/mp4, audio/mpeg" ', '音频');
@@ -181,8 +180,8 @@ function haveFileInut(obj){
 	var fileName=filePath.replace(/^.+?\\([^\\]+?)(\.[^\.\\]*?)?$/gi,"$1");  //正则表达式获取文件名，不带后缀
 	var fileExt=filePath.replace(/.+\./,"");   //正则表达式获取后缀
 	var fileFullName = fileName + "." + fileExt; //文件的全称，包括后缀
-	
-	$("#upload-material-table").append('<tr class="each-row" id="add-file-row-'+ fileIndex +'">'+ 
+
+	$("#upload-material-table").append('<tr class="each-row" id="add-file-row-'+ fileIndex +'" data-index="'+ fileIndex +'">'+
 											'<td>'+ fileFullName +'</td>'+ 
 											'<td onclick="addDesc(this);" onkeydown="saveDesc(event, this);"></td>'+
 											'<td class="file-status">未上传</td>'+ 
@@ -208,7 +207,22 @@ function uploadFiles(){
 		layer.msg("当前有任务在上传，请稍等。。。");
 		return;
 	}
-	
+
+	var $trs = $("#upload-material-table").find(".each-row");
+    if($trs && $trs.length < 1){
+        layer.msg("请先上传文件！");
+        return;
+    }else{
+        for(var i = 0; i <= fileIndex; i++){
+            var $addFileRow = $("#add-file-row-" + i);
+            if($addFileRow.length < 1){
+                var $formFile = $("#add-file-"+ i);
+                if($formFile)
+                    $formFile.remove();
+            }
+        }
+        //把一下空的file去掉(出现空file是因为用户没有选择文件)
+    }
 	if($formUpload.find("input").length < 1){
 		layer.msg("请先添加文件");
 		return;
@@ -543,7 +557,7 @@ function getData(){
 			if(data != null && data.isSuccess){
 				fileIndex++; //新增1
 				var qiniuPath = data.message;//获取新的链接
-				$("#upload-material-table").append('<tr class="complete each-row" id="add-file-row-'+ fileIndex +'">'+ 
+				$("#upload-material-table").append('<tr class="complete each-row" id="add-file-row-'+ fileIndex +'" data-index="'+ fileIndex +'">'+
 						'<td>'+ fileName +'</td>'+ 
 						'<td onclick="addDesc(this);" onkeydown="saveDesc(event, this);"></td>'+
 						'<td class="file-status">已上传</td>'+ 

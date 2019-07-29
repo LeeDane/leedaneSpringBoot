@@ -147,14 +147,14 @@ function getWebPhotos(){
                 $(".column-item4").empty();
             }
 			if(data != null && data.isSuccess){
-                $("#fh5co-board").find(".no-result").remove();
+                $("#fh5co-board").closest(".my-container").find(".no-result").remove();
 				if(data.message.length == 0){
 					canLoadData = false;
 //					layer.msg("该分组下还没有找到图片", {time: 2000, icon: 5});
                     if(method == 'firstloading'){
-					    $("#fh5co-board").append("<div class='row no-result'>该分组下还没有找到图片。</div>");
+					    $("#fh5co-board").closest(".my-container").append("<div class='row no-result'>该分组下还没有找到图片。</div>");
 					 }else{
-					    $("#fh5co-board").append("<div class='row no-result'>已经没有更多图片。</div>");
+					    $("#fh5co-board").closest(".my-container").append("<div class='row no-result'>已经没有更多图片。</div>");
 					 }
 					return;
 				}

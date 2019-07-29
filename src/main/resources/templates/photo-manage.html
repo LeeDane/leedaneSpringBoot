@@ -18,7 +18,7 @@
 		<div class="layui-row">
 			<div class="layui-col-md10 layui-col-md-offset1">
 				<hr class="layui-bg-blue" />
-				<button class="btn btn-success" data-toggle="modal" data-target="#add-grallery">新增</button>
+				<button class="btn btn-success" onclick="modelShow(null);">新增</button>
 				<table class="layui-hide" id="test" lay-filter="test"></table>
 				<script type="text/html" id="barDemo">
 					<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
@@ -29,7 +29,7 @@
 	</div>
 
 <!-- 模态框（Modal） -->
-<div class="modal fade" id="add-grallery" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="manage-grallery" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -74,7 +74,7 @@
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">关闭
 				</button>
-				<button type="button" class="btn btn-primary add-to-gallery">
+				<button type="button" class="btn btn-primary manage-to-gallery">
 					添加
 				</button>
 			</div>

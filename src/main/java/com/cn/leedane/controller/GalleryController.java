@@ -29,16 +29,15 @@ public class GalleryController extends BaseController{
 	 * @throws Exception 
 	 */
 	@RequestMapping(value = "/photo", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> addLink(Model model, HttpServletRequest request) throws Exception{
+	public Map<String, Object> manageLink(Model model, HttpServletRequest request) throws Exception{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request)){
 			return message.getMap();
 		}
 		
 		checkRoleOrPermission(model, request);;
-		message.putAll(galleryService.addLink(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
+		message.putAll(galleryService.manageLink(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
-		
 	}
 	
 	/**

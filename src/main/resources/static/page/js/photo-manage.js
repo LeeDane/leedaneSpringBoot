@@ -1,9 +1,10 @@
+var $model;
 $(function(){
     $(".navbar-nav .nav-main-li").each(function(){
         $(this).removeClass("active");
     });
     $(".nav-photo").addClass("active");
-    $(".add-to-gallery").on("click", function(){
+    $(".manage-to-gallery").on("click", function(){
         var link = $(".gallery-link").val();
         if(isEmpty(link)){
             layer.msg("请输入图片的链接");
@@ -16,9 +17,13 @@ $(function(){
             $(".gallery-link").focus();
             return;
         }
-        var params = {category: categoryId, path: $(".gallery-link").val(), desc: $(".gallery-desc").val(), width: $(".gallery-width").val(), height: $(".gallery-height").val(), length: $(".gallery-length").val(), t: Math.random()};
+        var params = {id: photoId, category: categoryId, path: $(".gallery-link").val(), desc: $(".gallery-desc").val(), width: $(".gallery-width").val(), height: $(".gallery-height").val(), length: $(".gallery-length").val(), t: Math.random()};
         addLink(params);
     });
+
+    //初始化model
+    $model = $('#manage-grallery');
+
     var x = 10;
     var y = 20;
     //鼠标滑入
@@ -53,32 +58,15 @@ layui.use('table', function(){
     ,cols: [[
     	{field:'id', title:'ID', width:80, unresize: true, sort: true}
       ,{field:'path', title:'图片路径', width:600}
-      ,{field:'length', title:'大小', width:80}
+      ,{field:'format-length', title:'大小', width:80}
       ,{field:'height', title:'高度', width:80}
       ,{field:'width', title:'宽度', width:80}
+      ,{field:'gallery_desc', title:'描述信息', width:120}
       ,{field:'category', title:'分类', width:120}
       ,{field:'modify_time', title:'最后修改时间', width:120}
       ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:120}
     ]]
     ,page: true
-  });
-
-  //头工具栏事件
-  table.on('toolbar(test)', function(obj){
-    var checkStatus = table.checkStatus(obj.config.id);
-    switch(obj.event){
-      case 'getCheckData':
-        var data = checkStatus.data;
-        layer.alert(JSON.stringify(data));
-      break;
-      case 'getCheckLength':
-        var data = checkStatus.data;
-        layer.msg('选中了：'+ data.length + ' 个');
-      break;
-      case 'isAll':
-        layer.msg(checkStatus.isAll ? '全选': '未全选');
-      break;
-    };
   });
 
   //监听行工具事件
@@ -110,88 +98,43 @@ layui.use('table', function(){
         });
       });
     } else if(obj.event === 'edit'){
-        testEditor.setMarkdown(data.source);
-        $("#publish").text("编辑");
-        eventId = data.id;
-        scrollToPageTop();
-      /*layer.prompt({
-        formType: 2
-        ,value: data.source
-      }, function(value, index){
-        obj.update({
-          email: value
-        });
-        layer.close(index);
-      });*/
+        modelShow(data);
     }
   });
 });
 
-var eventId = 0;
 /**
-* 发布事件
-*/
-function addEvent(){
-    if(!isEmpty(testEditor.getMarkdown())){
-        layer.confirm('MD编辑器还有内容，是否清空后再编辑？', {
-          btn: ['取消','确定'] //按钮
-        }, function(){
-            layer.close();
-        }, function(){
-          testEditor.setMarkdown("");
-          $("#publish").text("发布");
-          eventId = 0;
-          scrollToPageTop();
-        });
+** 显示model
+**/
+function modelShow(photo){
+    $model.modal("show");
+    if(photo){
+        categoryId = photo.category_id;
+        photoId = photo.id;
+        $model.find("#myModalLabel").html("编辑图库");
+        $model.find(".manage-to-gallery").text("编辑");
+        $model.find(".gallery-link").val(photo.path);
+        $model.find(".gallery-desc").val(changeNotNullString(photo.gallery_desc));
+        $model.find(".gallery-width").val(changeNotNullString(photo.width));
+        $model.find(".gallery-height").val(changeNotNullString(photo.height));
+        $model.find(".gallery-length").val(changeNotNullString(photo.length));
+        $model.find(".gallery-category").val(changeNotNullString(photo.category));
     }else{
-        testEditor.setMarkdown("");
-        $("#publish").text("发布");
-        eventId = 0;
-        scrollToPageTop();
+        categoryId = 0;
+        photoId = 0;
+        $model.find("#myModalLabel").html("添加图库");
+        $model.find(".manage-to-gallery").text("添加");
+        $model.find(".gallery-link").val("");
+        $model.find(".gallery-desc").val("");
+        $model.find(".gallery-width").val("");
+        $model.find(".gallery-height").val("");
+        $model.find(".gallery-length").val("");
+        $model.find(".gallery-category").val("");
     }
+
 }
 
-/**
-* 发布操作
-*/
-function publish(){
-    if(isEmpty(testEditor.getMarkdown())){
-        layer.msg("请先输入内容再提交");
-        testEditor.autoFocus ();
-        return;
-    }
-
-    var params = {};
-    if(eventId > 0){
-        params.eid = eventId;
-    }
-
-    params.content = testEditor.getHTML();
-    params.source = testEditor.getMarkdown();
-    var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
-    $.ajax({
-        type : eventId < 1 ? "post" : "put",
-        data : params,
-        url : "/ev/manage",
-        dataType: 'json',
-        beforeSend:function(){
-        },
-        success : function(data) {
-            layer.close(loadi);
-            if(data.isSuccess){
-                layer.msg(data.message +",1秒钟后自动刷新");
-                setTimeout("window.location.reload();", 1000);
-            }else{
-                ajaxError(data);
-            }
-        },
-        error : function(data) {
-            layer.close(loadi);
-            ajaxError(data);
-        }
-    });
-}
-
+var photoId = 0;
 /**
  * 添加图片链接
  * @param params
@@ -228,7 +171,10 @@ function addLink(params){
  */
 function afterSelectLink(links){
 	if(isNotEmpty(links)){
-		$(".gallery-link").val(links);
+        $model.find(".gallery-width").val("");
+        $model.find(".gallery-height").val("");
+        $model.find(".gallery-length").val("");
+		$model.find(".gallery-link").val(links);
 	}
 }
 

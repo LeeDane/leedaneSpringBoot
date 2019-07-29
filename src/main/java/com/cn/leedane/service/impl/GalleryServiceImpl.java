@@ -1,5 +1,6 @@
 package com.cn.leedane.service.impl;
 
+import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.CategoryHandler;
 import com.cn.leedane.mapper.GalleryMapper;
 import com.cn.leedane.model.*;
@@ -41,12 +42,19 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 	}
 	
 	@Override
-	public Map<String, Object> addLink(JSONObject jo, UserBean user,
+	public Map<String, Object> manageLink(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request){
 		logger.info("GalleryServiceImpl-->add():JSONObject="+jo.toString());
 		
 		ResponseMap message = new ResponseMap();
-		
+		int id = JsonUtil.getIntValue(jo, "id", 0); //获取参数中宽度的值,可以为空
+
+		if(id > 0){
+			GalleryBean galleryBean = galleryMapper.findById(GalleryBean.class, id);
+			if(galleryBean == null || galleryBean.getStatus() != ConstantsUtil.STATUS_NORMAL)
+				throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该图库不存在.value));
+		}
+
 		int width = JsonUtil.getIntValue(jo, "width", 0); //获取参数中宽度的值,可以为空
 		int height = JsonUtil.getIntValue(jo, "height", 0); //获取参数中高度的值,可以为空
 		long length = JsonUtil.getLongValue(jo, "length", 0); //获取参数中高度的值,可以为空
@@ -101,18 +109,28 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		bean.setWidth(width);
 		if(category > 0)
 			bean.setCategoryId(category);
-		if(galleryMapper.save(bean) > 0){
-			message.put("isSuccess", true);
-			message.put("message", "添加到图库成功");
+		if(id > 0){
+			bean.setId(id);
+			if(galleryMapper.update(bean) > 0){
+				message.put("isSuccess", true);
+				message.put("message", "编辑图库成功");
+			}else{
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库修改失败.value));
+				message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
+			}
 		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
+			if(galleryMapper.save(bean) > 0){
+				message.put("isSuccess", true);
+				message.put("message", "添加到图库成功");
+			}else{
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
+				message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
+			}
 		}
 		
 		//保存操作日志
 		String subject = user.getAccount() + "操作加入图库，链接是：" + path;
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "addLink", 1 , 0);
-		
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "manageLink", 1 , 0);
 		return message.getMap();
 	}
 
@@ -214,7 +232,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		if(CollectionUtil.isNotEmpty(rs)){
 			for(Map<String, Object> map: rs){
 //				map.put("path", "<img src='"+ StringUtil.changeNotNull(map.get("path")) +"'/>");
-				map.put("length", FileUtil.fileSizeFormat(StringUtil.changeNotNull(map.get("length"))));
+				map.put("format-length", FileUtil.fileSizeFormat(StringUtil.changeNotNull(map.get("length"))));
 				CategoryBean categoryBean = categoryHandler.getCategoryBean(StringUtil.changeObjectToInt(map.get("category_id")));
 				map.put("category", categoryBean != null ? categoryBean.getText(): "");
 			}

@@ -481,6 +481,7 @@ public class EnumUtil {
 		ES索引不存在(4035),
 		头像上传失败(4036),
 		该事件不存在(4037),
+		该图库不存在(4038),
 		;
 		
 		private ResponseCode(int value) {

@@ -61,7 +61,7 @@ public class WebFileUploadController extends BaseController{
      * 多个文件（建议断点上传每次的文件不要超过1M）
      * @return
      */
-	@RequestMapping(value = "/uploads")
+	@RequestMapping(value = "/uploads", method = RequestMethod.POST)
 	@ResponseBody
     public Map<String, Object> uploads(HttpServletRequest request, HttpServletResponse response, 
     		@RequestParam(value="myfile", required = false) CommonsMultipartFile[] multipartFiles) {

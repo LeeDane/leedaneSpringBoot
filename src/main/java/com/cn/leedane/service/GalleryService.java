@@ -19,16 +19,14 @@ import java.util.Map;
 @Transactional//对其实现类也自动添加事务
 public interface GalleryService <T extends IDBean>{
 	/**
-	 * 把链接加入图库
+	 * 添加或修改图库
 	 * * "{'path':'http://img.baidu.com/fjff.jpg', 'desc':'网络图片', 'width': 100, 'height':100, 'length':1040449}"
 	 * @param jo
 	 * @param user
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> addLink(JSONObject jo, UserBean user, HttpRequestInfoBean request);
-
-	
+	public Map<String, Object> manageLink(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	/**
 	 * 检查该图片是否已经加入图库
 	 * @param user
