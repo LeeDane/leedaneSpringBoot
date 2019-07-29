@@ -16,8 +16,10 @@ import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
@@ -45,7 +47,7 @@ import java.util.Properties;
  * 2017年3月13日 上午11:35:00
  * Version 1.0
  */
-//@EnableAutoConfiguration(exclude={MultipartAutoConfiguration.class})
+@EnableAutoConfiguration(exclude={MultipartAutoConfiguration.class})
 @SpringBootApplication  //全局controller控制
 @MapperScan("com.cn.leedane.mapper")
 @EnableTransactionManagement
