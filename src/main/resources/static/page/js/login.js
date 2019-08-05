@@ -21,7 +21,11 @@
       });
       
       //init();
-      
+      $("#remember").click(function () {
+          if ($(this).prop("checked") == true) {
+            layer.msg("请勿在不安全的地方勾选此项");
+          }
+       });
   });
   
   function doLogin(){
