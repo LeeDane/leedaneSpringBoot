@@ -2,8 +2,8 @@ layui.use(['layer', 'util'], function(){
    layer = layui.layer;
    util = layui.util;
 
-    $("#help").on("click", function(){
-		layer.msg("暂无帮助信息，请稍后重试！");
+    $("#to-page-top").on("click", function(){
+		scrollToPageTop(1000);
 	});
 
 	$("#write").on("click", function(){

@@ -12,6 +12,9 @@ layui.use(['layer', 'laypage', 'util'], function(){
 
 	$('[data-toggle="tooltip"]').tooltip();
 
+    $("#to-page-top").on("click", function(){
+		scrollToPageTop(1000);
+	});
 	/*initPage(".pagination", "getMoods", 9);*/
 	$moodContainer = $("#mood-container");
 	$operateItemsContrainer = $("#operate-item-list");

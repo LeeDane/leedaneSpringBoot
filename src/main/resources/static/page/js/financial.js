@@ -43,7 +43,7 @@ layui.use(['layer'], function(){
 	    	method = 'lowloading';
 	    	queryPaging();
 	    }
-	});   
+	});
 });
 var financials;
 var OneCategorys; //缓存一级分类对象

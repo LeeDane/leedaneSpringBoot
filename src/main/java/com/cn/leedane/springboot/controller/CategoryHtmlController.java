@@ -42,6 +42,7 @@ public class CategoryHtmlController extends BaseController{
 	
 	@RequestMapping("/")
 	public String index1(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入分类管理页面", "Category---->index()", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("category/index", true, model, request);
@@ -63,6 +64,7 @@ public class CategoryHtmlController extends BaseController{
 	public String select(Model model, 
 			@RequestParam(value="rootId") int rootId, //根节点的名称
 			HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		model.addAttribute("rootId", rootId);
 		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入选择分类页面", "Category---->index()", ConstantsUtil.STATUS_NORMAL, 0);

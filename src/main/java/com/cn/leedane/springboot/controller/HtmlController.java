@@ -76,31 +76,34 @@ public class HtmlController extends BaseController{
 	@RequestMapping(value = {"/", ControllerBaseNameUtil.index})
 	public String index1(Model model, HttpServletRequest request){
 		//首页不需要验证是否登录
-
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入系统首页页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("index", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.pt)
 	public String photo(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入图册模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("photo", true, model, request);
 	}
 
 	@RequestMapping(ControllerBaseNameUtil.pt +"/manage")
 	public String photoManage(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入图册管理模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("photo-manage", true, model, request);
 	}
 	
 	@RequestMapping("/test")
 	public String test(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入测试模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("test", false, model, request);
 	}
 	
 	@RequestMapping("/love")
 	public String love(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入爱情模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("love", false, model, request);
 	}
@@ -115,12 +118,14 @@ public class HtmlController extends BaseController{
 	public String message(Model model, @RequestParam(value = "tab", required = false) String tab, HttpServletRequest request){
 		if(StringUtil.isNotNull(tab))
 			model.addAttribute("tabName", tab);
+		checkRoleOrPermission(model, request);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入消息管理模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("message", true, model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.fn)
 	public String financial(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入记账模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("financial", true, model, request);
 	}
@@ -142,9 +147,8 @@ public class HtmlController extends BaseController{
 	public String detail(
 			@PathVariable(value="bid") int blogId,
 				Model model, HttpServletRequest request){
-		
+		checkRoleOrPermission(model, request);
 		//检查博客id是否存在
-		
 		model.addAttribute("bid", blogId);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入博客详情页面："+ blogId, "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("detail", model, request);
@@ -185,6 +189,7 @@ public class HtmlController extends BaseController{
 	
 	@RequestMapping(ControllerBaseNameUtil.my)
 	public String my(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		UserBean user = getMustLoginUserFromShiro();
 		model.addAttribute("uid", user.getId());
 		model.addAttribute("uaccount", userHandler.getUserName(user.getId()));
@@ -255,6 +260,7 @@ public class HtmlController extends BaseController{
 	
 	@RequestMapping(ControllerBaseNameUtil.pb)
 	public String publishBlog(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		int blogId = 0;
 		String bidStr = request.getParameter("bid");
 		if(StringUtil.isNotNull(bidStr))
@@ -280,18 +286,21 @@ public class HtmlController extends BaseController{
 	
 	@RequestMapping(ControllerBaseNameUtil.s)
 	public String search(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入搜索页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("search", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.cs)
 	public String chatSquare(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入聊天广场页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("chat-square", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.mt)
 	public String materialIndex(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入素材管理模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("material/index", true, model, request);
@@ -305,6 +314,7 @@ public class HtmlController extends BaseController{
 	 */
 	@RequestMapping(ControllerBaseNameUtil.ev)
 	public String eventIndex(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入大事件模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("event",  model, request);
 	}
@@ -317,6 +327,7 @@ public class HtmlController extends BaseController{
 	 */
 	@RequestMapping(ControllerBaseNameUtil.ev + "/manage")
 	public String eventManage(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入大事件管理模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return adminLoginRoleCheck("event-manage",  model, request);
 	}
@@ -330,6 +341,7 @@ public class HtmlController extends BaseController{
 	 */
 	@RequestMapping(ControllerBaseNameUtil.mt +"/add")
 	public String materialAdd(Model model, @RequestParam(value="type", required=false) String type, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		boolean iframe = false;
 		if(StringUtil.isNotNull(type) && "iframe".equals(type))
 			iframe = true;
@@ -354,6 +366,7 @@ public class HtmlController extends BaseController{
 			@RequestParam(value="select", required=false) Integer select, //最多选择的数量
 			@RequestParam(value="selectType", required=false) Integer selectType, //选择的类型，0表示全部， 1表示图片， 2表示文件
 			HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		boolean iframe = false;
 		if(StringUtil.isNotNull(type) && "iframe".equals(type))
 			iframe = true;
@@ -384,7 +397,7 @@ public class HtmlController extends BaseController{
 	 */
 	@RequestMapping("/my/setting")
 	public String memberList(Model model, HttpServletRequest request){
-		
+		checkRoleOrPermission(model, request);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
         UserBean user = null;

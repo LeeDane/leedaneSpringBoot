@@ -48,7 +48,6 @@ public class StockHtmlController extends BaseController{
 	public String index2(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model,request);
-
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入股票模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		return loginRoleCheck("stock/index", true, model, request);
 	}

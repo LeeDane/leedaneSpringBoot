@@ -145,6 +145,10 @@
 	</div>
 </body>
 <div th:include="common-js :: commJs">what?</div>
+<ul class="layui-fixbar" style="right: 50px; bottom: 30px;">
+	<li id="to-page-top" class="layui-icon layui-icon-top" lay-type="bar2" style="background-color:#393D49"></li>
+	<li class="layui-icon layui-fixbar-top" lay-type="top" style="background-color:#393D49"></li>
+</ul>
 <script th:inline="javascript">//引用
 	var isLoginUser = /*[[${isLoginUser}]]*/;//取值
 	var uid = /*[[${uid}]]*/;//取值

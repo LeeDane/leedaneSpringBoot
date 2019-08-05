@@ -11,6 +11,10 @@ layui.use(['layer', 'laypage'], function(){
 	getWebBackgroud();
 	getMainContentData();
 	getCarouselImgs();//获取推荐的轮播图信息
+
+	$("#to-page-top").on("click", function(){
+        scrollToPageTop(1000);
+    });
 });
 var imgs = [];
 var blogs;

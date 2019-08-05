@@ -170,7 +170,7 @@ document.onkeydown=function(event){
 }
  
 function initWebsocket(){
-	websocket = new WebSocket("ws://onlyloveu.top/scanLogin");
+	websocket = new WebSocket("ws://129.28.172.37:8089/scanLogin");
 
 	//连接发生错误的回调方法
 	websocket.onerror = function(){

@@ -70,6 +70,7 @@ public class ClockHtmlController extends BaseController{
 	 */
 	@RequestMapping("/donate")
 	public String donate(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		return loginRoleCheck("clock/donate", false, model, request);
 	}
 }

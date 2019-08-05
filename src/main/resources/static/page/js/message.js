@@ -103,6 +103,10 @@ layui.use(['layer', 'laypage'], function(){
 	});
 	
 	getMessages();
+
+	$("#to-page-top").on("click", function(){
+        scrollToPageTop(1000);
+    });
 });
 var messages;
 var type; //通知类型

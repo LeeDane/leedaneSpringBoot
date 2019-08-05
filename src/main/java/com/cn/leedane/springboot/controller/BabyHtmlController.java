@@ -162,6 +162,7 @@ public class BabyHtmlController extends BaseController{
 	 */
 	@RequestMapping("/add")
 	public String newBaby(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		return editBaby(0, model, request);
 	}
 	

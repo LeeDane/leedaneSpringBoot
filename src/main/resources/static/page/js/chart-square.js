@@ -69,7 +69,7 @@ var topArray = [100, 130, 170]; //距离顶部的可能数组
 var topIndex = 0;//弹屏距离顶部的距离样式控制
 
 function initWebSocket(){
-	 websocket = new WebSocket("ws://127.0.0.1:80/websocket?id=123");
+	 websocket = new WebSocket("ws://129.28.172.37:8089/websocket?id=123");
 
 	//连接发生错误的回调方法
 	websocket.onerror = function(){
@@ -79,7 +79,9 @@ function initWebSocket(){
 	//连接成功建立的回调方法
 	websocket.onopen = function(event){
 		if(isLogin)
-			sendMessageToServer(getSendJson(loginUserId, "hello，我是"+account, true));
+			sendMessageToServer(getSendJson(loginUserId, account +"加入聊天室", true));
+		else
+		    sendMessageToServer(getSendJson(loginUserId, "匿名用户加入聊天室", true));
 	}
 
 	//接收到消息的回调方法

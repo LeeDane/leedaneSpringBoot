@@ -78,7 +78,7 @@ public class CircleHtmlController extends BaseController{
 	
 	@RequestMapping(value= "/", method = RequestMethod.GET)
 	public String index1(Model model, HttpServletRequest request){
-		
+		checkRoleOrPermission(model, request);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
         UserBean user = null;
@@ -99,6 +99,7 @@ public class CircleHtmlController extends BaseController{
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String list(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		model.addAttribute("nonav", false);
 		return loginRoleCheck("circle/list", true, model, request);
 	}
@@ -242,8 +243,8 @@ public class CircleHtmlController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "post/dt/{postId}", method = RequestMethod.GET)
-	public String postDetail1(@PathVariable(value="postId") int postId, Model model, HttpServletRequest request){		
-		
+	public String postDetail1(@PathVariable(value="postId") int postId, Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
 		CirclePostBean postBean = circlePostHandler.getNormalCirclePostBean(postId);
 		if(postBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该帖子不存在.value));
@@ -258,8 +259,6 @@ public class CircleHtmlController extends BaseController{
 	}
 	
 	private String toPostDetail(CircleBean circle, CirclePostBean postBean, Model model, HttpServletRequest request){
-		
-		
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
         UserBean user = null;
