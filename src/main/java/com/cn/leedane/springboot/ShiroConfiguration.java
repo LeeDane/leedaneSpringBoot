@@ -58,10 +58,7 @@ public class ShiroConfiguration {
      * 在项目使用中你可能会因为一些很但疼的问题最后采用它， 想使用它你可能需要看官网或者已经很了解Shiro的处理原理了）
      * 2. 直接使用ShiroFilterFactoryBean（这种方法比较简单，其内部对ShiroFilter做了组装工作，无法自己定义UrlPattern，
      * 默认拦截 /*）
-     *
-     * @param dispatcherServlet
      * @return
-     * @author SHANHY
      * @create  2016年1月13日
      */
 	@Bean
@@ -102,7 +99,6 @@ public class ShiroConfiguration {
     	manager.setSessionDAO(getSessionDao());
     	return manager;
     }
-    
 
     @Bean(name = "securityManager")
     public DefaultWebSecurityManager getDefaultWebSecurityManager(MyShiroRealm myShiroRealm) {
@@ -115,7 +111,6 @@ public class ShiroConfiguration {
         dwsm.setSessionManager(getSessionManager());
         return dwsm;
     }
-
     
     @Bean
     public AuthorizationAttributeSourceAdvisor getAuthorizationAttributeSourceAdvisor() {
@@ -123,13 +118,10 @@ public class ShiroConfiguration {
         aasa.setSecurityManager(getDefaultWebSecurityManager(myShiroRealm));
         return aasa;
     }
-    
-    
 
     /**
      * 加载shiroFilter权限控制规则（从数据库读取然后配置）
      * 注意：经过测试发现，定义不拦截anon应该放到拦截authc前面才有效，匹配规则是从上到下，发现符合条件的是就不再进行下一步的处理
-     * @author SHANHY
      * @create  2016年1月14日
      */
     private void loadShiroFilterChain(ShiroFilterFactoryBean shiroFilterFactoryBean){
@@ -152,7 +144,7 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("us/login/phone", "anon");//anon 不拦截商城首页链接
         filterChainDefinitionMap.put(ControllerBaseNameUtil.bw, "anon");//anon 不拦截微信绑定详情链接
         // authc：该过滤器下的页面必须验证后才能访问，它是Shiro内置的一个拦截器org.apache.shiro.web.filter.authc.FormAuthenticationFilter
-        filterChainDefinitionMap.put("*", "authc");// 拦截全部的链接
+        filterChainDefinitionMap.put("*", "user");// 拦截全部的链接
         // anon：它对应的过滤器里面是空的,什么都没做
         logger.info("##################从数据库读取权限规则，加载到shiroFilter中##################");
         //filterChainDefinitionMap.put("/user/edit/**", "authc,perms[user:edit]");// 这里为了测试，固定写死的值，也可以从数据库或其他配置中读取
@@ -167,17 +159,12 @@ public class ShiroConfiguration {
      * ShiroFilter<br/>
      * 注意这里参数中的 StudentService 和 IScoreDao 只是一个例子，因为我们在这里可以用这样的方式获取到相关访问数据库的对象，
      * 然后读取数据库相关配置，配置到 shiroFilterFactoryBean 的访问规则中。实际项目中，请使用自己的Service来处理业务逻辑。
-     *
-     * @param myShiroRealm
-     * @param stuService
-     * @param scoreDao
+     * @param securityManager
      * @return
-     * @author SHANHY
      * @create  2016年1月14日
      */
     @Bean(name = "shiroFilter")
     public ShiroFilterFactoryBean getShiroFilterFactoryBean(DefaultWebSecurityManager securityManager) {
-
         ShiroFilterFactoryBean shiroFilterFactoryBean = new MShiroFilterFactoryBean();
         // 必须设置 SecurityManager  
         shiroFilterFactoryBean.setSecurityManager(securityManager);

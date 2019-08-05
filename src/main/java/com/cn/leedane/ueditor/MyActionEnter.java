@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.baidu.ueditor.define.ActionMap;
@@ -38,14 +40,20 @@ public class MyActionEnter {
 		this.actionType = request.getParameter("action");
 		this.file = file;
 		this.configManager = MyConfigManager.getInstance(rootPath, configJspPath);
-		isLogin = request.getSession().getAttribute(UserController.USER_INFO_KEY) != null;
+		/*isLogin = request.getSession().getAttribute(UserController.USER_INFO_KEY) != null;*/
+		//获取当前的Subject
+		Subject currentUser = SecurityUtils.getSubject();
+		isLogin = currentUser.isRemembered() || currentUser.isAuthenticated();
 	}
 	
 	public MyActionEnter(HttpServletRequest request, String rootPath, String configJspPath){
 		this.request = request;
 		this.actionType = request.getParameter("action");
 		this.configManager = MyConfigManager.getInstance(rootPath, configJspPath);
-		isLogin = request.getSession().getAttribute(UserController.USER_INFO_KEY) != null;
+		/*isLogin = request.getSession().getAttribute(UserController.USER_INFO_KEY) != null;*/
+		//获取当前的Subject
+		Subject currentUser = SecurityUtils.getSubject();
+		isLogin = currentUser.isRemembered() || currentUser.isAuthenticated();
 	}
 	 
 	public String exec(){

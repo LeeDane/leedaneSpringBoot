@@ -41,7 +41,7 @@
 	  crypt.setPublicKey($("#publicKey").val());
 	  //password = crypt.encrypt(password);
 	    
-	  var params = {account: account, pwd: crypt.encrypt($.md5(password)), t: Math.random()};
+	  var params = {account: account, pwd: crypt.encrypt($.md5(password)), remember: $("#remember").prop("checked"), t: Math.random()};
 	  //params[parameterName] = token;
 	  var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	  $.ajax({

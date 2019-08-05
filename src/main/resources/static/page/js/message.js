@@ -1,6 +1,7 @@
-layui.use(['layer', 'laypage'], function(){
+layui.use(['layer', 'laypage', 'util'], function(){
    layer = layui.layer;
    laypage = layui.laypage;
+   util = layui.util;
   /*initPage(".pagination", "getMessages");*/
 	$(".navbar-nav .nav-main-li").each(function(){
 		$(this).removeClass("active");
@@ -218,6 +219,8 @@ function getMessages(){
  * @returns {String}
  */
 function buildEachMessageRow(index, message){
+        var createTime = new Date(changeNotNullString(message.create_time));
+        createTime = setTimeAgo(createTime);
 		var html = '<div class="row notification-list notification-list-padding" data-id="'+ message.id +'">'+
 			   			'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;">'+
 							'<img src="'+ changeNotNullString(message.user_pic_path) +'" width="40" height="40" class="img-rounded">'+
@@ -226,7 +229,7 @@ function buildEachMessageRow(index, message){
 					       	'<div class="list-group">'+
 						       		'<div class="list-group-item notification-list-item active">'+
 						       			'<a href="JavaScript:void(0);" onclick="linkToMy('+ message.from_user_id +')" target="_blank" class="marginRight">'+ changeNotNullString(message.account)+'</a>'+
-						       			'<span class="marginRight publish-time">发表于:'+ changeNotNullString(message.create_time) +'</span>'+
+						       			'<span class="marginRight publish-time">发表于:'+ createTime +'</span>'+
 						       		'</div>';
 							html += '<div class="list-group-item notification-list-item">'+
 										'<div class="row">';
@@ -234,7 +237,7 @@ function buildEachMessageRow(index, message){
 								    html += '<div class="col-lg-12 '+ (isNotEmpty(message.source_account) && isNotEmpty(message.source_user_id) ? 'hand" onclick="linkToTable(\''+ message.table_name +'\', '+ message.table_id +', '+ message.source_user_id +')"' :'"') +'>'+
 												'<blockquote>'+ message.source;
 													if(isNotEmpty(message.source_account)){
-												html += '<small><cite>'+ message.source_account +'</cite>&nbsp;&nbsp;'+ changeNotNullString(message.create_time) +'</small>';
+												html += '<small><cite>'+ message.source_account +'</cite>&nbsp;&nbsp;'+ changeNotNullString(message.source_create_time) +'</small>';
 													}
 										html +='</blockquote>'+
 											'</div>';

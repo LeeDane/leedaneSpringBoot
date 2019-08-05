@@ -2,6 +2,7 @@ package com.cn.leedane.springboot.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.utils.ConstantsUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -48,21 +49,27 @@ public class MallPromotionHtmlController extends BaseController{
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入推广平台模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        UserBean user = null;
+        UserBean user = getMustLoginUserFromShiro();
         //int wishNumber = 0;
         //判断是否开通了推广
         S_PromotionAuditBean promotionAuditBean = null;
         S_PromotionUserBean promotionUserBean = null;
         
         //判断是否申请了审核
-        if(currentUser.isAuthenticated()){
+       /* if(currentUser.isAuthenticated()){
         	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
         	promotionUserBean = promotionUserHandler.getPromotion(user.getId());
         	if(promotionUserBean == null){
         		//判断是否提交了审核
         		promotionAuditBean = promotionAuditHandler.getPromotion(user.getId());
         	}
-        }
+        }*/
+		//判断是否申请了审核
+		promotionUserBean = promotionUserHandler.getPromotion(user.getId());
+		if(promotionUserBean == null){
+			//判断是否提交了审核
+			promotionAuditBean = promotionAuditHandler.getPromotion(user.getId());
+		}
         model.addAttribute("promotionUserBean", promotionUserBean);
         model.addAttribute("promotionAuditBean", promotionAuditBean);
 		return loginRoleCheck("mall/promotion/index", true, model, request);

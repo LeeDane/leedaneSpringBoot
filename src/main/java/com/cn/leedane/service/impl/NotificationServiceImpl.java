@@ -117,7 +117,6 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		
 		ResponseMap message = new ResponseMap();
 		List<Map<String, Object>> rs = notificationMapper.paging(user.getId(), type, ConstantsUtil.STATUS_NORMAL, SqlUtil.getPageStart(current, pageSize, total), pageSize);
-		
 		if(CollectionUtil.isNotEmpty(rs)){
 			int fromUserId = 0;
 			String tableName = null;

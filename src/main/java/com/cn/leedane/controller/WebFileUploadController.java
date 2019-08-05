@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cn.leedane.shiro.CustomAuthenticationToken;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -176,12 +177,7 @@ public class WebFileUploadController extends BaseController{
 		}
 		
         try {
-        	UserBean user = null;
-        	Subject currentUser = SecurityUtils.getSubject();
-            if(currentUser.isAuthenticated()){
-           	 	user = (UserBean)currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-            }
-            
+        	UserBean user = getUserFromShiro();
             if(user == null)
            	 	throw new UnsupportedTokenException();
             

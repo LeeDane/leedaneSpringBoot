@@ -16,6 +16,7 @@ import com.cn.leedane.rabbitmq.send.ISend;
 import com.cn.leedane.service.AppVersionService;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.VisitorService;
+import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
@@ -400,12 +401,9 @@ public class HtmlController extends BaseController{
 		checkRoleOrPermission(model, request);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        UserBean user = null;
-        if(currentUser.isAuthenticated()){
-        	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-        	//获取页面初始化的信息
-        	model.addAllAttributes(userService.initSetting(user, getHttpRequestInfo(request)));
-        }
+        UserBean user = getMustLoginUserFromShiro();
+		//获取页面初始化的信息
+		model.addAllAttributes(userService.initSetting(user, getHttpRequestInfo(request)));
 
 		model.addAttribute("user", user);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入个人设置页面", "", ConstantsUtil.STATUS_NORMAL, 0);
@@ -630,7 +628,7 @@ public class HtmlController extends BaseController{
 
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-		currentUser.getSession().setAttribute(UserController.USER_INFO_KEY, user);
+//		currentUser.getSession().setAttribute(UserController.USER_INFO_KEY, user);
 		currentUser.getSession().setAttribute("nonav", true);
 		return "forward:"+ ref;
 	}

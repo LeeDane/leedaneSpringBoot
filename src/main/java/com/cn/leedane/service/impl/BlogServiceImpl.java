@@ -582,6 +582,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		
 		boolean result = blogMapper.update(bean) > 0;
 		if(result){
+			new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(bean));
 			//给用户发送消息
 			notificationHandler.sendNotificationById(false, user, bean.getCreateUserId(), toUserContent, NotificationType.通知, (bean.getStatus() == ConstantsUtil.STATUS_DELETE ? DataTableType.不存在的表.value: DataTableType.博客.value), bean.getId(), bean);
 			message.put("isSuccess", true);

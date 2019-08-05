@@ -15,6 +15,7 @@ import com.cn.leedane.model.circle.CirclePostBean;
 import com.cn.leedane.service.circle.CirclePostService;
 import com.cn.leedane.service.circle.CircleService;
 import com.cn.leedane.service.impl.circle.CircleServiceImpl;
+import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.utils.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.pam.UnsupportedTokenException;
@@ -81,10 +82,7 @@ public class CircleHtmlController extends BaseController{
 		checkRoleOrPermission(model, request);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        UserBean user = null;
-        if(currentUser.isAuthenticated()){
-        	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-        }
+        UserBean user = getUserFromShiro();
         model.addAttribute("nonav", StringUtil.changeObjectToBoolean(currentUser.getSession().getAttribute("nonav")));
     	//获取页面初始化的信息
     	model.addAllAttributes(circleService.init(user, getHttpRequestInfo(request)));
@@ -113,13 +111,16 @@ public class CircleHtmlController extends BaseController{
 		
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        UserBean user = null;
-        if(currentUser.isAuthenticated()){
+        UserBean user = getUserFromShiro();
+        /*if(currentUser.isAuthenticated()){
         	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
         	//获取页面初始化的信息
         	model.addAllAttributes(circleService.main(circle, user, getHttpRequestInfo(request)));
-        }
-        
+        }*/
+
+		if(user != null)
+			//获取页面初始化的信息
+			model.addAllAttributes(circleService.main(circle, user, getHttpRequestInfo(request)));
         circleService.saveVisitLog(cid, user, getHttpRequestInfo(request));
         model.addAttribute("nonav", StringUtil.changeObjectToBoolean(currentUser.getSession().getAttribute("nonav")));
 		return loginRoleCheck("circle/main", true, model, request);
@@ -153,12 +154,16 @@ public class CircleHtmlController extends BaseController{
 		
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        UserBean user = null;
-        if(currentUser.isAuthenticated()){
+        UserBean user = getUserFromShiro();
+        /*if(currentUser.isAuthenticated()){
         	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
         	//获取页面初始化的信息
         	model.addAllAttributes(circleService.memberListInit(circle, user, getHttpRequestInfo(request)));
-        }
+        }*/
+
+        if(user != null)
+			//获取页面初始化的信息
+			model.addAllAttributes(circleService.memberListInit(circle, user, getHttpRequestInfo(request)));
 
 		model.addAttribute("circle", circle);
 		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(currentUser.getSession().getAttribute("nonav")));
@@ -171,13 +176,12 @@ public class CircleHtmlController extends BaseController{
 			Model model, 
 			HttpServletRequest request){
 		checkRoleOrPermission(model, request);
-		
-		//获取当前的Subject  
+
 		//获取当前的Subject 
-        UserBean user = (UserBean) SecurityUtils.getSubject().getSession().getAttribute(UserController.USER_INFO_KEY);
-        if(user == null)
-        	throw new UnsupportedTokenException();
-		
+//        UserBean user = (UserBean) SecurityUtils.getSubject().getSession().getAttribute(UserController.USER_INFO_KEY);
+		//获取当前的Subject
+		Subject currentUser = SecurityUtils.getSubject();
+		UserBean user = getMustLoginUserFromShiro();
 		//postId 不为空表示编辑
 		CircleBean circle = circleHandler.getNormalCircleBean(circleId, user);
 		
@@ -260,15 +264,12 @@ public class CircleHtmlController extends BaseController{
 	
 	private String toPostDetail(CircleBean circle, CirclePostBean postBean, Model model, HttpServletRequest request){
 		//获取当前的Subject  
-        Subject currentUser = SecurityUtils.getSubject();
-        UserBean user = null;
-        if(currentUser.isAuthenticated()){
-        	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-        }
+        UserBean user = getUserFromShiro();
         model.addAllAttributes(circlePostService.initDetail(circle, postBean, user, getHttpRequestInfo(request)));
         model.addAttribute("audit", false);
         //保存帖子的访问记录
         circlePostService.saveVisitLog(postBean.getId(), user, getHttpRequestInfo(request));
+		Subject currentUser = SecurityUtils.getSubject();
         model.addAttribute("nonav", StringUtil.changeObjectToBoolean(currentUser.getSession().getAttribute("nonav")));
 		return loginRoleCheck("circle/post-detail", true, model, request);
 	}
@@ -287,9 +288,7 @@ public class CircleHtmlController extends BaseController{
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
 		//获取当前的Subject 
-        UserBean user = (UserBean) SecurityUtils.getSubject().getSession().getAttribute(UserController.USER_INFO_KEY);
-        if(user == null)
-        	throw new UnsupportedTokenException();
+        UserBean user = getMustLoginUserFromShiro();
         
 		//判断是否是圈子或者圈子管理员
 		List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circleId, ConstantsUtil.STATUS_NORMAL);

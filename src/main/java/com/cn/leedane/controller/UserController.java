@@ -47,7 +47,7 @@ public class UserController extends BaseController{
 	
 	private Logger logger = Logger.getLogger(getClass());
 	
-	public static final String USER_INFO_KEY = "user_info";
+//	public static final String USER_INFO_KEY = "user_info";
 	
 	@Autowired
 	private WechatHandler wechatHandler;
@@ -76,7 +76,7 @@ public class UserController extends BaseController{
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})  
 	public Map<String, Object> login(@RequestParam(value="account", required = false) String username,
-			@RequestParam(value="pwd", required = false) String password,
+			@RequestParam(value="pwd", required = false) String password, @RequestParam(value="remember", required = false) boolean remember,
 			Model model, /*HttpSession session,*/
 			HttpServletRequest request, RedirectAttributes redirectAttributes){
 		ResponseMap message = new ResponseMap();
@@ -87,6 +87,7 @@ public class UserController extends BaseController{
 			JSONObject json = getJsonFromMessage(message);
 			username = JsonUtil.getStringValue(json, "account");
 			password = JsonUtil.getStringValue(json, "pwd");
+			remember = JsonUtil.getBooleanValue(json, "remember");
 		}
 		
 		if(StringUtil.isNull(username) || StringUtil.isNull(password)){
@@ -125,14 +126,14 @@ public class UserController extends BaseController{
 					}
 				}
 			}
-			
+
 			CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken();
 			authenticationToken.setUsername(username);
 			authenticationToken.setPassword(password.toCharArray());
 			//这里只负责获取用户，不做校验，校验交给shiro的realm里面去做
 	        UserBean user = userHandler.getUserBean(username, password);
 	        authenticationToken.setUser(user);
-	        authenticationToken.setRememberMe(true);
+	        authenticationToken.setRememberMe(remember);
 			
 	        //获取当前的Subject  
 	        Subject currentUser = SecurityUtils.getSubject();  
@@ -187,7 +188,7 @@ public class UserController extends BaseController{
 	        if(currentUser.isAuthenticated()){  
 	            logger.info("用户[" + username + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)");
 	            
-	            currentUser.getSession().setAttribute(USER_INFO_KEY, user);
+//	            currentUser.getSession().setAttribute(USER_INFO_KEY, user);
 	            currentUser.getSession().setAttribute("hasnav", true);
 	            //获取平台，如果是android就继续获取token
 	            String platform = request.getHeader("platform");
@@ -957,7 +958,7 @@ public class UserController extends BaseController{
 			new ThreadUtil().singleTask(new SolrUpdateThread<UserBean>(UserSolrHandler.getInstance(), user));
 			//UserSolrHandler.getInstance().updateBean(user);	
 			
-            currentUser.getSession().setAttribute(USER_INFO_KEY, user);
+//            currentUser.getSession().setAttribute(USER_INFO_KEY, user);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您成功绑定当前微信.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			message.put("isSuccess", true);		
@@ -1044,8 +1045,8 @@ public class UserController extends BaseController{
 		checkRoleOrPermission(model, request);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        if(currentUser.isAuthenticated()){
-        	currentUser.getSession().setAttribute(USER_INFO_KEY, getUserFromMessage(message));
+        if(currentUser.isRemembered() || currentUser.isAuthenticated()){
+//        	currentUser.getSession().setAttribute(USER_INFO_KEY, getUserFromMessage(message));
         	message.put("isSuccess", true);
         	message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您登录成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.恭喜您登录成功.value);

@@ -101,7 +101,7 @@ public class RolePermissionHandler {
 
 	/**
 	 * isFirst签到在redis的key
-	 * @param id
+	 * @param userId
 	 * @return
 	 */
 	public static String getRolePermissionKey(int userId){

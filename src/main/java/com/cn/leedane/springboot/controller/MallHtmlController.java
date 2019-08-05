@@ -23,6 +23,7 @@ import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.service.mall.S_HomeCarouselService;
 import com.cn.leedane.service.mall.S_HomeItemService;
 import com.cn.leedane.service.mall.S_ProductService;
+import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.ResponseCode;
@@ -150,12 +151,12 @@ public class MallHtmlController extends BaseController{
 		
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        UserBean user = null;
+        UserBean user = getUserFromShiro();
         //int wishNumber = 0;
-        if(currentUser.isAuthenticated()){
+        /*if(currentUser.isAuthenticated()){
         	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
         	//wishNumber = wishHandler.getWishNumber(user.getId());
-        }
+        }*/
        // model.addAttribute("wishNumber", wishNumber);
         
         //处理分类
@@ -186,10 +187,7 @@ public class MallHtmlController extends BaseController{
 		
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        UserBean user = null;
-        if(currentUser.isAuthenticated()){
-        	user = (UserBean) currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-        }
+        UserBean user = getUserFromShiro();
 		//保存访问记录
 		visitorService.saveVisitor(user, "web网页端", DataTableType.商店.value, shopId, ConstantsUtil.STATUS_NORMAL);
 		return loginRoleCheck("mall/shop", model, request);

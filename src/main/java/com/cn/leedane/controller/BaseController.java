@@ -313,11 +313,16 @@ public class BaseController {
 		httpRequestInfoBean.setRequest(request);
 
 		//获取session
-		Object sessionUserInfo = null;
+		UserBean user = null;
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        if(currentUser.isAuthenticated()){
-        	sessionUserInfo = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        if(currentUser.isRemembered() || currentUser.isAuthenticated()){
+			Object obj = currentUser.getPrincipal();
+			if(obj != null){
+				CustomAuthenticationToken token = (CustomAuthenticationToken)obj;
+				user =  token.getUser();
+			}
+//        	sessionUserInfo = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
         	/* Collection<Session> sessions = sessionDAO.getActiveSessions();
         	 for(Session session:sessions){
 
@@ -330,11 +335,11 @@ public class BaseController {
         	 }*/
         }
 		
-		UserBean user = null;
+
 		//标记用户已经登录
-		if(sessionUserInfo != null){
+		if(user != null){
 			result = true;
-			user = (UserBean)sessionUserInfo;
+//			user = (UserBean)sessionUserInfo;
 			message.put("user", user);
 			message.put("message", result);
 			//HttpSession session = SessionManagerUtil.getInstance().getSession(user.getId());
@@ -521,12 +526,12 @@ public class BaseController {
 	            message.put("message", "用户名或密码不正确");  
 	        }  */
 	        //验证是否登录成功  
-	        if(currentUser.isAuthenticated()){  
+	        if(currentUser.isRemembered() || currentUser.isAuthenticated()){
 	            logger.info("用户[" + userId + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)"); 
 	            message.put("message", "恭喜您登录成功"); 
 	            result = true;
 	            message.put("isSuccess", result); 
-	            currentUser.getSession().setAttribute(UserController.USER_INFO_KEY, user);
+//	            currentUser.getSession().setAttribute(UserController.USER_INFO_KEY, user);
 	            return user;
 	        }else{  
 	        	usernamePasswordToken.clear();  
@@ -592,9 +597,13 @@ public class BaseController {
 		UserBean user = null;
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        if(currentUser.isAuthenticated()){
-        	Object o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-        	user = (UserBean)o;
+        if(currentUser.isRemembered() || currentUser.isAuthenticated()){
+//        	Object o = currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+			Object obj = currentUser.getPrincipal();
+			if(obj != null){
+				CustomAuthenticationToken token = (CustomAuthenticationToken)obj;
+				user = token.getUser();
+			}
         }
 		return user;
 	}
@@ -606,8 +615,13 @@ public class BaseController {
 	protected UserBean getMustLoginUserFromShiro(){
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
-        if(currentUser.isAuthenticated()){
-        	return (UserBean)currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+        if(currentUser.isRemembered() || currentUser.isAuthenticated()){
+//        	return (UserBean)currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
+			Object obj = currentUser.getPrincipal();
+			if(obj != null){
+				CustomAuthenticationToken token = (CustomAuthenticationToken)obj;
+				return token.getUser();
+			}
         }
         throw new MustLoginException();
 	}
@@ -620,9 +634,16 @@ public class BaseController {
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
       //后台只有管理员权限才能操作
-        if(currentUser.isAuthenticated() && currentUser.hasRole(RoleController.ADMIN_ROLE_CODE)){
+       /* if(currentUser.isAuthenticated() && currentUser.hasRole(RoleController.ADMIN_ROLE_CODE)){
         	return (UserBean)currentUser.getSession().getAttribute(UserController.USER_INFO_KEY);
-        }
+        }*/
+		if((currentUser.isRemembered() || currentUser.isAuthenticated()) && currentUser.hasRole(RoleController.ADMIN_ROLE_CODE)){
+			Object obj = currentUser.getPrincipal();
+			if(obj != null){
+				CustomAuthenticationToken token = (CustomAuthenticationToken)obj;
+				return token.getUser();
+			}
+		}
         throw new MustAdminLoginException();
 	}
 

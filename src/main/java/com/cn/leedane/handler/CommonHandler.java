@@ -94,12 +94,10 @@ public class CommonHandler {
 	 * @param tableName
 	 * @param tableId
 	 * @param user 当前登录的用户
-	 * @param account 当前这个资源的作者的称呼
 	 * @return
 	 */
 	public Map<String, Object> getSourceByTableNameAndId(String tableName, int tableId, UserBean user){
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
-		
 		Map<String, Object> result = new HashMap<String, Object>();
 		//只支持心情和博客获取源
 		if(DataTableType.心情.value.equalsIgnoreCase(tableName)){
@@ -115,8 +113,7 @@ public class CommonHandler {
 		if(StringUtil.isNull(tableName) || tableId < 1){
 			return result;
 		}
-		
-		
+
 		if(list != null && list.size() ==1 && list.get(0) != null){
 			Map<String, Object> data = list.get(0);
 			content = getContent(data);
