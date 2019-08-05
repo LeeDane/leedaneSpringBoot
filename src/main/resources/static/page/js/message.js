@@ -108,10 +108,37 @@ layui.use(['layer', 'laypage', 'util'], function(){
 	$("#to-page-top").on("click", function(){
         scrollToPageTop(1000);
     });
+
+
 });
 var messages;
 var type; //通知类型
 
+/**
+** 更新未读取数量
+*/
+function updateNoReadNumber(){
+    var currentMsg = $(".nav-msg").hasClass("active");
+    if(noReadNumbers && noReadNumbers.length > 0){
+        for(var i = 0 ; i < noReadNumbers.length; i++){
+            if(noReadNumbers[i]['key'] == '全部'){
+                if(!currentMsg)
+                    break;
+            }else{
+                if(currentMsg){
+                    var lis = $("#notification-tabs").find("li");
+                    for(var j = 0; j < lis.length; j++){
+                        if(lis.eq(j).attr("data-value") == noReadNumbers[i]['key']){
+                            lis.eq(j).find("a").text(noReadNumbers[i]['key'] +'(' + noReadNumbers[i]['value'] +')');
+                        }
+                    }
+                }
+            }
+        }
+    }else{
+        getNoReadNumber();
+    }
+}
 
 /**
  * 当前tab标记为已读
@@ -199,6 +226,8 @@ function getMessages(){
 					    }
 					  }
 				 });
+
+				 updateNoReadNumber();
 			}else{
 				ajaxError(data);
 			}

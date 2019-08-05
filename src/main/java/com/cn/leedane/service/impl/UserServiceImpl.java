@@ -20,6 +20,7 @@ import com.cn.leedane.model.circle.CircleSettingBean;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.EmailSend;
 import com.cn.leedane.rabbitmq.send.ISend;
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.service.*;
 import com.cn.leedane.springboot.ElasticSearchUtil;
@@ -105,9 +106,6 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 
 	@Value("${constant.defalult.login.password.string}")
     private String DEFALULT_LOGIN_PASSWORD_STRING;
-	
-	@Value("${constant.websit.name}")
-    private String WEBSIT_NAME;
 	
 	@Value("${constant.system.server.url}")
     private String SYSTEM_SERVER_URL;
@@ -270,7 +268,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		set.add(user2);	
 		
 		EmailUtil emailUtil = EmailUtil.getInstance();
-		emailUtil.initData(user, set, content, WEBSIT_NAME +"注册验证");
+		emailUtil.initData(user, set, content, LeedanePropertiesConfig.newInstance().getString("constant.websit.name") +"注册验证");
 		try {
 			emailUtil.sendMore();
 		} catch (Exception e) {

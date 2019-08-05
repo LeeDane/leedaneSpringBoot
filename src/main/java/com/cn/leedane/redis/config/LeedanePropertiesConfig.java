@@ -5,6 +5,7 @@ import com.cn.leedane.utils.StringUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -46,7 +47,7 @@ public class LeedanePropertiesConfig {
 		Properties prop = new Properties();
 		// 将Properties和流关联
 		try {
-			prop.load(in);
+			prop.load(new InputStreamReader(in,  "UTF-8"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

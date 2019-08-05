@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import net.sf.json.JSONArray;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.StringUtil;
+import org.springframework.context.annotation.PropertySource;
 
 /**
  * 公共的处理类
@@ -22,6 +24,7 @@ import com.cn.leedane.utils.StringUtil;
  * 2016年4月6日 下午12:11:43
  * Version 1.0
  */
+@PropertySource(value = "classpath:leedane.properties",encoding = "utf-8")
 public class CommonHandler {
 	@Autowired
 	private MoodHandler moodHandler;
@@ -37,16 +40,12 @@ public class CommonHandler {
 	
 	@Autowired
 	private CirclePostHandler circlePostHandler;
-	
-	@Value("${constant.source.delete.tip}")
-    public String SOURCE_DELETE_TIP;
 
 	/**
 	 * 通过表名和表ID获取该资源对象的展示内容
 	 * @param tableName
 	 * @param tableId
 	 * @param user 当前登录的用户
-	 * @param account 当前这个资源的作者的称呼
 	 * @return
 	 */
 	public String getContentByTableNameAndId(String tableName, int tableId, UserBean user){
@@ -62,7 +61,7 @@ public class CommonHandler {
 		}else{
 			return "";
 		}
-		String content = SOURCE_DELETE_TIP;
+		String content = LeedanePropertiesConfig.newInstance().getString("constant.source.delete.tip");
 		if(StringUtil.isNull(tableName) || tableId < 1){
 			return content;
 		}
@@ -82,7 +81,7 @@ public class CommonHandler {
 			if(oldLength > (length + StringUtil.changeNotNull(account).length()))
 				content += "......";
 		}else{
-			content = SOURCE_DELETE_TIP;
+			content = LeedanePropertiesConfig.newInstance().getString("constant.source.delete.tip");
 		}
 		
 		//logger.info("tableName:"+tableName+",tableId:"+tableId+",content:"+content);
@@ -109,7 +108,7 @@ public class CommonHandler {
 		}else{
 			return result;
 		}
-		String content = SOURCE_DELETE_TIP;
+		String content = LeedanePropertiesConfig.newInstance().getString("constant.source.delete.tip");
 		if(StringUtil.isNull(tableName) || tableId < 1){
 			return result;
 		}
@@ -130,7 +129,7 @@ public class CommonHandler {
 			if(oldLength > length)
 				content += "......";
 		}else{
-			content = SOURCE_DELETE_TIP;
+			content = LeedanePropertiesConfig.newInstance().getString("constant.source.delete.tip");
 		}
 		result.put("source", content);
 		//logger.info("tableName:"+tableName+",tableId:"+tableId+",content:"+content);

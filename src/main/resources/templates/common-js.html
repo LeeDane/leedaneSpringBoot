@@ -24,6 +24,7 @@
 	var isLogin;
 	var isAdmin;
 	var loginUserId;
+	var noReadNumbers;
 	jQuery(function(){
 		isLogin = /*[[${isLogin}]]*/;//取值  
 		isAdmin = /*[[${isAdmin}]]*/;//取值  
@@ -71,7 +72,8 @@
 							}
 						}
 					}
-					/*]]>*/  
+					/*]]>*/
+					noReadNumbers = data.message;
 				}				
 			},
 			error : function(data) {
