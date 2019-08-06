@@ -1,6 +1,8 @@
 package com.cn.leedane.service.impl;
 import java.util.List;
+import java.util.Map;
 
+import com.cn.leedane.handler.RoleHandler;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,9 +29,18 @@ public class RolePermissionServiceImpl implements RolePermissionService<UserRole
 	@Autowired
 	private RolePermissionHandler rolePermissionHandler;
 
+	@Autowired
+	private RoleHandler roleHandler;
+
 	@Override
 	public List<RoleBean> getUserRoleBeans(int userid) {
 		logger.info("UserRoleServiceImpl-->getUserRoleBeans():userid="+userid);
 		return rolePermissionHandler.getUserRoleBeans(userid);
+	}
+
+	@Override
+	public List<Map<String, Object>> getUserByRoleBeans(int roleId) {
+		logger.info("UserRoleServiceImpl-->getUserByRoleBeans():roleId="+roleId);
+		return roleHandler.getUsers(roleId);
 	}
 }

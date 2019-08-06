@@ -36,7 +36,11 @@
 			</div>
 	        <input type="text" id="account" class="form-control" placeholder="您的账号" autofocus="true" value="test"/>
 	        <input type="password" id="password" class="form-control" style="margin-top: 10px;" placeholder="登录密码" data-placement="bottom" value="123"/>
-	        <div class="checkbox">
+			  <div style="position: relative;">
+			  		<input type="text" id="img-code" class="form-control" placeholder="验证码"/>
+				  	<img id="captcha_img" alt="点击更换" title="点击更换" onclick="refresh()" style="position: absolute; right: 0; bottom: 0; z-index: 100; cursor: pointer;" src="/kaptcha" />
+			  </div>
+			  <div class="checkbox">
 	          <label>
 	            <input type="checkbox" id="remember" /> 记住我
 	          </label>
@@ -49,11 +53,15 @@
 	      <form class="form-signin" role="form">
 	        <h2 class="form-signin-heading">注册<span class="form-signin-heading-small">登录</span></h2>
 	        <div id="registerErrorMessage"></div>
-	        <input type="text" id="rg-account" class="form-control" placeholder="account" autofocus="true" />
-	        <input type="password" id="rg-password" class="form-control" style="margin-top: 10px;" placeholder="Password" data-placement="bottom" />
-	        <input type="password" id="rg-confirmPassword" class="form-control" style="margin-top: 10px;" placeholder="ConfirmPassord" data-placement="bottom" />
-	        <input type="number" id="rg-phone" class="form-control" placeholder="phone" />
-	        <button class="btn btn-lg btn-primary btn-block" type="button" onclick="doRegister();" style="margin-top: 10px;">Sign up</button>
+	        <input type="text" id="rg-account" class="form-control" placeholder="账号" />
+	        <input type="password" id="rg-password" class="form-control" style="margin-top: 10px;" placeholder="密码" data-placement="bottom" />
+	        <input type="password" id="rg-confirmPassword" class="form-control" style="margin-top: 10px;" placeholder="确认密码" data-placement="bottom" />
+	        <input type="number" id="rg-phone" class="form-control" placeholder="手机号码" />
+		  	<div style="position: relative; margin-top: 10px;">
+			  <input type="text" id="rg_img-code" class="form-control" placeholder="验证码"/>
+			  <img id="rg_captcha_img" alt="点击更换" title="点击更换" onclick="rgRefresh()" style="position: absolute; right: 0; bottom: 0; z-index: 100; cursor: pointer;" src="/kaptcha" />
+		  	</div>
+	        <button class="btn btn-lg btn-primary btn-block" type="button" onclick="doRegister();" style="margin-top: 10px;">立即注册</button>
 	      </form>
     </div>
 <!-- 模态框发布心情列表 -->

@@ -117,10 +117,10 @@
 			   <div class="row">
 			   		<p th:utext="${post.title}" style="font-size: 25px; font-weight: bolder;"></p>
 					<p id="operate-list" style="color: #666;">
-						<button type="button" class="btn btn-default btn-xs user-img" data="'+ post.createUserId +'">
+						<button type="button" class="btn btn-default btn-sm user-img" data="'+ post.createUserId +'">
 								  <img th:src="${create_user_pic_path}" class="img-circle" style="width: 20px; height: 20px" /> <span th:text="${create_user_account}"></span>
 						</button>
-						<span class="label label-primary" th:text="${create_time}"></span>
+						<span id="post-create-time" class="label label-primary"></span>
 						<span th:if="${canDelete}" class="glyphicon glyphicon-trash post-delete hand" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="删除"></span>&nbsp;&nbsp;
 						<span class="glyphicon glyphicon-comment" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="评论"></span>&nbsp;<span th:text="${comment_number}"></span>&nbsp;&nbsp;
 						<span class="glyphicon glyphicon-share-alt" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="转发"></span>&nbsp;<span th:text="${transmit_number}"></span>&nbsp;&nbsp;
@@ -186,8 +186,7 @@
 	var createUserId = /*[[${post.createUserId}]]*/;//取值
 	var audit = /*[[${audit}]]*/;//取值
 	var imgs = /*[[${post.imgs}]]*/;//取值
-	
-	
+	var postCreate_time = /*[[${create_time}]]*/;//取值
 	
 	/*]]>*/  
 </script> 

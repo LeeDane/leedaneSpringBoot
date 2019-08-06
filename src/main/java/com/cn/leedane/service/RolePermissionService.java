@@ -1,7 +1,9 @@
 package com.cn.leedane.service;
 
 import java.util.List;
+import java.util.Map;
 
+import com.cn.leedane.model.UserBean;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,4 +26,12 @@ public interface RolePermissionService<T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<RoleBean> getUserRoleBeans(int userid);
+
+	/**
+	 * 通过角色名称获取该角色的授权用户列表
+	 * @param roleId
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public List<Map<String, Object>> getUserByRoleBeans(int roleId);
 }

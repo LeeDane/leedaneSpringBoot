@@ -222,7 +222,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			for(Map<String, Object> map: rs){
 				postId = StringUtil.changeObjectToInt(map.get("id"));
 				createUserId = StringUtil.changeObjectToInt(map.get("create_user_id"));
-				map.put("create_time", RelativeDateFormat.format(DateUtil.stringToDate(StringUtil.changeNotNull(map.get("create_time")))));
+				map.put("create_time", map.get("create_time"));
 				map.put("zan_users", zanHandler.getZanUser(postId, DataTableType.帖子.value, user, 6));
 				map.put("comment_number", commentHandler.getCommentNumber(postId, DataTableType.帖子.value));
 				map.put("transmit_number", circlePostHandler.getTransmitNumber(postId));

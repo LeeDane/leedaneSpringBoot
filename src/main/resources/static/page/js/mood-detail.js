@@ -4,14 +4,17 @@ var first_id = 0;
 var maxCommentNumber = 250; //最大的评论数量
 var $commentListContainer = null;
 var commentPageSize = 0;
-layui.use(['layer'], function(){
+layui.use(['layer', 'util'], function(){
 	layer = layui.layer;
+	util = layui.util;
 	if(isEmpty(mid)){
 		layer.msg("心情不存在");
 		return;
 	}
 	getDetail();
 
+    $("[data-toggle='tooltip']").tooltip();
+	$(".tooltip").css("display", "block");
 	$commentListContainer = $("#comment-list-container");
 	getComments();
 	$container= $(".container");
@@ -97,12 +100,13 @@ function getDetail(){
 		success : function(data) {
 			if(data.isSuccess && data.message.length > 0){
 				var mood = data.message[0];
+				var moodCreateTime = setTimeAgo(mood.create_time);
 				$("#b-account").html(changeNotNullString(mood.account));
 				$("#b-account").attr("onclick", 'linkToMy('+ mood.create_user_id +')');
-				$("#b-create-time").html("发表于:"+changeNotNullString(mood.create_time));
-				$("#b-comment-number").html("评论:"+mood.comment_number);
-				$("#b-transmit-number").html("转发:"+mood.transmit_number);
-				$("#b-zan-number").html("点赞:"+mood.zan_number);
+				$("#b-create-time").html(moodCreateTime);
+				$("#b-comment-number").html(mood.comment_number);
+				$("#b-transmit-number").html(mood.transmit_number);
+				$("#b-zan-number").html(mood.zan_number);
 				
 				if(isNotEmpty(mood.zan_users)){
 					var users = mood.zan_users.split(";");

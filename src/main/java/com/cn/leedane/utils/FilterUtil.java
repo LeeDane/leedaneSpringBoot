@@ -42,7 +42,6 @@ public class FilterUtil {
 	/**
 	 * 过滤是否含有敏感词汇并且过滤emoji表情
 	 * @param content
-	 * @param message
 	 * @return
 	 */
 	public static boolean filter(String content){
@@ -64,7 +63,6 @@ public class FilterUtil {
 	/**
 	 * 过滤是否含有敏感词汇
 	 * @param content
-	 * @param sensitiveWords
 	 */
 	public static Set<String> getFilter(String content){
 		//检测敏感词

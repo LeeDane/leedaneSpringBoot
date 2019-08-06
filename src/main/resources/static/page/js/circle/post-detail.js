@@ -1,6 +1,7 @@
-layui.use(['layer', 'laypage'], function(){
+layui.use(['layer', 'laypage', 'util'], function(){
 	layer = layui.layer;
 	laypage = layui.laypage;
+	util = layui.util;
 	$container= $(".container");
 	$commentContainer = $("#comment-list-container");
 	//initPage(".pagination", "getComments", 10);
@@ -101,6 +102,10 @@ layui.use(['layer', 'laypage'], function(){
 			$("#img-container").append(html);
 		}
 	}
+
+    //格式化创建时间
+	postCreate_time = setTimeAgo(postCreate_time);
+	$("#post-create-time").html(postCreate_time);
 });
 var comments;
 var $container;
@@ -284,6 +289,7 @@ function getComments(bid){
  * @param index
  */
 function buildEachCommentRow(index, comment){
+        var createTime = setTimeAgo(comment.create_time);
 		var html = '<div class="row comment-list comment-list-padding" data-id="'+ comment.id+'" create-user-id="'+ comment.create_user_id+'" >'+
 			   			'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">'+
 							'<img src="'+ changeNotNullString(comment.user_pic_path) +'" width="40" height="40" class="img-rounded hand center-block">'+
@@ -292,7 +298,7 @@ function buildEachCommentRow(index, comment){
 					       	'<div class="list-group">'+
 						       		'<div class="list-group-item comment-list-item active">'+
 						       			'<a href="JavaScript:void(0);" onclick="linkToMy('+ comment.create_user_id +')" target="_blank" class="marginRight">'+ changeNotNullString(comment.account)+'</a>'+
-						       			'<span class="marginRight publish-time">发表于:'+ changeNotNullString(comment.create_time) +'</span>'+
+						       			'<span class="marginRight publish-time">发表于:'+ createTime +'</span>'+
 						       			'<span class="marginRight publish-time">来自:'+ changeNotNullString(comment.froms) +'</span>'+
 						       		'</div>';
 							html += '<div class="list-group-item comment-list-item">'+
@@ -301,7 +307,8 @@ function buildEachCommentRow(index, comment){
 								    html += '<div class="col-lg-12">'+
 											    '<blockquote>'+ comment.blockquote_content;
 												if(isNotEmpty(comment.blockquote_account)){
-											html += '<small><cite>'+ comment.blockquote_account +'</cite>&nbsp;&nbsp;'+ changeNotNullString(comment.blockquote_time) +'</small>';
+												var blockquoteTime = setTimeAgo(comment.blockquote_time);
+											html += '<small><cite>'+ comment.blockquote_account +'</cite>&nbsp;&nbsp;'+ blockquoteTime +'</small>';
 												}
 										html +='</blockquote>'+
 											'</div>';
@@ -325,7 +332,7 @@ function buildEachCommentRow(index, comment){
 									    			'<div class="col-lg-12">'+
 									    				'<form class="form-signin" role="form">'+
 										    			     '<fieldset>'+
-										    				     '<textarea class="form-control reply-comment-text" placeholder="回复TA，最多250个文字。"> </textarea>'+
+										    				     '<textarea class="form-control reply-comment-text" placeholder="回复TA，最多250个文字。"></textarea>'+
 										    			     '</fieldset>'+
 										    			 '</form>'+
 									    			'</div>'+

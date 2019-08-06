@@ -1,7 +1,7 @@
-layui.use(['layer', 'laypage'], function(){
+layui.use(['layer', 'laypage', 'util'], function(){
    layer = layui.layer;
    laypage = layui.laypage;
-
+   util = layui.util;
   $(".common-search").remove();
   	searchKey = getURLParam(decodeURI(window.location.href), "q");
   	if(isEmpty(searchKey)){
@@ -160,6 +160,10 @@ function buildUsers(hits){
  * @returns {String}
  */
 function buildUserEach(user){
+    var lastRequestTime = '';
+    if(isNotEmpty(user.last_request_time)){
+        lastRequestTime = setTimeAgo(user.last_request_time);
+    }
 	var html = '<div class="col-lg-12" id="message-list-content">'+
                     '<div class="row notification-list notification-list-padding" data-id="">'+
                         '<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;">'+
@@ -168,9 +172,10 @@ function buildUserEach(user){
                         '<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">'+
                             '<div class="list-group">'+
                                 '<div class="list-group-item notification-list-item active">'+
-                                    '<a href="JavaScript:void(0);" onclick="linkToMy('+ user.id +')" target="_blank" class="marginRight">'+ changeNotNullString(user.account) +'</a>'+
-                                    '<span class="badge">管理员</span>'+
-                                '</div>'+
+                                    '<a href="JavaScript:void(0);" onclick="linkToMy('+ user.id +')" target="_blank" class="marginRight">'+ changeNotNullString(user.account) +'</a>';
+                                  if(user.is_admin)
+                                    html += '<span class="badge">管理员</span>';
+                html +=  '</div>'+
                                 '<div class="list-group-item notification-list-item">'+
                                     '<table class="table table-hover">'+
                                         '<caption>基本信息</caption>'+
@@ -213,7 +218,7 @@ function buildUserEach(user){
                                         '</tr>'+
                                         '<tr>'+
                                             '<td>最后请求时间</td>'+
-                                            '<td>'+ changeNotNullString(user.last_request_time) +'</td>'+
+                                            '<td>'+ lastRequestTime +'</td>'+
                                         '</tr>'+
                                         '</tbody>'+
                                     '</table>'+
@@ -241,6 +246,7 @@ function buildBlogs(hits){
  * @returns {String}
  */
 function buildBlogEach(blog){
+    var modifyTime = setTimeAgo(blog.modify_time);
 	var html = '<div class="col-lg-12" id="message-list-content">'+
                     '<div class="row notification-list notification-list-padding" data-id="">'+
                         '<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;">'+
@@ -250,7 +256,7 @@ function buildBlogEach(blog){
                             '<div class="list-group">'+
                                 '<div class="list-group-item notification-list-item active">'+
                                     '<a href="JavaScript:void(0);" onclick="linkToMy('+ blog.create_user_id +')" target="_blank" class="marginRight">'+ blog.account +'</a>'+
-                                    '<span class="marginRight publish-time">发布于: '+ blog.modify_time +'</span>'+
+                                    '<span class="marginRight publish-time">发布于: '+ modifyTime +'</span>'+
                                 '</div>'+
                                 '<div class="list-group-item notification-list-item">'+
                                     '<div class="row">'+
@@ -293,6 +299,7 @@ function buildMoods(hits){
  * @returns {String}
  */
 function buildMoodEach(index, mood){
+    var modifyTime = setTimeAgo(mood.modify_time);
 	var html = '<div class="col-lg-12" id="message-list-content">'+
                     '<div class="row notification-list notification-list-padding" data-id="">'+
                         '<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;">'+
@@ -302,7 +309,7 @@ function buildMoodEach(index, mood){
                             '<div class="list-group">'+
                                 '<div class="list-group-item notification-list-item active">'+
                                     '<a href="JavaScript:void(0);" onclick="linkToMy('+ mood.create_user_id +')" target="_blank" class="marginRight">'+ changeNotNullString(mood.account) +'</a>'+
-                                    '<span class="marginRight publish-time">发布于: '+ mood.modify_time +'</span>'+
+                                    '<span class="marginRight publish-time">发布于: '+ modifyTime +'</span>'+
                                 '</div>'+
                                 '<div class="list-group-item notification-list-item">'+
                                     '<div class="row">'+
@@ -353,13 +360,14 @@ function buildLogs(hits){
  * @returns {String}
  */
 function buildLogEach(log){
+    var modifyTime = setTimeAgo(log.modify_time);
 	var html = '<div class="col-lg-12" id="message-list-content">'+
                     '<div class="row notification-list notification-list-padding" data-id="">'+
                         '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">'+
                             '<div class="list-group">'+
                                 '<div class="list-group-item notification-list-item active">'+
                                     '<a href="JavaScript:void(0);" onclick="linkToMy('+ log.create_user_id +')" target="_blank" class="marginRight">'+ changeNotNullString(log.account) +'</a>'+
-                                    '<span class="marginRight publish-time">操作时间: '+ log.modify_time +'</span>'+
+                                    '<span class="marginRight publish-time">操作时间: '+ modifyTime +'</span>'+
                                     '<span class="publish-time">操作类型：'+ log.operate_type +'</span>'+
                                 '</div>'+
                                 '<div class="list-group-item notification-list-item">'+

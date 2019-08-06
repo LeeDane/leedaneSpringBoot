@@ -1,6 +1,7 @@
-layui.use(['laypage', 'layer'], function(){
+layui.use(['laypage', 'layer', 'util'], function(){
 	  laypage = layui.laypage;
 	  layer = layui.layer;
+	  util = layui.util;
 	  getInit(); //获取初始化数据
 	  getPosts();
 });
@@ -242,13 +243,14 @@ function getPosts(){
  * @returns {String}
  */
 function buildEachPostRow(index, post){
+        var createTime = setTimeAgo(post.create_time);
 		var html = '<div class="panel panel-default" id="post-list-'+ index +'">'+
 						'<div class="panel-heading">'+
 							'<p>'+ post.title +'</p>'+
 							'<div>'+
 								'<button type="button" class="btn btn-default btn-xs user-img" data="'+ post.create_user_id +'">'+
 								  '<img src="'+ post.user_pic_path +'" class="img-circle" style="width: 20px; height: 20px" /> '+ post.account+
-								  '</button>&nbsp;&nbsp;'+ '<span class="label label-info tag">'+ (post.role_type == 1 ? '圈主': (post.role_type == 2 ? '管理员': '普通')) +'</span>&nbsp;&nbsp;'+ post.create_time +
+								  '</button>&nbsp;&nbsp;'+ '<span class="label label-info tag">'+ (post.role_type == 1 ? '圈主': (post.role_type == 2 ? '管理员': '普通')) +'</span>&nbsp;&nbsp;'+ createTime +
 							'</div>';
 						if(isNotEmpty(post.tag)){
 					html +='<p style="margin-top: 10px;">标签：';

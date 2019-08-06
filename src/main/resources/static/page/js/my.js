@@ -275,12 +275,12 @@ function loadUserInfo(){
                     descHtml +='<div class="h4" style="max-height: 38px;overflow-y:auto;">'+ userinfo.personal_introduction+'</div>';
 								
 				if(isLoginUser){
-					descHtml +=	'<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#edit-user-info">'+
+					descHtml +=	'<div style="margin-top: 8px;"><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#edit-user-info">'+
 								  '<span class="glyphicon glyphicon-pencil" ></span> 编辑个人资料'+
 								'</button>'+
 								'<button id="sign_button" type="button" class="btn btn-primary btn-xs" style="margin-left:5px;" disabled="disabled">'+
 								  
-								'</button>';
+								'</button></div>';
 				}else{
 					
 					if(!data.fan){
@@ -499,15 +499,7 @@ function isInMonthArray(str){
  * @returns {String}
  */
 function buildMoodRow(index, mood, ifFlagNew, flagMonth){
-	/*var html = '<div id="section1" class="row_'+ index +'">'+
-					'<h1>'+ mood.content+'</h1>'+
-					'<p>Try to scroll this section and look at the navigation list while scrolling!</p>'+
-				'</div>';*/
-
-	var moodTime = new Date(changeNotNullString(mood.create_time));
-	/*moodTime = setTimeAgo(moodTime.getFullYear(), moodTime.getMonth(), moodTime.getDate(),
-	                    moodTime.getHours(), moodTime.getMinutes(), moodTime.getSeconds());*/
-    moodTime = setTimeAgo(moodTime);
+    var moodTime = setTimeAgo(mood.create_time);
 	var html = '<div class="list-group" id="'+(ifFlagNew? 'month-'+flagMonth: '')+'">'+
 				    '<div class="list-group-item active">'+
 						'<div class="row">'+
@@ -578,9 +570,9 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 					
 			html +=	'</div>'+
 					'<div class="list-group-item list-group-item-operate">'+
-					     '<button type="button" class="btn btn-primary btn-sm" onclick="showCommentOrTransmit(1, '+ index +')">评论('+ mood.comment_number+')</button>'+
-					     '<button type="button" class="btn btn-primary btn-sm" onclick="showCommentOrTransmit(2, '+ index +')">转发('+ mood.transmit_number+')</button>'+
-					     '<button type="button" class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="goToReadMoodFull('+ mood.id +', '+ uid +');" >查看详细</button>'+
+					     '<button type="button" class="btn btn-primary btn-xs" onclick="showCommentOrTransmit(1, '+ index +')">评论('+ mood.comment_number+')</button>'+
+					     '<button type="button" class="btn btn-primary btn-xs" onclick="showCommentOrTransmit(2, '+ index +')">转发('+ mood.transmit_number+')</button>'+
+					     '<button type="button" class="btn btn-primary btn-xs" href="javascript:void(0);" onclick="goToReadMoodFull('+ mood.id +', '+ uid +');" >查看详细</button>'+
 					'</div>'+
 				'</div>';
 	return html;
@@ -601,7 +593,7 @@ function buildShowUserinfo(){
     //处理最后请求时间
     var requestTime = "";
     if(isNotEmpty(userinfo.last_request_time)){
-        requestTime = setTimeAgo(new Date(userinfo.last_request_time));
+        requestTime = setTimeAgo(userinfo.last_request_time);
     }
 	var infoHtml = '<div class="table-responsive">'+
 						'<table class="table table-striped">'+

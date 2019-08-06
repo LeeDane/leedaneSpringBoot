@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.*;
 /**
@@ -76,9 +77,11 @@ public class UserController extends BaseController{
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})  
 	public Map<String, Object> login(@RequestParam(value="account", required = false) String username,
-			@RequestParam(value="pwd", required = false) String password, @RequestParam(value="remember", required = false) boolean remember,
+			@RequestParam(value="pwd", required = false) String password,
+									 @RequestParam(value="remember", required = false) boolean remember,
+									 @RequestParam(value="code", required = false) String code,
 			Model model, /*HttpSession session,*/
-			HttpServletRequest request, RedirectAttributes redirectAttributes){
+			HttpServletRequest request, HttpServletResponse response){
 		ResponseMap message = new ResponseMap();
 		boolean isSuccess = false;
 		checkParams(message, request);
@@ -88,11 +91,22 @@ public class UserController extends BaseController{
 			username = JsonUtil.getStringValue(json, "account");
 			password = JsonUtil.getStringValue(json, "pwd");
 			remember = JsonUtil.getBooleanValue(json, "remember");
+			code = JsonUtil.getStringValue(json, "code");
 		}
+
+		boolean isPageRequest = CommonUtil.isPageRequest(request, response);
+		//只有网页端才检验验证码
+		if(isPageRequest)
+			if(StringUtil.isNull(code) || !CodeUtil.checkVerifyCode(request, code)){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请输入正确验证码.value));
+				message.put("responseCode", EnumUtil.ResponseCode.请输入正确验证码.value);
+				return message.getMap();
+			}
 		
 		if(StringUtil.isNull(username) || StringUtil.isNull(password)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.账号或密码为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.账号或密码为空.value);
+			return message.getMap();
 		}else{
 			byte[] decodedData;
 			
@@ -330,9 +344,9 @@ public class UserController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 			//return message.getMap();
-		
 		checkRoleOrPermission(model, request);
 		JSONObject json = getJsonFromMessage(message);
+
 		UserBean user = new UserBean();
 		user.setAccount(JsonUtil.getStringValue(json, "account"));
 		user.setEmail(JsonUtil.getStringValue(json, "email"));

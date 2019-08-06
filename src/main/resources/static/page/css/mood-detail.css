@@ -69,3 +69,13 @@
     font-size: 18px;
     font-family: "微软雅黑";
 }
+
+.zan_user{
+    font-size: 12px!important;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#operate-list .glyphicon {
+    top: 4px !important;
+}

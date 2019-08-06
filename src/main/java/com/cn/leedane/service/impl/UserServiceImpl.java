@@ -736,11 +736,18 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	public Map<String, Object> registerByPhoneNoValidate(JSONObject jo,
 			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->registerByPhoneNoValidate():jo="+jo.toString());
+		ResponseMap message = new ResponseMap();
+		String code = JsonUtil.getStringValue(jo, "code");
+		if(StringUtil.isNull(code) || !CodeUtil.checkVerifyCode(request.getRequest(), code)){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请输入正确验证码.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请输入正确验证码.value);
+			return message.getMap();
+		}
+
 		String account = JsonUtil.getStringValue(jo, "account");
 		String password = JsonUtil.getStringValue(jo, "password");
 		String confirmPassword = JsonUtil.getStringValue(jo, "confirmPassword");
 		String phone = JsonUtil.getStringValue(jo, "mobilePhone");
-		ResponseMap message = new ResponseMap();
 		
 		try {
 			byte[] decodedData = RSACoder.decryptByPrivateKey(phone, RSAKeyUtil.getInstance().getPrivateKey());

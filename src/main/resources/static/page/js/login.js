@@ -27,25 +27,48 @@
           }
        });
   });
-  
+
+   /**
+   ** 刷新验证码
+   */
+  function refresh(){
+    $('#captcha_img').attr("src", "/kaptcha?"+Math.random());
+  }
+
+  /**
+     ** 刷新验证码
+     */
+    function rgRefresh(){
+      $('#rg_captcha_img').attr("src", "/kaptcha?"+Math.random());
+    }
+
   function doLogin(){
 	  var account = $("#account").val();
 	  if(isEmpty(account)){
 		  layer.msg("请输入账号");
+		  $("#account").focus();
 		  return;
 	  }
 	  
 	  var password = $("#password").val();
 	  if(isEmpty(password)){
 		  layer.msg("请输入密码");
+		  $("#password").focus();
 		  return;
 	  }
+
+	  var code = $("#img-code").val();
+	  if(isEmpty(code)){
+          layer.msg("请输入验证码");
+          $("#img-code").focus();
+          return;
+      }
 	  
 	  var crypt = new JSEncrypt();
 	  crypt.setPublicKey($("#publicKey").val());
 	  //password = crypt.encrypt(password);
 	    
-	  var params = {account: account, pwd: crypt.encrypt($.md5(password)), remember: $("#remember").prop("checked"), t: Math.random()};
+	  var params = {account: account, pwd: crypt.encrypt($.md5(password)), remember: $("#remember").prop("checked"), code: code, t: Math.random()};
 	  //params[parameterName] = token;
 	  var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	  $.ajax({
@@ -113,11 +136,18 @@
 		  $("#rg-phone").focus();
 		  return;
 	  }
+
+	  var code = $("#rg_img-code").val();
+      if(isEmpty(code)){
+            layer.msg("请输入验证码");
+            $("#rg_img-code").focus();
+            return;
+        }
 	  
 	  var crypt = new JSEncrypt();
 	  crypt.setPublicKey($("#publicKey").val());
 	    	  
-	  var params = {mobilePhone: crypt.encrypt(mobilePhone), account: account, confirmPassword: crypt.encrypt($.md5(confirmPassword)), password: crypt.encrypt($.md5(password)), t: Math.random()};
+	  var params = {mobilePhone: crypt.encrypt(mobilePhone), account: account, confirmPassword: crypt.encrypt($.md5(confirmPassword)), password: crypt.encrypt($.md5(password)), code: code, t: Math.random()};
 	  var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	  $.ajax({
 			type : "post",

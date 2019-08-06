@@ -25,13 +25,20 @@ Date.prototype.Format = function (fmt) { //author: meizz
 ** 要是layui工具没有启动，就返回格式好的时间，没有秒数
 */
 function setTimeAgo(time){
-    if(time == null)
+    if(isEmpty(time))
         return '';
 
+    time = new Date(time);
     //要是layui工具没有启动，就返回格式好的时间，没有秒数
      if(!util)
-        return time.format("yyyy-MM-dd hh:mm");;
-    return util.timeAgo(time);
+        return time.Format("yy-MM-dd HH:mm");
+
+    time = util.timeAgo(time);
+    if(time.length == 19){
+        time = new Date(time);
+        time = time.Format("yy-MM-dd HH:mm");
+    }
+    return time;
 };
 /**
  * 判断json是否为空

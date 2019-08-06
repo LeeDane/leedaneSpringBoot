@@ -3,9 +3,11 @@ package com.cn.leedane.controller;
 import com.cn.leedane.handler.FanHandler;
 import com.cn.leedane.handler.FriendHandler;
 import com.cn.leedane.handler.MoodHandler;
+import com.cn.leedane.handler.RoleHandler;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.ElasticSearchRequestBean;
 import com.cn.leedane.model.MoodBean;
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.MoodService;
 import com.cn.leedane.springboot.ElasticSearchUtil;
@@ -56,6 +58,9 @@ public class SearchController extends BaseController{
 	
 	@Autowired
 	private FriendHandler friendHandler;
+
+	@Autowired
+	private RoleHandler roleHandler;
 
 	@Autowired
 	private TransportClient transportClient;
@@ -178,6 +183,9 @@ public class SearchController extends BaseController{
 								map.put("isFan", fanHandler.inAttention(user.getId(), createUserId));
 								map.put("isFriend", friendHandler.inFriend(user.getId(), createUserId));
 							}*/
+
+
+
 					}else if(searchType == ConstantsUtil.SEARCH_TYPE_MOOD){
 						if(StringUtil.changeObjectToBoolean(documentFieldMap.get("has_img"))){
 							String uuid = StringUtil.changeNotNull(documentFieldMap.get("uuid"));
@@ -193,6 +201,7 @@ public class SearchController extends BaseController{
 					if(searchType == ConstantsUtil.SEARCH_TYPE_USER){
 						boolean self = getUserFromShiro() == null ? false: getUserFromShiro().getId() == StringUtil.changeObjectToInt(documentFieldMap.get("id"));
 						documentFieldMap = userHandler.getUserInfo(documentFieldMap, self);
+						documentFieldMap.put("is_admin", isAdmin(StringUtil.changeObjectToInt(documentFieldMap.get("id"))));
 					}
 				}
 
@@ -243,6 +252,23 @@ public class SearchController extends BaseController{
 			message.put("message", "es检索响应失败");
 		}
 		return message.getMap();
+	}
+
+	/**
+	 * 判断用户是否是管理员权限
+	 * @param userId
+	 * @return
+	 */
+	private boolean isAdmin(int userId){
+		int roleId = LeedanePropertiesConfig.newInstance().getInt("admin.role.id");
+		List<Map<String, Object>> users = roleHandler.getUsers(roleId);
+		if(CollectionUtil.isNotEmpty(users)){
+			for(Map<String, Object> user: users){
+				if(StringUtil.changeObjectToInt(user.get("user_id")) == userId)
+					return true;
+			}
+		}
+		return false;
 	}
 	
 	/**

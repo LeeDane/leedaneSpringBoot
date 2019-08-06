@@ -1,6 +1,7 @@
 package com.cn.leedane.service.impl;
 
 import com.cn.leedane.handler.LinkManageHandler;
+import com.cn.leedane.handler.RoleHandler;
 import com.cn.leedane.handler.RolePermissionHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.RoleMapper;
@@ -40,6 +41,9 @@ private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
 	private UserHandler userHandler;
+
+	@Autowired
+	private RoleHandler roleHandler;
 	
 	@Autowired
 	private RolePermissionHandler rolePermissionHandler;
@@ -188,7 +192,8 @@ private Logger logger = Logger.getLogger(getClass());
 			message.put("isSuccess", result);
 			if(result){
 				//清空用户的角色redis
-				
+				for(String roleId: rlidArray)
+					roleHandler.deleteRoleUsersCache(StringUtil.changeObjectToInt(roleId));
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			}
@@ -203,7 +208,7 @@ private Logger logger = Logger.getLogger(getClass());
 		logger.info("RoleServiceImpl-->users():rlid="+rlid);
 		ResponseMap message = new ResponseMap();
 		List<Map<String, Object>> rs = roleMapper.users(rlid, ConstantsUtil.STATUS_NORMAL);
-				
+
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户列表").toString(), "users()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
@@ -261,8 +266,10 @@ private Logger logger = Logger.getLogger(getClass());
 		//清空角色权限相关的缓存
 		if(clearIds.size() > 0){
 			logger.info("将清空以下用户的角色权限相关的缓存----->"+StringUtils.join(clearIds.toArray(), ","));
-			for(Integer clearId: clearIds)
+			for(Integer clearId: clearIds){
+				roleHandler.deleteRoleUsersCache(clearId);
 				rolePermissionHandler.deleteByUser(clearId);
+			}
 		}
 		
 		//保存操作日志

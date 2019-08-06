@@ -248,8 +248,7 @@ function getMessages(){
  * @returns {String}
  */
 function buildEachMessageRow(index, message){
-        var createTime = new Date(changeNotNullString(message.create_time));
-        createTime = setTimeAgo(createTime);
+        createTime = setTimeAgo(message.create_time);
 		var html = '<div class="row notification-list notification-list-padding" data-id="'+ message.id +'">'+
 			   			'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;">'+
 							'<img src="'+ changeNotNullString(message.user_pic_path) +'" width="40" height="40" class="img-rounded">'+

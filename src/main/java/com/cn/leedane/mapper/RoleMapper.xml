@@ -13,4 +13,10 @@
 		select u.id, u.account, (select 1 from t_user_role ur where ur.user_id = u.id and ur.role_id = #{rlid} and ur.status=#{status}) has
 		from t_user u where u.status=#{status}
 	</select>
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
+	<select id="usersByRole" resultType="java.util.Map">
+		select r.user_id
+		from t_user_role r where r.role_id = #{rlid} and  r.status=#{status}
+	</select>
 </mapper>
