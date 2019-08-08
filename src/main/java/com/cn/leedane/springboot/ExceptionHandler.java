@@ -55,7 +55,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			HttpServletResponse response, Object handler, Exception exception) {
 		
 		
-		boolean isPageRequest = CommonUtil.isPageRequest(request, response);
+		boolean isPageRequest = CommonUtil.isPageRequest(request);
 		
 		Map<String, Object> message = new HashMap<String, Object>();
         message.put("isSuccess", false);

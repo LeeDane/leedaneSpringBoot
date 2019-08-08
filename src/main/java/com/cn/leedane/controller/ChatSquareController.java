@@ -47,4 +47,19 @@ public class ChatSquareController extends BaseController{
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		return message.getMap();
 	}
+
+	/**
+	 * 获取系统当天活跃的用户列表
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/paging", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> paging(HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+
+		message.putAll(chatSquareService.getLimit(getJsonFromMessage(message), getHttpRequestInfo(request)));
+		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		return message.getMap();
+	}
 }

@@ -63,7 +63,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 			return message.getMap();
 		}
 		//进行敏感词过滤和emoji过滤
-		if(FilterUtil.filter(content, message))
+		if(FilterUtil.filter(content, message, request))
 			return message.getMap();
 
 		SqlUtil sqlUtil = new SqlUtil();
@@ -102,7 +102,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 			return message.getMap();
 		}
 		//进行敏感词过滤和emoji过滤
-		if(FilterUtil.filter(content, message))
+		if(FilterUtil.filter(content, message, request))
 			return message.getMap();
 
 		EventBean oldEventBean = eventMapper.findById(EventBean.class, eid);

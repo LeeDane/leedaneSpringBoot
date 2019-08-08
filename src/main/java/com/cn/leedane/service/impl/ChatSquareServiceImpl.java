@@ -8,12 +8,22 @@ import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.ChatSquareService;
 import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.springboot.ElasticSearchUtil;
 import com.cn.leedane.utils.*;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +49,18 @@ public class ChatSquareServiceImpl extends AdminRoleCheckService implements Chat
 	@Override
 	public Map<String, Object> getLimit(JSONObject jo, HttpRequestInfoBean request) {
 		logger.info("ChatSquareServiceImpl-->getLimit():jsonObject=" +jo.toString());
-		return null;
+		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
+		int last = JsonUtil.getIntValue(jo, "last", 0); //当前的索引页
+		ResponseMap message = new ResponseMap();
+		List<Map<String, Object>> result = chatSquareMapper.paging(ConstantsUtil.STATUS_NORMAL, last, pageSize);
+		if(CollectionUtil.isNotEmpty(result)){
+			for(Map<String, Object> map: result){
+				map.putAll(userHandler.getBaseUserInfo(StringUtil.changeObjectToInt(map.get("create_user_id"))));
+			}
+		}
+		message.put("message", result);
+		message.put("isSuccess", true);
+		return message.getMap();
 	}
 
 	@Override

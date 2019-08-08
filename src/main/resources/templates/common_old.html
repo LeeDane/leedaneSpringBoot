@@ -159,6 +159,7 @@
 	//退出登录
 	function logout(){
 		$.ajax({
+		    type: "delete",
 			dataType: 'json',
 			url : "/us/logout",
 			beforeSend:function(){

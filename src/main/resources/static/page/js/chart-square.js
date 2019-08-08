@@ -1,5 +1,8 @@
-layui.use(['layer'], function(){
+var container;
+layui.use(['layer', 'util'], function(){
 	layer = layui.layer;
+	util = layui.util;
+	container = $("#content");
 	//验证浏览器是否支持WebSocket协议
     if(!window.WebSocket){
     	layer.alert('WebSockeet not supported by this browser!', {
@@ -36,7 +39,28 @@ layui.use(['layer'], function(){
             //-- do something for user right click
             alert("Mouse up");
         }
-    }  
+    }
+    //定时刷新当前的时间
+    setInterval(function(){
+        $("#system-time").html("系统当前时间为："+ new Date().Format("yyyy-MM-dd HH:mm:ss"));
+    }, 1000);
+
+    //30秒钟更新一下所有的聊天时间
+    setInterval(function(){
+        var $chatCreateTimes = $(".chat-create-time");
+        if($chatCreateTimes.length > 0){
+            for(var i = 0; i < $chatCreateTimes.length; i++){
+                var $chatCreateTime = $chatCreateTimes.eq(i);
+                var oldTime = $chatCreateTime.data("time");
+                var isLeft = $chatCreateTime.data("flag");
+                var chatTime = setTimeAgo(oldTime);
+                if(isLeft == "left")
+                    $chatCreateTime.html("&nbsp;&nbsp;"+ chatTime);
+                else
+                    $chatCreateTime.html(chatTime);
+            }
+        }
+    }, 30000);
 });
 
 var colorsList = ["#FFC0CB", "#D8BFD8", "#DDA0DD", "#9932CC", "#E6E6FA", "#4169E1", "#E0FFFF"];
@@ -105,47 +129,97 @@ function initWebSocket(){
 /**
 * 初始化函数
 */
+var last = 0;
+var isFisrload = true;
+var flagLoadHistory = false;
 function init(){
-	//$("#content").empty();
-	initWebSocket(true);
-	
-	$("#has-at-style").click(function(){
-		$(this).hide();
-		if(atScrollIndex > 0){
-			$("#content").stop(true);
-			$("#content").animate({scrollTop: $(".chat-list-row").eq(atScrollIndex).offset().top}, 1000);
-			atScrollIndex = 0;
-		}
-	});
-	
-	var height = $("#content").height(); //页面总高度
-    
-    $("#content").scroll(function (e) {
-		e = e || window.event;
-	    if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件             
-	        if (e.wheelDelta > 0) { //当滑轮向上滚动时
-	            return;
-	        }
-	    } else if (e.detail) {  //Firefox滑轮事件
-	        if (e.detail> 0) { //当滑轮向上滚动时
-	            return;
-	        }
-	    }
-	     
-	    var divContentHeight = $("#content")[0].scrollHeight; //页面总高度 
-	    var scrollT = $("#content").scrollTop(); //滚动条top 
-	    console.log("差---->" +(divContentHeight-scrollT) + ", scrollT=" + scrollT +", pageH="+ divContentHeight);
-	    if(divContentHeight - scrollT < 100 + height){
-	    	
-	    }
-	}); 
-    
-    getActiveUsers();
-    //定时10分钟去查询活跃用户
-    setInterval("getActiveUsers()","60000");
-    //获取登录用户积分
-    if(isLogin)
-    	getScore();
+    if(container.find("#no-load-history").length > 0){
+        container.find("#load-history").remove();
+        return;
+    }
+	//获取最新10条聊天记录
+	var loadi = layer.load('读取聊天记录…'); //需关闭加载层时，执行layer.close(loadi)即可
+    var params = {page_size: 15, last: last, t: Math.random()};
+    $.ajax({
+        url : "/cs/paging?"+ jsonToGetRequestParams(params),
+        dataType: 'json',
+        beforeSend:function(){},
+        success : function(data) {
+            layer.close(loadi);
+            flagLoadHistory = false;
+            if(data.isSuccess){
+                container.find("#load-history").remove();
+                var chats = data.message;
+                if(chats && chats.length > 0){
+                    for(var i = 0; i < chats.length; i++){
+                        if(isLogin && loginUserId == chats[i].create_user_id){
+                            container.prepend(buildEachRightRow(chats[i]));
+                        }else{
+                            container.prepend(buildEachLeftRow(chats[i]));
+                        }
+
+                        if(i == (chats.length -1))
+                            last = chats[i].id;
+                    }
+                }else{
+                    container.prepend('<div id="no-load-history">没有更多历史记录啦</div>');
+                }
+                if(isFisrload){
+                    var height1 = container[0].scrollHeight; //页面总高度
+                    container.scrollTop(height1);
+                    isFisrload = false;
+                    initWebSocket(true);
+                    $("#has-at-style").click(function(){
+                        $(this).hide();
+                        if(atScrollIndex > 0){
+                            container.stop(true);
+                            container.animate({scrollTop: $(".chat-list-row").eq(atScrollIndex).offset().top}, 1000);
+                            atScrollIndex = 0;
+                        }
+                    });
+                    var height = container.height(); //页面总高度
+                    container.scroll(function (e) {
+                        e = e || window.event;
+                        if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件
+                            if (e.wheelDelta > 0) { //当滑轮向上滚动时
+                                return;
+                            }
+                        } else if (e.detail) {  //Firefox滑轮事件
+                            if (e.detail> 0) { //当滑轮向上滚动时
+                                return;
+                            }
+                        }
+
+                        var divContentHeight = container[0].scrollHeight; //页面总高度
+                        var scrollT = container.scrollTop(); //滚动条top
+                        console.log("差---->" +(divContentHeight-scrollT) + ", scrollT=" + scrollT +", pageH="+ divContentHeight);
+                        if(!flagLoadHistory && divContentHeight > 300 && scrollT < 100){
+                            flagLoadHistory = true;
+                            container.prepend('<div id="load-history">加载中。。。</div>');
+                            console.log("开始做点什么吗");
+                            init();
+                        }
+                    });
+                    getActiveUsers();
+                    //定时10分钟去查询活跃用户
+                    setInterval("getActiveUsers()","60000");
+                    //获取登录用户积分
+                    if(isLogin)
+                        getScore();
+                }
+            }else{
+                ajaxError(data);
+            }
+            isLoad = false;
+        },
+        error : function(data) {
+            flagLoadHistory = false;
+            container.prepend('<div id="load-history">加载失败，请重新滑动再次加载。。。</div>');
+            isLoad = false;
+            layer.close(loadi);
+            ajaxError(data);
+        }
+    });
 }
 
 /**
@@ -205,7 +279,7 @@ function getActiveUsers(){
 						if(isNotEmpty(message[i].user_pic_path)){
 							userPicPath = message[i].user_pic_path;
 						}
-						$("#active-users").append('<a href="javascript:void(0);" class="list-group-item active-users-item" onclick="linkToMy('+ message[i].create_user_id+');"><img width="30" height="30" class="img-circle hand" alt="" src="'+ userPicPath +'"  onclick="showSingleImg(this);"/>&nbsp;&nbsp; '+ message[i].account+'<span class="badge '+ colorClass +'">'+ message[i].count +'</span></a>');
+						$("#active-users").append('<a href="javascript:void(0);" class="list-group-item active-users-item" onclick="linkToMy('+ message[i].create_user_id+');"><img width="30" height="30" class="img-circle hand" alt="" src="'+ userPicPath +'"  onclick="showSingleImg(this);"/>&nbsp;&nbsp; '+ message[i].account+'<span class="badge '+ colorClass +'" style="margin-top: 7px;">'+ message[i].count +'</span></a>');
 					}
 				}
 			}else{
@@ -261,8 +335,7 @@ var log = function(s){
 	/* if(document.readyState !== "complete"){
 		log.buffer.pust(s);
 	}else{ */
-		var json = eval('(' + s + ')'); 
-		var container = $("#content");
+		var json = eval('(' + s + ')');
 		
 		if(isLogin && loginUserId == json.id && json['type'] && json.type == "welcome")
 			return;
@@ -301,7 +374,7 @@ var log = function(s){
  	    //对于滑动不远的数据，直接滚动回最新的地方
  	    var offset = divContentHeight - scrollT - height;
  	    if(offset < 400){
- 	    	$("#content").scrollTop(divContentHeight - height);
+ 	    	container.scrollTop(divContentHeight - height);
  	    }
  	    if(json.type == 'PlayScreen'){
  	    	var palyScreenContainerId = "play-screen-" + getRandomNumber(10000);
@@ -437,7 +510,7 @@ function clearMsg(){
 	layer.confirm('确定清空聊天列表？', {
 	  btn: ['确定','点错了'] //按钮
 	}, function(){
-	  $("#content").empty();
+	  container.empty();
 	  $("#at-other-container").empty();
 	  layer.msg('已清空 ', {icon: 1, time: 800});
 	}, function(){
@@ -479,22 +552,23 @@ function atOther(account, id){
  *	构建左侧的
  */
  function buildEachLeftRow(chat){
-	//var canClick = isLogin && chat.id != loginUserId && chat.account;
-	 var canClick = (isLogin && chat.id > 0 && chat.id != loginUserId && chat.account) || (!isLogin && chat.id > 0 && chat.account) ;
- 	var html = '<div class="row chat-list-row'+ (canClick ? ' hand' : '') +'" '+ (canClick ? 'onclick="atOther(\''+ chat.account +'\','+ chat.id +');"': '') +'>'+
+	//var canClick = isLogin && chat.create_user_id != loginUserId && chat.account;
+	 var canClick = (isLogin && chat.create_user_id > 0 && chat.create_user_id != loginUserId && chat.account) || (!isLogin && chat.create_user_id > 0 && chat.account) ;
+ 	var html = '<div class="row chat-list-row'+ (canClick ? ' hand' : '') +'" '+ (canClick ? 'onclick="atOther(\''+ chat.account +'\','+ chat.create_user_id +');"': '') +'>'+
 			   		'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;margin-top: 10px;">';
 			   		if(isNotEmpty(chat.user_pic_path)){
 			   			html += '<img style="width: 40px; Height: 40px;"" class="img-rounded hand" alt="" src="'+ chat.user_pic_path + '"  onclick="showSingleImg(this);"/>';
 			   		}else{
-			   			html += '<img style="width: 40px; Height: 40px;" class="img-rounded" alt="" src=""/>';
+			   			html += '<img style="width: 40px; Height: 40px;" class="img-rounded" alt=""/>';
 			   		}
-						
+
+			var chatTime = setTimeAgo(chat.time);
 			html += '</div>'+
 					'<div class="col-lg-10 col-md-10 col-sm-8 col-xs-8">'+
 						'<div class="row" style="font-family: \'微软雅黑\'; font-size: 15px; margin-top: 10px;">'+
 							'<div class="col-lg-12">'+
-								'<span class="chat-user-name"><a href="JavaScript:void(0);" onclick="linkToMy('+ chat.id +')">'+ chat.account +'</a></span>'+
-								'<span class="chat-create-time">&nbsp;&nbsp;'+ chat.time +'</span>'+
+								'<span class="chat-user-name"><a href="JavaScript:void(0);" onclick="linkToMy('+ chat.create_user_id +')">'+ chat.account +'</a></span>'+
+								'<span class="chat-create-time" data-time="'+ chat.time +'" data-flag="left">&nbsp;&nbsp;'+ chatTime +'</span>'+
 							'</div>'+
 						'</div>'+
 						'<div class="row" style="font-family: \'微软雅黑\'; font-size: 17px;margin-top: 5px;">'+
@@ -512,17 +586,18 @@ function atOther(account, id){
   *	构建右侧的
   */
   function buildEachRightRow(chat){
+    var chatTime = setTimeAgo(chat.time);
   	var html = '<div class="row chat-list-row">'+
 			   		'<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="text-align: center;margin-top: 10px;">'+
 			   		'</div>'+
-					'<div class="col-lg-10 col-md-10 col-sm-8 col-xs-8"  style="text-align: right;">'+
+					'<div class="col-lg-10 col-md-10 col-sm-8 col-xs-8">'+
 						'<div class="row" style="font-family: \'微软雅黑\'; font-size: 15px; margin-top: 10px;">'+
-							'<div class="col-lg-12">'+
-								'<span class="chat-create-time">'+ chat.time +'</span>'+
-								'<span class="chat-user-name"><a href="JavaScript:void(0);" onclick="linkToMy('+ chat.id +')">&nbsp;&nbsp;'+ chat.account +'</a></span>'+
+							'<div class="col-lg-12" style="text-align: right;">'+
+								'<span class="chat-create-time" data-time="'+ chat.time +'" data-flag="left">'+ chatTime +'</span>'+
+								'<span class="chat-user-name"><a href="JavaScript:void(0);" onclick="linkToMy('+ chat.create_user_id +')">&nbsp;&nbsp;'+ chat.account +'</a></span>'+
 							'</div>'+
 						'</div>'+
-						'<div class="row" style="font-family: \'微软雅黑\'; font-size: 17px;margin-top: 5px;">'+
+						'<div class="row" style="font-family: \'微软雅黑\'; font-size: 17px; margin-top: 5px; text-align: right;">'+
 							'<div class="col-lg-12">'+ chat.content +'</div>'+
 						'</div>'+
 					'</div>'+

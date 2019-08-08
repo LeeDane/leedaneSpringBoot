@@ -64,7 +64,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		ResponseMap message = new ResponseMap();
 		
 		//进行敏感词过滤和emoji过滤
-		if(FilterUtil.filter(content, message))
+		if(FilterUtil.filter(content, message, request))
 			return message.getMap();
 		
 		if(StringUtil.isNull(tableName) || tableId < 1 || StringUtil.isNull(content)){

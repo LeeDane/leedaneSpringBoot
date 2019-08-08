@@ -74,6 +74,17 @@
 		    cursor: pointer;
 		    display: none;
 		}
+		.panel-body pre{
+			text-align: left!important;
+		}
+
+		#load-history{
+			text-align: center!important;
+		}
+
+		#no-load-history{
+			text-align: center!important;
+		}
 	</style>
 </head>
 <body>
@@ -83,30 +94,34 @@
 	   <div class="row">
 			<div class="col-lg-3">
 				<div class="row">
-					<div class="panel panel-info">
-					    <div class="panel-heading">
-					    	您好：<span th:if="${isLogin}" th:text="${account}"></span><span th:if="${not isLogin}">访客</span>
-					    	&nbsp;&nbsp;当前积分：<span th:text="${isLogin ? '' :'0'}" id="score"></span>
-					    	<button th:if="${not isLogin}" class="btn btn-default panel-title" type="button" onclick="linkToLogin();">去登录</button>
-					    </div>
-					    <!-- <div class="panel-body">
-					        <div class="row">
-					        	<div class="col-lg-12">
-					        		欢迎签名：我是leedane，我来了！
-					        		<button type="button" class="btn btn-default btn-xs">
-									  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> 编辑
-									</button>
-					        	</div>
-					        </div>
-					    </div> -->
+					<div class="col-lg-12">
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								您好：<span th:if="${isLogin}" th:text="${account}"></span><span th:if="${not isLogin}">访客</span>
+								&nbsp;&nbsp;当前积分：<span th:text="${isLogin ? '' :'0'}" id="score"></span>
+								<button th:if="${not isLogin}" class="btn btn-default panel-title" type="button" onclick="linkToLogin();">去登录</button>
+							</div>
+							<!-- <div class="panel-body">
+								<div class="row">
+									<div class="col-lg-12">
+										欢迎签名：我是leedane，我来了！
+										<button type="button" class="btn btn-default btn-xs">
+										  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> 编辑
+										</button>
+									</div>
+								</div>
+							</div> -->
+						</div>
 					</div>
 				</div>
-				<div class="row" id="active-users">
-					<a href="javascript:void(0);" class="list-group-item active">今日活跃用户排名</a>
+				<div class="row">
+					<div id="active-users" class="col-lg-12">
+						<a href="javascript:void(0);" class="list-group-item active">今日活跃用户排名</a>
+					</div>
 				</div>
 			</div>
 			<div class="col-lg-9">
-				<div>系统当前时间为：2017-12-12 11：10：10</div>
+				<div id="system-time"></div>
 				<div class="panel panel-default" style="position: relative;">
 					<div id="has-at-style"> 有人@您 </div>
 					<div class="panel-body" id="content">

@@ -14,6 +14,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -97,18 +98,19 @@ public class ChatWebSocket {
         	UserHandler userHandler = (UserHandler) SpringUtil.getBean("userHandler");
         	final int userId = StringUtil.changeObjectToInt(jsonObject.getString("id"));
         	Map<String, Object> userInfo = new HashMap<String, Object>();
-        	
+        	String content = jsonObject.optString("content");
         	//非访客身份将不进行进一步的操作
         	if(userId < 1){
         		jsonObject.put("account", "匿名用户");
-        		jsonObject.put("id", userId);
-        		Set<String> sensitiveWords = FilterUtil.getFilter(jsonObject.getString("content"));
+        		jsonObject.put("create_user_id", userId);
+        		jsonObject.put("user_pic_path", LeedanePropertiesConfig.newInstance().getString("constant.default.no.pic.path"));
+        		Set<String> sensitiveWords = FilterUtil.getFilter(content);
             	//进行敏感词过滤和emoji过滤
         		if(sensitiveWords != null && sensitiveWords.size() > 0){
         			jsonObject.put("type", "error");
                 	StringBuffer words = new StringBuffer();
                 	words.append("您发送的内容\"");
-                	words.append(jsonObject.getString("content"));
+                	words.append(content);
                 	words.append("\"");
                 	words.append("中【");
                 	for(String sensitiveWord: sensitiveWords){
@@ -118,30 +120,33 @@ public class ChatWebSocket {
                 	words.append("】等是敏感词，请核实！");
                 	jsonObject.put("content", words.toString());
                 	sendMessageToSelf(jsonObject, userId);
+					//发送敏感信息日志
+					FilterUtil.sendOperateLogByUser(null, content, sensitiveWords);
         		}else{
         			sendMessageToAll(false, jsonObject, userId);
         		}
         		return;
         	}	
-        	
+
+        	//登录用户的统一处理
     		userInfo = userHandler.getBaseUserInfo(userId);
     		jsonObject.put("user_pic_path", userInfo.get("user_pic_path"));
         	jsonObject.put("account", userInfo.get("account"));
         	
-        	jsonObject.put("id", userId);
+        	jsonObject.put("create_user_id", userId);
         	String type = null;
         	if(jsonObject.has("type")){
         		type = jsonObject.getString("type");
         	}
         	
-        	Set<String> sensitiveWords = FilterUtil.getFilter(jsonObject.getString("content"));
+        	Set<String> sensitiveWords = FilterUtil.getFilter(content);
         	//进行敏感词过滤和emoji过滤
     		if(sensitiveWords != null && sensitiveWords.size() > 0){
     			type = "error";
             	jsonObject.put("type", type);
             	StringBuffer words = new StringBuffer();
             	words.append("您发送的内容\"");
-            	words.append(jsonObject.getString("content"));
+            	words.append(content);
             	words.append("\"");
             	words.append("中【");
             	for(String sensitiveWord: sensitiveWords){
@@ -151,6 +156,8 @@ public class ChatWebSocket {
             	words.append("】等是敏感词，请核实！");
             	jsonObject.put("content", words.toString());
             	sendMessageToSelf(jsonObject, userId);
+				//发送敏感信息日志
+				FilterUtil.sendOperateLogByUser(userHandler.getUserBean(userId), content, sensitiveWords);
             	return;
     		}
         	
@@ -174,7 +181,8 @@ public class ChatWebSocket {
     
     /**
      * 给自己发信息
-     * @param message
+     * @param jsonObject
+	 * @param userId
      */
     public void sendMessageToSelf(JSONObject jsonObject, int userId){
     	this.session.getAsyncRemote().sendText(jsonObject.toString());

@@ -103,7 +103,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 		String content = JsonUtil.getStringValue(jo, "content"); //聊天内容
 		
 		//进行敏感词过滤和emoji过滤
-		if(FilterUtil.filter(content, message))
+		if(FilterUtil.filter(content, message, request))
 			return message.getMap();
 		
 		if(StringUtil.isNull(content)){

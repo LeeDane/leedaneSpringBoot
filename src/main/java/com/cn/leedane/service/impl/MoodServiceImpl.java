@@ -100,7 +100,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		ResponseMap message = new ResponseMap();
 		
 		//进行敏感词过滤和emoji过滤
-		if(FilterUtil.filter(content, message))
+		if(FilterUtil.filter(content, message, request))
 			return message.getMap();
 		
 		if(StringUtil.isNull(content)){
@@ -537,7 +537,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		ResponseMap message = new ResponseMap();
 		
 		//进行敏感词过滤和emoji过滤
-		if(FilterUtil.filter(content, message))
+		if(FilterUtil.filter(content, message, request))
 			return message.getMap();
 		
 		
@@ -625,7 +625,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		ResponseMap message = new ResponseMap();
 		
 		//进行敏感词过滤和emoji过滤
-		if(FilterUtil.filter(content, message))
+		if(FilterUtil.filter(content, message, request))
 			return message.getMap();
 		
 		

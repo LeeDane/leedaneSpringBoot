@@ -244,12 +244,24 @@ public class CommonUtil {
 	 * @param request
 	 * @return
 	 */
-	public static boolean isPageRequest(HttpServletRequest request, HttpServletResponse response){
+	public static boolean isPageRequest(HttpServletRequest request){
 		
 		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With")))
 			return false;
-		
+
 		return true;
+	}
+
+	/**
+	 * 判断请求是否是页面，是页面请求才返回true
+	 * 注意：非page请求需要添加request的header X-Requested-With值为XMLHttpRequest
+	 * @param request
+	 * @return
+	 */
+	public static boolean isAndroidRequest(HttpServletRequest request){
+		if("android".equals(request.getHeader("platform")))
+			return true;
+		return false;
 	}
 	
 	/**

@@ -63,7 +63,7 @@ public class PrivateChatServiceImpl implements PrivateChatService<PrivateChatBea
 		String content = JsonUtil.getStringValue(jo, "content"); //私信内容
 		
 		//进行敏感词过滤和emoji过滤
-		if(FilterUtil.filter(content, message))
+		if(FilterUtil.filter(content, message, request))
 			return message.getMap();
 		
 		if(StringUtil.isNull(content)){

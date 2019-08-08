@@ -1,10 +1,14 @@
 package com.cn.leedane.springboot;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.cn.leedane.shiro.ShiroSessionListener;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
+import org.apache.shiro.session.SessionListener;
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
@@ -32,8 +36,6 @@ import com.cn.leedane.utils.ControllerBaseNameUtil;
 @Configuration
 public class ShiroConfiguration {
 	private static final Logger logger = LoggerFactory.getLogger(ShiroConfiguration.class);
-
-	
 	private MyShiroRealm myShiroRealm;
 	@Bean
     public EhCacheManager getEhCacheManager() {  
@@ -46,7 +48,6 @@ public class ShiroConfiguration {
     public MyShiroRealm myShiroRealm(CacheManager cacheManager) {  
         MyShiroRealm realm = new MyShiroRealm(); 
         realm.setCacheManager(cacheManager);
-        
         myShiroRealm = realm;
         return realm;
     } 
@@ -97,6 +98,9 @@ public class ShiroConfiguration {
     public DefaultWebSessionManager getSessionManager(){
     	DefaultWebSessionManager manager = new DefaultWebSessionManager();
     	manager.setSessionDAO(getSessionDao());
+        Collection<SessionListener> list = new ArrayList<>();
+        list.add(new ShiroSessionListener());
+        manager.setSessionListeners(list);
     	return manager;
     }
 

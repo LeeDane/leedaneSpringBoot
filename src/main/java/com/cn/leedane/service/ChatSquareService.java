@@ -40,7 +40,6 @@ public interface ChatSquareService<ChatSquareBean>{
 	/**
 	 * 获取聊天列表
 	 * @param jo
-	 * @param user
 	 * @param request
 	 * @return
 	 */

@@ -32,6 +32,7 @@ import com.cn.leedane.utils.EnumUtil.EmailType;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.session.mgt.DefaultSessionKey;
 import org.apache.shiro.session.mgt.SessionKey;
@@ -737,11 +738,16 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->registerByPhoneNoValidate():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
-		String code = JsonUtil.getStringValue(jo, "code");
-		if(StringUtil.isNull(code) || !CodeUtil.checkVerifyCode(request.getRequest(), code)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请输入正确验证码.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请输入正确验证码.value);
-			return message.getMap();
+
+		boolean isPageRequest = CommonUtil.isPageRequest(request.getRequest());
+		//只有网页端才检验验证码
+		if(isPageRequest){
+			String code = JsonUtil.getStringValue(jo, "code");
+			if(StringUtil.isNull(code) || !CodeUtil.checkVerifyCode(request.getRequest(), code)){
+				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请输入正确验证码.value));
+				message.put("responseCode", EnumUtil.ResponseCode.请输入正确验证码.value);
+				return message.getMap();
+			}
 		}
 
 		String account = JsonUtil.getStringValue(jo, "account");
@@ -1108,7 +1114,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			userHandler.deleteUserDetail(updateUserBean.getId());
 			
 			if(status != ConstantsUtil.STATUS_NORMAL){
-				SessionManagerUtil.getInstance().removeSession(updateUserBean.getId());
+				SessionManagerUtil.getInstance().removeUser(updateUserBean.getId());
 			}
 
 			//添加ES缓存
@@ -1743,40 +1749,74 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		
 		//检查是否具有管理员权限
 		checkAdmin(user);
-		
+
+		HashMap<String, List<Session>> userSessions = SessionManagerUtil.getInstance().getAllActives();
 		//登录的用户列表
-		List<String> userNames = new ArrayList<String>();
-		Iterator<Map.Entry<String,List<Serializable>>> it = UserController.activeSessions.entrySet().iterator();
+		List<Map<String, Object>> users = new ArrayList<>();
+		Iterator<Map.Entry<String, List<Session>>> it = userSessions.entrySet().iterator();
+		List<Session> errorSessions = new ArrayList<>();
 		while(it.hasNext()){
-			Entry<String, List<Serializable>> entry = it.next();
+			Entry<String, List<Session>> entry = it.next();
 			String userIdStr = entry.getKey();
-			List<Serializable> serializables = entry.getValue();
-			//int deleteIndex = -1;
-			
-			//遍历校验session是否已经注销(过期)，注销就从列表中删除
-			Iterator<Serializable> iterator = serializables.iterator();
-			while(iterator.hasNext()){
-				try{
-					SessionKey key = new DefaultSessionKey(iterator.next());
-					SecurityUtils.getSecurityManager().getSession(key);
-				}catch(UnknownSessionException e){
-					UserController.activeSessions.remove(userIdStr);
+			List<Session> sessions = entry.getValue();
+			if(CollectionUtil.isNotEmpty(sessions)){
+				for(Session session: sessions){
+					try{
+						Map<String, Object> us = new HashMap<>();
+						us.put("ip", session.getAttribute("ip"));
+						us.put("location", session.getAttribute("location"));
+						us.put("name", userHandler.getUserName(StringUtil.changeObjectToInt(userIdStr)) +"");
+						us.put("time", session.getAttribute("time"));
+						us.put("session", session.getId());
+						users.add(us);
+					}catch (UnknownSessionException u){
+						errorSessions.add(session);
+						continue;
+					}
 				}
-             }
-			serializables = UserController.activeSessions.get(userIdStr);
-			if(CollectionUtil.isNotEmpty(serializables)){
-				userNames.add(userHandler.getUserName(StringUtil.changeObjectToInt(userIdStr)) +"");
 			}
-			
+		}
+		//报错异常说明session过期，那就移除
+		if(CollectionUtil.isNotEmpty(errorSessions)){
+			for(Session session: errorSessions)
+				SessionManagerUtil.getInstance().removeSession(session);
 		}
 		message.put("isSuccess", true);
-		message.put("message", userNames);
+		message.put("message", users);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("管理员账号为", user.getAccount() , "获取在线用户列表", StringUtil.getSuccessOrNoStr(true)).toString(), "actives()", StringUtil.changeBooleanToInt(true), 0);
-		
 		return message.getMap();
 	}
 
+	@Override
+	public Map<String, Object> logoutOther(JSONObject json, UserBean user,
+									   HttpRequestInfoBean request) {
+		logger.info("UserServiceImpl-->logoutOther():jo="+json.toString());
+		ResponseMap message = new ResponseMap();
+
+		String sessionStr = JsonUtil.getStringValue(json, "session");
+		if(StringUtil.isNull(sessionStr)){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value) + " [session]");
+			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
+			return message.getMap();
+		}
+		//检查是否具有管理员权限
+		checkAdmin(user);
+		SessionKey key = new DefaultSessionKey(sessionStr);
+		Session session = SecurityUtils.getSecurityManager().getSession(key);
+		boolean success = SessionManagerUtil.getInstance().removeSession(session);
+		message.put("isSuccess", success);
+		if(success){
+			message.put("message", "操作成功");
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		}else{
+			message.put("message", "操作失败");
+		}
+
+		//保存操作日志
+		operateLogService.saveOperateLog(user, request, new Date(), "强制把用户退出登录，结果："+ StringUtil.getSuccessOrNoStr(success), "logoutOther", ConstantsUtil.STATUS_NORMAL, 0);
+		return message.getMap();
+	}
 }

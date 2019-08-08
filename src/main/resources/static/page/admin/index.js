@@ -1,6 +1,7 @@
 //退出登录
 function logout(){
 	$.ajax({
+	    type: "delete",
 		dataType: 'json',
 		url : "/us/logout?t="+Math.random(),
 		beforeSend:function(){

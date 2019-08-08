@@ -3,10 +3,7 @@ package com.cn.leedane.controller;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.WechatHandler;
 import com.cn.leedane.lucene.solr.UserSolrHandler;
-import com.cn.leedane.model.FriendBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.UserTokenBean;
+import com.cn.leedane.model.*;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserTokenService;
@@ -23,6 +20,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,11 +62,6 @@ public class UserController extends BaseController{
     
     @Autowired
 	private UserTokenService<UserTokenBean> userTokenService;
-    
-    /**
-     * 存储所有的session信息
-     */
-    public static Map<String, List<Serializable>> activeSessions = new HashMap<String, List<Serializable>>();
 	
 	/**
 	 * 登录
@@ -94,9 +87,9 @@ public class UserController extends BaseController{
 			code = JsonUtil.getStringValue(json, "code");
 		}
 
-		boolean isPageRequest = CommonUtil.isPageRequest(request, response);
+		boolean isAndroidRequest = CommonUtil.isAndroidRequest(request);
 		//只有网页端才检验验证码
-		if(isPageRequest)
+		if(!isAndroidRequest)
 			if(StringUtil.isNull(code) || !CodeUtil.checkVerifyCode(request, code)){
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请输入正确验证码.value));
 				message.put("responseCode", EnumUtil.ResponseCode.请输入正确验证码.value);
@@ -205,10 +198,9 @@ public class UserController extends BaseController{
 //	            currentUser.getSession().setAttribute(USER_INFO_KEY, user);
 	            currentUser.getSession().setAttribute("hasnav", true);
 	            //获取平台，如果是android就继续获取token
-	            String platform = request.getHeader("platform");
 	            
 	            Map<String, Object> userinfo = userHandler.getUserInfo(user, true);
-	            if(StringUtil.isNotNull(platform) && PlatformType.安卓版.value.equals(platform)){
+	            if(isAndroidRequest){
 	            	UserTokenBean userTokenBean = new UserTokenBean();
 	            	Date overdue = DateUtil.getOverdueTime(new Date(), "7天");
 	            	userTokenBean.setToken(StringUtil.getUserToken(String.valueOf(user.getId()), user.getSecretCode(), overdue));
@@ -232,29 +224,15 @@ public class UserController extends BaseController{
 				message.put("responseCode", EnumUtil.ResponseCode.恭喜您登录成功.value);
 				isSuccess = true;
 				message.put("isSuccess", isSuccess);
-				//保证一个用户唯一的session
-				String sessionKey = String.valueOf(SecurityUtils.getSubject().getPrincipal());
-				List<Serializable> serializables = new ArrayList<Serializable>();
-				if(StringUtil.isNotNull(sessionKey) && activeSessions.get(sessionKey) != null){
-					try{
-						serializables = activeSessions.get(sessionKey);
-						//int deleteIndex = -1;
-						//Iterator<Serializable> it = serializables.iterator();
-						//while(it.hasNext()){
-							//SessionKey key = new DefaultSessionKey(it.next());
-							//SecurityUtils.getSecurityManager().getSession(key).stop();
-		                    // it.remove();
-
-		                // }
-					}catch(UnknownSessionException e){
-						logger.info("UnknownSessionException ------");
-					}catch(NullPointerException e){
-						logger.info("NullPointerException ------");
-					}
+				//对session进行添加管理
+				Session session = SecurityUtils.getSubject().getSession();
+				HttpRequestInfoBean requestInfoBean = getHttpRequestInfo(request);
+				if(requestInfoBean != null){
+					session.setAttribute("ip", requestInfoBean.getIp());
+					session.setAttribute("location", requestInfoBean.getLocation());
 				}
-				serializables.add(SecurityUtils.getSubject().getSession().getId());
-				
-				activeSessions.put(sessionKey, serializables);
+				session.setAttribute("time", DateUtil.DateToString(new Date()));
+				SessionManagerUtil.getInstance().addSession(session, user.getId());
 	        }else{  
 	        	authenticationToken.clear(); 
 				number = userHandler.addLoginErrorNumber(username);	
@@ -461,8 +439,8 @@ public class UserController extends BaseController{
 	 * 退出系统
 	 * @return
 	 */
-	@RequestMapping(value="/logout", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> logout(HttpServletRequest request){
+	@RequestMapping(value="/logout", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> logout(Model model, HttpServletRequest request){
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), new Date(), "安全退出系统", "logout", ConstantsUtil.STATUS_NORMAL, 0);
 		ResponseMap message = new ResponseMap();
 		/*HttpSession session = request.getSession();
@@ -490,20 +468,16 @@ public class UserController extends BaseController{
 		//SecurityUtils.getSecurityManager().getSession(key)
 		//String username = String.valueOf(SecurityUtils.getSubject().getPrincipal());
 		//Subject sb = sessionManager.get("1");
-		
-		
-		//使用权限管理工具进行用户的退出，跳出登录，给出提示信息
-        SecurityUtils.getSubject().logout(); 
-        message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注销成功.value));
-		message.put("responseCode", EnumUtil.ResponseCode.注销成功.value);
-		message.put("isSuccess", true);
-		
-		//移除出缓存的在线用户列表
-		String sessionKey = String.valueOf(SecurityUtils.getSubject().getPrincipal());
-		try{
-			List<Serializable> serializables = activeSessions.get(sessionKey);
-			serializables.remove(SecurityUtils.getSubject().getSession().getId());
 
+		try{
+			//移除出缓存的在线用户列表
+			//对session进行移除
+			SessionManagerUtil.getInstance().removeSession(SecurityUtils.getSubject().getSession());
+			//使用权限管理工具进行用户的退出，跳出登录，给出提示信息
+			SecurityUtils.getSubject().logout();
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注销成功.value));
+			message.put("responseCode", EnumUtil.ResponseCode.注销成功.value);
+			message.put("isSuccess", true);
 		}catch(UnknownSessionException e){
 			logger.info("UnknownSessionException ------");
 		}catch(NullPointerException e){
@@ -516,35 +490,17 @@ public class UserController extends BaseController{
 	 * 将别人踢出系统
 	 * @return
 	 */
-	/*@RequestMapping("/logoutOther")
-	public String logoutOther(HttpServletRequest request){
-		Map<String, Object> message = new HashMap<String, Object>();
-		HttpSession session = request.getSession();
-		//判断是否有在线的用户，那就先取消该用户的session
-		if(session.getAttribute(USER_INFO_KEY) != null) {
-			UserBean user = (UserBean) session.getAttribute(USER_INFO_KEY);
-			try {
-				session.removeAttribute(USER_INFO_KEY);
-				this.operateLogService.saveOperateLog(user, request, null, user.getAccount()+"退出系统", "logout", 1, 0);
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注销成功.value));
-				message.put("responseCode", EnumUtil.ResponseCode.注销成功.value);
-				message.put("isSuccess", true);
-				printWriter(message, response);
-				return null;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注销成功.value));
-			message.put("responseCode", EnumUtil.ResponseCode.注销成功.value);
-			message.put("isSuccess", true);
-		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		printWriter(message, response);
-		return null;
+	@RequestMapping(value="/logoutOther", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> logoutOther(Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+
+		checkRoleOrPermission(model, request);
+		message.putAll(userService.logoutOther(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
+		return message.getMap();
 	}
-	*/
+
 	/**
 	 * 根据用户的id获取用户的base64位图像信息
 	 * {"uid":2, "size":"30x30"} "order":0默认是0, tablename:"t_user"

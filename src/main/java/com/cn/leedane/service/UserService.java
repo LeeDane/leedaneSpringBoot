@@ -525,4 +525,16 @@ public interface UserService<T extends IDBean>{
 	public Map<String, Object> actives(
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request);
+
+	/**
+	 * 将某人强制退出系统
+	 * @param json
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> logoutOther(
+			JSONObject json, UserBean user,
+			HttpRequestInfoBean request);
+
 }
