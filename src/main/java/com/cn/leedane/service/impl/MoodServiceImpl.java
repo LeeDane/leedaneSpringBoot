@@ -201,6 +201,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			//删除该心情的缓存
 			moodHandler.delete(mid, null, null);
 			message.put("isSuccess", result);
+			message.put("message", "更新心情状态成功");
 			//异步修改心情solr索引
 //	        new ThreadUtil().singleTask(new SolrUpdateThread<MoodBean>(MoodSolrHandler.getInstance(), oldMoodBean));
 

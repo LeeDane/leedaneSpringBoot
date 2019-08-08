@@ -3,7 +3,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.apache.log4j.Logger;
 
 import com.cn.leedane.utils.ConstantsUtil;
@@ -17,7 +16,6 @@ import com.qiniu.storage.ResumeUploader;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
-import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 
 /**
  * 七牛云存储相关的测试类
@@ -38,7 +36,7 @@ public class QiniuTest extends BaseTest{
 		}
 	}*/
 	
-	public static void test(String accessKey, String secretKey, String bucketName) throws IOException, Base64DecodingException{
+	public static void test(String accessKey, String secretKey, String bucketName) throws IOException {
 		UploadManager uploadManager = new UploadManager();
 	    Auth auth = Auth.create(accessKey, secretKey);
 	    String token = auth.uploadToken(bucketName);
@@ -49,7 +47,7 @@ public class QiniuTest extends BaseTest{
 	    logger.info(ret.fname);
 	}
 	
-	private static byte[] getDataOrFile() throws IOException, Base64DecodingException {
+	private static byte[] getDataOrFile() throws IOException {
 		//leedane_4eebe109-6f8d-48f1-8fc7-fe822461f1b3_20160219-175431-267-676.jpg
 		//leedane_b55c3c7c-4850-4e69-b899-cbb234bad662_20160219-175730-5-227.jpg
 		String filePath = ConstantsUtil.getDefaultSaveFileFolder() +"file/1_82378545124366_20160119184016_myJava.pdf";

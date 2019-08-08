@@ -25,9 +25,9 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 import com.cn.leedane.enums.FileType;
-import com.sun.image.codec.jpeg.JPEGCodec;
+/*import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import com.sun.image.codec.jpeg.JPEGImageEncoder;*/
 
 /**
  * 处理base64位图片的类
@@ -172,6 +172,9 @@ public class Base64ImageUtil {
 	 * @throws Exception
 	 */
 	public static String specificBase64Image(String base64, String account, int width, int height){
+		return null;
+	}
+	/*public static String specificBase64Image(String base64, String account, int width, int height){
 			
 		
 		//将当前的base64临时保存在本地的文件夹路径
@@ -259,7 +262,7 @@ public class Base64ImageUtil {
 			logger.error("生成临时文件错误");
 		}
 		return "";
-	}
+	}*/
 	
 	/**
 	 * 判断是否是支持的类型
@@ -312,7 +315,7 @@ public class Base64ImageUtil {
 	/**
 	 * 将图像转化成base64格式的字符串
 	 * @param inputStream 输入流对象
-	 * @param 图像的类型(png/jpg)可以为空，默认是jpg
+	 * @param type 图像的类型(png/jpg)可以为空，默认是jpg
 	 * @return
 	 * @throws IOException
 	 */
@@ -353,8 +356,7 @@ public class Base64ImageUtil {
 	
 	/**
 	 * 将base64格式的字符串转化成图像
-	 * @param path  图片文件的保存路径
-	 * @param fileName  图片的名称
+	 * @param filePath  图片文件的保存路径
 	 * @param image  base64位的字符串
 	 * @return
 	 * @throws IOException 

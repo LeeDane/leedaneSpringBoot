@@ -1,20 +1,9 @@
 package com.cn.leedane.utils;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import org.apache.log4j.Logger;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * 图像相关的工具类
@@ -134,64 +123,64 @@ public class ImageUtil {
 	 * 将大图片转化成小图片
 	 * @return
 	 */
-	public boolean ConverBigImageToSmallImage() {
+	/*public boolean ConverBigImageToSmallImage() {
 		//文件名和路径只要有空的值就直接返回false
 		if(oldFileName == "" || oldPath == "") return false;
-		
+
 		//如果文件名的后缀不是支持的类型，也直接返回false
 		if(!ImageUtil.isSupportType(oldFileName)) return false;
-		
+
 		//拼接成完整的旧图片文件路径
 		String fullOldPath = oldPath + "\\" + oldFileName;
-		
+
 		//拼接成完整的新图片文件路径
 		String fullNewPath = newPath + "\\" + newFileName;
-		
+
 		File file = new File(fullOldPath);
-		
+
 		//定义流
 		BufferedOutputStream out = null;
 		try{
 			img = ImageIO.read(file);
-						
+
 			//是等比缩放
 			if(this.isProportion()){
 				this.proportionPer = proportionPer > 0.0f && proportionPer < 1.0f ? proportionPer : 1.0f;
 				width = (int) ((float)img.getWidth(null) * proportionPer);
 				height = (int)((float)img.getHeight(null) * proportionPer);
 			}
-			
-			BufferedImage image = new BufferedImage(width, height, getImageType());	
-			
-			File destFile = new File(fullNewPath); 
-			
+
+			BufferedImage image = new BufferedImage(width, height, getImageType());
+
+			File destFile = new File(fullNewPath);
+
 			// 输出到文件流
-			out = new BufferedOutputStream(new FileOutputStream(destFile)); 
+			out = new BufferedOutputStream(new FileOutputStream(destFile));
 
 			// 转换成JPEG图像格式
 			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-			
+
 			//是否需要高质量的图片
-			if(!isHighQuality()){		
-				// 绘制缩小后的图 
-				image.getGraphics().drawImage(img, 0, 0, width, height, null); 
+			if(!isHighQuality()){
+				// 绘制缩小后的图
+				image.getGraphics().drawImage(img, 0, 0, width, height, null);
 			}
 			else{
 				Graphics2D g2 = image.createGraphics();
-				
+
 				//scale 为 比例， w为宽度，h为 高度
 				g2.drawImage(img, 0, 0, width, height, null); //绘制缩小后的图
-						
+
 				JPEGEncodeParam jpeg = encoder.getDefaultJPEGEncodeParam(image);
-				
+
 				//设置图片质量，1表示最优，0.5表示中等
 				jpeg.setQuality(getHighQualityPer(), false);
 
 				encoder.setJPEGEncodeParam(jpeg);
 			}
-			//JPEG编码  
+			//JPEG编码
 			encoder.encode(image);
-			
+
 			out.flush();
 		}catch(IOException e){
 			logger.error("图片压缩出现异常");
@@ -201,13 +190,13 @@ public class ImageUtil {
 					out.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-			} 
+			}
 		}
 	
 		endTime = System.currentTimeMillis();
 		logger.info("处理"+ oldFileName +"需要花费的时间："+(endTime - startTime) + "毫秒");
 		return true;
-	}
+	}*/
 	
 	/**
 	 * 根据旧的oldFileName创建出新的newFileName

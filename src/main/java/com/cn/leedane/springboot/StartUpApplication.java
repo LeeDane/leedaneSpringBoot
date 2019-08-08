@@ -18,9 +18,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
-import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
@@ -84,7 +84,7 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
 	
 	
 	
-	@Bean(name= "blogHandler")
+	/*@Bean(name= "blogHandler")
     public BlogHandler getBlogHandler() {
         return new BlogHandler();  
     }
@@ -187,7 +187,7 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
 	@Bean(name= "circlePostHandler")
     public CirclePostHandler getCirclePostHandler() {
         return new CirclePostHandler();  
-    }
+    }*/
 	
 	/*
 	 * ehcache 主要的管理器
@@ -216,11 +216,11 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
         return cacheManagerFactoryBean;
     }
     
-    @Bean(name= "systemCache")
+   /* @Bean(name= "systemCache")
     public SystemCache getSystemCache() {
 		//SystemCache.setSystemEhCache(ehCacheCacheManager(ehCacheManagerFactoryBean()).getCache("systemEhCache"));
         return new SystemCache();  
-    }
+    }*/
 	
 	/*@Bean(name= "directory")
     public SimpleFSDirectory getSimpleFSDirectory(){
@@ -301,10 +301,10 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
         return prop;  
     }  
     
-    @Bean(name= "initCacheData")
+    /*@Bean(name= "initCacheData")
     public InitCacheData getInitCacheData() {
         return new InitCacheData();  
-    }
+    }*/
 
 	// 创建事务管理器1
    /* @Bean(name = "txManager")

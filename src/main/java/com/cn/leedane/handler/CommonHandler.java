@@ -17,6 +17,7 @@ import com.cn.leedane.utils.CollectionUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.StringUtil;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 /**
  * 公共的处理类
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.PropertySource;
  * Version 1.0
  */
 @PropertySource(value = "classpath:leedane.properties",encoding = "utf-8")
+@Component
 public class CommonHandler {
 	@Autowired
 	private MoodHandler moodHandler;

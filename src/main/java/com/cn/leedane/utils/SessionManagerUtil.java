@@ -99,7 +99,7 @@ public class SessionManagerUtil {
 					break;
 				}
 			}
-			if(removeIndex >= 0){
+			if(removeIndex >= 0 && sessions.size() > removeIndex){
 				try{
 					sessions.remove(removeIndex);
 					if(sessions.size() == 0){
