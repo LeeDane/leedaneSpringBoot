@@ -398,7 +398,6 @@
 		  <version>1.9.13</version>
 		</dependency>
 
-
 		<!--  HanLP是一系列模型与算法组成的NLP工具包，由大快搜索主导并完全开源，目标是普及自然语言处理在生产环境中的应用。HanLP具备功能完善、性能高效、架构清晰、语料时新、可自定义的特点。   https://github.com/hankcs/HanLP#14-%E5%85%B3%E9%94%AE%E8%AF%8D%E6%8F%90%E5%8F%96  -->
 		<dependency>
 			<groupId>com.hankcs</groupId>
@@ -419,6 +418,14 @@
 			<artifactId>kaptcha</artifactId>
 			<version>2.3.2</version>
 		</dependency>
+
+		<!-- 加解密工具 https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>1.62</version>
+		</dependency>
+
 
 		<!-- ****************************************** local-jar ****************************************** -->
 		<!-- axis -->
