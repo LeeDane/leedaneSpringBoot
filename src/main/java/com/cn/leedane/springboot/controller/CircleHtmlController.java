@@ -80,6 +80,7 @@ public class CircleHtmlController extends BaseController{
 	@RequestMapping(value= "/", method = RequestMethod.GET)
 	public String index1(Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入圈子模块", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
         UserBean user = getUserFromShiro();
@@ -98,6 +99,7 @@ public class CircleHtmlController extends BaseController{
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String list(Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看圈子列表", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		model.addAttribute("nonav", false);
 		return loginRoleCheck("circle/list", true, model, request);
 	}
@@ -105,10 +107,11 @@ public class CircleHtmlController extends BaseController{
 	@RequestMapping(value = "/{cid}", method = RequestMethod.GET)
 	public String main(@PathVariable(value="cid") int cid, Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入圈子ID:"+ cid, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		CircleBean circle = circleHandler.getCircleBean(cid);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
-		
+
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
         UserBean user = getUserFromShiro();
@@ -135,6 +138,7 @@ public class CircleHtmlController extends BaseController{
 	@RequestMapping(value = "/{circleId}/setting", method = RequestMethod.GET)
 	public String setting(@PathVariable(value="circleId") int circleId, Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入圈子设置", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return memberList(circleId, model, request);
 	}
 	
@@ -147,7 +151,7 @@ public class CircleHtmlController extends BaseController{
 	@RequestMapping(value = "/{circleId}/member-list", method = RequestMethod.GET)
 	public String memberList(@PathVariable(value="circleId") int circleId, Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
-		
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看圈子成员管理界面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		CircleBean circle = circleHandler.getCircleBean(circleId);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
@@ -176,7 +180,7 @@ public class CircleHtmlController extends BaseController{
 			Model model, 
 			HttpServletRequest request){
 		checkRoleOrPermission(model, request);
-
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "发布帖子，圈子ID:"+ circleId, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		//获取当前的Subject 
 //        UserBean user = (UserBean) SecurityUtils.getSubject().getSession().getAttribute(UserController.USER_INFO_KEY);
 		//获取当前的Subject
@@ -231,6 +235,7 @@ public class CircleHtmlController extends BaseController{
 	@RequestMapping(value = "/{circleId}/post/{postId}", method = RequestMethod.GET)
 	public String postDetail(@PathVariable(value="circleId") int circleId, @PathVariable(value="postId") int postId, Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看帖子详情，圈子ID:"+ circleId+ ", 帖子ID:"+ postId, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		CircleBean circle = circleHandler.getCircleBean(circleId);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
@@ -249,6 +254,7 @@ public class CircleHtmlController extends BaseController{
 	@RequestMapping(value = "post/dt/{postId}", method = RequestMethod.GET)
 	public String postDetail1(@PathVariable(value="postId") int postId, Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看帖子详情, 帖子ID:"+ postId, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		CirclePostBean postBean = circlePostHandler.getNormalCirclePostBean(postId);
 		if(postBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该帖子不存在.value));
@@ -283,6 +289,7 @@ public class CircleHtmlController extends BaseController{
 	@RequestMapping(value = "/{circleId}/post/{postId}/audit", method = RequestMethod.GET)
 	public String postCheckDetail(@PathVariable(value="circleId") int circleId, @PathVariable(value="postId") int postId, Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "审核时查看帖子详情，圈子ID:"+ circleId+ ", 帖子ID:"+ postId, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		CircleBean circle = circleHandler.getCircleBean(circleId);
 		if(circle == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
@@ -325,6 +332,7 @@ public class CircleHtmlController extends BaseController{
 	@RequestMapping(value = "/{circleId}/post/check", method = RequestMethod.GET)
 	public String postCheck(@PathVariable(value="circleId") int circleId, Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看帖子审核页面，圈子ID:"+ circleId, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		UserBean user = getMustLoginUserFromShiro();
 		CircleBean circle = circleHandler.getNormalCircleBean(circleId, user);
 		model.addAttribute("setting", circleSettingHandler.getNormalSettingBean(circle.getId(), user));

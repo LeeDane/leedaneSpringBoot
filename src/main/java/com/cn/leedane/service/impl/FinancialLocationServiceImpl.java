@@ -72,7 +72,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.添加失败.value));
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"添加位置信息为：", location, StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"添加位置信息为：", location, StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 					
 		message.put("isSuccess", true);
 		return message.getMap();
@@ -110,7 +110,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改失败.value));
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "修改位置信息为：", location, StringUtil.getSuccessOrNoStr(result)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "修改位置信息为：", location, StringUtil.getSuccessOrNoStr(result)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 
 		return message.getMap();
 	}
@@ -181,7 +181,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "删除位置信息ID为：", flid, StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "删除位置信息ID为：", flid, StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 
 		return message.getMap();
 	}

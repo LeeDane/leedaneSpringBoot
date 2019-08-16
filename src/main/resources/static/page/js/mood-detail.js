@@ -252,7 +252,7 @@ function buildEachCommentRow(index, comment){
 					       	'<div class="list-group">'+
 						       		'<div class="list-group-item comment-list-item active">'+
 						       			'<a href="JavaScript:void(0);" onclick="linkToMy('+ comment.create_user_id +')" target="_blank" class="marginRight">'+ changeNotNullString(comment.account)+'</a>'+
-						       			'<span class="marginRight publish-time">发表于:'+ changeNotNullString(comment.create_time) +'</span>'+
+						       			'<span class="marginRight publish-time">'+ setTimeAgo(comment.create_time) +'</span>'+
 						       			'<span class="marginRight publish-time">来自:'+ changeNotNullString(comment.froms) +'</span>'+
 						       		'</div>';
 							html += '<div class="list-group-item comment-list-item">'+
@@ -261,7 +261,7 @@ function buildEachCommentRow(index, comment){
 								    html += '<div class="col-lg-12">'+
 											    '<blockquote>'+ comment.blockquote_content;
 												if(isNotEmpty(comment.blockquote_account)){
-											html += '<small><cite>'+ comment.blockquote_account +'</cite>&nbsp;&nbsp;'+ changeNotNullString(comment.blockquote_time) +'</small>';
+											html += '<small><cite>'+ comment.blockquote_account +'</cite>&nbsp;&nbsp;'+ setTimeAgo(comment.blockquote_time) +'</small>';
 												}
 										html +='</blockquote>'+
 											'</div>';

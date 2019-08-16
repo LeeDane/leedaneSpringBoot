@@ -75,7 +75,7 @@ public class S_HomeShopServiceImpl extends MallRoleCheckService implements S_Hom
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"发布新的店铺:", shopBean.getName() , "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"发布新的店铺:", shopBean.getName() , "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 	
@@ -99,7 +99,7 @@ public class S_HomeShopServiceImpl extends MallRoleCheckService implements S_Hom
 			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除商店, 店铺id为：", shopId, "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除商店, 店铺id为：", shopId, "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 

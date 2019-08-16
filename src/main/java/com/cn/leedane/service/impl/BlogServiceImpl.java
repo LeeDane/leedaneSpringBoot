@@ -275,7 +275,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
 		}
 		String subject = user.getAccount() + "删除了博客《"+ oldBean.getTitle() + "》" + StringUtil.getSuccessOrNoStr(result);
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "deleteById()", ConstantsUtil.STATUS_NORMAL, 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "deleteById()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -364,7 +364,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		boolean result = blogMapper.update(blogBean) > 0;
 		
 		String subject = user.getAccount() + "为博客《"+blogBean.getTitle() + "》添加标签:" + tag + StringUtil.getSuccessOrNoStr(result);
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "addTag()", ConstantsUtil.STATUS_NORMAL, 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "addTag()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		
 		if(result){
 			if(cut){
@@ -485,7 +485,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		//new ThreadUtil().task(new BlogSolrUpdateThread(blogBean));
 		//BlogSolrHandler.getInstance().updateBean(blogBean);
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"编辑博客ID:", blogId, StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "edit()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"编辑博客ID:", blogId, StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "edit()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		
 		return message.getMap();
 	}

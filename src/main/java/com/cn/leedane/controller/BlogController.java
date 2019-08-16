@@ -316,7 +316,6 @@ public class BlogController extends BaseController{
 	@RequestMapping(value="/carouselImgs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getCarouselImgs(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		
 		checkParams(message, request);
 		JSONObject json = getJsonFromMessage(message);
 		int num = JsonUtil.getIntValue(json, "num"); //获取图片的数量

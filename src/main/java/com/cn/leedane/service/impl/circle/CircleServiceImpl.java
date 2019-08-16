@@ -359,7 +359,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"创建名称为：", name,"的圈子，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "create()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"创建名称为：", name,"的圈子，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "create()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 				
 		return message.getMap();
 	}
@@ -604,7 +604,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		circleMemberHandler.deleteNewestMemberCache(circleId);
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"申请加入圈子--", circleId).toString(), "join()", ConstantsUtil.STATUS_NORMAL, 0);		
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"申请加入圈子--", circleId).toString(), "join()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("isSuccess", true);
 		message.put("message", msg);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -639,7 +639,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		boolean result = circleMemberMapper.deleteById(CircleMemberBean.class, (circleMemberBeans.get(0)).getId()) > 0;
 		if(result){
 			//保存操作日志
-			operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"离开圈子--", circleId).toString(), "leave()", ConstantsUtil.STATUS_NORMAL, 0);		
+			operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"离开圈子--", circleId).toString(), "leave()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 			message.put("isSuccess", true);
 			message.put("message", "退出圈子成功");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -718,7 +718,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		//发送授权管理员的通知
 		notificationHandler.sendNotificationByIds(false, user, addAdmins, "已经被"+user.getAccount()+"授予圈子《"+ circleBean.getName()+ "》的管理员权限", NotificationType.通知, "t_circle", circleBean.getId(), null);
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给圈子ID为"+ circleId +",分配管理员权限，成员为ids"+admins).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, 0);		
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给圈子ID为"+ circleId +",分配管理员权限，成员为ids"+admins).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("message", "操作成功");
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);

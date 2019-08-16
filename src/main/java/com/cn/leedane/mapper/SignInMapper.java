@@ -39,7 +39,7 @@ public interface SignInMapper extends BaseMapper<SignInBean>{
 	
 	/**
 	 * 获取昨天的签到记录
-	 * @param uid
+	 * @param userId
 	 * @return
 	 */
 	public List<Map<String, Object>> getYesTodayRecore(@Param("userId") int userId, @Param("createTime") Date createTime, @Param("status") int status);
@@ -50,4 +50,10 @@ public interface SignInMapper extends BaseMapper<SignInBean>{
 	 * @return
 	 */
 	//public int getScore(int uid);
+
+	/**
+	 * 获取用户签到标记列表
+	 * @return
+	 */
+	public List<Map<String, Object>> getSignInMark(@Param("userId") int userId);
 }

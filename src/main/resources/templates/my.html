@@ -28,23 +28,9 @@
 							<div class="row" id="user_info"></div>
 						</div>
 					</div>
-					<div class="row">
-						<div class="panel panel-info">
-							<div class="panel-heading">
-								<h3 class="panel-title">TA的关注</h3>
-							</div>
-							<div class="panel-body" id="attentions"></div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="panel panel-info">
-							<div class="panel-heading">
-								<h3 class="panel-title">TA的粉丝</h3>
-							</div>
-							<div class="panel-body" id="fans"></div>
-						</div>
-					</div>
+				   <div class="row">
+					   <div class="layui-inline" id="date-container" ></div>
+				   </div>
 					<div class="row">
 						<div class="panel panel-info">
 							<div class="panel-heading">
@@ -76,6 +62,7 @@
 					</div>
 			  </div>
 			  <nav class="col-sm-3" id="navbarExample">
+
 				<div class="row">
 					<div class="panel panel-info">
 						<div class="panel-heading">
@@ -84,6 +71,22 @@
 						<div class="panel-body" id="message-boards"></div>
 					</div>
 				</div>
+				 <div class="row">
+					  <div class="panel panel-info">
+						  <div class="panel-heading">
+							  <h3 class="panel-title">TA的关注</h3>
+						  </div>
+						  <div class="panel-body" id="attentions"></div>
+					  </div>
+				  </div>
+				  <div class="row">
+					  <div class="panel panel-info">
+						  <div class="panel-heading">
+							  <h3 class="panel-title">TA的粉丝</h3>
+						  </div>
+						  <div class="panel-body" id="fans"></div>
+					  </div>
+				  </div>
 			  </nav>
 		   </div>
 	</div>
@@ -144,6 +147,7 @@
 		</div><!-- /.modal -->
 	</div>
 </body>
+<div th:include="common-bottom :: bottom">bottom?</div>
 <div th:include="common-js :: commJs">what?</div>
 <ul class="layui-fixbar" style="right: 50px; bottom: 30px;">
 	<li id="to-page-top" class="layui-icon layui-icon-top" lay-type="bar2" style="background-color:#393D49"></li>

@@ -82,7 +82,7 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"添加订单，编号为", orderBean.getOrderCode(), ",商品唯一编号为：", orderBean.getProductCode(), "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"添加订单，编号为", orderBean.getOrderCode(), ",商品唯一编号为：", orderBean.getProductCode(), "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 				
 		return message.getMap();
 	}
@@ -135,7 +135,7 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 			message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改订单，订单ID为", orderBean.getId(), "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改订单，订单ID为", orderBean.getId(), "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 				
 		return message.getMap();
 	}
@@ -204,7 +204,7 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除订单ID为："+ orderId, "的订单").toString(), "delete()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除订单ID为："+ orderId, "的订单").toString(), "delete()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 

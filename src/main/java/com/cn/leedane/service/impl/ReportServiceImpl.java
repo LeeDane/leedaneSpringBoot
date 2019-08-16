@@ -109,7 +109,7 @@ public class ReportServiceImpl extends AdminRoleCheckService implements ReportSe
 		
 		//保存操作日志
 		String subject = user.getAccount() + "举报，表名："+tableName+",表ID:"+tableId+StringUtil.getSuccessOrNoStr(result);
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "addReport()", StringUtil.changeBooleanToInt(result) , 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "addReport()", StringUtil.changeBooleanToInt(result) , EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -136,7 +136,7 @@ public class ReportServiceImpl extends AdminRoleCheckService implements ReportSe
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"取消举报，表名是"+tableName+",表ID为："+ tableId, "cancel()", StringUtil.changeBooleanToInt(result), 0);
+		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"取消举报，表名是"+tableName+",表ID为："+ tableId, "cancel()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 

@@ -119,7 +119,7 @@ public class ScoreServiceImpl implements ScoreService<ScoreBean>{
 		scoreBean.setTableName(tableName);
 		boolean result = scoreMapper.save(scoreBean) > 0;
 		//保存操作日志
-		operateLogService.saveOperateLog(user, null, null, StringUtil.getStringBufferStr(user.getAccount(),"扣除积分").toString(), "reduceScore()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, null, null, StringUtil.getStringBufferStr(user.getAccount(),"扣除积分").toString(), "reduceScore()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		if(result){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);

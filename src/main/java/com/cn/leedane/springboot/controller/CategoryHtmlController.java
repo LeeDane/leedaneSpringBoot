@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,7 +45,7 @@ public class CategoryHtmlController extends BaseController{
 	public String index1(Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
 		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入分类管理页面", "Category---->index()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入分类管理页面", "Category---->index()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("category/index", true, model, request);
 	}
 	
@@ -67,7 +68,7 @@ public class CategoryHtmlController extends BaseController{
 		checkRoleOrPermission(model, request);
 		model.addAttribute("rootId", rootId);
 		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入选择分类页面", "Category---->index()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入选择分类页面", "Category---->index()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("category/select", true, model, request);
 	}
 }

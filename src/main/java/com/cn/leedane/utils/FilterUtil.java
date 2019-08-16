@@ -98,7 +98,7 @@ public class FilterUtil {
 					CustomAuthenticationToken token = (CustomAuthenticationToken)obj;
 					UserBean user = token.getUser();
 					//异步添加用户solr索引
-					new ThreadUtil().singleTask(new OperateLogSaveThread(user, request, new Date(), "原始内容是: "+ content +", 内容中敏感信息是："+ sensitiveword.toString(), "--", ConstantsUtil.STATUS_NORMAL, 0));
+					new ThreadUtil().singleTask(new OperateLogSaveThread(user, request, new Date(), "原始内容是: "+ content +", 内容中敏感信息是："+ sensitiveword.toString(), "--", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value));
 				}
 			}
 		}
@@ -112,6 +112,6 @@ public class FilterUtil {
 	 */
 	public static void sendOperateLogByUser(UserBean user, String content, Set<String> sensitiveword) {
 		//异步添加用户solr索引
-		new ThreadUtil().singleTask(new OperateLogSaveThread(user, null, new Date(), "原始内容是: " + content + ", 内容中敏感信息是：" + sensitiveword.toString(), "--", ConstantsUtil.STATUS_NORMAL, 0));
+		new ThreadUtil().singleTask(new OperateLogSaveThread(user, null, new Date(), "原始内容是: " + content + ", 内容中敏感信息是：" + sensitiveword.toString(), "--", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value));
 	}
 }

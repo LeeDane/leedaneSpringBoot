@@ -170,7 +170,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除转发ID为", tid, "的数据", StringUtil.getSuccessOrNoStr(result)).toString(), "deleteTransmit()", StringUtil.changeBooleanToInt(result), 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除转发ID为", tid, "的数据", StringUtil.getSuccessOrNoStr(result)).toString(), "deleteTransmit()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -290,7 +290,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"更新表名为：", tableName ,",表ID为：", tableId, "转发状态为", canTransmit, "，结果更新", StringUtil.getSuccessOrNoStr(result)).toString(), "updateTransmitStatus()", StringUtil.changeBooleanToInt(result), 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"更新表名为：", tableName ,",表ID为：", tableId, "转发状态为", canTransmit, "，结果更新", StringUtil.getSuccessOrNoStr(result)).toString(), "updateTransmitStatus()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		message.put("isSuccess", result);
 		return message.getMap();
 	}

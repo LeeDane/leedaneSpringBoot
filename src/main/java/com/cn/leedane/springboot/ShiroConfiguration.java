@@ -148,7 +148,7 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("us/login/phone", "anon");//anon 不拦截商城首页链接
         filterChainDefinitionMap.put(ControllerBaseNameUtil.bw, "anon");//anon 不拦截微信绑定详情链接
         // authc：该过滤器下的页面必须验证后才能访问，它是Shiro内置的一个拦截器org.apache.shiro.web.filter.authc.FormAuthenticationFilter
-        filterChainDefinitionMap.put("*", "user");// 拦截全部的链接
+        filterChainDefinitionMap.put("*", "authc");// 拦截全部的链接
         // anon：它对应的过滤器里面是空的,什么都没做
         logger.info("##################从数据库读取权限规则，加载到shiroFilter中##################");
         //filterChainDefinitionMap.put("/user/edit/**", "authc,perms[user:edit]");// 这里为了测试，固定写死的值，也可以从数据库或其他配置中读取

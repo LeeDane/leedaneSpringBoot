@@ -816,4 +816,19 @@ public class EnumUtil {
 	
 	}
 
+	/**
+	 * 日志操作类型
+	 * @author LeeDane
+	 * 2019年8月13日 上午9:01:01
+	 * Version 1.0
+	 */
+	public enum LogOperateType {
+		内部接口(0), 网页端(1), 对外接口(2);
+
+		private LogOperateType(int value) {
+			this.value = value;
+		}
+		public final int value;
+	}
+
 }

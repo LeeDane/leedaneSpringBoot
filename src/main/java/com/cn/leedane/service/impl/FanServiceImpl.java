@@ -431,7 +431,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		message.put("message", "恭喜您成为"+toUser.getAccount()+"的粉丝，今后他/她的动态将在您的朋友圈出现"); 
 		message.put("isSuccess", true);
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"成为："+toUser.getAccount()+"的粉丝", "addFan()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"成为："+toUser.getAccount()+"的粉丝", "addFan()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 

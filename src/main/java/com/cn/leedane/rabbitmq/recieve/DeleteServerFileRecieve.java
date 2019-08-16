@@ -7,6 +7,7 @@ import com.cn.leedane.model.ServerFileBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.OptionUtil;
 import com.cn.leedane.utils.StringUtil;
 
@@ -42,7 +43,7 @@ public class DeleteServerFileRecieve implements IRecieve{
 				@SuppressWarnings("unchecked")
 				OperateLogService<OperateLogBean> operateLogService = (OperateLogService<OperateLogBean>) SpringUtil.getBean("operateLogService");
 				//保存操作日志
-				operateLogService.saveOperateLog(OptionUtil.adminUser, null, null, StringUtil.getStringBufferStr("删除临时文件："+fileBean.getPath(), StringUtil.getSuccessOrNoStr(success)).toString(), "DeleteServerFileRecieve excute()", ConstantsUtil.STATUS_NORMAL, 0);
+				operateLogService.saveOperateLog(OptionUtil.adminUser, null, null, StringUtil.getStringBufferStr("删除临时文件："+fileBean.getPath(), StringUtil.getSuccessOrNoStr(success)).toString(), "DeleteServerFileRecieve excute()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 				success = true;
 			}
 		}catch(Exception e){

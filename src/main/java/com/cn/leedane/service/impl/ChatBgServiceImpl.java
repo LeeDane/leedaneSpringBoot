@@ -170,7 +170,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 		
 		boolean result = chatBgMapper.save(chatBgBean) > 0;
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "发布聊天背景到平台", StringUtil.getSuccessOrNoStr(result)).toString(), "send()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "发布聊天背景到平台", StringUtil.getSuccessOrNoStr(result)).toString(), "send()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		if(result){
 			message.put("isSuccess", result);
 			message.put("message", "发布聊天背景成功");
@@ -261,7 +261,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "下载聊天背景的资源", StringUtil.getSuccessOrNoStr(result)).toString(), "verifyChatBg()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "下载聊天背景的资源", StringUtil.getSuccessOrNoStr(result)).toString(), "verifyChatBg()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		if(result){
 			message.put("isSuccess", result);
 			message.put("message", "扣除下载积分成功!");

@@ -119,7 +119,7 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 		}
 		// 保存操作日志信息
 		String subject = user.getAccount()+"打卡， 圈子id=" + circleId;
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "saveClockIn()", ConstantsUtil.STATUS_NORMAL, 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "saveClockIn()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 

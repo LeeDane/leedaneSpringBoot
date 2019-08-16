@@ -365,7 +365,7 @@ public class InitCacheData {
 			while( (text = bufferedReader.readLine()) != null){
 				urls.add(text);
 			}		
-			systemCache.addCache("filterUrls", urls);
+			systemCache.addCache("filterUrls", urls, true);
 			bufferedReader.close();
 			long end = System.currentTimeMillis();  
 			logger.warn("加载filter-url.txt中的数据进缓存中结束，共计耗时："+(end - begin) +"ms"); 
@@ -405,7 +405,7 @@ public class InitCacheData {
 					//OptionBean option = new OptionBean();  
 					//option.setOptionKey(StringUtil.changeNotNull(result.get("option_key")));
 					//option.setOptionValue(StringUtil.changeNotNull(result.get("option_value")));
-					systemCache.addCache(StringUtil.changeNotNull(result.get("option_key")), StringUtil.changeNotNull(result.get("option_value")));
+					systemCache.addCache(StringUtil.changeNotNull(result.get("option_key")), StringUtil.changeNotNull(result.get("option_value")), true);
 				}
 			}
 			long end = System.currentTimeMillis();  

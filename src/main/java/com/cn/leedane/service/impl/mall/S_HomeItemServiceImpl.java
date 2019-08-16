@@ -83,7 +83,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"发布新的分类:", homeItemBean.getId() , "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "addItem()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"发布新的分类:", homeItemBean.getId() , "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "addItem()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 	
@@ -117,7 +117,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 			message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改分类项ID为:", itemId , "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "addItem()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改分类项ID为:", itemId , "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "addItem()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 	
@@ -165,7 +165,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除分类展示项ID为", itemId , "结果是：", StringUtil.getSuccessOrNoStr(true)).toString(), "deleteItem()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除分类展示项ID为", itemId , "结果是：", StringUtil.getSuccessOrNoStr(true)).toString(), "deleteItem()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 	
@@ -323,7 +323,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为分类项ID为", itemId, "发布新的商品ID为:", productId , "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为分类项ID为", itemId, "发布新的商品ID为:", productId , "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -349,7 +349,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除分类展示项ID为", itemId , "结果是：", StringUtil.getSuccessOrNoStr(true)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除分类展示项ID为", itemId , "结果是：", StringUtil.getSuccessOrNoStr(true)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 

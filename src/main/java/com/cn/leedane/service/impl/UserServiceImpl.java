@@ -586,7 +586,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(null, request, null, "手机号码："+mobilePhone+"用户获取注册验证码", "getPhoneRegisterCode", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(null, request, null, "手机号码："+mobilePhone+"用户获取注册验证码", "getPhoneRegisterCode", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 
 		userBean.setAccount(account);
 		userBean.setMobilePhone(mobilePhone);
@@ -628,7 +628,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			if(jsonResult.optInt("status") == 200){
 				//保存操作日志
 				UserBean user = userMapper.loginUserByPhone(mobilePhone);
-				operateLogService.saveOperateLog(user, request, null, "手机号码："+mobilePhone+"用户通过手机号码登录系统", "手机号码登录", ConstantsUtil.STATUS_NORMAL, 0);
+				operateLogService.saveOperateLog(user, request, null, "手机号码："+mobilePhone+"用户通过手机号码登录系统", "手机号码登录", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 				return user;
 			}else{
 				throw new MobCodeErrorException(jsonResult.optString("error"));
@@ -835,7 +835,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 			
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("注册账号为", account , ",手机号码为：", StringUtil.getSuccessOrNoStr(result)).toString(), "registerByPhoneNoValidate()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("注册账号为", account , ",手机号码为：", StringUtil.getSuccessOrNoStr(result)).toString(), "registerByPhoneNoValidate()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		
 		return message.getMap();
 	}
@@ -943,7 +943,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "搜索用户列表。搜索json语句是"+ jo.toString()).toString(), "webSearch()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "搜索用户列表。搜索json语句是"+ jo.toString()).toString(), "webSearch()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 				
 		return message.getMap();
 	}
@@ -1073,7 +1073,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 			
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "用户更新基本信息", StringUtil.getSuccessOrNoStr(result)).toString(), "updateUserBase()", StringUtil.changeBooleanToInt(result), 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "用户更新基本信息", StringUtil.getSuccessOrNoStr(result)).toString(), "updateUserBase()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		
 		return message.getMap();
 	}
@@ -1138,7 +1138,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 			
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("管理员账号为", user.getAccount() , "更新用户ID为", toUserId, "基本信息", StringUtil.getSuccessOrNoStr(result)).toString(), "adminUpdateUserBase()", StringUtil.changeBooleanToInt(result), 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("管理员账号为", user.getAccount() , "更新用户ID为", toUserId, "基本信息", StringUtil.getSuccessOrNoStr(result)).toString(), "adminUpdateUserBase()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -1183,7 +1183,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 			
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "用户更改登录密码", StringUtil.getSuccessOrNoStr(result)).toString(), "updatePassword()", StringUtil.changeBooleanToInt(result), 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("账号为", user.getAccount() , "用户更改登录密码", StringUtil.getSuccessOrNoStr(result)).toString(), "updatePassword()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		
 		return message.getMap();
 	}
@@ -1231,7 +1231,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 			
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("管理员账号为", user.getAccount() , "更改用户账号为", updateUserBean.getAccount(),"登录密码", StringUtil.getSuccessOrNoStr(result)).toString(), "adminResetPassword()", StringUtil.changeBooleanToInt(result), 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("管理员账号为", user.getAccount() , "更改用户账号为", updateUserBean.getAccount(),"登录密码", StringUtil.getSuccessOrNoStr(result)).toString(), "adminResetPassword()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		
 		return message.getMap();
 	}
@@ -1399,7 +1399,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			message.put("responseCode", EnumUtil.ResponseCode.登录页面已经过期.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"进行扫码登陆，校验"+ StringUtil.getSuccessOrNoStr(result), "扫码登录", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"进行扫码登陆，校验"+ StringUtil.getSuccessOrNoStr(result), "扫码登录", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 
 		return message;
 	}
@@ -1473,7 +1473,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"执行删除用户Id为"+toUserId +"的用户", "deleteUser()", StringUtil.changeBooleanToInt(result), 0);
+		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"执行删除用户Id为"+toUserId +"的用户", "deleteUser()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -1562,7 +1562,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"给用户Id为"+toUserId +"的用户发送信息，信息类型为："+type, "sendMessage()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"给用户Id为"+toUserId +"的用户发送信息，信息类型为："+type, "sendMessage()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -1631,7 +1631,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("管理员账号为", user.getAccount() , "添加新用户，用户账号是：", account, StringUtil.getSuccessOrNoStr(result)).toString(), "addUser()", StringUtil.changeBooleanToInt(result), 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("管理员账号为", user.getAccount() , "添加新用户，用户账号是：", account, StringUtil.getSuccessOrNoStr(result)).toString(), "addUser()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		
 		return message.getMap();
 	}
@@ -1720,7 +1720,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 		
 		String subject = user.getAccount() + "上传了头像" + StringUtil.getSuccessOrNoStr(result);
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "uploadUserHeadImageLink", StringUtil.changeBooleanToInt(result), 0);	
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "uploadUserHeadImageLink", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -1778,8 +1778,14 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 		//报错异常说明session过期，那就移除
 		if(CollectionUtil.isNotEmpty(errorSessions)){
-			for(Session session: errorSessions)
-				SessionManagerUtil.getInstance().removeSession(session);
+
+			for(Session session: errorSessions){
+				try{
+					SessionManagerUtil.getInstance().removeSession(session, false);
+				}catch (UnknownSessionException u){
+					continue;
+				}
+			}
 		}
 		message.put("isSuccess", true);
 		message.put("message", users);
@@ -1806,7 +1812,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		checkAdmin(user);
 		SessionKey key = new DefaultSessionKey(sessionStr);
 		Session session = SecurityUtils.getSecurityManager().getSession(key);
-		boolean success = SessionManagerUtil.getInstance().removeSession(session);
+		boolean success = SessionManagerUtil.getInstance().removeSession(session, true);
 		message.put("isSuccess", success);
 		if(success){
 			message.put("message", "操作成功");
@@ -1816,7 +1822,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, new Date(), "强制把用户退出登录，结果："+ StringUtil.getSuccessOrNoStr(success), "logoutOther", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, new Date(), "强制把用户退出登录，结果："+ StringUtil.getSuccessOrNoStr(success), "logoutOther", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 }

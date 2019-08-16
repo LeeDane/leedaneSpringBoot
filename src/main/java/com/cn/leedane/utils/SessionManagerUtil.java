@@ -1,18 +1,25 @@
 package com.cn.leedane.utils;
 
+import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
+import org.apache.shiro.session.mgt.DefaultSessionManager;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.mgt.CookieRememberMeManager;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.servlet.http.HttpSession;
-
 public class SessionManagerUtil {
-	
+	private Logger logger = Logger.getLogger(getClass());
 	private static SessionManagerUtil sManagerUtil = null;
 
 	/**
@@ -20,10 +27,12 @@ public class SessionManagerUtil {
 	 */
 	private HashMap<String, List<Session>> userSessions;
 	private HashMap<Serializable, String> userSessionMap; //session跟用户ID的一对一映射
-	
+	private HashMap<Serializable, Subject> userSubjectMap; //session跟用户ID的一对一映射
+	/*private int readNumber;*/
 	private SessionManagerUtil(){
 		userSessions = new HashMap<>();
 		userSessionMap = new HashMap<>();
+		userSubjectMap = new HashMap<>();
 	}
 	
 	public static synchronized SessionManagerUtil getInstance(){
@@ -52,7 +61,7 @@ public class SessionManagerUtil {
 	 * @param userid
 	 * @return
 	 */
-	public synchronized boolean addSession(Session session, int userid){
+	public synchronized boolean addSession(Subject subject, Session session, int userid){
 		if(session == null || userid < 0)
 			return false;
 		List<Session> sessions = userSessions.get(userid + "");
@@ -61,6 +70,7 @@ public class SessionManagerUtil {
 		sessions.add(session);
 		userSessions.put(userid + "", sessions);
 		userSessionMap.put(session.getId(), userid+"");
+		userSubjectMap.put(session.getId(), subject);
 		return true;
 	}
 
@@ -86,15 +96,22 @@ public class SessionManagerUtil {
 	 * @param userid
 	 * @return
 	 */
-	public boolean removeSession(Session session, int userid) {
-		if(session == null || userid < 0)
+	public boolean removeSession(Session session, int userid, boolean force) {
+		/**
+		 * 对
+		 */
+		if(session == null)
 			return false;
-		userSessionMap.remove(session.getId());
+
+		Serializable sessionId = session.getId();
+		if(userid < 1 ){
+			return false;
+		}
 		List<Session> sessions = userSessions.get(userid +"");
 		if(CollectionUtil.isNotEmpty(sessions)){
 			int removeIndex = -1;
 			for(int i = 0; i < sessions.size(); i++){
-				if(sessions.get(i).getId() == session.getId()){
+				if(sessions.get(i).getId() == sessionId){
 					removeIndex = i;
 					break;
 				}
@@ -107,9 +124,16 @@ public class SessionManagerUtil {
 					}else{
 						userSessions.put(userid + "", sessions);
 					}
-					sessions.get(removeIndex).stop();
+
+					if(CollectionUtil.isEmpty(sessions))
+						userSessions.remove(userid+"");
+
 				}catch (UnknownSessionException e){
 					e.printStackTrace();
+				}finally {
+					userSessionMap.remove(sessionId);
+					userSubjectMap.remove(sessionId);
+					session.stop();
 				}
 			}
 		}
@@ -119,12 +143,14 @@ public class SessionManagerUtil {
 	/**
 	 * 移除单个session
 	 * @param session
+	 * @param force 是否强制删除
 	 * @return
 	 */
-	public boolean removeSession(Session session) {
+	public boolean removeSession(Session session, boolean force) {
 		if(session == null)
 			return false;
-		return removeSession(session, StringUtil.changeObjectToInt(userSessionMap.get(session.getId())));
+		Serializable sessionId = session.getId();
+		return removeSession(session, StringUtil.changeObjectToInt(userSessionMap.get(sessionId)), force);
 	}
 
 	/**
@@ -141,7 +167,7 @@ public class SessionManagerUtil {
 			for(Session session: sessions){
 				try {
 					userSessionMap.remove(session.getId());
-					session.stop();
+//					session.stop();
 				}catch (UnknownSessionException e){
 					e.printStackTrace();
 				}
@@ -162,7 +188,7 @@ public class SessionManagerUtil {
 				if(CollectionUtil.isNotEmpty(sessions)){
 					for(Session session: sessions){
 						try {
-							session.stop();
+//							session.stop();
 						}catch (UnknownSessionException e){
 							e.printStackTrace();
 						}

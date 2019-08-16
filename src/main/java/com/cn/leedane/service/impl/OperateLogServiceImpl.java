@@ -7,10 +7,8 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.OperateLogSaveThread;
-import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +48,6 @@ public class OperateLogServiceImpl implements OperateLogService<OperateLogBean>{
 
 		if(null == user)
 			status = ConstantsUtil.STATUS_SELF; //未登录的用户状态统一改成私有的
-
 		//异步添加用户solr索引
 		new ThreadUtil().singleTask(new OperateLogSaveThread(user, request, createTime, subject, method, status, operateType));
 		return true;
@@ -93,5 +90,11 @@ public class OperateLogServiceImpl implements OperateLogService<OperateLogBean>{
 		message.put("message", rs);
 		message.put("isSuccess", true);
 		return message.getMap();		
+	}
+
+	@Override
+	public int getAllReadNumber() {
+		logger.info("OperateLogServiceImpl-->getAllReadNumber()");
+		return SqlUtil.getTotalByList(operateLogMapper.getAllReadNumber(EnumUtil.LogOperateType.网页端.value));
 	}
 }

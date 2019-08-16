@@ -97,14 +97,14 @@ public class PrivateChatServiceImpl implements PrivateChatService<PrivateChatBea
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给用户Id为：", toUserId, "发送私信，内容是：" , content, StringUtil.getSuccessOrNoStr(result)).toString(), "send()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给用户Id为：", toUserId, "发送私信，内容是：" , content, StringUtil.getSuccessOrNoStr(result)).toString(), "send()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 					
 		return message.getMap();
 	}
 	
 	/**
 	 * 将chatbean转化成map集合存储
-	 * @param chatBean
+	 * @param privateChatBean
 	 * @return
 	 */
 	public static Map<String, Object> privateChatBeanToMap(PrivateChatBean privateChatBean){

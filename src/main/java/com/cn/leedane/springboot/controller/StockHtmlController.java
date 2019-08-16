@@ -3,6 +3,7 @@ package com.cn.leedane.springboot.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,7 +49,7 @@ public class StockHtmlController extends BaseController{
 	public String index2(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model,request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入股票模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入股票模块首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("stock/index", true, model, request);
 	}
 	

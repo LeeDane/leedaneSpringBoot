@@ -152,7 +152,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleBean.getName(), "发布帖子，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleBean.getName(), "发布帖子，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 				
 		return message.getMap();
 	}
@@ -198,7 +198,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleBean.getName(), "修改帖子, 帖子Id为", postId, "，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleBean.getName(), "修改帖子, 帖子Id为", postId, "，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 				
 		return message.getMap();
 	}
@@ -337,7 +337,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleId, "帖子为", postId, "转发，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "transmit()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleId, "帖子为", postId, "转发，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "transmit()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		//保存帖子的访问记录
         saveVisitLog(postId, user, request);
 		return message.getMap();
@@ -426,7 +426,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleId, "帖子为", postId, "转发，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleId, "帖子为", postId, "转发，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 	
@@ -600,7 +600,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleId, "帖子为", postId, "审核，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "check()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"为圈子为", circleId, "帖子为", postId, "审核，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "check()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 }

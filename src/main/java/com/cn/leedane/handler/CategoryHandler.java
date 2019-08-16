@@ -58,7 +58,7 @@ public class CategoryHandler {
 				try {
 					categoryBean =  (CategoryBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), CategoryBean.class);
 					if(categoryBean != null){
-						systemCache.addCache(key, categoryBean);
+						systemCache.addCache(key, categoryBean, true);
 					}else{
 						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
 						redisUtil.delete(key);
@@ -66,7 +66,7 @@ public class CategoryHandler {
 						if(categoryBean != null){
 							try {
 								redisUtil.addSerialize(key, SerializeUtil.serializeObject(categoryBean));
-								systemCache.addCache(key, categoryBean);
+								systemCache.addCache(key, categoryBean, true);
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
@@ -82,7 +82,7 @@ public class CategoryHandler {
 				if(categoryBean != null){
 					try {
 						redisUtil.addSerialize(key, SerializeUtil.serializeObject(categoryBean));
-						systemCache.addCache(key, categoryBean);
+						systemCache.addCache(key, categoryBean, true);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

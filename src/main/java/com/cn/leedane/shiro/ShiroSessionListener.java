@@ -15,13 +15,13 @@ public class ShiroSessionListener implements SessionListener {
 
     @Override
     public void onStop(Session session) {
-        SessionManagerUtil.getInstance().removeSession(session);
         System.out.println("会话停止。。。。。");
+//        SessionManagerUtil.getInstance().removeSession(session);
     }
 
     @Override
     public void onExpiration(Session session) {
-        SessionManagerUtil.getInstance().removeSession(session);
         System.out.println("会话onExpiration。。。。。");
+        SessionManagerUtil.getInstance().removeSession(session, false);
     }
 }

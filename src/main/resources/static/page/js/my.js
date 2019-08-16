@@ -1,7 +1,10 @@
-layui.use(['layer', 'laypage', 'util'], function(){
+var myLaydate;
+var mark = {};
+layui.use(['layer', 'laypage', 'util', 'laydate'], function(){
 	layer = layui.layer;
 	laypage = layui.laypage;
 	util = layui.util;
+	laydate = layui.laydate;
 	/*initPage(".pagination", "getMoods");*/
 	$cOTItemContainer = $("#comment-or-transmit-item");
 	$moodMardownContent = $("#push-mood-text");
@@ -84,7 +87,36 @@ layui.use(['layer', 'laypage', 'util'], function(){
   getVisitors(); //获取访客列表
   getAttentions();//获取关注列表
   getFans();//获取粉丝列表
+  getSiginMark();//获取签到的标注
+
+  myLaydate = laydate.render({
+    elem: '#date-container'
+    ,position: 'static'
+    ,lang: 'cn'
+    ,showBottom: false
+    ,theme: '#337ab7'
+    ,calendar: true
+    ,mark: mark
+    ,done: function(value, date, endDate){
+       /*  mark = {
+        		'2019-08-14': '例会' + flagIndex
+        	   };
+        myLaydate.config.mark = mark;
+        flagIndex = flagIndex + 1;*/
+//        setTimeout(function(){
+//            $(".layui-laydate-content .layui-this").click();
+//        },1000);
+
+        console.log(value); //得到日期生成的值，如：2017-08-18
+        console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+        console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+//        getLifes(value, value, 0, null);
+      }
+  }, function(string){
+      alert(ddd);
+  });
 });
+var flagIndex = 1;
 var userinfo;
 var moods = [];
 var isLoad = false;
@@ -96,6 +128,31 @@ var $moodMardownContent;
 var $commentOrTransmitItemContainer;
 var $operateItemsContrainer ;
 
+/**
+**  获取签到的标注
+*/
+function getSiginMark(){
+    $.ajax({
+		url : "/si/signIn/mark?uid="+ uid+ "&t=" + Math.random(),
+		dataType: 'json',
+		beforeSend:function(){
+		},
+		success : function(data) {
+			if(data.isSuccess){
+				for(var i = 0; i < data.message.length; i++){
+					mark[data.message[i].create_date] = '签';
+				}
+				myLaydate.config.mark = mark;
+				 $(".layui-laydate-content .layui-this").click();
+			}else{
+				ajaxError(data);
+			}
+		},
+		error : function(data) {
+			ajaxError(data);
+		}
+	});
+}
 /**
  * 获取留言板列表
  */
@@ -282,7 +339,7 @@ function loadUserInfo(){
 								  
 								'</button></div>';
 				}else{
-					
+					descHtml += '<div style="margin-top: 8px;">';
 					if(!data.fan){
 						descHtml +=	'<button type="button" class="btn btn-primary btn-xs" onclick="attentionTa();">'+
 									  '关注TA'+
@@ -292,7 +349,7 @@ function loadUserInfo(){
 									  '取消关注TA'+
 									'</button>';
 					}
-					
+					descHtml += '</div>';
 				}
 				
 				$("#user-desc").html(descHtml);
@@ -964,10 +1021,10 @@ function signin(){
 					layer.msg("签到成功");
 					$("#sign_button").attr("disabled", "disabled");
 					$("#sign_button").html('<span class="glyphicon glyphicon-time" ></span> 已签到');
+				    window.location.reload();
 				}else{
 					layer.msg(data.message);
 				}
-				
 		},
 		error : function() {
 			layer.close(loadi);

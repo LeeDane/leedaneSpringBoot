@@ -25,7 +25,7 @@ public class OperateLogBean extends RecordTimeBean {
 	private long operateTime;
 	
 	/**
-	 * 操作方式，0：网页端，1：手机端
+	 * 操作方式，0：接口端，1：网页端
 	 */
 	private int operateType;
 	

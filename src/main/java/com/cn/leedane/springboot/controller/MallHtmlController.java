@@ -108,7 +108,7 @@ public class MallHtmlController extends BaseController{
 			homeItemShowBeans.add(homeItemHandler.getCategory(category.getId()));
 		model.addAttribute("homeItemShowBeans", homeItemShowBeans);*/
 
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商场模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商场模块首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("mall/index", model, request);
 	}
 	
@@ -136,7 +136,7 @@ public class MallHtmlController extends BaseController{
 		new ThreadUtil().singleTask(new SolrAddThread<S_ProductBean>(ProductSolrHandler.getInstance(), productMapper.findById(S_ProductBean.class, 12)));
 		new ThreadUtil().singleTask(new SolrAddThread<S_ProductBean>(ProductSolrHandler.getInstance(), productMapper.findById(S_ProductBean.class, 13)));*/
 
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看商品详情，商品ID为："+ productId, "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看商品详情，商品ID为："+ productId, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 
 		S_ProductBean productBean = productHandler.getNormalProductBean(productId);
 		if(productBean == null)
@@ -178,7 +178,7 @@ public class MallHtmlController extends BaseController{
 			@PathVariable(value="shopId") int shopId, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看商店ID"+ shopId, "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看商店ID"+ shopId, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		S_ShopBean shopBean = shopHandler.getNormalShopBean(shopId);
 		if(shopBean == null)
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商店不存在或已被删除.value));
@@ -203,7 +203,7 @@ public class MallHtmlController extends BaseController{
 	public String wish(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入心愿单首页", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入心愿单首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("mall/wish", true, model, request);
 	}
 	
@@ -219,7 +219,7 @@ public class MallHtmlController extends BaseController{
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
 
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入订单模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入订单模块首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("mall/order", true, model, request);
 	}
 	
@@ -234,7 +234,7 @@ public class MallHtmlController extends BaseController{
 	public String category(Model model, @PathVariable(value="categoryId") int categoryId, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看商品分类ID"+ categoryId, "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看商品分类ID"+ categoryId, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		//处理分类
         List<String[]> categorys = new ArrayList<String[]>();
         categorys.add(new String[]{"-1", "LeeDane", "/"});
@@ -258,7 +258,7 @@ public class MallHtmlController extends BaseController{
 	public String search(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入物品搜索页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入物品搜索页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("mall/search", model, request);
 	}
 	
@@ -272,7 +272,7 @@ public class MallHtmlController extends BaseController{
 	public String manager(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商店管理模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商店管理模块首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("mall/shop-manager", true, model, request);
 	}
 	
@@ -288,7 +288,7 @@ public class MallHtmlController extends BaseController{
 			@PathVariable(value="productId") int productId, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商品管理模块首页，商品ID"+ productId, "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商品管理模块首页，商品ID"+ productId, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		S_ProductBean productBean = productHandler.getNormalProductBean(productId);
 		if(productBean == null)
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商品不存在或已被删除.value));
@@ -306,7 +306,7 @@ public class MallHtmlController extends BaseController{
 		UserBean user = (UserBean)modelMap.get("user");
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, getHttpRequestInfo(request), null, StringUtil.getStringBufferStr(user.getAccount(),"管理商品，该商品ID是", productId, StringUtil.getSuccessOrNoStr(true)).toString(), "productManager()", 1, 0);
+		operateLogService.saveOperateLog(user, getHttpRequestInfo(request), null, StringUtil.getStringBufferStr(user.getAccount(),"管理商品，该商品ID是", productId, StringUtil.getSuccessOrNoStr(true)).toString(), "productManager()", 1, EnumUtil.LogOperateType.网页端.value);
 		//保存访问记录
 		visitorService.saveVisitor(user, "web网页端", DataTableType.商店商品.value, productId, ConstantsUtil.STATUS_NORMAL);
 		return responseStr;
@@ -316,7 +316,7 @@ public class MallHtmlController extends BaseController{
 	public String productSelect(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商品选择页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商品选择页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		String url = loginRoleCheck("mall/product-select", true, model, request);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
@@ -332,7 +332,7 @@ public class MallHtmlController extends BaseController{
 	public String shopSelect(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商店选择页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商店选择页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		String url = loginRoleCheck("mall/shop-select", true, model, request);
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
@@ -349,7 +349,7 @@ public class MallHtmlController extends BaseController{
 	public String homeManager(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商场管理模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商场管理模块首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		String url = loginRoleCheck("mall/home-manager", true, model, request);
 		//获取分类列表
 		List<S_HomeItemBean> homeItemBeans = homeItemHandler.showCategoryList();

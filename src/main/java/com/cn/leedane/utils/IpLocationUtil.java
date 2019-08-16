@@ -31,7 +31,7 @@ public class IpLocationUtil {
     public String getLocaltion(String ip){
         String location  = null;
         //对127.0.0.1不做处理
-        if(StringUtil.isNotNull(ip) && !"127.0.0.1".equalsIgnoreCase(ip)){
+        if(StringUtil.isNotNull(ip) && !"127.0.0.1".equalsIgnoreCase(ip) && !ip.startsWith("192.168")){
             SystemCache systemCache = (SystemCache) SpringUtil.getBean("systemCache");
             Object obj = systemCache.getCache(ip);
             if(obj == null || obj == ""){

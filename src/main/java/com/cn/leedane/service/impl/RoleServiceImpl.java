@@ -273,7 +273,7 @@ private Logger logger = Logger.getLogger(getClass());
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给角色ID为"+ rlid +",分配用户ids"+users).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, 0);		
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给角色ID为"+ rlid +",分配用户ids"+users).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("message", "操作成功");
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);

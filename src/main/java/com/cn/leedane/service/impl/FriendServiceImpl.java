@@ -91,7 +91,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		message.put("isSuccess", result);
 		String subject = user.getAccount()+"解除关系ID为"+fid+"的好友关系"+StringUtil.getSuccessOrNoStr(result);
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, subject, "deleteFriends()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, subject, "deleteFriends()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		
 		return message.getMap();
 	}
@@ -157,7 +157,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		message.put("message", "等待对方确认..."); 
 		message.put("isSuccess", true);
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"请求添加账号："+toUser.getAccount()+"为好友", "addFriend()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"请求添加账号："+toUser.getAccount()+"为好友", "addFriend()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -219,7 +219,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		notificationHandler.sendNotificationById(false, user, friendBean.getFromUserId(), content, NotificationType.通知, DataTableType.好友.value, friendBean.getId(), null);
 	
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"同意好友关系"+fid, "addAgree()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"同意好友关系"+fid, "addAgree()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 

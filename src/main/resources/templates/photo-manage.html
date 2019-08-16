@@ -82,6 +82,7 @@
 	</div><!-- /.modal -->
 </div>
 </body>
+<div th:include="common-bottom :: bottom">bottom?</div>
 <div th:include="common-js :: commJs">what?</div>
 <script th:if="${not isDebug}" th:src="@{/page/js/select-material.min.js}"></script>
 <script th:if="${isDebug}" th:src="@{/page/js/select-material.js}"></script>

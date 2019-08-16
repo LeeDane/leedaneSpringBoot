@@ -54,7 +54,7 @@ public class EventHandler {
 				try {
 					datas =  (EventAllBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), EventAllBean.class);
 					if(datas != null){
-						systemCache.addCache(key, datas);
+						systemCache.addCache(key, datas, true);
 					}else{
 						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
 						redisUtil.delete(key);
@@ -64,7 +64,7 @@ public class EventHandler {
 								datas = new EventAllBean();
 								datas.setList(data);
 								redisUtil.addSerialize(key, SerializeUtil.serializeObject(datas));
-								systemCache.addCache(key, datas);
+								systemCache.addCache(key, datas, true);
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
@@ -82,7 +82,7 @@ public class EventHandler {
 						datas = new EventAllBean();
 						datas.setList(data);
 						redisUtil.addSerialize(key, SerializeUtil.serializeObject(datas));
-						systemCache.addCache(key, datas);
+						systemCache.addCache(key, datas, true);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

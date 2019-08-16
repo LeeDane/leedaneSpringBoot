@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import com.cn.leedane.utils.EnumUtil;
 import org.junit.Test;
 
 import com.cn.leedane.cache.SystemCache;
@@ -52,7 +53,7 @@ public class OperateLogTest extends BaseTest {
         operateLogBean.setCreateTime(new Date());
         operateLogBean.setBrowser("猎豹浏览器");
         operateLogBean.setMethod("单元测试");
-        operateLogBean.setOperateType(0);
+        operateLogBean.setOperateType(EnumUtil.LogOperateType.内部接口.value);
         operateLogBean.setSubject("测试新增操作日志");
         operateLogMapper.save(operateLogBean);
 		

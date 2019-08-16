@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html th:fragment="bottom" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<style type="text/css">
+	    #common-bottom{
+	        padding: 8px;
+	        text-align: center;
+	        font-size: 16px;
+            font-family: '微软雅黑';
+            background: #f6f7fb;
+	    }
+        #common-bottom a{
+            margin-right: 10px;
+        }
+	</style>
+</head>
+
+<div id="common-bottom">
+    <p>欢迎您使用，目前在线人数<span th:text="${onlineCount}"></span>人，网页访问总量：<span th:text="${allRead}"></span>次， 本系统已经稳定运行<span th:text="${onlineTime}"></span>小时</p>
+    <p>粤ICP备17069107号 最终版权归开发者个人所有 系统版本：v2.1.0</p>
+    <p>友情链接： <a href="https://www.baidu.com" target="_blank">百度</a>
+        <a href="https://www.oschina.net/" target="_blank">开源中国</a>
+        <a href="https://www.github.com/" target="_blank">github</a>
+        <a href="https://www.layui.com/" target="_blank">layui</a>
+        <a href="https://www.bootcss.com/" target="_blank">boostrap</a>
+        <a href="https://spring.io/" target="_blank">spring</a>
+    </p>
+</div>
+</html>

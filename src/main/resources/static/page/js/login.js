@@ -1,4 +1,11 @@
   $(function () {
+
+
+        var s4=new SM4Util();
+        console.log(s4.encryptData_ECB("ssda撒打飞机了ii&$$^##)*&6223':{}【】;.,[]"));
+        s4.iv="UISwD9fW6cFh9SNS";
+        console.log(s4.encryptData_CBC("ssda撒打飞机了ii&$$^##)*&6223':{}【】;.,[]"));
+
       $("#show-login-qr-code-btn").on("click", function(){
     	  //验证浏览器是否支持WebSocket协议
     	  if(!window.WebSocket){
@@ -23,7 +30,8 @@
       //init();
       $("#remember").click(function () {
           if ($(this).prop("checked") == true) {
-            layer.msg("请勿在不安全的地方勾选此项");
+//            layer.msg("请勿在不安全的地方勾选此项");
+            layer.msg("考虑到系统安全性，不开放此项目");
           }
        });
   });
@@ -93,6 +101,10 @@
 									  '<strong>警告!</strong>'+ data.message +
 									'</div>';
 					$("#errorMessage").html(errorHtml);
+
+					if(data.responseCode == 4039){
+					    refresh();
+					}
 				}
 			},
 			error : function(data) {

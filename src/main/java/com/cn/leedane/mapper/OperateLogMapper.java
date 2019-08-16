@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cn.leedane.model.OperateLogBean;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 操作日志的mapper接口类
@@ -24,4 +25,11 @@ public interface OperateLogMapper extends BaseMapper<OperateLogBean>{
 	 * @return
 	 */
 	public List<Map<String, Object>> getlimits(String tableName, String where, int pageSize, int pageNo);
+
+	/**
+	 * 获取系统总的访问数量
+	 * @param type
+	 * @return
+	 */
+	public List<Map<String, Object>> getAllReadNumber(@Param("type")int type);
 }

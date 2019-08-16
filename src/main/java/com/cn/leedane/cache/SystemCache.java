@@ -25,12 +25,12 @@ public class SystemCache implements com.cn.leedane.cache.ICache{
 		return systemEhCache;
 	}
 	/**
-	 * 将value添加到缓存中(不强制覆盖已经存在的key)
+	 * 将value添加到缓存中(默认强制覆盖已经存在的key)
 	 * @param key  键名称
 	 * @param value 值
 	 */
 	public void addCache(String key, Object value){		
-		addCache(key, value, false);
+		addCache(key, value, true);
 	}
 	
 	/**

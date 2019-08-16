@@ -163,7 +163,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		}
 		// 保存发表心情日志信息
 		String subject = user.getAccount() + "发表了心情" + StringUtil.getSuccessOrNoStr(result);
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "saveMood()", StringUtil.changeBooleanToInt(result), 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "saveMood()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -247,7 +247,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		boolean result = moodMapper.deleteById(MoodBean.class, mid) > 0;
 		// 删除心情日志信息
 		String subject = user.getAccount() + "删除了心情，心情id为:" + mid+StringUtil.getSuccessOrNoStr(result);
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "deleteMood()", StringUtil.changeBooleanToInt(result) , 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "deleteMood()", StringUtil.changeBooleanToInt(result) , EnumUtil.LogOperateType.内部接口.value);
 	
 		if(result){
 
@@ -611,7 +611,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		
 		// 保存发表心情日志信息
 		String subject = user.getAccount() + "发表了心情" + StringUtil.getSuccessOrNoStr(result);
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "sendWord", ConstantsUtil.STATUS_NORMAL, 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "sendWord", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		
 		return message.getMap();
 	}
@@ -749,7 +749,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		
 		// 保存发表心情日志信息
 		String subject = user.getAccount() + "发表了心情" + StringUtil.getSuccessOrNoStr(result);
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "sendWordAndLink", ConstantsUtil.STATUS_NORMAL, 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "sendWordAndLink", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		
 		return message.getMap();
 	}

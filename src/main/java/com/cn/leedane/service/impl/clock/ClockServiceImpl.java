@@ -144,7 +144,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "创建任务名称为：", clockBean.getTitle(), "，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "创建任务名称为：", clockBean.getTitle(), "，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -215,7 +215,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 			}
 		}else{
 			//保存操作日志
-			operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改名称为：", clockBean.getTitle(),"的任务的基本信息：", jo.toString(), "，结果是：", StringUtil.getSuccessOrNoStr(true)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, 0);	
+			operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改名称为：", clockBean.getTitle(),"的任务的基本信息：", jo.toString(), "，结果是：", StringUtil.getSuccessOrNoStr(true)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 			return clockMemberService.update(clockId, user.getId(), jo, user, request);
 		}
 		
@@ -292,7 +292,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
 		}
 		
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除任务ID为：", clockId ,"的宝宝的基本信息：", "，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除任务ID为：", clockId ,"的宝宝的基本信息：", "，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 	@Override

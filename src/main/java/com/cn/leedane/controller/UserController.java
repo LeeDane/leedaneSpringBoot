@@ -140,7 +140,7 @@ public class UserController extends BaseController{
 			//这里只负责获取用户，不做校验，校验交给shiro的realm里面去做
 	        UserBean user = userHandler.getUserBean(username, password);
 	        authenticationToken.setUser(user);
-	        authenticationToken.setRememberMe(remember);
+	        //authenticationToken.setRememberMe(remember);
 			
 	        //获取当前的Subject  
 	        Subject currentUser = SecurityUtils.getSubject();  
@@ -225,14 +225,21 @@ public class UserController extends BaseController{
 				isSuccess = true;
 				message.put("isSuccess", isSuccess);
 				//对session进行添加管理
-				Session session = SecurityUtils.getSubject().getSession();
+				/*Session session = SecurityUtils.getSubject().getSession();
 				HttpRequestInfoBean requestInfoBean = getHttpRequestInfo(request);
 				if(requestInfoBean != null){
 					session.setAttribute("ip", requestInfoBean.getIp());
 					session.setAttribute("location", requestInfoBean.getLocation());
 				}
 				session.setAttribute("time", DateUtil.DateToString(new Date()));
-				SessionManagerUtil.getInstance().addSession(session, user.getId());
+				SessionManagerUtil.getInstance().addSession(session, user.getId());*/
+				Session session = SecurityUtils.getSubject().getSession();
+				/*session.setAttribute("remember", remember);
+				if(remember)
+					session.setTimeout(-1001L);
+				else*/
+					session.setTimeout(1000 * 60 * 60); //设置一个小时过期
+				SessionManagerUtil.getInstance().addSession(SecurityUtils.getSubject(), session, user.getId());
 	        }else{  
 	        	authenticationToken.clear(); 
 				number = userHandler.addLoginErrorNumber(username);	
@@ -246,7 +253,7 @@ public class UserController extends BaseController{
 			
 			// 保存用户登录日志信息
 			String subject = user != null ? user.getAccount()+"登录系统": "账号" + username + "登录系统失败";
-			this.operateLogService.saveOperateLog(user, getHttpRequestInfo(request) , new Date(), subject, "账号登录", (isSuccess ? 1: 0), 0);
+			this.operateLogService.saveOperateLog(user, getHttpRequestInfo(request) , new Date(), subject, "账号登录", (isSuccess ? 1: 0), EnumUtil.LogOperateType.内部接口.value);
 		}
 		return message.getMap();
 	}
@@ -336,7 +343,7 @@ public class UserController extends BaseController{
 		user.setSecretCode(UUID.randomUUID().toString());
 		message.putAll(userService.saveUser(user));
 		//保存操作日志
-		this.operateLogService.saveOperateLog(OptionUtil.adminUser, getHttpRequestInfo(request), null, user.getAccount()+"注册成功", "register", 1, 0);
+		this.operateLogService.saveOperateLog(OptionUtil.adminUser, getHttpRequestInfo(request), null, user.getAccount()+"注册成功", "register", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 	
@@ -380,7 +387,7 @@ public class UserController extends BaseController{
 		JSONObject json = getJsonFromMessage(message);
 		//根据账号和密码找到该用户(密码需要再进行MD5加密)
 		UserBean user = userService.loginUser(JsonUtil.getStringValue(json, "account"), JsonUtil.getStringValue(json, "password"));
-		this.operateLogService.saveOperateLog(user, getHttpRequestInfo(request), null, user.getAccount()+"请求发送邮箱", "againSendRegisterEmail", 1, 0);
+		this.operateLogService.saveOperateLog(user, getHttpRequestInfo(request), null, user.getAccount()+"请求发送邮箱", "againSendRegisterEmail", 1, EnumUtil.LogOperateType.内部接口.value);
 		if(user != null && user.getStatus() == 2){
 			//生成注册码
 			String newRegisterCode = StringUtil.produceRegisterCode(DateUtil.DateToString(new Date(),"YYYYMMDDHHmmss"),
@@ -441,7 +448,7 @@ public class UserController extends BaseController{
 	 */
 	@RequestMapping(value="/logout", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> logout(Model model, HttpServletRequest request){
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), new Date(), "安全退出系统", "logout", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), new Date(), "安全退出系统", "logout", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		ResponseMap message = new ResponseMap();
 		/*HttpSession session = request.getSession();
 		//判断是否有在线的用户，那就先取消该用户的session
@@ -471,18 +478,23 @@ public class UserController extends BaseController{
 
 		try{
 			//移除出缓存的在线用户列表
-			//对session进行移除
-			SessionManagerUtil.getInstance().removeSession(SecurityUtils.getSubject().getSession());
 			//使用权限管理工具进行用户的退出，跳出登录，给出提示信息
-			SecurityUtils.getSubject().logout();
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注销成功.value));
-			message.put("responseCode", EnumUtil.ResponseCode.注销成功.value);
-			message.put("isSuccess", true);
+			//对session进行移除
+			/*Subject requestSubject = new Subject.Builder().session(SecurityUtils.getSubject().getSession()).buildSubject();
+			SecurityUtils.getSecurityManager().logout(requestSubject);*/
+//			SecurityUtils.getSecurityManager().logout();
+//			SecurityUtils.getSubject().logout();
+			SessionManagerUtil.getInstance().removeSession(SecurityUtils.getSubject().getSession(), true);
+//			SecurityUtils.getSubject().logout();
+//			SecurityUtils.getSecurityManager().logout();
 		}catch(UnknownSessionException e){
 			logger.info("UnknownSessionException ------");
-		}catch(NullPointerException e){
-			logger.info("NullPointerException ------");
+		}catch(Exception e){
+			logger.info("Exception ------");
 		}
+		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注销成功.value));
+		message.put("responseCode", EnumUtil.ResponseCode.注销成功.value);
+		message.put("isSuccess", true);
 		return message.getMap();
 	}
 	
@@ -551,7 +563,7 @@ public class UserController extends BaseController{
 		checkRoleOrPermission(model, request);
 		UserBean user = getUserFromMessage(message);
 		message.put("isSuccess", userService.uploadHeadBase64StrById(getJsonFromMessage(message), user, getHttpRequestInfo(request)));
-		operateLogService.saveOperateLog(user, getHttpRequestInfo(request), null, user.getAccount()+"上传头像" + StringUtil.getSuccessOrNoStr(true), "uploadHeadBase64Str", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, getHttpRequestInfo(request), null, user.getAccount()+"上传头像" + StringUtil.getSuccessOrNoStr(true), "uploadHeadBase64Str", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 	
@@ -593,7 +605,7 @@ public class UserController extends BaseController{
 			ls = userService.find4MoreUser(sort + "limit ?,?", s, l);
 			buildGetAllUserResp(ls,total);
 		}
-		this.operateLogService.saveOperateLog(user, getHttpRequestInfo(request), null, user.getAccount()+"查看所有用户", "getAllUsers", 1, 0);
+		this.operateLogService.saveOperateLog(user, getHttpRequestInfo(request), null, user.getAccount()+"查看所有用户", "getAllUsers", 1, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 	

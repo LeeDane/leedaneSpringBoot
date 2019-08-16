@@ -63,7 +63,7 @@ public class UserHandler {
 				try {
 					settingBean =  (UserSettingBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), UserSettingBean.class);
 					if(settingBean != null){
-						systemCache.addCache(key, settingBean);
+						systemCache.addCache(key, settingBean, true);
 					}else{
 						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
 						redisUtil.delete(key);
@@ -75,7 +75,7 @@ public class UserHandler {
 						if(settingBean != null){
 							try {
 								redisUtil.addSerialize(key, SerializeUtil.serializeObject(settingBean));
-								systemCache.addCache(key, settingBean);
+								systemCache.addCache(key, settingBean, true);
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
@@ -94,7 +94,7 @@ public class UserHandler {
 				settingBean = settingBeans.get(0);
 				try {
 					redisUtil.addSerialize(key, SerializeUtil.serializeObject(settingBean));
-					systemCache.addCache(key, settingBean);
+					systemCache.addCache(key, settingBean, true);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -181,7 +181,7 @@ public class UserHandler {
 			if(redisUtil.hasKey(userPicKey)){
 				userPicPath = redisUtil.getString(userPicKey);
 				if(StringUtil.isNotNull(userPicPath)){
-					systemCache.addCache(userPicKey, userPicPath);
+					systemCache.addCache(userPicKey, userPicPath, true);
 				}else {
 					//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
 					redisUtil.delete(userPicKey);
@@ -191,7 +191,7 @@ public class UserHandler {
 						userPicPath = StringUtil.changeNotNull(list.get(0).get("user_pic_path"));
 						if(StringUtil.isNotNull(userPicPath)){
 							redisUtil.addString(userPicKey, userPicPath);
-							systemCache.addCache(userPicKey, userPicPath);
+							systemCache.addCache(userPicKey, userPicPath, true);
 						}
 					}
 				}
@@ -202,7 +202,7 @@ public class UserHandler {
 					userPicPath = StringUtil.changeNotNull(list.get(0).get("user_pic_path"));
 					if(StringUtil.isNotNull(userPicPath))
 						redisUtil.addString(userPicKey, userPicPath);
-						systemCache.addCache(userPicKey, userPicPath);
+						systemCache.addCache(userPicKey, userPicPath, true);
 				}
 			}
 		}else{
@@ -234,7 +234,7 @@ public class UserHandler {
 			userPicPath = StringUtil.changeNotNull(list.get(0).get("user_pic_path"));
 			if(StringUtil.isNotNull(userPicPath)){
 				redisUtil.addString(userPicKey, userPicPath);
-				systemCache.addCache(userPicKey, userPicPath);
+				systemCache.addCache(userPicKey, userPicPath, true);
 			}
 		}
 	}
@@ -267,21 +267,21 @@ public class UserHandler {
 						//从redi缓存中读取
 						user = (UserBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(userInfoKey.getBytes()), UserBean.class);
 						if(user != null){
-							systemCache.addCache(userInfoKey, user);
+							systemCache.addCache(userInfoKey, user, true);
 						}else{
 							//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
 							redisUtil.delete(userInfoKey);
 							user = userMapper.findById(UserBean.class, userId);
 							if(user != null){
 								redisUtil.addSerialize(userInfoKey, SerializationUtils.serialize(user));
-								systemCache.addCache(userInfoKey, user);
+								systemCache.addCache(userInfoKey, user, true);
 							}
 						}
 				}else{
 					user = userMapper.findById(UserBean.class, userId);
 					if(user != null){
 						redisUtil.addSerialize(userInfoKey, SerializationUtils.serialize(user));
-						systemCache.addCache(userInfoKey, user);
+						systemCache.addCache(userInfoKey, user, true);
 					}
 				}
 			}else{

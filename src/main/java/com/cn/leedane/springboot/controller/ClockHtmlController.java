@@ -6,10 +6,7 @@ import com.cn.leedane.handler.baby.BabyHandler;
 import com.cn.leedane.model.VisitorBean;
 import com.cn.leedane.model.baby.BabyBean;
 import com.cn.leedane.service.VisitorService;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.baby.BabyUtil;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +51,7 @@ public class ClockHtmlController extends BaseController{
 	public String index2(@PathVariable(value="babyId") int babyId, Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model,request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入任务提醒页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return loginRoleCheck("baby/index", true, model, request);
 	}
 	

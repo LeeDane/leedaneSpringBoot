@@ -82,7 +82,7 @@ public class MaterialServiceImpl extends AdminRoleCheckService implements Materi
 		
 		//保存操作日志
 		String subject = user.getAccount() + "操作批量加入素材";
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "save", 1 , 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "save", 1 , EnumUtil.LogOperateType.内部接口.value);
 		
 		return message.getMap();
 	}
@@ -110,7 +110,7 @@ public class MaterialServiceImpl extends AdminRoleCheckService implements Materi
 		
 		//保存操作日志
 		String subject = user.getAccount() + "删除素材ID为："+materialId+"的数据"+StringUtil.getSuccessOrNoStr(result);
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "delete()", StringUtil.changeBooleanToInt(result) , 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "delete()", StringUtil.changeBooleanToInt(result) , EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 	

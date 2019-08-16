@@ -244,3 +244,28 @@ div.col-sm-9 div {
     color: #fff!important;
     background-color: #ffc107!important;
 }
+
+#date-container{
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#date-container #layui-laydate1{
+    width: 100%;
+}
+
+#date-container #layui-laydate1 .layui-laydate-main{
+    width: 100%;
+}
+
+#date-container #layui-laydate1 .layui-laydate-main .layui-laydate-header{
+    width: 100%;
+}
+
+#date-container #layui-laydate1 .layui-laydate-main .layui-laydate-content{
+    width: 100%;
+}
+
+#date-container #layui-laydate1 .layui-laydate-main .layui-laydate-content table{
+    width: 100%;
+}

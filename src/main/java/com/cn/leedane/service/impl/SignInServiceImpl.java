@@ -112,6 +112,7 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 		
 		boolean isSave = signInMapper.save(signInBean) > 0;
 		if(isSave){
+			signInHandler.deleteSignInMarkKey(user.getId());
 			scoreBean.setTotalScore(StringUtil.getScoreBySignin(continuous, score));
 			scoreBean.setScore(StringUtil.getScoreBySignin(continuous));
 			scoreBean.setCreateTime(currentTime);
@@ -129,7 +130,7 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 		
 		// 保存操作日志信息
 		String subject = user.getAccount()+"签到" + StringUtil.getSuccessOrNoStr(isSave);
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "saveSignIn", StringUtil.changeBooleanToInt(isSave), 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "saveSignIn", StringUtil.changeBooleanToInt(isSave), EnumUtil.LogOperateType.内部接口.value);
 		return isSave;
 	}
 
@@ -181,5 +182,16 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 			return "";
 		
 		return " limit 0,"+pageSize +" ";
+	}
+
+	@Override
+	public Map<String, Object> getSignInMark(int userId, JSONObject jo,
+									  UserBean user, HttpRequestInfoBean request){
+		logger.info("SignInServiceImpl-->getSignInMark():jo=" +jo.toString());
+		ResponseMap message = new ResponseMap();
+		message.put("isSuccess", true);
+		message.put("message", signInHandler.marks(userId));
+		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		return message.getMap();
 	}
 }

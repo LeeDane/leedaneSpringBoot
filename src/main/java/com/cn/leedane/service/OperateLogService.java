@@ -41,4 +41,12 @@ public interface OperateLogService<T extends IDBean>{
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> getUserLoginLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
+	/**
+	 * 获取当前系统所有页面的访问总数
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public int getAllReadNumber();
+
+
 }

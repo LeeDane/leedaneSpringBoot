@@ -3,6 +3,7 @@ package com.cn.leedane.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -11,7 +12,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cn.leedane.handler.AllReadHandler;
 import com.cn.leedane.model.*;
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
+import com.cn.leedane.utils.*;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -32,14 +36,8 @@ import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.shiro.CustomAuthenticationToken;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.CommonUtil;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.PlatformType;
 import com.cn.leedane.utils.EnumUtil.ResponseCode;
-import com.cn.leedane.utils.HttpUtil;
-import com.cn.leedane.utils.StringUtil;
 
 public class BaseController {
 	private Logger logger = Logger.getLogger(getClass());
@@ -49,7 +47,10 @@ public class BaseController {
 	
 	@Resource
 	protected UserHandler userHandler;
-	
+
+	@Resource
+	protected AllReadHandler allReadHandler;
+
 	@Resource
 	private LinkManageHandler linkManageHandler;
 	
@@ -779,6 +780,7 @@ public class BaseController {
 	 * @return
 	 */
 	protected String loginRoleCheck(String urlParse, boolean mustLogin, Model model, HttpServletRequest request){
+
 		//设置统一的请求模式
 		model.addAttribute("isDebug", IS_DEBUG);
 		//获取当前的Subject  
@@ -813,7 +815,11 @@ public class BaseController {
 			model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
 			return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();
 		}
-		
+
+		model.addAttribute("onlineCount", SessionManagerUtil.getInstance().getAllActivesNumber());
+		model.addAttribute("allRead", allReadHandler.getAllRead());
+		model.addAttribute("onlineTime", DateUtil.leftHours(DateUtil.stringToDate(LeedanePropertiesConfig.newInstance().getString("constant.system.online.time")), new Date()));
+
 		return StringUtil.isNotNull(urlParse) ? urlParse : "404";
 	}
 

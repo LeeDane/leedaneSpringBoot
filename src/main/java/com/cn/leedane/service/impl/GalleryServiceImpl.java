@@ -130,7 +130,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		
 		//保存操作日志
 		String subject = user.getAccount() + "操作加入图库，链接是：" + path;
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "manageLink", 1 , 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "manageLink", 1 , EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -163,7 +163,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		
 		//保存操作日志
 		String subject = user.getAccount() + "删除图库ID为："+galleryId+"的数据"+StringUtil.getSuccessOrNoStr(result);
-		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "delete()", StringUtil.changeBooleanToInt(result) , 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "delete()", StringUtil.changeBooleanToInt(result) , EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 	

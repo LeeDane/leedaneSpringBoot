@@ -83,7 +83,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		}
-		this.operateLogService.saveOperateLog(user, request, new Date(), "添加大事件", "add()", StringUtil.changeBooleanToInt(result), 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), "添加大事件", "add()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -126,7 +126,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		}
-		this.operateLogService.saveOperateLog(user, request, new Date(), "修改大事件， id="+ eid, "update()", StringUtil.changeBooleanToInt(result), 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), "修改大事件， id="+ eid, "update()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -152,7 +152,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
 		}
-		this.operateLogService.saveOperateLog(user, request, new Date(), "删除大事件， id="+ eid, "delete()", StringUtil.changeBooleanToInt(result), 0);
+		this.operateLogService.saveOperateLog(user, request, new Date(), "删除大事件， id="+ eid, "delete()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 

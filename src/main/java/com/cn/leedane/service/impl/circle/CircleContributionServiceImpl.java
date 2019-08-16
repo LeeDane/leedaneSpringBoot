@@ -101,7 +101,7 @@ public class CircleContributionServiceImpl implements CircleContributionService<
 		contributionBean.setCircleId(circleId);
 		boolean result = circleContributionMapper.save(contributionBean) > 0;
 		//保存操作日志
-		operateLogService.saveOperateLog(user, null, null, StringUtil.getStringBufferStr(user.getAccount(),"扣除贡献值").toString(), "reduceScore()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, null, null, StringUtil.getStringBufferStr(user.getAccount(),"扣除贡献值").toString(), "reduceScore()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		if(result){
 			//通知用户
 			notificationHandler.sendNotificationById(true, user, user.getId(), "您的贡献值减少"+ reduceScore +"分，原因："+ (StringUtil.isNotNull(desc) ? desc : "暂无"), NotificationType.通知, DataTableType.不存在的表.value, -1, null);
@@ -133,7 +133,7 @@ public class CircleContributionServiceImpl implements CircleContributionService<
 		contributionBean.setCircleId(circleId);
 		boolean result = circleContributionMapper.save(contributionBean) > 0;
 		//保存操作日志
-		operateLogService.saveOperateLog(user, null, null, StringUtil.getStringBufferStr(user.getAccount(),"增加贡献值").toString(), "addScore()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, null, null, StringUtil.getStringBufferStr(user.getAccount(),"增加贡献值").toString(), "addScore()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		if(result){
 			//通知用户
 			notificationHandler.sendNotificationById(true, user, user.getId(), "您的贡献值增加"+ addScore+"分，原因："+ (StringUtil.isNotNull(desc) ? desc : "暂无"), NotificationType.通知, DataTableType.不存在的表.value, -1, null);

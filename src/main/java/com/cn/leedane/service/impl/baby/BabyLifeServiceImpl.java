@@ -83,7 +83,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"您为宝宝《"+ babyBean.getNickname() +"》添加一条心的生活方式记录！，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"您为宝宝《"+ babyBean.getNickname() +"》添加一条心的生活方式记录！，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -119,7 +119,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改宝宝《", babyBean.getNickname() ,"》的生活方式, 数据是：", jo.toString(), "，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改宝宝《", babyBean.getNickname() ,"》的生活方式, 数据是：", jo.toString(), "，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 
@@ -151,7 +151,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
 		}
 		
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除宝宝《", baby.getNickname(), "》生活方式，ID为：", lifeId, "，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, 0);	
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除宝宝《", baby.getNickname(), "》生活方式，ID为：", lifeId, "，结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 

@@ -603,6 +603,46 @@ public class DateUtil {
 	}
 
 	/**
+	 * 计算开始时间离结束时间还有多少分钟
+	 * @param createTime
+	 * @param endTime
+	 * @return
+	 */
+	public static int leftMintes(Date createTime, Date endTime){
+		try{
+			long diff = endTime.getTime() - createTime.getTime();
+			if(diff < 0)
+				return 1;
+			int i = StringUtil.changeObjectToInt(diff / (1000 * 60) );
+			return  i == 0? 1 : i;
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return 1;
+	}
+
+	/**
+	 * 计算开始时间离结束时间还有多少小时
+	 * @param createTime
+	 * @param endTime
+	 * @return
+	 */
+	public static int leftHours(Date createTime, Date endTime){
+		try{
+			long diff = endTime.getTime() - createTime.getTime();
+			if(diff < 0)
+				return 1;
+			int i = StringUtil.changeObjectToInt(diff / (1000 * 60 * 60) );
+			return  i == 0? 1 : i;
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return 1;
+	}
+
+	/**
 	 * 获取去年本月的开始时间(本月的同比时间)
 	 * @return
 	 */
@@ -693,7 +733,6 @@ public class DateUtil {
 	/**
 	 * 对字符串进行格式化，格式如Thu Sep 03 23:51:25 CST 2015
 	 * @param str
-	 * @param format
 	 * @return 转化不了返回""
 	 */
 	public static String formatStringTime(String str){

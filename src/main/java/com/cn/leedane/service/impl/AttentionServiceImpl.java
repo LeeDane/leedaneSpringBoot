@@ -77,7 +77,7 @@ public class AttentionServiceImpl extends AdminRoleCheckService implements Atten
 		boolean result = attentionMapper.save(bean) > 0;
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"关注", userHandler.getUserName(bean.getId()), StringUtil.getSuccessOrNoStr(result)).toString(), "addAttention()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"关注", userHandler.getUserName(bean.getId()), StringUtil.getSuccessOrNoStr(result)).toString(), "addAttention()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		
 		if(result){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.关注成功.value));
@@ -114,7 +114,7 @@ public class AttentionServiceImpl extends AdminRoleCheckService implements Atten
 			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
 		}	
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"解除关注ID为", aid, StringUtil.getSuccessOrNoStr(result)).toString(), "deleteAttention()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"解除关注ID为", aid, StringUtil.getSuccessOrNoStr(result)).toString(), "deleteAttention()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 

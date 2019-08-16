@@ -78,7 +78,7 @@ public class CollectionServiceImpl extends AdminRoleCheckService implements Coll
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"收藏表ID为：", tableId, ",表名为：", tableName, "的记录", StringUtil.getSuccessOrNoStr(result)).toString(), "addCollect()", StringUtil.changeBooleanToInt(result), 0);		
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"收藏表ID为：", tableId, ",表名为：", tableName, "的记录", StringUtil.getSuccessOrNoStr(result)).toString(), "addCollect()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 	
@@ -107,7 +107,7 @@ public class CollectionServiceImpl extends AdminRoleCheckService implements Coll
 			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除收藏ID为", cid, "的数据", StringUtil.getSuccessOrNoStr(result)).toString(), "deleteCollection()", StringUtil.changeBooleanToInt(result), 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除收藏ID为", cid, "的数据", StringUtil.getSuccessOrNoStr(result)).toString(), "deleteCollection()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 

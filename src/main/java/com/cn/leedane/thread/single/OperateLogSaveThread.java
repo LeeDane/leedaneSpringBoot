@@ -4,7 +4,9 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cn.leedane.handler.AllReadHandler;
 import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.utils.*;
 import org.apache.log4j.Logger;
 
@@ -94,6 +96,12 @@ public class OperateLogSaveThread implements Runnable{
 		SendMessage sendMessage = new SendMessage(send);
 		//logger.info("发送日志");
 		sendMessage.sendMsg();//发送日志到消息队列
+
+		if(mOperateType == EnumUtil.LogOperateType.网页端.value){
+			AllReadHandler allReadHandler = (AllReadHandler)SpringUtil.getBean("allReadHandler");
+			allReadHandler.addRead();
+		}
+
 	}
 
 }

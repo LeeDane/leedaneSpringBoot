@@ -67,6 +67,19 @@ public interface SignInService <T extends IDBean>{
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<Map<String, Object>> getSignInByLimit(JSONObject jo,
 			UserBean user, HttpRequestInfoBean request);
+
+	/**
+	 * 获取签到的分页记录
+	 * @param jo 格式"{'uid':1, 'pageSize':5,'timeScope':1, 'start_date': '2015-12-31', 'end_date':'2016-01-18'}"
+	 * 注意：timeScope大于0时，start_date和end_date将不起作用
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public Map<String, Object> getSignInMark(int userId, JSONObject jo,
+													  UserBean user, HttpRequestInfoBean request);
+
 	
 	
 }

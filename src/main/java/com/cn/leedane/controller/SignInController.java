@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -92,6 +93,21 @@ public class SignInController extends BaseController{
 		logger.info("获得签到的数量：" +result.size());
 		message.put("isSuccess", true);
 		message.put("message", result);
+		return message.getMap();
+	}
+
+	/**
+	 * 获取签到历史记录
+	 * @return
+	 */
+	@RequestMapping(value = "/signIn/mark", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> signInMark(Model model, @RequestParam(value="uid", required = true) int userId, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+
+		checkRoleOrPermission(model, request);
+		message.putAll(signInService.getSignInMark(userId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

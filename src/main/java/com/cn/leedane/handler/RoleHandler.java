@@ -48,7 +48,7 @@ public class RoleHandler {
 				try {
 					roleUsersBean =  (RoleUsersBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), RoleUsersBean.class);
 					if(roleUsersBean != null){
-						systemCache.addCache(key, roleUsersBean);
+						systemCache.addCache(key, roleUsersBean, true);
 					}else{
 						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
 						redisUtil.delete(key);
@@ -59,7 +59,7 @@ public class RoleHandler {
 							roleUsersBean = new RoleUsersBean();
 							roleUsersBean.setUsers(rs);
 							redisUtil.addSerialize(key, SerializeUtil.serializeObject(roleUsersBean));
-							systemCache.addCache(key, roleUsersBean);
+							systemCache.addCache(key, roleUsersBean, true);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -77,7 +77,7 @@ public class RoleHandler {
 					roleUsersBean = new RoleUsersBean();
 					roleUsersBean.setUsers(rs);
 					redisUtil.addSerialize(key, SerializeUtil.serializeObject(roleUsersBean));
-					systemCache.addCache(key, roleUsersBean);
+					systemCache.addCache(key, roleUsersBean, true);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

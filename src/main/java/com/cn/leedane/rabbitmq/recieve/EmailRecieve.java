@@ -7,6 +7,7 @@ import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EmailUtil;
+import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -48,7 +49,7 @@ public class EmailRecieve implements IRecieve{
 		
 		for(UserBean userBean: emailBean.getReplyTo()){
 			//保存操作日志
-			operateLogService.saveOperateLog(emailBean.getFrom(), null, null, StringUtil.getStringBufferStr(emailBean.getFrom().getAccount(),"给用户", userBean.getAccount(), "发送邮件,内容是：", emailBean.getSubject(), "，结果：",StringUtil.getSuccessOrNoStr(success)).toString(), "SendEmailRecieve excute()", ConstantsUtil.STATUS_NORMAL, 0);
+			operateLogService.saveOperateLog(emailBean.getFrom(), null, null, StringUtil.getStringBufferStr(emailBean.getFrom().getAccount(),"给用户", userBean.getAccount(), "发送邮件,内容是：", emailBean.getSubject(), "，结果：",StringUtil.getSuccessOrNoStr(success)).toString(), "SendEmailRecieve excute()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		}
 		return success;
 	}

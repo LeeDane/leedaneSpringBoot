@@ -103,7 +103,7 @@ public class CircleSettingServiceImpl extends AdminRoleCheckService implements C
 			message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改圈子id为"+ circleId+"的设置").toString(), "update()", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改圈子id为"+ circleId+"的设置").toString(), "update()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 
 		return message.getMap();
 	}

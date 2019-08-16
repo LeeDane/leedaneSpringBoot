@@ -107,15 +107,21 @@ public class BabyHtmlController extends BaseController{
 		}
 		
 		model.addAttribute("infos", BabyUtil.getInfoDisplay(baby));
-		model.addAttribute("babyName", baby.getNickname());
-		model.addAttribute("baby", baby);
-		String lifeDay = null;
-		if(baby.isBorn()){
-			lifeDay = "宝宝出生的第" + DateUtil.getBirthDayFormat(new Date(), baby.getGregorianBirthDay());
-		}else{
-			lifeDay = "距离宝宝出生还有" + DateUtil.getBirthDayFormat(baby.getPreProduction(), new Date());
+		String babyName = null;
+		if(baby != null){
+			babyName = baby.getNickname();
+			String lifeDay = null;
+			if(baby.isBorn()){
+				lifeDay = "宝宝出生的第" + DateUtil.getBirthDayFormat(new Date(), baby.getGregorianBirthDay());
+			}else{
+				lifeDay = "距离宝宝出生还有" + DateUtil.getBirthDayFormat(baby.getPreProduction(), new Date());
+			}
+			model.addAttribute("lifeDay", lifeDay);
 		}
-		model.addAttribute("lifeDay", lifeDay);
+
+		model.addAttribute("babyName", babyName);
+		model.addAttribute("baby", baby);
+
 		
 		//处理宝宝列表的展示
 		if(CollectionUtil.isNotEmpty(babys)){

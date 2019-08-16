@@ -204,7 +204,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		List<Map<String, Object>> rs = permissionMapper.roles(pmid, ConstantsUtil.STATUS_NORMAL);
 				
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取角色列表").toString(), "roles()", ConstantsUtil.STATUS_NORMAL, 0);		
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取角色列表").toString(), "roles()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);
@@ -272,7 +272,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		}
 		
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给权限ID为"+ pmid +",分配角色ids"+roles).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, 0);		
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给权限ID为"+ pmid +",分配角色ids"+roles).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("message", "操作成功");
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		message.put("isSuccess", true);

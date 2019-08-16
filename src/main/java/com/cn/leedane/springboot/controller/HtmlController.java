@@ -77,35 +77,35 @@ public class HtmlController extends BaseController{
 	@RequestMapping(value = {"/", ControllerBaseNameUtil.index})
 	public String index1(Model model, HttpServletRequest request){
 		//首页不需要验证是否登录
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入系统首页页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入系统首页页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("index", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.pt)
 	public String photo(Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入图册模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入图册模块页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("photo", true, model, request);
 	}
 
 	@RequestMapping(ControllerBaseNameUtil.pt +"/manage")
 	public String photoManage(Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入图册管理模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入图册管理模块页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("photo-manage", true, model, request);
 	}
 	
 	@RequestMapping("/test")
 	public String test(Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入测试模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入测试模块首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("test", false, model, request);
 	}
 	
 	@RequestMapping("/love")
 	public String love(Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入爱情模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入爱情模块首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("love", false, model, request);
 	}
 	
@@ -120,27 +120,27 @@ public class HtmlController extends BaseController{
 		if(StringUtil.isNotNull(tab))
 			model.addAttribute("tabName", tab);
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入消息管理模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入消息管理模块首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("message", true, model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.fn)
 	public String financial(Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入记账模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入记账模块首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("financial", true, model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.dl)
 	public String download(Model model, HttpServletRequest request){
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入下载模块首页", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入下载模块首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("download", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.dlvs)
 	public String downloadVersion(Model model, HttpServletRequest request){
 		model.addAttribute("historys", appVersionService.getAllVersions());
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入下载历史版本页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入下载历史版本页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("downloadVersion", model, request);
 	}
 	
@@ -151,7 +151,7 @@ public class HtmlController extends BaseController{
 		checkRoleOrPermission(model, request);
 		//检查博客id是否存在
 		model.addAttribute("bid", blogId);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入博客详情页面："+ blogId, "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入博客详情页面："+ blogId, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("detail", model, request);
 	}
 	
@@ -183,7 +183,7 @@ public class HtmlController extends BaseController{
 			HttpServletRequest request){
 		model.addAttribute("FromUserName", FromUserName);
 		model.addAttribute("currentType", currentType);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "绑定微信账号", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "绑定微信账号", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("bind-wechat", model, request);
 		
 	}
@@ -195,7 +195,7 @@ public class HtmlController extends BaseController{
 		model.addAttribute("uid", user.getId());
 		model.addAttribute("uaccount", userHandler.getUserName(user.getId()));
 		model.addAttribute("isLoginUser", true);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看个人中心", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看个人中心", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("my", model, request);
 	}
 	
@@ -210,7 +210,7 @@ public class HtmlController extends BaseController{
 		if(uid != user.getId())
 			visitorService.saveVisitor(user, "web网页端", DataTableType.心情.value, uid, ConstantsUtil.STATUS_NORMAL);
 
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看"+ userHandler.getUserName(uid) +"个人中心", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看"+ userHandler.getUserName(uid) +"个人中心", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("my", model, request);
 	}
 	
@@ -224,7 +224,7 @@ public class HtmlController extends BaseController{
 		model.addAttribute("uaccount", userHandler.getUserName(uid));
 		model.addAttribute("isLoginUser", uid == user.getId());
 
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看用户"+ userHandler.getUserName(uid) + "的留言板", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看用户"+ userHandler.getUserName(uid) + "的留言板", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("board", model, request);	
 	}
 	
@@ -255,7 +255,7 @@ public class HtmlController extends BaseController{
 		if(uid != user.getId())
 			visitorService.saveVisitor(user, "web网页端", DataTableType.心情.value, uid, ConstantsUtil.STATUS_NORMAL);
 
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看用户"+ userHandler.getUserName(uid) + "的心情ID为:"+ mid, "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看用户"+ userHandler.getUserName(uid) + "的心情ID为:"+ mid, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("mood-detail", true, model, request);
 	}
 	
@@ -281,21 +281,21 @@ public class HtmlController extends BaseController{
 		model.addAttribute("categorys", categorys);*/
 		model.addAttribute("blogId", blogId);
 		model.addAttribute("noHeader1", noHeader1);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入发布博客页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入发布博客页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("publish-blog", true, model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.s)
 	public String search(Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入搜索页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入搜索页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("search", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.cs)
 	public String chatSquare(Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入聊天广场页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入聊天广场页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("chat-square", model, request);
 	}
 	
@@ -303,7 +303,7 @@ public class HtmlController extends BaseController{
 	public String materialIndex(Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
 		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入素材管理模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入素材管理模块页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("material/index", true, model, request);
 	}
 
@@ -316,7 +316,7 @@ public class HtmlController extends BaseController{
 	@RequestMapping(ControllerBaseNameUtil.ev)
 	public String eventIndex(Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入大事件模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入大事件模块页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("event",  model, request);
 	}
 
@@ -329,7 +329,7 @@ public class HtmlController extends BaseController{
 	@RequestMapping(ControllerBaseNameUtil.ev + "/manage")
 	public String eventManage(Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入大事件管理模块页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入大事件管理模块页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return adminLoginRoleCheck("event-manage",  model, request);
 	}
 	
@@ -349,7 +349,7 @@ public class HtmlController extends BaseController{
 		
 		model.addAttribute("iframe", iframe);
 		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入素材添加页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入素材添加页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("material/add", true, model, request);
 	}
 	
@@ -386,7 +386,7 @@ public class HtmlController extends BaseController{
 		model.addAttribute("select", select);
 		model.addAttribute("selectType", selectType);
 		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入素材选择页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入素材选择页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("material/select", true, model, request);
 	}
 	
@@ -406,7 +406,7 @@ public class HtmlController extends BaseController{
 		model.addAllAttributes(userService.initSetting(user, getHttpRequestInfo(request)));
 
 		model.addAttribute("user", user);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入个人设置页面", "", ConstantsUtil.STATUS_NORMAL, 0);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入个人设置页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("setting", true, model, request);
 	}
 	@RequestMapping("403")
@@ -478,7 +478,7 @@ public class HtmlController extends BaseController{
 			BlogService<BlogBean> blogService = (BlogService<BlogBean>) SpringUtil.getBean("blogService");
 			checkParams(message, request);
 
-			operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "客户端查看博客详情，博客ID："+ blogId, "", ConstantsUtil.STATUS_NORMAL, 0);
+			operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "客户端查看博客详情，博客ID："+ blogId, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 			String device_width = request.getParameter("device_width");
 			
 			if(blogId < 1){

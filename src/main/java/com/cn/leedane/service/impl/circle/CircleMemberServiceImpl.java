@@ -121,7 +121,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 			message.put("responseCode", EnumUtil.ResponseCode.修改失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"把用户id为", memberId, "，圈子id是：", circleId, "设置为推荐").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);		
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"把用户id为", memberId, "，圈子id是：", circleId, "设置为推荐").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 	
@@ -180,7 +180,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
 		}
 		//保存操作日志
-		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"把用户id为", memberId, "，圈子id为", circleId, "进行移除").toString(), "delete()", ConstantsUtil.STATUS_NORMAL, 0);		
+		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"把用户id为", memberId, "，圈子id为", circleId, "进行移除").toString(), "delete()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
 }

@@ -420,7 +420,7 @@ public class NotificationHandler {
 				try {
 					messages =  (KeyValuesBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), CircleUserPostsBean.class);
 					if(messages != null){
-						systemCache.addCache(key, messages);
+						systemCache.addCache(key, messages, true);
 						return messages;
 					}else{
 						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
@@ -430,7 +430,7 @@ public class NotificationHandler {
 						if(CollectionUtil.isNotEmpty(messages.getData())){
 							try {
 								redisUtil.addSerialize(key, SerializeUtil.serializeObject(messages));
-								systemCache.addCache(key, messages);
+								systemCache.addCache(key, messages, true);
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
@@ -447,7 +447,7 @@ public class NotificationHandler {
 				if(CollectionUtil.isNotEmpty(messages.getData())){
 					try {
 						redisUtil.addSerialize(key, SerializeUtil.serializeObject(messages));
-						systemCache.addCache(key, messages);
+						systemCache.addCache(key, messages, true);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
