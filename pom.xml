@@ -357,11 +357,11 @@
 		</dependency>-->
 		
 		<!-- 静态文件实现修改不重启 -->
-		<!-- <dependency>
+		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-devtools</artifactId>
-		    <version>1.3.0.RELEASE</version>
-		</dependency> -->
+			<optional>true</optional>
+		</dependency>
 		
 		<!-- quartz -->
 		<dependency>
@@ -604,6 +604,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
 				<version>1.4.0.RELEASE</version>
+				<configuration>
+					<fork>true</fork>
+				</configuration>
 	            <!-- <dependencies>    修改代码后自动生效，Reload Java classes without restarting the container  
 	                <dependency>  
 	                    <groupId>org.springframework</groupId>  

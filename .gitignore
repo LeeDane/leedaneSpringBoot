@@ -21,3 +21,6 @@ src/main/resources/application.properties
 src/main/resources/static/baidu_verify_uQ5fnLnZYC.html
 src/main/resources/static/baidu_verify_xqqO0ZkqFT.html
 src/main/resources/static/jd_root.txt
+.idea
+*.log
+out
