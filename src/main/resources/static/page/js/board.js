@@ -1,6 +1,7 @@
-layui.use(['layer', 'laypage'], function(){
+layui.use(['layer', 'laypage', 'util'], function(){
 	layer = layui.layer;
 	laypage = layui.laypage;
+	util = layui.util;
 	/*initPage(".pagination", "getMessageBoards");*/
 	$commentListContainer = $("#comment-list-container");
 	$container= $(".container");
@@ -135,17 +136,19 @@ function buildEachCommentRow(index, comment){
 						       		'</div>';
 							html += '<div class="list-group-item comment-list-item">'+
 										'<div class="row">';
-									if(isNotEmpty(comment.blockquote_content)){
-								    html += '<div class="col-lg-12">'+
-												'<blockquote>'+ comment.blockquote_content;
-													if(isNotEmpty(comment.blockquote_account)){
-												html += '<small><cite>'+ comment.blockquote_account +'</cite>&nbsp;&nbsp;'+ changeNotNullString(comment.blockquote_time) +'</small>';
-													}
-										html +='</blockquote>'+
-											'</div>';
-									}
-									html += '<div class="col-lg-12">'+ changeNotNullString(comment.content) +'</div>'+
-										'</div>'+
+									html += '<div class="col-lg-12 comment-list-item-main">'+ changeNotNullString(comment.content) +'</div>';
+                                   html += blockquote(comment);
+									/*if(isNotEmpty(comment.blockquote_content)){
+                                        html += '<div class="col-lg-12">'+
+                                                    '<blockquote>'+ comment.blockquote_content;
+                                                        if(isNotEmpty(comment.blockquote_account)){
+                                                    html += '<small><cite>'+ comment.blockquote_account +'</cite>&nbsp;&nbsp;'+ changeNotNullString(comment.blockquote_time) +'</small>';
+                                                        }
+                                            html +='</blockquote>'+
+                                                '</div>';
+                                        }*/
+
+							    html +=	'</div>'+
 									'</div>';
 								if(isLogin){
 							html += '<div class="list-group-item comment-list-item">'+
@@ -164,12 +167,12 @@ function buildEachCommentRow(index, comment){
 									    			'<div class="col-lg-12">'+
 									    				'<form class="form-signin" role="form">'+
 										    			     '<fieldset>'+
-										    				     '<textarea class="form-control reply-comment-text" placeholder="回复TA，最多250个文字。"> </textarea>'+
+										    				     '<textarea class="form-control reply-comment-text" placeholder="回复TA，最多250个文字。"></textarea>'+
 										    			     '</fieldset>'+
 										    			 '</form>'+
 									    			'</div>'+
 									    			'<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right" style="margin-top: 10px;">'+
-									    				'<button class="btn btn-sm btn-info pull-right" style="width: 60px;" type="button" onclick="commentItem(this, '+ comment.id +', '+ comment.create_user_id +');">评论</button>'+
+									    				'<button class="btn btn-sm btn-info pull-right" style="width: 60px;" type="button" onclick="commentItem(this, '+ comment.id +', '+ comment.create_user_id +');">回复</button>'+
 									    			'</div>'+
 									    		'</div>'+
 									    	'</div>'+
@@ -182,7 +185,6 @@ function buildEachCommentRow(index, comment){
 	
 	return html;
 }
-
 
 /**
  * 评论别人的评论

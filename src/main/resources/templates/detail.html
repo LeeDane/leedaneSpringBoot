@@ -9,13 +9,6 @@
 	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{/page/css/detail.min.css}" />
 	<link th:if="${isDebug}" rel="stylesheet" th:href="@{/page/css/detail.css}" />
 	<style type="text/css"></style>
-	<script async="async" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-	<script>
-	  (adsbygoogle = window.adsbygoogle || []).push({
-		google_ad_client: "ca-pub-6043302182822181",
-		enable_page_level_ads: true
-	  });
-	</script>
 </head>
 <body>
 <div th:include="common :: hello">what?</div>
@@ -26,12 +19,12 @@ jEmoji.unifiedToHTML(emojiText) -->
 </body>
 	<div class="container">
 		<div class="row">
-			<div class="col-lg-12">
+			<div class="col-lg-offset-2 col-lg-8">
 				<div class="inline" id="isOriginal" style="margin-bottom: -3px;"></div>
 				<div class="inline" id="isRecommed" style="margin-bottom: -3px;"></div>
 				<div class="h3 inline" id="b-title"></div>
 			</div>
-			<div class="col-lg-12">
+			<div class="col-lg-offset-2 col-lg-8">
 				<a href="JavaScript:void(0);" target="_blank" class="marginRight" id="b-account"></a>
 				<span class="marginRight" id="b-create-time"></span>
 				<span class="marginRight" id="b-read-time"></span>
@@ -40,24 +33,24 @@ jEmoji.unifiedToHTML(emojiText) -->
 				<span class="marginRight" id="b-zan-number"></span>
 				<span class="marginRight" id="b-share-number"></span>
 			</div>
-			<div class="col-lg-12" id="tags"></div>
+			<div class="col-lg-offset-2 col-lg-8" id="tags"></div>
 		</div>
 	   <div class="row">
-	   		<div class="col-lg-12 row-content"></div>
+	   		<div class="col-lg-offset-2 col-lg-8 row-content"></div>
 	   </div>
 	   <div class="row">
-	   		<div class="col-lg-12" id="keywords">
+	   		<div class="col-lg-offset-2 col-lg-8" id="keywords">
 	   			<span class="marginRight">关键字：</span>
 			</div>
 	   </div>
 	   <div class="row to-comment-contrainer" id="comment">
-	   		<div class="col-lg-12" th:if="${not isLogin}" style="text-align: center;">
+	   		<div class="col-lg-offset-2 col-lg-8" th:if="${not isLogin}" style="text-align: center;">
 			        您还未登录，无法参与评论 <a type="button" class="btn btn-info" href="javascript:void(0);" onclick="linkToLogin();">登录</a>
 			</div>
-			<div class="col-lg-12" th:if="${isLogin}" style="text-align: center;">
+			<div class="col-lg-offset-2 col-lg-8" th:if="${isLogin}" style="text-align: center;">
 					<textarea class="form-control" name="add-comment" onkeyup="updateNumber(this);" style="min-height: 125px;" autofocus ="true"></textarea>
 			</div>
-			<div class="col-lg-12" th:if="${isLogin}" style="text-align: center;">
+			<div class="col-lg-offset-2 col-lg-8" th:if="${isLogin}" style="text-align: center;">
 				<div class="row">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<!--MOB SHARE BEGIN-->
@@ -80,6 +73,13 @@ jEmoji.unifiedToHTML(emojiText) -->
 				</div>
 			</div>
 	   </div>
+
+		<div class="row">
+			<div class="col-lg-offset-2 col-lg-8">
+				<div id="commentContainer">
+				</div>
+			</div>
+		</div>
 	</div>
 <div th:include="common-bottom :: bottom">bottom?</div>
 <div th:include="common-js :: commJs">what?</div>

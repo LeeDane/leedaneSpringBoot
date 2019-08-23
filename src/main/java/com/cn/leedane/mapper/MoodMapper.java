@@ -36,7 +36,8 @@ public interface MoodMapper extends BaseMapper<MoodBean>{
 	
 	/**
 	 * 摇一摇搜索心情
-	 * @param statusNormal
+	 * @param createUserId
+	 * @param status
 	 * @return
 	 */
 	public int shakeSearch(@Param("createUserId")int createUserId, @Param("status")int status);

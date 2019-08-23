@@ -283,9 +283,7 @@ public class MoodController extends BaseController{
 	@RequestMapping(value = "/detail", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> detail(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
-		if(!checkParams(message, request))
-			return message.getMap();
-		
+		checkParams(message, request);
 		checkRoleOrPermission(model, request);;
 		message.putAll(moodService.detail(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request), "120x120"));
 		//printWriter(message, response);

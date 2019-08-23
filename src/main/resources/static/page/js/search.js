@@ -267,7 +267,11 @@ function buildBlogEach(blog){
                                             '</blockquote>'+
                                         '</div>'+
                                     '</div>'+
-                                '</div>'+
+                                '</div>';
+                                if(blog.has_img){
+                                     html +=  '<div class="list-group-item notification-list-item"><div class="row" style="margin-top: 5px;"><div class="col-lg-12 col-sm-12"><font color="#ff0000" size="4">有附件,请打开详情查看</font></div></div></div>';
+                                 }
+                         html +=
                                 '<div class="list-group-item notification-list-item">'+
                                     '<div class="row">'+
                                         '<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right">'+
@@ -315,20 +319,17 @@ function buildMoodEach(index, mood){
                                     '<div class="row">'+
                                         '<div class="col-lg-12"><h4>'+ changeNotNullString(mood.content) +'</h4></div>'+
                                     '</div>'+
-                                '</div>'+
-                                '<div class="list-group-item notification-list-item">'+
-                                   '<div class="row" style="margin-top: 5px;">';
-                                   if(isNotEmpty(mood.imgs)){
-                                        var imgs = mood.imgs.split(";");
+                                '</div>';
+                                   if(mood.has_img){
+                                         html +=  '<div class="list-group-item notification-list-item"><div class="row" style="margin-top: 5px;"><div class="col-lg-12 col-sm-12"><font color="#ff0000" size="4">有附件,请打开详情查看</font></div></div></div>';
+                                        /*var imgs = mood.imgs.split(";");
                                         for(var i = 0; i < imgs.length; i++){
                                             html +=  '<div class="col-lg-4 col-sm-4">'+
                                                             '<img src="'+ imgs[i] +'" width="100%" height="180px" class="img-rounded" onclick="showImg(0, 0);" />'+
                                                         '</div>';
-                                        }
+                                        }*/
                                    }
-
-                            html += '</div>'+
-                                '</div>'+
+                            html +=
                                 '<div class="list-group-item notification-list-item">'+
                                     '<div class="row">'+
                                         '<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-align-right">'+

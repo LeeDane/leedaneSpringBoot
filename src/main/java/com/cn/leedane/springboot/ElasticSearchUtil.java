@@ -260,42 +260,36 @@ public class ElasticSearchUtil {
 
 		//添加固定字段查询条件
 		boolQuery.must(boolQueryField);
+		BoolQueryBuilder boolQueryStatus = QueryBuilders.boolQuery();
+		//所有用户可以查询共享状态的心情
+		boolQueryStatus.should(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_SHARE));
 		if(null == elasticSearchRequestBean.getUser()) { //未登录用户只能查询正常状态下的信息{
-
 			//操作日志查询只能是登录用户才可以
 			if(elasticSearchRequestBean.getSearchType() == ConstantsUtil.SEARCH_TYPE_OPERATE_LOG)
 				throw new MustLoginException("请先登录才能执行下一步操作");
-
-			boolQuery.must(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_NORMAL));
 		}else{
+			//登录用户还可以查询正常状态的心情
+			boolQueryStatus.should(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_NORMAL));
 			//获取当前的Subject
 			Subject currentUser = SecurityUtils.getSubject();
 			//判断是否是管理员，管理员可以查询所有的数据(无论状态)
 			//非管理员，只能查询公开的或者自己的私有的
 			if(!currentUser.hasRole(RoleController.ADMIN_ROLE_CODE)){
+				//日志只能看自己的
 				if(elasticSearchRequestBean.getSearchType() != ConstantsUtil.SEARCH_TYPE_OPERATE_LOG) {
-					BoolQueryBuilder boolQueryStatus = QueryBuilders.boolQuery();
-					BoolQueryBuilder boolQueryNormal = QueryBuilders.boolQuery();
-					boolQueryNormal.must(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_NORMAL));
-
+					boolQueryStatus.must(QueryBuilders.termQuery("create_user_id", elasticSearchRequestBean.getUser().getId()));
+				}else{
 					BoolQueryBuilder boolQuerySelf = QueryBuilders.boolQuery();
 					boolQuerySelf.must(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_SELF));
 					boolQuerySelf.must(QueryBuilders.termQuery("create_user_id", elasticSearchRequestBean.getUser().getId()));
-
-					boolQueryStatus.should(boolQueryNormal);
 					boolQueryStatus.should(boolQuerySelf);
-					boolQuery.must(boolQueryStatus);
-				}else{
-					BoolQueryBuilder boolQuerySelf = QueryBuilders.boolQuery();
-					boolQuerySelf.must(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_NORMAL));
-					boolQuerySelf.must(QueryBuilders.termQuery("create_user_id", elasticSearchRequestBean.getUser().getId()));
-					boolQuery.must(boolQuerySelf);
 				}
 			}else{
-
+				//管理员可以查看所有人私有的数据
+				boolQueryStatus.should(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_SELF));
 			}
 		}
-
+		boolQuery.must(boolQueryStatus);
 		//判断开始和结束日期
 		if(StringUtil.isNotNull(elasticSearchRequestBean.getStartDate()) || StringUtil.isNotNull(elasticSearchRequestBean.getEndDate())){
 			RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(elasticSearchRequestBean.getSearchType() == ConstantsUtil.SEARCH_TYPE_USER ? "register_time" : "modify_time");

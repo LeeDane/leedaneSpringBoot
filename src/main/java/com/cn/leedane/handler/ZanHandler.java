@@ -272,7 +272,8 @@ public class ZanHandler {
 	
 	/**
 	 * 获取赞用户在redis的key
-	 * @param id
+	 * @param tableId
+	 * @param tableName
 	 * @return
 	 */
 	public static String getZanUserKey(int tableId, String tableName){
@@ -281,7 +282,8 @@ public class ZanHandler {
 	
 	/**
 	 * 获取赞在redis的key
-	 * @param id
+	 * @param tableId
+	 * @param tableName
 	 * @return
 	 */
 	public static String getZanKey(int tableId, String tableName){

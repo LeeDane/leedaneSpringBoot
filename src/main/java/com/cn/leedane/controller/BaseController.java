@@ -780,7 +780,6 @@ public class BaseController {
 	 * @return
 	 */
 	protected String loginRoleCheck(String urlParse, boolean mustLogin, Model model, HttpServletRequest request){
-
 		//设置统一的请求模式
 		model.addAttribute("isDebug", IS_DEBUG);
 		//获取当前的Subject  
@@ -788,6 +787,12 @@ public class BaseController {
         UserBean user = getUserFromShiro();
         //设置是否是登录用户
         model.addAttribute("isTestRole", currentUser.hasRole(TEST_ROLE_TEXT));
+
+		if(mustLogin && user == null){
+			model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
+			return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();
+		}
+
 		boolean isLogin = false;
 		boolean isAdmin = false;
 		boolean isStock = false; //判断用户是否有股票的权限
@@ -811,10 +816,6 @@ public class BaseController {
 		model.addAttribute("isCircle", isCircle);
 		model.addAttribute("isShopping", isShopping);
 		model.addAttribute("isBaby", isBaby);
-		if(mustLogin && !isLogin){
-			model.addAttribute("errorMessage", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
-			return "redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString();
-		}
 
 		model.addAttribute("onlineCount", SessionManagerUtil.getInstance().getAllActivesNumber());
 		model.addAttribute("allRead", allReadHandler.getAllRead());

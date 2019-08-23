@@ -2,9 +2,14 @@ package com.cn.leedane.service.impl;
 
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.*;
+import com.cn.leedane.mapper.BlogMapper;
 import com.cn.leedane.mapper.CommentMapper;
+import com.cn.leedane.mapper.MoodMapper;
 import com.cn.leedane.model.*;
 import com.cn.leedane.service.*;
+import com.cn.leedane.springboot.ElasticSearchUtil;
+import com.cn.leedane.thread.ThreadUtil;
+import com.cn.leedane.thread.single.EsIndexAddThread;
 import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
@@ -50,6 +55,15 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	@Autowired
 	private OperateLogService<OperateLogBean> operateLogService;
 
+	@Autowired
+	private MoodMapper moodMapper;
+
+	@Autowired
+	private BlogMapper blogMapper;
+
+	@Autowired
+	private ElasticSearchUtil elasticSearchUtil;
+
 	@Override
 	public Map<String, Object> add(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request){
@@ -59,7 +73,6 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
 		int tableId = JsonUtil.getIntValue(jo, "table_id", 0);
 		String content = JsonUtil.getStringValue(jo, "content");
-		String from = JsonUtil.getStringValue(jo, "froms");
 		boolean check = JsonUtil.getBooleanValue(jo, "check", true);
 		ResponseMap message = new ResponseMap();
 		
@@ -86,10 +99,16 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		bean.setCreateTime(new Date());
 		bean.setCreateUserId(user.getId());
 		bean.setPid(pid);
-		bean.setFroms(from);
+		String froms = request.getLocation();
+		if(StringUtil.isNull(froms) || "未知".equalsIgnoreCase(froms)){
+			froms = StringUtil.changeNotNull(JsonUtil.getStringValue(jo, "froms"));
+		}
+		bean.setFroms(froms);
 		bean.setStatus(ConstantsUtil.STATUS_NORMAL);
 		bean.setTableId(tableId);
 		bean.setTableName(tableName);
+		if(pid > 0)
+			bean.setLevel(commentMapper.getLevel(pid));
 		//bean.setCid(cid);
 		boolean result = commentMapper.save(bean) > 0;
 		if(result){
@@ -209,7 +228,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		if(StringUtil.isNull(tableName) && toUserId > 0){		
 			if("firstloading".equalsIgnoreCase(method)){
 				sql.append("select c.id, c.pid, c.froms, c.content, c.table_id, c.table_name, c.create_user_id, u.account");
-				sql.append(", date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id ");
+				sql.append(", date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id , c.level ");
 				sql.append("  from "+DataTableType.评论.value+" c inner join "+DataTableType.用户.value+" u on u.id = c.create_user_id");
 				sql.append(" where c.create_user_id =? and c.status = ? ");
 				sql.append(" order by c.id desc limit 0,?");
@@ -217,7 +236,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			//下刷新
 			}else if("lowloading".equalsIgnoreCase(method)){
 				sql.append("select c.id, c.pid, c.froms, c.content, c.table_id, c.table_name, c.create_user_id, u.account");
-				sql.append(", date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id ");
+				sql.append(", date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id , c.level ");
 				sql.append("  from "+DataTableType.评论.value+" c inner join "+DataTableType.用户.value+" u on u.id = c.create_user_id");
 				sql.append(" where c.create_user_id =? and c.status = ? ");
 				sql.append(" and c.id < ? order by c.id desc limit 0,? ");
@@ -225,7 +244,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			//上刷新
 			}else if("uploading".equalsIgnoreCase(method)){
 				sql.append("select c.id, c.pid, c.froms, c.content, c.table_id, c.table_name, c.create_user_id, u.account");
-				sql.append(", date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id ");
+				sql.append(", date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id , c.level ");
 				sql.append("  from "+DataTableType.评论.value+" c inner join "+DataTableType.用户.value+" u on u.id = c.create_user_id");
 				sql.append(" where c.create_user_id =? and c.status = ? ");
 				sql.append(" and c.id > ? limit 0,?  ");
@@ -237,7 +256,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		if(StringUtil.isNotNull(tableName) && toUserId < 1 && tableId > 0){
 			if("firstloading".equalsIgnoreCase(method)){
 				sql.append("select c.id, c.pid, c.froms, c.content, c.table_id, c.table_name, c.create_user_id, u.account");
-				sql.append(", date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id ");
+				sql.append(", date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id , c.level ");
 				sql.append("  from "+DataTableType.评论.value+" c inner join "+DataTableType.用户.value+" u on u.id = c.create_user_id");
 				sql.append(" where c.table_name = ? and c.table_id = ? and c.status = ?");
 				sql.append(" order by c.id desc limit 0,?");
@@ -245,7 +264,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			//下刷新
 			}else if("lowloading".equalsIgnoreCase(method)){			
 				sql.append("select c.id, c.pid, c.froms, c.content, c.table_id, c.table_name, c.create_user_id, u.account ");
-				sql.append(", date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id ");
+				sql.append(", date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id , c.level ");
 				sql.append("  from "+DataTableType.评论.value+" c inner join "+DataTableType.用户.value+" u on u.id = c.create_user_id ");
 				sql.append(" where c.table_name = ? and c.table_id = ? and c.status = ?");
 				sql.append(" and c.id < ? order by c.id desc limit 0,?");
@@ -253,7 +272,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			//上刷新
 			}else if("uploading".equalsIgnoreCase(method)){
 				sql.append("select c.id, c.pid, c.froms, c.content, c.table_id, c.table_name, c.create_user_id, u.account");
-				sql.append(", date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id ");
+				sql.append(", date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id , c.level ");
 				sql.append("  from "+DataTableType.评论.value+" c inner join "+DataTableType.用户.value+" u on u.id = c.create_user_id ");
 				sql.append(" where c.table_name = ? and c.table_id = ? and c.status = ?");
 				sql.append(" and c.id > ? limit 0,?");
@@ -270,16 +289,26 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			int pid = 0;
 			int pCreateUserId = 0;
 			String blockquoteAccount = ""; //@用户的名称
+			String levelStr;
 			//为名字备注赋值
 			for(int i = 0; i < rs.size(); i++){
+				Map<String, Object> comment = rs.get(i);
 				if(StringUtil.isNull(tableName) && tableId <1){
 					//在非获取指定表下的评论列表的情况下的前面35个字符
-					tabName = StringUtil.changeNotNull((rs.get(i).get("table_name")));
-					tabId = StringUtil.changeObjectToInt(rs.get(i).get("table_id"));
-					rs.get(i).put("source", commonHandler.getContentByTableNameAndId(tabName, tabId, user));
+					tabName = StringUtil.changeNotNull((comment.get("table_name")));
+					tabId = StringUtil.changeObjectToInt(comment.get("table_id"));
+					comment.put("source", commonHandler.getContentByTableNameAndId(tabName, tabId, user));
 				}else{
-					pid = StringUtil.changeObjectToInt(rs.get(i).get("pid"));
-					/*if(pid > 0 ){
+					pid = StringUtil.changeObjectToInt(comment.get("pid"));
+					levelStr = StringUtil.changeNotNull(comment.get("level"));
+					if(pid > 0 && StringUtil.isNotNull(levelStr)){
+						Map<String, Object> items = new HashMap<>();
+						comment.put("item", items);
+						getLevelMap(items, StringUtil.changeObjectToInt(pid));
+					}
+
+					/*pid = StringUtil.changeObjectToInt(rs.get(i).get("pid"));
+					*//*if(pid > 0 ){
 						pCreateUserId = getCommentCreateUserId(pid);
 						if(pCreateUserId > 0){
 							atUsername = userHandler.getUserName(pCreateUserId);
@@ -292,7 +321,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 								}
 							}
 						}
-					}*/
+					}*//*
 					if(pid > 0 ){
 						CommentBean pCommentBean = commentMapper.findById(CommentBean.class, pid);
 						if(pCommentBean != null){
@@ -301,12 +330,12 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 							if(pCreateUserId > 0){
 								blockquoteAccount = userHandler.getUserName(pCreateUserId);
 								if(StringUtil.isNotNull(blockquoteAccount)){
-									/*resultContent = StringUtil.changeNotNull((rs.get(i).get("content")));
+									*//*resultContent = StringUtil.changeNotNull((rs.get(i).get("content")));
 									if(resultContent.indexOf("@"+atUsername) > 0 )
 										rs.get(i).put("content", resultContent);
 									else{
 										rs.get(i).put("content", "回复@"+atUsername + " " + resultContent);
-									}*/
+									}*//*
 									rs.get(i).put("blockquote_account", blockquoteAccount); //引用的用户名称
 								}
 							}
@@ -315,11 +344,11 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 						}else{
 							rs.get(i).put("blockquote_content", "该评论已经被删除"); //引用的用户名称
 						}
-					}
+					}*/
 				}
 				if(showUserInfo){
-					createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
-					rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId, user, friendObject));
+					createUserId = StringUtil.changeObjectToInt(comment.get("create_user_id"));
+					comment.putAll(userHandler.getBaseUserInfo(createUserId, user, friendObject));
 				}
 			}	
 		}
@@ -369,7 +398,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			int pid = 0;
 			int pCreateUserId = 0;
 			String blockquoteAccount = ""; //@用户的名称
-			//为名字备注赋值
+			//为名字备注赋值comments
 			for(int i = 0; i < rs.size(); i++){
 				if(StringUtil.isNull(tableName) && tableId <1){
 					//在非获取指定表下的评论列表的情况下的前面35个字符
@@ -429,7 +458,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	
 	/**
 	 * 构建CreateUser的SQL语句字符串
-	 * @param ids
+	 * @param
 	 * @return
 	 */
 	/*private String buildCreateUserIdInSQL(Object[] ids){
@@ -575,12 +604,14 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		boolean result = false;
 		CommentBean commentBean = commentMapper.findById(CommentBean.class, cid);
 		if(commentBean != null && commentBean.getCreateUserId() == createUserId){
-			result = commentMapper.deleteById(CommentBean.class, cid) > 0;
+//			result = commentMapper.deleteById(CommentBean.class, cid) > 0;
+			result = commentMapper.updateSql(EnumUtil.getBeanClass(EnumUtil.getTableCNName(DataTableType.评论.value)), " set status = ? where id = ? ", ConstantsUtil.STATUS_DELETE, cid) > 0;
 		}else{
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 		}
 		
 		if(result){
+			commentHandler.deleteComment(cid);
 			commentHandler.deleteComment(commentBean.getTableId(), commentBean.getTableName());
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除评论成功.value));
@@ -615,6 +646,22 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		boolean result = commentMapper.updateSql(EnumUtil.getBeanClass(EnumUtil.getTableCNName(tableName)), " set can_comment=? where id=?", canComment, tableId) > 0;
 		
 		if(result){
+			if(DataTableType.心情.value.equalsIgnoreCase(tableName)){
+				//获取心情对象
+				MoodBean moodBean = moodMapper.findById(MoodBean.class, tableId);
+				//删除es缓存
+				elasticSearchUtil.delete(DataTableType.心情.value, tableId);
+				//重新加进缓存
+				new ThreadUtil().singleTask(new EsIndexAddThread<MoodBean>(moodBean));
+			}else if(DataTableType.博客.value.equalsIgnoreCase(tableName)){
+				//获取心情对象
+				BlogBean blogBean = blogMapper.findById(BlogBean.class, tableId);
+				//删除es缓存
+				elasticSearchUtil.delete(DataTableType.博客.value, tableId);
+				//重新加进缓存
+				new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(blogBean));
+			}
+
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.更新评论状态成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -664,28 +711,36 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			int pid = 0;
 			int pCreateUserId = 0;
 			String blockquoteAccount; //引用的用户名称
+			String levelStr;
 			//为名字备注赋值
 			for(int i = 0; i < rs.size(); i++){
-				pid = StringUtil.changeObjectToInt(rs.get(i).get("pid"));
-				if(pid > 0 ){
-					CommentBean pCommentBean = commentMapper.findById(CommentBean.class, pid);
+				Map<String, Object> comment = rs.get(i);
+				pid = StringUtil.changeObjectToInt(comment.get("pid"));
+				levelStr = StringUtil.changeNotNull(comment.get("level"));
+				if(pid > 0 && StringUtil.isNotNull(levelStr)){
+//					String[] levels = levelStr.split("\\|");
+					Map<String, Object> items = new HashMap<>();
+					comment.put("item", items);
+					getLevelMap(items, StringUtil.changeObjectToInt(pid));
+
+					/*CommentBean pCommentBean = commentMapper.findById(CommentBean.class, pid);
 					if(pCommentBean != null){
 						pCreateUserId = pCommentBean.getCreateUserId();
 						blockquoteAccount = "";
 						if(pCreateUserId > 0){
 							blockquoteAccount = userHandler.getUserName(pCreateUserId);
 							if(StringUtil.isNotNull(blockquoteAccount)){
-								rs.get(i).put("blockquote_account", blockquoteAccount); //引用的用户名称
+								comment.put("blockquote_account", blockquoteAccount); //引用的用户名称
 							}
 						}
-						rs.get(i).put("blockquote_content", pCommentBean.getContent()); //引用的内容
-						rs.get(i).put("blockquote_time", DateUtil.DateToString(pCommentBean.getCreateTime())); //引用的时间
+						comment.put("blockquote_content", pCommentBean.getContent()); //引用的内容
+						comment.put("blockquote_time", DateUtil.DateToString(pCommentBean.getCreateTime())); //引用的时间
 					}else{
-						rs.get(i).put("blockquote_content", "该评论已经被删除"); //引用的用户名称
-					}
+						comment.put("blockquote_content", "该评论已经被删除"); //引用的用户名称
+					}*/
 				}
-				createUserId = StringUtil.changeObjectToInt(rs.get(i).get("create_user_id"));
-				rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId, user, friendObject));
+				createUserId = StringUtil.changeObjectToInt(comment.get("create_user_id"));
+				comment.putAll(userHandler.getBaseUserInfo(createUserId, user, friendObject));
 			}
 		}
 		message.put("total", SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, "where table_name='"+ DataTableType.留言.value +"' and table_id='"+ userId +"' and status="+ ConstantsUtil.STATUS_NORMAL)));
@@ -694,5 +749,27 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"分页获取留言板列表", ",表ID为：", userId, StringUtil.getSuccessOrNoStr(true)).toString(), "getMessageBoards()", 1, 0);
 		return message.getMap();
+	}
+
+	private Map<String, Object> getLevelMap(Map<String, Object> items, int id){
+		CommentBean commentBean = commentHandler.getComment(id);
+		if(commentBean == null)
+			return items;
+		if(commentBean.getStatus() == ConstantsUtil.STATUS_DELETE){
+			items.put("source", "该内容已经被删除");
+			items.put("id", -1);
+		}else{
+			items.put("source", commentBean.getContent());
+			items.put("id", commentBean.getId());
+		}
+		items.put("user_id", commentBean.getCreateUserId());
+		items.put("time", DateUtil.DateToString(commentBean.getCreateTime()));
+		items.put("account", userHandler.getUserName(commentBean.getCreateUserId()));
+		if(commentBean.getPid() > 0 && StringUtil.isNotNull(commentBean.getLevel())){
+			Map<String, Object> sItems = new HashMap<>();
+			items.put("item", sItems);
+			return getLevelMap(sItems, commentBean.getPid());
+		}
+		return items;
 	}
 }

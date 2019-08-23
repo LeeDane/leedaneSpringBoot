@@ -1,6 +1,6 @@
 package com.cn.leedane.utils;
 
-import java.io.InputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -330,5 +330,65 @@ public class CommonUtil {
 			return user.getAge();
 		}
 		return age;
+	}
+
+	/**
+	 * 执行多行文本命令
+	 * @param commandStrs
+	 * @return
+	 * @throws InterruptedException
+	 */
+	public static String execMult(String commandStrs) throws InterruptedException {
+		if(StringUtil.isNull(commandStrs))
+			return "空的命令无法执行";
+
+		String[] commands = commandStrs.split(";");
+		if(commands.length > 0){
+			StringBuffer buffer = new StringBuffer();
+			for(int i = 0; i < commands.length; i++){
+				String command = commands[i];
+				buffer.append("执行："+ command);
+				buffer.append("\n");
+				buffer.append("结果：");
+				buffer.append(exec(command));
+				buffer.append("\n");
+			}
+
+			return buffer.toString();
+		}
+
+		return "无法执行命令，请检查后重试。";
+	}
+	/**
+	 * 执行command命令
+	 * @param command
+	 * @return
+	 * @throws InterruptedException
+	 */
+	public static String exec(String command) throws InterruptedException {
+		if(StringUtil.isNull(command))
+			return "空的命令无法执行";
+
+		String returnString = "";
+		Process pro = null;
+		Runtime runTime = Runtime.getRuntime();
+		if (runTime == null) {
+			System.err.println("Create runtime false!");
+		}
+		try {
+			pro = runTime.exec(command);
+			BufferedReader input = new BufferedReader(new InputStreamReader(pro.getInputStream()));
+			PrintWriter output = new PrintWriter(new OutputStreamWriter(pro.getOutputStream()));
+			String line;
+			while ((line = input.readLine()) != null) {
+				returnString = returnString + line + "\n";
+			}
+			input.close();
+			output.close();
+			pro.destroy();
+		} catch (IOException e) {
+			logger.error("执行command命令出现异常", e);
+		}
+		return returnString;
 	}
 }

@@ -158,7 +158,7 @@ function getSiginMark(){
  */
 function getMessageBoards(){
 	$.ajax({
-		url : "/cm/user/"+ uid+ "/messageBoards?page_size=15&t=" + Math.random(),
+		url : "/cm/user/"+ uid+ "/messageBoards?page_size=5&t=" + Math.random(),
 		dataType: 'json', 
 		beforeSend:function(){
 		},
@@ -577,6 +577,10 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 						if(isLoginUser && mood.status == 5){
 							html += '<span class="label label-warning" data-toggle="tooltip" data-placement="right" title="该心情是私有的，其他人无法查看" onMouseOver="$(this).tooltip(\'show\')">私有</span>';
 						}
+
+						if(mood.status == 14){
+                            html += '<span class="label label-success" data-toggle="tooltip" data-placement="right" title="该心情是共享的，任何人都查看" onMouseOver="$(this).tooltip(\'show\')">共享</span>';
+                        }
 							html += '<span class="label '+ (mood.can_comment? 'label-default' : 'label-danger') +'"  '+ (mood.can_comment ? '': 'data-toggle="tooltip" data-placement="right" title="该心情禁止任何人评论" onMouseOver="$(this).tooltip(\'show\')"') + '>'+ (mood.can_comment? '可以评论':'禁止评论') +'</span>'+
 							'<span class="label '+ (mood.can_transmit? 'label-default' : 'label-danger') +'" '+ (mood.can_transmit ? '': 'data-toggle="tooltip" data-placement="right" title="该心情禁止任何人转发" onMouseOver="$(this).tooltip(\'show\')"') + '>'+ (mood.can_transmit? '可以转发':'禁止转发') +'</span>'+
 						'</div>'+
@@ -790,10 +794,14 @@ function showItemListModal(index){
 			    '<li class="list-group-item cursor do-copy-btn" data-clipboard-action="copy" data-clipboard-target="#couponValue-'+ index +'">复制文字</li>';
 	if(isLoginUser){
 		html += '<li class="list-group-item cursor" onclick="deleteMood('+ mood.id +')">删除</li>'+
-				'<li class="list-group-item cursor" onclick="updateIsSelfStatus('+ mood.status +','+ mood.id +');">'+
+				'<li class="list-group-item cursor" onclick="updateIsSelfStatus('+ mood.status +','+ mood.id +', 5);">'+
 			        '<span class="badge '+ (mood.status == 5? 'badge-warning': '') +'">'+ (mood.status == 5? '私有': '非私有') +'</span>'+
 			        	'设置是否私有'+
 			    '</li>'+
+			    '<li class="list-group-item cursor" onclick="updateIsSelfStatus('+ mood.status +','+ mood.id +', 14);">'+
+                    '<span class="badge '+ (mood.status == 14? 'badge-share': '') +'">'+ (mood.status == 14? '共享': '非共享') +'</span>'+
+                        '设置是否共享'+
+                '</li>'+
 			    '<li class="list-group-item cursor" onclick="updateCommentStatus('+ mood.can_comment +','+ mood.id +');">'+
 			        '<span class="badge '+ (mood.can_comment? '': 'badge-danger') +'">'+ (mood.can_comment? '已启用': '已禁用') +'</span>'+
 			        	'设置是否能评论'+
@@ -899,21 +907,30 @@ function deleteMood(id){
 	});
 }
 
-function updateIsSelfStatus(status, id){
+function updateIsSelfStatus(status, id, newStatus){
 	var loadi = layer.load('努力加载中…');
+	if(newStatus == 5){
+	    status = status == 5 ? 1 : 5;
+	}
+
+	if(newStatus == 14){
+        status = status == 14 ? 1 : 14;
+    }
 	$.ajax({
 		type : "put",
-		data: {status: (status == 1 ? 5 : 1), mid: id},
+		data: {status: status, mid: id},
 		url : "/md/mood",
 		dataType: 'json', 
 		beforeSend:function(){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				layer.msg(data.message);
 				if(data.isSuccess){
-					window.location.reload();
-				}
+                    layer.msg(data.message+", 1秒后自动刷新");
+                    reloadPage(1500);
+                }else{
+                    layer.msg(data.message);
+                }
 		},
 		error : function() {
 			layer.close(loadi);
@@ -938,10 +955,12 @@ function updateCommentStatus(can, table_id){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				layer.msg(data.message);
 				if(data.isSuccess){
-					window.location.reload();
-				}
+                    layer.msg(data.message+", 1秒后自动刷新");
+                    reloadPage(1500);
+                }else{
+                    layer.msg(data.message);
+                }
 		},
 		error : function() {
 			layer.close(loadi);
@@ -966,11 +985,12 @@ function updateTransmitStatus(can, table_id){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				layer.msg(data.message);
 				if(data.isSuccess){
-					window.location.reload();
+					layer.msg(data.message+", 1秒后自动刷新");
+					reloadPage(1500);
+				}else{
+				    layer.msg(data.message);
 				}
-				
 		},
 		error : function() {
 			layer.close(loadi);

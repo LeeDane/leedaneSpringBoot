@@ -14,13 +14,14 @@ import com.cn.leedane.model.CommentBean;
  * Version 1.0
  */
 public interface CommentMapper extends BaseMapper<CommentBean>{
-	
+
 	/**
 	 * 基础更新SQL的方法
-	 * @param sql
-	 * @param obj
+	 * @param tableId
+	 * @param status
+	 * @param start
+	 * @param pageSize
 	 * @return
-	 * @throws Exception
 	 */
 	//public boolean updateSQL(String sql, Object ... obj);
 	
@@ -38,10 +39,11 @@ public interface CommentMapper extends BaseMapper<CommentBean>{
 	 */
 	public List<Map<String, Object>> getAllByUser(@Param("userId") int userId, @Param("status") int status, 
 			@Param("start")int start, @Param("pageSize") int pageSize);
-	
+
 	/**
 	 * 获取该表资源的全部评论
-	 * @param userId
+	 * @param tableName
+	 * @param tableId
 	 * @param status
 	 * @param start
 	 * @param pageSize
@@ -53,4 +55,11 @@ public interface CommentMapper extends BaseMapper<CommentBean>{
 			@Param("status") int status, 
 			@Param("start")int start, 
 			@Param("pageSize") int pageSize);
+
+	/**
+	 * 获取关系的等级字符串
+	 * @param pid
+	 * @return
+	 */
+	public String getLevel(@Param("pid") int pid);
 }

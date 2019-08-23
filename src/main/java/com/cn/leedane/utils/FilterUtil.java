@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.OperateLogSaveThread;
@@ -32,6 +33,10 @@ public class FilterUtil {
 	 * @return
 	 */
 	public static boolean filter(String content, Map<String, Object> message, HttpRequestInfoBean request){
+
+	/*	//测试环境不校验
+		if(LeedanePropertiesConfig.newInstance().getBoolean("constant.is.debug"))
+			return false;*/
 		//检测敏感词
 		SensitivewordFilter filter = new SensitivewordFilter();
 		long beginTime = System.currentTimeMillis();

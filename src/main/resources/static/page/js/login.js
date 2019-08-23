@@ -1,11 +1,8 @@
   $(function () {
-
-
-        var s4=new SM4Util();
+        /*var s4=new SM4Util();
         console.log(s4.encryptData_ECB("ssda撒打飞机了ii&$$^##)*&6223':{}【】;.,[]"));
         s4.iv="UISwD9fW6cFh9SNS";
-        console.log(s4.encryptData_CBC("ssda撒打飞机了ii&$$^##)*&6223':{}【】;.,[]"));
-
+        console.log(s4.encryptData_CBC("ssda撒打飞机了ii&$$^##)*&6223':{}【】;.,[]"));*/
       $("#show-login-qr-code-btn").on("click", function(){
     	  //验证浏览器是否支持WebSocket协议
     	  if(!window.WebSocket){
@@ -15,7 +12,6 @@
     	  init();
     	  $("#load-qr-code").modal("show");
       });
-      
       $(".form-signin-heading-small").on("click", function(){
     	  var tx = $(this).text();
     	  if(tx == "登录"){
@@ -26,7 +22,6 @@
     		  $("#login-container").hide();
     	  }
       });
-      
       //init();
       $("#remember").click(function () {
           if ($(this).prop("checked") == true) {

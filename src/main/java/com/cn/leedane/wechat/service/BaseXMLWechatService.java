@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,9 +48,6 @@ public abstract class BaseXMLWechatService {
 	 */
 	protected String Content;
 	
-	@Value("${constant.system.server.url}")
-    private String SYSTEM_SERVER_URL;
-	
 	public BaseXMLWechatService() {
 	}
 	
@@ -84,7 +82,6 @@ public abstract class BaseXMLWechatService {
 	
 	/**
 	 * 由子类自己实现的具体操作方法
-	 * @param xmlString
 	 * return
 	 */
 	protected abstract String execute();
@@ -134,6 +131,6 @@ public abstract class BaseXMLWechatService {
 		 /*this.basePath = request.getScheme()+"://"+request.getServerName()
 				+":"+request.getServerPort()+request.getContextPath()+"/"; 
 		 return basePath;*/
-		return SYSTEM_SERVER_URL;
+		return LeedanePropertiesConfig.newInstance().getString("constant.system.server.url");
 	}
 }

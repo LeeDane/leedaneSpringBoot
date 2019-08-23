@@ -661,3 +661,36 @@ function formatFileSize(length){
         return parseFloat(length/ 1024/ 1024).toFixed(2) + "M";
     return length;
 }
+
+/**
+**  对评论多级联关系的处理
+**/
+function blockquote(items){
+    if(!items)
+        return '';
+    var html = '<div class="col-lg-12">';
+    html += recursive(items, '');
+    html += '</div>';
+    return html;
+}
+
+/**
+**  对评论多级联关系的处理
+**/
+function recursive(json, html){
+    if(!json || !json.item)
+        return html;
+
+    var item = json.item;
+    html += '<blockquote>';
+
+        //小于0表示删除，不做处理
+        if(item.id > 0){
+            html += item.source;
+            html += '<small><cite>'+ item.account +'</cite>&nbsp;&nbsp;'+ setTimeAgo(item.time) +'</small>';
+        }else{
+             html += ('<span style="color: #FF7F50; font-size: 12px;">' +item.source + '</span>');
+        }
+
+    return recursive(item, html) + '</blockquote>';
+}

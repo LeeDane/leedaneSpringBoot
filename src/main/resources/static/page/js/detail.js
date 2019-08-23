@@ -1,6 +1,7 @@
 var maxCommentNumber = 250; //最大的评论数量
-layui.use(['layer'], function(){
+layui.use(['layer', 'util'], function(){
 	layer = layui.layer;
+	util = layui.util;
 	if(isEmpty(bid)){
 		layer.msg("文章不存在");
 		return;
@@ -228,7 +229,10 @@ function buildEachCommentRow(index, comment){
 						       		'</div>';
 							html += '<div class="list-group-item comment-list-item">'+
 										'<div class="row">';
-									if(isNotEmpty(comment.blockquote_content)){
+
+							        html += '<div class="col-lg-12 comment-list-item-main">'+ changeNotNullString(comment.content) +'</div>';
+                                    html += blockquote(comment);
+									/*if(isNotEmpty(comment.blockquote_content)){
 								    html += '<div class="col-lg-12">'+
 											    '<blockquote>'+ comment.blockquote_content;
 												if(isNotEmpty(comment.blockquote_account)){
@@ -237,8 +241,8 @@ function buildEachCommentRow(index, comment){
 										html +='</blockquote>'+
 											'</div>';
 									}
-									html += '<div class="col-lg-12">'+ changeNotNullString(comment.content) +'</div>'+
-										'</div>'+
+									html += '<div class="col-lg-12">'+ changeNotNullString(comment.content) +'</div>'+*/
+								html +=	'</div>'+
 									'</div>';
 								if(isLogin){
 							html += '<div class="list-group-item comment-list-item">'+
@@ -273,7 +277,7 @@ function buildEachCommentRow(index, comment){
 					'</div>'+
 			'</div>';
 	
-	$(".container").append(html);
+	$("#commentContainer").append(html);
 }
 
 /**

@@ -103,4 +103,19 @@ public class LeedanePropertiesConfig {
 		}
 		return properties == null ? "" : StringUtil.changeNotNull(properties.get(key));
 	}
+
+	/**
+	 * 获取boolean类型的值, 默认是false
+	 * @param key
+	 * @return
+	 */
+	public boolean getBoolean(String key){
+		if(properties == null){
+			synchronized (LeedanePropertiesConfig.class){
+				if(properties == null)
+					initMapProperties();
+			}
+		}
+		return properties == null ? false : StringUtil.changeObjectToBoolean(StringUtil.changeNotNull(properties.get(key)));
+	}
 }

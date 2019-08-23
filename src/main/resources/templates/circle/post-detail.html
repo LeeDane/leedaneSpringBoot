@@ -117,7 +117,7 @@
 			   <div class="row">
 			   		<p th:utext="${post.title}" style="font-size: 25px; font-weight: bolder;"></p>
 					<p id="operate-list" style="color: #666;">
-						<button type="button" class="btn btn-default btn-sm user-img" data="'+ post.createUserId +'">
+						<button type="button" class="btn btn-default btn-xs user-img" data="'+ post.createUserId +'">
 								  <img th:src="${create_user_pic_path}" class="img-circle" style="width: 20px; height: 20px" /> <span th:text="${create_user_account}"></span>
 						</button>
 						<span id="post-create-time" class="label label-primary"></span>

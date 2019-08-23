@@ -245,6 +245,11 @@ div.col-sm-9 div {
     background-color: #ffc107!important;
 }
 
+.badge-share {
+    color: #fff!important;
+    background-color: #5cb85c!important;
+}
+
 #date-container{
     width: 100%;
     margin-bottom: 20px;

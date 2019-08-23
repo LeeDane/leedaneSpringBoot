@@ -48,6 +48,11 @@ public class CommentBean extends RecordTimeBean{
 	 * 评论对象的表ID，必须
 	 */
 	private int tableId;
+
+	/**
+	 * 保存评论关系级别的字符串，用|分开
+	 */
+	private String level;
 	
 	//@Type(type="text")
 	//@Column(name="content", nullable=false)
@@ -99,7 +104,12 @@ public class CommentBean extends RecordTimeBean{
 	public void setFroms(String froms) {
 		this.froms = froms;
 	}
-	
-	
-	
+
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
+	}
 }

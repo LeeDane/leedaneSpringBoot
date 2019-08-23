@@ -251,3 +251,28 @@ END WHILE;
 select categorys;  
 END $$
 delimiter
+
+
+-- 获取评论级联关系的存储过程
+drop PROCEDURE if EXISTS `commentCascade` ;
+delimiter $$
+CREATE PROCEDURE `commentCascade` (IN childId INT)
+BEGIN
+	DECLARE sTemp VARCHAR(1000);
+	DECLARE sTempChd VARCHAR(1000);
+
+	SET sTemp = '$';
+	SET sTempChd =cast(childId as CHAR);
+
+	WHILE sTempChd is not null DO
+		IF sTemp = '$'
+		THEN
+			SET sTemp = sTempChd;
+		ELSE
+			SET sTemp = concat(sTemp,'|',sTempChd);
+		END IF;
+		SELECT group_concat(pid) INTO sTempChd FROM t_comment c where FIND_IN_SET(id, sTempChd)>0 and pid > 0;
+	END WHILE;
+	SELECT sTemp;
+	END $$
+delimiter

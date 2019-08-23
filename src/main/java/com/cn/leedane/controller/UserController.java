@@ -108,7 +108,7 @@ public class UserController extends BaseController{
 				password = new String(decodedData, "UTF-8");
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.RSA加密解密异常.value) +", 请刷新当前页面，重新操作！");
+				message.put("message", "该页面过期, 请刷新当前页面，重新操作！");
 				message.put("responseCode", EnumUtil.ResponseCode.RSA加密解密异常.value);
 				return message.getMap();
 			}
@@ -908,11 +908,18 @@ public class UserController extends BaseController{
 			@RequestParam("account") String account,
 			@RequestParam("password") String password,
 			@RequestParam("FromUserName") String FromUserName,
+			@RequestParam("code") String code,
 			@RequestParam(value = "currentType", required=false) String currentType){
 		ResponseMap message = new ResponseMap();
 		if(StringUtil.isNull(currentType))
 			currentType = WeixinUtil.MODEL_MAIN_MENU;
-		
+
+		if(StringUtil.isNull(code) || !CodeUtil.checkVerifyCode(request, code)){
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请输入正确验证码.value));
+			message.put("responseCode", EnumUtil.ResponseCode.请输入正确验证码.value);
+			return message.getMap();
+		}
+
 		CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken();
 		authenticationToken.setUsername(account);
 		authenticationToken.setPassword(password.toCharArray());
@@ -941,12 +948,12 @@ public class UserController extends BaseController{
 			//UserSolrHandler.getInstance().updateBean(user);	
 			
 //            currentUser.getSession().setAttribute(USER_INFO_KEY, user);
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您成功绑定当前微信.value));
+			message.put("message", user.getId());
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			message.put("isSuccess", true);		
 			// 保存用户绑定日志信息
-			String subject = user.getAccount()+"绑定账号微信账号："+ FromUserName +"成功";
 //			operateLogService.saveOperateLog(user, request, new Date(), subject, "bingWechat", 1, 0);
+			operateLogService.saveOperateLog(null, getHttpRequestInfo(request), null, "绑定账号微信账号："+ FromUserName +"成功", "bindWechat", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
         }else{
         	message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.密码不正确.value));
 			message.put("responseCode", EnumUtil.ResponseCode.密码不正确.value);

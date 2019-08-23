@@ -2,12 +2,17 @@ package com.cn.leedane.service.impl;
 
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.*;
+import com.cn.leedane.mapper.BlogMapper;
+import com.cn.leedane.mapper.MoodMapper;
 import com.cn.leedane.mapper.TransmitMapper;
 import com.cn.leedane.model.*;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.TransmitService;
+import com.cn.leedane.springboot.ElasticSearchUtil;
+import com.cn.leedane.thread.ThreadUtil;
+import com.cn.leedane.thread.single.EsIndexAddThread;
 import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
@@ -50,6 +55,15 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 	
 	@Autowired
 	private OperateLogService<OperateLogBean> operateLogService;
+
+	@Autowired
+	private MoodMapper moodMapper;
+
+	@Autowired
+	private BlogMapper blogMapper;
+
+	@Autowired
+	private ElasticSearchUtil elasticSearchUtil;
 	
 	@Override
 	public Map<String, Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request){
@@ -281,6 +295,22 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 		boolean result = transmitMapper.updateSql(EnumUtil.getBeanClass(EnumUtil.getTableCNName(tableName)), " set can_transmit=? where id=?", canTransmit, tableId) > 0;
 		
 		if(result){
+			if(DataTableType.心情.value.equalsIgnoreCase(tableName)){
+				//获取心情对象
+				MoodBean moodBean = moodMapper.findById(MoodBean.class, tableId);
+				//删除es缓存
+				elasticSearchUtil.delete(DataTableType.心情.value, tableId);
+				//重新加进缓存
+				new ThreadUtil().singleTask(new EsIndexAddThread<MoodBean>(moodBean));
+			}else if(DataTableType.博客.value.equalsIgnoreCase(tableName)){
+				//获取心情对象
+				BlogBean blogBean = blogMapper.findById(BlogBean.class, tableId);
+				//删除es缓存
+				elasticSearchUtil.delete(DataTableType.博客.value, tableId);
+				//重新加进缓存
+				new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(blogBean));
+			}
+
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.更新转发状态成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);

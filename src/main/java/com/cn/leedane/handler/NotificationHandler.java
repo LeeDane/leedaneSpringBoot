@@ -221,8 +221,6 @@ public class NotificationHandler {
 	 * leedane机器人回复
 	 * @param robotId
 	 * @param user
-	 * @param tableName
-	 * @param tableId
 	 * @param objectBean
 	 */
 	private void robotReply(int robotId, UserBean user, Object objectBean) {

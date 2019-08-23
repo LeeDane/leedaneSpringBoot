@@ -1,5 +1,6 @@
 package com.cn.leedane.service.impl;
 
+import com.cn.leedane.exception.MustLoginException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.*;
 import com.cn.leedane.lucene.solr.MoodSolrHandler;
@@ -25,6 +26,15 @@ import com.cn.leedane.utils.EnumUtil.NotificationType;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -54,11 +64,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	
 	@Autowired
 	private UserService<UserBean> userService;
-	
-	public void setUserService(UserService<UserBean> userService) {
-		this.userService = userService;
-	}
-	
+
 	@Autowired
 	private FriendService<FriendBean> friendService;
 	
@@ -88,10 +94,9 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 
 	@Autowired
 	private ElasticSearchUtil elasticSearchUtil;
-	
-	public void setNotificationHandler(NotificationHandler notificationHandler) {
-		this.notificationHandler = notificationHandler;
-	}
+
+	@Autowired
+	private TransportClient transportClient;
 	
 	@Override
 	public Map<String, Object> saveMood(JSONObject jsonObject, UserBean user, int status, HttpRequestInfoBean request){
@@ -174,11 +179,16 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		logger.info("MoodServiceImpl-->updateMoodStatus():mid=" +mid +", status=" +status + ",jsonObject="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		boolean result = false;
+
 		if(mid < 1)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 		
 		MoodBean oldMoodBean = moodMapper.findById(MoodBean.class, mid);
-		
+		if(oldMoodBean == null){
+			//删除es缓存
+			elasticSearchUtil.delete(DataTableType.心情.value, mid);
+			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该心情不存在.value));
+		}
 		checkAdmin(user, oldMoodBean.getCreateUserId());
 
 		//设置es缓存为false
@@ -225,6 +235,11 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 			
 		MoodBean moodBean = moodMapper.findById(MoodBean.class, mid);
+		if(moodBean == null){
+			//删除es缓存
+			elasticSearchUtil.delete(DataTableType.心情.value, mid);
+			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该心情不存在.value));
+		}
 		
 		checkAdmin(user, moodBean.getCreateUserId());
 		
@@ -344,20 +359,54 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			UserBean user, HttpRequestInfoBean request){
 		logger.info("MoodServiceImpl-->getMoodPaging():jo=" +jo.toString());
 		int toUserId = JsonUtil.getIntValue(jo, "to_user_id", user.getId()); //
-		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
+//		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int currentIndex = JsonUtil.getIntValue(jo, "current", 0); //当前的索引页
 		int total = JsonUtil.getIntValue(jo, "total", 0); //当前的索引页
 		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
 		String picSize = ConstantsUtil.DEFAULT_PIC_SIZE; //JsonUtil.getStringValue(jo, "pic_size"); //图像的规格(大小)		
 		ResponseMap message = new ResponseMap();
-		rs = moodMapper.getMoodPaging(user.getId(), toUserId, start, pageSize, ConstantsUtil.STATUS_NORMAL, ConstantsUtil.STATUS_SELF);
-		if(CollectionUtil.isNotEmpty(rs)){
+
+		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+
+		//登录的用户可以自己查询所有的心情
+		BoolQueryBuilder boolQueryStatus = QueryBuilders.boolQuery();
+		boolQueryStatus.should(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_NORMAL));
+		boolQueryStatus.should(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_SHARE));
+		//当前登录用户可以查看自己私有的心情
+		if(toUserId == user.getId()){
+			boolQueryStatus.should(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_SELF));
+		}
+		boolQuery.must(boolQueryStatus);
+		boolQuery.must(QueryBuilders.termQuery("create_user_id", toUserId));
+		SearchRequestBuilder builder = transportClient.prepareSearch(ElasticSearchUtil.getDefaultIndexName(DataTableType.心情.value)).setTypes(DataTableType.心情.value)
+				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+				.setQuery(boolQuery)
+				.setFrom(start)
+				//为0表示只获取统计数，不获取详细的文档数据
+				.setSize(pageSize)
+				.setFetchSource(new String[]{"id", "status", "content", "froms", "uuid", "create_user_id", "create_time", "has_img", "can_comment",
+						"can_transmit", "read_number", "location", "longitude", "latitude", "share_number"}, null);
+		//控制是否新增排序
+		builder.addSort("id", SortOrder.DESC);
+
+		logger.info(builder.toString());
+
+		SearchResponse response = builder.get();
+
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		for (SearchHit hit : response.getHits()) {
+			Map<String, HighlightField> fieldMap = hit.getHighlightFields();
+			result.add(hit.getSourceAsMap());
+		}
+
+//		rs = moodMapper.getMoodPaging(user.getId(), toUserId, start, pageSize, ConstantsUtil.STATUS_NORMAL, ConstantsUtil.STATUS_SELF);
+		if(CollectionUtil.isNotEmpty(result)){
 			boolean hasImg ;
 			String uuid;
 			int moodId;
 			//为名字备注赋值
-			for(Map<String, Object> map: rs){
+			for(Map<String, Object> map: result){
 				hasImg = StringUtil.changeObjectToBoolean(map.get("has_img"));
 				uuid = StringUtil.changeNotNull(map.get("uuid"));
 				moodId = StringUtil.changeObjectToInt(map.get("id"));
@@ -365,6 +414,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 				map.put("comment_number", commentHandler.getCommentNumber(moodId, DataTableType.心情.value));
 				map.put("transmit_number", transmitHandler.getTransmitNumber(moodId, DataTableType.心情.value));
 				map.put("zan_number", zanHandler.getZanNumber(moodId, DataTableType.心情.value));
+				map.put("account", userHandler.getUserName(StringUtil.changeObjectToInt(map.get("create_user_id"))));
 				//有图片的获取图片的路径
 				if(hasImg && !StringUtil.isNull(uuid)){
 					map.put("imgs", moodHandler.getMoodImg(DataTableType.心情.value, uuid, picSize));
@@ -374,7 +424,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		message.put("total", SqlUtil.getTotalByList(moodMapper.getTotal(DataTableType.心情.value, " m where create_user_id="+ toUserId +" and "+ getMoodStatusSQL(toUserId, user))));
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户id为"+toUserId+"个人中心", "getMoodPaging()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("message", rs);
+		message.put("message", result);
 		message.put("isSuccess", true);
 		return message.getMap();
 	}
@@ -478,7 +528,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	@Override
 	public Map<String, Object> detail(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request, String picSize){
-		logger.info("MoodServiceImpl-->detail():jsonObject=" +jo.toString() +", user=" +user.getAccount());
+		logger.info("MoodServiceImpl-->detail():jsonObject=" +jo.toString() +", user=" + (user != null ? user.getAccount(): "未登录用户"));
 		final int mid = JsonUtil.getIntValue(jo, "mid", 0); //心情ID
 		ResponseMap message = new ResponseMap();
 		if(mid < 1)
@@ -490,9 +540,15 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			Map<String, Object> mood = list.get(0);
 			int moodCreateUserId = StringUtil.changeObjectToInt(mood.get("create_user_id"));
 			int status = StringUtil.changeObjectToInt(mood.get("status"));
-			//判断是否是需要验证私有的
-			if(moodCreateUserId != user.getId() && !isAdmin() && status == ConstantsUtil.STATUS_SELF)
+			//非登录用户只能查看共享的心情
+
+			if(status != ConstantsUtil.STATUS_SHARE){
+				if(user == null)
+					throw new MustLoginException();
+			}
+			if(user != null && moodCreateUserId != user.getId() && !isAdmin() && status == ConstantsUtil.STATUS_SELF)
 				throw new UnauthorizedException("私有信息，您无法查看！");
+
 
 			message.put("isSuccess", true);
 			boolean hasImg = StringUtil.changeObjectToBoolean(mood.get("has_img"));
@@ -701,7 +757,11 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 				moodBean.setLatitude(latitude);
 			}
 			moodBean.setCreateTime(new Date());
-			moodBean.setFroms(JsonUtil.getStringValue(jsonObject, "froms"));
+			String froms = request.getLocation();
+			if(StringUtil.isNull(froms) || "未知".equalsIgnoreCase(froms)){
+				froms = StringUtil.changeNotNull(JsonUtil.getStringValue(jsonObject, "froms"));
+			}
+			moodBean.setFroms(froms);
 			moodBean.setPublishNow(true);
 			moodBean.setStatus(ConstantsUtil.STATUS_NORMAL);
 			moodBean.setCreateUserId(user.getId());

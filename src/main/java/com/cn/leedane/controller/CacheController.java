@@ -74,6 +74,8 @@ public class CacheController extends BaseController{
 		SystemCache.getSystemEhCache().clear();
 		RedisUtil redisUtil = RedisUtil.getInstance();
 		boolean result = redisUtil.clearAll();
+		if(result)
+			result = systemCache.removeAllCache();
 		if(result){
 			message.put("isSuccess", true);
 		}else{

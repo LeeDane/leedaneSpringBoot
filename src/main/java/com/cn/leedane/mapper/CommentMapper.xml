@@ -10,7 +10,8 @@
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
 	<select id="getMessageBoards" resultType="java.util.Map">
-		select c.id, c.content, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time, c.create_user_id, c.froms, c.pid, c.status 
+		select c.id, c.content, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time, c.create_user_id,
+		c.froms, c.pid, c.status , c.level
 		from t_comment c 
 		where c.table_id = #{tableId} and c.table_name = 't_message_board' and c.status=#{status} 
 		order by c.id desc limit #{start}, #{pageSize}
@@ -18,7 +19,7 @@
 	
 	<select id="getAllByUser" resultType="java.util.Map">
 		select c.id, c.pid, c.froms, c.content, c.table_id, c.table_name, c.create_user_id, u.account
-		, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id 
+		, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id , c.level
 		  from t_comment c inner join t_user u on u.id = c.create_user_id
 		 where c.create_user_id =#{userId} and c.status = #{status} 
 		 order by c.id desc limit #{start}, #{pageSize}
@@ -26,9 +27,15 @@
 	
 	<select id="getAllByTable" resultType="java.util.Map">
 		select c.id, c.pid, c.froms, c.content, c.table_id, c.table_name, c.create_user_id, u.account 
-		, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id 
+		, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time,c.comment_level, c.table_id, c.level
 		  from t_comment c inner join t_user u on u.id = c.create_user_id
 		 where c.table_name = #{tableName} and c.table_id = #{tableId} and c.status = #{status}
 		 order by c.id desc limit #{start}, #{pageSize}
+	</select>
+
+	<select id="getLevel" parameterType="int" resultType="string" statementType="CALLABLE">
+		{
+		call commentCascade(#{pid})
+		}
 	</select>
 </mapper>

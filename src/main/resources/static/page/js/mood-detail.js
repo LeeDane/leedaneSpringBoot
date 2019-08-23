@@ -257,7 +257,10 @@ function buildEachCommentRow(index, comment){
 						       		'</div>';
 							html += '<div class="list-group-item comment-list-item">'+
 										'<div class="row">';
-									if(isNotEmpty(comment.blockquote_content)){
+
+						            html += '<div class="col-lg-12 comment-list-item-main">'+ changeNotNullString(comment.content) +'</div>';
+                                    html += blockquote(comment);
+									/*if(isNotEmpty(comment.blockquote_content)){
 								    html += '<div class="col-lg-12">'+
 											    '<blockquote>'+ comment.blockquote_content;
 												if(isNotEmpty(comment.blockquote_account)){
@@ -266,8 +269,8 @@ function buildEachCommentRow(index, comment){
 										html +='</blockquote>'+
 											'</div>';
 									}
-									html += '<div class="col-lg-12">'+ changeNotNullString(comment.content) +'</div>'+
-										'</div>'+
+									html += '<div class="col-lg-12">'+ changeNotNullString(comment.content) +'</div>'+*/
+								html +=	'</div>'+
 									'</div>';
 								if(isLogin){
 							html += '<div class="list-group-item comment-list-item">'+

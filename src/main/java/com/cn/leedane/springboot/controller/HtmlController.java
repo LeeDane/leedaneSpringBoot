@@ -17,6 +17,7 @@ import com.cn.leedane.service.AppVersionService;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.shiro.CustomAuthenticationToken;
+import com.cn.leedane.springboot.ElasticSearchUtil;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
@@ -62,6 +63,9 @@ public class HtmlController extends BaseController{
 
 	@Autowired
 	private MoodHandler moodHandler;
+
+	@Autowired
+	private ElasticSearchUtil elasticSearchUtil;
 	
 	/***
 	 * 下面的mapping会导致js/css文件依然访问到templates，返回的是html页面
@@ -205,10 +209,9 @@ public class HtmlController extends BaseController{
         UserBean user = getMustLoginUserFromShiro();
         model.addAttribute("uid", uid);
 		model.addAttribute("uaccount", userHandler.getUserName(uid));
-		model.addAttribute("isLoginUser", uid == user.getId());
+		model.addAttribute("isLoginUser", user != null && uid == user.getId());
 		//保存访客记录
-		if(uid != user.getId())
-			visitorService.saveVisitor(user, "web网页端", DataTableType.心情.value, uid, ConstantsUtil.STATUS_NORMAL);
+		visitorService.saveVisitor(user, "web网页端", DataTableType.心情.value, uid, ConstantsUtil.STATUS_NORMAL);
 
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看"+ userHandler.getUserName(uid) +"个人中心", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("my", model, request);
@@ -231,10 +234,10 @@ public class HtmlController extends BaseController{
 	@RequestMapping("user/{uid}/mood/{mid}/"+ ControllerBaseNameUtil.dt)
 	public String moodDetail(@PathVariable(value="uid") int uid, @PathVariable(value="mid") int mid, Model model, HttpServletRequest request){
         checkRoleOrPermission(model, request);
-        UserBean user = getMustLoginUserFromShiro();
+        UserBean user = getUserFromShiro();
         model.addAttribute("uid", uid);
 		model.addAttribute("mid", mid);
-		model.addAttribute("isLoginUser", uid == user.getId());
+		model.addAttribute("isLoginUser", user != null && uid == user.getId());
 
 		//校验是否可以查看该心情
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
@@ -244,19 +247,27 @@ public class HtmlController extends BaseController{
 			int moodCreateUserId = StringUtil.changeObjectToInt(mood.get("create_user_id"));
 			int status = StringUtil.changeObjectToInt(mood.get("status"));
 			Subject currentUser = SecurityUtils.getSubject();
-			//判断是否是需要验证私有的
-			if (moodCreateUserId != user.getId() && !currentUser.hasRole(RoleController.ADMIN_ROLE_CODE) && status == ConstantsUtil.STATUS_SELF)
+			//非登录用户只能查看共享的心情
+			if(status != ConstantsUtil.STATUS_SHARE){
+				if(user == null)
+					throw new MustLoginException();
+			}
+			if(user != null && moodCreateUserId != user.getId() && !currentUser.hasRole(RoleController.ADMIN_ROLE_CODE) && status == ConstantsUtil.STATUS_SELF)
 				throw new UnauthorizedException("私有信息，您无法查看！");
+
 		}else{
+			 if(mid > 0)
+				 //删除es缓存
+				 elasticSearchUtil.delete(DataTableType.心情.value, mid);
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该心情不存在.value));
 		}
 
 		//保存访客记录
-		if(uid != user.getId())
+		if(user != null && uid != user.getId())
 			visitorService.saveVisitor(user, "web网页端", DataTableType.心情.value, uid, ConstantsUtil.STATUS_NORMAL);
 
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "查看用户"+ userHandler.getUserName(uid) + "的心情ID为:"+ mid, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
-		return loginRoleCheck("mood-detail", true, model, request);
+		return loginRoleCheck("mood-detail", model, request);
 	}
 	
 	@RequestMapping(ControllerBaseNameUtil.pb)

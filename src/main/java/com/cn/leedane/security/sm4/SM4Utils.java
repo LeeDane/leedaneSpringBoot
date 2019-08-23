@@ -1,8 +1,10 @@
 package com.cn.leedane.security.sm4;
 import java.io.IOException;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.cn.leedane.utils.CommonUtil;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -161,4 +163,5 @@ public class SM4Utils
         //PI4ke7HMoUMD/LOSHWX5/g==
 
     }*/
+
 }

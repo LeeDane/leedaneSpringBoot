@@ -93,6 +93,9 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			//获取文章
 			BlogBean oldBean = blogMapper.findById(BlogBean.class, blog.getId());
 			if(oldBean == null){
+				//删除缓存
+				elasticSearchUtil.delete(DataTableType.博客.value, blog.getId());
+
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
 				message.put("responseCode", EnumUtil.ResponseCode.该博客不存在.value);
 				return message.getMap();
@@ -250,8 +253,11 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		
 		//获取该文章
 		BlogBean oldBean = blogMapper.findById(BlogBean.class, id);
-		if(oldBean == null)
+		if(oldBean == null){
+			//删除缓存
+			elasticSearchUtil.delete(DataTableType.博客.value, id);
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
+		}
 		
 		//获取该文章的作者
 		int createUserId = oldBean.getCreateUserId();
@@ -339,8 +345,11 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		
 		BlogBean blogBean = blogMapper.findById(BlogBean.class, bid);
 		
-		if(blogBean == null)
+		if(blogBean == null){
+			//删除缓存
+			elasticSearchUtil.delete(DataTableType.博客.value, bid);
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
+		}
 		
 		boolean cut = false;
 		String oldTag = blogBean.getTag();
@@ -467,8 +476,11 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		
 		List<Map<String, Object>> r = blogMapper.executeSQL(sql.toString(), blogId, ConstantsUtil.STATUS_NORMAL);
 		
-		if(r == null || r.size() != 1)
+		if(r == null || r.size() != 1){
+			//删除缓存
+			elasticSearchUtil.delete(DataTableType.博客.value, blogId);
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
+		}
 		
 		//获取该文章的作者
 		int createUserId = StringUtil.changeObjectToInt(r.get(0).get("create_user_id"));
@@ -557,9 +569,12 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		int blogId = JsonUtil.getIntValue(jo, "blog_id"); //文章ID
 		boolean agree = JsonUtil.getBooleanValue(jo, "agree");
 		BlogBean bean = blogMapper.findById(BlogBean.class, blogId);
-		if(bean == null)
+		if(bean == null){
+			//删除缓存
+			elasticSearchUtil.delete(DataTableType.博客.value, blogId);
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
-		
+		}
+
 		if(bean.getStatus() != ConstantsUtil.STATUS_AUDIT){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该文章不需要审核.value));
 			message.put("responseCode", EnumUtil.ResponseCode.该文章不需要审核.value);
@@ -610,9 +625,11 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
 			return message.getMap();
 		}
-		
+
 		List<Map<String, Object>> ls = blogMapper.getOneBlog(ConstantsUtil.STATUS_NORMAL, blogId);
 		if(CollectionUtil.isEmpty(ls)){
+			//删除缓存
+			elasticSearchUtil.delete(DataTableType.博客.value, blogId);
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
 		}
 		

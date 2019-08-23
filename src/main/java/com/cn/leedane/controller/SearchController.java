@@ -113,6 +113,7 @@ public class SearchController extends BaseController{
 		}*/
 		String table = null;
 		String[] searchFields = new String[1];
+		String[] showFields = null;
 		//查询的类型，目前支持0、全部，1、博客（正文和标题），2、说说(正文)，3、用户(姓名，中文名，邮件，手机号码,证件号码)
 		switch (searchType){
 			case ConstantsUtil.SEARCH_TYPE_BLOG:
@@ -121,11 +122,31 @@ public class SearchController extends BaseController{
 				searchFields[0] = "title";
 				searchFields[1] = "digest";
 				searchFields[2] = "content";
+
+				showFields = new String[7];
+				showFields[0] = "create_time";
+				showFields[1] = "create_user_id";
+				showFields[2] = "digest";
+				showFields[3] = "has_img";
+				showFields[4] = "id";
+				showFields[5] = "modify_time";
+				showFields[6] = "title";
+
 				break;
 			case ConstantsUtil.SEARCH_TYPE_MOOD:
 				table = DataTableType.心情.value;
 				searchFields = new String[1];
 				searchFields[0] = "content";
+
+				showFields = new String[7];
+				showFields[0] = "create_user_id";
+				showFields[1] = "content";
+				showFields[2] = "create_time";
+				showFields[3] = "has_img";
+				showFields[4] = "id";
+				showFields[5] = "modify_time";
+				showFields[6] = "imgs";
+
 				break;
 			case ConstantsUtil.SEARCH_TYPE_USER:
 				table = DataTableType.用户.value;
@@ -163,6 +184,7 @@ public class SearchController extends BaseController{
 		requestBean.setStartDate(startDate);
 		requestBean.setEndDate(endDate);
 		requestBean.setSearchType(searchType);
+		requestBean.setShowFields(showFields);
 		SearchResponse response = elasticSearchUtil.getResults(requestBean);
 
 		List<Map<String, Object>> results = new ArrayList<>();
@@ -187,10 +209,11 @@ public class SearchController extends BaseController{
 
 
 					}else if(searchType == ConstantsUtil.SEARCH_TYPE_MOOD){
-						if(StringUtil.changeObjectToBoolean(documentFieldMap.get("has_img"))){
+						/*if(StringUtil.changeObjectToBoolean(documentFieldMap.get("has_img"))){
 							String uuid = StringUtil.changeNotNull(documentFieldMap.get("uuid"));
 							documentFieldMap.put("imgs", moodHandler.getMoodImg(DataTableType.心情.value, uuid, ConstantsUtil.DEFAULT_PIC_SIZE));
-						}
+						}*/
+						documentFieldMap.put("has_img", StringUtil.isNotNull(StringUtil.changeNotNull(documentFieldMap.get("imgs"))));
 						documentFieldMap.put("account", userHandler.getUserName(createUserId));
 					}else if(searchType == ConstantsUtil.SEARCH_TYPE_BLOG){
 						documentFieldMap.put("account", userHandler.getUserName(createUserId));

@@ -177,7 +177,7 @@ public class HttpRequestUtil {
 	 * @throws IOException
 	 */
 	public static synchronized String sendAndRecieveFromTuLing(String Content) throws IOException {
-		String APIKEY = "74ab60601405fa07c2c38d2595443342"; 
+		String APIKEY = "b044a69b6cf049daab15f17a900b5b40";
 	    String INFO = URLEncoder.encode(Content, "utf-8"); 
 	    String getURL = "http://www.tuling123.com/openapi/api?key=" + APIKEY + "&info=" + INFO; 
 	    URL getUrl = new URL(getURL); 

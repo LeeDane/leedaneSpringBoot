@@ -14,7 +14,8 @@ import com.cn.leedane.model.circle.CircleCreateLimitBean;
 public interface CircleCreateLimitMapper extends BaseMapper<CircleCreateLimitBean>{
 	/**
 	 * 获取能创建的圈子数量
-	 * @param userId
+	 * @param createUserId
+	 * @param status
 	 * @return
 	 */
 	public int getNumber(@Param("createUserId") int createUserId, @Param("status") int status);

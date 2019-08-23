@@ -306,4 +306,23 @@ public class ToolController extends BaseController{
 		message.putAll(appVersionService.getNewest(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();	
 	}
+
+	/**
+	 * 获取系统配置的详细信息
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/system/info", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> getSystemInfo(HttpServletRequest request) throws InterruptedException {
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		//获得所有的环境变量
+//       Map<String, String> env = System.getenv();
+		//获得指定的环境变量
+//       String path = System.getenv("path");
+		String result = CommonUtil.execMult("java -version");
+		message.put("isSuccess", true);
+		message.put("message", result);
+		return message.getMap();
+	}
 }

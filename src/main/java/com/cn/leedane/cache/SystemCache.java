@@ -86,4 +86,12 @@ public class SystemCache implements com.cn.leedane.cache.ICache{
 		}
 	}
 
+	/**
+	 * 移除所有的缓存
+	 * @return
+	 */
+	public boolean removeAllCache(){
+		systemEhCache.clear();
+		return true;
+	}
 }

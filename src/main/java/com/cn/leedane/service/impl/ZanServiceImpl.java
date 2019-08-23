@@ -81,10 +81,10 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 		boolean result = zanMapper.save(bean) > 0;
 		if(result){
 			int createUserId = 0;
-			String str = "{from_user_remark}点赞，源自："+content;
+			String str = "{from_user_remark}给您点赞";
 			createUserId = SqlUtil.getCreateUserIdByList(zanMapper.getObjectCreateUserId(tableName, tableId));
 			if(createUserId > 0 && createUserId != user.getId()){
-				Set<Integer> ids = new HashSet<Integer>();
+				Set<Integer> ids = new HashSet<>();
 				ids.add(createUserId);
 				notificationHandler.sendNotificationByIds(false, user, ids, str, NotificationType.赞过我, tableName, tableId, bean);
 			}

@@ -36,3 +36,6 @@ alter table t_operate_log add COLUMN `location` varchar(100) DEFAULT NULL;
 
 /*修改图库表，添加路径的唯一索引*/
 alter table t_gallery add constraint gallery_user_unique UNIQUE(create_user_id, category_id, path);
+
+/*修改评论表，添加level字段*/
+alter table t_comment add COLUMN level varchar(255) DEFAULT NULL  COMMENT '关系级联的字符串，用|分隔开';
