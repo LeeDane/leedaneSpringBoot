@@ -276,9 +276,7 @@ public class ElasticSearchUtil {
 			//非管理员，只能查询公开的或者自己的私有的
 			if(!currentUser.hasRole(RoleController.ADMIN_ROLE_CODE)){
 				//日志只能看自己的
-				if(elasticSearchRequestBean.getSearchType() != ConstantsUtil.SEARCH_TYPE_OPERATE_LOG) {
-					boolQueryStatus.must(QueryBuilders.termQuery("create_user_id", elasticSearchRequestBean.getUser().getId()));
-				}else{
+				if(elasticSearchRequestBean.getSearchType() == ConstantsUtil.SEARCH_TYPE_OPERATE_LOG){
 					BoolQueryBuilder boolQuerySelf = QueryBuilders.boolQuery();
 					boolQuerySelf.must(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_SELF));
 					boolQuerySelf.must(QueryBuilders.termQuery("create_user_id", elasticSearchRequestBean.getUser().getId()));

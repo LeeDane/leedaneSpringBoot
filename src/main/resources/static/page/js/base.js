@@ -9,7 +9,7 @@ Date.prototype.Format = function (fmt) { //author: meizz
      "M+": this.getMonth() + 1, //月份 
      "d+": this.getDate(), //日 
      "H+": this.getHours(), //小时 
-     "m+": this.getMinutes(), //分 
+     "m+": this.getMinutes(), //分
      "s+": this.getSeconds(), //秒 
      "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
      "S": this.getMilliseconds() //毫秒 
@@ -611,7 +611,7 @@ function isVideo(link){
  */
 function getVideoHtml(link){
 	 if(isVideo){
-		 return '<video style="width: 100%; max-height: 500px; margin-top: 10px; margin-bottom: 10px;" src="'+ changeNotNullString(link) +'" controls="controls">Your browser does not support the video tag.</video>';
+		 return '<video style="width: 100%; max-height: 500px; margin-top: 4px; margin-bottom: 4px;" src="'+ changeNotNullString(link) +'" controls="controls">Your browser does not support the video tag.</video>';
 	 }
 	return "";
 }
@@ -639,7 +639,7 @@ function isAudio(link){
  */
 function getAudioHtml(link){
 	 if(isAudio){
-		 return '<audio style="width: 100%; max-height: 500px; margin-top: 10px; margin-bottom: 10px;" src="'+ changeNotNullString(link) +'" controls="controls">Your browser does not support the audio tag.</audio>';
+		 return '<audio style="width: 100%; max-height: 500px; margin-top: 4px; margin-bottom: 4px;" src="'+ changeNotNullString(link) +'" controls="controls">Your browser does not support the audio tag.</audio>';
 	 }
 	return "";
 }

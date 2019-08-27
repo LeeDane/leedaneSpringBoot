@@ -302,7 +302,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		
 		if("firstloading".equalsIgnoreCase(method)){
 			sql.append("select m.id, m.status, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img, m.can_comment, m.can_transmit,");
-			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account");
+			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account, m.stick ");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where "+ getMoodStatusSQL(toUserId, user) +" and ");
 			sql.append(" m.create_user_id = ?");
 			sql.append(" order by m.id desc limit 0,?");
@@ -310,7 +310,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		//下刷新
 		}else if("lowloading".equalsIgnoreCase(method)){
 			sql.append("select m.id, m.status, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img, m.can_comment, m.can_transmit,");
-			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account");
+			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account, m.stick ");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where "+ getMoodStatusSQL(toUserId, user) +" and ");
 			sql.append(" m.create_user_id = ?");
 			sql.append(" and m.id < ? order by m.id desc limit 0,? ");
@@ -318,7 +318,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		//上刷新
 		}else if("uploading".equalsIgnoreCase(method)){
 			sql.append("select m.id, m.status, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img, m.can_comment, m.can_transmit,");
-			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account");
+			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account, m.stick");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where "+ getMoodStatusSQL(toUserId, user) +" and ");
 			sql.append(" m.create_user_id = ?");
 			sql.append(" and m.id > ? limit 0,?  ");
@@ -386,8 +386,9 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 				//为0表示只获取统计数，不获取详细的文档数据
 				.setSize(pageSize)
 				.setFetchSource(new String[]{"id", "status", "content", "froms", "uuid", "create_user_id", "create_time", "has_img", "can_comment",
-						"can_transmit", "read_number", "location", "longitude", "latitude", "share_number"}, null);
+						"can_transmit", "read_number", "location", "longitude", "latitude", "share_number", "stick"}, null);
 		//控制是否新增排序
+        builder.addSort("stick", SortOrder.DESC);
 		builder.addSort("id", SortOrder.DESC);
 
 		logger.info(builder.toString());
@@ -845,7 +846,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			return message.getMap();
 		}
 		
-		List<Map<String, Object>> rs = moodMapper.executeSQL("select id, content, uuid, froms, create_user_id, date_format(create_time,'%Y-%m-%d %H:%i:%s') create_time, has_img , can_comment, can_transmit from "+DataTableType.心情.value+" where status=? and content like '%"+searchKey+"%' order by create_time desc limit 25", ConstantsUtil.STATUS_NORMAL);
+		List<Map<String, Object>> rs = moodMapper.executeSQL("select id, content, uuid, froms, create_user_id, date_format(create_time,'%Y-%m-%d %H:%i:%s') create_time, has_img , can_comment, can_transmit, stick from "+DataTableType.心情.value+" where status=? and content like '%"+searchKey+"%' order by create_time desc limit 25", ConstantsUtil.STATUS_NORMAL);
 		if(rs != null && rs.size() > 0){
 			int createUserId = 0;
 			boolean hasImg;
@@ -929,7 +930,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		
 		if("firstloading".equalsIgnoreCase(method)){
 			sql.append("select m.id, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img, m.can_comment, m.can_transmit,");
-			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account");
+			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account, m.stick ");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where m.status = ? and ");
 			sql.append(" m.content like '%"+topic+"%'");
 			sql.append(" order by m.id desc limit 0,?");
@@ -937,7 +938,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		//下刷新
 		}else if("lowloading".equalsIgnoreCase(method)){
 			sql.append("select m.id, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img, m.can_comment, m.can_transmit,");
-			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account");
+			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account, m.stick ");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where m.status = ? and ");
 			sql.append(" m.content like '%"+topic+"%'");
 			sql.append(" and m.id < ? order by m.id desc limit 0,? ");
@@ -945,7 +946,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		//上刷新
 		}else if("uploading".equalsIgnoreCase(method)){
 			sql.append("select m.id, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img, m.can_comment, m.can_transmit,");
-			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account");
+			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account, m.stick ");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where m.status = ? and ");
 			sql.append(" m.content like '%"+topic+"%'");
 			sql.append(" and m.id > ? limit 0,?  ");
@@ -996,4 +997,54 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		return  moodMapper.getBeans(sql, params);
 	}
 
+	@Override
+	public Map<String, Object> updateMoodStick(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request) {
+		int mid = JsonUtil.getIntValue(jsonObject, "mid");
+		boolean staick = JsonUtil.getBooleanValue(jsonObject, "stick");
+		logger.info("MoodServiceImpl-->updateMoodStick():mid=" +mid +"" + ",jsonObject="+jsonObject.toString());
+		ResponseMap message = new ResponseMap();
+		boolean result = false;
+
+		if(mid < 1)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
+
+		MoodBean oldMoodBean = moodMapper.findById(MoodBean.class, mid);
+		if(oldMoodBean == null){
+			//删除es缓存
+			elasticSearchUtil.delete(DataTableType.心情.value, mid);
+			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该心情不存在.value));
+		}
+		checkAdmin(user, oldMoodBean.getCreateUserId());
+
+		//
+		if(staick){
+			//获取排序的最大数
+			oldMoodBean.setStick(moodMapper.getMaxStick(user.getId()) + 1);
+		}else{
+			oldMoodBean.setStick(0);
+		}
+
+		//设置es缓存为false
+		oldMoodBean.setEsIndex(false);
+		oldMoodBean.setModifyUserId(user.getId());
+		oldMoodBean.setModifyTime(new Date());
+		result = moodMapper.update(oldMoodBean)> 0;
+		if(result){
+			//删除该心情的缓存
+			moodHandler.delete(mid, null, null);
+			message.put("isSuccess", result);
+			message.put("message", "更新心情置顶状态成功");
+			//异步修改心情solr索引
+//	        new ThreadUtil().singleTask(new SolrUpdateThread<MoodBean>(MoodSolrHandler.getInstance(), oldMoodBean));
+
+			//删除es缓存
+			elasticSearchUtil.delete(DataTableType.心情.value, mid);
+			new ThreadUtil().singleTask(new EsIndexAddThread<MoodBean>(oldMoodBean));
+			//MoodSolrHandler.getInstance().updateBean(oldMoodBean);
+		}else{
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
+			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
+		}
+		return message.getMap();
+	}
 }

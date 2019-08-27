@@ -174,6 +174,11 @@ public class BlogBean extends RecordTimeBean{
 	 */
 	@Field
 	private String category;
+
+	/**
+	 * 排序字段，根据从大到小排序，大于0表示置顶字段
+	 */
+	private int stick;
 	
 	/**
 	 * 扩展字段1
@@ -384,5 +389,13 @@ public class BlogBean extends RecordTimeBean{
 
 	public void setEsIndex(boolean esIndex) {
 		this.esIndex = esIndex;
+	}
+
+	public int getStick() {
+		return stick;
+	}
+
+	public void setStick(int stick) {
+		this.stick = stick;
 	}
 }

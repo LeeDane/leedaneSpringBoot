@@ -34,7 +34,7 @@ public class TransmitHandler {
 		//还没有添加到redis中
 		if(!redisUtil.hasKey(key)){
 			//获取数据库中所有转发的数量
-			count = SqlUtil.getTotalByList(transmitMapper.getTotal(DataTableType.转发.value, "where table_id = "+tableId+" and table_name='"+tableName+"'")) + 1;
+			count = SqlUtil.getTotalByList(transmitMapper.getTotal(DataTableType.转发.value, "where table_id = "+tableId+" and table_name='"+tableName+"' and status="+ ConstantsUtil.STATUS_NORMAL)) + 1;
 		}else{
 			count = Integer.parseInt(redisUtil.getString(key)) + 1;
 		}
@@ -51,7 +51,7 @@ public class TransmitHandler {
 		int transmitNumber;
 		//转发
 		if(!redisUtil.hasKey(transmitKey)){
-			transmitNumber = SqlUtil.getTotalByList(transmitMapper.getTotal(DataTableType.转发.value, "where table_id = "+tableId+" and table_name='"+tableName+"'"));
+			transmitNumber = SqlUtil.getTotalByList(transmitMapper.getTotal(DataTableType.转发.value, "where table_id = "+tableId+" and table_name='"+tableName+"' and status="+ ConstantsUtil.STATUS_NORMAL));
 			redisUtil.addString(transmitKey, String.valueOf(transmitNumber));
 		}else{
 			transmitNumber = Integer.parseInt(redisUtil.getString(transmitKey));
@@ -69,7 +69,7 @@ public class TransmitHandler {
 		int transmitNumber;
 		//转发
 		if(!redisUtil.hasKey(transmitKey)){
-			transmitNumber = SqlUtil.getTotalByList(transmitMapper.getTotal(DataTableType.转发.value, "where table_id = "+tableId+" and table_name='"+tableName+"'"));
+			transmitNumber = SqlUtil.getTotalByList(transmitMapper.getTotal(DataTableType.转发.value, "where table_id = "+tableId+" and table_name='"+tableName+"' and status="+ ConstantsUtil.STATUS_NORMAL));
 			redisUtil.addString(transmitKey, String.valueOf(transmitNumber));
 		}else{
 			transmitNumber = Integer.parseInt(redisUtil.getString(transmitKey));
@@ -86,10 +86,11 @@ public class TransmitHandler {
 	public int getTransmits(int userId){
 		return SqlUtil.getTotalByList(transmitMapper.getTotalByUser(DataTableType.转发.value, userId));
 	}
-	
+
 	/**
 	 * 获取转发在redis的key
-	 * @param id
+	 * @param tableId
+	 * @param tableName
 	 * @return
 	 */
 	public static String getTransmitKey(int tableId, String tableName){

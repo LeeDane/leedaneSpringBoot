@@ -22,13 +22,23 @@
 	<select id="shakeSearch" resultType="Integer">
 		select id from t_blog where status = #{status} and create_user_id != #{createUserId} order by rand() limit 1
 	</select>
+
+	<select id="getMaxStick" resultType="Integer">
+		select max(stick) stick from t_mood
+	</select>
 	
 	<resultMap type="java.util.HashMap" id="nullToEmptyMapper">  
 	    <result column="source" property="source" typeHandler="com.cn.leedane.handler.EmptyStringIfNullHandler"/>    
 	    <result column="origin_link" property="origin_link" typeHandler="com.cn.leedane.handler.EmptyStringIfNullHandler"/>    
 	    <result column="img_url" property="img_url" typeHandler="com.cn.leedane.handler.EmptyStringIfNullHandler"/>    
-	</resultMap> 
+	</resultMap>
+
 	<select id="getOneBlog" resultType="java.util.Map" resultMap="nullToEmptyMapper">
-		select b.id, b.content, b.img_url, b.title, b.has_img, b.tag, b.create_user_id, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time, b.digest, b.froms, b.content, b.can_comment, b.can_transmit, b.origin_link, b.source, b.category, b.read_number, b.share_number, b.is_recommend from t_blog b where status = #{status} and id = #{id} limit 1
+		select b.id, b.content, b.img_url, b.title, b.has_img, b.tag, b.create_user_id, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time,
+		b.digest, b.froms, b.content, b.can_comment, b.can_transmit, b.origin_link, b.source, b.category, b.read_number, b.share_number,
+		b.is_recommend, b.stick
+		from t_blog b
+		where
+		status = #{status} and id = #{id} limit 1
 	</select>
 </mapper>

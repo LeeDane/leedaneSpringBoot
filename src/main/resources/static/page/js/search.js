@@ -91,7 +91,7 @@ function doSearch(){
 				$("#notification-tabs .active").find("a").append('<span class="badge pull-right">'+ lists.total +'</span>');
 				if(hits.length == 0){
 				    if(currentIndex == 0){
-                        $ContentContainer.append('<div class="col-lg-12">没有检索到数据，请换个关键词试试！</div>');
+                        $ContentContainer.append('<div class="col-lg-12">没有检索到数据，请换个关键词试试！未登录的用户可以登录后再来检索。</div>');
                     }else{
                         $ContentContainer.append('<div class="col-lg-12">已经没有更多的数据啦！</div>');
                         /*pageDivUtil(data.total);*/

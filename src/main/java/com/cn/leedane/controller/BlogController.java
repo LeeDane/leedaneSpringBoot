@@ -141,7 +141,12 @@ public class BlogController extends BaseController{
 		}
 		
 		blog.setRecommend(JsonUtil.getBooleanValue(json, "is_recommend"));
-		
+		boolean isStick = JsonUtil.getBooleanValue(json, "is_stick");
+		if(isStick){
+			blog.setStick(blogService.getMaxStick() + 1);
+		}else {
+			blog.setStick(0);
+		}
 		blog.setDigest(digest);
 		if(blogId > 0){
 			blog.setId(blogId);

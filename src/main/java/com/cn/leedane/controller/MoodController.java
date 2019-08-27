@@ -319,4 +319,20 @@ public class MoodController extends BaseController{
 		message.putAll(moodService.getTopicByLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
+
+	/**
+	 * 发表心情(只是更新心情的草稿状态为正常状态)
+	 * 适用于心情没有图片或者图片很小的情况下，其他情况下请使用uploadBase64()
+	 * @return
+	 */
+	@RequestMapping(value= "/mood/stick", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> stick(Model model, HttpServletRequest request){
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+
+		checkRoleOrPermission(model, request);
+		message.putAll(moodService.updateMoodStick(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
+		return message.getMap();
+	}
 }

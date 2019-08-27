@@ -89,6 +89,13 @@ layui.use(['layer', 'laypage', 'util', 'laydate'], function(){
   getFans();//获取粉丝列表
   getSiginMark();//获取签到的标注
 
+  $("#mood-container").on("click", ".click-more",function(){
+    var $prev = $(this).prev();
+    $prev.css("height", "auto");
+    $prev.css("overflow-y", "auto");
+    $(this).hide();
+
+  });
   myLaydate = laydate.render({
     elem: '#date-container'
     ,position: 'static'
@@ -499,6 +506,9 @@ function getMoods(){
 					//添加每一行到心情容器
 					$moodContainer.append(buildMoodRow(i, moods[i]/*, ifFlagNew, flagMonth*/));
 				}
+
+				//对长文本做处理
+				dealLongTextField();
 				//pageDivUtil(data.total);
 				console.log(monthArray);
 				//resetSideHeight();
@@ -533,6 +543,22 @@ function getMoods(){
 			ajaxError(data);
 		}
 	});
+}
+
+/**
+** 对长文本做处理
+**/
+function dealLongTextField(){
+    $("div[id^=couponValue-").each(function(index){
+        var $this = $(this);
+        var height = $this.height();
+        if(height > 100){
+            $this.css("height", "105px");
+            $this.css("overflow-y", "hidden");
+            $this.after('<div class="click-more">展开查看更多</div>');
+        }
+        console.log(height);
+    });
 }
 
 function isInMonthArray(str){
@@ -574,6 +600,9 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 					'</div>'+
 					'<div class="list-group-item">'+
 						'<div class="list-group-item-text tip-list">';
+                        if(mood.stick > 0){
+                            html += '<span class="label label-danger" data-toggle="tooltip" data-placement="right" title="该心情已置顶" onMouseOver="$(this).tooltip(\'show\')">已置顶</span>';
+                        }
 						if(isLoginUser && mood.status == 5){
 							html += '<span class="label label-warning" data-toggle="tooltip" data-placement="right" title="该心情是私有的，其他人无法查看" onMouseOver="$(this).tooltip(\'show\')">私有</span>';
 						}
@@ -584,18 +613,28 @@ function buildMoodRow(index, mood, ifFlagNew, flagMonth){
 							html += '<span class="label '+ (mood.can_comment? 'label-default' : 'label-danger') +'"  '+ (mood.can_comment ? '': 'data-toggle="tooltip" data-placement="right" title="该心情禁止任何人评论" onMouseOver="$(this).tooltip(\'show\')"') + '>'+ (mood.can_comment? '可以评论':'禁止评论') +'</span>'+
 							'<span class="label '+ (mood.can_transmit? 'label-default' : 'label-danger') +'" '+ (mood.can_transmit ? '': 'data-toggle="tooltip" data-placement="right" title="该心情禁止任何人转发" onMouseOver="$(this).tooltip(\'show\')"') + '>'+ (mood.can_transmit? '可以转发':'禁止转发') +'</span>'+
 						'</div>'+
-					    '<div class="list-group-item-text" style="margin-top: 5px;" id="couponValue-'+ index+'">'+ changeNotNullString(mood.content) +
+					    '<div class="list-group-item-text"style="margin-top: 5px; overflow-wrap: break-word;" id="couponValue-'+ index+'">'+ changeNotNullString(mood.content) +
 					    '</div>'+
-					    '<div class="list-group-item-text" style="margin-top: 5px; color: red;" id="fanValue-'+ index+'">'+
+					    '<div class="list-group-item-text" style="margin-top: 2px; color: red;" id="fanValue-'+ index+'">'+
 					    '</div>';
 				if(isNotEmpty(mood.location)){
 					html += '<p class="location">位置：'+ changeNotNullString(mood.location) +'</p>';
 				}
-					html += '<div class="row" style="margin-top: 5px;">';
+				//标记是否是图片容器
+				var isNeedImgsContainer = true;
+				if(isNotEmpty(mood.imgs)){
+                    var imgs = mood.imgs.split(";");
+                    for(var i = 0; i < imgs.length; i++){
+                        if(isVideo(imgs[i]) || isAudio(imgs[i])){
+                            isNeedImgsContainer = false;
+                            break;
+                        }
+                    }
+                }
+				html += '<div class="row '+ (isNeedImgsContainer ? '': 'material-container') +'" style="margin-top: 2px;">';
 				if(isNotEmpty(mood.imgs)){
 					var imgs = mood.imgs.split(";");
 					for(var i = 0; i < imgs.length; i++){
-						
 						if(isVideo(imgs[i])){
 							/*html += '<div class="col-lg-9 col-sm-9">';*/
 							html += getVideoHtml(imgs[i]);
@@ -793,7 +832,12 @@ function showItemListModal(index){
 			    '<li class="list-group-item cursor" onclick="translation('+ index +');">翻译</li>'+
 			    '<li class="list-group-item cursor do-copy-btn" data-clipboard-action="copy" data-clipboard-target="#couponValue-'+ index +'">复制文字</li>';
 	if(isLoginUser){
-		html += '<li class="list-group-item cursor" onclick="deleteMood('+ mood.id +')">删除</li>'+
+		html +=
+		        '<li class="list-group-item cursor" onclick="deleteMood('+ mood.id +')">删除</li>'+
+		        '<li class="list-group-item cursor" onclick="updateStick('+ mood.stick +','+ mood.id +');">'+
+                    '<span class="badge '+ (mood.stick > 0? 'badge-danger': '') +'">'+ (mood.stick > 0? '已置顶': '未置顶') +'</span>'+
+                        '设置是否置顶'+
+                '</li>'+
 				'<li class="list-group-item cursor" onclick="updateIsSelfStatus('+ mood.status +','+ mood.id +', 5);">'+
 			        '<span class="badge '+ (mood.status == 5? 'badge-warning': '') +'">'+ (mood.status == 5? '私有': '非私有') +'</span>'+
 			        	'设置是否私有'+
@@ -814,6 +858,35 @@ function showItemListModal(index){
 			    
 	
 	$("#operate-list").html(html);
+}
+
+
+/**
+** 更新是否置顶
+**/
+function updateStick(stick, mid){
+    var loadi = layer.load('努力加载中…');
+	$.ajax({
+		type : "put",
+		data: {stick: !(stick > 0), mid: mid},
+		url : "/md/mood/stick",
+		dataType: 'json',
+		beforeSend:function(){
+		},
+		success : function(data) {
+				layer.close(loadi);
+				if(data.isSuccess){
+                    layer.msg(data.message+", 1秒后自动刷新");
+                    reloadPage(1500);
+                }else{
+                    layer.msg(data.message);
+                }
+		},
+		error : function() {
+			layer.close(loadi);
+			layer.msg("网络请求失败");
+		}
+	});
 }
 
 /**

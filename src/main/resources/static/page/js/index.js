@@ -117,8 +117,23 @@ function buildHasImgRow(index, blog){
 								        '<small>'+
 								        	
 										'</small>'+
-								    '</h2>'+
-								    '<ol class="breadcrumb">'+
+								    '</h2>';
+								    if(blog.stick > 0 || !blog.can_comment || !blog.can_transmit){
+						html +=   '<div style="margin-bottom: 8px;">';
+						                 if(blog.stick > 0){
+                                        html += '<span class="label label-danger" data-toggle="tooltip" data-placement="right" title="" onmouseover="$(this).tooltip(\'show\')" data-original-title="该文章已置顶">已置顶</span>';
+                                        }
+                                        if(!blog.can_comment){
+                                        html += '<span class="label label-danger" data-toggle="tooltip" data-placement="right" title="" onmouseover="$(this).tooltip(\'show\')" data-original-title="该文章已设置禁止评论">禁止评论</span>';
+                                        }
+
+                                        if(!blog.can_transmit){
+                                        html += '<span class="label label-danger" data-toggle="tooltip" data-placement="right" title="" onmouseover="$(this).tooltip(\'show\')" data-original-title="该文章已设置禁止转发">禁止转发</span>';
+                                        }
+
+                        html +=  '</div>';
+								    }
+							html += '<ol class="breadcrumb">'+
 								    	'<li>'+ changeNotNullString(blog.category) +'</li>'+
 										'<li class="active">'+ blog.create_time +'</li>'+
 									'</ol>';
@@ -187,8 +202,23 @@ function buildNotHasImgRow(index, blog){
 							        '<small>'+
 							        	
 									'</small>'+
-							    '</h2>'+
-							    '<ol class="breadcrumb">'+
+							    '</h2>';
+							    if(blog.stick > 0 || !blog.can_comment || !blog.can_transmit){
+                    html +=   '<div style="margin-bottom: 8px;">';
+                                     if(blog.stick > 0){
+                                    html += '<span class="label label-danger" data-toggle="tooltip" data-placement="right" title="" onmouseover="$(this).tooltip(\'show\')" data-original-title="该文章已置顶">已置顶</span>';
+                                    }
+                                    if(!blog.can_comment){
+                                    html += '<span class="label label-danger" data-toggle="tooltip" data-placement="right" title="" onmouseover="$(this).tooltip(\'show\')" data-original-title="该文章已设置禁止评论">禁止评论</span>';
+                                    }
+
+                                    if(!blog.can_transmit){
+                                    html += '<span class="label label-danger" data-toggle="tooltip" data-placement="right" title="" onmouseover="$(this).tooltip(\'show\')" data-original-title="该文章已设置禁止转发">禁止转发</span>';
+                                    }
+
+                    html +=  '</div>';
+                        }
+					    html += '<ol class="breadcrumb">'+
 							    	'<li>' +changeNotNullString(blog.category)+ '</li>'+
 									'<li class="active">'+ blog.create_time +'</li>'+
 								'</ol>';

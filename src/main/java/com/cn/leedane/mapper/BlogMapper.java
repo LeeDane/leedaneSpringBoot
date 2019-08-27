@@ -105,5 +105,11 @@ public interface BlogMapper extends BaseMapper<BlogBean>{
 	 * @param id
 	 * @return
 	 */
-	//public boolean deleteById(int id); 
+	//public boolean deleteById(int id);
+
+	/**
+	 * 获取博客最大的置顶数据
+	 * @return
+	 */
+	public int getMaxStick();
 }

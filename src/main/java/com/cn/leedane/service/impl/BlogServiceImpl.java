@@ -310,7 +310,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			return message.getMap();
 		}
 		
-		List<Map<String, Object>> rs = blogMapper.executeSQL("select id, img_url, title, has_img, tag, date_format(create_time,'%Y-%m-%d %H:%i:%s') create_time, digest, froms, source, create_user_id from "+DataTableType.博客.value+" where status=? and (digest like '%"+searchKey+"%' or title like '%"+searchKey+"%' or content like '%"+searchKey+"%') order by create_time desc limit 25", ConstantsUtil.STATUS_NORMAL);
+		List<Map<String, Object>> rs = blogMapper.executeSQL("select id, img_url, title, has_img, tag, date_format(create_time,'%Y-%m-%d %H:%i:%s') create_time, digest, froms, source, create_user_id, stick from "+DataTableType.博客.value+" where status=? and (digest like '%"+searchKey+"%' or title like '%"+searchKey+"%' or content like '%"+searchKey+"%') order by create_time desc limit 25", ConstantsUtil.STATUS_NORMAL);
 		if(rs != null && rs.size() > 0){
 			int createUserId = 0;
 			for(int i = 0; i < rs.size(); i++){
@@ -417,7 +417,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		//String sql = "select content, read_number from "+DataTableType.博客.value+" where status = ? and id = ?";
 		StringBuffer sql = new StringBuffer();
 		sql.append("select b.id, b.img_url, b.title, b.has_img, b.tag, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time");
-		sql.append(" , b.digest, b.froms, b.create_user_id, u.account, b.can_comment, b.can_transmit, b.origin_link, b.source, b.category ");
+		sql.append(" , b.digest, b.froms, b.create_user_id, u.account, b.can_comment, b.can_transmit, b.origin_link, b.source, b.category, b.stick  ");
 		sql.append(" from "+DataTableType.博客.value+" b inner join "+DataTableType.用户.value+" u on b.create_user_id = u.id ");
 		sql.append(" where b.status = ?  and b.id = ? ");
 		
@@ -443,7 +443,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		ResponseMap message = new ResponseMap();		
 		StringBuffer sql = new StringBuffer();
 		sql.append("select b.id, b.img_url, b.title, b.has_img, b.tag, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time");
-		sql.append(" , b.digest, b.froms, b.content, b.can_comment, b.can_transmit, b.origin_link, b.source, b.category");
+		sql.append(" , b.digest, b.froms, b.content, b.can_comment, b.can_transmit, b.origin_link, b.source, b.category, b.stick ");
 		sql.append(" from "+DataTableType.博客.value+" b ");
 		sql.append(" where status = ? and create_user_id = ? order by id desc ");
 		
@@ -470,7 +470,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		StringBuffer sql = new StringBuffer();
 		sql.append("select b.id, b.img_url, b.title, b.has_img, b.tag, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time");
 		sql.append(" , b.digest, b.froms, b.content, b.can_comment, b.can_transmit, b.origin_link, b.source, b.category, b.create_user_id");
-		sql.append(" , b.is_recommend");
+		sql.append(" , b.is_recommend, b.stick ");
 		sql.append(" from "+DataTableType.博客.value+" b ");
 		sql.append(" where id = ? and status=?");
 		
@@ -522,7 +522,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		//下刷新
 		if(method.equalsIgnoreCase("lowloading")){
 			sql.append("select b.id, b.img_url, b.title, b.has_img, b.tag, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time");
-			sql.append(" , b.digest, b.froms, b.create_user_id, b.category, u.account ");
+			sql.append(" , b.digest, b.froms, b.create_user_id, b.category, u.account, b.stick  ");
 			sql.append(" from "+DataTableType.博客.value+" b inner join "+DataTableType.用户.value+" u on b.create_user_id = u.id ");
 			sql.append(" where b.status = ?  and b.id < ? order by b.id desc limit 0,?");
 			r = executeSQL(sql.toString(), ConstantsUtil.STATUS_AUDIT, lastId, pageSize);
@@ -530,7 +530,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		//上刷新
 		}else if(method.equalsIgnoreCase("uploading")){
 			sql.append("select b.id, b.img_url, b.title, b.has_img, b.tag, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time ");
-			sql.append(" , b.digest, b.froms, b.create_user_id, b.category, u.account ");
+			sql.append(" , b.digest, b.froms, b.create_user_id, b.category, u.account, b.stick  ");
 			sql.append(" from "+DataTableType.博客.value+" b inner join "+DataTableType.用户.value+" u on b.create_user_id = u.id ");
 			sql.append(" where b.status = ? and b.id > ?  limit 0,?");
 			r = executeSQL(sql.toString(), ConstantsUtil.STATUS_AUDIT, firstId, pageSize);
@@ -538,7 +538,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		//第一次刷新
 		}else if(method.equalsIgnoreCase("firstloading")){
 			sql.append("select b.id, b.img_url, b.title, b.has_img, b.tag, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time ");
-			sql.append(" , b.digest, b.froms, b.create_user_id, b.category, u.account ");
+			sql.append(" , b.digest, b.froms, b.create_user_id, b.category, u.account, b.stick  ");
 			sql.append(" from "+DataTableType.博客.value+" b inner join "+DataTableType.用户.value+" u on b.create_user_id = u.id ");
 			sql.append(" where b.status = ?  order by b.id desc limit 0,?");
 			r = executeSQL(sql.toString(), ConstantsUtil.STATUS_AUDIT, pageSize);
@@ -688,8 +688,10 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 				.setFrom(start)
 				//为0表示只获取统计数，不获取详细的文档数据
 				.setSize(pageSize)
-				.setFetchSource(new String[]{"account", "category", "create_time", "create_user_id", "digest", "has_img", "img_url", "title", "id"}, null);
+				.setFetchSource(new String[]{"account", "category", "create_time", "create_user_id", "digest", "has_img", "img_url", "title", "id", "stick", "can_comment",
+						"can_transmit"}, null);
 		//控制是否新增排序
+		builder.addSort("stick", SortOrder.DESC);
 		builder.addSort("create_time", SortOrder.DESC);
 
 		logger.info(builder.toString());
@@ -714,4 +716,8 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		return message.getMap();
 	}
 
+	@Override
+	public int getMaxStick(){
+		return blogMapper.getMaxStick();
+	}
 }

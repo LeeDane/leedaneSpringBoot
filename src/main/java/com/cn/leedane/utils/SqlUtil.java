@@ -41,10 +41,25 @@ public class SqlUtil {
 		return createUserId;
 	}
 
+	/**
+	 * 获取总数
+	 * @param list
+	 * @return
+	 */
 	public static int getTotalByList(List<Map<String, Object>> list) {
+		return getNumberByList(list, "ct");
+	}
+
+	/**
+	 * 获取SQL查询结果中返回的数据的字段的数量(field)
+	 * @param list
+	 * @param field
+	 * @return
+	 */
+	public static int getNumberByList(List<Map<String, Object>> list, String field) {
 		int total = 0;
 		if(!CollectionUtils.isEmpty(list)){
-			total = StringUtil.changeObjectToInt(list.get(0).get("ct"));
+			total = StringUtil.changeObjectToInt(list.get(0).get(field));
 		}
 		return total;
 	}

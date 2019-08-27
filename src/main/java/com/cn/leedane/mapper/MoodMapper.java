@@ -50,4 +50,11 @@ public interface MoodMapper extends BaseMapper<MoodBean>{
 			@Param("status_normal")int statusNormal,
 			@Param("status_self")int statusSelf);
 
+	/**
+	 * 获取该用户心情的最大置顶数
+	 * @param uid
+	 * @return
+	 */
+	public int getMaxStick(@Param("uid")int uid);
+
 }

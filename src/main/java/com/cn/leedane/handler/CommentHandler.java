@@ -43,7 +43,7 @@ public class CommentHandler {
 		//还没有添加到redis中
 		if(StringUtil.isNull(redisUtil.getString(key))){
 			//获取数据库中所有评论的数量
-			count = SqlUtil.getTotalByList(commentMapper.executeSQL("select count(*) ct from "+DataTableType.评论.value+" where table_name=? and table_id = ?", tableName, tableId));	
+			count = SqlUtil.getTotalByList(commentMapper.executeSQL("select count(*) ct from "+DataTableType.评论.value+" where table_name=? and table_id = ? and status = ?", tableName, tableId, ConstantsUtil.STATUS_NORMAL));
 		}else{
 			count = Integer.parseInt(redisUtil.getString(key)) + 1;
 		}
@@ -105,7 +105,7 @@ public class CommentHandler {
 		int commentNumber;
 		//评论
 		if(!redisUtil.hasKey(commentKey)){
-			commentNumber = SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, "where table_id = "+tableId+" and table_name='"+tableName+"'"));
+			commentNumber = SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, "where table_id = "+tableId+" and table_name='"+tableName+"' and status = " + ConstantsUtil.STATUS_NORMAL));
 			redisUtil.addString(commentKey, String.valueOf(commentNumber));
 		}else{
 			commentNumber = Integer.parseInt(redisUtil.getString(commentKey));
@@ -132,7 +132,7 @@ public class CommentHandler {
 		int commentNumber;
 		//评论
 		if(!redisUtil.hasKey(commentKey)){
-			commentNumber = SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, "where table_id = "+tableId+" and table_name='"+tableName+"'"));
+			commentNumber = SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, "where table_id = "+tableId+" and table_name='"+tableName+"' and status = "+ ConstantsUtil.STATUS_NORMAL));
 			redisUtil.addString(commentKey, String.valueOf(commentNumber));
 		}else{
 			commentNumber = Integer.parseInt(redisUtil.getString(commentKey));

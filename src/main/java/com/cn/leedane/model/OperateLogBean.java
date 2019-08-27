@@ -56,6 +56,11 @@ public class OperateLogBean extends RecordTimeBean {
 	@Column("es_index")
 	private boolean esIndex;
 
+	/**
+	 * 排序字段，根据从大到小排序，大于0表示置顶字段
+	 */
+	private int stick;
+
 	public String getSubject() {
 		return subject;
 	}
@@ -111,5 +116,13 @@ public class OperateLogBean extends RecordTimeBean {
 
 	public void setLocation(String location) {
 		this.location = location;
+	}
+
+	public int getStick() {
+		return stick;
+	}
+
+	public void setStick(int stick) {
+		this.stick = stick;
 	}
 }

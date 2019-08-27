@@ -53,6 +53,11 @@ public class CommentBean extends RecordTimeBean{
 	 * 保存评论关系级别的字符串，用|分开
 	 */
 	private String level;
+
+	/**
+	 * 排序字段，根据从大到小排序，大于0表示置顶字段
+	 */
+	private int stick;
 	
 	//@Type(type="text")
 	//@Column(name="content", nullable=false)
@@ -111,5 +116,13 @@ public class CommentBean extends RecordTimeBean{
 
 	public void setLevel(String level) {
 		this.level = level;
+	}
+
+	public int getStick() {
+		return stick;
+	}
+
+	public void setStick(int stick) {
+		this.stick = stick;
 	}
 }

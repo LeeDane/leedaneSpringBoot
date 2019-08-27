@@ -234,4 +234,10 @@ public interface BlogService <T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public Map<String, Object> paging(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+
+	/**
+	 * 获取博客最大的置顶数
+	 * @return
+	 */
+	public int getMaxStick();
 }

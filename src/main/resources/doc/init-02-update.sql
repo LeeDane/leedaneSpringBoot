@@ -39,3 +39,18 @@ alter table t_gallery add constraint gallery_user_unique UNIQUE(create_user_id, 
 
 /*修改评论表，添加level字段*/
 alter table t_comment add COLUMN level varchar(255) DEFAULT NULL  COMMENT '关系级联的字符串，用|分隔开';
+
+/*修改博客表，添加排序字段, 0:表示未置顶，大于1表示置顶*/
+alter table t_blog add COLUMN `stick` int(3) DEFAULT 0 COMMENT '排序字段，根据从大到小排序，大于0表示置顶字段';
+
+/*修改用户表，添加排序字段, 0:表示未置顶，大于1表示置顶*/
+alter table t_user add COLUMN `stick` int(3) DEFAULT 0 COMMENT '排序字段，根据从大到小排序，大于0表示置顶字段';
+
+/*修改心情表，添加排序字段, 0:表示未置顶，大于1表示置顶*/
+alter table t_mood add COLUMN `stick` int(3) DEFAULT 0 COMMENT '排序字段，根据从大到小排序，大于0表示置顶字段';
+
+/*修改日志表，添加排序字段, 0:表示未置顶，大于1表示置顶*/
+alter table t_operate_log add COLUMN `stick` int(3) DEFAULT 0 COMMENT '排序字段，根据从大到小排序，大于0表示置顶字段';
+
+/*修改评论表，添加排序字段, 0:表示未置顶，大于1表示置顶*/
+alter table t_comment add COLUMN `stick` int(3) DEFAULT 0 COMMENT '排序字段，根据从大到小排序，大于0表示置顶字段';

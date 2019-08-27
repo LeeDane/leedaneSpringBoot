@@ -191,4 +191,14 @@ public interface MoodService <T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<MoodBean> getMoodBeans(String sql, Object ...params);
+
+	/**
+	 * 置顶心情
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> updateMoodStick(JSONObject jo, UserBean user,HttpRequestInfoBean request);
+
 }

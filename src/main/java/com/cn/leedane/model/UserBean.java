@@ -232,6 +232,11 @@ public class UserBean extends StatusBean{
 	@Field
 	@Column("es_index")
 	private boolean esIndex;
+
+	/**
+	 * 排序字段，根据从大到小排序，大于0表示置顶字段
+	 */
+	private int stick;
 	
 	/**
 	 * 用户拥有的角色(一对多的关系)
@@ -530,5 +535,13 @@ public class UserBean extends StatusBean{
 
 	public void setEsIndex(boolean esIndex) {
 		this.esIndex = esIndex;
+	}
+
+	public int getStick() {
+		return stick;
+	}
+
+	public void setStick(int stick) {
+		this.stick = stick;
 	}
 }
