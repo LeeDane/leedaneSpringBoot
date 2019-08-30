@@ -29,8 +29,8 @@ public class ZXingCodeHandler {
 	private static final int BLACK = 0xff000000;
 	/** 
      * 生成二维码(QRCode)图片 
-     * @param content 
-     * @param imgPath 
+     * @param str
+     * @param widthAndHeight
      */  
     public static String createQRCode(String str,int widthAndHeight) throws WriterException {
 		Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();  

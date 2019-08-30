@@ -555,7 +555,7 @@ function dealLongTextField(){
         if(height > 100){
             $this.css("height", "105px");
             $this.css("overflow-y", "hidden");
-            $this.after('<div class="click-more">展开查看更多</div>');
+            $this.after('<div class="click-more"><div class="click-more-text">展开查看更多<embed src="/page/images/go_down.svg" width="10" height="10" type="image/svg+xml" pluginspage="http://www.adobe.com/svg/viewer/install/" style="margin-left: 5px;"><div></div>');
         }
         console.log(height);
     });

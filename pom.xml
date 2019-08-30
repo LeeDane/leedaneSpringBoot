@@ -606,7 +606,15 @@
 				<version>1.4.0.RELEASE</version>
 				<configuration>
 					<fork>true</fork>
+					<executable>true</executable>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.springframework.boot.experimental</groupId>
+						<artifactId>spring-boot-thin-layout</artifactId>
+						<version>1.0.3.RELEASE</version>
+					</dependency>
+				</dependencies>
 	            <!-- <dependencies>    修改代码后自动生效，Reload Java classes without restarting the container  
 	                <dependency>  
 	                    <groupId>org.springframework</groupId>  

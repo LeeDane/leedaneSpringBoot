@@ -14,7 +14,9 @@
 .row-content{
     font-family: "华文宋体";
     font-size: 14px;
+    word-break: break-word!important;
 }
+
 .original{
     border-color: #51BAE3;
     color: #51BAE3;
