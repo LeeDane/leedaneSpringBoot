@@ -6,105 +6,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title th:text="${post.title}"></title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
-
 	<link th:if="${not isDebug}" rel="stylesheet" href="https://www.layuicdn.com/layui-v2.5.4/css/layui.css"  media="all" />
 	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.5.4/css/layui.css"  media="all" />
-
-	<style type="text/css">
-		/**  大屏样式 **/
-		@media screen and (min-width: 900px){
-			.post-item-img{
-				width: 100%;
-				height: 280px !important;
-			}
-			
-			.adapter-row{
-				
-			}
-		}
-		
-		/**  小屏样式 **/
-		@media screen and (max-width: 900px){
-			.post-item-img{
-				width: 100%;
-				height: 420px !important;
-			}
-			
-			.adapter-row{
-				margin-left: -8px !important;
-				margin-right: -8px !important;
-			}
-		}
-		.main-container{
-			margin-top: 50px;
-		}
-		#content-container .row{
-			margin-top: 15px;
-		}
-		.panel-footer button{
-			margin-top: 5px;
-			margin-right: 5px;
-		}
-		.btn-group{
-			margin-top: 10px;
-		}
-		.row-content{
-			font-family: "华文宋体";
-			font-size: 14px;
-		}
-		.original{
-			border-color: #51BAE3;
-  			color: #51BAE3;
-  			box-sizing: inherit;
-  			-webkit-tap-highlight-color: transparent;
-  			border: 2px solid;
-		    border-radius: 50%;
-		    width: 25px;
-		    height: 25px;
-		    vertical-align: text-bottom;
-		    text-align: center;
-		    font-size: 16px;
-		    line-height: 26px;
-		    float: left;
-		}
-		.inline{
-			display: inline-block !important;
-		}
-		.marginRight{
-			margin-right: 12px;
-		}
-		.comment-list{
-			/* border:1px solid #f5f5f5;
-			box-shadow: 1px 0px 5px #888888; */
-			margin-bottom: 10px;
-		}
-		.comment-list-padding{
-			padding: 5px;
-			border-radius: 3px; 
-		}
-		.comment-list-item{
-			background-color: #fff !important;
-			border-color: #f5f5f5 !important;
-		}
-		.publish-time{
-			color: #999;
-		}
-		.text-align-right{
-			text-align: right;
-		}
-		.comment-list:hover {
-			border: 1px dashed #999;
-		}
-		.tag{
-			margin-right: 5px;
-		}
-		.list-group-item{
-			padding: 5px 8px !important;
-		}
-		#operate-list .glyphicon{
-			top: 4px !important;
-		}
-	</style>
+	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{/page/css/circle/post-detail.min.css}" />
+	<link th:if="${isDebug}" rel="stylesheet" th:href="@{/page/css/circle/post-detail.css}" />
+	<style type="text/css"></style>
 </head>
 <body th:attr="style='background-color: ' +(${setting.backgroundColor} == '#f5f5f5' ? '' : ${setting.backgroundColor})">
 	<div th:include="common :: hello">what?</div>
@@ -116,8 +22,8 @@
 				</div>
 			   <div class="row">
 			   		<p th:utext="${post.title}" style="font-size: 25px; font-weight: bolder;"></p>
-					<p id="operate-list" style="color: #666;">
-						<button type="button" class="btn btn-default btn-xs user-img" data="'+ post.createUserId +'">
+					<p style="color: #666;">
+						<!--<button type="button" class="btn btn-default btn-xs user-img" data="'+ post.createUserId +'">
 								  <img th:src="${create_user_pic_path}" class="img-circle" style="width: 20px; height: 20px" /> <span th:text="${create_user_account}"></span>
 						</button>
 						<span id="post-create-time" class="label label-primary"></span>
@@ -125,7 +31,23 @@
 						<span class="glyphicon glyphicon-comment" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="评论"></span>&nbsp;<span th:text="${comment_number}"></span>&nbsp;&nbsp;
 						<span class="glyphicon glyphicon-share-alt" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="转发"></span>&nbsp;<span th:text="${transmit_number}"></span>&nbsp;&nbsp;
 						<span class="glyphicon glyphicon-thumbs-up hand post-zan" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="很赞"></span>&nbsp;<span th:text="${zan_number}"></span>&nbsp;&nbsp;
-						<span class="glyphicon glyphicon-credit-card hand" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="打赏"></span>
+						<span class="glyphicon glyphicon-credit-card hand" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="打赏"></span>-->
+						<span id="b-account" th:onclick="'linkToMy(+ ${post.create_user_id} +);'">
+							<img class="img-circle" style="width: 20px; height: 20px; margin-top: -3px;" th:src="${user_pic_path}" /><span id="b-account-text" th:text="${account}"></span>
+						</span>
+							<span id="operate-list" style="margin-left: 16px;">
+							<span class="glyphicon glyphicon-time" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="时间"></span>
+							<label id="post-create-time"></label>&nbsp;&nbsp;
+							<span href="#comment" class="glyphicon glyphicon-comment" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="评论"></span>&nbsp;
+							<label id="b-comment-number" th:text="${comment_number}"></label>&nbsp;&nbsp;
+							<span class="glyphicon glyphicon-share-alt" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="转发"></span>&nbsp;
+							<label id="b-transmit-number" th:text="${transmit_number}"></label>&nbsp;&nbsp;
+							<span class="glyphicon glyphicon-thumbs-up hand post-zan" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="很赞"></span>&nbsp;
+							<label id="b-zan-number" th:text="${zan_number}"></label>&nbsp;&nbsp;
+							<span class="glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="阅读"></span>&nbsp;
+							<label id="b-read-number" th:text="${read_number}"></label>&nbsp;&nbsp;
+							<span th:if="${canDelete}" class="glyphicon glyphicon-trash post-delete hand" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="删除"></span>&nbsp;&nbsp;
+						</span>
 					</p>
 			   		<div id="zan-users"></div>
 			   		<div class="row-content" th:utext="${post.content}"></div>
@@ -176,8 +98,6 @@
 </body>
 <div th:include="common-bottom :: bottom">bottom?</div>
 <div th:include="common-js :: commJs">what?</div>
-<script th:src="@{/page/js/page.js}" type="text/javascript"></script>
-<script th:src="@{/page/js/circle/post-detail.js}" type="text/javascript"></script>
 <script th:inline="javascript">//引用  
 	/*<![CDATA[*/  
 	var zanUsers = /*[[${zan_users}]]*/;//取值  zan_number
@@ -190,5 +110,9 @@
 	var postCreate_time = /*[[${create_time}]]*/;//取值
 	
 	/*]]>*/  
-</script> 
+</script>
+<script th:if="${not isDebug}" th:src="@{/page/js/page.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/page.js}" type="text/javascript"></script>
+<script th:if="${not isDebug}" th:src="@{/page/js/circle/post-detail.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/circle/post-detail.js}" type="text/javascript"></script>
 </html>

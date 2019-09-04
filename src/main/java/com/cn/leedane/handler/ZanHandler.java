@@ -1,12 +1,5 @@
 package com.cn.leedane.handler;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.cn.leedane.mapper.ZanMapper;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.redis.util.RedisUtil;
@@ -14,6 +7,12 @@ import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.SqlUtil;
 import com.cn.leedane.utils.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 赞的处理类
@@ -31,12 +30,12 @@ public class ZanHandler {
 
 	/**
 	 * 获取赞数量
-	 * @param tableId
 	 * @param tableName
+	 * @param tableId
 	 * @return
 	 */
-	public int getZanNumber(int tableId, String tableName){
-		String zanKey = getZanKey(tableId, tableName);
+	public int getZanNumber(String tableName, int tableId){
+		String zanKey = getZanKey(tableName, tableId);
 		int zanNumber;
 		//赞
 		if(!redisUtil.hasKey(zanKey)){
@@ -46,7 +45,7 @@ public class ZanHandler {
 		}else{
 			zanNumber = Integer.parseInt(redisUtil.getString(zanKey));
 		}
-		return zanNumber;
+		return zanNumber < 1 ? 0 : zanNumber;
 	}
 	
 	/**
@@ -56,7 +55,7 @@ public class ZanHandler {
 	 * @return
 	 */
 	public boolean addZanNumber(int tableId, String tableName){
-		String zanKey = getZanKey(tableId, tableName);
+		String zanKey = getZanKey(tableName, tableId);
 		boolean result = false;
 		//赞
 		if(!redisUtil.hasKey(zanKey)){
@@ -79,8 +78,8 @@ public class ZanHandler {
 	 * @return
 	 */
 	public boolean cancelZan(int tableId, String tableName, UserBean user){
-		String zanKey = getZanKey(tableId, tableName);
-		String zanUserKey = getZanUserKey(tableId, tableName);
+		String zanKey = getZanKey(tableName, tableId);
+		String zanUserKey = getZanUserKey(tableName, tableId);
 		boolean result = false;
 		int zanNumber ;
 		//赞的数量
@@ -129,7 +128,7 @@ public class ZanHandler {
 	 * @return
 	 */
 	public boolean addZanUser(int tableId, String tableName, UserBean user){
-		String zanUserKey = getZanUserKey(tableId, tableName);
+		String zanUserKey = getZanUserKey(tableName, tableId);
 		boolean result = false;
 		//赞
 		if(!redisUtil.hasKey(zanUserKey)){
@@ -199,7 +198,7 @@ public class ZanHandler {
 	 */
 	public String getZanUser(int tableId, String tableName, UserBean user, int limit){
 		
-		String zanUserKey = getZanUserKey(tableId, tableName);
+		String zanUserKey = getZanUserKey(tableName, tableId);
 		limit = limit == 0 ? 6 : limit;
 		StringBuffer returnValue = new StringBuffer();
 		//赞用户
@@ -269,24 +268,44 @@ public class ZanHandler {
 		}
 		return value;
 	}
+
+	/**
+	 * 删除对应的赞用户列表在redis
+	 * @param tableName
+	 * @param tableId
+	 * @return
+	 */
+	public boolean deleteZanUsers(String tableName, int tableId){
+		return redisUtil.delete(getZanUserKey(tableName, tableId));
+	}
+
+	/**
+	 * 删除对应的赞列表在redis
+	 * @param tableName
+	 * @param tableId
+	 * @return
+	 */
+	public boolean deleteZan(String tableName, int tableId){
+		return redisUtil.delete(getZanKey(tableName, tableId));
+	}
 	
 	/**
 	 * 获取赞用户在redis的key
-	 * @param tableId
 	 * @param tableName
+	 * @param tableId
 	 * @return
 	 */
-	public static String getZanUserKey(int tableId, String tableName){
+	public static String getZanUserKey(String tableName, int tableId){
 		return ConstantsUtil.ZAN_USER_REDIS +tableName+"_"+tableId;
 	}
 	
 	/**
 	 * 获取赞在redis的key
-	 * @param tableId
 	 * @param tableName
+	 * @param tableId
 	 * @return
 	 */
-	public static String getZanKey(int tableId, String tableName){
+	public static String getZanKey(String tableName, int tableId){
 		return ConstantsUtil.ZAN_REDIS +tableName+"_"+tableId;
 	}
 }

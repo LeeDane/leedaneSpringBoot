@@ -35,7 +35,7 @@
 
 	<select id="getOneBlog" resultType="java.util.Map" resultMap="nullToEmptyMapper">
 		select b.id, b.content, b.img_url, b.title, b.has_img, b.tag, b.create_user_id, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time,
-		b.digest, b.froms, b.content, b.can_comment, b.can_transmit, b.origin_link, b.source, b.category, b.read_number, b.share_number,
+		b.digest, b.froms, b.content, b.can_comment, b.can_transmit, b.origin_link, b.source, b.category,
 		b.is_recommend, b.stick
 		from t_blog b
 		where

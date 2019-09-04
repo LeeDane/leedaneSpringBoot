@@ -260,8 +260,8 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 			
 			//同时更新一下赞的信息
 			RedisUtil redisUtil = RedisUtil.getInstance();
-			String zanUserKey = ZanHandler.getZanUserKey(tableId, tableName);
-			String zanKey = ZanHandler.getZanKey(tableId, tableName);
+			String zanUserKey = ZanHandler.getZanUserKey(tableName, tableId);
+			String zanKey = ZanHandler.getZanKey(tableName, tableId);
 			redisUtil.delete(zanUserKey);
 			redisUtil.delete(zanKey);
 			redisUtil.addSet(zanUserKey, userArray);

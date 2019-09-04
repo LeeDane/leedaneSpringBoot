@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.cn.leedane.handler.RolePermissionHandler;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -61,7 +62,7 @@ public class MyShiroRealm extends AuthorizingRealm{
     private UserService<UserBean> userService;
     
     @Autowired
-    private RolePermissionService<UserRoleBean> rolePermissionService;
+    private RolePermissionHandler rolePermissionHandler;
 
     /**
      * 权限认证，为当前登录的Subject授予角色和权限 
@@ -79,10 +80,10 @@ public class MyShiroRealm extends AuthorizingRealm{
             CustomAuthenticationToken customAuthenticationToken = (CustomAuthenticationToken)object;
             int userid = customAuthenticationToken.getUser().getId();
             //到数据库查是否有此对象
-            List<RoleBean> roleBeans = rolePermissionService.getUserRoleBeans(userid);// 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
+            List<RoleBean> roleBeans = rolePermissionHandler.getUserRoleBeans(userid);// 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
             if(CollectionUtil.isNotEmpty(roleBeans)){
                 //权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
-                SimpleAuthorizationInfo info= new SimpleAuthorizationInfo();
+                SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
                 Set<String> roles = new HashSet<String>();
                 Set<String> permissions = new HashSet<String>();
                 for(RoleBean roleBean: roleBeans){
@@ -99,6 +100,7 @@ public class MyShiroRealm extends AuthorizingRealm{
                 //用户的角色对应的所有权限，如果只使用角色定义访问权限，下面的四行可以不要
                 if(permissions.size() > 0)
                     info.addStringPermissions(permissions);
+
                 // 或者按下面这样添加
                 //添加一个角色,不是配置意义上的添加,而是证明该用户拥有admin角色
 //            simpleAuthorInfo.addRole("admin");
@@ -139,19 +141,19 @@ public class MyShiroRealm extends AuthorizingRealm{
     	 if(user.getStatus() != ConstantsUtil.STATUS_NORMAL){
      		if(user.getStatus() == ConstantsUtil.STATUS_NO_TALK){
 					throw new BannedAccountException(); //抛出用户被禁言异常
-				}else if(user.getStatus() == ConstantsUtil.STATUS_DELETE){
-					throw new CancelAccountException(); //抛出用户已经注销异常
-				}else if(user.getStatus() == ConstantsUtil.STATUS_DISABLE){
-					throw new StopUseAccountException(); //抛出用户暂时被禁止使用异常
-				}else if(user.getStatus() == ConstantsUtil.STATUS_NO_VALIDATION_EMAIL){
-					throw new NoValidationEmailAccountException(); //抛出用户未校验邮箱异常
-				}else if(user.getStatus() == ConstantsUtil.STATUS_NO_ACTIVATION){
-					throw new NoActiveAccountException(); //抛出用户未激活异常
-				}else if(user.getStatus() == ConstantsUtil.STATUS_INFORMATION){
-					throw new NoCompleteAccountException(); //抛出用户未完善信息异常
-				}else{
-					throw new UnknownAccountException(); //抛出未知异常
-				}
+            }else if(user.getStatus() == ConstantsUtil.STATUS_DELETE){
+                throw new CancelAccountException(); //抛出用户已经注销异常
+            }else if(user.getStatus() == ConstantsUtil.STATUS_DISABLE){
+                throw new StopUseAccountException(); //抛出用户暂时被禁止使用异常
+            }else if(user.getStatus() == ConstantsUtil.STATUS_NO_VALIDATION_EMAIL){
+                throw new NoValidationEmailAccountException(); //抛出用户未校验邮箱异常
+            }else if(user.getStatus() == ConstantsUtil.STATUS_NO_ACTIVATION){
+                throw new NoActiveAccountException(); //抛出用户未激活异常
+            }else if(user.getStatus() == ConstantsUtil.STATUS_INFORMATION){
+                throw new NoCompleteAccountException(); //抛出用户未完善信息异常
+            }else{
+                throw new UnknownAccountException(); //抛出未知异常
+            }
     	 }
     	 
     	 if(customAuthenticationToken.getPlatformType() == PlatformType.安卓版){
@@ -174,7 +176,7 @@ public class MyShiroRealm extends AuthorizingRealm{
     
     @Override
     public void setCachingEnabled(boolean cachingEnabled) {
-    	cachingEnabled = false;
+    	cachingEnabled = true;
     	super.setCachingEnabled(cachingEnabled);
     }
 }

@@ -1,20 +1,18 @@
 package com.cn.leedane.handler;
 
 import com.cn.leedane.cache.SystemCache;
+import com.cn.leedane.mapper.CommentMapper;
 import com.cn.leedane.model.CommentBean;
-import com.cn.leedane.model.EventAllBean;
-import com.cn.leedane.utils.*;
+import com.cn.leedane.redis.util.RedisUtil;
+import com.cn.leedane.utils.ConstantsUtil;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
+import com.cn.leedane.utils.SerializeUtil;
+import com.cn.leedane.utils.SqlUtil;
+import com.cn.leedane.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.mapper.CommentMapper;
-import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 评论的处理类
@@ -38,7 +36,7 @@ public class CommentHandler {
 	 * @param tableId
 	 */
 	public void addComment(String tableName, int tableId){
-		String key = getCommentKey(tableId, tableName);
+		String key = getCommentKey(tableName, tableId);
 		int count = 0;
 		//还没有添加到redis中
 		if(StringUtil.isNull(redisUtil.getString(key))){
@@ -96,12 +94,12 @@ public class CommentHandler {
 
 	/**
 	 * 获取评论总数
-	 * @param tableId
 	 * @param tableName
+	 * @param tableId
 	 * @return
 	 */
-	public int getCommentNumber(int tableId, String tableName){
-		String commentKey = getCommentKey(tableId, tableName);
+	public int getCommentNumber(String tableName, int tableId){
+		String commentKey = getCommentKey(tableName, tableId);
 		int commentNumber;
 		//评论
 		if(!redisUtil.hasKey(commentKey)){
@@ -110,7 +108,7 @@ public class CommentHandler {
 		}else{
 			commentNumber = Integer.parseInt(redisUtil.getString(commentKey));
 		}
-		return commentNumber;
+		return commentNumber < 1 ? 0: commentNumber;
 	}
 	
 	/**
@@ -124,11 +122,11 @@ public class CommentHandler {
 	
 	/**
 	 * 删除评论后修改评论数量
-	 * @param tableId
 	 * @param tableName
+	 * @param tableId
 	 */
-	public void deleteComment(int tableId, String tableName){
-		String commentKey = getCommentKey(tableId, tableName);
+	public void deleteComment(String tableName, int tableId){
+		String commentKey = getCommentKey(tableName, tableId);
 		int commentNumber;
 		//评论
 		if(!redisUtil.hasKey(commentKey)){
@@ -143,11 +141,11 @@ public class CommentHandler {
 
 	/**
 	 * 获取评论在redis的key
-	 * @param tableId
 	 * @param tableName
+	 * @param tableId
 	 * @return
 	 */
-	public static String getCommentKey(int tableId, String tableName){
+	public static String getCommentKey(String tableName, int tableId){
 		return ConstantsUtil.COMMENT_REDIS +tableName+"_"+tableId;
 	}
 

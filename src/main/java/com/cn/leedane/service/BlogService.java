@@ -111,15 +111,7 @@ public interface BlogService <T extends IDBean>{
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<Map<String, Object>> getRecommendBlogs(int size);
-	
-	/**
-	 * 更新阅读的数量
-	 * @param num 数量
-	 * @param id 博客的id
-	 * @return
-	 */
-	public int updateReadNum(int id, int num);
-	
+
 
 	/**
 	 * 通过Id删除相应的博客

@@ -101,12 +101,14 @@ function getDetail(){
 			if(data.isSuccess && data.message.length > 0){
 				var mood = data.message[0];
 				var moodCreateTime = setTimeAgo(mood.create_time);
-				$("#b-account").html(changeNotNullString(mood.account));
+				$("#b-account").find("span").html(changeNotNullString(mood.account));
+				$("#b-account").find("img").attr("src", changeNotNullString(mood.user_pic_path));
 				$("#b-account").attr("onclick", 'linkToMy('+ mood.create_user_id +')');
 				$("#b-create-time").html(moodCreateTime);
 				$("#b-comment-number").html(mood.comment_number);
 				$("#b-transmit-number").html(mood.transmit_number);
 				$("#b-zan-number").html(mood.zan_number);
+				$("#b-read-number").html(mood.read_number);
 				
 				if(isNotEmpty(mood.zan_users)){
 					var users = mood.zan_users.split(";");
@@ -127,6 +129,7 @@ function getDetail(){
 				if(isNotEmpty(mood.imgs)){
 					var imgs = mood.imgs.split(";");
 					var $moodMediaContrainer = $("#mood-media-contrainer");
+
 					for(var i = 0; i < imgs.length; i++){
 						var html = '';
 						if(isVideo(imgs[i])){
@@ -194,7 +197,7 @@ function getComments(bid){
 				
 				if(data.message.length == 0){
 					canLoadData = false;
-					var html = '<div class="row comment-list comment-list-padding">已无更多评论数据</div>';
+					var html = '<div class="row comment-list comment-list-padding"><div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">已无更多评论数据</div></div>';
 					$commentListContainer.append(html);
 					return;
 				}
@@ -211,7 +214,7 @@ function getComments(bid){
 
 					if(comments.length < commentPageSize){
 					    canLoadData = false;
-                        var html = '<div class="row comment-list comment-list-padding">已无更多评论数据</div>';
+                        var html = '<div class="row comment-list comment-list-padding"><div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">已无更多评论数据</div></div>';
                         $commentListContainer.append(html);
 					}
                     return;

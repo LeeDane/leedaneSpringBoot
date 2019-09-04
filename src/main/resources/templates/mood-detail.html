@@ -22,15 +22,22 @@ jEmoji.unifiedToHTML(emojiText) -->
 			<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12" id="content-container">
 			   <div class="row">
 			   		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<p id="operate-list" style="color: #666;">
-							<button type="button" class="btn btn-default btn-xs user-img" data="'+ post.createUserId +'">
-								<img class="img-circle" style="width: 20px; height: 20px" src="http://pic.onlyloveu.top/test_2019070317083220140620221531_tAZ3G.thumb.700_0.jpeg?imageslim" /> <span>test</span>
-							</button>
-							<span id="b-create-time" class="label label-primary"></span>
-							&nbsp;&nbsp;
-							<a href="#comment" class="glyphicon glyphicon-comment" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="评论"></a>&nbsp;<span id="b-comment-number"></span>&nbsp;&nbsp;
-							<span class="glyphicon glyphicon-share-alt" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="转发"></span>&nbsp;<span id="b-transmit-number"></span>&nbsp;&nbsp;
-							<span class="glyphicon glyphicon-thumbs-up hand post-zan" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="很赞"></span>&nbsp;<span id="b-zan-number"></span>&nbsp;&nbsp;
+						<p style="color: #666; margin: 0!important;">
+							<span id="b-account">
+								<img class="img-circle" style="width: 20px; height: 20px; margin-top: -3px;" src="" /> <span id="b-account-text"></span>
+							</span>
+							<span id="operate-list" style="margin-left: 16px;">
+								<span class="glyphicon glyphicon-time" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="时间"></span>
+								<label id="b-create-time"></label>&nbsp;&nbsp;
+								<span href="#comment" class="glyphicon glyphicon-comment" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="评论"></span>&nbsp;
+								<label id="b-comment-number"></label>&nbsp;&nbsp;
+								<span class="glyphicon glyphicon-share-alt" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="转发"></span>&nbsp;
+								<label id="b-transmit-number"></label>&nbsp;&nbsp;
+								<span class="glyphicon glyphicon-thumbs-up hand post-zan" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="很赞"></span>&nbsp;
+								<label id="b-zan-number"></label>&nbsp;&nbsp;
+								<span class="glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="阅读"></span>&nbsp;
+								<label id="b-read-number"></label>&nbsp;&nbsp;
+							</span>
 						</p>
 						<!--<a href="JavaScript:void(0);" target="_blank" class="marginRight" id="b-account"></a>
 						<span class="marginRight" id="b-create-time"></span>
@@ -40,7 +47,9 @@ jEmoji.unifiedToHTML(emojiText) -->
 					</div>
 			   		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="zan-users"></div>
 			   		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 row-content"></div>
-			   		<div id="mood-media-contrainer" class="col-lg-12 col-md-12 col-sm-12 col-xs-12"></div>
+			   		<div  class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<div id="mood-media-contrainer" class="row"></div>
+					</div>
 			   </div>
 			   <div class="row to-comment-contrainer" id="comment">
 			   		<div class="col-lg-12" th:if="${not isLogin}" style="text-align: center;">

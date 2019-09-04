@@ -6,10 +6,7 @@ import com.cn.leedane.controller.UserController;
 import com.cn.leedane.exception.MustLoginException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.MoodHandler;
-import com.cn.leedane.model.BlogBean;
-import com.cn.leedane.model.FilePathBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.VisitorBean;
+import com.cn.leedane.model.*;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.AddReadSend;
 import com.cn.leedane.rabbitmq.send.ISend;
@@ -41,10 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Html页面的控制器
@@ -483,8 +477,6 @@ public class HtmlController extends BaseController{
 		Map<String, Object> message = new HashMap<String, Object>();
 		long start = System.currentTimeMillis();
 		try{
-
-
 			@SuppressWarnings("unchecked")
 			BlogService<BlogBean> blogService = (BlogService<BlogBean>) SpringUtil.getBean("blogService");
 			checkParams(message, request);
@@ -504,10 +496,16 @@ public class HtmlController extends BaseController{
 				
 				//把更新读的信息提交到Rabbitmq队列处理
 				new Thread(new Runnable() {
-					
 					@Override
 					public void run() {
-						ISend send = new AddReadSend(bean);
+						ReadBean readBean = new ReadBean();
+						readBean.setTableName(DataTableType.博客.value);
+						readBean.setFroms(getHttpRequestInfo(request).getIp());
+						readBean.setTableId(blogId);
+						readBean.setCreateTime(new Date());
+						readBean.setCreateUserId(getUserFromShiro() != null ? getUserFromShiro().getId(): -1);
+						readBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+						ISend send = new AddReadSend(readBean);
 						SendMessage sendMessage = new SendMessage(send);
 						sendMessage.sendMsg();
 					}
@@ -608,7 +606,6 @@ public class HtmlController extends BaseController{
 					}
 					model.addAttribute("device_width", device_width);
 					model.addAttribute("content", content);
-					blogService.updateReadNum(blogId, bean.getReadNumber());
 					return "content-page";
 				}
 			}

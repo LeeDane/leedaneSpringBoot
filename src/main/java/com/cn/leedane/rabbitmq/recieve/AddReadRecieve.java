@@ -1,10 +1,16 @@
 package com.cn.leedane.rabbitmq.recieve;
 
+import com.cn.leedane.handler.MoodHandler;
+import com.cn.leedane.handler.ReadHandler;
 import com.cn.leedane.mapper.BlogMapper;
 import com.cn.leedane.mapper.MoodMapper;
+import com.cn.leedane.mapper.ReadMapper;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.MoodBean;
+import com.cn.leedane.model.ReadBean;
 import com.cn.leedane.springboot.SpringUtil;
+import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.OptionUtil;
 import com.cn.leedane.utils.StringUtil;
 
 /**
@@ -20,9 +26,7 @@ public class AddReadRecieve implements IRecieve{
 	/**
 	 * 类型：1.博客，2.心情
 	 */
-	private int model;
-	public AddReadRecieve(int model){
-		this.model = model;
+	public AddReadRecieve(){
 	}
 
 	public final static String QUEUE_NAME = "read_rabbitmq";
@@ -33,35 +37,25 @@ public class AddReadRecieve implements IRecieve{
 
 	@Override
 	public Class<?> getQueueClass() {
-		Class<?> cl = null;
-		switch(model){
-		case MODEL_BLOG:
-			cl = BlogBean.class;
-			break;
-		case MODEL_MOOD:
-			cl = MoodBean.class;
-			break;
-		}
-		return cl;
+		return ReadBean.class;
 	}
 
 	@Override
 	public boolean excute(Object obj) { 
 		boolean success = false;
-		
+		if(obj == null)
+			return success;
 		try{
-			if(obj instanceof BlogBean){
-				BlogBean blogBean = (BlogBean)obj;
-				//更新读取数量
-				int readNum = StringUtil.changeObjectToInt(blogBean.getReadNumber());
-				BlogMapper blogMapper = (BlogMapper) SpringUtil.getBean("blogMapper");
-				success = blogMapper.updateSql(getQueueClass(), " set read_number = ? , is_read = true where id = ?", readNum, blogBean.getId()) > 0;
-			}else if(obj instanceof MoodBean){
-				MoodBean moodBean = (MoodBean)obj;
-				//更新读取数量
-				int readNum = StringUtil.changeObjectToInt(moodBean.getReadNumber());
-				MoodMapper moodMapper = (MoodMapper) SpringUtil.getBean("moodMapper");
-				success = moodMapper.updateSql(getQueueClass(), " set read_number = ? where id = ?", readNum, moodBean.getId()) > 0;
+
+			ReadMapper readMapper = (ReadMapper) SpringUtil.getBean("readMapper");
+			ReadBean readBean = (ReadBean) obj;
+			if(readBean.getCreateUserId() < 1)
+				readBean.setCreateUserId(OptionUtil.adminUser.getId());
+			success = readMapper.save(readBean) > 0;
+			if(success){
+				ReadHandler readHandler = (ReadHandler) SpringUtil.getBean("readHandler");
+				//清空redis缓存
+				readHandler.delete(readBean.getTableName(), readBean.getTableId());
 			}
 		}catch(Exception e){
 			e.printStackTrace();

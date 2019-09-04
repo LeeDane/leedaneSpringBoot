@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.cn.leedane.cache.SystemCache;
 import net.sf.json.JSONArray;
 
 import org.apache.log4j.Logger;
@@ -40,9 +41,15 @@ public class MoodHandler {
 	
 	@Autowired
 	private ZanHandler zanHandler;
+
+	@Autowired
+	private ReadHandler readHandler;
 	
 	@Autowired
 	private UserHandler userHandler;
+
+	@Autowired
+	private SystemCache systemCache;
 	
 	/**
 	 * 获取心情的详细信息(注意：有照片的情况下，只缓存该照片已经上传到七牛存储服务器的，未上传的情况不做缓存)
@@ -95,10 +102,11 @@ public class MoodHandler {
 		}
 		
 		if(list != null && list.size() == 1 && !onlyContent){
-			list.get(0).put("comment_number", commentHandler.getCommentNumber(moodId, DataTableType.心情.value));
-			list.get(0).put("transmit_number", transmitHandler.getTransmitNumber(moodId, DataTableType.心情.value));
-			list.get(0).put("zan_number", zanHandler.getZanNumber(moodId, DataTableType.心情.value));
+			list.get(0).put("comment_number", commentHandler.getCommentNumber(DataTableType.心情.value, moodId));
+			list.get(0).put("transmit_number", transmitHandler.getTransmitNumber(DataTableType.心情.value, moodId));
+			list.get(0).put("zan_number", zanHandler.getZanNumber(DataTableType.心情.value, moodId));
 			list.get(0).put("zan_users", zanHandler.getZanUser(moodId, DataTableType.心情.value, user, 6));
+			list.get(0).put("read_number", readHandler.getReadNumber(DataTableType.心情.value, moodId));
 			int createUserId = StringUtil.changeObjectToInt(list.get(0).get("create_user_id"));
 			if( createUserId > 0)
 				//填充图片信息
@@ -231,7 +239,23 @@ public class MoodHandler {
 			redisUtil.delete(moodImgKeySource);
 			redisUtil.delete(moodImgKeyDefault);
 			redisUtil.delete(moodImgsKey);
-		}	
+		}
+		zanHandler.deleteZan(DataTableType.心情.value, moodId);
+		zanHandler.deleteZanUsers(DataTableType.心情.value, moodId);
+		commentHandler.deleteComment(moodId);
+		commentHandler.deleteComment(DataTableType.心情.value, moodId);
+		transmitHandler.deleteTransmit(DataTableType.心情.value, moodId);
+		readHandler.delete(DataTableType.心情.value, moodId);
+		try{
+			systemCache.removeCache(ZanHandler.getZanKey(DataTableType.心情.value, moodId));
+			systemCache.removeCache(ZanHandler.getZanUserKey(DataTableType.心情.value, moodId));
+			systemCache.removeCache(CommentHandler.getCommentKey(moodId));
+			systemCache.removeCache(CommentHandler.getCommentKey(DataTableType.心情.value, moodId));
+			systemCache.removeCache(TransmitHandler.getTransmitKey(DataTableType.心情.value, moodId));
+			systemCache.removeCache(moodKey);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 		return redisUtil.delete(moodKey);
 	}
 	

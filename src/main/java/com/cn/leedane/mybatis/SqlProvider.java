@@ -366,8 +366,8 @@ public class SqlProvider {
 	
 	/**
 	 * 通过实体列表
-	 * @param clazz
-	 * @param id
+	 * @param sql
+	 * @param params
 	 * @return
 	 */
 	public String getBeans(String sql, Object ... params){
@@ -380,16 +380,16 @@ public class SqlProvider {
 	
 	/**
 	 * 通过实体列表
-	 * @param clazz
-	 * @param id
+	 * @param tableName
+	 * @param where
 	 * @return
 	 */
 	public String getTotal(String tableName, String where){
-		return "select count(*) ct from "+tableName +" " +StringUtil.changeNotNull(where);
+		return "select count(id) ct from "+tableName +" " +StringUtil.changeNotNull(where);
 	}
 	
 	public String getTotalByUser(String tableName, int userId){
-		return "select count(*) ct from "+tableName +" where create_user_id="+userId;
+		return "select count(id) ct from "+tableName +" where create_user_id="+userId;
 	}
 	
 	public String exists(Class<?> clazz, String tableName, int tableId, int userId){
@@ -403,8 +403,8 @@ public class SqlProvider {
 
 	/**
 	 * 执行最基本的sql语句
-	 * @param clazz
-	 * @param id
+	 * @param sql
+	 * @param params
 	 * @return
 	 */
 	public String executeSQL(String sql, Object ...params) {
@@ -468,7 +468,7 @@ public class SqlProvider {
 	
 	/**
 	 * 获取类clazz的所有Field，包括其父类的Field，如果重名，以子类Field为准。
-	 * @param clazz
+	 * @param beanClass
 	 * @return Field数组
 	 */
 	public Field[] getFields(Class<?> beanClass) {

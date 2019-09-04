@@ -1,50 +1,32 @@
 package com.cn.leedane.handler;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import com.cn.leedane.rabbitmq.recieve.*;
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.CronTrigger;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.TriggerBuilder;
-import org.quartz.TriggerKey;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.ehcache.EhCacheCache;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
-import org.springframework.stereotype.Component;
-
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.mapper.BaseMapper;
 import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.model.JobManageBean;
 import com.cn.leedane.model.RecordTimeBean;
 import com.cn.leedane.rabbitmq.RecieveMessage;
+import com.cn.leedane.rabbitmq.recieve.*;
 import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.task.spring.QuartzJobFactory;
-import com.cn.leedane.utils.CollectionUtil;
-import com.cn.leedane.utils.CommonUtil;
-import com.cn.leedane.utils.FinancialCategoryUtil;
-import com.cn.leedane.utils.FinancialWebImeiUtil;
-import com.cn.leedane.utils.OptionUtil;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.sensitiveWord.SensitiveWordInit;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.quartz.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.ehcache.EhCacheCache;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.stereotype.Component;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 初始化缓存数据
@@ -100,6 +82,14 @@ public class InitCacheData {
 			@Override
 			public void run() {
 				startRabbitMqLogListener(); //异步启动rabbitmq的操作日志队列的监听
+			}
+		}).start();
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				startRabbitMqAddReadListener(); //异步启动rabbitmq的添加已读队列的监听
 			}
 		}).start();
 
@@ -265,6 +255,20 @@ public class InitCacheData {
 		}		
 	}
 
+	/**
+	 * 启动rabbitmq添加已读的监听
+	 */
+	private void startRabbitMqAddReadListener() {
+
+		try {
+			//日志队列的监听
+			IRecieve recieve = new AddReadRecieve();
+			RecieveMessage recieveMessage = new RecieveMessage(recieve);
+			recieveMessage.getMsg();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * 启动rabbitmq日志队列的监听

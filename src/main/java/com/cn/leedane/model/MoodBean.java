@@ -78,36 +78,6 @@ public class MoodBean extends RecordTimeBean{
     private boolean canTransmit;
 	
 	/**
-	 * 阅读次数
-	 */
-	@Field
-	private int readNumber; 
-	
-	/**
-	 * 统计赞的数量
-	 */
-	@Field
-	private int zanNumber;   
-	
-	/**
-	 * 统计评论的数量
-	 */
-	@Field
-	private int commentNumber; 
-	
-	/**
-	 * 统计转发的数量
-	 */
-	@Field
-	private int transmitNumber ;
-	
-	/**
-	 * 统计分享的数量
-	 */
-	@Field
-	private int shareNumber;
-	
-	/**
 	 * 是否立即发布
 	 */
 	private boolean isPublishNow;
@@ -174,47 +144,6 @@ public class MoodBean extends RecordTimeBean{
 	public void setStr2(String str2) {
 		this.str2 = str2;
 	}
-	
-	//@Column(length=21,columnDefinition="INT default 0",name="read_number")
-	public int getReadNumber() {
-		return readNumber;
-	}
-	public void setReadNumber(int readNumber) {
-		this.readNumber = readNumber;
-	}
-	
-	//@Column(columnDefinition="INT default 0",name="zan_number")  //设置默认值是0
-	public int getZanNumber() {
-		return zanNumber;
-	}
-	public void setZanNumber(int zanNumber) {
-		this.zanNumber = zanNumber;
-	}
-	
-	//@Column(columnDefinition="INT default 0", name="comment_number")
-	public int getCommentNumber() {
-		return commentNumber;
-	}
-	public void setCommentNumber(int commentNumber) {
-		this.commentNumber = commentNumber;
-	}
-	
-	//@Column(columnDefinition="INT default 0",name="transmit_number")
-	public int getTransmitNumber() {
-		return transmitNumber;
-	}
-	public void setTransmitNumber(int transmitNumber) {
-		this.transmitNumber = transmitNumber;
-	}
-	
-	//@Column(columnDefinition="INT default 0",name="share_number")
-	public int getShareNumber() {
-		return shareNumber;
-	}
-	public void setShareNumber(int shareNumber) {
-		this.shareNumber = shareNumber;
-	}
-	
 	//@Column(name="has_img", columnDefinition="bit(1) default 0")
 	public boolean isHasImg() {
 		return hasImg;

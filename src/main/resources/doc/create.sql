@@ -47,20 +47,15 @@ CREATE TABLE `t_mood` (
   `status` int(11) NOT NULL,
   `create_time` datetime DEFAULT NULL,
   `modify_time` datetime DEFAULT NULL,
-  `comment_number` int(11) DEFAULT '0',
   `content` longtext NOT NULL,
   `froms` varchar(255) DEFAULT NULL,
   `has_img` bit(1) DEFAULT b'0',
   `is_publish_now` bit(1) DEFAULT b'0',
-  `read_number` int(11) DEFAULT '0',
-  `share_number` int(11) DEFAULT '0',
   `is_solr_index` bit(1) DEFAULT b'0',
   `str1` varchar(255) DEFAULT NULL,
   `str2` varchar(255) DEFAULT NULL,
   `tag` varchar(255) DEFAULT NULL,
-  `transmit_number` int(11) DEFAULT '0',
   `uuid` varchar(255) DEFAULT NULL,
-  `zan_number` int(11) DEFAULT '0',
   `create_user_id` int(11) DEFAULT NULL,
   `modify_user_id` int(11) DEFAULT NULL,
   `latitude` double NOT NULL,
@@ -100,7 +95,6 @@ CREATE TABLE `t_blog` (
   `status` int(11) NOT NULL,
   `create_time` datetime DEFAULT NULL,
   `modify_time` datetime DEFAULT NULL,
-  `comment_number` int(11) DEFAULT '0',
   `content` longtext NOT NULL,
   `digest` varchar(255) DEFAULT NULL,
   `froms` varchar(255) DEFAULT NULL,
@@ -109,18 +103,13 @@ CREATE TABLE `t_blog` (
   `is_index` bit(1) DEFAULT b'0',
   `origin_link` longtext,
   `is_publish_now` bit(1) DEFAULT b'0',
-  `is_read` bit(1) DEFAULT b'0',
-  `read_number` int(11) DEFAULT '0',
-  `share_number` int(11) DEFAULT '0',
   `is_solr_index` bit(1) DEFAULT b'0',
   `source` varchar(255) DEFAULT NULL,
   `str1` varchar(255) DEFAULT NULL,
   `str2` varchar(255) DEFAULT NULL,
   `tag` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
-  `transmit_number` int(11) DEFAULT '0',
   `uuid` varchar(255) DEFAULT NULL,
-  `zan_number` int(11) DEFAULT '0',
   `create_user_id` int(11) DEFAULT NULL,
   `modify_user_id` int(11) DEFAULT NULL,
   `can_comment` bit(1) DEFAULT b'1',
@@ -1341,3 +1330,24 @@ CREATE TABLE `t_event` (
    CONSTRAINT `FK_event_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
    CONSTRAINT `FK_event_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_read
+-- ----------------------------
+DROP TABLE IF EXISTS `t_read`;
+CREATE TABLE `t_read` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `froms` varchar(255) DEFAULT NULL,
+  `table_id` int(11) NOT NULL,
+  `table_name` varchar(15) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_read_create_user` (`create_user_id`),
+  KEY `FK_modify_create_user` (`modify_user_id`),
+  CONSTRAINT `FK_modify_create_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_read_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

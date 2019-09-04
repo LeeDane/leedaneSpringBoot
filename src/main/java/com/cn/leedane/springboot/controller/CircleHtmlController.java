@@ -241,6 +241,9 @@ public class CircleHtmlController extends BaseController{
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该圈子不存在.value));
 		
 		CirclePostBean postBean = circlePostHandler.getNormalCirclePostBean(circle, postId);
+
+		if(postBean == null)
+			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该帖子不存在.value));
 		model.addAttribute("nonav", StringUtil.changeObjectToBoolean(SecurityUtils.getSubject().getSession().getAttribute("nonav")));
 		return toPostDetail(circle, postBean, model, request);
 	}

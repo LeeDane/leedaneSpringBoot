@@ -236,12 +236,20 @@ public class ElasticSearchUtil {
 		String[] searchFields = elasticSearchRequestBean.getSearchFields();
 		String searchKey = elasticSearchRequestBean.getSearchKey();
 
+		//判断是否是管理员
+		Subject currentUser = SecurityUtils.getSubject();
+		boolean isAdmin = currentUser.hasRole(RoleController.ADMIN_ROLE_CODE);
 		//对操作日志查询，不需要关键字
 		if(StringUtil.isNotNull(searchKey)) {
 			for (int i = 0; searchFields.length > 0 && i < searchFields.length; i++) {
 				switch (elasticSearchRequestBean.getAccurate()) {
 					case 0: //模糊查询
-						boolQueryField.should(QueryBuilders.matchQuery(searchFields[i], searchKey).prefixLength(4));
+						//管理员才能使用： 判断是否含有特殊字符，有特殊字符用
+						if(isAdmin && StringUtil.isSpecialChar(searchKey)){
+							boolQueryField.should(QueryBuilders.wildcardQuery(searchFields[i], searchKey));
+						}else{
+							boolQueryField.should(QueryBuilders.matchQuery(searchFields[i], searchKey)/*.prefixLength(4)*/);
+						}
 						break;
 					case 1: //精确查询
 						boolQueryField.should(QueryBuilders.termQuery(searchFields[i] + ".keyword", searchKey));
@@ -270,8 +278,7 @@ public class ElasticSearchUtil {
 		}else{
 			//登录用户还可以查询正常状态的心情
 			boolQueryStatus.should(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_NORMAL));
-			//获取当前的Subject
-			Subject currentUser = SecurityUtils.getSubject();
+
 			//判断是否是管理员，管理员可以查询所有的数据(无论状态)
 			//非管理员，只能查询公开的或者自己的私有的
 			if(!currentUser.hasRole(RoleController.ADMIN_ROLE_CODE)){

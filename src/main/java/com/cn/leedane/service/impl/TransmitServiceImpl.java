@@ -174,7 +174,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
 		}
 		if(result){
-			transmitHandler.deleteTransmit(transmitBean.getTableId(), transmitBean.getTableName());
+			transmitHandler.deleteTransmit(transmitBean.getTableName(), transmitBean.getTableId());
 			message.put("isSuccess", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除转发成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);

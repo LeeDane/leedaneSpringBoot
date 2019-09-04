@@ -63,8 +63,6 @@ public class CirclePostHandler {
 	
 	/**
 	 * 获取热门帖子列表(这里只缓存8条记录，主要用于首页的展示)
-	 * @param circleId
-	 * @param userId
 	 * @return
 	 */
 	public CircleUserPostsBean getHotestPosts(){
@@ -127,7 +125,6 @@ public class CirclePostHandler {
 	
 	/**
 	 * 删除热门帖子的cache和redis缓存
-	 * @param userId
 	 * @return
 	 */
 	public boolean deleteHotestPosts(){
@@ -140,7 +137,6 @@ public class CirclePostHandler {
 	
 	/**
 	 * 获取圈子用户的帖子列表(这里只缓存8条用户最新帖子记录，主要用于首页的展示)
-	 * @param circleId
 	 * @param userId
 	 * @return
 	 */
@@ -203,7 +199,6 @@ public class CirclePostHandler {
 	
 	/**
 	 * 获取圈子当前用户的帖子列表
-	 * @param userId
 	 * @param limit
 	 * @return
 	 */
@@ -264,7 +259,7 @@ public class CirclePostHandler {
 	
 	/**
 	 * 获取圈子用户的帖子列表(这里只缓存8条用户最新帖子记录，主要用于首页的展示)
-	 * @param postId
+	 * @param circleId
 	 * @param userId
 	 * @return
 	 */
@@ -323,7 +318,7 @@ public class CirclePostHandler {
 	
 	/**
 	 * 根据圈子的当前登录用户的id删除其对应的帖子的cache和redis缓存
-	 * @param postId
+	 * @param circleId
 	 * @param userId
 	 * @return
 	 */
@@ -354,7 +349,7 @@ public class CirclePostHandler {
 	 * @param postId
 	 */
 	public void addTransmit(int postId){
-		String key = TransmitHandler.getTransmitKey(postId, DataTableType.帖子.value);
+		String key = TransmitHandler.getTransmitKey(DataTableType.帖子.value, postId);
 		int count = 0;
 		//还没有添加到redis中
 		if(StringUtil.isNull(redisUtil.getString(key))){
@@ -373,7 +368,7 @@ public class CirclePostHandler {
 	 */
 	public int getTransmitNumber(int postId){
 		
-		String transmitKey = TransmitHandler.getTransmitKey(postId, DataTableType.帖子.value);
+		String transmitKey = TransmitHandler.getTransmitKey(DataTableType.帖子.value, postId);
 		int transmitNumber;
 		//redisUtil.delete(transmitKey);
 		//转发
@@ -391,7 +386,7 @@ public class CirclePostHandler {
 	 * @param postId
 	 */
 	public void deleteTransmit(int postId){
-		String transmitKey = TransmitHandler.getTransmitKey(postId, DataTableType.帖子.value);
+		String transmitKey = TransmitHandler.getTransmitKey(DataTableType.帖子.value, postId);
 		int transmitNumber;
 		//转发
 		if(!redisUtil.hasKey(transmitKey)){
@@ -406,7 +401,6 @@ public class CirclePostHandler {
 	
 	/**
 	 * 获取正常状态的帖子对象
-	 * @param circleId
 	 * @param postId
 	 * @return
 	 */
@@ -500,10 +494,7 @@ public class CirclePostHandler {
 
 	/**
 	 * 获取帖子对象(没有状态)
-	 * @param circleId
 	 * @param postId
-	 * @param user 不为空将校验帖子和该用户是否是同一个
-	 * @param normal
 	 * @return
 	 */
 	private CirclePostBean getCirclePostBean(int postId){		
@@ -574,7 +565,6 @@ public class CirclePostHandler {
 	
 	/**
 	 * 获取用户的圈子帖子列表关系在redis的key
-	 * @param circleId
 	 * @param userId
 	 * @return
 	 */
@@ -585,7 +575,6 @@ public class CirclePostHandler {
 	/**
 	 * 获取圈子里面的用户的帖子列表关系在redis的key
 	 * @param circleId
-	 * @param postId
 	 * @param userId
 	 * @return
 	 */
@@ -595,8 +584,6 @@ public class CirclePostHandler {
 	
 	/**
 	 * 获取热门帖子列表关系在redis的key
-	 * @param circleId
-	 * @param userId
 	 * @return
 	 */
 	public static String getHotestPostKey(){

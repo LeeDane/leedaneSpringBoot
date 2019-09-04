@@ -95,14 +95,15 @@ function getInfo(bid){
 				var blog = data.message[0];
 				document.title = data.message[0].title;
 				$("#b-title").html(changeNotNullString(blog.title));
-				$("#b-account").html(changeNotNullString(blog.account));
-				$("#b-account").attr("onclick", 'linkToMy('+ blog.create_user_id +')');
-				$("#b-create-time").html("发表于:"+changeNotNullString(blog.create_time));
-				$("#b-read-time").html("阅读:"+blog.read_number);
-				$("#b-comment-number").html("评论:"+blog.comment_number);
-				$("#b-transmit-number").html("转发:"+blog.transmit_number);
-				$("#b-zan-number").html("点赞:"+blog.zan_number);
-				$("#b-share-number").html("分享:"+blog.share_number);
+				$("#b-account").find("span").html(changeNotNullString(blog.account));
+                $("#b-account").find("img").attr("src", changeNotNullString(blog.user_pic_path));
+                $("#b-account").attr("onclick", 'linkToMy('+ blog.create_user_id +')');
+				$("#b-create-time").html(setTimeAgo(changeNotNullString(blog.create_time)));
+				$("#b-read-number").html(blog.read_number);
+				$("#b-comment-number").html(blog.comment_number);
+				$("#b-transmit-number").html(blog.transmit_number);
+				$("#b-zan-number").html(blog.zan_number);
+				$("#b-share-number").html(blog.share_number);
 				var keywords = blog.keywords;
 				if(typeof(keywords) != 'undefined' && keywords.length > 0){
 					$("#keywords").find("a").remove();

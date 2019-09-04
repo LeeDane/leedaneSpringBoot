@@ -6,10 +6,10 @@ import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.*;
 import com.cn.leedane.mapper.BlogMapper;
-import com.cn.leedane.model.BlogBean;
-import com.cn.leedane.model.HttpRequestInfoBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.*;
+import com.cn.leedane.rabbitmq.SendMessage;
+import com.cn.leedane.rabbitmq.send.AddReadSend;
+import com.cn.leedane.rabbitmq.send.ISend;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.OperateLogService;
@@ -84,6 +84,9 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 
 	@Autowired
 	private TransportClient transportClient;
+
+	@Autowired
+	private ReadHandler readHandler;
 	@Override
 	public Map<String,Object> addBlog(BlogBean blog, UserBean user){	
 		logger.info("BlogServiceImpl-->addBlog():blog="+blog);
@@ -238,12 +241,6 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	}
 
 	@Override
-	public int updateReadNum(int id, int num) {
-		logger.info("BlogServiceImpl-->updateReadNum():id="+id+",num="+num);
-		return this.blogMapper.updateSql(EnumUtil.getBeanClass(EnumUtil.getTableCNName(EnumUtil.DataTableType.博客.value)), " set read_number = ? , is_read = true where id = ?", num, id);
-	}
-
-	@Override
 	public Map<String, Object> deleteById(JSONObject jo, HttpRequestInfoBean request, UserBean user){
 		int id = JsonUtil.getIntValue(jo, "b_id");
 		logger.info("BlogServiceImpl-->deleteById():id="+id);
@@ -270,6 +267,8 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			//删除es缓存
 			elasticSearchUtil.delete(DataTableType.博客.value, id);
 
+			//删除redis相关联的缓存
+			blogHandler.delete(id);
 			//异步删除solr
 //			new ThreadUtil().singleTask(new SolrDeleteThread<BlogBean>(BlogSolrHandler.getInstance(), String.valueOf(id)));
 			
@@ -637,13 +636,32 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			//为名字备注赋值
 			for(int i = 0; i < ls.size(); i++){
 				ls.get(i).put("zan_users", zanHandler.getZanUser(blogId, DataTableType.博客.value, user, 6));
-				ls.get(i).put("comment_number", commentHandler.getCommentNumber(blogId, DataTableType.博客.value));
-				ls.get(i).put("transmit_number", transmitHandler.getTransmitNumber(blogId, DataTableType.博客.value));
-				ls.get(i).put("zan_number", zanHandler.getZanNumber(blogId, DataTableType.博客.value));
+				ls.get(i).put("comment_number", commentHandler.getCommentNumber(DataTableType.博客.value, blogId));
+				ls.get(i).put("transmit_number", transmitHandler.getTransmitNumber(DataTableType.博客.value, blogId));
+				ls.get(i).put("zan_number", zanHandler.getZanNumber(DataTableType.博客.value, blogId));
+				ls.get(i).put("read_number", readHandler.getReadNumber(DataTableType.博客.value, blogId));
+				ls.get(i).put("share_number", 0);
 			}	
 		}
 		Map<String, Object> blogMap = ls.get(0);
-		int readNum = StringUtil.changeObjectToInt(blogMap.get("read_number"));
+
+		//把更新读的信息提交到Rabbitmq队列处理
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				ReadBean readBean = new ReadBean();
+				readBean.setTableName(DataTableType.博客.value);
+				readBean.setFroms(request.getIp());
+				readBean.setTableId(blogId);
+				readBean.setCreateTime(new Date());
+				readBean.setCreateUserId(user != null ? user.getId(): -1);
+				readBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+				ISend send = new AddReadSend(readBean);
+				SendMessage sendMessage = new SendMessage(send);
+				sendMessage.sendMsg();
+			}
+		}).start();
+
 		try {
 			//获取文章的简要中的关键字
 			String content = JsoupUtil.getInstance().getContentNoTag(StringUtil.changeNotNull(blogMap.get("content")));
@@ -652,18 +670,9 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		boolean result = updateReadNum(blogId, readNum + 1) > 0;
-		if(result){
-			
-			int createUserId = StringUtil.changeObjectToInt(blogMap.get("create_user_id"));
-			blogMap.put("account", userHandler.getUserName(createUserId));
-			message.put("message", ls);
-			message.put("isSuccess", true);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message.getMap();
-		}
+		blogMap.putAll(userHandler.getBaseUserInfo(StringUtil.changeObjectToInt(blogMap.get("create_user_id"))));
+		message.put("message", ls);
+		message.put("isSuccess", true);
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("获取博客ID为", blogId, "详情", StringUtil.getSuccessOrNoStr(result)).toString(), "check()", StringUtil.changeBooleanToInt(result), 0);
 		return message.getMap();

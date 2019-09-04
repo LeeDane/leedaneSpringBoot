@@ -132,7 +132,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 		ResponseMap message = new ResponseMap();
 		if("firstloading".equalsIgnoreCase(method)){
 			sql.append("select m.id table_id, '"+DataTableType.心情.value+"' table_name, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img,");
-			sql.append(" m.read_number, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account");
+			sql.append(" u.account");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where m.status = ? and ");
 			sql.append(buildCreateUserIdInSQL(fids));
 			sql.append(" order by m.id desc limit 0,?");
@@ -140,7 +140,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 		//下刷新
 		}else if("lowloading".equalsIgnoreCase(method)){
 			sql.append("select m.id table_id, '"+DataTableType.心情.value+"' table_name, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img,");
-			sql.append(" m.read_number, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account");
+			sql.append(" u.account");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where m.status = ? and ");
 			sql.append(buildCreateUserIdInSQL(fids));
 			sql.append(" and m.id < ? order by m.id desc limit 0,? ");
@@ -148,7 +148,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 		//上刷新
 		}else if("uploading".equalsIgnoreCase(method)){
 			sql.append("select m.id table_id, '"+DataTableType.心情.value+"' table_name, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img,");
-			sql.append(" m.read_number, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account");
+			sql.append("u.account");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where m.status = ? and ");
 			sql.append(buildCreateUserIdInSQL(fids));
 			sql.append(" and m.id > ? limit 0,?  ");
@@ -179,9 +179,9 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 						rs.get(i).put("account", "本人");
 					}
 					rs.get(i).put("zan_users", zanHandler.getZanUser(moodId, DataTableType.心情.value, user, 6));
-					rs.get(i).put("comment_number", commentHandler.getCommentNumber(moodId, DataTableType.心情.value));
-					rs.get(i).put("transmit_number", transmitHandler.getTransmitNumber(moodId, DataTableType.心情.value));
-					rs.get(i).put("zan_number", zanHandler.getZanNumber(moodId, DataTableType.心情.value));
+					rs.get(i).put("comment_number", commentHandler.getCommentNumber(DataTableType.心情.value, moodId));
+					rs.get(i).put("transmit_number", transmitHandler.getTransmitNumber(DataTableType.心情.value, moodId));
+					rs.get(i).put("zan_number", zanHandler.getZanNumber(DataTableType.心情.value, moodId));
 				}
 				
 				//有图片的获取图片的路径
@@ -242,7 +242,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 		
 		StringBuffer sql = new StringBuffer();
 		sql.append("select m.id table_id, '"+DataTableType.心情.value+"' table_name, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img,");
-		sql.append(" m.read_number, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account");
+		sql.append(" u.account");
 		sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where m.status = ? and ");
 		sql.append(buildCreateUserIdInSQL(fids));
 		sql.append(" order by m.id desc limit ?, ?");
@@ -273,9 +273,9 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 						rs.get(i).put("account", "本人");
 					}
 					rs.get(i).put("zan_users", zanHandler.getZanUser(moodId, DataTableType.心情.value, user, 6));
-					rs.get(i).put("comment_number", commentHandler.getCommentNumber(moodId, DataTableType.心情.value));
-					rs.get(i).put("transmit_number", transmitHandler.getTransmitNumber(moodId, DataTableType.心情.value));
-					rs.get(i).put("zan_number", zanHandler.getZanNumber(moodId, DataTableType.心情.value));
+					rs.get(i).put("comment_number", commentHandler.getCommentNumber(DataTableType.心情.value, moodId));
+					rs.get(i).put("transmit_number", transmitHandler.getTransmitNumber(DataTableType.心情.value, moodId));
+					rs.get(i).put("zan_number", zanHandler.getZanNumber(DataTableType.心情.value, moodId));
 				}
 				
 				//有图片的获取图片的路径

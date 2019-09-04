@@ -319,7 +319,7 @@ function loadUserInfo(){
 				
 				userinfo = data.userinfo;
 				if(isNotEmpty(userinfo.user_pic_path))
-					$("#user-img").html('<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"><img src="'+ userinfo.user_pic_path +'" width="120px" height="120px" class="img-circle center-block"></div>');
+					$("#user-img").html('<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"><img src="'+ userinfo.user_pic_path +'" width="120px" height="120px" class="img-circle center-block" onclick="showSingleImg(this);"></div>');
 				
 				var descHtml = '<div>'+ 
 									'<div class="animate three">';

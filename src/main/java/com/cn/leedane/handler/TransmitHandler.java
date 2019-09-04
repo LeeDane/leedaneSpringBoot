@@ -29,7 +29,7 @@ public class TransmitHandler {
 	 * @param tableId
 	 */
 	public void addTransmit(String tableName, int tableId){
-		String key = TransmitHandler.getTransmitKey(tableId, tableName);
+		String key = TransmitHandler.getTransmitKey(tableName, tableId);
 		int count = 0;
 		//还没有添加到redis中
 		if(!redisUtil.hasKey(key)){
@@ -42,12 +42,12 @@ public class TransmitHandler {
 	}
 	/**
 	 * 获取转发总数
-	 * @param tableId
 	 * @param tableName
+	 * @param tableId
 	 * @return
 	 */
-	public int getTransmitNumber(int tableId, String tableName){
-		String transmitKey = getTransmitKey(tableId, tableName);
+	public int getTransmitNumber(String tableName, int tableId){
+		String transmitKey = getTransmitKey(tableName, tableId);
 		int transmitNumber;
 		//转发
 		if(!redisUtil.hasKey(transmitKey)){
@@ -56,16 +56,16 @@ public class TransmitHandler {
 		}else{
 			transmitNumber = Integer.parseInt(redisUtil.getString(transmitKey));
 		}
-		return transmitNumber;
+		return transmitNumber < 1 ? 0 : transmitNumber;
 	}
 	
 	/**
 	 * 删除转发后修改转发数量
-	 * @param tableId
 	 * @param tableName
+	 * @param tableId
 	 */
-	public void deleteTransmit(int tableId, String tableName){
-		String transmitKey = getTransmitKey(tableId, tableName);
+	public void deleteTransmit(String tableName, int tableId){
+		String transmitKey = getTransmitKey(tableName, tableId);
 		int transmitNumber;
 		//转发
 		if(!redisUtil.hasKey(transmitKey)){
@@ -89,11 +89,11 @@ public class TransmitHandler {
 
 	/**
 	 * 获取转发在redis的key
-	 * @param tableId
 	 * @param tableName
+	 * @param tableId
 	 * @return
 	 */
-	public static String getTransmitKey(int tableId, String tableName){
+	public static String getTransmitKey(String tableName, int tableId){
 		return ConstantsUtil.TRANSMIT_REDIS +tableName+"_"+tableId;
 	}
 }

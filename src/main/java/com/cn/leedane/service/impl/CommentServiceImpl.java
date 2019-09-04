@@ -612,7 +612,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		
 		if(result){
 			commentHandler.deleteComment(cid);
-			commentHandler.deleteComment(commentBean.getTableId(), commentBean.getTableName());
+			commentHandler.deleteComment(commentBean.getTableName(), commentBean.getTableId());
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除评论成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);

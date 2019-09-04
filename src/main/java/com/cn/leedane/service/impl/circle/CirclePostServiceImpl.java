@@ -1,10 +1,7 @@
 package com.cn.leedane.service.impl.circle;
 
 import com.cn.leedane.exception.RE404Exception;
-import com.cn.leedane.handler.CommentHandler;
-import com.cn.leedane.handler.NotificationHandler;
-import com.cn.leedane.handler.UserHandler;
-import com.cn.leedane.handler.ZanHandler;
+import com.cn.leedane.handler.*;
 import com.cn.leedane.handler.circle.CircleHandler;
 import com.cn.leedane.handler.circle.CirclePostHandler;
 import com.cn.leedane.handler.circle.CircleSettingHandler;
@@ -13,6 +10,9 @@ import com.cn.leedane.mapper.circle.CircleMemberMapper;
 import com.cn.leedane.mapper.circle.CirclePostMapper;
 import com.cn.leedane.model.*;
 import com.cn.leedane.model.circle.*;
+import com.cn.leedane.rabbitmq.SendMessage;
+import com.cn.leedane.rabbitmq.send.AddReadSend;
+import com.cn.leedane.rabbitmq.send.ISend;
 import com.cn.leedane.service.*;
 import com.cn.leedane.service.circle.CircleContributionService;
 import com.cn.leedane.service.circle.CirclePostService;
@@ -66,6 +66,9 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	
 	@Autowired
 	private ZanHandler zanHandler;
+
+	@Autowired
+	private ReadHandler readHandler;
 
 	@Autowired
 	private UserHandler userHandler;
@@ -224,9 +227,9 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 				createUserId = StringUtil.changeObjectToInt(map.get("create_user_id"));
 				map.put("create_time", map.get("create_time"));
 				map.put("zan_users", zanHandler.getZanUser(postId, DataTableType.帖子.value, user, 6));
-				map.put("comment_number", commentHandler.getCommentNumber(postId, DataTableType.帖子.value));
+				map.put("comment_number", commentHandler.getCommentNumber(DataTableType.帖子.value, postId));
 				map.put("transmit_number", circlePostHandler.getTransmitNumber(postId));
-				map.put("zan_number", zanHandler.getZanNumber(postId, DataTableType.帖子.value));
+				map.put("zan_number", zanHandler.getZanNumber(DataTableType.帖子.value, postId));
 				map.putAll(userHandler.getBaseUserInfo(createUserId));
 				pid = StringUtil.changeObjectToInt(map.get("pid"));
 				if(pid > 0){
@@ -437,26 +440,47 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		ResponseMap message = new ResponseMap();
 		message.put("circle", circle);
 		message.put("post", post);
-		
+		int postId = post.getId();
+		//把更新读的信息提交到Rabbitmq队列处理
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				ReadBean readBean = new ReadBean();
+				readBean.setTableName(DataTableType.帖子.value);
+				readBean.setFroms(request.getIp());
+				readBean.setTableId(postId);
+				readBean.setCreateTime(new Date());
+				readBean.setCreateUserId(user == null ? -1 : user.getId());
+				readBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+				ISend send = new AddReadSend(readBean);
+				SendMessage sendMessage = new SendMessage(send);
+				sendMessage.sendMsg();
+			}
+		}).start();
 		//标记用户是否有删除权限
     	boolean canDelete = false;
 		if(user != null){
-			List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circle.getId(), ConstantsUtil.STATUS_NORMAL);
-			if(CollectionUtil.isNotEmpty(members)){
-				int roleType = members.get(0).getRoleType();
-				canDelete = roleType == CircleServiceImpl.CIRCLE_CREATER || roleType == CircleServiceImpl.CIRCLE_MANAGER;
+			canDelete = post.getCreateUserId() == user.getId();
+			if(!canDelete){
+				List<CircleMemberBean> members = circleMemberMapper.getMember(user.getId(), circle.getId(), ConstantsUtil.STATUS_NORMAL);
+				if(CollectionUtil.isNotEmpty(members)){
+					int roleType = members.get(0).getRoleType();
+					canDelete = roleType == CircleServiceImpl.CIRCLE_CREATER || roleType == CircleServiceImpl.CIRCLE_MANAGER;
+				}
 			}
 		}
     	message.put("canDelete", canDelete);
 		
-		int postId = post.getId();
+
 		message.put("create_time", DateUtil.DateToString(post.getCreateTime()));
 		message.put("zan_users", zanHandler.getZanUser(postId, DataTableType.帖子.value, user, 6));
-		message.put("comment_number", commentHandler.getCommentNumber(postId, DataTableType.帖子.value));
+		message.put("comment_number", commentHandler.getCommentNumber(DataTableType.帖子.value, postId));
 		message.put("transmit_number", circlePostHandler.getTransmitNumber(postId));
-		message.put("zan_number", zanHandler.getZanNumber(postId, DataTableType.帖子.value));
-		message.put("create_user_account", userHandler.getUserName(post.getCreateUserId()));
-		message.put("create_user_pic_path", userHandler.getUserPicPath(post.getCreateUserId(), "30x30"));
+		message.put("zan_number", zanHandler.getZanNumber(DataTableType.帖子.value, postId));
+		message.put("read_number", readHandler.getReadNumber(DataTableType.帖子.value, postId));
+		message.putAll(userHandler.getBaseUserInfo(post.getCreateUserId()));
+//		message.put("create_user_account", userHandler.getUserName());
+//		message.put("create_user_pic_path", userHandler.getUserPicPath(post.getCreateUserId(), "30x30"));
 		int pid = post.getPid();
 		if(pid > 0){
 			CirclePostBean postBean = circlePostHandler.getNormalCirclePostBean(pid);

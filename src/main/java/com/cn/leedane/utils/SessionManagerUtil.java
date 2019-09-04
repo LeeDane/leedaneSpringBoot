@@ -28,7 +28,6 @@ public class SessionManagerUtil {
 	private HashMap<String, List<Session>> userSessions;
 	private HashMap<Serializable, String> userSessionMap; //session跟用户ID的一对一映射
 	private HashMap<Serializable, Subject> userSubjectMap; //session跟用户ID的一对一映射
-	/*private int readNumber;*/
 	private SessionManagerUtil(){
 		userSessions = new HashMap<>();
 		userSessionMap = new HashMap<>();

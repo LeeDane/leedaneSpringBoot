@@ -79,6 +79,9 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	
 	@Autowired
 	private ZanHandler zanHandler;
+
+	@Autowired
+	private ReadHandler readHandler;
 	
 	@Autowired
 	private MoodHandler moodHandler;
@@ -302,7 +305,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		
 		if("firstloading".equalsIgnoreCase(method)){
 			sql.append("select m.id, m.status, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img, m.can_comment, m.can_transmit,");
-			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account, m.stick ");
+			sql.append(" m.location, m.longitude, m.latitude, u.account, m.stick ");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where "+ getMoodStatusSQL(toUserId, user) +" and ");
 			sql.append(" m.create_user_id = ?");
 			sql.append(" order by m.id desc limit 0,?");
@@ -310,7 +313,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		//下刷新
 		}else if("lowloading".equalsIgnoreCase(method)){
 			sql.append("select m.id, m.status, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img, m.can_comment, m.can_transmit,");
-			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account, m.stick ");
+			sql.append(" m.location, m.longitude, m.latitude, u.account, m.stick ");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where "+ getMoodStatusSQL(toUserId, user) +" and ");
 			sql.append(" m.create_user_id = ?");
 			sql.append(" and m.id < ? order by m.id desc limit 0,? ");
@@ -318,7 +321,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		//上刷新
 		}else if("uploading".equalsIgnoreCase(method)){
 			sql.append("select m.id, m.status, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img, m.can_comment, m.can_transmit,");
-			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account, m.stick");
+			sql.append(" m.location, m.longitude, m.latitude, u.account, m.stick");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where "+ getMoodStatusSQL(toUserId, user) +" and ");
 			sql.append(" m.create_user_id = ?");
 			sql.append(" and m.id > ? limit 0,?  ");
@@ -336,9 +339,9 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 				moodId = StringUtil.changeObjectToInt(rs.get(i).get("id"));
 				
 				rs.get(i).put("zan_users", zanHandler.getZanUser(moodId, DataTableType.心情.value, user, 6));
-				rs.get(i).put("comment_number", commentHandler.getCommentNumber(moodId, DataTableType.心情.value));
-				rs.get(i).put("transmit_number", transmitHandler.getTransmitNumber(moodId, DataTableType.心情.value));
-				rs.get(i).put("zan_number", zanHandler.getZanNumber(moodId, DataTableType.心情.value));
+				rs.get(i).put("comment_number", commentHandler.getCommentNumber(DataTableType.心情.value, moodId));
+				rs.get(i).put("transmit_number", transmitHandler.getTransmitNumber(DataTableType.心情.value, moodId));
+				rs.get(i).put("zan_number", zanHandler.getZanNumber(DataTableType.心情.value, moodId));
 				
 				
 				//有图片的获取图片的路径
@@ -412,9 +415,9 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 				uuid = StringUtil.changeNotNull(map.get("uuid"));
 				moodId = StringUtil.changeObjectToInt(map.get("id"));
 				map.put("zan_users", zanHandler.getZanUser(moodId, DataTableType.心情.value, user, 6));
-				map.put("comment_number", commentHandler.getCommentNumber(moodId, DataTableType.心情.value));
-				map.put("transmit_number", transmitHandler.getTransmitNumber(moodId, DataTableType.心情.value));
-				map.put("zan_number", zanHandler.getZanNumber(moodId, DataTableType.心情.value));
+				map.put("comment_number", commentHandler.getCommentNumber(DataTableType.心情.value, moodId));
+				map.put("transmit_number", transmitHandler.getTransmitNumber(DataTableType.心情.value, moodId));
+				map.put("zan_number", zanHandler.getZanNumber(DataTableType.心情.value, moodId));
 				map.put("account", userHandler.getUserName(StringUtil.changeObjectToInt(map.get("create_user_id"))));
 				//有图片的获取图片的路径
 				if(hasImg && !StringUtil.isNull(uuid)){
@@ -538,6 +541,23 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		list = moodHandler.getMoodDetail(mid, user);
 		if(!CollectionUtils.isEmpty(list) && list.size() == 1){
+			//把更新读的信息提交到Rabbitmq队列处理
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					ReadBean readBean = new ReadBean();
+					readBean.setTableName(DataTableType.心情.value);
+					readBean.setFroms(request.getIp());
+					readBean.setTableId(mid);
+					readBean.setCreateTime(new Date());
+					readBean.setCreateUserId(user == null ? -1 : user.getId());
+					readBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+					ISend send = new AddReadSend(readBean);
+					SendMessage sendMessage = new SendMessage(send);
+					sendMessage.sendMsg();
+				}
+			}).start();
+
 			Map<String, Object> mood = list.get(0);
 			int moodCreateUserId = StringUtil.changeObjectToInt(mood.get("create_user_id"));
 			int status = StringUtil.changeObjectToInt(mood.get("status"));
@@ -558,20 +578,8 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			if(hasImg && !StringUtil.isNull(uuid)){
 				mood.put("imgs", moodHandler.getMoodImg(DataTableType.心情.value, uuid, picSize));
 			}
-
 			//从Redis缓存直接获取
 			message.put("message", list);
-
-			//把更新读的信息提交到Rabbitmq队列处理
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					ISend send = new AddReadSend(moodMapper.findById(MoodBean.class, mid));
-					SendMessage sendMessage = new SendMessage(send);
-					sendMessage.sendMsg();
-				}
-			}).start();
 		}else{
 			//再次清空redis缓存
 			moodHandler.delete(mid, null, null);
@@ -930,7 +938,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		
 		if("firstloading".equalsIgnoreCase(method)){
 			sql.append("select m.id, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img, m.can_comment, m.can_transmit,");
-			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account, m.stick ");
+			sql.append(" m.location, m.longitude, m.latitude, u.account, m.stick ");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where m.status = ? and ");
 			sql.append(" m.content like '%"+topic+"%'");
 			sql.append(" order by m.id desc limit 0,?");
@@ -938,7 +946,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		//下刷新
 		}else if("lowloading".equalsIgnoreCase(method)){
 			sql.append("select m.id, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img, m.can_comment, m.can_transmit,");
-			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account, m.stick ");
+			sql.append(" m.location, m.longitude, m.latitude, u.account, m.stick ");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where m.status = ? and ");
 			sql.append(" m.content like '%"+topic+"%'");
 			sql.append(" and m.id < ? order by m.id desc limit 0,? ");
@@ -946,7 +954,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		//上刷新
 		}else if("uploading".equalsIgnoreCase(method)){
 			sql.append("select m.id, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time, m.has_img, m.can_comment, m.can_transmit,");
-			sql.append(" m.read_number, m.location, m.longitude, m.latitude, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account, m.stick ");
+			sql.append(" m.location, m.longitude, m.latitude, u.account, m.stick ");
 			sql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where m.status = ? and ");
 			sql.append(" m.content like '%"+topic+"%'");
 			sql.append(" and m.id > ? limit 0,?  ");
@@ -971,11 +979,10 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 					}
 				}
 				rs.get(i).put("zan_users", zanHandler.getZanUser(moodId, DataTableType.心情.value, user, 6));
-				rs.get(i).put("comment_number", commentHandler.getCommentNumber(moodId, DataTableType.心情.value));
-				rs.get(i).put("transmit_number", transmitHandler.getTransmitNumber(moodId, DataTableType.心情.value));
-				rs.get(i).put("zan_number", zanHandler.getZanNumber(moodId, DataTableType.心情.value));
-				
-				
+				rs.get(i).put("zan_number", zanHandler.getZanNumber(DataTableType.心情.value, moodId));
+				rs.get(i).put("comment_number", commentHandler.getCommentNumber(DataTableType.心情.value, moodId));
+				rs.get(i).put("transmit_number", transmitHandler.getTransmitNumber(DataTableType.心情.value, moodId));
+
 				//有图片的获取图片的路径
 				if(hasImg && !StringUtil.isNull(uuid)){
 					rs.get(i).put("imgs", moodHandler.getMoodImg(DataTableType.心情.value, uuid, picSize));

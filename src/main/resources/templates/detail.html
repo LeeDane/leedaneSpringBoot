@@ -25,13 +25,30 @@ jEmoji.unifiedToHTML(emojiText) -->
 				<div class="h3 inline" id="b-title"></div>
 			</div>
 			<div class="col-lg-offset-2 col-lg-8">
-				<a href="JavaScript:void(0);" target="_blank" class="marginRight" id="b-account"></a>
+				<!--<a href="JavaScript:void(0);" target="_blank" class="marginRight" id="b-account"></a>
 				<span class="marginRight" id="b-create-time"></span>
 				<span class="marginRight" id="b-read-time"></span>
 				<a href="#comment" class="marginRight" id="b-comment-number"></a>
 				<span class="marginRight" id="b-transmit-number"></span>
 				<span class="marginRight" id="b-zan-number"></span>
-				<span class="marginRight" id="b-share-number"></span>
+				<span class="marginRight" id="b-share-number"></span>-->
+				<p style="color: #666;">
+					<span id="b-account">
+						<img class="img-circle" style="width: 20px; height: 20px; margin-top: -3px;" src="" /><span id="b-account-text"></span>
+					</span>
+					<span id="operate-list" style="margin-left: 16px;">
+						<span class="glyphicon glyphicon-time" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="时间"></span>
+						<label id="b-create-time"></label>&nbsp;&nbsp;
+						<span href="#comment" class="glyphicon glyphicon-comment" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="评论"></span>&nbsp;
+						<label id="b-comment-number"></label>&nbsp;&nbsp;
+						<span class="glyphicon glyphicon-share-alt" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="转发"></span>&nbsp;
+						<label id="b-transmit-number"></label>&nbsp;&nbsp;
+						<span class="glyphicon glyphicon-thumbs-up hand post-zan" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="很赞"></span>&nbsp;
+						<label id="b-zan-number"></label>&nbsp;&nbsp;
+						<span class="glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="阅读"></span>&nbsp;
+						<label id="b-read-number"></label>&nbsp;&nbsp;
+					</span>
+				</p>
 			</div>
 			<div class="col-lg-offset-2 col-lg-8" id="tags"></div>
 		</div>

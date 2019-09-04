@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.cn.leedane.cache.SystemCache;
 import net.sf.json.JSONArray;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,14 @@ public class BlogHandler {
 	
 	@Autowired
 	private ZanHandler zanHandler;
-	
+
+	@Autowired
+	private ReadHandler readHandler;
 	@Autowired
 	private UserHandler userHandler;
-	
+
+	@Autowired
+	private SystemCache systemCache;
 	/**
 	 * 获取博客的详细信息
 	 * @param blogId
@@ -83,9 +88,9 @@ public class BlogHandler {
 		}
 		
 		if(list != null && list.size() == 1 && !onlyContent){
-			list.get(0).put("comment_number", commentHandler.getCommentNumber(blogId, DataTableType.博客.value));
-			list.get(0).put("transmit_number", transmitHandler.getTransmitNumber(blogId, DataTableType.博客.value));
-			list.get(0).put("zan_number", zanHandler.getZanNumber(blogId, DataTableType.博客.value));
+			list.get(0).put("comment_number", commentHandler.getCommentNumber(DataTableType.博客.value, blogId));
+			list.get(0).put("transmit_number", transmitHandler.getTransmitNumber(DataTableType.博客.value, blogId));
+			list.get(0).put("zan_number", zanHandler.getZanNumber(DataTableType.博客.value, blogId));
 //			list.get(0).put("zan_users", zanHandler.getZanUser(blogId, DataTableType.博客.value, user, 6));
 //			int createUserId = StringUtil.changeObjectToInt(list.get(0).get("create_user_id"));
 			//暂时没用上图片
@@ -102,6 +107,22 @@ public class BlogHandler {
 	 * @return
 	 */
 	public boolean delete(int blogId){
+		zanHandler.deleteZan(DataTableType.博客.value, blogId);
+		zanHandler.deleteZanUsers(DataTableType.博客.value, blogId);
+		commentHandler.deleteComment(blogId);
+		commentHandler.deleteComment(DataTableType.博客.value, blogId);
+		transmitHandler.deleteTransmit(DataTableType.博客.value, blogId);
+		readHandler.delete(DataTableType.博客.value, blogId);
+		try{
+			systemCache.removeCache(ZanHandler.getZanKey(DataTableType.博客.value, blogId));
+			systemCache.removeCache(ZanHandler.getZanUserKey(DataTableType.博客.value, blogId));
+			systemCache.removeCache(CommentHandler.getCommentKey(blogId));
+			systemCache.removeCache(CommentHandler.getCommentKey(DataTableType.博客.value, blogId));
+			systemCache.removeCache(TransmitHandler.getTransmitKey(DataTableType.博客.value, blogId));
+			systemCache.removeCache(getBlogKey(blogId));
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 		return redisUtil.delete(getBlogKey(blogId));
 	}
 	

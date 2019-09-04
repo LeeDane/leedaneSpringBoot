@@ -2,6 +2,7 @@ package com.cn.leedane.rabbitmq.send;
 
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.MoodBean;
+import com.cn.leedane.model.ReadBean;
 import com.cn.leedane.rabbitmq.recieve.AddReadRecieve;
 
 
@@ -15,13 +16,10 @@ public class AddReadSend implements ISend{
 			
 	private Object object;
 	
-	public AddReadSend(MoodBean moodBean){
-		this.object = moodBean;
+	public AddReadSend(ReadBean readBean){
+		this.object = readBean;
 	}
 
-	public AddReadSend(BlogBean blogBean){
-		this.object = blogBean;
-	}
 	@Override
 	public String getQueueName() {
 		return AddReadRecieve.QUEUE_NAME;

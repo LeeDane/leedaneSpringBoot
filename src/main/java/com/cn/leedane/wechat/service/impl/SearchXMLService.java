@@ -121,7 +121,7 @@ public class SearchXMLService extends BaseXMLWechatService {
 		
 		StringBuffer moodSql = new StringBuffer();
 		moodSql.append("select m.id, m.content, m.froms, m.uuid, m.create_user_id, date_format(m.create_time,'%Y-%c-%d %H:%i:%s') create_time, m.has_img,");
-		moodSql.append(" m.read_number, m.zan_number, m.comment_number, m.transmit_number, m.share_number, u.account");
+		moodSql.append(" u.account");
 		moodSql.append(" from "+DataTableType.心情.value+" m inner join "+DataTableType.用户.value+" u on u.id = m.create_user_id where m.status = ? and ");
 		moodSql.append(" m.content like '%"+search+"%' limit 10");
 		List<Map<String, Object>> Moods = moodMapper.executeSQL(moodSql.toString(), ConstantsUtil.STATUS_NORMAL);
