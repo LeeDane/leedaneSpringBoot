@@ -62,9 +62,6 @@ public class BaseController {
     @Autowired
     private SessionDAO sessionDAO;
     
-    @Value("${constant.is.debug}")
-    public boolean IS_DEBUG;
-    
     @Value("${constant.test.role.text}")
     public String TEST_ROLE_TEXT;
 
@@ -781,7 +778,7 @@ public class BaseController {
 	 */
 	protected String loginRoleCheck(String urlParse, boolean mustLogin, Model model, HttpServletRequest request){
 		//设置统一的请求模式
-		model.addAttribute("isDebug", IS_DEBUG);
+		model.addAttribute("isDebug", LeedanePropertiesConfig.newInstance().isDebug());
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
         UserBean user = getUserFromShiro();
@@ -818,7 +815,7 @@ public class BaseController {
 		model.addAttribute("isBaby", isBaby);
 
 		model.addAttribute("onlineCount", SessionManagerUtil.getInstance().getAllActivesNumber());
-		model.addAttribute("allRead", allReadHandler.getAllRead());
+		model.addAttribute("allRead", allReadHandler.get());
 		model.addAttribute("onlineTime", DateUtil.leftHours(DateUtil.stringToDate(LeedanePropertiesConfig.newInstance().getString("constant.system.online.time")), new Date()));
 
 		return StringUtil.isNotNull(urlParse) ? urlParse : "404";
@@ -833,7 +830,7 @@ public class BaseController {
 	 */
 	public String adminLoginRoleCheck(String urlParse, Model model, HttpServletRequest request){
 		//设置统一的请求模式
-		model.addAttribute("isDebug", IS_DEBUG);
+		model.addAttribute("isDebug", LeedanePropertiesConfig.newInstance().isDebug());
 		UserBean userBean = getMustAdminLoginUserFromShiro();
 		model.addAttribute("isLogin", true);
 		//获取当前的Subject

@@ -31,86 +31,45 @@ import java.util.*;
  * Version 1.0
  */
 @Component
-public class EventHandler {
+public class EventHandler extends BaseCacheHandler<EventAllBean> {
 
 	@Autowired
 	private EventMapper eventMapper;
-	
-	private RedisUtil redisUtil = RedisUtil.getInstance();
-	
-	@Autowired
-	private SystemCache systemCache;
+
+	@Override
+	protected EventAllBean getBean() {
+		return new EventAllBean();
+	}
+
+	@Override
+	public EventAllBean getT(Object... params) {
+		List<Map<String, Object>> data = eventMapper.all();
+		if(CollectionUtil.isNotEmpty(data)) {
+			EventAllBean eventAllBean = new EventAllBean();
+			eventAllBean.setList(data);
+			return eventAllBean;
+		}
+		return null;
+	}
 
 	/**
 	 * 获取所有大事件对象
 	 * @return
 	 */
-	public List<Map<String, Object>> all(){
-		EventAllBean datas = null;
-		String key = getAllEventKey();
-		Object obj = systemCache.getCache(key);
-		if(obj == ""){
-			if(redisUtil.hasKey(key)){
-				try {
-					datas =  (EventAllBean) SerializeUtil.deserializeObject(redisUtil.getSerialize(key.getBytes()), EventAllBean.class);
-					if(datas != null){
-						systemCache.addCache(key, datas, true);
-					}else{
-						//对在redis中存在但是获取不到对象的直接删除redis的缓存，重新获取数据库数据进行保持ecache和redis
-						redisUtil.delete(key);
-						List<Map<String, Object>> data = eventMapper.all();
-						if(CollectionUtil.isNotEmpty(data)){
-							try {
-								datas = new EventAllBean();
-								datas.setList(data);
-								redisUtil.addSerialize(key, SerializeUtil.serializeObject(datas));
-								systemCache.addCache(key, datas, true);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				}catch (IOException e) {
-					e.printStackTrace();
-				}
-			}else{//redis没有的处理
-				List<Map<String, Object>> data = eventMapper.all();
-				if(CollectionUtil.isNotEmpty(data)){
-					try {
-						datas = new EventAllBean();
-						datas.setList(data);
-						redisUtil.addSerialize(key, SerializeUtil.serializeObject(datas));
-						systemCache.addCache(key, datas, true);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}else{
-			datas = (EventAllBean) obj;
+	public List<Map<String, Object>> get(Object ... params) {
+		Object obj  = super.get(params);
+		if(obj != null){
+			return ((EventAllBean) obj).getList();
 		}
-		return datas != null ? datas.getList(): new ArrayList<>();
+		return new ArrayList<>();
 	}
-	
-	
-	/**
-	 * 根据用户ID删除该用户的cache和redis缓存
-	 * @return
-	 */
-	public boolean deleteAllEventCache(){
-		String key = getAllEventKey();
-		redisUtil.delete(key);
-		systemCache.removeCache(key);
-		return true;
-	}
-	
+
 	/**
 	 * 获取所有的事件在redis的key
 	 * @return
 	 */
-	public static String getAllEventKey(){
+	@Override
+	public String getKey(Object ... params) {
 		return ConstantsUtil.All_EVENT_REDIS;
 	}
 }

@@ -1,21 +1,17 @@
 package com.cn.leedane.handler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import com.cn.leedane.cache.SystemCache;
-import net.sf.json.JSONArray;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.cn.leedane.mapper.BlogMapper;
+import com.cn.leedane.model.BlogsBean;
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 文章处理类
@@ -24,16 +20,13 @@ import com.cn.leedane.utils.StringUtil;
  * Version 1.0
  */
 @Component
-public class BlogHandler {
+public class BlogHandler extends BaseCacheHandler<BlogsBean>{
 	@Autowired
 	private BlogMapper blogMapper;
 
-	private RedisUtil redisUtil = RedisUtil.getInstance();
-	
 	@Autowired
 	private CommentHandler commentHandler;
-	
-	
+
 	@Autowired
 	private TransmitHandler transmitHandler;
 	
@@ -42,11 +35,26 @@ public class BlogHandler {
 
 	@Autowired
 	private ReadHandler readHandler;
-	@Autowired
-	private UserHandler userHandler;
 
-	@Autowired
-	private SystemCache systemCache;
+	@Override
+	protected BlogsBean getBean() {
+		return new BlogsBean();
+	}
+
+	@Override
+	protected BlogsBean getT(Object... params) {
+		BlogsBean blogsBean = new BlogsBean();
+		StringBuffer sql = new StringBuffer();
+		sql.append("select b.id, b.img_url, b.title, b.has_img, b.tag, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time");
+		sql.append(" , b.digest, b.froms, b.create_user_id, b.stick, (select account from "+DataTableType.用户.value+" where id = b.create_user_id) account");
+		sql.append(" from "+ DataTableType.博客.value +" b");
+		sql.append(" where b.id=? ");
+		sql.append(" and b.status = ?");
+		List<Map<String, Object>> list = blogMapper.executeSQL(sql.toString(), StringUtil.changeObjectToInt(params[0]), ConstantsUtil.STATUS_NORMAL);
+		blogsBean.setList(list);
+		return blogsBean;
+	}
+
 	/**
 	 * 获取博客的详细信息
 	 * @param blogId
@@ -66,25 +74,10 @@ public class BlogHandler {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getBlogDetail(int blogId, UserBean user, boolean onlyContent){
-		String blogKey = getBlogKey(blogId);
-		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
-		JSONArray jsonArray = new JSONArray();
-		if(!redisUtil.hasKey(blogKey)){
-			StringBuffer sql = new StringBuffer();
-			sql.append("select b.id, b.img_url, b.title, b.has_img, b.tag, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time");
-			sql.append(" , b.digest, b.froms, b.create_user_id, b.stick, (select account from "+DataTableType.用户.value+" where id = b.create_user_id) account");
-			sql.append(" from "+DataTableType.博客.value+" b");
-			sql.append(" where b.id=? ");
-			sql.append(" and b.status = ?");
-			list = blogMapper.executeSQL(sql.toString(), blogId, ConstantsUtil.STATUS_NORMAL);
-			jsonArray = JSONArray.fromObject(list);
-			redisUtil.addString(blogKey, jsonArray.toString());
-		}else{
-			String blog = redisUtil.getString(blogKey);
-			if(StringUtil.isNotNull(blog) && !"[null]".equalsIgnoreCase(blog)){
-				jsonArray = JSONArray.fromObject(blog);
-				list = (List<Map<String, Object>>) jsonArray;
-			}
+		Object obj = super.get(blogId, user, onlyContent);
+		List<Map<String, Object>> list = new ArrayList<>();
+		if(obj != null){
+			list = ((BlogsBean)obj).getList();
 		}
 		
 		if(list != null && list.size() == 1 && !onlyContent){
@@ -103,10 +96,12 @@ public class BlogHandler {
 	
 	/**
 	 * 删除在redis
-	 * @param blogId
+	 * @param params
 	 * @return
 	 */
-	public boolean delete(int blogId){
+	@Override
+	public boolean delete(Object... params) {
+		int blogId = StringUtil.changeObjectToInt(params[0]);
 		zanHandler.deleteZan(DataTableType.博客.value, blogId);
 		zanHandler.deleteZanUsers(DataTableType.博客.value, blogId);
 		commentHandler.deleteComment(blogId);
@@ -119,19 +114,19 @@ public class BlogHandler {
 			systemCache.removeCache(CommentHandler.getCommentKey(blogId));
 			systemCache.removeCache(CommentHandler.getCommentKey(DataTableType.博客.value, blogId));
 			systemCache.removeCache(TransmitHandler.getTransmitKey(DataTableType.博客.value, blogId));
-			systemCache.removeCache(getBlogKey(blogId));
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-		return redisUtil.delete(getBlogKey(blogId));
+		return super.delete(params);
 	}
-	
+
 	/**
 	 * 获取心情在redis的key
-	 * @param blogId
+	 * @param params
 	 * @return
 	 */
-	public static String getBlogKey(int blogId){
-		return ConstantsUtil.BLOG_REDIS +blogId;
+	@Override
+	public String getKey(Object... params) {
+		return ConstantsUtil.BLOG_REDIS + StringUtil.changeObjectToInt(params[0]);
 	}
 }

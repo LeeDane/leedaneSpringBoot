@@ -35,6 +35,6 @@ public class AllReadOptimizeIndex extends AbstractScheduling{
 	@Override
 	public void execute() throws SchedulerException {
 		logger.info("开始优化系统所有访问页统计缓存");
-		allReadHandler.optimize();
+		allReadHandler.delete();
 	}
 }

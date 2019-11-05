@@ -276,13 +276,13 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 			AlimamaRecommend recommend = new AlimamaRecommend();
 			JSONObject recommendJson;
 			try {
-				recommendJson = recommend.doParse(Long.parseLong(productBean.getCode() +""));
-				message.put("message", getTaoBaoRecommend(recommendJson));
+				//recommendJson = recommend.doParse(Long.parseLong(productBean.getCode() +""));
+				//message.put("message", getTaoBaoRecommend(recommendJson));
 				message.put("isSuccess", true);
 			} catch (NumberFormatException e) {
 				message.put("message", "获取淘宝/天猫推荐商品失败");
 				e.printStackTrace();
-			} catch (ApiException e) {
+			} catch (Exception e) {
 				message.put("message", "获取淘宝/天猫推荐商品失败");
 				e.printStackTrace();
 			}

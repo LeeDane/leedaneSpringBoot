@@ -118,4 +118,12 @@ public class LeedanePropertiesConfig {
 		}
 		return properties == null ? false : StringUtil.changeObjectToBoolean(StringUtil.changeNotNull(properties.get(key)));
 	}
+
+	/**
+	 * 判断是否是debug模式
+	 * @return
+	 */
+	public boolean isDebug(){
+		return getBoolean("constant.is.debug");
+	}
 }

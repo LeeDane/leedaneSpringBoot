@@ -74,7 +74,7 @@ layui.use(['layer', 'laypage', 'util'], function(){
 	$(".container").on("click", ".delete-other-btn", function(){
 		var dataId = $(this).closest(".notification-list").attr("data-id");
 		if(dataId > 0){
-			layer.confirm('您要删除该评论吗？', {
+			layer.confirm('您要删除该消息吗？', {
 				  btn: ['确定','点错了'] //按钮
 			}, function(){
 				var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可

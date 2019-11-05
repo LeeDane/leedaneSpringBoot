@@ -1,5 +1,6 @@
 package com.cn.leedane.service.impl;
 
+import com.cn.leedane.event.MoodSubscribeEvent;
 import com.cn.leedane.exception.MustLoginException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.*;
@@ -17,6 +18,7 @@ import com.cn.leedane.rabbitmq.send.AddReadSend;
 import com.cn.leedane.rabbitmq.send.ISend;
 import com.cn.leedane.service.*;
 import com.cn.leedane.springboot.ElasticSearchUtil;
+import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.EsIndexAddThread;
 import com.cn.leedane.thread.single.SolrAddThread;
@@ -158,7 +160,6 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	        	message.put("message", i);
 		        message.put("isSuccess", true);
 	        }
-
 			new ThreadUtil().singleTask(new EsIndexAddThread<MoodBean>(moodBean));
 
 	        //异步添加心情solr索引
@@ -781,6 +782,9 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			
 			result = moodMapper.save(moodBean) > 0;
 			if(result){
+				//发布事件
+				SpringUtil.getApplicationContext().publishEvent(new MoodSubscribeEvent(moodBean));
+				System.out.println("完成啦啦啦");
 				new ThreadUtil().singleTask(new EsIndexAddThread<MoodBean>(moodBean));
 
 				//异步添加心情solr索引

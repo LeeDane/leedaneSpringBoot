@@ -357,11 +357,11 @@
 		</dependency>-->
 		
 		<!-- 静态文件实现修改不重启 -->
-		<dependency>
+		<!--<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
-		</dependency>
+		</dependency>-->
 		
 		<!-- quartz -->
 		<dependency>
@@ -506,19 +506,25 @@
 	     	<artifactId>dayu</artifactId>
 	     	<version>9.9.9</version>
 	  	</dependency>
-	  	<dependency>
+	  	<!--<dependency>
 	     	<groupId>com.leedane.other.taobao</groupId>
 	     	<artifactId>taobaoke</artifactId>
-	     	<version>9.0.1</version>
-	  	</dependency>
+	     	<version>9.0.2</version>
+	  	</dependency>-->
 	  	
 	  	<!-- jingdong开放平台 -->
-	  	<dependency>
+	  	<!--<dependency>
 	     	<groupId>com.leedane.other.jingdong</groupId>
 	     	<artifactId>openapi</artifactId>
 	     	<version>9.9.9</version>
-	  	</dependency>
-	  	
+	  	</dependency>-->
+
+		<!--<dependency>
+			<groupId>com.leedane.other.jingdong</groupId>
+			<artifactId>jingfen</artifactId>
+			<version>2.0.0</version>
+		</dependency>-->
+
 	  	<!-- ueditor.jar -->
 	  	<dependency>
 	     	<groupId>com.leedane.other</groupId>
@@ -570,8 +576,16 @@
             <artifactId>zkclient</artifactId>
             <version>0.1</version>
         </dependency>
-	  	
-	  	<!-- mardown解析  https://mvnrepository.com/artifact/org.commonjava.googlecode.markdown4j/markdown4j -->
+
+		<!-- https://mvnrepository.com/artifact/ognl/ognl -->
+		<dependency>
+			<groupId>ognl</groupId>
+			<artifactId>ognl</artifactId>
+			<version>3.2.6</version>
+		</dependency>
+
+
+		<!-- mardown解析  https://mvnrepository.com/artifact/org.commonjava.googlecode.markdown4j/markdown4j -->
 		<dependency>
 		    <groupId>org.commonjava.googlecode.markdown4j</groupId>
 		    <artifactId>markdown4j</artifactId>

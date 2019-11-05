@@ -40,6 +40,9 @@ public class MShiroFilterFactoryBean extends ShiroFilterFactoryBean{
         ignoreExt.add(".js");
         ignoreExt.add(".css");
         ignoreExt.add(".do");
+        ignoreExt.add(".svg");
+        ignoreExt.add(".xml");
+        ignoreExt.add(".txt"); //对/resources/static下面的静态文件必须在这里配置才能访问
     }
 
     @Override

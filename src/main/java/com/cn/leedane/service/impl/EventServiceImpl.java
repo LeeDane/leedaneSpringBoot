@@ -4,19 +4,14 @@ import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.EventHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.EventMapper;
-import com.cn.leedane.model.*;
-import com.cn.leedane.model.circle.CirclePostBean;
-import com.cn.leedane.observer.ConcreteWatched;
-import com.cn.leedane.observer.ConcreteWatcher;
-import com.cn.leedane.observer.Watched;
-import com.cn.leedane.observer.Watcher;
-import com.cn.leedane.observer.template.UpdateMoodTemplate;
+import com.cn.leedane.model.EventBean;
+import com.cn.leedane.model.HttpRequestInfoBean;
+import com.cn.leedane.model.OperateLogBean;
+import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.EventService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserService;
-import com.cn.leedane.thread.ThreadUtil;
-import com.cn.leedane.thread.single.EsIndexAddThread;
 import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import net.sf.json.JSONObject;
@@ -24,7 +19,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 大事件service实现类
@@ -75,7 +73,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 		boolean result = eventMapper.save(eventBean) > 0;
 		if(result){
 			//清空缓存
-			eventHandler.deleteAllEventCache();
+			eventHandler.delete();
 			message.put("isSuccess", true);
 			message.put("message", "添加事件成功");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -118,7 +116,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 
 		if(result){
 			//清空缓存
-			eventHandler.deleteAllEventCache();
+			eventHandler.delete();
 			message.put("isSuccess", true);
 			message.put("message", "修改事件成功");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -143,7 +141,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 		if(result){
 
 			//清空缓存
-			eventHandler.deleteAllEventCache();
+			eventHandler.delete();
 			message.put("isSuccess", true);
 			message.put("message", "删除事件成功");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -202,7 +200,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 		logger.info("EventServiceImpl-->all():jo=" +jo.toString());
 		ResponseMap message = new ResponseMap();
 		message.put("isSuccess", true);
-		message.put("message", eventHandler.all());
+		message.put("message", eventHandler.get());
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		return message.getMap();
 	}

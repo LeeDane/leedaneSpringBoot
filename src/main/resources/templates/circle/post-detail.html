@@ -32,8 +32,8 @@
 						<span class="glyphicon glyphicon-share-alt" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="转发"></span>&nbsp;<span th:text="${transmit_number}"></span>&nbsp;&nbsp;
 						<span class="glyphicon glyphicon-thumbs-up hand post-zan" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="很赞"></span>&nbsp;<span th:text="${zan_number}"></span>&nbsp;&nbsp;
 						<span class="glyphicon glyphicon-credit-card hand" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="打赏"></span>-->
-						<span id="b-account" th:onclick="'linkToMy(+ ${post.create_user_id} +);'">
-							<img class="img-circle" style="width: 20px; height: 20px; margin-top: -3px;" th:src="${user_pic_path}" /><span id="b-account-text" th:text="${account}"></span>
+						<span id="b-account" th:onclick="'linkToMy('+ ${post.createUserId} +');'">
+							<img class="img-circle" style="width: 20px; height: 20px; margin-top: -3px;" th:src="${post_create_user_pic_path}" /><span id="b-account-text" th:text="${post_create_user_account}"></span>
 						</span>
 							<span id="operate-list" style="margin-left: 16px;">
 							<span class="glyphicon glyphicon-time" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="时间"></span>

@@ -743,7 +743,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		//只有网页端才检验验证码
 		if(isPageRequest){
 			String code = JsonUtil.getStringValue(jo, "code");
-			if(StringUtil.isNull(code) || !CodeUtil.checkVerifyCode(request.getRequest(), code)){
+			if(!LeedanePropertiesConfig.newInstance().isDebug() && (StringUtil.isNull(code) || !CodeUtil.checkVerifyCode(request.getRequest(), code))){
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请输入正确验证码.value));
 				message.put("responseCode", EnumUtil.ResponseCode.请输入正确验证码.value);
 				return message.getMap();

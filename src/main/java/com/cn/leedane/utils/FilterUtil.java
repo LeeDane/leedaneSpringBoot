@@ -35,7 +35,7 @@ public class FilterUtil {
 	public static boolean filter(String content, Map<String, Object> message, HttpRequestInfoBean request){
 
 	/*	//测试环境不校验
-		if(LeedanePropertiesConfig.newInstance().getBoolean("constant.is.debug"))
+		if(LeedanePropertiesConfig.newInstance().isDebug())
 			return false;*/
 		//检测敏感词
 		SensitivewordFilter filter = new SensitivewordFilter();

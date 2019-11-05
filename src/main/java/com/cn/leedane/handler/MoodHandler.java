@@ -114,20 +114,7 @@ public class MoodHandler {
 		}
 		return list;
 	}
-	/**
-	 * 获取心情的内容
-	 * @param moodId
-	 * @param user
-	 * @return
-	 */
-	public String getMoodContent(int moodId, UserBean user){
-		List<Map<String, Object>> list = getMoodDetail(moodId, user, true);
-		String content = null;
-		if(list != null && list.size() == 1){
-			content = StringUtil.changeNotNull(list.get(0).get("content"));
-		}
-		return content;
-	}
+
 	/**
 	 * 获得心情的全部图片列表
 	 * @param tableName

@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" id="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<title>查看信纸内容</title>
+	<title>默认的信纸</title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
 	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{/page/css/paper/opened.min.css}" />
 	<link th:if="${isDebug}" rel="stylesheet" th:href="@{/page/css/paper/opened.css}" />
@@ -18,6 +18,18 @@
 jEmoji.unifiedToHTML(emojiText) -->
 </body>
 	<div class="container" style="margin-top: 50px;">
+		<div class="row">
+			<blockquote>
+					本站承诺：
+					<ol>
+						<li>系统至少运行到2022年8月80日。在您的信纸未读期间，我们会续费网站并保障系统平稳运行。</li>
+						<li>竭力保障你所写的信到时能收到可以打开的通知(包括短信、邮件、站内消息等)并支持在线打开您所写的信纸。</li>
+						<li>竭力保障您的信件在未拆封之前，任何人都无法查看信件的内容。</li>
+						<li>信件到期后，支持自己或者分享给好友查阅。</li>
+						<li>该功能模块全部免费使用，没有附加收费项。</li>
+					</ol>
+			</blockquote>
+		</div>
 		<div class="row" style="border: 2px dashed #FDC7C3;border-radius: 8px;">
 				fffff
 		</div>

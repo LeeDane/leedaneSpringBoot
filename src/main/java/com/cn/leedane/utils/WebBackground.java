@@ -2,6 +2,7 @@ package com.cn.leedane.utils;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +14,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class WebBackground {
-	
-	@Value("${constant.is.debug}")
-    private boolean IS_DEBUG;
 	
 	//七天的图像列表
 	private static final String[] IMAGES = new String[]{
@@ -34,7 +32,7 @@ public class WebBackground {
 			if (w < 0)
 				w = 0;
 			
-			image = (IS_DEBUG? "page/images/": "http://pic.onlyloveu.top/page_images_") +IMAGES[w];
+			image = (LeedanePropertiesConfig.newInstance().isDebug() ? "page/images/": "http://pic.onlyloveu.top/page_images_") +IMAGES[w];
 		}
 		return image;
 	}

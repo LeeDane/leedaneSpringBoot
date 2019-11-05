@@ -10,6 +10,7 @@ import com.cn.leedane.model.*;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.AddReadSend;
 import com.cn.leedane.rabbitmq.send.ISend;
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import com.cn.leedane.service.AppVersionService;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.VisitorService;
@@ -99,7 +100,15 @@ public class HtmlController extends BaseController{
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入测试模块首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("test", false, model, request);
 	}
-	
+
+
+	@RequestMapping("/about")
+	public String about(Model model, HttpServletRequest request){
+		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入关于系统首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
+		return loginRoleCheck("about-me", false, model, request);
+	}
+
 	@RequestMapping("/love")
 	public String love(Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
@@ -417,14 +426,14 @@ public class HtmlController extends BaseController{
 	@RequestMapping("403")
 	public String unauthorizedRole(Model model, HttpServletRequest request){
 		//设置统一的请求模式
-		model.addAttribute("isDebug", IS_DEBUG);
+		model.addAttribute("isDebug", LeedanePropertiesConfig.newInstance().isDebug());
 		return loginRoleCheck("p403", model, request);
 	}
 	
 	@RequestMapping("404")
 	public String nonexistence(Model model, HttpServletRequest request){
 		//设置统一的请求模式
-		model.addAttribute("isDebug", IS_DEBUG);
+		model.addAttribute("isDebug", LeedanePropertiesConfig.newInstance().isDebug());
 		String errorMessage = request.getParameter("errorMessage");
 		if(StringUtil.isNotNull(errorMessage)){
 			model.addAttribute("error", true);
@@ -443,7 +452,7 @@ public class HtmlController extends BaseController{
 	@RequestMapping("null-pointer")
 	public String nullPointer(Model model, HttpServletRequest request) throws UnsupportedEncodingException{
 		//设置统一的请求模式
-		model.addAttribute("isDebug", IS_DEBUG);
+		model.addAttribute("isDebug", LeedanePropertiesConfig.newInstance().isDebug());
 		String errorMessage = request.getParameter("errorMessage");
 		if(StringUtil.isNotNull(errorMessage)){
 			model.addAttribute("error", true);

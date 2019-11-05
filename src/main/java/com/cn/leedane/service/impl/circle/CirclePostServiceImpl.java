@@ -478,9 +478,9 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		message.put("transmit_number", circlePostHandler.getTransmitNumber(postId));
 		message.put("zan_number", zanHandler.getZanNumber(DataTableType.帖子.value, postId));
 		message.put("read_number", readHandler.getReadNumber(DataTableType.帖子.value, postId));
-		message.putAll(userHandler.getBaseUserInfo(post.getCreateUserId()));
-//		message.put("create_user_account", userHandler.getUserName());
-//		message.put("create_user_pic_path", userHandler.getUserPicPath(post.getCreateUserId(), "30x30"));
+		//message.putAll(userHandler.getBaseUserInfo(post.getCreateUserId()));
+		message.put("post_create_user_account", userHandler.getUserName(post.getCreateUserId()));
+		message.put("post_create_user_pic_path", userHandler.getUserPicPath(post.getCreateUserId(), "30x30"));
 		int pid = post.getPid();
 		if(pid > 0){
 			CirclePostBean postBean = circlePostHandler.getNormalCirclePostBean(pid);

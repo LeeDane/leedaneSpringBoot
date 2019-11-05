@@ -13,7 +13,7 @@ layui.use(['layer', 'laypage', 'util'], function(){
 		var dataId = $(this).closest(".comment-list").attr("data-id");
 		var createUserId = $(this).closest(".comment-list").attr("create-user-id");
 		if(dataId > 0 && createUserId > 0){
-			layer.confirm('您要删除该评论吗？', {
+			layer.confirm('您要删除该留言吗？', {
 				  btn: ['确定','点错了'] //按钮
 			}, function(){
 				var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
@@ -49,14 +49,14 @@ var $commentListContainer;
 var $container;
 
 /**
- * 获取评论请求列表参数
+ * 获取留言请求列表参数
  */
 function getMessageBoardsRequestParams(){
 	return {page_size: pageSize, current: currentIndex, total: totalPage, t: Math.random()};
 }
 
 /**
- * 获取博客的评论内容
+ * 获取留言内容
  * @param bid
  */
 function getMessageBoards(){
@@ -118,7 +118,7 @@ function getMessageBoards(){
 }
 
 /**
- * 构建每一行评论html
+ * 构建每一行留言html
  * @param comment
  * @param index
  */
@@ -187,7 +187,7 @@ function buildEachCommentRow(index, comment){
 }
 
 /**
- * 评论别人的评论
+ * 评论别人的留言
  * @param obj
  */
 function commentItem(obj, pid){
@@ -197,7 +197,7 @@ function commentItem(obj, pid){
 }
 
 /**
- * 添加评论
+ * 添加留言
  * @param obj
  */
 function addComment(obj){
@@ -212,7 +212,7 @@ function addComment(obj){
 }
 
 /**
- * 获取博客的评论内容
+ * 留言内容
  * @param bid
  */
 function doAddComment(params){

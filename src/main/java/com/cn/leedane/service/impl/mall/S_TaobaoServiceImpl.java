@@ -97,7 +97,7 @@ public class S_TaobaoServiceImpl extends MallRoleCheckService implements S_Taoba
 		return message.getMap();
 	}*/
 
-	@Override
+	/*@Override
 	public Map<String, Object> search(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		
@@ -164,6 +164,78 @@ public class S_TaobaoServiceImpl extends MallRoleCheckService implements S_Taoba
 			message.put("responseCode", EnumUtil.ResponseCode.淘宝api请求失败.value);
 		}
 		
+		//保存操作日志
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user != null ? user.getAccount(): "","对淘宝的商品发起查询", "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "search()", ConstantsUtil.STATUS_NORMAL, 0);
+		return message.getMap();
+	}*/
+
+	@Override
+	public Map<String, Object> search(JSONObject jo, UserBean user,
+									  HttpRequestInfoBean request) {
+
+		logger.info("S_TaobaoServiceImpl-->search():jo="+jo);
+		ResponseMap message = new ResponseMap();
+
+		long current = JsonUtil.getLongValue(jo, "current", 0);
+		long rows = JsonUtil.getLongValue(jo, "rows", 10);
+		String keyword = JsonUtil.getStringValue(jo, "keyword"); //搜索关键字
+		boolean result = false;
+		try {
+			Connection.Response res;
+			Map<String, String> dataMap = new HashMap<String, String>();
+			dataMap.put("q", keyword);
+			dataMap.put("t", JsonUtil.getStringValue(jo, "t"));
+			dataMap.put("auctionTag", "");
+			dataMap.put("dpyhq", "1");
+			dataMap.put("perPageSize", rows +"");
+			dataMap.put("shopTag", "dpyhq"); //"yxjh"
+			dataMap.put("toPage", current +"");
+
+			res = Jsoup.connect("http://pub.alimama.com/items/search.json")
+					.data(dataMap)
+					.userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.75 Safari/537.36 LBBROWSER")
+					.timeout(10000)//网络链接超时的时间
+					.method(Method.GET)
+					.ignoreContentType(true)
+					.execute();
+			JSONObject resultJson = JSONObject.fromObject(res.body());
+			JSONObject resultData = resultJson.getJSONObject("data");
+			Map<String, Object> resultMap = new HashMap<String, Object>();
+			JSONObject paginator = resultData.getJSONObject("paginator");
+			List<S_PlatformProductBean> taobaoItems = new ArrayList<S_PlatformProductBean>();
+			int total = 0;
+			if(paginator != null && paginator.containsKey("items") && !paginator.isEmpty()){
+				total = paginator.getInt("items");
+				JSONArray pageList = resultData.getJSONArray("pageList");
+				for(int i = 0; i < pageList.size(); i++){
+					S_PlatformProductBean taobaoProductBean = new S_PlatformProductBean();
+					JSONObject object = pageList.getJSONObject(i);
+					taobaoProductBean.setAuctionId(object.getLong("auctionId"));
+					taobaoProductBean.setCashBack(object.getDouble("tkCommFee"));
+					taobaoProductBean.setCashBackRatio(object.getDouble("tkRate"));
+					taobaoProductBean.setImg(object.getString("pictUrl"));
+					taobaoProductBean.setPlatform(EnumUtil.ProductPlatformType.淘宝.value);
+					taobaoProductBean.setPrice(object.getDouble("zkPrice"));
+					taobaoProductBean.setTitle(object.getString("title"));
+					taobaoProductBean.setShopTitle(object.getString("shopTitle"));
+					taobaoProductBean.setCouponAmount(object.getInt("couponAmount"));
+					taobaoProductBean.setCouponLeftCount(object.getLong("couponLeftCount"));
+					taobaoItems.add(taobaoProductBean);
+				}
+
+			}
+			message.put("total", total);
+			resultMap.put("list", taobaoItems);
+			result = true;
+			message.put("isSuccess", true);
+			message.put("message", resultMap);
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		} catch (IOException  e) {
+			e.printStackTrace();
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.淘宝api请求失败.value));
+			message.put("responseCode", EnumUtil.ResponseCode.淘宝api请求失败.value);
+		}
+
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user != null ? user.getAccount(): "","对淘宝的商品发起查询", "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "search()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();

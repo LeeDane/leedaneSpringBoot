@@ -99,9 +99,7 @@ public class OperateLogSaveThread implements Runnable{
 
 		if(mOperateType == EnumUtil.LogOperateType.网页端.value){
 			AllReadHandler allReadHandler = (AllReadHandler)SpringUtil.getBean("allReadHandler");
-			allReadHandler.addRead();
+			allReadHandler.add();
 		}
-
 	}
-
 }

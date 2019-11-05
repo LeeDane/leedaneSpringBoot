@@ -1,11 +1,7 @@
 package com.cn.leedane.springboot;
 
-import com.cn.leedane.cache.SystemCache;
-import com.cn.leedane.handler.*;
-import com.cn.leedane.handler.circle.CircleHandler;
-import com.cn.leedane.handler.circle.CircleMemberHandler;
-import com.cn.leedane.handler.circle.CirclePostHandler;
-import com.cn.leedane.handler.circle.CircleSettingHandler;
+import com.cn.leedane.handler.InitCacheData;
+import com.cn.leedane.listener.MoodSubscribeListener;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -328,9 +324,13 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
 //        System.setProperty("es.set.netty.runtime.available.processors", "false");
 		logger.warn( "项目开始启动。。。" );
         //SpringApplication.run("classpath:spring-common.xml", args);
-		ApplicationContext ctx = (ApplicationContext)SpringApplication.run(StartUpApplication.class, args);
+        SpringApplication application = new SpringApplication(StartUpApplication.class);
+        //需要把监听器加入到spring容器中
+        application.addListeners(new MoodSubscribeListener());
+
+		ApplicationContext ctx = application.run(args);
 		SpringUtil.setApplicationContext2(ctx);
-		
+
 		 /*ConfigurableApplicationContext context = (ConfigurableApplicationContext)ctx;  
 	        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory)context.getBeanFactory(); 
 	        beanFactory.removeBeanDefinition("multipartResolver");*/

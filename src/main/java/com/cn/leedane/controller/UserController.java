@@ -4,6 +4,7 @@ import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.WechatHandler;
 import com.cn.leedane.lucene.solr.UserSolrHandler;
 import com.cn.leedane.model.*;
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserTokenService;
@@ -88,8 +89,8 @@ public class UserController extends BaseController{
 		}
 
 		boolean isAndroidRequest = CommonUtil.isAndroidRequest(request);
-		//只有网页端才检验验证码
-		if(!isAndroidRequest)
+		//只有正式系统的网页端才检验验证码
+		if(!LeedanePropertiesConfig.newInstance().isDebug() && !isAndroidRequest)
 			if(StringUtil.isNull(code) || !CodeUtil.checkVerifyCode(request, code)){
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请输入正确验证码.value));
 				message.put("responseCode", EnumUtil.ResponseCode.请输入正确验证码.value);
@@ -238,7 +239,7 @@ public class UserController extends BaseController{
 				if(remember)
 					session.setTimeout(-1001L);
 				else*/
-					session.setTimeout(1000 * 60 * 60); //设置一个小时过期
+					session.setTimeout(1000 * 60 * 60 * 4); //设置4个小时过期
 				SessionManagerUtil.getInstance().addSession(SecurityUtils.getSubject(), session, user.getId());
 	        }else{  
 	        	authenticationToken.clear(); 
@@ -914,7 +915,7 @@ public class UserController extends BaseController{
 		if(StringUtil.isNull(currentType))
 			currentType = WeixinUtil.MODEL_MAIN_MENU;
 
-		if(StringUtil.isNull(code) || !CodeUtil.checkVerifyCode(request, code)){
+		if(!LeedanePropertiesConfig.newInstance().isDebug() && (StringUtil.isNull(code) || !CodeUtil.checkVerifyCode(request, code))){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请输入正确验证码.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请输入正确验证码.value);
 			return message.getMap();

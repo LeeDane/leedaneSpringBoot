@@ -132,6 +132,7 @@ public class ShiroConfiguration {
         /////////////////////// 下面这些规则配置最好配置到配置文件中 ///////////////////////
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
         filterChainDefinitionMap.put("index", "anon");//anon 不拦截系统首页链接
+        filterChainDefinitionMap.put("/sitemap.xml", "anon");//anon 不拦截系统首页链接
         filterChainDefinitionMap.put("/", "anon");//anon 不拦截系统首页链接
         filterChainDefinitionMap.put("dl", "anon");//anon 不拦截下载链接
         filterChainDefinitionMap.put("dt", "anon");//anon 不拦截文章详情链接
