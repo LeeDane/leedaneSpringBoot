@@ -2,7 +2,7 @@
   > 最近在其他技术论坛上看到微服务的入门级微框架springboot，感觉还是挺有意思的，就想到把服务器端改造一下，就有现在的版本。经过一个星期的学习和努力，springmvc版本的大部分功能都已经集成过来了，网站页面大多数都能正常使用。目前还没有集成的是任务调度、ueditor的文件上传(springboot不推荐使用JSP)等，主要做的调整是将原先的大部分的jsp页面换成HTML+thymeleaf实现、把网站所用到的接口全部改成restful风格、maven管理相关jar和依赖关系。在阿里云买了最低配的服务器搭建了一套系统，[访问LeeDane](http://www.onlyloveu.top), 测试账号：test 密码：123，推荐使用谷歌测试。
 
 #前言
-  > 大家好，这个是本人日常学习的项目--java服务器端源码。目前先把原形做出来，很多代码还没有来得及重构，阅读的时候难免有问题，希望看到兄弟能多多指正，共同学习。android app端地址[请点击这里](https://github.com/LeeDane/app)
+  > 大家好，这个是本人日常学习的项目--java服务器端源码。目前先把原形做出来，很多代码还没有来得及重构，希望能得到同学们多多指正，共同学习。android app端地址[请点击这里](https://github.com/LeeDane/app)
 
 #主要使用到的技术
   * springboot+maven
@@ -27,24 +27,27 @@
   8. 微信公众号：目前已经支持在线翻译、与机器人聊天、查询博客、发布app心情，获取最新博客列表、获取最新app发布的版本等(2016-06-06日前)
 
 ##效果截图
-![](http://pic.onlyloveu.top/leedaneweb-github-001.png?imageView/2/w/800/q/90)
-
-![](http://pic.onlyloveu.top/leedaneweb-github-002.png?imageView/2/w/800/q/90)
-
-![](http://pic.onlyloveu.top/leedaneweb-github-003.png?imageView/2/w/800/q/90)
-
-![](http://pic.onlyloveu.top/leedaneweb-github-004.png?imageView/2/w/800/q/90)
-
-![](http://pic.onlyloveu.top/leedaneweb-github-005.png?imageView/2/w/800/q/90)
-
-![](http://pic.onlyloveu.top/leedaneweb-github-006.png?imageView/2/w/800/q/90)
-
-![](http://pic.onlyloveu.top/leedaneweb-github-007.png?imageView/2/w/800/q/90)
-
-![](http://pic.onlyloveu.top/leedaneweb-github-008.png?imageView/2/w/800/q/90)
-
-![](http://pic.onlyloveu.top/leedaneweb-github-010.png?imageView/2/w/800/q/90)
-
-
-
-
+####系统首页
+![首页](http://pic.onlyloveu.top/leedaneweb-github-011.png?imageView/2/w/800/q/90)
+####个人中心
+![个人中心](http://pic.onlyloveu.top/leedaneweb-github-012.png?imageView/2/w/800/q/90)
+####我的相册
+![相册](http://pic.onlyloveu.top/leedaneweb-github-013.png?imageView/2/w/800/q/90)
+####相册管理
+![相册管理](http://pic.onlyloveu.top/leedaneweb-github-014.png?imageView/2/w/800/q/90)
+####搜索
+![搜索](http://pic.onlyloveu.top/leedaneweb-github-022.png?imageView/2/w/800/q/90)
+####心情详情
+![心情详情](http://pic.onlyloveu.top/leedaneweb-github-015.png?imageView/2/w/800/q/90)
+####素材管理
+![素材管理](http://pic.onlyloveu.top/leedaneweb-github-016.png?imageView/2/w/800/q/90)
+####分类管理
+![分类管理](http://pic.onlyloveu.top/leedaneweb-github-017.png?imageView/2/w/800/q/90)
+####关于系统
+![关于系统](http://pic.onlyloveu.top/leedaneweb-github-018.png?imageView/2/w/800/q/90)
+####大事件
+![大事件](http://pic.onlyloveu.top/leedaneweb-github-019.png?imageView/2/w/800/q/90)
+####系统反馈
+![系统反馈](http://pic.onlyloveu.top/leedaneweb-github-020.png?imageView/2/w/800/q/90)
+####登录注册
+![登录注册](http://pic.onlyloveu.top/leedaneweb-github-021.png?imageView/2/w/800/q/90)
