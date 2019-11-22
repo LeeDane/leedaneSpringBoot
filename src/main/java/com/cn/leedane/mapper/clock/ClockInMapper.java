@@ -23,7 +23,7 @@ public interface ClockInMapper extends BaseMapper<ClockInBean>{
 	 * @return
 	 */
 	public List<Map<String, String>> getClockInsRangeDate(
-			@Param("clockId")int clockId, 
+			@Param("clockId")long clockId,
 			@Param("start")String startDate, 
 			@Param("end")String end);
 
@@ -35,7 +35,7 @@ public interface ClockInMapper extends BaseMapper<ClockInBean>{
 	 * @return
 	 */
 	@Deprecated
-	public List<Map<String, Object>> getTopMember(@Param("clockId")int clockId, @Param("limit")int limit);
+	public List<Map<String, Object>> getTopMember(@Param("clockId")long clockId, @Param("limit")int limit);
 
 	/**
 	 * 获得任务在指定日期的打卡情况
@@ -44,7 +44,7 @@ public interface ClockInMapper extends BaseMapper<ClockInBean>{
 	 * @param limit
 	 * @return
 	 */
-	public List<Map<String, Object>> membersSortByIns(@Param("clockId")int clockId, @Param("date")String date, @Param("limit")int limit);
+	public List<Map<String, Object>> membersSortByIns(@Param("clockId")long clockId, @Param("date")String date, @Param("limit")int limit);
 
 	/**
 	 * 获取用户打卡信息(不校验状态)
@@ -53,5 +53,5 @@ public interface ClockInMapper extends BaseMapper<ClockInBean>{
 	 * @param date
 	 * @return
 	 */
-	public ClockInDisplay getUserClockIn(@Param("clockId")int clockId, @Param("toUserId")int toUserId, @Param("date")String date);
+	public ClockInDisplay getUserClockIn(@Param("clockId")long clockId, @Param("toUserId")long toUserId, @Param("date")String date);
 }

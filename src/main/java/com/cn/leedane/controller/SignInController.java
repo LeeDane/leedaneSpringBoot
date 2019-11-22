@@ -68,7 +68,7 @@ public class SignInController extends BaseController{
 		checkRoleOrPermission(model, request);
 		message.put("isSuccess", true);
 		UserBean user = getUserFromMessage(message);
-		int id = JsonUtil.getIntValue(getJsonFromMessage(message), "id", getUserFromMessage(message).getId());
+		long id = JsonUtil.getLongValue(getJsonFromMessage(message), "id", getUserFromMessage(message).getId());
 		String dateTime = DateUtil.DateToString(new Date(), "yyyy-MM-dd");		
 		message.put("isSuccess", signInService.isSign(id, dateTime));
 		

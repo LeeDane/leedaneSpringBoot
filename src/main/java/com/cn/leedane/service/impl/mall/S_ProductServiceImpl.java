@@ -133,7 +133,7 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 	}
 
 	@Override
-	public Map<String, Object> statistics(int productId, JSONObject json, UserBean user,
+	public Map<String, Object> statistics(long productId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		
 		logger.info("S_ProductServiceImpl-->statistics():productId="+productId);
@@ -177,7 +177,7 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 		return message.getMap();
 	}
 	
-	private LineOption getLineOption(List<Date> listDate, String start, String end, int productId, Map<String, S_StatisticsBean> mapStatisticsBean){
+	private LineOption getLineOption(List<Date> listDate, String start, String end, long productId, Map<String, S_StatisticsBean> mapStatisticsBean){
 		
 		List<String> legendData = new ArrayList<String>();
 		legendData.add(EnumUtil.getMallProductStatisticsType(MallProductStatisticsType.心愿单.value));
@@ -263,7 +263,7 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 	}
 	
 	@Override
-	public Map<String, Object> recommend(int productId, JSONObject json, UserBean user,
+	public Map<String, Object> recommend(long productId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		
 		logger.info("S_ProductServiceImpl-->recommend():productId="+productId);

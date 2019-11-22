@@ -9,7 +9,7 @@
 <mapper namespace="com.cn.leedane.mapper.baby.BabyMapper">
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
-	<select id="getMyBabys" parameterType="int" resultMap="objectBean">
+	<select id="getMyBabys" resultMap="objectBean">
 		select bb.id id, bb.born, bb.nickname, bb.name, bb.gregorian_birthday, bb.lunar_birthday, bb.head_pic, 
 		bb.sex, bb.personalized_signature, bb.healthy_state, bb.sorting, bb.introduction, bb.pregnancy_date, bb.pre_production,
 		bb.create_user_id, date_format(bb.create_time,'%Y-%m-%d %H:%i:%s') create_time

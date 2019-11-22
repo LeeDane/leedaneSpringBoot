@@ -18,17 +18,17 @@ public class S_HomeItemProductShowBean extends RecordTimeBean{
 	/**
 	 * 当前分类对应的项的id
 	 */
-	private int itemId;
+	private long itemId;
 	
 	private int order_;
 	
 	private S_ProductBean productBean;
 
-	public int getItemId() {
+	public long getItemId() {
 		return itemId;
 	}
 
-	public void setItemId(int itemId) {
+	public void setItemId(long itemId) {
 		this.itemId = itemId;
 	}
 

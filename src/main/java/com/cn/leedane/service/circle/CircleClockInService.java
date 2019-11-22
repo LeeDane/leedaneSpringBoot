@@ -26,7 +26,7 @@ public interface CircleClockInService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> isClockIn(UserBean user, int circleId, Date dateTime);
+	public Map<String, Object> isClockIn(UserBean user, long circleId, Date dateTime);
 	
 	/**
 	 * 保存(打卡),当天已经打卡的直接返回false
@@ -36,7 +36,7 @@ public interface CircleClockInService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> saveClockIn(int circleId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> saveClockIn(long circleId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 
 	/**

@@ -77,7 +77,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 
 
 	@Override
-	public Map<String, Object> update(int babyId, JSONObject jo, UserBean user,
+	public Map<String, Object> update(long babyId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("BabyServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -113,7 +113,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 
 
 	@Override
-	public Map<String, Object> delete(int babyId, UserBean user,
+	public Map<String, Object> delete(long babyId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("BabyServiceImpl-->delete():babyId=" +babyId +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -144,7 +144,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 	}
 	
 	@Override
-	public Map<String, Object> changeBorn(int babyId, JSONObject json,
+	public Map<String, Object> changeBorn(long babyId, JSONObject json,
 			UserBean user, HttpRequestInfoBean request) {
 		logger.info("BabyServiceImpl-->changeBorn():jsonObject=" +json.toString() +", user=" +user.getAccount()+", babyId="+ babyId);
 		ResponseMap message = new ResponseMap();

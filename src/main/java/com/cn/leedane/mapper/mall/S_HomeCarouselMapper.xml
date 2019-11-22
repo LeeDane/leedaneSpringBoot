@@ -9,7 +9,7 @@
 <mapper namespace="com.cn.leedane.mapper.mall.S_HomeCarouselMapper">
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
-	<select id="carousel" parameterType="int" resultMap="objectBean">
+	<select id="carousel" resultMap="objectBean">
 		select c.id, c.status, c.create_user_id, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time 
 		, c.product_id, c.img, p.p_code, p.create_user_id p_create_user_id, date_format(p.create_time,'%Y-%m-%d %H:%i:%s') p_create_time
 		, p.title p_title, p.subtitle p_subtitle, p.digest p_digest, p.platform p_platform, p.price p_price

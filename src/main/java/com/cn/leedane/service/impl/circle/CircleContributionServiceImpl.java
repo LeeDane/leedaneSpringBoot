@@ -84,7 +84,7 @@ public class CircleContributionServiceImpl implements CircleContributionService<
 	}
 	
 	@Override
-	public Map<String, Object> reduceScore(int reduceScore, String desc, int circleId, UserBean user) {
+	public Map<String, Object> reduceScore(int reduceScore, String desc, long circleId, UserBean user) {
 		logger.info("CircleContributionServiceImpl-->reduceScore():user=" +user.getAccount()); 		
 		
 		reduceScore = reduceScore < 1 ? 0 : reduceScore;
@@ -117,7 +117,7 @@ public class CircleContributionServiceImpl implements CircleContributionService<
 	}
 
 	@Override
-	public Map<String, Object> addScore(int addScore, String desc, int circleId, UserBean user) {
+	public Map<String, Object> addScore(int addScore, String desc, long circleId, UserBean user) {
 		logger.info("CircleContributionServiceImpl-->addScore():user=" +user.getAccount()); 		
 		
 		addScore = addScore < 1 ? 0 : addScore;

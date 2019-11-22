@@ -1,6 +1,7 @@
 package com.cn.leedane.model.mall;
 
 import com.cn.leedane.model.IDBean;
+import com.cn.leedane.utils.MoneyUtil;
 
 
 /**
@@ -28,6 +29,14 @@ public class S_PlatformProductBean extends IDBean{
 	private String shopTitle; //商铺名称
 	private int couponAmount; //优惠券的金额
 	private long couponLeftCount; //优惠券的剩余数量
+	private String shareUrl;//商品推广的地址
+	private String couponShareUrl;//优惠券推广地址
+	private int categoryId; //分类ID
+	private long createUserId; //创建人
+	private String subtitle;//子标题
+	private String detail;//详情
+	private Double afterCouponPrice;//券后价格
+
 	public String getTitle() {
 		return title;
 	}
@@ -47,6 +56,9 @@ public class S_PlatformProductBean extends IDBean{
 		this.cashBackRatio = cashBackRatio;
 	}
 	public double getCashBack() {
+		if(cashBackRatio > 0.0d){
+			return MoneyUtil.twoDecimalPlaces((price - couponAmount) * cashBackRatio / 100);
+		}
 		return cashBack;
 	}
 	public void setCashBack(double cashBack) {
@@ -56,7 +68,7 @@ public class S_PlatformProductBean extends IDBean{
 		return price;
 	}
 	public void setPrice(double price) {
-		this.price = price;
+		this.price = MoneyUtil.twoDecimalPlaces(price);
 	}
 	public long getAuctionId() {
 		return auctionId;
@@ -80,7 +92,7 @@ public class S_PlatformProductBean extends IDBean{
 		return oldPrice;
 	}
 	public void setOldPrice(double oldPrice) {
-		this.oldPrice = oldPrice;
+		this.oldPrice = MoneyUtil.twoDecimalPlaces(oldPrice);
 	}
 	public int getCouponAmount() {
 		return couponAmount;
@@ -94,6 +106,60 @@ public class S_PlatformProductBean extends IDBean{
 	public void setCouponLeftCount(long couponLeftCount) {
 		this.couponLeftCount = couponLeftCount;
 	}
-	
-	
+
+	public String getShareUrl() {
+		return shareUrl;
+	}
+
+	public void setShareUrl(String shareUrl) {
+		this.shareUrl = shareUrl;
+	}
+
+	public String getCouponShareUrl() {
+		return couponShareUrl;
+	}
+
+	public void setCouponShareUrl(String couponShareUrl) {
+		this.couponShareUrl = couponShareUrl;
+	}
+
+	public int getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public long getCreateUserId() {
+		return createUserId;
+	}
+
+	public void setCreateUserId(long createUserId) {
+		this.createUserId = createUserId;
+	}
+
+	public String getSubtitle() {
+		return subtitle;
+	}
+
+	public void setSubtitle(String subtitle) {
+		this.subtitle = subtitle;
+	}
+
+	public String getDetail() {
+		return detail;
+	}
+
+	public void setDetail(String detail) {
+		this.detail = detail;
+	}
+
+	public Double getAfterCouponPrice() {
+		return afterCouponPrice;
+	}
+
+	public void setAfterCouponPrice(Double afterCouponPrice) {
+		this.afterCouponPrice = afterCouponPrice;
+	}
 }

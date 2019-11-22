@@ -25,7 +25,7 @@ public interface CircleMemberService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(int circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> paging(long circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 推荐/取消推荐(必须是圈主或者圈子管理员才能操作)
@@ -35,7 +35,7 @@ public interface CircleMemberService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> recommend(int circleId, int memberId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> recommend(long circleId, long memberId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除某个成员(必须是圈主或者圈子管理员才能操作)，圈主不能删除
@@ -45,6 +45,6 @@ public interface CircleMemberService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int circleId, int memberId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> delete(long circleId, long memberId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 }

@@ -177,7 +177,7 @@
                		<li><a th:href="@{/dl}"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;&nbsp;&nbsp;&nbsp;app下载</a></li>
                		<li><a th:href="@{/ev}"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;&nbsp;&nbsp;大事件</a></li>
                     <li><a th:href="@{/cc/35}"><span class="glyphicon glyphicon-ban-circle"></span>&nbsp;&nbsp;&nbsp;&nbsp;问题反馈</a></li>
-                    <li><a th:href="@{/about}"><span class="glyphicon glyphicon-ban-circle"></span>&nbsp;&nbsp;&nbsp;&nbsp;关于系统</a></li>
+                    <li><a th:href="@{/about}"><span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;&nbsp;&nbsp;&nbsp;关于系统</a></li>
                     <li th:if="${isLogin}"><a href="javascript:void(0);" onclick="logout()"><span class="glyphicon glyphicon-bell"></span>&nbsp;&nbsp;&nbsp;&nbsp;退出</a></li>
                 	<li th:if="${not isLogin}"><a th:href="@{/lg}"><span class="glyphicon glyphicon-bell"></span>&nbsp;&nbsp;&nbsp;&nbsp;登录</a></li>
                 </ul>

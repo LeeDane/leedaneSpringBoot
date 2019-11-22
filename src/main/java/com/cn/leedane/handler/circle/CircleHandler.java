@@ -41,7 +41,7 @@ public class CircleHandler {
 	 * @param circleId
 	 * @return
 	 */
-	public CircleBean getNormalCircleBean(int circleId, UserBean user){
+	public CircleBean getNormalCircleBean(long circleId, UserBean user){
 		CircleBean circle = getCircleBean(circleId);
 		if(circle == null || user == null
 				||  (circle.getStatus() == ConstantsUtil.STATUS_SELF && circle.getCreateUserId() != user.getId()) 
@@ -56,7 +56,7 @@ public class CircleHandler {
 	 * @param circleId
 	 * @return
 	 */
-	public CircleBean getCircleBean(int circleId){
+	public CircleBean getCircleBean(long circleId){
 		String key = getCircleKey(circleId);
 		Object obj = systemCache.getCache(key);
 		CircleBean circleBean = null;
@@ -112,7 +112,7 @@ public class CircleHandler {
 	 * @param circleId
 	 * @return
 	 */
-	public boolean deleteCircleBeanCache(int circleId){
+	public boolean deleteCircleBeanCache(long circleId){
 		String key = getCircleKey(circleId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -126,14 +126,13 @@ public class CircleHandler {
 	 * @param circle
 	 * @return
 	 */
-	public int getRoleCode(UserBean user, int circle){
+	public int getRoleCode(UserBean user, long circle){
 		return 1;
 	}
 	
 	/**
 	 * 获取该用户所有的圈子
 	 * @param user
-	 * @param circle
 	 * @return
 	 */
 	public List<CircleBean> getAllCircles(UserBean user){
@@ -207,7 +206,7 @@ public class CircleHandler {
 	 * 获取圈子在redis的key
 	 * @return
 	 */
-	public static String getCircleKey(int circleId){
+	public static String getCircleKey(long circleId){
 		return ConstantsUtil.CIRCLE_REDIS + circleId;
 	}
 	

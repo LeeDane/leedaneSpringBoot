@@ -18,5 +18,5 @@ public interface CircleCreateLimitMapper extends BaseMapper<CircleCreateLimitBea
 	 * @param status
 	 * @return
 	 */
-	public int getNumber(@Param("createUserId") int createUserId, @Param("status") int status);
+	public int getNumber(@Param("createUserId") long createUserId, @Param("status") int status);
 }

@@ -31,7 +31,7 @@ public interface ScoreService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public int getTotalScore(int userId);
+	public int getTotalScore(long userId);
 
 	/**
 	 * 分页获得积分历史列表

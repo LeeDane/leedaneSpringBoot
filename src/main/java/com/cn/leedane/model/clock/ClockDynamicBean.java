@@ -24,7 +24,7 @@ public class ClockDynamicBean extends RecordTimeBean{
 	 * 相关联的任务ID
 	 */
 	@Column(value="clock_id", required = true)
-	private int clockId;
+	private long clockId;
 
 	/**
 	 * 标记的消息类型，如任务打卡、其他等
@@ -46,11 +46,11 @@ public class ClockDynamicBean extends RecordTimeBean{
 		this.dynamicDesc = dynamicDesc;
 	}
 
-	public int getClockId() {
+	public long getClockId() {
 		return clockId;
 	}
 
-	public void setClockId(int clockId) {
+	public void setClockId(long clockId) {
 		this.clockId = clockId;
 	}
 

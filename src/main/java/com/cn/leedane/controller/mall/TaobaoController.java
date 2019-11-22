@@ -5,9 +5,12 @@ import com.cn.leedane.model.IDBean;
 import com.cn.leedane.service.mall.S_TaobaoService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
+import com.google.zxing.WriterException;
+import com.taobao.api.ApiException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,6 +60,34 @@ public class TaobaoController extends BaseController{
 			return message.getMap();
 		
 		message.putAll(taobaoService.buildShare(taobaoId, getUserFromMessage(message), getHttpRequestInfo(request)));
+		return message.getMap();
+	}
+
+	/**
+	 * 查询淘宝商品
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/product/{itemId}/recommend", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> search(@PathVariable("itemId") long itemId, HttpServletRequest request) throws ApiException {
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+
+		message.putAll(taobaoService.productRecommend(itemId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
+		return message.getMap();
+	}
+
+	/**
+	 * 链接转化
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/link/transform", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> tranform(HttpServletRequest request) throws ApiException, WriterException {
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+
+		message.putAll(taobaoService.transform(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 }

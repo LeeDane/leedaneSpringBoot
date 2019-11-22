@@ -165,7 +165,7 @@ public class CommentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/user/{uid}/messageBoards", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> messageBoards(Model model, HttpServletRequest request, @PathVariable("uid") int uid){
+	public Map<String, Object> messageBoards(Model model, HttpServletRequest request, @PathVariable("uid") long uid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

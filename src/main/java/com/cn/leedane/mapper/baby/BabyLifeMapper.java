@@ -16,10 +16,9 @@ import com.cn.leedane.model.baby.BabyLifeBean;
 public interface BabyLifeMapper extends BaseMapper<BabyLifeBean>{
 	/**
 	 * 获取用户所有的宝宝
-	 * @param userId
 	 * @return
 	 */
-	public List<BabyLifeBean> getBabyLifes(@Param("createUserId") int createUserId, @Param("babyId") int babyId, @Param("status") int status, 
+	public List<BabyLifeBean> getBabyLifes(@Param("createUserId") long createUserId, @Param("babyId") long babyId, @Param("status") int status,
 			@Param("start")int start, @Param("pageSize") int pageSize);
 
 	/**
@@ -29,11 +28,10 @@ public interface BabyLifeMapper extends BaseMapper<BabyLifeBean>{
 	 * @param endDate
 	 * @param start
 	 * @param pageSize
-	 * @param statusNormal
 	 * @return
 	 */
-	public List<BabyLifeBean> lifes(@Param("createUserId") int createUserId, 
-			@Param("babyId") int babyId, 
+	public List<BabyLifeBean> lifes(@Param("createUserId") long createUserId,
+			@Param("babyId") long babyId,
 			@Param("startDate") String startDate,
 			@Param("endDate") String endDate, 
 			@Param("keyWord") String keyword, 

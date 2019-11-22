@@ -40,7 +40,7 @@ public class CircleClockInController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/clockIn/check", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> check(@PathVariable("circleId")int circleId, Model model, HttpServletRequest request){
+	public Map<String, Object> check(@PathVariable("circleId")long circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -55,7 +55,7 @@ public class CircleClockInController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "{circleId}/clockIn", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(@PathVariable("circleId")int circleId, Model model, HttpServletRequest request){
+	public Map<String, Object> add(@PathVariable("circleId")long circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

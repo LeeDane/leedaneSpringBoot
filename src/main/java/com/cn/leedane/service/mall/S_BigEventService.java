@@ -34,6 +34,6 @@ public interface S_BigEventService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(int productId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> paging(long productId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 }

@@ -55,7 +55,7 @@ public interface UserService<T extends IDBean>{
 	 * @param id
 	 * @return
 	 */
-	public UserBean findById(int id);
+	public UserBean findById(long id);
 	
 	/**
 	 * 通过Id找到对应的User

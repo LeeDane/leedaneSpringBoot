@@ -17,7 +17,7 @@ import com.cn.leedane.model.UserRoleBean;
 public interface UserRoleMapper  extends BaseMapper<UserRoleBean>{
 	
 	public List<RoleBean> getUserRoleBeans(
-				@Param("userId") int userId, @Param("status") int status);
+				@Param("userId") long userId, @Param("status") int status);
 	
 	/**
 	 * 批量添加
@@ -27,15 +27,15 @@ public interface UserRoleMapper  extends BaseMapper<UserRoleBean>{
 	
 	/**
 	 * 根据角色id获取其对应分配的用户id
-	 * @param pmid
+	 * @param rlid
 	 * @return
 	 */
-	public List<Map<String, Object>> getUsersByRoleId(@Param("rlid")int rlid);
+	public List<Map<String, Object>> getUsersByRoleId(@Param("rlid")long rlid);
 	
 	/**
 	 * 根据角色ids获取其对应分配的用户id
-	 * @param pmids
+	 * @param rlids
 	 * @return
 	 */
-	public List<Map<String, Object>> getUsersByRoleIds(@Param("rlids")int[] rlids);
+	public List<Map<String, Object>> getUsersByRoleIds(@Param("rlids")long[] rlids);
 }

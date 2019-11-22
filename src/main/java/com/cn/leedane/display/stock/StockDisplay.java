@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class StockDisplay{
 	
-	private int id;
+	private long id;
 	
 	private String name;
 	
@@ -76,11 +76,11 @@ public class StockDisplay{
 		this.buys = buys;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

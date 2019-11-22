@@ -16,7 +16,7 @@
 	</select>
 	
 	<!-- 分页获取心愿单列表 -->
-	<select id="paging" parameterType="int" resultType="java.util.Map">
+	<select id="paging" resultType="java.util.Map">
 		select w.id, w.product_id
 		from t_mall_wish w inner join t_mall_product p on w.product_id = p.id
 		where w.create_user_id = #{userId} and w.status = #{status} and p.status = #{status}

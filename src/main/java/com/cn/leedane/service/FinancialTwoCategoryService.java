@@ -26,7 +26,7 @@ public interface FinancialTwoCategoryService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<FinancialTwoLevelCategoryBean> getAllDefault(int userId);
+	public List<FinancialTwoLevelCategoryBean> getAllDefault(long userId);
 	
 	/**
 	 * 获取用户所有的二级分类

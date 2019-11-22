@@ -224,14 +224,14 @@ public class SqlProvider {
 		return updateSql.toString();
 	}
 	
-	public String deleteById(Class<?> clazz, int id) {
+	public String deleteById(Class<?> clazz, long id) {
 		String tableName = getTableName(clazz);
 		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append(" delete from ").append(tableName).append(" where id="+id);
 		return deleteSql.toString();
 	}
 	
-	public String deleteByIds(Class<?> clazz, int ...ids) {
+	public String deleteByIds(Class<?> clazz, long ...ids) {
 		String tableName = getTableName(clazz);
 		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append(" delete from ").append(tableName).append(" where ");
@@ -323,7 +323,7 @@ public class SqlProvider {
 	 * @param id
 	 * @return
 	 */
-	public String findById(Class<?> clazz, int id) {
+	public String findById(Class<?> clazz, long id) {
 		String tableName = getTableName(clazz);
 		Field[] fields = getFields(clazz);
 		StringBuilder selectSql = new StringBuilder();
@@ -388,16 +388,16 @@ public class SqlProvider {
 		return "select count(id) ct from "+tableName +" " +StringUtil.changeNotNull(where);
 	}
 	
-	public String getTotalByUser(String tableName, int userId){
+	public String getTotalByUser(String tableName, long userId){
 		return "select count(id) ct from "+tableName +" where create_user_id="+userId;
 	}
 	
-	public String exists(Class<?> clazz, String tableName, int tableId, int userId){
+	public String exists(Class<?> clazz, String tableName, long tableId, long userId){
 		String table = getTableName(clazz);
 		return "select id from "+table+" where table_id = "+tableId+" and table_name = '"+ tableName +"' and create_user_id ="+userId;
 	}
 	
-	public String recordExists(String tableName, int tableId){
+	public String recordExists(String tableName, long tableId){
 		return "select id from "+tableName +" where id = "+tableId;
 	}
 

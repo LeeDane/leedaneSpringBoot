@@ -89,7 +89,7 @@ var $carouselContainer;
  */
 function getCarousels(){
 	//异步请求去保存轮播数据并获取全部的轮播数据
-	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+	var loadi = layer.load('努力加载中…'); //需关闭加载层时，mall/home/item/执行layer.close(loadi)即可
 	$.ajax({
 		type : "get",
 		url : "/mall/home/carousels",
@@ -186,7 +186,7 @@ function addCarousel(product){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
 		type : "POST",
-		data: {"product_id": product.id, order: 1},
+		data: {"product_id": product.auctionId, order: 1},
 		url : "/mall/home/carousel",
 		dataType: 'json',
 		beforeSend:function(){
@@ -452,7 +452,7 @@ function getMallHomeCategory(itemId){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
 		type : "GET",
-		url : "/mall/home/item/"+ itemId +"?t="+ Math.random(),
+		url : "/mall/home/item/"+ 165 +"?t="+ Math.random(),
 		dataType: 'json',
 		beforeSend:function(){
 		},

@@ -158,7 +158,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 	public Map<String, Object> events(JSONObject jo,
 			UserBean user, HttpRequestInfoBean request){
 		logger.info("EventServiceImpl-->events():jo=" +jo.toString());
-		int toUserId = JsonUtil.getIntValue(jo, "to_user_id", user.getId()); //
+		long toUserId = JsonUtil.getLongValue(jo, "to_user_id", user.getId()); //
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		int pageSize = JsonUtil.getIntValue(jo, "limit", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int currentIndex = JsonUtil.getIntValue(jo, "page", 0); //当前的索引页

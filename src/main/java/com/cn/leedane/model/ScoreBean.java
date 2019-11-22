@@ -34,7 +34,7 @@ public class ScoreBean extends RecordTimeBean{
 	/**
 	 * 相关联的表ID
 	 */
-	private int tableId;
+	private long tableId;
 	
 	public int getScore() {
 		return score;
@@ -69,10 +69,10 @@ public class ScoreBean extends RecordTimeBean{
 	}
 	
 	//@Column(name="table_id", nullable = false)
-	public int getTableId() {
+	public long getTableId() {
 		return tableId;
 	}
-	public void setTableId(int tableId) {
+	public void setTableId(long tableId) {
 		this.tableId = tableId;
 	}
 	

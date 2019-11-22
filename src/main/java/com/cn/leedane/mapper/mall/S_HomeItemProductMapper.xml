@@ -8,7 +8,7 @@
  -->
 <mapper namespace="com.cn.leedane.mapper.mall.S_HomeItemProductMapper">
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
-	<select id="getProducts" parameterType="int" resultMap="objectBean">
+	<select id="getProducts" resultMap="objectBean">
 		select ip.id, ip.status, ip.create_user_id, date_format(ip.create_time,'%Y-%m-%d %H:%i:%s') create_time 
 		, ip.item_id, ip.product_id, ip.product_order 
 		from t_mall_home_item_product ip 
@@ -17,7 +17,7 @@
 		where ip.status = 1 and ip.item_id = #{itemId} order by ip.product_order desc,ip.create_time desc  limit #{limit}
 	</select>
 	
-	<delete id="deleteProducts" flushCache="true" parameterType="int">
+	<delete id="deleteProducts" flushCache="true">
 		delete from t_mall_home_item_product where item_id = #{itemId}
 	</delete>
 	

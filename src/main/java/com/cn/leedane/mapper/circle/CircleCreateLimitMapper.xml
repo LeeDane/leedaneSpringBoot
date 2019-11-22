@@ -9,7 +9,7 @@
 <mapper namespace="com.cn.leedane.mapper.circle.CircleCreateLimitMapper">
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
-	<select id="getNumber" parameterType="int" resultType="int" statementType="CALLABLE">
+	<select id="getNumber" resultType="int" statementType="CALLABLE">
 		{
 			call getCircleCreateLimitProcedure(#{createUserId}, #{status})
 		}

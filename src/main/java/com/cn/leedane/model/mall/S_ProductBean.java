@@ -79,28 +79,28 @@ public class S_ProductBean extends RecordTimeBean{
 	 * 商品现价
 	 */
 	@Field
-	private float price;
+	private double price;
 	
 	/**
 	 * 商品原价
 	 */
 	@Column(value="old_price")
 	@Field
-	private float oldPrice;
+	private double oldPrice;
 	
 	/**
 	 * 商品总的返现比率(百分比)
 	 */
 	@Column(value="cash_back_ratio")
 	@Field
-	private float cashBackRatio;
+	private double cashBackRatio;
 	
 	/**
 	 * 商品返现的价钱
 	 */
 	@Column(value="cash_back")
 	@Field
-	private float cashBack;
+	private double cashBack;
 	
 	/**
 	 * 商店的ID
@@ -141,6 +141,20 @@ public class S_ProductBean extends RecordTimeBean{
 	@Column(required = false)
 	@Field
 	private String category;
+
+	/**
+	 * 优惠券的金额
+	 */
+	@Column(value="coupon_amount")
+	@Field
+	private int couponAmount;
+
+	/**
+	 * 优惠券的地址
+	 */
+	@Column(value="coupon_url")
+	@Field
+	private String couponUrl;
 
 	public S_ProductBean() {
 		this.platform = EnumUtil.ProductPlatformType.淘宝.value; //默认是淘宝平台
@@ -194,27 +208,27 @@ public class S_ProductBean extends RecordTimeBean{
 		this.platform = platform;
 	}
 
-	public float getPrice() {
+	public double getPrice() {
 		return price;
 	}
 
-	public void setPrice(float price) {
+	public void setPrice(double price) {
 		this.price = price;
 	}
 
-	public float getCashBackRatio() {
+	public double getCashBackRatio() {
 		return cashBackRatio;
 	}
 
-	public void setCashBackRatio(float cashBackRatio) {
+	public void setCashBackRatio(double cashBackRatio) {
 		this.cashBackRatio = cashBackRatio;
 	}
 
-	public float getCashBack() {
+	public double getCashBack() {
 		return cashBack;
 	}
 
-	public void setCashBack(float cashBack) {
+	public void setCashBack(double cashBack) {
 		this.cashBack = cashBack;
 	}
 
@@ -226,11 +240,11 @@ public class S_ProductBean extends RecordTimeBean{
 		this.link = link;
 	}
 
-	public float getOldPrice() {
+	public double getOldPrice() {
 		return oldPrice;
 	}
 
-	public void setOldPrice(float oldPrice) {
+	public void setOldPrice(double oldPrice) {
 		this.oldPrice = oldPrice;
 	}
 
@@ -289,5 +303,20 @@ public class S_ProductBean extends RecordTimeBean{
 	public void setShop(S_ShopBean shop) {
 		this.shop = shop;
 	}
-	
+
+	public int getCouponAmount() {
+		return couponAmount;
+	}
+
+	public void setCouponAmount(int couponAmount) {
+		this.couponAmount = couponAmount;
+	}
+
+	public String getCouponUrl() {
+		return couponUrl;
+	}
+
+	public void setCouponUrl(String couponUrl) {
+		this.couponUrl = couponUrl;
+	}
 }

@@ -34,7 +34,7 @@ public class ScoreServiceImpl implements ScoreService<ScoreBean>{
 	private OperateLogService<OperateLogBean> operateLogService;
 
 	@Override
-	public int getTotalScore(int userId) {
+	public int getTotalScore(long userId) {
 		return SqlUtil.getTotalByList(scoreMapper.executeSQL("select sum(t.score) ct from t_score t where create_user_id=?", userId));
 	}
 

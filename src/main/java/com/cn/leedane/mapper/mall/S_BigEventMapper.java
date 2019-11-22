@@ -17,10 +17,9 @@ import com.cn.leedane.model.mall.S_BigEventBean;
 public interface S_BigEventMapper extends BaseMapper<S_BigEventBean>{
 	/**
 	 * 获取大事件列表
-	 * @param userId
 	 * @return
 	 */
-	public List<Map<String, Object>> getEvents(@Param("productId") int productId, @Param("status") int status, 
+	public List<Map<String, Object>> getEvents(@Param("productId") long productId, @Param("status") int status,
 			@Param("start")int start, @Param("pageSize") int pageSize);
 	
 }

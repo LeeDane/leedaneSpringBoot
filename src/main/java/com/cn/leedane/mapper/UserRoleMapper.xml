@@ -9,7 +9,7 @@
 <mapper namespace="com.cn.leedane.mapper.UserRoleMapper">
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
-	<select id="getUserRoleBeans" parameterType="int" resultMap="roleMap1">
+	<select id="getUserRoleBeans" resultMap="roleMap1">
 		select ur.id, rp.permission_id pid,
 			(select r.role_code from t_role r where r.id = ur.role_id and r.status = #{status}) rcode, 
 			(select p.permission_code from t_permission p where p.id = rp.permission_id and rp.status = #{status}) pcode

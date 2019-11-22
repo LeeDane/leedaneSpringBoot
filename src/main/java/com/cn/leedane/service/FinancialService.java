@@ -100,7 +100,7 @@ public interface FinancialService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<FinancialBean> getByTimeRange(int createUserId, int status, Date startTime, Date endTime);
+	public List<FinancialBean> getByTimeRange(long createUserId, int status, Date startTime, Date endTime);
 
 	/**
 	 * 查询

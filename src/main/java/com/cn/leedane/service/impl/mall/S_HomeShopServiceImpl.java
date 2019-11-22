@@ -80,7 +80,7 @@ public class S_HomeShopServiceImpl extends MallRoleCheckService implements S_Hom
 	}
 	
 	@Override
-	public Map<String, Object> delete(int shopId, UserBean user,
+	public Map<String, Object> delete(long shopId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("S_HomeShopServiceImpl-->delete():shopId="+shopId);
 		

@@ -183,8 +183,8 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	public Map<String, Object> main(CircleBean circle, UserBean user, HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->main(), user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
-		
-		int circleId = circle.getId();
+
+		long circleId = circle.getId();
 		if(user.getId() == circle.getCreateUserId()){
 			message.put("isCreater", true);
 			message.put("inMember", true);
@@ -232,8 +232,8 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	public Map<String, Object> memberListInit(CircleBean circle, UserBean user, HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->memberListInit(), user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
-		
-		int circleId = circle.getId();
+
+		long circleId = circle.getId();
 		if(user.getId() == circle.getCreateUserId()){
 			message.put("isCircleAdmin", true);
 			CircleSettingBean circleSettingBean = circleSettingHandler.getNormalSettingBean(circle.getId(), user);
@@ -366,7 +366,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 
 
 	@Override
-	public Map<String, Object> update(int circleId, JSONObject jo, UserBean user,
+	public Map<String, Object> update(long circleId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -404,7 +404,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 
 
 	@Override
-	public Map<String, Object> delete(int cid, UserBean user,
+	public Map<String, Object> delete(long cid, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->delete():cid=" +cid +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -474,7 +474,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	}
 	
 	@Override
-	public Map<String, Object> joinCheck(int circleId, UserBean user,
+	public Map<String, Object> joinCheck(long circleId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->joinCheck():circleId="+circleId);
 		ResponseMap message = new ResponseMap();
@@ -530,7 +530,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	
 	
 	@Override
-	public Map<String, Object> join(int circleId, JSONObject json, UserBean user,
+	public Map<String, Object> join(long circleId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->join():circleId="+circleId +", json="+ json);
 		ResponseMap message = new ResponseMap();
@@ -612,14 +612,14 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	}
 	
 	@Override
-	public void saveVisitLog(int circleId, UserBean user,
+	public void saveVisitLog(long circleId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->saveVisitLog() , circleId= "+ circleId +", --" + (user == null ? "" : user.getAccount()));
 		visitorService.saveVisitor(user, "web网页端", DataTableType.圈子.value, circleId, ConstantsUtil.STATUS_NORMAL);
 	}
 	
 	@Override
-	public Map<String, Object> leave(int circleId, UserBean user,
+	public Map<String, Object> leave(long circleId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->leave():circleId="+circleId);
 		ResponseMap message = new ResponseMap();
@@ -655,7 +655,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	}
 	
 	@Override
-	public Map<String, Object> admins(int cid, UserBean user,
+	public Map<String, Object> admins(long cid, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->admins():cid="+cid);
 		ResponseMap message = new ResponseMap();
@@ -671,7 +671,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	}
 
 	@Override
-	public Map<String, Object> allot(int circleId, String admins, UserBean user,
+	public Map<String, Object> allot(long circleId, String admins, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->allot():circleId="+circleId +", admins="+ admins);
 		
@@ -682,15 +682,15 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		if(circleBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
 		
-		Set<Integer> deleteAdmins = new HashSet<Integer>();
-		Set<Integer> addAdmins = new HashSet<Integer>();
+		Set<Long> deleteAdmins = new HashSet<Long>();
+		Set<Long> addAdmins = new HashSet<Long>();
 		
 		//先请空该圈子的管理员列表
 		List<Map<String, Object>> adminMember = circleMemberMapper.getMembersByRoleType(circleId, CIRCLE_MANAGER, ConstantsUtil.STATUS_NORMAL);
 		List<Map<String, Object>> data = new ArrayList<Map<String,Object>>();
 		for(Map<String, Object> admin: adminMember){
 			circleMemberMapper.updateSql(CircleMemberBean.class, " set role_type=? where id = ?", CIRCLE_NORMAL, admin.get("id"));
-			deleteAdmins.add(StringUtil.changeObjectToInt(admin.get("member_id")));
+			deleteAdmins.add(StringUtil.changeObjectToLong(admin.get("member_id")));
 		}
 		
 		//根据权限id去删除所有相关的角色
@@ -727,7 +727,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 	}
 	
 	@Override
-	public Map<String, Object> initialize(int circleId, UserBean user,
+	public Map<String, Object> initialize(long circleId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CircleServiceImpl-->initialize():circleId="+circleId);
 		

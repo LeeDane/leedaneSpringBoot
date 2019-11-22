@@ -51,7 +51,7 @@ public class BabyController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{babyId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(@PathVariable("babyId") int babyId, Model model, HttpServletRequest request){
+	public Map<String, Object> update(@PathVariable("babyId") long babyId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -67,7 +67,7 @@ public class BabyController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{babyId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@PathVariable("babyId") int babyId, Model model, HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("babyId") long babyId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -106,8 +106,8 @@ public class BabyController extends BaseController{
 	 */
 	@RequestMapping(value="/{babyId}/life/{lifeId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> updateLife(
-			@PathVariable(value="babyId") int babyId,
-			@PathVariable(value="lifeId") int lifeId,
+			@PathVariable(value="babyId") long babyId,
+			@PathVariable(value="lifeId") long lifeId,
 			Model model, 
 			HttpServletRequest request){
 		
@@ -128,7 +128,7 @@ public class BabyController extends BaseController{
 	 */
 	@RequestMapping(value="/{babyId}/changeBorn", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> changeBorn(
-			@PathVariable(value="babyId") int babyId,
+			@PathVariable(value="babyId") long babyId,
 			Model model, 
 			HttpServletRequest request){
 		
@@ -149,8 +149,8 @@ public class BabyController extends BaseController{
 	 */
 	@RequestMapping(value="/{babyId}/life/{lifeId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> addEat(
-			@PathVariable(value="babyId") int babyId,
-			@PathVariable(value="lifeId") int lifeId,
+			@PathVariable(value="babyId") long babyId,
+			@PathVariable(value="lifeId") long lifeId,
 			Model model, 
 			HttpServletRequest request){
 		
@@ -177,7 +177,7 @@ public class BabyController extends BaseController{
 	 */
 	@RequestMapping(value="/{babyId}/lifes", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getLifes(
-			@PathVariable(value="babyId") int babyId,
+			@PathVariable(value="babyId") long babyId,
 			@RequestParam(value="start", required=false) String startDate,
 			@RequestParam(value="end", required=false) String endDate,
 			@RequestParam(value="keyword", required=false) String keyWord,

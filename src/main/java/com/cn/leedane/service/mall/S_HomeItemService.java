@@ -32,7 +32,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> getItem(int categoryId,
+	public Map<String, Object> getItem(long categoryId,
 			UserBean user, HttpRequestInfoBean request);
 
 	/**
@@ -43,7 +43,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> updateItem(int itemId,
+	public Map<String, Object> updateItem(long itemId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request);
 	
@@ -54,7 +54,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deleteItem(int categoryId,
+	public Map<String, Object> deleteItem(long categoryId,
 			UserBean user, HttpRequestInfoBean request);
 	
 	/**
@@ -70,7 +70,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> matchingCategory(int itemId,
+	public Map<String, Object> matchingCategory(long itemId,
 			UserBean user, HttpRequestInfoBean request);
 
 	/**
@@ -81,7 +81,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> updateCategory(int itemId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> updateCategory(long itemId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 添加某一项的商品
@@ -91,7 +91,7 @@ public interface S_HomeItemService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> addProduct(int itemId,
+	public Map<String, Object> addProduct(long itemId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request);
 	
@@ -103,8 +103,8 @@ public interface S_HomeItemService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deleteProduct(int itemId,
-			int productId, UserBean user,
+	public Map<String, Object> deleteProduct(long itemId,
+											 long productId, UserBean user,
 			HttpRequestInfoBean request);
 
 	/**

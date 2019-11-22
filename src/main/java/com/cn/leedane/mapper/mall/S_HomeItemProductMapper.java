@@ -19,13 +19,13 @@ public interface S_HomeItemProductMapper extends BaseMapper<S_HomeItemProductBea
 	 * @return
 	 */
 	public List<S_HomeItemProductBean> getProducts(
-			@Param("itemId") int itemId
+			@Param("itemId") long itemId
 			,@Param("limit") int limit);
 
 	/**
 	 * 删除该项关联的商品记录
 	 * @param itemId
 	 */
-	public void deleteProducts(@Param("itemId")int itemId);
+	public void deleteProducts(@Param("itemId")long itemId);
 	
 }

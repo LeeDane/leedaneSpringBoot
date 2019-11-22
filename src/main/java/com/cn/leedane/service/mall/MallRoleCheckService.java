@@ -22,7 +22,7 @@ public class MallRoleCheckService {
 	 * @param user
 	 * @param createUserId
 	 */
-	public void checkMallAdmin(UserBean user, int createUserId){
+	public void checkMallAdmin(UserBean user, long createUserId){
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
 		//后台只有管理员权限才能操作

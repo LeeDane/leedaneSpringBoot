@@ -33,7 +33,7 @@ public interface CircleContributionService<T extends IDBean>{
 	 * @param desc
 	 * @return
 	 */
-	public Map<String, Object> addScore(int addScore, String desc, int circleId, UserBean user);
+	public Map<String, Object> addScore(int addScore, String desc, long circleId, UserBean user);
 	
 	/**
 	 * 减少分数(并通知用户)
@@ -43,6 +43,6 @@ public interface CircleContributionService<T extends IDBean>{
 	 * @param user
 	 * @return
 	 */
-	public Map<String, Object> reduceScore(int reduceScore, String desc, int circleId ,UserBean user);
+	public Map<String, Object> reduceScore(int reduceScore, String desc, long circleId ,UserBean user);
 	
 }

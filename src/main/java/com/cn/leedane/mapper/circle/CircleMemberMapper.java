@@ -23,37 +23,40 @@ public interface CircleMemberMapper extends BaseMapper<CircleMemberBean>{
 	 * @param circleId
 	 * @return
 	 */
-	public List<CircleMemberBean> getMember(@Param("memberId") int memberId, @Param("circleId") int circleId, @Param("status") int status);
-	
+	public List<CircleMemberBean> getMember(@Param("memberId") long memberId, @Param("circleId") long circleId, @Param("status") int status);
+
 	/**
 	 * 获取圈子的管理员列表
-	 * @param memberId
 	 * @param circleId
+	 * @param roleType
+	 * @param status
 	 * @return
 	 */
 	public List<Map<String, Object>> getMembersByRoleType(
-			@Param("circleId") int circleId
+			@Param("circleId") long circleId
 			, @Param("roleType") int roleType, 
 			@Param("status") int status);
 
 	/**
 	 * 获取圈子的所有成员
-	 * @param memberId
 	 * @param circleId
+	 * @param status
 	 * @return
 	 */
 	public List<Map<String, Object>> getAllMembers(
-			@Param("circleId") int circleId, 
+			@Param("circleId") long circleId,
 			@Param("status") int status);
-	
+
 	/**
 	 * 根据权限ids获取其对应分配的用户id
-	 * @param pmids
+	 * @param memberIds
+	 * @param circleId
+	 * @param status
 	 * @return
 	 */
 	public List<CircleMemberBean> findByMemberIds(
 			@Param("memberIds")int[] memberIds,
-			@Param("circleId") int circleId, 
+			@Param("circleId") long circleId,
 			@Param("status") int status);
 	
 	/**
@@ -64,11 +67,10 @@ public interface CircleMemberMapper extends BaseMapper<CircleMemberBean>{
 	 */
 	public void updateByBatch(@Param("list")List<Map<String, Object>> data, 
 			@Param("roleType") int roleType,
-			@Param("circleId") int circleId);
-	
+			@Param("circleId") long circleId);
+
 	/**
 	 * 分页获取圈子成员列表
-	 * @param createUserId
 	 * @param circleId
 	 * @param start
 	 * @param pageSize
@@ -76,17 +78,16 @@ public interface CircleMemberMapper extends BaseMapper<CircleMemberBean>{
 	 * @return
 	 */
 	public List<Map<String, Object>> paging(
-			@Param("circleId")int circleId,
+			@Param("circleId")long circleId,
 			@Param("start")int start, 
 			@Param("pageSize")int pageSize, 
 			@Param("status") int status);
-	
+
 	/**
 	 * 获取目前最热门的圈子成员(只计算)
-	 * @param time
-	 * @return
+	 * @param circleId
 	 */
-	public void calculateHotests(@Param("circleId") int circleId);
+	public void calculateHotests(@Param("circleId") long circleId);
 	
 	/**
 	 * 获取目前圈子最热门的成员
@@ -95,7 +96,7 @@ public interface CircleMemberMapper extends BaseMapper<CircleMemberBean>{
 	 * @param pageSize
 	 * @return
 	 */
-	public List<Map<String, Object>> getHotests(@Param("circleId")int circleId, @Param("time") Date time, @Param("pageSize") int pageSize, @Param("status") int status);
+	public List<Map<String, Object>> getHotests(@Param("circleId")long circleId, @Param("time") Date time, @Param("pageSize") int pageSize, @Param("status") int status);
 	
 	/**
 	 * 获取目前圈子最新的成员
@@ -103,7 +104,7 @@ public interface CircleMemberMapper extends BaseMapper<CircleMemberBean>{
 	 * @param pageSize
 	 * @return
 	 */
-	public List<Map<String, Object>> getNewests(@Param("circleId")int circleId, @Param("pageSize") int pageSize, @Param("status") int status);
+	public List<Map<String, Object>> getNewests(@Param("circleId")long circleId, @Param("pageSize") int pageSize, @Param("status") int status);
 	
 	/**
 	 * 获取目前圈子推荐的成员
@@ -111,5 +112,5 @@ public interface CircleMemberMapper extends BaseMapper<CircleMemberBean>{
 	 * @param pageSize
 	 * @return
 	 */
-	public List<Map<String, Object>> getRecommends(@Param("circleId")int circleId, @Param("pageSize") int pageSize, @Param("status") int status);
+	public List<Map<String, Object>> getRecommends(@Param("circleId")long circleId, @Param("pageSize") int pageSize, @Param("status") int status);
 }

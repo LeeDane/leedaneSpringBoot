@@ -71,7 +71,7 @@ public class StockController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{stockId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(@PathVariable("stockId") int stockId, Model model, HttpServletRequest request){
+	public Map<String, Object> update(@PathVariable("stockId") long stockId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -86,7 +86,7 @@ public class StockController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{stockId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@PathVariable("stockId") int stockId, Model model, HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("stockId") long stockId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

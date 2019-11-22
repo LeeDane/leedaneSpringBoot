@@ -81,7 +81,7 @@ public class S_HomeCarouselServiceImpl extends MallRoleCheckService implements S
 	}
 	
 	@Override
-	public Map<String, Object> delete(int carouselId, UserBean user,
+	public Map<String, Object> delete(long carouselId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("S_CarouselServiceImpl-->delete():carouselId="+carouselId);
 		

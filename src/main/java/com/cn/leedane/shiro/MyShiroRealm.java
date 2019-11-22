@@ -78,7 +78,7 @@ public class MyShiroRealm extends AuthorizingRealm{
         Object object = principalCollection.getPrimaryPrincipal();
         if(object != null){
             CustomAuthenticationToken customAuthenticationToken = (CustomAuthenticationToken)object;
-            int userid = customAuthenticationToken.getUser().getId();
+            long userid = customAuthenticationToken.getUser().getId();
             //到数据库查是否有此对象
             List<RoleBean> roleBeans = rolePermissionHandler.getUserRoleBeans(userid);// 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
             if(CollectionUtil.isNotEmpty(roleBeans)){

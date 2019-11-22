@@ -100,11 +100,11 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 		bean.setFroms(JsonUtil.getStringValue(jo, "froms"));
 		if(transmitMapper.save(bean) > 0){
 			result = true;
-			int createUserId = 0;
+			long createUserId = 0;
 			//String str = "{from_user_remark}转发："+content;
 			createUserId = SqlUtil.getCreateUserIdByList(transmitMapper.getObjectCreateUserId(tableName, tableId));
 			if(createUserId > 0 && createUserId != user.getId()){
-				Set<Integer> ids = new HashSet<Integer>();
+				Set<Long> ids = new HashSet<Long>();
 				ids.add(createUserId);
 				notificationHandler.sendNotificationByIds(false, user, ids, content, NotificationType.转发, tableName, tableId, bean);
 			}

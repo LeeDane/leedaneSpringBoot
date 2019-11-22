@@ -50,7 +50,7 @@ public class SessionManagerUtil {
 	 * @param userid
 	 * @return
 	 */
-	public List<Session> getSession(int userid){
+	public List<Session> getSession(long userid){
 		return userSessions.get(String.valueOf(userid));
 	}
 
@@ -60,7 +60,7 @@ public class SessionManagerUtil {
 	 * @param userid
 	 * @return
 	 */
-	public synchronized boolean addSession(Subject subject, Session session, int userid){
+	public synchronized boolean addSession(Subject subject, Session session, long userid){
 		if(session == null || userid < 0)
 			return false;
 		List<Session> sessions = userSessions.get(userid + "");
@@ -95,7 +95,7 @@ public class SessionManagerUtil {
 	 * @param userid
 	 * @return
 	 */
-	public boolean removeSession(Session session, int userid, boolean force) {
+	public boolean removeSession(Session session, long userid, boolean force) {
 		/**
 		 * 对
 		 */
@@ -157,7 +157,7 @@ public class SessionManagerUtil {
 	 * @param userId
 	 * @return
 	 */
-	public boolean removeUser(int userId) {
+	public boolean removeUser(long userId) {
 		if(userId < 1)
 			return false;
 

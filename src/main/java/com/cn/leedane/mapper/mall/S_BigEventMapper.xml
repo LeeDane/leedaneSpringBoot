@@ -9,7 +9,7 @@
 <mapper namespace="com.cn.leedane.mapper.mall.S_BigEventMapper">
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
-	<select id="getEvents" parameterType="int" resultType="java.util.Map">
+	<select id="getEvents" resultType="java.util.Map">
 		select e.id, e.status, e.create_user_id, date_format(e.create_time,'%Y-%m-%d %H:%i:%s') create_time
 		, e.text, e.product_id 
 		from t_mall_big_event e inner join t_mall_product p on p.id = e.product_id 

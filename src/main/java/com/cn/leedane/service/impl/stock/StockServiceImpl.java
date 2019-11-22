@@ -58,7 +58,7 @@ public class StockServiceImpl implements StockService<StockBean>{
 		logger.info("StockServiceImpl-->init():jo="+jo);
 		ResponseMap message = new ResponseMap();
 		List<StockDisplay> stockDisplays = new ArrayList<StockDisplay>();
-		int userId = user.getId();
+		long userId = user.getId();
 		List<StockBean> stockBeans = stockHandler.getStocks(userId);
 		//处理股票列表的展示
 		if(CollectionUtil.isNotEmpty(stockBeans)){
@@ -150,10 +150,10 @@ public class StockServiceImpl implements StockService<StockBean>{
 	}
 	
 	@Override
-	public Map<String, Object> update(int stockId, JSONObject json, UserBean user,
+	public Map<String, Object> update(long stockId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("StockServiceImpl-->update(), stockId= " + stockId +",user=" +user.getAccount());
-		int userId = user.getId();
+		long userId = user.getId();
 		StockBean oldStockBean = stockHandler.getNormalStock(stockId, userId);
 		ResponseMap message = new ResponseMap();
 		
@@ -179,9 +179,9 @@ public class StockServiceImpl implements StockService<StockBean>{
 	}
 	
 	@Override
-	public Map<String, Object> delete(int stockId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> delete(long stockId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("StockServiceImpl-->delete(), stockId= " + ",user=" +user.getAccount());
-		int userId = user.getId();
+		long userId = user.getId();
 		StockBean stockBean = stockHandler.getNormalStock(stockId, userId);
 		ResponseMap message = new ResponseMap();
 		

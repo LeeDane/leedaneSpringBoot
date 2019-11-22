@@ -34,7 +34,7 @@ public class S_PromotionAuditHandler {
 	 * @param userId
 	 * @return
 	 */
-	public S_PromotionAuditBean getPromotion(int userId){
+	public S_PromotionAuditBean getPromotion(long userId){
 		String key = getPromotionAuditKey(userId);
 		Object obj = systemCache.getCache(key);
 		S_PromotionAuditBean promotionAuditBean = null;
@@ -89,7 +89,7 @@ public class S_PromotionAuditHandler {
 	 * @param userId
 	 * @return
 	 */
-	public boolean deletePromotionAuditCache(int userId){
+	public boolean deletePromotionAuditCache(long userId){
 		String key = getPromotionAuditKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -101,7 +101,7 @@ public class S_PromotionAuditHandler {
 	 * @param userId
 	 * @return
 	 */
-	public static String getPromotionAuditKey(int userId){
+	public static String getPromotionAuditKey(long userId){
 		return ConstantsUtil.PROMOTION_AUDIT_REDIS + userId;
 	}
 

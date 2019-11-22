@@ -39,7 +39,7 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
+	public Map<String, Object> add(@PathVariable("circleId") long circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -54,7 +54,7 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
+	public Map<String, Object> update(@PathVariable("circleId") long circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -69,7 +69,7 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post/{postId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, Model model, HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("circleId") long circleId, @PathVariable("postId") long postId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -84,7 +84,7 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/posts", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
+	public Map<String, Object> paging(@PathVariable("circleId") long circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -99,7 +99,7 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post/{postId}/comment", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> comment(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, Model model, HttpServletRequest request){
+	public Map<String, Object> comment(@PathVariable("circleId") long circleId, @PathVariable("postId") long postId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -114,7 +114,7 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post/{postId}/transmit", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> transmit(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, Model model, HttpServletRequest request){
+	public Map<String, Object> transmit(@PathVariable("circleId") long circleId, @PathVariable("postId") long postId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -129,7 +129,7 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post/{postId}/zan", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> zan(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, Model model, HttpServletRequest request){
+	public Map<String, Object> zan(@PathVariable("circleId") long circleId, @PathVariable("postId") long postId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -144,7 +144,7 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post/nochecktotal", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> noCheckTotal(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
+	public Map<String, Object> noCheckTotal(@PathVariable("circleId") long circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -159,7 +159,7 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post/nochecks", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> noCheckList(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
+	public Map<String, Object> noCheckList(@PathVariable("circleId") long circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -174,7 +174,7 @@ public class CirclePostController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/post/{postId}/check", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> check(@PathVariable("circleId") int circleId, @PathVariable("postId") int postId, Model model, HttpServletRequest request){
+	public Map<String, Object> check(@PathVariable("circleId") long circleId, @PathVariable("postId") long postId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

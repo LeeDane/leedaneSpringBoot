@@ -31,7 +31,7 @@ public class FinancialCategoryUtil {
 		return instance;
 	}
 	
-	private static int createUserId;
+	private static long createUserId;
 	private static List<FinancialOneLevelCategoryBean> oneLevelCategoryBeans;
 	
 	private static List<FinancialTwoLevelCategoryBean> twoLevelCategoryBeans;
@@ -234,8 +234,8 @@ public class FinancialCategoryUtil {
      * @param value
      * @return
      */
-    public static int getOneLevelIdByValue(String value){
-        int id = 0;
+    public static long getOneLevelIdByValue(String value){
+        long id = 0;
         if(StringUtil.isNull(value))
             return id;
         List<FinancialOneLevelCategoryBean> oneLevelCategories = getOneLevelCategoryBeans();
@@ -255,7 +255,7 @@ public class FinancialCategoryUtil {
      * @param oneLevelId
      * @return
      */
-    public static String getValueByOneLevelId(int oneLevelId){
+    public static String getValueByOneLevelId(long oneLevelId){
         String value = "";
         if(oneLevelId < 1)
             return value;

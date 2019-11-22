@@ -25,7 +25,7 @@ public class CircleSettingBean extends RecordTimeBean {
 	 */
 	@Column("circle_id")
 	@Field
-	private int circleId;
+	private long circleId;
 	
 	/**
 	 * 是否可以添加成员
@@ -107,11 +107,11 @@ public class CircleSettingBean extends RecordTimeBean {
 		this.questionAnswer = questionAnswer;
 	}
 
-	public int getCircleId() {
+	public long getCircleId() {
 		return circleId;
 	}
 
-	public void setCircleId(int circleId) {
+	public void setCircleId(long circleId) {
 		this.circleId = circleId;
 	}
 

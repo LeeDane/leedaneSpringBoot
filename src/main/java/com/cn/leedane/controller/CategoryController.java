@@ -63,7 +63,7 @@ public class CategoryController extends BaseController{
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/category/{pid}/children", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> children(@PathVariable("pid") int pid, Model model, HttpServletRequest request){
+	public Map<String, Object> children(@PathVariable("pid") long pid, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -81,7 +81,7 @@ public class CategoryController extends BaseController{
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/category/{cid}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(@PathVariable("cid") int cid, Model model, HttpServletRequest request){
+	public Map<String, Object> update(@PathVariable("cid") long cid, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -101,7 +101,7 @@ public class CategoryController extends BaseController{
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/category/{cid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@PathVariable("cid") int cid, Model model, HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("cid") long cid, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

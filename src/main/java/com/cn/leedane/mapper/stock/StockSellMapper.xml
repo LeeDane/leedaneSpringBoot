@@ -9,7 +9,7 @@
 <mapper namespace="com.cn.leedane.mapper.stock.StockSellMapper">
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
-	<select id="getStockSells" parameterType="int" resultMap="objectBean">
+	<select id="getStockSells" resultMap="objectBean">
 		select ss.id, ss.stock_buy_id, ss.price, ss.number, ss.residue_number,
 		ss.create_user_id, date_format(ss.create_time,'%Y-%m-%d %H:%i:%s') create_time,
 		ss.modify_user_id, date_format(ss.modify_time,'%Y-%m-%d %H:%i:%s') modify_time

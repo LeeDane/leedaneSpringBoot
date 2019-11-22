@@ -61,7 +61,7 @@ public class JobManageController extends BaseController{
 	 * @throws SchedulerException 
 	 */
 	@RequestMapping(value = "/job/{jid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@PathVariable("jid") int jid, Model model, HttpServletRequest request) throws SchedulerException{
+	public Map<String, Object> delete(@PathVariable("jid") long jid, Model model, HttpServletRequest request) throws SchedulerException{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

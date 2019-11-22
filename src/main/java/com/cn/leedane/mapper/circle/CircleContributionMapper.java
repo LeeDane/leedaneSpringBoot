@@ -22,17 +22,14 @@ public interface CircleContributionMapper extends BaseMapper<CircleContributionB
 	 * @param userId
 	 * @return
 	 */
-	public List<Map<String, Object>> getTotalScore(@Param("circleId")int circleId, @Param("createUserId")int userId);
+	public List<Map<String, Object>> getTotalScore(@Param("circleId")long circleId, @Param("createUserId")long userId);
 	
 	/**
 	 * 获取贡献值
-	 * @param user
-	 * @param id
-	 * @param date
 	 * @return
 	 */
 	public List<Map<String, Object>> getContribute(
-			@Param("circleId") int circleId, 
-			@Param("userId")int userId);
+			@Param("circleId") long circleId,
+			@Param("userId")long userId);
 
 }

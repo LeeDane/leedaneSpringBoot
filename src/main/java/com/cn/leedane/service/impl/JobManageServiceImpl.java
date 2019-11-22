@@ -170,7 +170,7 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
     }
     
     @Override
-    public Map<String, Object> delete(int jid, HttpRequestInfoBean request) throws SchedulerException{
+    public Map<String, Object> delete(long jid, HttpRequestInfoBean request) throws SchedulerException{
     	logger.info("JobManageServiceImpl-->delete():jid="+jid);
 		ResponseMap message = new ResponseMap();
 		

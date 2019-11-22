@@ -151,7 +151,7 @@ public class BlogController extends BaseController{
 		if(blogId > 0){
 			blog.setId(blogId);
 		}
-		blog.setCreateUserId(JsonUtil.getIntValue(json, "create_user_id", user.getId()));
+		blog.setCreateUserId(JsonUtil.getLongValue(json, "create_user_id", user.getId()));
 		blog.setCreateTime(new Date());
 
 		message.putAll(blogService.addBlog(blog, user));   
@@ -266,7 +266,7 @@ public class BlogController extends BaseController{
 	 */
 	@RequestMapping(value="/blog/{blogId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public Map<String, Object> getOneBlog(
-			@PathVariable("blogId") int blogId,
+			@PathVariable("blogId") long blogId,
 			HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
@@ -387,7 +387,7 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/blog/edit/{blog_id}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> edit(@PathVariable("blog_id") int blogId, Model model, HttpServletRequest request){
+	public Map<String, Object> edit(@PathVariable("blog_id") long blogId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

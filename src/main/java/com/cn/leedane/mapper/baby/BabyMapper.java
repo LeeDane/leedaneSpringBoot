@@ -19,5 +19,5 @@ public interface BabyMapper extends BaseMapper<BabyBean>{
 	 * @param userId
 	 * @return
 	 */
-	public List<BabyBean> getMyBabys(@Param("createUserId") int userId, @Param("status") int status);
+	public List<BabyBean> getMyBabys(@Param("createUserId") long userId, @Param("status") int status);
 }

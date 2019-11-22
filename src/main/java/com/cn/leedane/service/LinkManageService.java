@@ -50,7 +50,7 @@ public interface LinkManageService<LinkManageBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int lnid, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> delete(long lnid, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 分页获取链接列表
@@ -80,7 +80,7 @@ public interface LinkManageService<LinkManageBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> roleOrPermissions(int lnid, boolean role, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> roleOrPermissions(long lnid, boolean role, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 角色、权限的分配
@@ -90,5 +90,5 @@ public interface LinkManageService<LinkManageBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> allot(int lnid,JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> allot(long lnid,JSONObject json, UserBean user, HttpRequestInfoBean request);
 }

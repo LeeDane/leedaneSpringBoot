@@ -150,12 +150,12 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 
 
 	@Override
-	public Map<String, Object> update(int clockId, JSONObject jo, UserBean user,
+	public Map<String, Object> update(long clockId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		ClockBean clockBean = clockHandler.getNormalClock(clockId);
-		int userId = user.getId();
+		long userId = user.getId();
 		
 		boolean creater = userId == clockBean.getCreateUserId();
 		//判断如果是创建人或者是普通成员
@@ -224,7 +224,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 
 
 	@Override
-	public Map<String, Object> delete(int clockId, UserBean user,
+	public Map<String, Object> delete(long clockId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->delete():clockId=" +clockId +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -235,7 +235,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		if(!clockMemberHandler.inMember(user.getId(), clockId))
 			throw new UnauthorizedException("您还未加入该任务");
 
-		int userId = user.getId();
+		long userId = user.getId();
 		boolean creater = clockBean.getCreateUserId() == userId;
 		boolean result = true;
 
@@ -451,7 +451,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 
 
 	@Override
-	public Map<String, Object> getClock(int clockId, JSONObject json, UserBean user,
+	public Map<String, Object> getClock(long clockId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->getClock():json=" +json.toString() +", clockId=" +clockId);
 		ResponseMap message = new ResponseMap();
@@ -486,7 +486,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 
 
 	@Override
-	public Map<String, Object> getClockThumbnail(int clockId, JSONObject json,
+	public Map<String, Object> getClockThumbnail(long clockId, JSONObject json,
 			UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->getClockThumbnail():json=" +json.toString() +", clockId=" +clockId);
 		ResponseMap message = new ResponseMap();
@@ -516,7 +516,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 
 
 	@Override
-	public Map<String, Object> statistics(int clockId, JSONObject json,
+	public Map<String, Object> statistics(long clockId, JSONObject json,
 			UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->getClockThumbnail():json=" +json.toString() +", clockId=" +clockId);
 		ResponseMap message = new ResponseMap();
@@ -562,7 +562,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 	}
 
 	@Override
-	public Map<String, Object> resources(int clockId, int resourceType, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> resources(long clockId, int resourceType, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockServiceImpl-->resources():json=" +json.toString() +", clockId=" +clockId + ", resourceType="+ resourceType);
 		ResponseMap message = new ResponseMap();
 		//先判断任务是否存在
@@ -596,7 +596,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 	 * @param clockId
 	 * @return
 	 */
-	private List<Map<String, Object>> getTop3Member(int clockId) {
+	private List<Map<String, Object>> getTop3Member(long clockId) {
 		List<Map<String, Object>> members = clockMemberMapper.membersSortByIns(clockId, 3);
 		if(CollectionUtil.isNotEmpty(members)){
 			for(Map<String, Object> mb: members){

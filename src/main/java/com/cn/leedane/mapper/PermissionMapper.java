@@ -14,5 +14,5 @@ import com.cn.leedane.model.PermissionBean;
  * version 1.0
  */
 public interface PermissionMapper extends BaseMapper<PermissionBean>{
-	public List<Map<String, Object>> roles(@Param("pmid")int pmid, @Param("status") int status);
+	public List<Map<String, Object>> roles(@Param("pmid")long pmid, @Param("status") int status);
 }

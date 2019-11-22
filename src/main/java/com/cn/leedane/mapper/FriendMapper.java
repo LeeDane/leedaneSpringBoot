@@ -28,7 +28,7 @@ public interface FriendMapper extends BaseMapper<FriendBean>{
 	 * @param to_user_id  对方用户的id
 	 * @return
 	 */
-	public List<Map<String, Object>> isFriend(@Param("id")int id, @Param("toUserId")int to_user_id, @Param("status")int status);
+	public List<Map<String, Object>> isFriend(@Param("id")long id, @Param("toUserId")long to_user_id, @Param("status")int status);
 	
 	/**
 	 * 判断两人是否是朋友的关系（包括一方申请还没有同意）
@@ -36,6 +36,6 @@ public interface FriendMapper extends BaseMapper<FriendBean>{
 	 * @param to_user_id  对方用户的id
 	 * @return
 	 */
-	public List<Map<String, Object>> isFriendRecord(@Param("id")int id, @Param("toUserId")int to_user_id);
+	public List<Map<String, Object>> isFriendRecord(@Param("id")long id, @Param("toUserId")long to_user_id);
 	
 }

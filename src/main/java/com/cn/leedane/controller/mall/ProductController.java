@@ -68,7 +68,7 @@ public class ProductController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/product/{productId}/statistics", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> statistics(@PathVariable("productId") int productId, HttpServletRequest request){
+	public Map<String, Object> statistics(@PathVariable("productId") long productId, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
@@ -81,7 +81,7 @@ public class ProductController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/product/{productId}/recommend", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> recommend(@PathVariable("productId") int productId, HttpServletRequest request){
+	public Map<String, Object> recommend(@PathVariable("productId") long productId, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		

@@ -33,7 +33,7 @@ public interface S_HomeShopService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(int shopId, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> delete(long shopId, UserBean user, HttpRequestInfoBean request);
 	
 	
 	/**

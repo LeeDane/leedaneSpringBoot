@@ -35,7 +35,7 @@ public interface S_ProductService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> statistics(int productId, JSONObject json,
+	public Map<String, Object> statistics(long productId, JSONObject json,
 			UserBean user, HttpRequestInfoBean request);
 
 	/**
@@ -47,7 +47,7 @@ public interface S_ProductService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> recommend(int productId,
+	public Map<String, Object> recommend(long productId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request);
 	

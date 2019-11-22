@@ -9,7 +9,7 @@
 <mapper namespace="com.cn.leedane.mapper.mall.S_ShopMapper">
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
-	<select id="getShop" parameterType="int" resultMap="objectBean">
+	<select id="getShop" resultMap="objectBean">
 		select s.id, s.validation, s.detail, s.status, s.create_user_id, date_format(s.create_time,'%Y-%m-%d %H:%i:%s') create_time
 		, s.is_official, s.validation_detail, s.shop_name, s.link, s.img
 		from t_mall_shop s 

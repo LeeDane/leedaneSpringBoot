@@ -27,14 +27,14 @@ public class CircleMemberBean extends RecordTimeBean{
 	 */
 	@Column("member_id")
 	@Field
-	private int memberId;
+	private long memberId;
 	
 	/**
 	 * 圈子id,外键是CircleBean的id
 	 */
 	@Column("circle_id")
 	@Field
-	private int circleId;
+	private long circleId;
 	
 	/**
 	 * 权限的类型，为1是创建者，2是管理者，0是普通
@@ -52,19 +52,19 @@ public class CircleMemberBean extends RecordTimeBean{
 	@Field
 	private boolean memberRecommend;
 
-	public int getMemberId() {
+	public long getMemberId() {
 		return memberId;
 	}
 
-	public void setMemberId(int memberId) {
+	public void setMemberId(long memberId) {
 		this.memberId = memberId;
 	}
 
-	public int getCircleId() {
+	public long getCircleId() {
 		return circleId;
 	}
 
-	public void setCircleId(int circleId) {
+	public void setCircleId(long circleId) {
 		this.circleId = circleId;
 	}
 

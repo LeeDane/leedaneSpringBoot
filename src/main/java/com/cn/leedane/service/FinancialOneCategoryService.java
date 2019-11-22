@@ -26,7 +26,7 @@ public interface FinancialOneCategoryService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<FinancialOneLevelCategoryBean> getAllDefault(int userId);
+	public List<FinancialOneLevelCategoryBean> getAllDefault(long userId);
 	
 	/**
 	 * 获取用户所有的一级分类

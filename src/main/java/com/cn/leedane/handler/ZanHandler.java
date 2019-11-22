@@ -34,7 +34,7 @@ public class ZanHandler {
 	 * @param tableId
 	 * @return
 	 */
-	public int getZanNumber(String tableName, int tableId){
+	public int getZanNumber(String tableName, long tableId){
 		String zanKey = getZanKey(tableName, tableId);
 		int zanNumber;
 		//赞
@@ -54,7 +54,7 @@ public class ZanHandler {
 	 * @param tableName
 	 * @return
 	 */
-	public boolean addZanNumber(int tableId, String tableName){
+	public boolean addZanNumber(long tableId, String tableName){
 		String zanKey = getZanKey(tableName, tableId);
 		boolean result = false;
 		//赞
@@ -77,7 +77,7 @@ public class ZanHandler {
 	 * @param user
 	 * @return
 	 */
-	public boolean cancelZan(int tableId, String tableName, UserBean user){
+	public boolean cancelZan(long tableId, String tableName, UserBean user){
 		String zanKey = getZanKey(tableName, tableId);
 		String zanUserKey = getZanUserKey(tableName, tableId);
 		boolean result = false;
@@ -127,7 +127,7 @@ public class ZanHandler {
 	 * @param user
 	 * @return
 	 */
-	public boolean addZanUser(int tableId, String tableName, UserBean user){
+	public boolean addZanUser(long tableId, String tableName, UserBean user){
 		String zanUserKey = getZanUserKey(tableName, tableId);
 		boolean result = false;
 		//赞
@@ -182,7 +182,7 @@ public class ZanHandler {
 	 * @param tableName
 	 * @return
 	 */
-	private int getCurrentZanNumber(int tableId, String tableName){
+	private int getCurrentZanNumber(long tableId, String tableName){
 		//获取数据库中所有赞的数量
 		return SqlUtil.getTotalByList(zanMapper.executeSQL("select count(*) ct from "+DataTableType.赞.value+" where table_name=? and table_id = ?", tableName, tableId));
 	}
@@ -196,7 +196,7 @@ public class ZanHandler {
 	 * @param limit 限制数量，当赞人数多的时候，限制展示的人数，默认只展示6个
 	 * @return key是用户名， value是用户ID
 	 */
-	public String getZanUser(int tableId, String tableName, UserBean user, int limit){
+	public String getZanUser(long tableId, String tableName, UserBean user, int limit){
 		
 		String zanUserKey = getZanUserKey(tableName, tableId);
 		limit = limit == 0 ? 6 : limit;
@@ -275,7 +275,7 @@ public class ZanHandler {
 	 * @param tableId
 	 * @return
 	 */
-	public boolean deleteZanUsers(String tableName, int tableId){
+	public boolean deleteZanUsers(String tableName, long tableId){
 		return redisUtil.delete(getZanUserKey(tableName, tableId));
 	}
 
@@ -285,7 +285,7 @@ public class ZanHandler {
 	 * @param tableId
 	 * @return
 	 */
-	public boolean deleteZan(String tableName, int tableId){
+	public boolean deleteZan(String tableName, long tableId){
 		return redisUtil.delete(getZanKey(tableName, tableId));
 	}
 	
@@ -295,7 +295,7 @@ public class ZanHandler {
 	 * @param tableId
 	 * @return
 	 */
-	public static String getZanUserKey(String tableName, int tableId){
+	public static String getZanUserKey(String tableName, long tableId){
 		return ConstantsUtil.ZAN_USER_REDIS +tableName+"_"+tableId;
 	}
 	
@@ -305,7 +305,7 @@ public class ZanHandler {
 	 * @param tableId
 	 * @return
 	 */
-	public static String getZanKey(String tableName, int tableId){
+	public static String getZanKey(String tableName, long tableId){
 		return ConstantsUtil.ZAN_REDIS +tableName+"_"+tableId;
 	}
 }

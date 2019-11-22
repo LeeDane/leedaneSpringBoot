@@ -100,7 +100,7 @@ public class RoleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/role/{rlid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("rlid") int rlid){
+	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("rlid") long rlid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -145,7 +145,7 @@ public class RoleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/role/{rlid}/users", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> roles(Model model, HttpServletRequest request, @PathVariable("rlid") int rlid){
+	public Map<String, Object> roles(Model model, HttpServletRequest request, @PathVariable("rlid") long rlid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -160,7 +160,7 @@ public class RoleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/role/{rlid}/users/allot", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> allot(Model model, HttpServletRequest request, @PathVariable("rlid") int rlid){
+	public Map<String, Object> allot(Model model, HttpServletRequest request, @PathVariable("rlid") long rlid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

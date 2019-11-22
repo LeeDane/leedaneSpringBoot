@@ -37,7 +37,7 @@ public class BabyLifeBean extends RecordTimeBean{
 	 */
 	@Column("baby_id")
 	@Field
-	private int babyId;
+	private long babyId;
 	
 	/**
 	 * 发生日期
@@ -242,11 +242,11 @@ public class BabyLifeBean extends RecordTimeBean{
 		this.washEndTime = washEndTime;
 	}
 
-	public int getBabyId() {
+	public long getBabyId() {
 		return babyId;
 	}
 
-	public void setBabyId(int babyId) {
+	public void setBabyId(long babyId) {
 		this.babyId = babyId;
 	}
 	

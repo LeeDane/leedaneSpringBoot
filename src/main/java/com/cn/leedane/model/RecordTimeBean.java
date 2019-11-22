@@ -33,7 +33,7 @@ public abstract class RecordTimeBean extends StatusBean{
 	
 	@Column("create_user_id")
 	@Field
-	protected int createUserId;
+	protected long createUserId;
 	
 	/**
 	 * 最后修改时间
@@ -48,7 +48,7 @@ public abstract class RecordTimeBean extends StatusBean{
 	private UserBean modifyUser; */
 	
 	@Column("modify_user_id")
-	protected int modifyUserId;
+	protected long modifyUserId;
 	
 	//@Column(name="create_time")
 	//@JSON(format = "yyyy-MM-dd HH:mm:ss")
@@ -93,23 +93,23 @@ public abstract class RecordTimeBean extends StatusBean{
 	}*/
 	
 	@JSONField(name="create_user_id")
-	public int getCreateUserId() {
+	public long getCreateUserId() {
 		return createUserId;
 	}
 	@JSONField(name="create_user_id")
-	public void setCreateUserId(int createUserId) {
+	public void setCreateUserId(long createUserId) {
 		this.createUserId = createUserId;
 		if(modifyUserId < 1)
 			setModifyUserId(createUserId);
 	}
 	
 	@JSONField(name="modify_user_id")
-	public int getModifyUserId() {
+	public long getModifyUserId() {
 		return modifyUserId;
 	}
 	
 	@JSONField(name="modify_user_id")
-	public void setModifyUserId(int modifyUserId) {
+	public void setModifyUserId(long modifyUserId) {
 		this.modifyUserId = modifyUserId;
 	}
 	

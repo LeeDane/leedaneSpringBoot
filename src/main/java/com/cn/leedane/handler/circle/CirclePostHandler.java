@@ -140,7 +140,7 @@ public class CirclePostHandler {
 	 * @param userId
 	 * @return
 	 */
-	public CircleUserPostsBean getUserCirclePosts(int userId){
+	public CircleUserPostsBean getUserCirclePosts(long userId){
 		String key = getUserCirclePostKey(userId);
 		Object obj = systemCache.getCache(key);
 		CircleUserPostsBean userPostBean = null;
@@ -216,7 +216,7 @@ public class CirclePostHandler {
 	 * @param limit
 	 * @return
 	 */
-	private CircleUserPostsBean getTheUserCirclePosts(int userId, int limit){
+	private CircleUserPostsBean getTheUserCirclePosts(long userId, int limit){
 		CircleUserPostsBean userPostsBean = new CircleUserPostsBean();
 		//这里只缓存8条用户最新帖子记录
 		userPostsBean.setPosts(getCircleUserPost(circlePostMapper.getUserCirclePosts(userId, 0, limit, ConstantsUtil.STATUS_NORMAL)));
@@ -250,7 +250,7 @@ public class CirclePostHandler {
 	 * @param userId
 	 * @return
 	 */
-	public boolean deleteUserCirclePosts(int userId){
+	public boolean deleteUserCirclePosts(long userId){
 		String key = getUserCirclePostKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -263,7 +263,7 @@ public class CirclePostHandler {
 	 * @param userId
 	 * @return
 	 */
-	public CircleUserPostsBean getUserPostPosts(int circleId, int userId){
+	public CircleUserPostsBean getUserPostPosts(long circleId, long userId){
 		/*CirclePostBean postBean =CirclePostBean 
 		if(postBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该帖子不存在.value));
@@ -322,7 +322,7 @@ public class CirclePostHandler {
 	 * @param userId
 	 * @return
 	 */
-	public boolean deleteUserPostPosts(int circleId, int userId){
+	public boolean deleteUserPostPosts(long circleId, long userId){
 		String key = getUserPostPostKey(circleId, userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -336,7 +336,7 @@ public class CirclePostHandler {
 	 * @param limit
 	 * @return
 	 */
-	private CircleUserPostsBean getTheUserPostPosts(int circleId, int userId, int limit){
+	private CircleUserPostsBean getTheUserPostPosts(long circleId, long userId, int limit){
 		CircleUserPostsBean userPostsBean = new CircleUserPostsBean();
 		//这里只缓存8条用户最新帖子记录
 		userPostsBean.setPosts(getCircleUserPost(circlePostMapper.getUserPostPosts(circleId, userId, 0, limit, ConstantsUtil.STATUS_NORMAL)));
@@ -348,7 +348,7 @@ public class CirclePostHandler {
 	 * 添加转发帖子
 	 * @param postId
 	 */
-	public void addTransmit(int postId){
+	public void addTransmit(long postId){
 		String key = TransmitHandler.getTransmitKey(DataTableType.帖子.value, postId);
 		int count = 0;
 		//还没有添加到redis中
@@ -366,7 +366,7 @@ public class CirclePostHandler {
 	 * @param postId
 	 * @return
 	 */
-	public int getTransmitNumber(int postId){
+	public int getTransmitNumber(long postId){
 		
 		String transmitKey = TransmitHandler.getTransmitKey(DataTableType.帖子.value, postId);
 		int transmitNumber;
@@ -385,7 +385,7 @@ public class CirclePostHandler {
 	 * 删除转发后修改转发数量
 	 * @param postId
 	 */
-	public void deleteTransmit(int postId){
+	public void deleteTransmit(long postId){
 		String transmitKey = TransmitHandler.getTransmitKey(DataTableType.帖子.value, postId);
 		int transmitNumber;
 		//转发
@@ -404,7 +404,7 @@ public class CirclePostHandler {
 	 * @param postId
 	 * @return
 	 */
-	public CirclePostBean getNormalCirclePostBean(int postId){
+	public CirclePostBean getNormalCirclePostBean(long postId){
 		return getNormalCirclePostBean(-1, postId, null);
 	}
 	
@@ -413,7 +413,7 @@ public class CirclePostHandler {
 	 * @param postId
 	 * @return
 	 */
-	public boolean deletePostBeanCache(int postId){
+	public boolean deletePostBeanCache(long postId){
 		String key = getPostKey(postId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -427,7 +427,7 @@ public class CirclePostHandler {
 	 * @param user
 	 * @return
 	 */
-	public List<Map<String, Object>> getPostDetail(int postId, UserBean user){
+	public List<Map<String, Object>> getPostDetail(long postId, UserBean user){
 		CirclePostBean circlePostBean = getNormalCirclePostBean(postId);
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		if(circlePostBean != null){
@@ -449,7 +449,7 @@ public class CirclePostHandler {
 	 * @param user
 	 * @return
 	 */
-	public CirclePostBean getNormalCirclePostBean(CircleBean circle, int postId, UserBean user){
+	public CirclePostBean getNormalCirclePostBean(CircleBean circle, long postId, UserBean user){
 		return getNormalCirclePostBean(circle.getId(), postId, user);
 	}
 	
@@ -459,7 +459,7 @@ public class CirclePostHandler {
 	 * @param postId
 	 * @return
 	 */
-	public CirclePostBean getNormalCirclePostBean(CircleBean circle, int postId){
+	public CirclePostBean getNormalCirclePostBean(CircleBean circle, long postId){
 		return getNormalCirclePostBean(circle.getId(), postId, null);
 	}
 	
@@ -471,7 +471,7 @@ public class CirclePostHandler {
 	 * @param user 不为空将校验帖子和该用户是否是同一个
 	 * @return
 	 */
-	public CirclePostBean getNormalCirclePostBean(int circleId, int postId, UserBean user){
+	public CirclePostBean getNormalCirclePostBean(long circleId, long postId, UserBean user){
 		CirclePostBean circlePostBean = getCirclePostBean(postId);
 		if(postId > 0 && circlePostBean != null){
 			//非正常状态
@@ -487,7 +487,7 @@ public class CirclePostHandler {
 	 * @param user 不为空将校验帖子和该用户是否是同一个
 	 * @return
 	 */
-	public CirclePostBean getCirclePostBean(int postId, UserBean user){
+	public CirclePostBean getCirclePostBean(long postId, UserBean user){
 		return getCirclePostBean(postId);
 	}
 	
@@ -497,7 +497,7 @@ public class CirclePostHandler {
 	 * @param postId
 	 * @return
 	 */
-	private CirclePostBean getCirclePostBean(int postId){		
+	private CirclePostBean getCirclePostBean(long postId){
 		String key = getPostKey(postId);
 		Object obj = systemCache.getCache(key);
 		CirclePostBean circlePostBean = null;
@@ -550,7 +550,7 @@ public class CirclePostHandler {
 	 * @param postId
 	 * @return
 	 */
-	public CirclePostBean getNormalCirclePostBean(int circleId, int postId){
+	public CirclePostBean getNormalCirclePostBean(long circleId, long postId){
 		return getNormalCirclePostBean(circleId, postId, null);
 	}
 	
@@ -559,7 +559,7 @@ public class CirclePostHandler {
 	 * @param postId
 	 * @return
 	 */
-	public static String getPostKey(int postId){
+	public static String getPostKey(long postId){
 		return ConstantsUtil.CIRCLE_REDIS + "P_" + postId;
 	}
 	
@@ -568,7 +568,7 @@ public class CirclePostHandler {
 	 * @param userId
 	 * @return
 	 */
-	public static String getUserCirclePostKey(int userId){
+	public static String getUserCirclePostKey(long userId){
 		return ConstantsUtil.CIRCLE_REDIS +"_U_" + userId;
 	}
 	
@@ -578,7 +578,7 @@ public class CirclePostHandler {
 	 * @param userId
 	 * @return
 	 */
-	public static String getUserPostPostKey(int circleId, int userId){
+	public static String getUserPostPostKey(long circleId, long userId){
 		return ConstantsUtil.CIRCLE_REDIS+ circleId +"_U_" + userId;
 	}
 	

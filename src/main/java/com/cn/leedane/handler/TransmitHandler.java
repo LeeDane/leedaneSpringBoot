@@ -28,7 +28,7 @@ public class TransmitHandler {
 	 * @param tableName
 	 * @param tableId
 	 */
-	public void addTransmit(String tableName, int tableId){
+	public void addTransmit(String tableName, long tableId){
 		String key = TransmitHandler.getTransmitKey(tableName, tableId);
 		int count = 0;
 		//还没有添加到redis中
@@ -46,7 +46,7 @@ public class TransmitHandler {
 	 * @param tableId
 	 * @return
 	 */
-	public int getTransmitNumber(String tableName, int tableId){
+	public int getTransmitNumber(String tableName, long tableId){
 		String transmitKey = getTransmitKey(tableName, tableId);
 		int transmitNumber;
 		//转发
@@ -64,7 +64,7 @@ public class TransmitHandler {
 	 * @param tableName
 	 * @param tableId
 	 */
-	public void deleteTransmit(String tableName, int tableId){
+	public void deleteTransmit(String tableName, long tableId){
 		String transmitKey = getTransmitKey(tableName, tableId);
 		int transmitNumber;
 		//转发
@@ -83,7 +83,7 @@ public class TransmitHandler {
 	 * @param userId
 	 * @return
 	 */
-	public int getTransmits(int userId){
+	public int getTransmits(long userId){
 		return SqlUtil.getTotalByList(transmitMapper.getTotalByUser(DataTableType.转发.value, userId));
 	}
 
@@ -93,7 +93,7 @@ public class TransmitHandler {
 	 * @param tableId
 	 * @return
 	 */
-	public static String getTransmitKey(String tableName, int tableId){
+	public static String getTransmitKey(String tableName, long tableId){
 		return ConstantsUtil.TRANSMIT_REDIS +tableName+"_"+tableId;
 	}
 }

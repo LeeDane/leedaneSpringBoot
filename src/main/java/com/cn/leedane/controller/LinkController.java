@@ -68,7 +68,7 @@ public class LinkController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/link/{lnid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("lnid") int lnid){
+	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("lnid") long lnid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -113,7 +113,7 @@ public class LinkController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/link/{lnid}/roleOrPermissions", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> roleOrPermissions(Model model, HttpServletRequest request, @PathVariable("lnid") int lnid){
+	public Map<String, Object> roleOrPermissions(Model model, HttpServletRequest request, @PathVariable("lnid") long lnid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -129,7 +129,7 @@ public class LinkController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/link/{lnid}/roleOrPermissions/allot", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> allot(Model model, HttpServletRequest request, @PathVariable("lnid") int lnid){
+	public Map<String, Object> allot(Model model, HttpServletRequest request, @PathVariable("lnid") long lnid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

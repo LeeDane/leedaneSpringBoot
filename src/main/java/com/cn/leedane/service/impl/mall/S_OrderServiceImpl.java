@@ -88,7 +88,7 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 	}
 	
 	@Override
-	public Map<String, Object> update(int orderId, JSONObject jo, UserBean user,
+	public Map<String, Object> update(long orderId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		
 		logger.info("S_OrderServiceImpl-->update(): orderId = "+ orderId +",jo="+jo);
@@ -179,7 +179,7 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 	}
 	
 	@Override
-	public Map<String, Object> delete(int orderId, UserBean user, HttpRequestInfoBean request){
+	public Map<String, Object> delete(long orderId, UserBean user, HttpRequestInfoBean request){
 		logger.info("S_OrderServiceImpl-->delete():orderId=" +orderId);
 		ResponseMap message = new ResponseMap();
 		S_OrderBean orderBean = orderMapper.findById(S_OrderBean.class, orderId);

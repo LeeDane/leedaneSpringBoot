@@ -43,7 +43,7 @@ public interface PermissionService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int pmid, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> delete(long pmid, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 分页获取权限列表
@@ -72,7 +72,7 @@ public interface PermissionService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> roles(int pmid, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> roles(long pmid, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 给角色分配权限
@@ -82,5 +82,5 @@ public interface PermissionService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> allot(int pmid,String roles, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> allot(long pmid,String roles, UserBean user, HttpRequestInfoBean request);
 }

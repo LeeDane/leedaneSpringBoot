@@ -117,7 +117,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	@Autowired
 	private ElasticSearchUtil elasticSearchUtil;
 	@Override
-	public UserBean findById(int uid) {
+	public UserBean findById(long uid) {
 		return userMapper.findById(UserBean.class, uid);
 	}
 
@@ -952,7 +952,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	public Map<String, Object> shakeSearch(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->shakeSearch():jo="+jo.toString());
-		int userId = 0; //获取到的用户的ID
+		long userId = 0; //获取到的用户的ID
 		ResponseMap message = new ResponseMap();
 		
 		UserBean userBean = userMapper.shakeSearch(user.getId(), ConstantsUtil.STATUS_NORMAL);
@@ -1276,10 +1276,10 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		logger.info("UserServiceImpl-->searchUserByUserIdOrAccount():jo=" +jo.toString());
 		
 		int type = JsonUtil.getIntValue(jo, "type", 0);// 0表示ID，1表示名称
-		int searchUserId = 0;
+		long searchUserId = 0;
 		ResponseMap message = new ResponseMap();		
 		if(type == 0){
-			searchUserId = JsonUtil.getIntValue(jo, "searchUserIdOrAccount", user.getId());
+			searchUserId = JsonUtil.getLongValue(jo, "searchUserIdOrAccount", user.getId());
 		}else if(type == 1){
 			String account = JsonUtil.getStringValue(jo, "searchUserIdOrAccount");
 			if(StringUtil.isNull(account)){
@@ -1439,7 +1439,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	public Map<String, Object> deleteUser(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->deleteUser():jo=" +jo.toString());
-		int toUserId = JsonUtil.getIntValue(jo, "to_user_id", user.getId());// 0表示ID，1表示名称
+		long toUserId = JsonUtil.getLongValue(jo, "to_user_id", user.getId());// 0表示ID，1表示名称
 		ResponseMap message = new ResponseMap();
 
 		//

@@ -35,7 +35,7 @@ public class CommentHandler {
 	 * @param tableName
 	 * @param tableId
 	 */
-	public void addComment(String tableName, int tableId){
+	public void addComment(String tableName, long tableId){
 		String key = getCommentKey(tableName, tableId);
 		int count = 0;
 		//还没有添加到redis中
@@ -53,7 +53,7 @@ public class CommentHandler {
 	 * @param commentId
 	 * @return
 	 */
-	public CommentBean getComment(int commentId){
+	public CommentBean getComment(long commentId){
 		CommentBean commentBean = null;
 		String key = getCommentKey(commentId);
 		Object obj = systemCache.getCache(key);
@@ -98,7 +98,7 @@ public class CommentHandler {
 	 * @param tableId
 	 * @return
 	 */
-	public int getCommentNumber(String tableName, int tableId){
+	public int getCommentNumber(String tableName, long tableId){
 		String commentKey = getCommentKey(tableName, tableId);
 		int commentNumber;
 		//评论
@@ -116,7 +116,7 @@ public class CommentHandler {
 	 * @param userId
 	 * @return
 	 */
-	public int getComments(int userId){
+	public int getComments(long userId){
 		return SqlUtil.getTotalByList(commentMapper.getTotalByUser(DataTableType.评论.value, userId));
 	}
 	
@@ -125,7 +125,7 @@ public class CommentHandler {
 	 * @param tableName
 	 * @param tableId
 	 */
-	public void deleteComment(String tableName, int tableId){
+	public void deleteComment(String tableName, long tableId){
 		String commentKey = getCommentKey(tableName, tableId);
 		int commentNumber;
 		//评论
@@ -145,7 +145,7 @@ public class CommentHandler {
 	 * @param tableId
 	 * @return
 	 */
-	public static String getCommentKey(String tableName, int tableId){
+	public static String getCommentKey(String tableName, long tableId){
 		return ConstantsUtil.COMMENT_REDIS +tableName+"_"+tableId;
 	}
 
@@ -153,7 +153,7 @@ public class CommentHandler {
 	 * 根据用户ID删除该评论的cache和redis缓存
 	 * @return
 	 */
-	public boolean deleteComment(int commentId){
+	public boolean deleteComment(long commentId){
 		String key = getCommentKey(commentId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -164,7 +164,7 @@ public class CommentHandler {
 	 * 获取该评论在redis的key
 	 * @return
 	 */
-	public static String getCommentKey(int commentId){
+	public static String getCommentKey(long commentId){
 		return ConstantsUtil.COMMENT_REDIS + "id"+ commentId;
 	}
 }

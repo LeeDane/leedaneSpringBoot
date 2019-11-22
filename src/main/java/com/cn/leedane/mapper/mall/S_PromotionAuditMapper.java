@@ -18,6 +18,6 @@ public interface S_PromotionAuditMapper extends BaseMapper<S_WishBean>{
 	 * @param userId
 	 * @return
 	 */
-	public S_PromotionAuditBean getAudit(@Param("userId") int userId, @Param("status") int status);
+	public S_PromotionAuditBean getAudit(@Param("userId") long userId, @Param("status") int status);
 	
 }

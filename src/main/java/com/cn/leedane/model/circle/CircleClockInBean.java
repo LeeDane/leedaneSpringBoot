@@ -23,12 +23,12 @@ public class CircleClockInBean extends RecordTimeBean{
 	 */
 	@Column("circle_id")
 	@Field
-	private int circleId;
+	private long circleId;
 
 	/**
 	 * 上次记录的id
 	 */
-	private int pid;  
+	private long pid;
 	
 	/**
 	 * 连续签到的天数
@@ -47,11 +47,11 @@ public class CircleClockInBean extends RecordTimeBean{
 	@Field
 	private String createDate;
 
-	public int getPid() {
+	public long getPid() {
 		return pid;
 	}
 
-	public void setPid(int pid) {
+	public void setPid(long pid) {
 		this.pid = pid;
 	}
 
@@ -79,11 +79,11 @@ public class CircleClockInBean extends RecordTimeBean{
 		this.createDate = createDate;
 	}
 
-	public int getCircleId() {
+	public long getCircleId() {
 		return circleId;
 	}
 
-	public void setCircleId(int circleId) {
+	public void setCircleId(long circleId) {
 		this.circleId = circleId;
 	}
 	

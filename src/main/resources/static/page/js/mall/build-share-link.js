@@ -2,7 +2,7 @@
  * 初始化点击复制事件
  */
 function initClipBoard(){
-	var clipboard = new Clipboard('.layui-btn');
+	var clipboard = new Clipboard('.layui-btn-tranform');
 
 	  clipboard.on('success', function(e) {
 	      //console.info('Action:', e.action);
@@ -10,15 +10,18 @@ function initClipBoard(){
 	      //console.info('Trigger:', e.trigger);
 	      //console.info('Trigger:', e.trigger.previousSibling.id);
 	      //$("#"+ e.trigger.previousSibling.id).text(e.text);
-	      layer.tips('已复制成功', "#"+ e.trigger.previousSibling.id, {time: 1000});
+	      var id = e.trigger.previousElementSibling.id;
+
+	      //1-上，2-右，3-下，4-左
+	      layer.tips('复制成功', "#"+ id, {time: 2000,  tips: [1, '#009688']});
 	      //layer.msg("链接已复制成功");
-	      //e.clearSelection();
+	      e.clearSelection();
 	  });
 
 	  clipboard.on('error', function(e) {
 	      //console.error('Action:', e.action);
 	      //console.error('Trigger:', e.trigger);
-		  layer.tips('复制失败', "#"+ e.trigger.previousSibling.id, {time: 1000});
+		  layer.tips('复制失败', "#"+ e.trigger.previousElementSibling.id, {time: 2000,  tips: [1, '#FF5722']});
 	  });
 }
 

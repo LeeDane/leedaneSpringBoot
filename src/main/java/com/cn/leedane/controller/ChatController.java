@@ -102,7 +102,6 @@ public class ChatController extends BaseController{
 	/**
 	 * 获取登录用户的全部与其有过聊天记录的用户的最新一条聊天信息
 	 * @param request
-	 * @param response
 	 * @return
 	 */
 	@RequestMapping(value = "/chat", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})

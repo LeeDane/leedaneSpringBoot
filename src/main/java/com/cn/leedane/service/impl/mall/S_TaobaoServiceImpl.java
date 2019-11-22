@@ -1,5 +1,8 @@
 package com.cn.leedane.service.impl.mall;
 
+import com.cn.leedane.exception.ParameterUnspecificationException;
+import com.cn.leedane.handler.QRCodeEncoderHandler;
+import com.cn.leedane.handler.ZXingCodeHandler;
 import com.cn.leedane.handler.mall.S_ProductHandler;
 import com.cn.leedane.mapper.mall.S_ProductMapper;
 import com.cn.leedane.model.HttpRequestInfoBean;
@@ -12,10 +15,13 @@ import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.mall.MallRoleCheckService;
 import com.cn.leedane.service.mall.S_BigEventService;
 import com.cn.leedane.service.mall.S_TaobaoService;
-import com.cn.leedane.taobao.api.AlimamaShareLink;
+import com.cn.leedane.taobao.api.*;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.StringUtil;
+import com.google.zxing.WriterException;
+import com.taobao.api.ApiException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -274,6 +280,82 @@ public class S_TaobaoServiceImpl extends MallRoleCheckService implements S_Taoba
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"对淘宝的商品ID为", taobaoId, "生成分享链接。", "结果是：", StringUtil.getSuccessOrNoStr(true)).toString(), "buildShare()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
 	}
+
+	@Override
+	public Map<String, Object> productRecommend(long productId, JSONObject jo, UserBean user,
+									  HttpRequestInfoBean request) throws ApiException {
+
+		logger.info("S_TaobaoServiceImpl-->productRecommend(): productId="+ productId +", jo="+jo);
+		ResponseMap message = new ResponseMap();
+
+		long count = JsonUtil.getLongValue(jo, "count", 12);
+		message.put("message", SearchMaterialApi.search(productId, count).getTaobaoItems());
+		message.put("isSuccess", true);
+		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+
+		//保存操作日志
+//		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user != null ? user.getAccount(): "","对淘宝的商品发起查询", "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "search()", ConstantsUtil.STATUS_NORMAL, 0);
+		return message.getMap();
+	}
+
+	@Override
+	public Map<String, Object> transform(JSONObject jo, UserBean user,
+												HttpRequestInfoBean request) throws ApiException, WriterException {
+
+		logger.info("S_TaobaoServiceImpl-->transform(): jo="+jo);
+		ResponseMap message = new ResponseMap();
+
+		//标题，不能为空，不然无法转发淘口令
+		String title = JsonUtil.getStringValue(jo, "title");
+		if(StringUtil.isNull(title))
+			throw new ParameterUnspecificationException("param title must not null");
+
+		//主图地址，可以为空
+		String img = JsonUtil.getStringValue(jo, "img");
+
+		String longLink = JsonUtil.getStringValue(jo, "productUrl");
+		if(StringUtil.isNull(longLink))
+			throw new ParameterUnspecificationException("param productUrl must not null");
+
+		String longCouponLink = JsonUtil.getStringValue(jo, "couponUrl"); //获取优惠券的地址信息，可以为空
+		boolean hasCoupon = StringUtil.isNotNull(longCouponLink);
+
+		//封装查询请求参数
+		String[] links = new String[hasCoupon ? 2: 1];
+		links[0] = longLink;
+		if(hasCoupon)
+			links[1] = longCouponLink;
+
+		SpreadApi.ShortLinkResult shortLinkResult = SpreadApi.toShort(links);
+		TaobaoShareLinkBean shareLinkBean = new TaobaoShareLinkBean();
+		shareLinkBean.setClickUrl(longLink);
+		shareLinkBean.setCouponLink(longCouponLink);
+
+		if(shortLinkResult.getTotal() > 0){
+			if("OK".equalsIgnoreCase(shortLinkResult.getResults().get(0).getErrCode()))
+				shareLinkBean.setShortLinkUrl(shortLinkResult.getResults().get(0).getContent());
+			if(hasCoupon){
+				if("OK".equalsIgnoreCase(shortLinkResult.getResults().get(1).getErrCode()))
+					shareLinkBean.setCouponShortLinkUrl(shortLinkResult.getResults().get(1).getContent());
+			}
+
+		}else{
+			message.put("message", "无法生成共享链接！");
+			return message.getMap();
+		}
+
+		//获取淘口令
+		shareLinkBean.setTaoToken(TpwdApi.toTpwd(shareLinkBean.getShortLinkUrl(), img, title));
+		if(hasCoupon)
+			shareLinkBean.setCouponLinkTaoToken(TpwdApi.toTpwd(shareLinkBean.getCouponShortLinkUrl(), img, title));
+
+		shareLinkBean.setQrCodeUrl(ZXingCodeHandler.createQRCode(shareLinkBean.getShortLinkUrl(), 100));
+		if(hasCoupon)
+			shareLinkBean.setQrCouponCodeUrl(ZXingCodeHandler.createQRCode(shareLinkBean.getCouponShortLinkUrl(), 100));
+		message.put("message", shareLinkBean);
+		message.put("isSuccess", true);
+		return message.getMap();
+	}
 	
 	/**
 	 * 淘宝共享链接的实体bean
@@ -292,7 +374,8 @@ public class S_TaobaoServiceImpl extends MallRoleCheckService implements S_Taoba
 		
 		private String couponShortLinkUrl; //领券短链接
 		
-		private String qrCodeUrl; //二维码图片地址
+		private String qrCodeUrl; //二维码地址
+		private String qrCouponCodeUrl; //二维码领券地址
 		
 		private String clickUrl; //长链接的地址
 		
@@ -357,6 +440,13 @@ public class S_TaobaoServiceImpl extends MallRoleCheckService implements S_Taoba
 		public void setCouponLinkTaoToken(String couponLinkTaoToken) {
 			this.couponLinkTaoToken = couponLinkTaoToken;
 		}
-		
+
+		public String getQrCouponCodeUrl() {
+			return qrCouponCodeUrl;
+		}
+
+		public void setQrCouponCodeUrl(String qrCouponCodeUrl) {
+			this.qrCouponCodeUrl = qrCouponCodeUrl;
+		}
 	}
 }

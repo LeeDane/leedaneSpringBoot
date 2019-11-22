@@ -71,8 +71,8 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		}
 				
 		FriendBean friendBean = friendMapper.findById(FriendBean.class, fid);
-		int toUserId = friendBean.getToUserId();
-		int fromUserId = friendBean.getFromUserId();
+		long toUserId = friendBean.getToUserId();
+		long fromUserId = friendBean.getFromUserId();
 		boolean result = false;
 		if(friendBean != null){
 			result = friendMapper.deleteById(FriendBean.class, fid) > 0;
@@ -97,7 +97,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 	}
 
 	@Override
-	public boolean isFriend(int id, int to_user_id) {
+	public boolean isFriend(long id, long to_user_id) {
 		logger.info("FriendServiceImpl-->isFriend():id="+id+",to_user_id="+to_user_id);
 		return SqlUtil.getBooleanByList(this.friendMapper.isFriend(id, to_user_id, ConstantsUtil.STATUS_NORMAL));
 	}
@@ -224,7 +224,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 	}
 
 	@Override
-	public boolean isFriendRecord(int id, int to_user_id) {
+	public boolean isFriendRecord(long id, long to_user_id) {
 		logger.info("FriendServiceImpl-->isFriendRecord():id="+id+",to_user_id="+to_user_id);
 		return SqlUtil.getBooleanByList(this.friendMapper.isFriendRecord(id, to_user_id));
 	}

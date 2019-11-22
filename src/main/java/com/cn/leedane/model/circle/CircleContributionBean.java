@@ -22,7 +22,7 @@ public class CircleContributionBean extends RecordTimeBean{
 	 */
 	@Column("circle_id")
 	@Field
-	private int circleId;
+	private long circleId;
 	
 	/**
 	 * 当前的获得的贡献值(非总贡献值)
@@ -63,10 +63,10 @@ public class CircleContributionBean extends RecordTimeBean{
 	public void setScoreDesc(String scoreDesc) {
 		this.scoreDesc = scoreDesc;
 	}
-	public int getCircleId() {
+	public long getCircleId() {
 		return circleId;
 	}
-	public void setCircleId(int circleId) {
+	public void setCircleId(long circleId) {
 		this.circleId = circleId;
 	}
 	

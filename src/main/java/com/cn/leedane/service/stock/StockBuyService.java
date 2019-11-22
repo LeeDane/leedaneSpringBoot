@@ -25,7 +25,7 @@ public interface StockBuyService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> add(int stockId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> add(long stockId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 更新股票购买记录
@@ -36,7 +36,7 @@ public interface StockBuyService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> update(int stockId, int stockBuyId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> update(long stockId, long stockBuyId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 删除股票购买记录
@@ -47,6 +47,6 @@ public interface StockBuyService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int stockId, int stockBuyId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> delete(long stockId, long stockBuyId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 }

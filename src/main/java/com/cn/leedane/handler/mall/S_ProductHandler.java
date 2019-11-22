@@ -37,7 +37,7 @@ public class S_ProductHandler {
 	 * @param productId
 	 * @return
 	 */
-	public S_ProductBean getNormalProductBean(int productId){
+	public S_ProductBean getNormalProductBean(long productId){
 		S_ProductBean product = getProductBean(productId);
 		if(product == null || product.getStatus() != ConstantsUtil.STATUS_NORMAL){
 			return null;
@@ -50,7 +50,7 @@ public class S_ProductHandler {
 	 * @param productId
 	 * @return
 	 */
-	public S_ProductBean getProductBean(int productId){
+	public S_ProductBean getProductBean(long productId){
 		String key = getProductKey(productId);
 		Object obj = systemCache.getCache(key);
 		S_ProductBean productBean = null;
@@ -111,7 +111,7 @@ public class S_ProductHandler {
 	 * @param productId
 	 * @return
 	 */
-	public boolean deleteProductBeanCache(int productId){
+	public boolean deleteProductBeanCache(long productId){
 		String key = getProductKey(productId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -123,7 +123,7 @@ public class S_ProductHandler {
 	 * @param productId
 	 * @return
 	 */
-	public static String getProductKey(int productId){
+	public static String getProductKey(long productId){
 		return ConstantsUtil.PRODUCT_REDIS + productId;
 	}
 

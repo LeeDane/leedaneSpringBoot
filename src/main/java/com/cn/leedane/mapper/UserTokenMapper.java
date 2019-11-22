@@ -16,7 +16,7 @@ import com.cn.leedane.model.UserTokenBean;
 public interface UserTokenMapper  extends BaseMapper<UserTokenBean>{
 	
 	public List<UserTokenBean> getUserToken(
-				@Param("createUserId") int createUserId, 
+				@Param("createUserId") long createUserId,
 				@Param("status") int status, 
 				@Param("token") String token, 
 				@Param("serverTime") Date serverTime);

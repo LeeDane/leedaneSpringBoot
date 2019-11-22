@@ -88,7 +88,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	}
 	
 	@Override
-	public Map<String, Object> updateItem(int itemId, JSONObject json, UserBean user,
+	public Map<String, Object> updateItem(long itemId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->updateItem():json="+json +", itemId="+ itemId);
 		S_HomeItemBean homeItemBean = homeItemMapper.findById(S_HomeItemBean.class, itemId);
@@ -122,7 +122,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	}
 	
 	@Override
-	public Map<String, Object> getItem(int categoryId, UserBean user,
+	public Map<String, Object> getItem(long categoryId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->getItem():categoryId="+categoryId);
 		ResponseMap message = new ResponseMap();
@@ -139,7 +139,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	}
 	
 	@Override
-	public Map<String, Object> deleteItem(int itemId, UserBean user,
+	public Map<String, Object> deleteItem(long itemId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->deleteItem():itemId="+itemId);
 		
@@ -183,7 +183,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	}
 	
 	@Override
-	public Map<String, Object> matchingCategory(int itemId, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> matchingCategory(long itemId, UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->showCategoryList()");
 		ResponseMap message = new ResponseMap();
 		
@@ -249,7 +249,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	 * @param itemId
 	 * @return
 	 */
-	private boolean inCategoryList(List<S_HomeItemBean>  s_HomeItemBeans, int itemId) {
+	private boolean inCategoryList(List<S_HomeItemBean>  s_HomeItemBeans, long itemId) {
 		for(S_HomeItemBean homeItemBean: s_HomeItemBeans){
 			if(homeItemBean.getId() == itemId)
 				return true;
@@ -258,7 +258,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	}
 	
 	@Override
-	public Map<String, Object> updateCategory(int itemId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> updateCategory(long itemId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->updateCategory()");
 		ResponseMap message = new ResponseMap();
 		
@@ -291,7 +291,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	}
 
 	@Override
-	public Map<String, Object> addProduct(int itemId,
+	public Map<String, Object> addProduct(long itemId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		int productId = JsonUtil.getIntValue(json, "product_id");
@@ -328,7 +328,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	}
 
 	@Override
-	public Map<String, Object> deleteProduct(int itemId, int productId,
+	public Map<String, Object> deleteProduct(long itemId, long productId,
 			UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->deleteProduct():itemId="+itemId +", productId="+ productId);
 		ResponseMap message = new ResponseMap();

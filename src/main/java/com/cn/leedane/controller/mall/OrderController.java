@@ -51,7 +51,7 @@ public class OrderController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/order/{orderId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(@PathVariable("orderId") int orderId, Model model, HttpServletRequest request){
+	public Map<String, Object> update(@PathVariable("orderId") long orderId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -66,7 +66,7 @@ public class OrderController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/order/{orderId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@PathVariable("orderId") int orderId, Model model, HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("orderId") long orderId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

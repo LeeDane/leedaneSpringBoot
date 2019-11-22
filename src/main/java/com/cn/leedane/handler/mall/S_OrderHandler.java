@@ -32,7 +32,7 @@ public class S_OrderHandler {
 	 * @param userId
 	 * @return
 	 */
-	public int getNoDealOrderNumber(int userId){
+	public int getNoDealOrderNumber(long userId){
 		//deleteNoDealOrderCache(userId);
 		String key = getNoDealOrderKey(userId);
 		Object obj = systemCache.getCache(key);
@@ -58,7 +58,7 @@ public class S_OrderHandler {
 	 * @param userId
 	 * @return
 	 */
-	public boolean deleteNoDealOrderCache(int userId){
+	public boolean deleteNoDealOrderCache(long userId){
 		String key = getNoDealOrderKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -70,7 +70,7 @@ public class S_OrderHandler {
 	 * @param userId
 	 * @return
 	 */
-	public static String getNoDealOrderKey(int userId){
+	public static String getNoDealOrderKey(long userId){
 		return ConstantsUtil.NO_DEAL_ORDER_REDIS + userId;
 	}
 

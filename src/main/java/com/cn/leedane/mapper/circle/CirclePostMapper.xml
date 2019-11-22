@@ -28,14 +28,14 @@
    </resultMap>
    
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 --> 
-	<select id="getCirclePost" parameterType="int" resultType="java.util.Map">
+	<select id="getCirclePost" resultType="java.util.Map">
 		select cp.id, cp.status, cp.title, cp.content, cp.has_img, cp.circle_id, cp.pid, digest
 		, date_format(cp.create_time,'%Y-%m-%d %H:%i:%s') create_time, cp.create_user_id, cp.imgs, cp.tag, cp.post_score, cp.post_recommend
 		from t_circle_post cp
 		where cp.id = #{postId} and cp.status = #{status} limit 1
 	</select>
 	
-	<select id="paging" parameterType="int" resultType="java.util.Map">
+	<select id="paging" resultType="java.util.Map">
 		select cp.id, cp.status, cp.title, cp.has_img, cp.circle_id, cp.pid, cp.post_score, cp.post_recommend
 		, date_format(cp.create_time,'%Y-%m-%d %H:%i:%s') create_time, cp.create_user_id, cp.imgs, cp.tag, cm.role_type, cp.digest
 		from t_circle_post cp inner join t_circle_member cm on cp.create_user_id = cm.member_id and cp.circle_id = cm.circle_id
@@ -43,7 +43,7 @@
 		order by cp.id desc limit #{start}, #{pageSize}
 	</select>
 	
-	<select id="getUserCirclePosts" parameterType="int" resultMap="objectBean">
+	<select id="getUserCirclePosts" resultMap="objectBean">
 		select cp.id, cp.status, cp.title, cp.has_img, cp.circle_id, cp.pid, digest
 		, date_format(cp.create_time,'%Y-%m-%d %H:%i:%s') create_time, cp.create_user_id, cp.imgs, cp.tag, cp.post_score, cp.post_recommend
 		from t_circle_post cp 
@@ -51,7 +51,7 @@
 		order by cp.id desc limit #{start}, #{pageSize}
 	</select>
 	
-	<select id="getUserPostPosts" parameterType="int" resultMap="objectBean">
+	<select id="getUserPostPosts" resultMap="objectBean">
 		select cp.id, cp.status, cp.title, cp.has_img, cp.circle_id, cp.pid, cp.digest
 		, date_format(cp.create_time,'%Y-%m-%d %H:%i:%s') create_time, cp.create_user_id, cp.imgs, cp.tag, cp.post_score, cp.post_recommend
 		from t_circle_post cp 

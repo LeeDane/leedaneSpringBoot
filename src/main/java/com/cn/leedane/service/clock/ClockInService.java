@@ -33,7 +33,7 @@ public interface ClockInService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> update(int clockInId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> update(long clockInId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除任务打卡
@@ -42,7 +42,7 @@ public interface ClockInService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(int clockInId, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> delete(long clockInId, UserBean user, HttpRequestInfoBean request);
 
 
 	/**
@@ -54,7 +54,7 @@ public interface ClockInService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-    public Map<String, Object> clockIns(int clockId, String date, JSONObject json, UserBean user, HttpRequestInfoBean request);
+    public Map<String, Object> clockIns(long clockId, String date, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取用户的打卡详情
@@ -66,7 +66,7 @@ public interface ClockInService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-    public Map<String, Object> getUserClockIn(int clockId, int toUserId, String date, JSONObject json, UserBean user, HttpRequestInfoBean request);
+    public Map<String, Object> getUserClockIn(long clockId, long toUserId, String date, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 提醒继续发消息
@@ -77,7 +77,7 @@ public interface ClockInService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-    public Map<String, Object> userClockInNotification(int clockId, int clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+    public Map<String, Object> userClockInNotification(long clockId, long clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 审核
@@ -88,7 +88,7 @@ public interface ClockInService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> clockInCheck(int clockId, int clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> clockInCheck(long clockId, long clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 添加位置信息
@@ -99,7 +99,7 @@ public interface ClockInService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-    public Map<String, Object> clockInAddLocation(int clockId, int clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+    public Map<String, Object> clockInAddLocation(long clockId, long clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 添加图片信息
@@ -110,7 +110,7 @@ public interface ClockInService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> clockInAddImage(int clockId, int clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> clockInAddImage(long clockId, long clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 删除打卡资源(管理员和自己才能操作)
@@ -122,5 +122,5 @@ public interface ClockInService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deleteResource(int clockId, int clockInId, int resourceId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> deleteResource(long clockId, long clockInId, long resourceId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 }

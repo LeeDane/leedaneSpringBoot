@@ -47,7 +47,7 @@ public class StockBuyServiceImpl implements StockBuyService<StockBuyBean>{
 	private StockSellHandler stockSellHandler;
 
 	@Override
-	public Map<String, Object> add(int stockId, JSONObject json, UserBean user,
+	public Map<String, Object> add(long stockId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("StockBuyServiceImpl-->add(), stockId="+ stockId +", user=" +user.getAccount());
 		SqlUtil sqlUtil = new SqlUtil();
@@ -73,10 +73,10 @@ public class StockBuyServiceImpl implements StockBuyService<StockBuyBean>{
 	}
 	
 	@Override
-	public Map<String, Object> update(int stockId, int stockBuyId, JSONObject json, UserBean user,
+	public Map<String, Object> update(long stockId, long stockBuyId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("StockBuyServiceImpl-->update(), stockId= " + stockId +", stockBuyId="+ stockBuyId +",user=" +user.getAccount());
-		int userId = user.getId();
+		long userId = user.getId();
 		StockBuyBean oldStockBuyBean = stockBuyHandler.getNormalStockBuy(stockBuyId, userId, stockId);
 		ResponseMap message = new ResponseMap();
 		
@@ -102,9 +102,9 @@ public class StockBuyServiceImpl implements StockBuyService<StockBuyBean>{
 	}
 	
 	@Override
-	public Map<String, Object> delete(int stockId, int stockBuyId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> delete(long stockId, long stockBuyId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("StockBuyServiceImpl-->delete(), stockId= " + ", stockBuyId="+ stockBuyId +",user=" +user.getAccount());
-		int userId = user.getId();
+		long userId = user.getId();
 		StockBuyBean stockBuyBean = stockBuyHandler.getNormalStockBuy(stockBuyId, userId, stockId);
 		ResponseMap message = new ResponseMap();
 		

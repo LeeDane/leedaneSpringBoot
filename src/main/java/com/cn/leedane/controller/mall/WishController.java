@@ -51,7 +51,7 @@ public class WishController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/wish/{wishId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@PathVariable("wishId") int wishId, Model model, HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("wishId") long wishId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

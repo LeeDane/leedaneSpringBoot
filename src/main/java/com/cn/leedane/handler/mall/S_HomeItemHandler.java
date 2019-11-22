@@ -128,7 +128,7 @@ public class S_HomeItemHandler {
 	 * @param itemId
 	 * @return
 	 */
-	public S_HomeItemShowBean getCategory(int itemId) {
+	public S_HomeItemShowBean getCategory(long itemId) {
 		String key = getItemShowKey(itemId);
 		Object obj = systemCache.getCache(key);
 		S_HomeItemShowBean homeItemShowBean = null;
@@ -174,7 +174,7 @@ public class S_HomeItemHandler {
 		return homeItemShowBean;
 	}
 	
-	private S_HomeItemShowBean getHomeItemShowBean(int itemId){
+	private S_HomeItemShowBean getHomeItemShowBean(long itemId){
 		S_HomeItemShowBean itemShowBean = null;
 		List<S_HomeItemBean> homeItemBeans = homeItemMapper.findItemById(itemId);
 		if(CollectionUtil.isNotEmpty(homeItemBeans)){
@@ -223,7 +223,7 @@ public class S_HomeItemHandler {
 	 * @param itemId
 	 * @return
 	 */
-	public boolean deleteItemShowCache(int itemId){
+	public boolean deleteItemShowCache(long itemId){
 		String key = getItemShowKey(itemId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -235,7 +235,7 @@ public class S_HomeItemHandler {
 	 * @param itemId
 	 * @return
 	 */
-	public static String getItemShowKey(int itemId){
+	public static String getItemShowKey(long itemId){
 		return ConstantsUtil.MALL_CATEGORY_REDIS + itemId;
 	}
 

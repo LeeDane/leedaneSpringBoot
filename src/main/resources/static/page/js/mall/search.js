@@ -1,6 +1,7 @@
-var SEARCH_TYPE_PRODUCT = 5; //商品
-var SEARCH_TYPE_SHOP = 4; //商店
-var SEARCH_TYPE_TAOBAO = 6; //淘宝商品
+var SEARCH_TYPE_TB_PRODUCT = 5; //淘宝商品
+var SEARCH_TYPE_TB_SHOP = 4; //淘宝商店
+var SEARCH_TYPE_JD_PRODUCT = 6; //京东商品
+var SEARCH_TYPE_JD_SHOP = 7; //京东商品
 layui.use(['form', 'laypage'], function(){
 	  var element = layui.element;
 	  //监听Tab切换，以改变地址hash值
@@ -9,24 +10,24 @@ layui.use(['form', 'laypage'], function(){
 		  console.log(data.index); //得到当前Tab的所在下标
 		  switch(data.index){
 		  case 0:
-			   preType = SEARCH_TYPE_PRODUCT;
-			   product_start = 0;
-			   product_currentIndex = 0;
+			   preType = SEARCH_TYPE_TB_PRODUCT;
+			   tb_product_start = 0;
+			   tb_product_currentIndex = 0;
 			  	//商品
 			  	doSearch();
 		  		break;
 		  	case 1:  //商店 
-		  		preType = SEARCH_TYPE_SHOP;
-		  		shop_start = 0;
+		  		preType = SEARCH_TYPE_TB_SHOP;
+		  		tb_shop_start = 0;
 				shop_currentIndex = 0;
 		  		console.log(data.elem); //得到当前的Tab大容器
 		  		doSearch();
 			  break;
 			  
-		  	case 2:  //查询淘宝的商品
-		  		preType = SEARCH_TYPE_TAOBAO;
+		  	case 2:  //查询京东的商品
+		  		preType = SEARCH_TYPE_JD_PRODUCT;
 		  		taobao_start = 0;
-				taobao_currentIndex = 0;
+				jd_product_currentIndex = 0;
 		  		console.log(data.elem); //得到当前的Tab大容器
 		  		doSearch();
 			  break;
@@ -51,31 +52,47 @@ layui.use(['form', 'laypage'], function(){
 	
 	  $SearchContainer.val(searchKey);
 	  //搜索商品
-	  if(isEmpty(preType) || preType == SEARCH_TYPE_PRODUCT){
-		  preType = SEARCH_TYPE_PRODUCT;
-		  $("#li-product").addClass("layui-this");
-		  $("#li-shop").removeClass("layui-this");
-		  $("#li-taobao").removeClass("layui-this");
-		  $("#tab-content-product").addClass("layui-show");
-		  $("#tab-content-shop").removeClass("layui-show");
-		  $("#tab-content-taobao").removeClass("layui-show");
-	  }else if(preType == SEARCH_TYPE_SHOP){
-		  preType = SEARCH_TYPE_SHOP;
-		  $("#li-shop").addClass("layui-this");
-		  $("#li-product").removeClass("layui-this");
-		  $("#li-taobao").removeClass("layui-this");
-		  $("#tab-content-shop").addClass("layui-show");
-		  $("#tab-content-product").removeClass("layui-show");
-		  $("#tab-content-taobao").removeClass("layui-show");
-	  }else if(preType == SEARCH_TYPE_TAOBAO){
-		  preType = SEARCH_TYPE_TAOBAO;
-		  $("#li-taobao").addClass("layui-this");
-		  $("#li-product").removeClass("layui-this");
-		  $("#li-shop").removeClass("layui-this");
-		  $("#tab-content-taobao").addClass("layui-show");
-		  $("#tab-content-product").removeClass("layui-show");
-		  $("#tab-content-shop").removeClass("layui-show");
-	  }
+	  if(isEmpty(preType) || preType == SEARCH_TYPE_TB_PRODUCT){
+		  preType = SEARCH_TYPE_TB_PRODUCT;
+		  $("#li-tb-product").addClass("layui-this");
+		  $("#li-tb-shop").removeClass("layui-this");
+		  $("#li-jd-product").removeClass("layui-this");
+		  $("#li-jd-shop").removeClass("layui-this");
+		  $("#tab-content-tb-product").addClass("layui-show");
+		  $("#tab-content-tb-shop").removeClass("layui-show");
+		  $("#tab-content-jd-product").removeClass("layui-show");
+		  $("#tab-content-jd-shop").removeClass("layui-show");
+	  }else if(preType == SEARCH_TYPE_TB_SHOP){
+		  preType = SEARCH_TYPE_TB_SHOP;
+		  $("#li-tb-shop").addClass("layui-this");
+		  $("#li-tb-product").removeClass("layui-this");
+		  $("#li-jd-product").removeClass("layui-this");
+		  ("#li-jd-shop").removeClass("layui-this");
+		  $("#tab-content-tb-shop").addClass("layui-show");
+		  $("#tab-content-tb-product").removeClass("layui-show");
+		  $("#tab-content-jd-product").removeClass("layui-show");
+		  $("#tab-content-jd-shop").removeClass("layui-show");
+	  }else if(preType == SEARCH_TYPE_JD_PRODUCT){
+		  preType = SEARCH_TYPE_JD_PRODUCT;
+		  $("#li-jd-product").addClass("layui-this");
+		  $("#li-tb-product").removeClass("layui-this");
+		  $("#li-tb-shop").removeClass("layui-this");
+		  $("#li-jd-shop").removeClass("layui-this");
+		  $("#tab-content-jd-product").addClass("layui-show");
+		  $("#tab-content-tb-product").removeClass("layui-show");
+		  $("#tab-content-tb-shop").removeClass("layui-show");
+		  $("#tab-content-jd-shop").removeClass("layui-show");
+	  }else if(preType == SEARCH_TYPE_JD_SHOP){
+       		  preType = SEARCH_TYPE_JD_SHOP;
+       		  $("#li-jd-shop").addClass("layui-this");
+       		  $("#li-tb-product").removeClass("layui-this");
+       		  $("#li-tb-shop").removeClass("layui-this");
+       		  $("#li-jd-product").removeClass("layui-this");
+       		  $("#tab-content-jd-shop").addClass("layui-show");
+       		  $("#tab-content-tb-product").removeClass("layui-show");
+       		  $("#tab-content-tb-shop").removeClass("layui-show");
+       		  $("#tab-content-jd-product").removeClass("layui-show");
+       	  }
 	  doSearch();
 	  
 	  initClipBoard();
@@ -102,30 +119,30 @@ function searchShop(obj, type){
 	preType = type;
 	
 	 //搜索商品
-	  if(isEmpty(preType) || preType == SEARCH_TYPE_PRODUCT){
-		  preType = SEARCH_TYPE_PRODUCT;
+	  if(isEmpty(preType) || preType == SEARCH_TYPE_TB_PRODUCT){
+		  preType = SEARCH_TYPE_TB_PRODUCT;
 		  $("#li-product").addClass("layui-this");
 		  $("#li-shop").removeClass("layui-this");
 		  $("#li-taobao").removeClass("layui-this");
-		  $("#tab-content-product").addClass("layui-show");
-		  $("#tab-content-shop").removeClass("layui-show");
-		  $("#tab-content-taobao").removeClass("layui-show");
-	  }else if(preType == SEARCH_TYPE_SHOP){
-		  preType = SEARCH_TYPE_SHOP;
+		  $("#tab-content-tb-product").addClass("layui-show");
+		  $("#tab-content-tb-shop").removeClass("layui-show");
+		  $("#tab-content-jd-product").removeClass("layui-show");
+	  }else if(preType == SEARCH_TYPE_TB_SHOP){
+		  preType = SEARCH_TYPE_TB_SHOP;
 		  $("#li-shop").addClass("layui-this");
 		  $("#li-product").removeClass("layui-this");
 		  $("#li-taobao").removeClass("layui-this");
-		  $("#tab-content-shop").addClass("layui-show");
-		  $("#tab-content-product").removeClass("layui-show");
-		  $("#tab-content-taobao").removeClass("layui-show");
-	  }else if(preType == SEARCH_TYPE_TAOBAO){
-		  preType = SEARCH_TYPE_TAOBAO;
+		  $("#tab-content-tb-shop").addClass("layui-show");
+		  $("#tab-content-tb-product").removeClass("layui-show");
+		  $("#tab-content-jd-product").removeClass("layui-show");
+	  }else if(preType == SEARCH_TYPE_JD_PRODUCT){
+		  preType = SEARCH_TYPE_JD_PRODUCT;
 		  $("#li-taobao").addClass("layui-this");
 		  $("#li-product").removeClass("layui-this");
 		  $("#li-shop").removeClass("layui-this");
-		  $("#tab-content-taobao").addClass("layui-show");
-		  $("#tab-content-product").removeClass("layui-show");
-		  $("#tab-content-shop").removeClass("layui-show");
+		  $("#tab-content-jd-product").addClass("layui-show");
+		  $("#tab-content-tb-product").removeClass("layui-show");
+		  $("#tab-content-tb-shop").removeClass("layui-show");
 	  }
 	doSearch();
 }
@@ -135,18 +152,18 @@ function searchShop(obj, type){
  */
 function doSearch(){
 	var url = "";
-	if(SEARCH_TYPE_PRODUCT == preType){
-		$productContainer = $("#product-row-container");
-		$productContainer.empty();
-		url = "/s/s?"+ jsonToGetRequestParams(getProductsRequestParams());
-	}else if(SEARCH_TYPE_SHOP == preType){
+	if(SEARCH_TYPE_TB_PRODUCT == preType){
+	    $taobaoProductContainer = $("#tb-product-row-container");
+    	$taobaoProductContainer.empty();
+    	url = "/mall/search/product?"+ jsonToGetRequestParams(getTaobaosRequestParams());
+	}else if(SEARCH_TYPE_TB_SHOP == preType){
 		$shopContainer = $("#shop-row-container");
 		$shopContainer.empty();	
-		url = "/s/s?"+ jsonToGetRequestParams(getShopsRequestParams());
-	}else if(SEARCH_TYPE_TAOBAO == preType){
-		$taobaoContainer = $("#taobao-row-container");
-		$taobaoContainer.empty();
-		url = "/mall/taobao/search?"+ jsonToGetRequestParams(getTaobaosRequestParams());
+		url = "/mall/search/shop?"+ jsonToGetRequestParams(getShopsRequestParams());
+	}else if(SEARCH_TYPE_JD_PRODUCT == preType){
+		$productContainer = $("#product-row-container");
+        $productContainer.empty();
+        url = "/mall/search/product?"+ jsonToGetRequestParams(getProductsRequestParams());
 	}
 	
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
@@ -155,7 +172,7 @@ function doSearch(){
 		url : url,
 		dataType: 'json',
 		beforeSend:function(){
-			if(SEARCH_TYPE_PRODUCT == preType)
+			if(SEARCH_TYPE_TB_PRODUCT == preType)
 				$productContainer.empty();
 		},
 		beforeSend:function(){
@@ -165,16 +182,22 @@ function doSearch(){
 			layer.close(loadi);
 			$(".search-need-time").text(data.consumeTime);
 			if(data.isSuccess && isNotEmpty(data.message)){
-				if(data.message[preType]){
-					if(SEARCH_TYPE_PRODUCT == preType)
-						dealProductSearch(data.message[preType], data.total);
-					else if(SEARCH_TYPE_SHOP == preType){
-						dealShopSearch(data.message[preType], data.total);
+			    if(SEARCH_TYPE_TB_PRODUCT == preType)
+                    dealTaobaoProductSearch(data.message.list, data.total);
+                else if(SEARCH_TYPE_TB_SHOP == preType){
+                    dealTaobaoShopSearch(data.message[preType], data.total);
+                }else if(SEARCH_TYPE_JD_PRODUCT == preType)
+                    dealJingDongProductSearch(data.message[preType], data.total);
+				/*if(data.message[preType]){
+					if(SEARCH_TYPE_TB_PRODUCT == preType)
+					    dealTaobaoProductSearch(data.message.list, data.total);
+					else if(SEARCH_TYPE_TB_SHOP == preType){
+						dealTaobaoShopSearch(data.message[preType], data.total);
 					}	
 				}else {
-					if(SEARCH_TYPE_TAOBAO == preType)
-						dealTaobaoSearch(data.message.list, data.total);
-				}
+					if(SEARCH_TYPE_JD_PRODUCT == preType)
+						dealJingDongProductSearch(data.message[preType], data.total);
+				}*/
 			}else{
 				ajaxError(data);
 			}
@@ -190,11 +213,11 @@ function doSearch(){
  * 处理是商品的搜索
  * @param message
  */
-function dealProductSearch(message, total){
+function dealJingDongProductSearch(message, total){
 	$productContainer.empty();
 	products = message;
 	if(message.length == 0){
-		if(product_currentIndex == 0){
+		if(jd_product_currentIndex == 0){
 			$productContainer.append("搜索不到符合条件的商品，请换条件试试！");
 		}else{
 			$productContainer.append("已经没有更多的商品啦，请重新选择！");
@@ -205,8 +228,8 @@ function dealProductSearch(message, total){
 		}
 	}
 	
-	if(product_currentIndex == 0 && (!products || products.length ==0)){
-		$("#product-pager").empty();
+	if(jd_product_currentIndex == 0 && (!products || products.length ==0)){
+		$("#tb-product-pager").empty();
 		$("#product-pager").css("padding", "0");
 	}else{
 		$("#product-pager").css("padding", "5px");
@@ -215,8 +238,8 @@ function dealProductSearch(message, total){
 		    elem: 'product-pager' //注意，这里的 test1 是 ID，不用加 # 号
 		    ,layout: ['prev', 'page', 'next', 'count', 'skip']
 		    ,count: total[preType] //数据总数，从服务端得到
-		    ,limit: product_pageSize
-		    , curr: product_currentIndex + 1
+		    ,limit: jd_product_pageSize
+		    , curr: jd_product_currentIndex + 1
 		    ,jump: function(obj, first){
 			    //obj包含了当前分页的所有参数，比如：
 			    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
@@ -231,7 +254,7 @@ function dealProductSearch(message, total){
 }
 
 var product_pageSize = 3;
-var product_start = 0;
+var tb_product_start = 0;
 var product_currentIndex = 0;
 var product_totalPage = 0;
 var products;
@@ -257,7 +280,7 @@ function buildEachSearchProductRow(index, product){
 							'<div class="m-product-contrainer">'+
 								'<a class="m-product-desc" href="/mall/product/'+ product.id +'/detail" title="'+ changeNotNullString(product.title) +'">'+ changeNotNullString(product.title) +'</a>'+
 								'<p style="text-align: left;"><span class="m-product-price">¥'+ product.price +'</span> <span style="float: right; margin-right: 8px; text-decoration: line-through; font-size: 0.6em;">原价: ¥'+product.oldPrice +'</span></p>'+
-								'<p style="text-align: left;"><span class="m-product-price" style="font-size: 1.0em;">比率：'+ product.cashBackRatio +'%</span>&nbsp;&nbsp;<span style="float: right; margin-right: 8px; font-size: 1.0em;">佣金: ¥'+(product.price * product.cashBackRatio / 100).toFixed(2) +'</span></p>'+
+								'<p style="text-align: left;"><span class="m-product-price" style="font-size: 1.0em;">比率：'+ product.cashBackRatio +'%</span>&nbsp;&nbsp;<span style="float: right; margin-right: 8px; font-size: 1.0em;">佣金: ¥'+product.cashBack +'</span></p>'+
 							'</div>'+
 						'</div>'+
 					'</div>';
@@ -307,10 +330,10 @@ function productPriceSort(obj){
 
 /***********************************  商店   *************************************************/
 /**
- * 处理是商品的搜索
+ * 处理是淘宝商品的搜索
  * @param message
  */
-function dealShopSearch(message, total){
+function dealTaobaoShopSearch(message, total){
 	$shopContainer.empty();
 	shops = message;
 	if(message.length == 0){
@@ -351,7 +374,7 @@ function dealShopSearch(message, total){
 }
 
 var shop_pageSize = 3;
-var shop_start = 0;
+var tb_shop_start = 0;
 var shop_currentIndex = 0;
 var shop_totalPage = 0;
 var shops;
@@ -386,39 +409,39 @@ function buildEachSearchShopRow(index, shop){
  * 处理是商品的搜索
  * @param message
  */
-function dealTaobaoSearch(message, total){
-	$taobaoContainer.empty();
+function dealTaobaoProductSearch(message, total){
+	$taobaoProductContainer.empty();
 	taobaos = message;
 	if(message.length == 0){
-		if(taobao_currentIndex == 0){
-			$taobaoContainer.append("搜索不到符合条件的商品，请换条件试试！");
+		if(tb_product_currentIndex == 0){
+			$taobaoProductContainer.append("搜索不到符合条件的商品，请换条件试试！");
 		}else{
-			$taobaoContainer.append("已经没有更多的商品啦，请重新选择！");
+			$taobaoProductContainer.append("已经没有更多的商品啦，请重新选择！");
 		}
 	}else{
 		for(var i = 0; i < taobaos.length; i++){
-			buildEachSearchTaobaoRow(i, taobaos[i]);
+			buildEachSearchTaobaoProductRow(i, taobaos[i]);
 		}
 	}
 	
-	if(taobao_currentIndex == 0 && (!taobaos || taobaos.length ==0)){
-		$("#taobao-pager").empty();
-		$("#taobao-pager").css("padding", "0");
+	if(tb_product_currentIndex == 0 && (!taobaos || taobaos.length ==0)){
+		$("#tb-product-pager").empty();
+		$("#tb-product-pager").css("padding", "0");
 	}else{
-		$("#taobao-pager").css("padding", "5px");
+		$("#tb-product-pager").css("padding", "5px");
 		//执行一个laypage实例
 		 laypage.render({
-		    elem: 'taobao-pager' //注意，这里的 test1 是 ID，不用加 # 号
+		    elem: 'tb-product-pager' //注意，这里的 test1 是 ID，不用加 # 号
 		    ,layout: ['prev', 'page', 'next', 'count', 'skip']
 		    ,count: total //数据总数，从服务端得到
 		    ,limit: taobao_pageSize
-		    , curr: taobao_currentIndex + 1
+		    , curr: tb_product_currentIndex + 1
 		    ,jump: function(obj, first){
 			    //obj包含了当前分页的所有参数，比如：
 			    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
 			    console.log(obj.limit); //得到每页显示的条数
 			    if(!first){
-			    	taobao_currentIndex = obj.curr -1;
+			    	tb_product_currentIndex = obj.curr -1;
 			    	doSearch();
 			    }
 			  }
@@ -428,15 +451,15 @@ function dealTaobaoSearch(message, total){
 
 var taobao_pageSize = 12;
 var taobao_start = 0;
-var taobao_currentIndex = 0;
+var tb_product_currentIndex = 0;
 var taobao_totalPage = 0;
 var taobaos;
-var $taobaoContainer;
+var $taobaoProductContainer;
 /**
  * 获取商品请求列表参数
  */
 function getTaobaosRequestParams(){
-	return {keyword: searchKey, current: taobao_currentIndex, type: preType, rows: taobao_pageSize, t: Math.random()};
+	return {keyword: searchKey, current: tb_product_currentIndex, type: preType, rows: taobao_pageSize, t: Math.random()};
 }
 
 /**
@@ -444,8 +467,8 @@ function getTaobaosRequestParams(){
  * @param taobao
  * @param index
  */
-function buildEachSearchTaobaoRow(index, taobao){
-		var html = '<div class="layui-col-md4 layui-col-xs12" style="cursor: pointer;" onclick="buildShareLink('+ taobao.auctionId +');">'+
+function buildEachSearchTaobaoProductRow(index, taobao){
+		var html = '<div class="layui-col-md3 layui-col-xs12 button_link" style="cursor: pointer;" onclick="toProductDetail(\'tb_'+ taobao.auctionId +'\');">'+
 						'<div class="layui-col-md12 layui-col-xs12 m-taobao-item">'+
 							'<img alt="" src="'+ taobao.img +'" class="m-product-item-img"/>		'+						
 							'<div class="m-product-contrainer">'+
@@ -454,9 +477,13 @@ function buildEachSearchTaobaoRow(index, taobao){
 						html +=	'<p style="margin-left: 5px; text-align: left;">优惠：<span style="color: red;">'+ taobao.couponAmount +'</span>元&nbsp;&nbsp;&nbsp;&nbsp;<span style="float: right; margin-right: 8px;">剩余：'+ taobao.couponLeftCount +'</span></p>';
 					}
 						html += '<p style="margin-left: 5px; text-align: left;"><span style="font-size: 0.8em;">'+ taobao.shopTitle +'</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="m-product-price" style="float: right; margin-right: 8px;">¥'+ taobao.price +'</span></p>'+
-								'<p style="text-align: left;"><span class="m-product-price" style="font-size: 1.0em;">比率：'+ taobao.cashBackRatio +'%</span>&nbsp;&nbsp;<span style="float: right; margin-right: 8px; font-size: 1.0em;">佣金: ¥'+(taobao.price * taobao.cashBackRatio / 100).toFixed(2) +'</span></p>'+
+								'<p style="text-align: left;"><span class="m-product-price" style="font-size: 1.0em;">比率：'+ taobao.cashBackRatio +'%</span>&nbsp;&nbsp;<span style="float: right; margin-right: 8px; font-size: 1.0em;">佣金: ¥'+taobao.cashBack +'</span></p>'+
 							'</div>'+
-						'</div>'+
+                        '</div>'+
+                        '<span class="line line_top"></span>'+
+                        '<span class="line line_right"></span>'+
+                        '<span class="line line_bottom"></span>'+
+                        '<span class="line line_left"></span>'+
 					'</div>';			
-		$taobaoContainer.append(html);
+		$taobaoProductContainer.append(html);
 }

@@ -39,7 +39,7 @@ public class ClockMemberController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/members", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> members(@PathVariable("clockId") int clockId, Model model, HttpServletRequest request){
+	public Map<String, Object> members(@PathVariable("clockId") long clockId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

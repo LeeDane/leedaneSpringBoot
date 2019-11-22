@@ -20,7 +20,7 @@ public class StockBuyDisplay{
 	/**
 	 * 股票购买的id
 	 */
-	private int id;
+	private long id;
 	
 	/**
 	 * 买入价格
@@ -123,11 +123,11 @@ public class StockBuyDisplay{
 		this.holding = holding;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

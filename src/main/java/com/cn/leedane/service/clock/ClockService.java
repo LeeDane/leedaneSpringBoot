@@ -33,7 +33,7 @@ public interface ClockService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> update(int babyId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> update(long babyId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除任务提醒
@@ -42,7 +42,7 @@ public interface ClockService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(int clockId, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> delete(long clockId, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取指定日期的打卡任务提醒
@@ -89,7 +89,7 @@ public interface ClockService <T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> getClock(
-			int clockId, JSONObject json, UserBean user,
+			long clockId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request);
 			
 	/**
@@ -101,7 +101,7 @@ public interface ClockService <T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> getClockThumbnail(
-			int clockId, JSONObject json, UserBean user,
+			long clockId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request);		
 
 	/**
@@ -123,7 +123,7 @@ public interface ClockService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> statistics(int clockId,
+	public Map<String, Object> statistics(long clockId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request);
 
@@ -136,5 +136,5 @@ public interface ClockService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> resources(int clockId, int resourceType, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> resources(long clockId, int resourceType, JSONObject json, UserBean user, HttpRequestInfoBean request);
 }

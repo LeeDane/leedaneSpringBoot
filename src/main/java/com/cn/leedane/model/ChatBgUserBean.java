@@ -12,14 +12,14 @@ public class ChatBgUserBean extends RecordTimeBean{
 
 	private static final long serialVersionUID = 1L;
 	
-	private int chatBgTableId; //背景图像表的Id
+	private long chatBgTableId; //背景图像表的Id
 	
 	//@Column(name="chat_bg_table_id")
-	public int getChatBgTableId() {
+	public long getChatBgTableId() {
 		return chatBgTableId;
 	}
 
-	public void setChatBgTableId(int chatBgTableId) {
+	public void setChatBgTableId(long chatBgTableId) {
 		this.chatBgTableId = chatBgTableId;
 	}
 }

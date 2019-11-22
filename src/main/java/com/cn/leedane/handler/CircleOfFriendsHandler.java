@@ -67,7 +67,7 @@ public class CircleOfFriendsHandler {
 	 * @param tableId
 	 * @return
 	 */
-	public boolean deleteMyAndFansTimeLine(UserBean user, String tableName, int tableId){
+	public boolean deleteMyAndFansTimeLine(UserBean user, String tableName, long tableId){
 		//找到该用户(粉丝列表)
 		Set<String> ids = fanHandler.getMyFans(user.getId());
 		
@@ -89,7 +89,7 @@ public class CircleOfFriendsHandler {
 	 * @param tableName
 	 * @param tableId
 	 */
-	private void deleteTimeLine(int toUserId, int createUserId, String tableName, int tableId){
+	private void deleteTimeLine(long toUserId, long createUserId, String tableName, long tableId){
 		String timeLineKey = getTimeLineKey(toUserId);
 		if(redisUtil.hasKey(timeLineKey)){
 			Set<String> set = redisUtil.getLimit(false, timeLineKey, 0, -1);
@@ -127,7 +127,7 @@ public class CircleOfFriendsHandler {
 	 * @param toUserId
 	 * @param timeLineBean
 	 */
-	private void addTimeLine(int toUserId, TimeLineBean timeLineBean){
+	private void addTimeLine(long toUserId, TimeLineBean timeLineBean){
 		Map<Double, String> scoreMembers = new HashMap<Double, String>();
 		long count = 1;
 		String timeLineKey = getTimeLineKey(toUserId);
@@ -282,8 +282,8 @@ public class CircleOfFriendsHandler {
 	 * @param userId
 	 * @return
 	 */
-	public static String getTimeLineKey(Integer userId) {
-		return ConstantsUtil.TIME_LINE +userId;
+	public static String getTimeLineKey(long userId) {
+		return ConstantsUtil.TIME_LINE + userId;
 	}
 	
 	/**
@@ -291,7 +291,7 @@ public class CircleOfFriendsHandler {
 	 * @param userId
 	 * @return
 	 */
-	public static String getTimeLineSelfKey(Integer userId) {
+	public static String getTimeLineSelfKey(long userId) {
 		return ConstantsUtil.TIME_LINE_SELF +userId;
 	}
 }

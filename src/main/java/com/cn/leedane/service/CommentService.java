@@ -147,6 +147,6 @@ public interface CommentService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getMessageBoards(int userId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> getMessageBoards(long userId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 }

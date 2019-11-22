@@ -23,16 +23,16 @@ public class IDBean implements Serializable{
 	 * 基本的ID列
 	 */
 	@Field
-	protected int id;
+	protected long id;
 	
 	//@Id
     //@GeneratedValue(strategy=GenerationType.AUTO)
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 	
 	//@Field
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 }

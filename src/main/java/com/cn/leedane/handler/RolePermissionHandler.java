@@ -36,7 +36,7 @@ public class RolePermissionHandler {
 	 * @param userId
 	 * @return
 	 */
-	public List<RoleBean> getUserRoleBeans(int userId){
+	public List<RoleBean> getUserRoleBeans(long userId){
 		String key = getRolePermissionKey(userId);
 		Object obj = systemCache.getCache(key);
 		RolesBean rolesBean = null;
@@ -91,7 +91,7 @@ public class RolePermissionHandler {
 	 * @param userId
 	 * @return
 	 */
-	public boolean deleteByUser(int userId){
+	public boolean deleteByUser(long userId){
 		String key = getRolePermissionKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -104,7 +104,7 @@ public class RolePermissionHandler {
 	 * @param userId
 	 * @return
 	 */
-	public static String getRolePermissionKey(int userId){
+	public static String getRolePermissionKey(long userId){
 		return ConstantsUtil.ROLE_PERMISSION_REDIS +userId;
 	}
 }

@@ -40,11 +40,11 @@ public interface MoodMapper extends BaseMapper<MoodBean>{
 	 * @param status
 	 * @return
 	 */
-	public int shakeSearch(@Param("createUserId")int createUserId, @Param("status")int status);
+	public int shakeSearch(@Param("createUserId")long createUserId, @Param("status")int status);
 	
 	public List<Map<String, Object>> getMoodPaging(
-			@Param("login_user_id")int loginUserId,
-			@Param("to_user_id")int to_user_id,
+			@Param("login_user_id")long loginUserId,
+			@Param("to_user_id")long to_user_id,
 			@Param("start")int start,
 			@Param("page_size")int pageSize,
 			@Param("status_normal")int statusNormal,
@@ -55,6 +55,6 @@ public interface MoodMapper extends BaseMapper<MoodBean>{
 	 * @param uid
 	 * @return
 	 */
-	public int getMaxStick(@Param("uid")int uid);
+	public int getMaxStick(@Param("uid")long uid);
 
 }

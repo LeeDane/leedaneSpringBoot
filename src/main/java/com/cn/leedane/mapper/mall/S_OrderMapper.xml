@@ -16,7 +16,7 @@
 	</select>
 	
 	<!-- 分页获取心愿单列表 -->
-	<select id="paging" parameterType="int" resultType="java.util.Map">
+	<select id="paging" resultType="java.util.Map">
 		select o.id, o.status, o.create_user_id, date_format(o.create_time,'%Y-%m-%d %H:%i:%s') create_time,
 		o.order_code, o.product_code, o.title, o.referrer, o.platform, o.order_date 
 		from t_mall_order o

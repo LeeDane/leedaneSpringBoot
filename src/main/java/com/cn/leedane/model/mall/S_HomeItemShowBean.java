@@ -21,12 +21,12 @@ public class S_HomeItemShowBean extends IDBean{
 	/**
 	 * 首页分页存储的id, 用来判断是否是可以编辑的
 	 */
-	private int itemId;
+	private long itemId;
 	
 	/**
 	 * 当前分类的id
 	 */
-	private int categoryId;
+	private long categoryId;
 	
 	/**
 	 * 当前分类的名称
@@ -54,11 +54,11 @@ public class S_HomeItemShowBean extends IDBean{
 	private int number;
 	
 
-	public int getItemId() {
+	public long getItemId() {
 		return itemId;
 	}
 
-	public void setItemId(int itemId) {
+	public void setItemId(long itemId) {
 		this.itemId = itemId;
 	}
 
@@ -86,11 +86,11 @@ public class S_HomeItemShowBean extends IDBean{
 		this.productBeans = productBeans;
 	}
 
-	public int getCategoryId() {
+	public long getCategoryId() {
 		return categoryId;
 	}
 
-	public void setCategoryId(int categoryId) {
+	public void setCategoryId(long categoryId) {
 		this.categoryId = categoryId;
 	}
 

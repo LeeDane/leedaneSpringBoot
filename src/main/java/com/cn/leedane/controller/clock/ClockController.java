@@ -56,7 +56,7 @@ public class ClockController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(@PathVariable("clockId") int clockId, Model model, HttpServletRequest request){
+	public Map<String, Object> update(@PathVariable("clockId") long clockId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -70,7 +70,7 @@ public class ClockController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/info", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getClock(@PathVariable("clockId") int clockId, Model model, HttpServletRequest request){
+	public Map<String, Object> getClock(@PathVariable("clockId") long clockId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -85,7 +85,7 @@ public class ClockController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/thumbnail", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getClockThumbnail(@PathVariable("clockId") int clockId, Model model, HttpServletRequest request){
+	public Map<String, Object> getClockThumbnail(@PathVariable("clockId") long clockId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -131,7 +131,7 @@ public class ClockController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("clockId") int clockId){
+	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("clockId") long clockId){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -211,7 +211,7 @@ public class ClockController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/statistics", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> dynamics(@PathVariable("clockId") int clockId, Model model, HttpServletRequest request){
+	public Map<String, Object> dynamics(@PathVariable("clockId") long clockId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -229,7 +229,7 @@ public class ClockController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/type/{resourceType}/resources", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> resources(@PathVariable("clockId") int clockId, @PathVariable("resourceType") int resourceType, Model model, HttpServletRequest request){
+	public Map<String, Object> resources(@PathVariable("clockId") long clockId, @PathVariable("resourceType") int resourceType, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

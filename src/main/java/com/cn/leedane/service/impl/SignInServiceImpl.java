@@ -50,26 +50,26 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 	private SystemCache systemCache;
 	
 	@Override
-	public boolean isSign(int userId, String dateTime) {
+	public boolean isSign(long userId, String dateTime) {
 		return SqlUtil.getBooleanByList(this.signInMapper.isSign(userId, dateTime));
 	}
 
 
 	@Override
-	public List<Map<String, Object>> getNewestRecore(int userId) {
+	public List<Map<String, Object>> getNewestRecore(long userId) {
 		return this.signInMapper.getNewestRecore(userId);
 	}
 
 	@Override
-	public boolean hasHistorySign(int userId) {	
+	public boolean hasHistorySign(long userId) {
 		return SqlUtil.getBooleanByList(this.signInMapper.hasHistorySign(userId));
 	}
 	
 	@Override
 	public boolean saveSignIn(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request){
-		
-		int uid = user.getId();
+
+		long uid = user.getId();
 		String dateTime = DateUtil.DateToString(new Date(), "yyyy-MM-dd");
 		
 		SignInBean signInBean = new SignInBean();
@@ -139,7 +139,7 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 			UserBean user, HttpRequestInfoBean request) {
 		long start = System.currentTimeMillis();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
-		int uid = JsonUtil.getIntValue(jo, "uid", user.getId()); //操作的用户的id
+		long uid = JsonUtil.getLongValue(jo, "uid", user.getId()); //操作的用户的id
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", 0); //每页的大小
 		String start_date_str = JsonUtil.getStringValue(jo, "start_date"); //开始的页数
 		String end_date_str = JsonUtil.getStringValue(jo, "end_date"); //结束的页数
@@ -185,7 +185,7 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 	}
 
 	@Override
-	public Map<String, Object> getSignInMark(int userId, JSONObject jo,
+	public Map<String, Object> getSignInMark(long userId, JSONObject jo,
 									  UserBean user, HttpRequestInfoBean request){
 		logger.info("SignInServiceImpl-->getSignInMark():jo=" +jo.toString());
 		ResponseMap message = new ResponseMap();

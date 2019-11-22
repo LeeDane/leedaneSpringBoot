@@ -18,11 +18,14 @@ public interface NotificationMapper extends BaseMapper<NotificationBean>{
 
 	/**
 	 * 分页获取通知
-	 * @param pmid
+	 * @param toUserId
+	 * @param type
 	 * @param status
+	 * @param start
+	 * @param pageSize
 	 * @return
 	 */
-	public List<Map<String, Object>> paging(@Param("toUserId") int toUserId, @Param("type") String type, @Param("status") int status, 
+	public List<Map<String, Object>> paging(@Param("toUserId") long toUserId, @Param("type") String type, @Param("status") int status,
 			@Param("start")int start, @Param("pageSize") int pageSize);
 	
 	/**
@@ -39,6 +42,6 @@ public interface NotificationMapper extends BaseMapper<NotificationBean>{
 	 * @param status
 	 * @return
 	 */
-	public List<KeyValueBean> noReadNumber(@Param("toUserId") int toUserId, @Param("read") boolean read, @Param("status") int status);
+	public List<KeyValueBean> noReadNumber(@Param("toUserId") long toUserId, @Param("read") boolean read, @Param("status") int status);
 	
 }

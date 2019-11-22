@@ -135,7 +135,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 	}
 
 	@Override
-	public Map<String, Object> delete(int galleryId, JSONObject jo, UserBean user,
+	public Map<String, Object> delete(long galleryId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("GalleryServiceImpl-->delete():JSONObject="+jo.toString() +", gid="+ galleryId);
 		
@@ -172,7 +172,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 			UserBean user, HttpRequestInfoBean request) {	
 		long start = System.currentTimeMillis();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
-		int uid = JsonUtil.getIntValue(jo, "uid", user.getId()); //操作的用户的id
+		long uid = JsonUtil.getLongValue(jo, "uid", user.getId()); //操作的用户的id
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
 		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数

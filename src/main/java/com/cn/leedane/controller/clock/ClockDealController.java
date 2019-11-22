@@ -39,7 +39,7 @@ public class ClockDealController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/request/{clockId}/add", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> requestAdd(@PathVariable("clockId") int clockId, Model model, HttpServletRequest request){
+	public Map<String, Object> requestAdd(@PathVariable("clockId") long clockId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -54,7 +54,7 @@ public class ClockDealController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/request/{clockId}/agree/{memberId}", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> requestAgree(@PathVariable("clockId") int clockId, @PathVariable("memberId") int memberId,Model model, HttpServletRequest request){
+	public Map<String, Object> requestAgree(@PathVariable("clockId") long clockId, @PathVariable("memberId") long memberId,Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -69,7 +69,7 @@ public class ClockDealController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/invite/{clockId}/add/{memberId}", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> inviteAdd(@PathVariable("clockId") int clockId, @PathVariable("memberId") int memberId, Model model, HttpServletRequest request){
+	public Map<String, Object> inviteAdd(@PathVariable("clockId") long clockId, @PathVariable("memberId") long memberId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -84,7 +84,7 @@ public class ClockDealController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/invite/{clockId}/agree/{memberId}", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> inviteAgree(@PathVariable("clockId") int clockId, @PathVariable("memberId") int memberId, Model model, HttpServletRequest request){
+	public Map<String, Object> inviteAgree(@PathVariable("clockId") long clockId, @PathVariable("memberId") long memberId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

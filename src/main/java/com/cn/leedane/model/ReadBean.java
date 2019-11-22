@@ -26,7 +26,7 @@ public class ReadBean extends RecordTimeBean{
 	/**
 	 * 阅读对象的ID，必须
 	 */
-	private int tableId;
+	private long tableId;
 	
 	public String getTableName() {
 		return tableName;
@@ -34,10 +34,10 @@ public class ReadBean extends RecordTimeBean{
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
 	}
-	public int getTableId() {
+	public long getTableId() {
 		return tableId;
 	}
-	public void setTableId(int tableId) {
+	public void setTableId(long tableId) {
 		this.tableId = tableId;
 	}
 	public String getFroms() {

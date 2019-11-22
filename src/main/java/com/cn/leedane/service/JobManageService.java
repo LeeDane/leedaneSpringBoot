@@ -43,11 +43,9 @@ public interface JobManageService <T extends IDBean>{
      * @param request
      * @throws SchedulerException
      */
-    public Map<String, Object> delete(int jid, HttpRequestInfoBean request) throws SchedulerException;
+    public Map<String, Object> delete(long jid, HttpRequestInfoBean request) throws SchedulerException;
     /**
 	 * 分页获取任务列表
-	 * @param jsonObject
-	 * @param user
 	 * @param request
 	 * @return
 	 */
@@ -56,8 +54,6 @@ public interface JobManageService <T extends IDBean>{
 
 	/**
 	 * 批量删除任务
-	 * @param pmids
-	 * @param user
 	 * @param request
 	 * @return
 	 */

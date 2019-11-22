@@ -54,7 +54,7 @@ public class ClockDynamicServiceImpl extends AdminRoleCheckService implements Cl
 	private ClockMemberHandler clockMemberHandler;
 	
 	@Override
-	public Map<String, Object> dynamics(int clockId, JSONObject jsonObject, UserBean user,
+	public Map<String, Object> dynamics(long clockId, JSONObject jsonObject, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ClockDynamicServiceImpl-->dynamics():jo="+jsonObject.toString());
 		
@@ -82,7 +82,7 @@ public class ClockDynamicServiceImpl extends AdminRoleCheckService implements Cl
 		if(CollectionUtil.isNotEmpty(dynamicBeans)){
 			for(ClockDynamicBean dynamicBean: dynamicBeans){
 				ClockDynamicDisplay display = new ClockDynamicDisplay();
-				int createUserId = dynamicBean.getCreateUserId();
+				long createUserId = dynamicBean.getCreateUserId();
 				display.setAccount(userHandler.getUserName(createUserId));
 				display.setClockId(clockId);
 				display.setCreateTime(DateUtil.DateToString(dynamicBean.getCreateTime()));

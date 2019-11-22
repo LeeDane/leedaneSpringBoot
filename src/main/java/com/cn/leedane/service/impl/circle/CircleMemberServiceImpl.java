@@ -59,7 +59,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 	private CircleService<CircleBean> circleService;
 
 	@Override
-	public Map<String, Object> paging(int circleId, JSONObject jsonObject, UserBean user,
+	public Map<String, Object> paging(long circleId, JSONObject jsonObject, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CircleMemberServiceImpl-->paging():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
@@ -86,7 +86,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 	}
 
 	@Override
-	public Map<String, Object> recommend(int circleId, int memberId, JSONObject jsonObject,
+	public Map<String, Object> recommend(long circleId, long memberId, JSONObject jsonObject,
 			UserBean user, HttpRequestInfoBean request) {
 		logger.info("CircleMemberServiceImpl-->recommend():circleId="+circleId +", memberId="+ memberId);
 		ResponseMap message = new ResponseMap();
@@ -126,7 +126,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 	}
 	
 	@Override
-	public Map<String, Object> delete(int circleId, int memberId, JSONObject json,
+	public Map<String, Object> delete(long circleId, long memberId, JSONObject json,
 			UserBean user, HttpRequestInfoBean request) {
 		logger.info("CircleMemberServiceImpl-->delete():circleId="+circleId +", memberId="+ memberId);
 		ResponseMap message = new ResponseMap();

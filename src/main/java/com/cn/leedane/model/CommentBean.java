@@ -16,7 +16,7 @@ public class CommentBean extends RecordTimeBean{
 	/**
 	 * 回复别人评论时，别人的评论的id，是直属父节点的ID,非必须
 	 */
-	private int pid;
+	private long pid;
 	
 	/**
 	 * 所属的父节点的id（针对所有的子节点是必须的）
@@ -47,7 +47,7 @@ public class CommentBean extends RecordTimeBean{
 	/**
 	 * 评论对象的表ID，必须
 	 */
-	private int tableId;
+	private long tableId;
 
 	/**
 	 * 保存评论关系级别的字符串，用|分开
@@ -75,10 +75,10 @@ public class CommentBean extends RecordTimeBean{
 	public void setCommentLevel(int commentLevel) {
 		this.commentLevel = commentLevel;
 	}
-	public int getPid() {
+	public long getPid() {
 		return pid;
 	}
-	public void setPid(int pid) {
+	public void setPid(long pid) {
 		this.pid = pid;
 	}
 	
@@ -97,10 +97,10 @@ public class CommentBean extends RecordTimeBean{
 	}
 	
 	//@Column(name="table_id", nullable = false)
-	public int getTableId() {
+	public long getTableId() {
 		return tableId;
 	}
-	public void setTableId(int tableId) {
+	public void setTableId(long tableId) {
 		this.tableId = tableId;
 	}
 	public String getFroms() {

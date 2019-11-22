@@ -17,14 +17,12 @@ import com.cn.leedane.model.mall.S_ProductBean;
 public interface S_ProductMapper extends BaseMapper<S_ProductBean>{
 	/**
 	 * 获取商品
-	 * @param userId
 	 * @return
 	 */
-	public List<S_ProductBean> getProduct(@Param("productId") int productId, @Param("status") int status);
+	public List<S_ProductBean> getProduct(@Param("productId") long productId, @Param("status") int status);
 	
 	/**
 	 * 获取所有的商品
-	 * @param userId
 	 * @return
 	 */
 	public List<Map<String, Object>> getProducts();

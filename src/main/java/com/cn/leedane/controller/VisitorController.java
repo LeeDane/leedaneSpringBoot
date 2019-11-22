@@ -37,7 +37,7 @@ public class VisitorController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "user/{tableId}/visitors", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(@PathVariable("tableId") int tableId, Model model, HttpServletRequest request){
+	public Map<String, Object> paging(@PathVariable("tableId") long tableId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

@@ -52,7 +52,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 	private NotificationHandler notificationHandler;
 	
 	@Override
-	public Map<String, Object> add(int babyId, JSONObject jo, UserBean user,
+	public Map<String, Object> add(long babyId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("BabyLifeServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount() +", babyId="+ babyId);
 		
@@ -89,7 +89,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 
 
 	@Override
-	public Map<String, Object> update(int babyId, int lifeId, JSONObject jo, UserBean user,
+	public Map<String, Object> update(long babyId, long lifeId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("BabyLifeServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount()+", babyId="+ babyId +", lifeId="+ lifeId);
 		ResponseMap message = new ResponseMap();
@@ -125,7 +125,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 
 
 	@Override
-	public Map<String, Object> delete(int babyId, int lifeId, UserBean user,
+	public Map<String, Object> delete(long babyId, long lifeId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("BabyLifeServiceImpl-->delete():babyId=" +babyId +", user=" +user.getAccount()+", lifeId="+ lifeId);
 		ResponseMap message = new ResponseMap();
@@ -157,7 +157,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 
 
 	@Override
-	public Map<String, Object> lifes(int babyId, String startDate,
+	public Map<String, Object> lifes(long babyId, String startDate,
 			String endDate, String keyWord, int lifeType, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("BabyLifeServiceImpl-->paging():babyId=" +babyId + ", startDate="+ startDate +", endDate="+ endDate +", keyWord="+ keyWord +", lifeType="+ lifeType +", user="+ user.getAccount());
@@ -289,7 +289,6 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 
 	/**
 	 * 获取图表展示的series数据
-	 * @param babyLifes
 	 * @param dates
 	 * @param day
 	 * @return

@@ -150,7 +150,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		
 		boolean result = moodMapper.save(moodBean) > 0;
 		if(result){
-			int i = moodBean.getId();
+			long i = moodBean.getId();
 	        if(i < 0){
 	        	//通过观察者的模式发送消息通知
 				Watched watched = new ConcreteWatched();       
@@ -293,7 +293,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	public Map<String, Object> rolling(JSONObject jo,
 			UserBean user, HttpRequestInfoBean request){
 		logger.info("MoodServiceImpl-->rolling():jo=" +jo.toString());
-		int toUserId = JsonUtil.getIntValue(jo, "to_user_id", user.getId()); //
+		long toUserId = JsonUtil.getLongValue(jo, "to_user_id", user.getId()); //
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
@@ -362,7 +362,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	public Map<String, Object> getMoodsPaging(JSONObject jo,
 			UserBean user, HttpRequestInfoBean request){
 		logger.info("MoodServiceImpl-->getMoodPaging():jo=" +jo.toString());
-		int toUserId = JsonUtil.getIntValue(jo, "to_user_id", user.getId()); //
+		long toUserId = JsonUtil.getLongValue(jo, "to_user_id", user.getId()); //
 //		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int currentIndex = JsonUtil.getIntValue(jo, "current", 0); //当前的索引页
@@ -441,7 +441,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	 * @param user
 	 * @return
 	 */
-	private String getMoodStatusSQL(int toUserId, UserBean user){
+	private String getMoodStatusSQL(long toUserId, UserBean user){
 		if(toUserId == user.getId()){
 			return " (m.status = "+ ConstantsUtil.STATUS_NORMAL +" or m.status = "+ ConstantsUtil.STATUS_SELF +")";
 		}else {
@@ -515,8 +515,8 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	@Override
 	public Map<String, Object> getCountByUser(JSONObject jo, UserBean user, HttpRequestInfoBean request){
 		logger.info("MoodServiceImpl-->getCountByUser():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		
-		int uid = JsonUtil.getIntValue(jo, "uid", user.getId()); //计算的用户id
+
+		long uid = JsonUtil.getLongValue(jo, "uid", user.getId()); //计算的用户id
 		
 		StringBuffer sql = new StringBuffer();
 		sql.append(" where create_user_id = " + uid + " and status = " +ConstantsUtil.STATUS_NORMAL);

@@ -20,7 +20,7 @@ public class FinancialBean extends RecordTimeBean{
 	 * 上传设备上记录的id，目前只做返回客户端的表示用
 	 */
 	@JSONField(name="local_id")
-	private int localId;
+	private long localId;
 	
 	/**
 	 * 设备的imei值，跟local绑定表示客户端的唯一
@@ -167,11 +167,11 @@ public class FinancialBean extends RecordTimeBean{
 		this.additionTime = additionTime;
 	}
 
-	public int getLocalId() {
+	public long getLocalId() {
 		return localId;
 	}
 
-	public void setLocalId(int localId) {
+	public void setLocalId(long localId) {
 		this.localId = localId;
 	}
 

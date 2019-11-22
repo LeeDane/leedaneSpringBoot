@@ -18,9 +18,8 @@ public interface CircleSettingMapper extends BaseMapper<CircleSettingBean>{
 	/**
 	 * 获取圈子的设置
 	 * @param circleId
-	 * @param status
 	 * @return
 	 */
-	public List<CircleSettingBean> getSetting(@Param("circleId") int circleId);
+	public List<CircleSettingBean> getSetting(@Param("circleId") long circleId);
 
 }

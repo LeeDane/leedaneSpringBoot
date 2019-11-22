@@ -32,7 +32,7 @@ public class ClockDynamicHandler {
 	 * @param userId
 	 * @return
 	 */
-	public String getUserName(UserBean user, int userId){
+	public String getUserName(UserBean user, long userId){
 		String name = "";
 		if(userId < 1 || user.getId() == userId)
 			return name;
@@ -46,7 +46,7 @@ public class ClockDynamicHandler {
 	 * @param desc
 	 * @param publicity
 	 */
-	public void saveDynamic(int clockId, Date systemDate, int userId, String desc, boolean publicity, int messageType){
+	public void saveDynamic(long clockId, Date systemDate, long userId, String desc, boolean publicity, int messageType){
 		//设置动态信息
 		ClockDynamicQueueBean clockDynamicQueueBean = new ClockDynamicQueueBean();
 		clockDynamicQueueBean.setError(0);

@@ -33,7 +33,7 @@ public interface CategoryService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> children(boolean isAdmin, int pid, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> children(boolean isAdmin, long pid, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取该节点以及其上所有直接节点
@@ -51,7 +51,7 @@ public interface CategoryService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> update(boolean isAdmin, int cid, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> update(boolean isAdmin, long cid, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除节点以及其全部子节点
@@ -61,5 +61,5 @@ public interface CategoryService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(boolean isAdmin, int cid, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> delete(boolean isAdmin, long cid, UserBean user, HttpRequestInfoBean request);
 }

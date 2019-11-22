@@ -25,7 +25,7 @@ public interface ClockMemberService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public boolean add(int clockId, int memberId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public boolean add(long clockId, long memberId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 编辑任务成员
@@ -36,7 +36,7 @@ public interface ClockMemberService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> update(int clockId, int memberId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> update(long clockId, long memberId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除任务成员
@@ -46,7 +46,7 @@ public interface ClockMemberService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(int clockId, int memberId, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> delete(long clockId, long memberId, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取任务的成员列表
@@ -55,5 +55,5 @@ public interface ClockMemberService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> members(int clockId, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> members(long clockId, UserBean user, HttpRequestInfoBean request);
 }	

@@ -46,7 +46,7 @@ public interface MaterialService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int materialId, UserBean user, HttpRequestInfoBean request) ;
+	public Map<String, Object> delete(long materialId, UserBean user, HttpRequestInfoBean request) ;
 	
 	/**
 	 * 分页获取指定用户素材的图片的路径列表

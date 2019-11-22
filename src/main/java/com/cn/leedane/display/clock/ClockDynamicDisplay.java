@@ -15,17 +15,17 @@ public class ClockDynamicDisplay implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private int id;
+	private long id;
 	
 	private int status;
 	
-	private int createUserId;
+	private long createUserId;
 	
 	private String createTime;
 	
 	private String modifyTime; //最终修改时间
 	
-	private int clockId;
+	private long clockId;
 
 	private String desc;
 	
@@ -37,11 +37,11 @@ public class ClockDynamicDisplay implements Serializable{
 
 	private boolean seeEachOther;
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -61,19 +61,19 @@ public class ClockDynamicDisplay implements Serializable{
 		this.createTime = createTime;
 	}
 
-	public int getCreateUserId() {
+	public long getCreateUserId() {
 		return createUserId;
 	}
 
-	public void setCreateUserId(int createUserId) {
+	public void setCreateUserId(long createUserId) {
 		this.createUserId = createUserId;
 	}
 
-	public int getClockId() {
+	public long getClockId() {
 		return clockId;
 	}
 
-	public void setClockId(int clockId) {
+	public void setClockId(long clockId) {
 		this.clockId = clockId;
 	}
 

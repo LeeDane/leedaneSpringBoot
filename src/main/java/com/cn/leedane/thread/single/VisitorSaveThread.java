@@ -20,9 +20,9 @@ public class VisitorSaveThread implements Runnable{
 	private UserBean mUser;
 	private String mFroms;
 	private String mTableName;
-	private int mTableId;
+	private long mTableId;
 	private int mStatus;
-	public VisitorSaveThread(UserBean user, String froms, String tableName, int tableId, int status) {
+	public VisitorSaveThread(UserBean user, String froms, String tableName, long tableId, int status) {
 		this.mUser = user;
 		this.mFroms = froms;
 		this.mTableName = tableName;

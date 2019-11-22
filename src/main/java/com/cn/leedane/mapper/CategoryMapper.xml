@@ -10,7 +10,7 @@
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
 
-	<select id="children" parameterType="int" resultType="java.util.Map">
+	<select id="children" resultType="java.util.Map">
 		select c.id, c.text, c.pid, c.is_system
 		, date_format(c.create_time,'%Y-%m-%d %H:%i:%s') create_time, c.create_user_id
 		, (
@@ -23,7 +23,7 @@
 		</if>
 	</select>
 	
-	<select id="canDelete" parameterType="int" resultType="java.util.Map">
+	<select id="canDelete" resultType="java.util.Map">
 		select id from t_category c where id = #{id} and create_user_id = #{userId} and is_system = 0 limit 1
 	</select>
 	

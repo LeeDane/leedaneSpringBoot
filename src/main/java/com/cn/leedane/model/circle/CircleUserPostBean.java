@@ -18,12 +18,12 @@ public class CircleUserPostBean extends IDBean{
 	/**
 	 * 父圈子的id(转发、引用时候才不为0),关联自身
 	 */
-	private int pid;
+	private long pid;
 	
 	/**
 	 * 圈子的id,外键关联CircleBean
 	 */
-	private int circleId;
+	private long circleId;
 
 	/**
 	 * 帖子的内容
@@ -60,19 +60,19 @@ public class CircleUserPostBean extends IDBean{
 	 */
 	private String createTime;
 
-	public int getPid() {
+	public long getPid() {
 		return pid;
 	}
 
-	public void setPid(int pid) {
+	public void setPid(long pid) {
 		this.pid = pid;
 	}
 
-	public int getCircleId() {
+	public long getCircleId() {
 		return circleId;
 	}
 
-	public void setCircleId(int circleId) {
+	public void setCircleId(long circleId) {
 		this.circleId = circleId;
 	}
 

@@ -25,12 +25,12 @@ public interface RolePermissionMapper extends BaseMapper<RolePermissionBean>{
 	 * @param pmid
 	 * @return
 	 */
-	public List<Map<String, Object>> getUsersByPermissionId(@Param("pmid")int pmid);
+	public List<Map<String, Object>> getUsersByPermissionId(@Param("pmid")long pmid);
 	
 	/**
 	 * 根据权限ids获取其对应分配的用户id
 	 * @param pmids
 	 * @return
 	 */
-	public List<Map<String, Object>> getUsersByPermissionIds(@Param("pmids")int[] pmids);
+	public List<Map<String, Object>> getUsersByPermissionIds(@Param("pmids")long[] pmids);
 }

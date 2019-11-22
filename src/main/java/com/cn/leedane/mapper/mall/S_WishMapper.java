@@ -20,14 +20,14 @@ public interface S_WishMapper extends BaseMapper<S_WishBean>{
 	 * @param userId
 	 * @return
 	 */
-	public List<Map<String, Object>> getNumber(@Param("userId") int userId, @Param("status") int status);
+	public List<Map<String, Object>> getNumber(@Param("userId") long userId, @Param("status") int status);
 	
 	/**
 	 * 分页获取心愿单列表
 	 * @param userId
 	 * @return
 	 */
-	public List<Map<String, Object>> paging(@Param("userId") int userId, @Param("status") int status, 
+	public List<Map<String, Object>> paging(@Param("userId") long userId, @Param("status") int status,
 			@Param("start")int start, @Param("pageSize") int pageSize);
 	
 }

@@ -25,7 +25,7 @@ public interface BlogMapper extends BaseMapper<BlogBean>{
 	 * 查找一条博客信息(跟findById的区别是字段可以自定义显示，去掉冗余字段)
 	 * @param id
 	 */
-	public List<Map<String, Object>> getOneBlog(@Param("status") int status,@Param("id") int id);
+	public List<Map<String, Object>> getOneBlog(@Param("status") int status,@Param("id") long id);
 	
 	public List<BlogBean> getMoreBlog(int start,int end,String showType);
 	public List<BlogBean> managerAllBlog();
@@ -36,16 +36,16 @@ public interface BlogMapper extends BaseMapper<BlogBean>{
 	 */
 	public int getTotalNum();
 	
-	public int getZanNum(int Bid);//获得赞的总数
+	public int getZanNum(long Bid);//获得赞的总数
 	
-	public int getCommentNum(int Bid);//获得评论的总数
+	public int getCommentNum(long Bid);//获得评论的总数
 	
 	public int getSearchBlogTotalNum(String conditions,String conditionsType);  //按照条件和条件的类型搜索符合条件的博客的数量
 	//public List<BlogBean> SearchBlog(int start,int end ,String conditions,String conditionsType); //按照条件和条件的类型分页搜索符合条件的博客
 	
 	
 	public void addReadNum(BlogBean blog);//此处不必有返回值
-	public int getReadNum(int Bid);//根据博客Id获得该博客的阅读次数
+	public int getReadNum(long Bid);//根据博客Id获得该博客的阅读次数
 	
 	/**
 	 * 根据num的值，如5表示获取最新5条，负数表示获得全部
@@ -60,7 +60,7 @@ public interface BlogMapper extends BaseMapper<BlogBean>{
 	 * @param num  需要获取的博客条数,注意：当值小于1将取最新的num条
 	 * @return
 	 */
-	public List<Map<String, Object>> getLatestBlogById(@Param("last_blog_id")int lastBlogId, @Param("num")int num);
+	public List<Map<String, Object>> getLatestBlogById(@Param("last_blog_id")long lastBlogId, @Param("num")int num);
 	
 	
 	/**
@@ -87,10 +87,9 @@ public interface BlogMapper extends BaseMapper<BlogBean>{
 
 	/**
 	 * 摇一摇获取文章
-	 * @param statusNormal
 	 * @return
 	 */
-	public int shakeSearch(@Param("createUserId")int createUserId, @Param("status")int status);
+	public int shakeSearch(@Param("createUserId")long createUserId, @Param("status")int status);
 	
 	/**
 	 * 更新阅读的数量

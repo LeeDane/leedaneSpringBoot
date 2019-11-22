@@ -40,7 +40,7 @@ public class StockSellController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{stockId}/buy/{stockBuyId}/sell/add", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(@PathVariable("stockId") int stockId, @PathVariable("stockBuyId") int stockBuyId, Model model, HttpServletRequest request){
+	public Map<String, Object> add(@PathVariable("stockId") long stockId, @PathVariable("stockBuyId") long stockBuyId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -55,7 +55,7 @@ public class StockSellController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{stockId}/buy/{stockBuyId}/sell/{stockSellId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(@PathVariable("stockId") int stockId, @PathVariable("stockBuyId") int stockBuyId, @PathVariable("stockSellId") int stockSellId, Model model, HttpServletRequest request){
+	public Map<String, Object> update(@PathVariable("stockId") long stockId, @PathVariable("stockBuyId") long stockBuyId, @PathVariable("stockSellId") long stockSellId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -70,7 +70,7 @@ public class StockSellController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{stockId}/buy/{stockBuyId}/sell/{stockSellId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@PathVariable("stockId") int stockId, @PathVariable("stockBuyId") int stockBuyId, @PathVariable("stockSellId") int stockSellId, Model model, HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("stockId") long stockId, @PathVariable("stockBuyId") long stockBuyId, @PathVariable("stockSellId") long stockSellId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

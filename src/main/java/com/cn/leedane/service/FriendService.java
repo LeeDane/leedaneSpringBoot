@@ -53,7 +53,7 @@ public interface FriendService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public boolean isFriend(int id, int to_user_id);
+	public boolean isFriend(long id, long to_user_id);
 	
 	/**
 	 * 判断两人是否是朋友的关系（包括一方申请还没有同意）
@@ -62,7 +62,7 @@ public interface FriendService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public boolean isFriendRecord(int id, int to_user_id);
+	public boolean isFriendRecord(long id, long to_user_id);
 
 	/**
 	 * 获取已经跟我成为好友关系的分页列表

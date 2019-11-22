@@ -121,7 +121,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 			}
 		}
 		
-		int userId = user.getId();
+		long userId = user.getId();
 		
 		//判断当天是否可以打卡
 		
@@ -271,7 +271,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 
 
 	@Override
-	public Map<String, Object> update(int clockInId, JSONObject jo, UserBean user,
+	public Map<String, Object> update(long clockInId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ClockInServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -308,7 +308,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 
 
 	@Override
-	public Map<String, Object> delete(int clockInId, UserBean user,
+	public Map<String, Object> delete(long clockInId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ClockInServiceImpl-->delete():clockInId=" +clockInId +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -339,7 +339,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 	}
 
 	@Override
-	public Map<String, Object> clockIns(int clockId, String date, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> clockIns(long clockId, String date, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockInServiceImpl-->clockIns():clockId=" +clockId + ", date="+ date +", user=" +user.getAccount());
 		clockHandler.getNormalClock(clockId);
 		ResponseMap message = new ResponseMap();
@@ -368,7 +368,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 	}
 
 	@Override
-	public Map<String, Object> getUserClockIn(int clockId, int toUserId, String date, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> getUserClockIn(long clockId, long toUserId, String date, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockInServiceImpl-->getUserClockIn():clockId=" +clockId + ", date="+ date +", userId = "+ toUserId +", user=" +user.getAccount());
 		ClockBean clockBean = clockHandler.getNormalClock(clockId);
 		ResponseMap message = new ResponseMap();
@@ -413,7 +413,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 	}
 
 	@Override
-	public Map<String, Object> userClockInNotification(int clockId, int clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> userClockInNotification(long clockId, long clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockInServiceImpl-->userClockInNotification():clockId=" +clockId +", clockInId = "+ clockInId +", user=" +user.getAccount());
 		ClockBean clockBean = clockHandler.getNormalClock(clockId);
 
@@ -443,7 +443,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 	}
 
 	@Override
-	public Map<String, Object> clockInCheck(int clockId, int clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> clockInCheck(long clockId, long clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockInServiceImpl-->clockInCheck():clockId=" +clockId + ", clockInId = "+ clockInId +", user=" +user.getAccount());
 		ClockBean clockBean = clockHandler.getNormalClock(clockId);
 
@@ -493,7 +493,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 	}
 
 	@Override
-	public Map<String, Object> clockInAddLocation(int clockId, int clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> clockInAddLocation(long clockId, long clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockInServiceImpl-->clockInAddLocation():clockId=" +clockId + ", clockInId = "+ clockInId +", user=" +user.getAccount());
 		ClockBean clockBean = clockHandler.getNormalClock(clockId);
 		String location = JsonUtil.getStringValue(json, "location", null);
@@ -542,7 +542,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 	}
 
 	@Override
-	public Map<String, Object> clockInAddImage(int clockId, int clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> clockInAddImage(long clockId, long clockInId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockInServiceImpl-->clockInAddImage():clockId=" +clockId + ", clockInId = "+ clockInId +", user=" +user.getAccount());
 		ClockBean clockBean = clockHandler.getNormalClock(clockId);
 		String image = JsonUtil.getStringValue(json, "image", null);
@@ -591,7 +591,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 	}
 
 	@Override
-	public Map<String, Object> deleteResource(int clockId, int clockInId, int resourceId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> deleteResource(long clockId, long clockInId, long resourceId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockInServiceImpl-->deleteResource():clockId=" +clockId + ", clockInId = "+ clockInId +", resourceId="+ resourceId +", user=" +user.getAccount());
 		ClockBean clockBean = clockHandler.getNormalClock(clockId);
 

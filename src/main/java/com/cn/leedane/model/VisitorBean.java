@@ -35,7 +35,7 @@ public class VisitorBean extends RecordTimeBean{
 	 */
 	@Column("table_id")
 	@Field
-	private int tableId;
+	private long tableId;
 
 	public String getTableName() {
 		return tableName;
@@ -44,10 +44,10 @@ public class VisitorBean extends RecordTimeBean{
 		this.tableName = tableName;
 	}
 	
-	public int getTableId() {
+	public long getTableId() {
 		return tableId;
 	}
-	public void setTableId(int tableId) {
+	public void setTableId(long tableId) {
 		this.tableId = tableId;
 	}
 	public String getFroms() {

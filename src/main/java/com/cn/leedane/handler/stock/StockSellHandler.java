@@ -47,7 +47,7 @@ public class StockSellHandler {
 	 * @param stockSellId
 	 * @return
 	 */
-	public StockSellBean getNormalStockSell(int userId, int stockId, int stockBuyId, int stockSellId){
+	public StockSellBean getNormalStockSell(long userId, long stockId, long stockBuyId, long stockSellId){
 		StockSellBean stockSell = getStockSell(userId, stockId, stockBuyId, stockSellId);
 		
 		//不是自己的股票卖出记录将抛出权限异常
@@ -68,7 +68,7 @@ public class StockSellHandler {
 	 * @param stockSellId
 	 * @return
 	 */
-	public StockSellBean getStockSell(int userId, int stockId, int stockBuyId, int stockSellId){
+	public StockSellBean getStockSell(long userId, long stockId, long stockBuyId, long stockSellId){
 		if(stockSellId < 1)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该股票卖出记录不存在.value));
 		
@@ -130,7 +130,7 @@ public class StockSellHandler {
 	 * @param userId
 	 * @return
 	 */
-	public List<StockSellBean> getStockSells(int stockId, int userId, int stockBuyId){
+	public List<StockSellBean> getStockSells(long stockId, long userId, long stockBuyId){
 		//校验对应的股票购买记录是否是自己的
 		stockBuyHandler.getNormalStockBuy(stockBuyId, userId, stockId);
 		String key = getStockSellsKey(stockBuyId);
@@ -193,7 +193,7 @@ public class StockSellHandler {
 	 * @param stockSellId
 	 * @return
 	 */
-	public boolean deleteStockSellBeanCache(int stockSellId){
+	public boolean deleteStockSellBeanCache(long stockSellId){
 		String key = getStockSellKey(stockSellId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -205,7 +205,7 @@ public class StockSellHandler {
 	 * @param stockBuyId
 	 * @return
 	 */
-	public boolean deleteStockSellBeansCache(int stockBuyId){
+	public boolean deleteStockSellBeansCache(long stockBuyId){
 		String key = getStockSellsKey(stockBuyId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -217,7 +217,7 @@ public class StockSellHandler {
 	 * @param stockSellId
 	 * @return
 	 */
-	public static String getStockSellKey(int stockSellId){
+	public static String getStockSellKey(long stockSellId){
 		return ConstantsUtil.STOCK_SELL_REDIS + stockSellId;
 	}
 	
@@ -226,7 +226,7 @@ public class StockSellHandler {
 	 * @param stockBuyId
 	 * @return
 	 */
-	public static String getStockSellsKey(int stockBuyId){
+	public static String getStockSellsKey(long stockBuyId){
 		return ConstantsUtil.STOCK_SELLS_REDIS + stockBuyId;
 	}
 	

@@ -23,7 +23,7 @@ public interface FinancialMapper extends BaseMapper<FinancialBean>{
 	 * @param userId
 	 * @return
 	 */
-	public List<Map<String, Object>> getLimit(@Param("year") int year, @Param("status")int status, @Param("userId")int userId);
+	public List<Map<String, Object>> getLimit(@Param("year") int year, @Param("status")int status, @Param("userId")long userId);
 	
 	/**
 	 * 获取该用户的全部记账数据
@@ -31,7 +31,7 @@ public interface FinancialMapper extends BaseMapper<FinancialBean>{
 	 * @param userId
 	 * @return
 	 */
-	public List<Map<String, Object>> getAll(@Param("status")int status, @Param("userId")int userId);
+	public List<Map<String, Object>> getAll(@Param("status")int status, @Param("userId")long userId);
 
 	/**
 	 * 获取指定用户的范围内的记账记录
@@ -41,6 +41,6 @@ public interface FinancialMapper extends BaseMapper<FinancialBean>{
 	 * @param endTime
 	 * @return
 	 */
-	public List<FinancialBean> getByTimeRange(@Param("createUserId")int createUserId, @Param("status")int status, @Param("startTime")Date startTime, @Param("endTime")Date endTime);
+	public List<FinancialBean> getByTimeRange(@Param("createUserId")long createUserId, @Param("status")int status, @Param("startTime")Date startTime, @Param("endTime")Date endTime);
 	
 }

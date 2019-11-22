@@ -74,7 +74,7 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 	}
 	
 	@Override
-	public Map<String, Object> children(boolean isAdmin, int pid, UserBean user,
+	public Map<String, Object> children(boolean isAdmin, long pid, UserBean user,
 										HttpRequestInfoBean request){
 		logger.info("CategoryServiceImpl-->children():pid=" +pid +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -135,7 +135,7 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 	}
 	
 	@Override
-	public Map<String, Object> update(boolean isAdmin, int cid, JSONObject json, UserBean user,
+	public Map<String, Object> update(boolean isAdmin, long cid, JSONObject json, UserBean user,
 									  HttpRequestInfoBean request) {
 		logger.info("CategoryServiceImpl-->delete():cid=" +cid + ", json="+ json +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -166,7 +166,7 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 	}
 	
 	@Override
-	public Map<String, Object> delete(boolean isAdmin, int cid, UserBean user,
+	public Map<String, Object> delete(boolean isAdmin, long cid, UserBean user,
 									  HttpRequestInfoBean request) {
 		logger.info("CategoryServiceImpl-->delete():cid=" +cid +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();

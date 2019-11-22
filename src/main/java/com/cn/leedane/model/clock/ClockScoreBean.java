@@ -43,7 +43,7 @@ public class ClockScoreBean extends RecordTimeBean{
 	 * 相关联的任务ID
 	 */
 	@Column(value="clock_id", required = true)
-	private int clockId;
+	private long clockId;
 	
 	/**
 	 * 相关联的任务业务类型
@@ -75,11 +75,11 @@ public class ClockScoreBean extends RecordTimeBean{
 		this.scoreDesc = scoreDesc;
 	}
 
-	public int getClockId() {
+	public long getClockId() {
 		return clockId;
 	}
 
-	public void setClockId(int clockId) {
+	public void setClockId(long clockId) {
 		this.clockId = clockId;
 	}
 

@@ -33,5 +33,5 @@ public interface UploadMapper extends BaseMapper<UploadBean>{
 	 * @param userId
 	 * @return
 	 */
-	public List<Map<String, Object>> hasUpload(@Param("tableName")String tableName, @Param("tableUuid")String tableUuid, @Param("order")int order, @Param("serialNumber")int serialNumber, @Param("userId")int userId);
+	public List<Map<String, Object>> hasUpload(@Param("tableName")String tableName, @Param("tableUuid")String tableUuid, @Param("order")int order, @Param("serialNumber")int serialNumber, @Param("userId")long userId);
 }

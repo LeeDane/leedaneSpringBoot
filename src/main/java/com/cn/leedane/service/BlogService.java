@@ -57,10 +57,10 @@ public interface BlogService <T extends IDBean>{
 	public int getTotalNum();
 	
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public int getZanNum(int Bid);//获得赞的总数
+	public int getZanNum(long Bid);//获得赞的总数
 	
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public int getCommentNum(int Bid);//获得评论的总数
+	public int getCommentNum(long Bid);//获得评论的总数
 	
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public int getSearchBlogTotalNum(String conditions,String conditionsType);  //按照条件和条件的类型搜索符合条件的博客的数量
@@ -69,7 +69,7 @@ public interface BlogService <T extends IDBean>{
 	public void addReadNum(BlogBean blog);//此处不必有返回值
 	
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public int getReadNum(int Bid);//根据博客Id获得该博客的阅读次数
+	public int getReadNum(long Bid);//根据博客Id获得该博客的阅读次数
 	
 	/**
 	 * 根据num的值，如5表示获取最新5条，负数表示获得全部
@@ -186,7 +186,7 @@ public interface BlogService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> edit(int blogId, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> edit(long blogId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 未审核文章列表
@@ -215,7 +215,7 @@ public interface BlogService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getOneBlog(int blogId, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> getOneBlog(long blogId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 分页获取博客列表列表

@@ -10,7 +10,7 @@
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
 
-	<select id="getSetting" parameterType="int" resultMap="objectBean">
+	<select id="getSetting" resultMap="objectBean">
 		select cs.id, cs.status, cs.circle_id, cs.add_member, cs.welcome_member, cs.question_title, cs.question_answer
 		, date_format(cs.create_time,'%Y-%m-%d %H:%i:%s') create_time, cs.create_user_id, cs.announce, cs.check_post
 		, cs.background_color, cs.limit_number 

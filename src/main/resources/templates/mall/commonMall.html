@@ -30,6 +30,10 @@
   	.hand{
  		cursor: pointer;
   	}
+
+  	.layui-nav .layui-nav-more{
+  	  margin-top: 0!important;
+  	}
   </style>
 </head>
 <body>
@@ -40,14 +44,18 @@
   <li class="layui-nav-item nav-height">
     <a href="/mall/wish">心愿单<span class="layui-badge" id="wishNumber">0</span></a>
   </li>
+  <li class="layui-nav-item nav-height">
+    <a href="/mall/s" target="_blank">搜索</a>
+  </li>
   <li class="layui-nav-item nav-height" th:if="${isLogin}">
-    <a href="javascript:;"><img th:src="${user_pic_path}" class="layui-nav-img" /><span th:utext="${account}"></span></a>
+    <a href="javascript:;"><img th:src="${user_pic_path}" style="width: 30px; height: 30px;" class="layui-nav-img" /><span th:utext="${account}"></span></a>
     <dl class="layui-nav-child">
       <dd><a href="/mall/order">我的订单<span class="layui-badge" id="noDealOrderNumber">0</span></a></dd>
       <dd><a href="/mall/promotion/index">推广管理</a></dd>
       <dd th:if="${isAdmin}"><a href="/mall/home/manager">首页管理</a></dd>
       <dd><a href="javascript:;">修改信息</a></dd>
-      <dd><a href="/mall/manager">店铺管理</a></dd>
+      <dd><a href="/mall/product/manager">商品管理</a></dd>
+      <dd><a href="/mall/shop/manager">店铺管理</a></dd>
       <dd><a href="javascript:;">安全管理</a></dd>
       <dd><a href="javascript:void(0);" onclick="logout();">退了</a></dd>
     </dl>

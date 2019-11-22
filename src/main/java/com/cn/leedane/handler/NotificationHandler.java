@@ -93,8 +93,8 @@ public class NotificationHandler {
 	 * @param tableId
 	 * @param objectBean ids没有机器人的Id的时候可以为空
 	 */
-	public void sendErrorNotification(String content, String tableName, int tableId, Object objectBean){
-		Set<Integer> ids = new HashSet<Integer>();
+	public void sendErrorNotification(String content, String tableName, long tableId, Object objectBean){
+		Set<Long> ids = new HashSet<Long>();
 		ids.add(OptionUtil.adminUser.getId());
 		sendNotificationByIds(true, OptionUtil.adminUser, ids, content, NotificationType.通知, tableName, tableId, objectBean);
 	}
@@ -111,8 +111,8 @@ public class NotificationHandler {
 	 * @param tableId
 	 * @param objectBean ids没有机器人的Id的时候可以为空
 	 */
-	public void sendNotificationById(boolean notifyMySelf, UserBean user, int id, String content, NotificationType notificationType, String tableName, int tableId, Object objectBean){
-		Set<Integer> ids = new HashSet<Integer>();
+	public void sendNotificationById(boolean notifyMySelf, UserBean user, long id, String content, NotificationType notificationType, String tableName, long tableId, Object objectBean){
+		Set<Long> ids = new HashSet<Long>();
 		ids.add(id);
 		sendNotificationByIds(notifyMySelf, user, ids, content, notificationType, tableName, tableId, objectBean);
 	}
@@ -128,7 +128,7 @@ public class NotificationHandler {
 	 * @param tableId
 	 * @param objectBean ids没有机器人的Id的时候可以为空
 	 */
-	public void sendNotificationByIds(boolean notifyMySelf, final UserBean user, Set<Integer> ids, String content, NotificationType notificationType, String tableName, int tableId, final Object objectBean){
+	public void sendNotificationByIds(boolean notifyMySelf, final UserBean user, Set<Long> ids, String content, NotificationType notificationType, String tableName, long tableId, final Object objectBean){
 		if(!notifyMySelf){
 			//先把自己过滤掉(自己不需要通知)
 			ids.remove(user.getId());	
@@ -164,7 +164,7 @@ public class NotificationHandler {
 		NotificationBean notificationBean;
 		JSONObject friendObject = null;
 		String account = null;
-		for(Integer id: ids){
+		for(Long id: ids){
 			friendObject = friendHandler.getFromToFriends(id);
 			notificationBean = new NotificationBean();
 			notificationBean.setFromUserId(user.getId());
@@ -226,13 +226,13 @@ public class NotificationHandler {
 	private void robotReply(int robotId, UserBean user, Object objectBean) {
 		
 		String tableName = null;
-		int tableId = 0;
+		long tableId = 0;
 		String robotName = userHandler.getUserName(robotId);
 		//找到该机器人的名称
 		if(StringUtil.isNotNull(robotName)){
 			String content = "";//用户发送的内容
 			String robotReply = "";//机器人回复的内容
-			int pid = 0;
+			long pid = 0;
 			if(objectBean instanceof MoodBean){
 				MoodBean moodBean = (MoodBean) objectBean;
 				if(moodBean != null){
@@ -341,12 +341,12 @@ public class NotificationHandler {
 	 * @param tableId
 	 * @param objectBean
 	 */
-	public void sendNotificationByNames(boolean notifyMySelf, UserBean user, Set<String> names, String content, NotificationType notificationType, String tableName, int tableId, Object objectBean){
+	public void sendNotificationByNames(boolean notifyMySelf, UserBean user, Set<String> names, String content, NotificationType notificationType, String tableName, long tableId, Object objectBean){
 		int size = names.size();
 		if(size < 1)
 			return;
-		Set<Integer> ids = new HashSet<Integer>();
-		int id = 0;
+		Set<Long> ids = new HashSet<Long>();
+		long id = 0;
 		for(String name: names){
 			id = userHandler.getUserIdByName(name);
 			if(id > 0 )
@@ -407,7 +407,7 @@ public class NotificationHandler {
 	 * @param userId
 	 * @return
 	 */
-	public KeyValuesBean getNoReadMessagesNumber(int userId) {
+	public KeyValuesBean getNoReadMessagesNumber(long userId) {
 		//deleteNoReadMessagesNumber(userId);
 		String key = getNoReadMessageKey(userId);
 		Object obj = systemCache.getCache(key);
@@ -462,14 +462,14 @@ public class NotificationHandler {
 	 * @param userId
 	 * @return
 	 */
-	public boolean deleteNoReadMessagesNumber(int userId){
+	public boolean deleteNoReadMessagesNumber(long userId){
 		String key = getNoReadMessageKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
 		return true;
 	}
 	
-	public static String getNoReadMessageKey(int userId){
+	public static String getNoReadMessageKey(long userId){
 		return ConstantsUtil.MESSAGE_REDIS + userId;
 	}
 }

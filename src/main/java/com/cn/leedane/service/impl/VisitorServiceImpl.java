@@ -50,7 +50,7 @@ public class VisitorServiceImpl extends AdminRoleCheckService implements Visitor
 	private OperateLogService<OperateLogBean> operateLogService;
 	
 	@Override
-	public boolean saveVisitor(final UserBean user, final String froms, final String tableName, final int tableId, final int status){
+	public boolean saveVisitor(final UserBean user, final String froms, final String tableName, final long tableId, final int status){
 		if(user == null)
 			return false;
 		new ThreadUtil().singleTask(new VisitorSaveThread(user, froms, tableName, tableId, status));
@@ -59,7 +59,7 @@ public class VisitorServiceImpl extends AdminRoleCheckService implements Visitor
 	
 
 	@Override
-	public boolean deleteVisitor(final UserBean user, final String tableName, final int tableId){
+	public boolean deleteVisitor(final UserBean user, final String tableName, final long tableId){
 		if(user == null)
 			return false;
 		new ThreadUtil().singleTask(new VisitorDeleteThread(user, tableName, tableId));
@@ -67,7 +67,7 @@ public class VisitorServiceImpl extends AdminRoleCheckService implements Visitor
 	}
 	
 	@Override
-	public Map<String, Object> getVisitorsByLimit(int tableId, JSONObject json, UserBean user,
+	public Map<String, Object> getVisitorsByLimit(long tableId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("VisitorServiceImpl-->getVisitorsByLimit():uid=" +tableId +", json="+json.toString());
 		ResponseMap message = new ResponseMap();
@@ -104,20 +104,20 @@ public class VisitorServiceImpl extends AdminRoleCheckService implements Visitor
 	}
 	
 	@Override
-	public int getTodayVisitors(String tableName, int tableId) {
+	public int getTodayVisitors(String tableName, long tableId) {
 		logger.info("VisitorServiceImpl-->getTodayVisitor():tableName = "+ tableName +", tableId=" +tableId);
 		Date today = DateUtil.getTodayStart();
 		return visitorMapper.getTodayVisitors(today, tableName, tableId, ConstantsUtil.STATUS_NORMAL);
 	}
 	
 	@Override
-	public int getVisitorsByTime(String tableName, int tableId, String time) {
+	public int getVisitorsByTime(String tableName, long tableId, String time) {
 		logger.info("VisitorServiceImpl-->getVisitorsByTime():tableName = "+ tableName +", tableId=" +tableId +", time=" + time);
 		return visitorMapper.getVisitorsByTime(tableName, tableId, ConstantsUtil.STATUS_NORMAL, time);
 	}
 	
 	@Override
-	public int getAllVisitors(String tableName, int tableId) {
+	public int getAllVisitors(String tableName, long tableId) {
 		logger.info("VisitorServiceImpl-->getAllVisitors():tableName = "+ tableName +", tableId=" +tableId);
 		return visitorMapper.getAllVisitors(tableName, tableId, ConstantsUtil.STATUS_NORMAL);
 	}

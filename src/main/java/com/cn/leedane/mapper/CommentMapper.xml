@@ -33,7 +33,7 @@
 		 order by c.id desc limit #{start}, #{pageSize}
 	</select>
 
-	<select id="getLevel" parameterType="int" resultType="string" statementType="CALLABLE">
+	<select id="getLevel" resultType="string" statementType="CALLABLE">
 		{
 		call commentCascade(#{pid})
 		}

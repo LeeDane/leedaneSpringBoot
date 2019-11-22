@@ -68,7 +68,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
 		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
-		int toUserId = JsonUtil.getIntValue(jo, "toUserId", user.getId());
+		long toUserId = JsonUtil.getLongValue(jo, "toUserId", user.getId());
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		
 		logger.info("FanServiceImpl-->getMyAttentionFansLimit():jo="+jo.toString());
@@ -203,7 +203,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
 		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
-		int toUserId = JsonUtil.getIntValue(jo, "toUserId", user.getId());
+		long toUserId = JsonUtil.getLongValue(jo, "toUserId", user.getId());
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		
 		logger.info("FanServiceImpl-->getMyFansLimit():jo="+jo.toString());
@@ -441,7 +441,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 	 * @param toUserId
 	 * @return
 	 */
-	private boolean cheakIsAddFan(int id, int toUserId) {
+	private boolean cheakIsAddFan(long id, long toUserId) {
 		return this.fanMapper.executeSQL("select id from "+DataTableType.粉丝.value+" where create_user_id=? and to_user_id =? and status=?", id, toUserId, ConstantsUtil.STATUS_NORMAL).size() > 0;
 	}
 

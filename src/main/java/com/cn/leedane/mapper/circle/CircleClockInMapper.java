@@ -20,8 +20,8 @@ public interface CircleClockInMapper extends BaseMapper<CircleClockInBean>{
 	 * @return
 	 */
 	public List<CircleClockInBean> getClockInBean(
-			@Param("circleId") int circleId, 
-			@Param("createUserId")int userId, 
+			@Param("circleId") long circleId,
+			@Param("createUserId")long userId,
 			@Param("status")int status,
 			@Param("time")String time);
 }

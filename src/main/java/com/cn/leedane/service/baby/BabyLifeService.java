@@ -23,7 +23,7 @@ public interface BabyLifeService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> add(int babyId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> add(long babyId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 编辑生活方式
@@ -34,7 +34,7 @@ public interface BabyLifeService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> update(int babyId, int lifeId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> update(long babyId, long lifeId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除宝宝生活方式
@@ -44,7 +44,7 @@ public interface BabyLifeService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(int babyId, int lifeId, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> delete(long babyId, long lifeId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取宝宝的生活方式列表
@@ -57,7 +57,7 @@ public interface BabyLifeService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> lifes(int babyId,
+	public Map<String, Object> lifes(long babyId,
 			String startDate, String endDate, String keyWord, int lifeType,
 			UserBean user, HttpRequestInfoBean request);
 

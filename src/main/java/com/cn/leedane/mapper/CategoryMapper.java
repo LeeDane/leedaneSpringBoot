@@ -22,8 +22,8 @@ public interface CategoryMapper extends BaseMapper<CategoryBean>{
 	 * @return
 	 */
 	public List<Map<String, Object>> children(
-			@Param("pid")int pid, 
-			@Param("userId")int userId);
+			@Param("pid")long pid,
+			@Param("userId")long userId);
 
 	/**
 	 * 判断该节点是否能被登录用户删除的
@@ -32,9 +32,9 @@ public interface CategoryMapper extends BaseMapper<CategoryBean>{
 	 * @return
 	 */
 	public List<Map<String, Object>> canDelete(
-			@Param("id")int id, 
-			@Param("userId")int userId);
+			@Param("id")long id,
+			@Param("userId")long userId);
 
-	public List<Map<String, Object>> getParentCategorys(@Param("cid")int cid);
+	public List<Map<String, Object>> getParentCategorys(@Param("cid")long cid);
 
 }

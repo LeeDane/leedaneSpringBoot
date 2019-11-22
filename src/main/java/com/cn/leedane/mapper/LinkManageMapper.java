@@ -30,12 +30,12 @@ public interface LinkManageMapper  extends BaseMapper<LinkManageBean>{
 	 * @param lnid
 	 * @return
 	 */
-	public List<Map<String, Object>> roles(@Param("lnid")int lnid, @Param("status") int status);
+	public List<Map<String, Object>> roles(@Param("lnid")long lnid, @Param("status") int status);
 	
 	/**
 	 * 获取该链接的全部权限
 	 * @param lnid
 	 * @return
 	 */
-	public List<Map<String, Object>> permissions(@Param("lnid")int lnid, @Param("status") int status);
+	public List<Map<String, Object>> permissions(@Param("lnid")long lnid, @Param("status") int status);
 }

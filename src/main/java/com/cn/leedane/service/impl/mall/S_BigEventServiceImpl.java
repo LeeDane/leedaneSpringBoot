@@ -72,7 +72,7 @@ public class S_BigEventServiceImpl extends MallRoleCheckService implements S_Big
 	}
 	
 	@Override
-	public Map<String, Object> paging(int productId, JSONObject jo, UserBean user, HttpRequestInfoBean request){
+	public Map<String, Object> paging(long productId, JSONObject jo, UserBean user, HttpRequestInfoBean request){
 		logger.info("S_BigEventServiceImpl-->paging():jsonObject=" +jo.toString() +", productId=" +productId);
 		ResponseMap message = new ResponseMap();
 		if(user == null)

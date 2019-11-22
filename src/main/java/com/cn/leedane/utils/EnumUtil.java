@@ -483,6 +483,7 @@ public class EnumUtil {
 		该事件不存在(4037),
 		该图库不存在(4038),
 		请输入正确验证码(4039),
+		淘宝api异常(4040),
 		;
 		
 		private ResponseCode(int value) {

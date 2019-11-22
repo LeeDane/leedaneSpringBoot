@@ -27,14 +27,14 @@ public class CirclePostBean extends RecordTimeBean{
 	 */
 	@Column("pid")
 	@Field
-	private int pid;
+	private long pid;
 	
 	/**
 	 * 圈子的id,外键关联CircleBean
 	 */
 	@Column("circle_id")
 	@Field
-	private int circleId;
+	private long circleId;
 
 	/**
 	 * 帖子的内容
@@ -100,11 +100,11 @@ public class CirclePostBean extends RecordTimeBean{
 	@Field
 	private boolean postRecommend;
 
-	public int getCircleId() {
+	public long getCircleId() {
 		return circleId;
 	}
 
-	public void setCircleId(int circleId) {
+	public void setCircleId(long circleId) {
 		this.circleId = circleId;
 	}
 
@@ -148,11 +148,11 @@ public class CirclePostBean extends RecordTimeBean{
 		this.tag = tag;
 	}
 
-	public int getPid() {
+	public long getPid() {
 		return pid;
 	}
 
-	public void setPid(int pid) {
+	public void setPid(long pid) {
 		this.pid = pid;
 	}
 

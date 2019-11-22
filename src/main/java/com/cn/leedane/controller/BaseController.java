@@ -649,7 +649,7 @@ public class BaseController {
 	 * 从message中解析user数据
 	 * @return
 	 */
-	protected int getUserIdFromShiro(){
+	protected long getUserIdFromShiro(){
 		UserBean user = getMustLoginUserFromShiro();
 		if(user == null)
 			throw new MustLoginException();

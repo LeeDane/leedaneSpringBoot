@@ -60,7 +60,7 @@ public class CircleSettingServiceImpl extends AdminRoleCheckService implements C
 	private CirclePostHandler circlePostHandler;
 
 	@Override
-	public Map<String, Object> update(int circleId, int settingId, JSONObject json, UserBean user,
+	public Map<String, Object> update(long circleId, long settingId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CircleSettingServiceImpl-->paging():jo="+json.toString());
 		ResponseMap message = new ResponseMap();

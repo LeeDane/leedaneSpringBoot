@@ -25,14 +25,14 @@ public class S_HomeItemProductBean extends RecordTimeBean{
 	 */
 	@Column(value="item_id")
 	@Field
-	private int itemId;
+	private long itemId;
 	
 	/**
 	 * 当前分类对应的商品的id
 	 */
 	@Column(value="product_id")
 	@Field
-	private int productId;
+	private long productId;
 	
 	/**
 	 * 商品的排列顺序
@@ -41,11 +41,11 @@ public class S_HomeItemProductBean extends RecordTimeBean{
 	@Field
 	private int productOrder;
 
-	public int getProductId() {
+	public long getProductId() {
 		return productId;
 	}
 
-	public void setProductId(int productId) {
+	public void setProductId(long productId) {
 		this.productId = productId;
 	}
 
@@ -57,11 +57,11 @@ public class S_HomeItemProductBean extends RecordTimeBean{
 		this.productOrder = productOrder;
 	}
 
-	public int getItemId() {
+	public long getItemId() {
 		return itemId;
 	}
 
-	public void setItemId(int itemId) {
+	public void setItemId(long itemId) {
 		this.itemId = itemId;
 	}
 

@@ -20,14 +20,14 @@ public interface S_OrderMapper extends BaseMapper<S_OrderBean>{
 	 * @param userId
 	 * @return
 	 */
-	public List<Map<String, Object>> getNoDealNumber(@Param("userId") int userId);
+	public List<Map<String, Object>> getNoDealNumber(@Param("userId") long userId);
 	
 	/**
 	 * 分页获取订单列表
 	 * @param userId
 	 * @return
 	 */
-	public List<Map<String, Object>> paging(@Param("userId") int userId, @Param("status") int status, 
+	public List<Map<String, Object>> paging(@Param("userId") long userId, @Param("status") int status,
 			@Param("start")int start, @Param("pageSize") int pageSize);
 	
 }

@@ -74,7 +74,7 @@ public class CircleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
+	public Map<String, Object> update(@PathVariable("circleId") long circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -104,7 +104,7 @@ public class CircleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("circleId") int circleId){
+	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("circleId") long circleId){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -119,7 +119,7 @@ public class CircleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/join/check", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> joinCheck(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
+	public Map<String, Object> joinCheck(@PathVariable("circleId") long circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -134,7 +134,7 @@ public class CircleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/join", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> join(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
+	public Map<String, Object> join(@PathVariable("circleId") long circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -149,7 +149,7 @@ public class CircleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/leave", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> leave(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
+	public Map<String, Object> leave(@PathVariable("circleId") long circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -164,7 +164,7 @@ public class CircleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{cid}/admins", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> roles(Model model, HttpServletRequest request, @PathVariable("cid") int cid){
+	public Map<String, Object> roles(Model model, HttpServletRequest request, @PathVariable("cid") long cid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -179,7 +179,7 @@ public class CircleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{cid}/admins/allot", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> allot(Model model, HttpServletRequest request, @PathVariable("cid") int cid){
+	public Map<String, Object> allot(Model model, HttpServletRequest request, @PathVariable("cid") long cid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -197,7 +197,7 @@ public class CircleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{cid}/init", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> initialize(Model model, HttpServletRequest request, @PathVariable("cid") int cid){
+	public Map<String, Object> initialize(Model model, HttpServletRequest request, @PathVariable("cid") long cid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

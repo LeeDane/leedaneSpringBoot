@@ -54,7 +54,7 @@ public class ClockDynamicRecieve implements IRecieve{
 		
 		//不成功
 		if(!success && clockDynamicQueueBean != null){
-			int createUserId = clockDynamicQueueBean.getClockDynamicBean().getCreateUserId();
+			long createUserId = clockDynamicQueueBean.getClockDynamicBean().getCreateUserId();
 			//已经有三次失败记录，发送给创建者
 			if(clockDynamicQueueBean.getError() == 2){
 				CustomMessage customMessage = new JpushCustomMessage();

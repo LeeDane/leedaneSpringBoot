@@ -23,7 +23,7 @@ public interface ClockMapper extends BaseMapper<ClockBean>{
 	 * @return
 	 */
 	public List<ClockDisplay> dateClocks(
-			@Param("createUserId") int userId, 
+			@Param("createUserId") long userId,
 			@Param("week")String week, 
 			@Param("date")String date);
 	
@@ -35,7 +35,7 @@ public interface ClockMapper extends BaseMapper<ClockBean>{
 	 * @return
 	 */
 	public List<ClockDisplay> getMyOngoingClocks(
-			@Param("createUserId") int userId,
+			@Param("createUserId") long userId,
 			@Param("start") int start,
 			@Param("pageSize") int pageSize,
 			@Param("date")String date);
@@ -49,7 +49,7 @@ public interface ClockMapper extends BaseMapper<ClockBean>{
 	 * @return
 	 */
 	public List<ClockDisplay> getMyEndedClocks(
-			@Param("createUserId") int userId,
+			@Param("createUserId") long userId,
 			@Param("start") int start,
 			@Param("pageSize") int pageSize,
 			@Param("date")String date);
@@ -61,7 +61,7 @@ public interface ClockMapper extends BaseMapper<ClockBean>{
 	 * @param pageSize
 	 * @return
 	 */
-	public List<ClockBean> getMyAllClocks(@Param("createUserId") int userId, @Param("start")int start, @Param("pageSize") int pageSize);
+	public List<ClockBean> getMyAllClocks(@Param("createUserId") long userId, @Param("start")int start, @Param("pageSize") int pageSize);
 
 	/**
 	 * 获取系统的任务列表
@@ -73,13 +73,13 @@ public interface ClockMapper extends BaseMapper<ClockBean>{
 	 * 获得指定用户的指定任务
 	 * @return
 	 */
-	public List<ClockDisplay> getMyClock(@Param("createUserId") int userId, @Param("clockId")int clockId);
+	public List<ClockDisplay> getMyClock(@Param("createUserId") long userId, @Param("clockId")long clockId);
 	
 	/**
 	 * 获得指定用户的指定的搜索任务
 	 * @return
 	 */
-	public ClockSearchDisplay getClockThumbnail(@Param("userId") int userId, @Param("clockId")int clockId);
+	public ClockSearchDisplay getClockThumbnail(@Param("userId") long userId, @Param("clockId")long clockId);
 	
 
 	/**
@@ -88,5 +88,5 @@ public interface ClockMapper extends BaseMapper<ClockBean>{
 	 * @param keyword
 	 * @return
 	 */
-	public List<ClockSearchDisplay> search(@Param("userId")int userId, @Param("keyword")String keyword);
+	public List<ClockSearchDisplay> search(@Param("userId")long userId, @Param("keyword")String keyword);
 }

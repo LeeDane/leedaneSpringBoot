@@ -70,8 +70,6 @@ public class LinkManageHandler {
 	}
 	
 	/**
-	 * 获取心情在redis的key
-	 * @param blogId
 	 * @return
 	 */
 	public static String getLinkManageKey(){

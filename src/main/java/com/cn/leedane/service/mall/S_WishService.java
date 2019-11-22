@@ -55,7 +55,7 @@ public interface S_WishService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public int getWishTotal(int productId, String toDayString);
+	public int getWishTotal(long productId, String toDayString);
 
 	/**
 	 * 删除心愿单
@@ -64,7 +64,7 @@ public interface S_WishService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int wishId,
+	public Map<String, Object> delete(long wishId,
 			UserBean user, HttpRequestInfoBean request);
 	
 	

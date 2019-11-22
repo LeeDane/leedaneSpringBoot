@@ -89,7 +89,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	private VisitorService<VisitorBean> visitorService;
 	
 	@Override
-	public Map<String, Object> add(int circleId, JSONObject json, UserBean user,
+	public Map<String, Object> add(long circleId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->add(), circleId= " + circleId +",user=" +user.getAccount());
 		SqlUtil sqlUtil = new SqlUtil();
@@ -161,7 +161,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	}
 	
 	@Override
-	public Map<String, Object> update(int circleId, JSONObject json, UserBean user,
+	public Map<String, Object> update(long circleId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->update(), circleId= " + circleId +",user=" +user.getAccount());
 		
@@ -207,7 +207,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	}
 
 	@Override
-	public Map<String, Object> paging(int circleId, JSONObject json,
+	public Map<String, Object> paging(long circleId, JSONObject json,
 			UserBean user, HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->paging():json=" +json.toString());
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
@@ -235,7 +235,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 				if(pid > 0){
 					CirclePostBean postBean = circlePostHandler.getNormalCirclePostBean(pid);
 					String blockquoteContent = "该帖子已被删除！";
-					int blockCreateUserId = 0;
+					long blockCreateUserId = 0;
 					map.put("blockquote", false);
 					if(postBean != null){
 						blockquoteContent = postBean.getTitle();
@@ -258,7 +258,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	}
 	
 	@Override
-	public Map<String, Object> comment(int circleId, int postId, JSONObject json, UserBean user,
+	public Map<String, Object> comment(long circleId, long postId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->comment(), postId= " + postId +",user=" +user.getAccount());
 		CirclePostBean oldCirclePostBean = circlePostHandler.getNormalCirclePostBean(circleId, postId);
@@ -288,7 +288,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	}
 	
 	@Override
-	public Map<String, Object> transmit(int circleId, int postId, JSONObject json, UserBean user,
+	public Map<String, Object> transmit(long circleId, long postId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->transmit(), postId= " + postId +",user=" +user.getAccount());
 		CirclePostBean oldCirclePostBean = circlePostHandler.getNormalCirclePostBean(circleId, postId);
@@ -347,7 +347,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	}
 
 	@Override
-	public Map<String, Object> zan(int circleId, int postId, JSONObject json, UserBean user,
+	public Map<String, Object> zan(long circleId, long postId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->zan(), postId= " + postId +",user=" +user.getAccount());
 		CirclePostBean oldCirclePostBean = circlePostHandler.getNormalCirclePostBean(circleId, postId);
@@ -378,7 +378,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	}
 	
 	@Override
-	public Map<String, Object> delete(int circleId, int postId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> delete(long circleId, long postId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->delete(), postId= " + postId +",user=" +user.getAccount());
 		CirclePostBean circlePostBean = circlePostHandler.getNormalCirclePostBean(circleId, postId);
 		if(circlePostBean == null)
@@ -395,8 +395,8 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
 		
 		ResponseMap message = new ResponseMap();
-		
-		int createUserId = circlePostBean.getCreateUserId();
+
+		long createUserId = circlePostBean.getCreateUserId();
 		String reason = JsonUtil.getStringValue(json, "reason", "没有原因");
 		String content = "您的帖子《"+ circlePostBean.getTitle() +"》被管理者：\""+ user.getAccount() +"\" 删除, 原因是："+ reason;
 		boolean result = circlePostMapper.deleteById(CirclePostBean.class, circlePostBean.getId()) > 0;
@@ -440,7 +440,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		ResponseMap message = new ResponseMap();
 		message.put("circle", circle);
 		message.put("post", post);
-		int postId = post.getId();
+		long postId = post.getId();
 		//把更新读的信息提交到Rabbitmq队列处理
 		new Thread(new Runnable() {
 			@Override
@@ -481,11 +481,11 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		//message.putAll(userHandler.getBaseUserInfo(post.getCreateUserId()));
 		message.put("post_create_user_account", userHandler.getUserName(post.getCreateUserId()));
 		message.put("post_create_user_pic_path", userHandler.getUserPicPath(post.getCreateUserId(), "30x30"));
-		int pid = post.getPid();
+		long pid = post.getPid();
 		if(pid > 0){
 			CirclePostBean postBean = circlePostHandler.getNormalCirclePostBean(pid);
 			String blockquoteContent = "该帖子已被删除！";
-			int blockCreateUserId = 0;
+			long blockCreateUserId = 0;
 			message.put("blockquote", false);
 			if(postBean != null){
 				blockquoteContent = postBean.getTitle();
@@ -501,7 +501,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	}
 
 	@Override
-	public void saveVisitLog(int postId, UserBean user,
+	public void saveVisitLog(long postId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->saveVisitLog() , postId= "+ postId +", --" + (user == null ? "" : user.getAccount()));
 		
@@ -509,7 +509,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	}
 	
 	@Override
-	public Map<String, Object> noCheckTotal(int circleId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> noCheckTotal(long circleId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->noCheckTotal(), circleId= " + circleId +",user=" +user.getAccount());
 		circleHandler.getNormalCircleBean(circleId, user);
 		
@@ -531,7 +531,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	}
 	
 	@Override
-	public Map<String, Object> noCheckList(int circleId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> noCheckList(long circleId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->noCheckList(), circleId= " + circleId +",user=" +user.getAccount());
 		circleHandler.getNormalCircleBean(circleId, user);
 		
@@ -569,7 +569,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 	}
 	
 	@Override
-	public Map<String, Object> check(int circleId, int postId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> check(long circleId, long postId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("CirclePostServiceImpl-->check(), circleId= " + circleId +", postId= "+ postId +",user=" +user.getAccount());
 		CirclePostBean circlePostBean = circlePostHandler.getCirclePostBean(postId, user);
 		if(circlePostBean == null)

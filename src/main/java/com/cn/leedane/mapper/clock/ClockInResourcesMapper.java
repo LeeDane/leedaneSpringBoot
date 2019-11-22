@@ -22,7 +22,7 @@ public interface ClockInResourcesMapper extends BaseMapper<ClockInResourcesBean>
      * @param pageSize 为0表示获取全部
      * @return
      */
-    public List<ClockInResourceDisplay> resources(@Param("clockId")int clockId, @Param("resourceType")int resourceType,
+    public List<ClockInResourceDisplay> resources(@Param("clockId")long clockId, @Param("resourceType")int resourceType,
                                                   @Param("start")int start,
                                                   @Param("pageSize")int pageSize);
 //	/**

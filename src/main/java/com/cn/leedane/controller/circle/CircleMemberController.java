@@ -44,7 +44,7 @@ public class CircleMemberController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/members", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(@PathVariable("circleId") int circleId, Model model, HttpServletRequest request){
+	public Map<String, Object> paging(@PathVariable("circleId") long circleId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -60,7 +60,7 @@ public class CircleMemberController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/member/{memberId}/recommend", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> recommend(@PathVariable("circleId") int circleId, @PathVariable("memberId") int memberId, Model model, HttpServletRequest request){
+	public Map<String, Object> recommend(@PathVariable("circleId") long circleId, @PathVariable("memberId") long memberId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -75,7 +75,7 @@ public class CircleMemberController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/member/{memberId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@PathVariable("circleId") int circleId, @PathVariable("memberId") int memberId, Model model, HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("circleId") long circleId, @PathVariable("memberId") long memberId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -90,7 +90,7 @@ public class CircleMemberController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{circleId}/setting/{settingId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> setting(@PathVariable("circleId") int circleId, @PathVariable("settingId") int settingId, Model model, HttpServletRequest request){
+	public Map<String, Object> setting(@PathVariable("circleId") long circleId, @PathVariable("settingId") long settingId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

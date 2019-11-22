@@ -19,8 +19,8 @@ public class VisitorDeleteThread implements Runnable{
 	private Logger logger = Logger.getLogger(getClass());
 	private UserBean mUser;
 	private String mTableName;
-	private int mTableId;
-	public VisitorDeleteThread(UserBean user, String tableName, int tableId) {
+	private long mTableId;
+	public VisitorDeleteThread(UserBean user, String tableName, long tableId) {
 		this.mUser = user;
 		this.mTableName = tableName;
 		this.mTableId = tableId;

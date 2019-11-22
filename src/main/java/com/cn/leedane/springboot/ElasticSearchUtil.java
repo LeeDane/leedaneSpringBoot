@@ -108,7 +108,7 @@ public class ElasticSearchUtil {
 	 * @param mapping 相应的mapping（只有在索引不存在的情况下才操作）
 	 * @return
 	 */
-	public boolean add(String table, int id, HashMap<String, Object> fields, XContentBuilder mapping){
+	public boolean add(String table, long id, HashMap<String, Object> fields, XContentBuilder mapping){
 		try {
 
 			//索引不存在就重新创建
@@ -182,7 +182,7 @@ public class ElasticSearchUtil {
 	 * @param id 主键ID
 	 * @return
 	 */
-	public boolean delete(String table, int id){
+	public boolean delete(String table, long id){
 		try {
 			DeleteResponse deleteresponse = getTransportClient().prepareDelete(getDefaultIndexName(table), table,id + "").execute().actionGet();
 			System.out.println(deleteresponse.getVersion());

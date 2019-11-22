@@ -66,7 +66,7 @@ public class MaterialController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/material/{mid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"}) 
-	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("mid") int materialId){
+	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("mid") long materialId){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

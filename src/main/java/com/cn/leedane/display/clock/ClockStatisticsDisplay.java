@@ -17,9 +17,9 @@ public class ClockStatisticsDisplay implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private int clockId;
+	private long clockId;
 	
-	private int createUserId;  //创建人
+	private long createUserId;  //创建人
 	
 	private String createAccount; //创建者名称
 	
@@ -37,19 +37,19 @@ public class ClockStatisticsDisplay implements Serializable{
 
 	private List<Map<String, Object>> results; // 最近30天的打卡时间统计
 //
-	public int getClockId() {
+	public long getClockId() {
 		return clockId;
 	}
 
-	public void setClockId(int clockId) {
+	public void setClockId(long clockId) {
 		this.clockId = clockId;
 	}
 
-	public int getCreateUserId() {
+	public long getCreateUserId() {
 		return createUserId;
 	}
 
-	public void setCreateUserId(int createUserId) {
+	public void setCreateUserId(long createUserId) {
 		this.createUserId = createUserId;
 	}
 

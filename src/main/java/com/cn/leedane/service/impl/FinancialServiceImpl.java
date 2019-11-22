@@ -63,7 +63,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 		}
 		
 		if(result){
-			Map<String, Integer> r = new HashMap<String, Integer>();
+			Map<String, Long> r = new HashMap<String, Long>();
 			r.put("local_id", financialBean.getLocalId());
 			r.put("id", financialBean.getId());
 			message.put("isSuccess", true);
@@ -81,7 +81,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 	 * 判断记录是否已经存在
 	 * @return
 	 */
-	private boolean checkExists(String imei, int localId, String additionTime){
+	private boolean checkExists(String imei, long localId, String additionTime){
 		
 		//暂时对没有imei或者additionTime 不做处理
 		if(StringUtil.isNull(imei) || StringUtil.isNull(additionTime)){
@@ -172,12 +172,12 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 			fBean.setImei(imei);
 		}
 		
-		List<Map<String, Integer>> inserts = new ArrayList<Map<String,Integer>>();//此次同步插入的数据ID
-		List<Map<String, Integer>> updates = new ArrayList<Map<String,Integer>>(); //此次同步发现数据有更新的数据ID
-		List<Map<String, Integer>> deletes = new ArrayList<Map<String,Integer>>();//此次同步发现数据被删的数据ID
+		List<Map<String, Long>> inserts = new ArrayList<Map<String,Long>>();//此次同步插入的数据ID
+		List<Map<String, Long>> updates = new ArrayList<Map<String,Long>>(); //此次同步发现数据有更新的数据ID
+		List<Map<String, Long>> deletes = new ArrayList<Map<String,Long>>();//此次同步发现数据被删的数据ID
 		int total = 0; //此次同步总共处理的数量
-		
-		int fId = 0;
+
+		long fId = 0;
 		FinancialBean webBean;
 		for(FinancialBean appFinancialBean: appFinancialBeans){
 			fId = appFinancialBean.getId();
@@ -186,13 +186,13 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 				webBean = financialMapper.findById(FinancialBean.class, fId);
 				if(webBean == null){
 					//deletes.add(fId);
-					Map<String, Integer> map = new HashMap<String, Integer>();
+					Map<String, Long> map = new HashMap<String, Long>();
 					map.put("localId", appFinancialBean.getLocalId());
 					map.put("id", appFinancialBean.getId());
 					deletes.add(map);
 				}else{
 					if(hasChange(appFinancialBean, webBean)){
-						Map<String, Integer> map = new HashMap<String, Integer>();
+						Map<String, Long> map = new HashMap<String, Long>();
 						map.put("localId", appFinancialBean.getLocalId());
 						map.put("id", appFinancialBean.getId());
 						if(financialMapper.update(appFinancialBean) > 0){
@@ -208,7 +208,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 				//校验记录是否存在
 				if(!checkExists(imei, financialBean.getLocalId(), financialBean.getAdditionTime())){
 					if(financialMapper.save(financialBean) > 0){
-						Map<String, Integer> map = new HashMap<String, Integer>();
+						Map<String, Long> map = new HashMap<String, Long>();
 						map.put("localId", appFinancialBean.getLocalId());
 						map.put("id", financialBean.getId());
 						inserts.add(map);
@@ -247,8 +247,8 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 			message.put("isSuccess", true);
 			return message.getMap();
 		}
-				
-		int fId = 0;
+
+		long fId = 0;
 		List<FinancialBean> returnBeans = new ArrayList<FinancialBean>();
 		FinancialBean newFinancialBean = null;
 		FinancialBean webBean;
@@ -399,7 +399,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 	}
 
 	@Override
-	public List<FinancialBean> getByTimeRange(int createUserId, int status,
+	public List<FinancialBean> getByTimeRange(long createUserId, int status,
 			Date startTime, Date endTime) {
 		return this.financialMapper.getByTimeRange(createUserId, status, startTime, endTime);
 	}

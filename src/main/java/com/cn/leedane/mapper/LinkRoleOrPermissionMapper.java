@@ -22,15 +22,13 @@ public interface LinkRoleOrPermissionMapper extends BaseMapper<LinkRoleOrPermiss
 	
 	/**
 	 * 根据链接id获取其对应分配的用户id
-	 * @param pmid
 	 * @return
 	 */
-	public List<Map<String, Object>> getUsersByLinkId(@Param("lnid")int lnid);
+	public List<Map<String, Object>> getUsersByLinkId(@Param("lnid")long lnid);
 	
 	/**
 	 * 根据权限ids获取其对应分配的用户id
-	 * @param pmids
 	 * @return
 	 */
-	public List<Map<String, Object>> getUsersByLinkIds(@Param("lnids")int[] lnids);
+	public List<Map<String, Object>> getUsersByLinkIds(@Param("lnids")long[] lnids);
 }

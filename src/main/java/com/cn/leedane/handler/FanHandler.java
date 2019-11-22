@@ -100,7 +100,7 @@ public class FanHandler {
 	 * @param toUserId
 	 * @return
 	 */
-	public Set<String> getMyAttentions(int toUserId){
+	public Set<String> getMyAttentions(long toUserId){
 		return getMyAttentionsLimit(toUserId, 0, -1);
 	}
 	/**
@@ -110,7 +110,7 @@ public class FanHandler {
 	 * @param end
 	 * @return
 	 */
-	public Set<String> getMyAttentionsLimit(int toUserId, int start, int end){
+	public Set<String> getMyAttentionsLimit(long toUserId, int start, int end){
 		String attentionIDKey = getAttentionIdsKey(toUserId);
 		
 		//关注列表不存在，先获取该对象的列表放在redis缓存中
@@ -139,7 +139,7 @@ public class FanHandler {
 	 * @param userId
 	 * @param toUserId
 	 */
-	public void cancelAttention(int userId, int toUserId){
+	public void cancelAttention(long userId, long toUserId){
 		Map<Double, String> scoreMembers = new HashMap<Double, String>();
 		long count = 1;
 		String attentionIDKey = getAttentionIdsKey(userId);
@@ -178,7 +178,7 @@ public class FanHandler {
 	 * @param userId
 	 * @param toUserId
 	 */
-	public void cancelFan(int userId, int toUserId){
+	public void cancelFan(long userId, long toUserId){
 		Map<Double, String> scoreMembers = new HashMap<Double, String>();
 		long count = 1;
 		//获取TA的粉丝列表
@@ -213,11 +213,9 @@ public class FanHandler {
 	/**
 	 * 获取我全部粉丝的对象的列表
 	 * @param toUserId
-	 * @param start
-	 * @param end
 	 * @return
 	 */
-	public Set<String> getMyFans(int toUserId){
+	public Set<String> getMyFans(long toUserId){
 		return getMyFansLimit(toUserId, 0, -1);
 	}
 	
@@ -228,7 +226,7 @@ public class FanHandler {
 	 * @param end
 	 * @return
 	 */
-	public Set<String> getMyFansLimit(int toUserId, int start, int end){
+	public Set<String> getMyFansLimit(long toUserId, int start, int end){
 		String fanIDKey = getFanIdsKey(toUserId);
 		//redisUtil.delete(fanIDKey);
 		//关注列表不存在，先获取该对象的列表放在redis缓存中
@@ -283,7 +281,7 @@ public class FanHandler {
 	 * @param toUserId
 	 * @return
 	 */
-	public boolean inAttention(int userId, int toUserId){
+	public boolean inAttention(long userId, long toUserId){
 		boolean result = false;
 		if(userId == toUserId || userId < 1 || toUserId < 1)
 			return result;
@@ -298,19 +296,19 @@ public class FanHandler {
 	
 	/**
 	 * 获取我所关注的人列表在redis的key
-	 * @param id
+	 * @param userId
 	 * @return
 	 */
-	public static String getAttentionIdsKey(int userId){
+	public static String getAttentionIdsKey(long userId){
 		return "attention_id_" +userId;
 	}
 	
 	/**
 	 * 获取关注我的人列表在redis的key
-	 * @param id
+	 * @param userId
 	 * @return
 	 */
-	public static String getFanIdsKey(int userId){
+	public static String getFanIdsKey(long userId){
 		return "fan_id_" +userId;
 	}
 }

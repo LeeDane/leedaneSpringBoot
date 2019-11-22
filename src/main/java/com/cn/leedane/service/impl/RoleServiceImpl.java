@@ -101,7 +101,7 @@ private Logger logger = Logger.getLogger(getClass());
 	}
 
 	@Override
-	public Map<String, Object> delete(int rlid, UserBean user,
+	public Map<String, Object> delete(long rlid, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("RoleServiceImpl-->delete():rlid="+ rlid);
 		ResponseMap message = new ResponseMap();
@@ -169,7 +169,7 @@ private Logger logger = Logger.getLogger(getClass());
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value));
 		
 		String[] rlidArray = rlids.split(",");
-		int[] ids = new int[rlidArray.length];
+		long[] ids = new long[rlidArray.length];
 		
 		StringBuffer sql = new StringBuffer("delete from " + DataTableType.用户角色.value + " where ");
 		for(int i = 0; i < rlidArray.length; i++){
@@ -203,7 +203,7 @@ private Logger logger = Logger.getLogger(getClass());
 	}
 
 	@Override
-	public Map<String, Object> users(int rlid, UserBean user,
+	public Map<String, Object> users(long rlid, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("RoleServiceImpl-->users():rlid="+rlid);
 		ResponseMap message = new ResponseMap();
@@ -219,7 +219,7 @@ private Logger logger = Logger.getLogger(getClass());
 	}
 
 	@Override
-	public Map<String, Object> allot(int rlid, String users, UserBean user,
+	public Map<String, Object> allot(long rlid, String users, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("RoleServiceImpl-->allot():rlid="+rlid +", users="+ users);
 		

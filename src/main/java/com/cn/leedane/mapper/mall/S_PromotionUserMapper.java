@@ -18,6 +18,6 @@ public interface S_PromotionUserMapper extends BaseMapper<S_WishBean>{
 	 * @param userId
 	 * @return
 	 */
-	public S_PromotionUserBean getUser(@Param("userId") int userId, @Param("status") int status);
+	public S_PromotionUserBean getUser(@Param("userId") long userId, @Param("status") int status);
 	
 }

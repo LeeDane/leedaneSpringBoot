@@ -20,11 +20,10 @@ public interface S_StatisticsMapper extends BaseMapper<S_StatisticsBean>{
 	 * 获取相同
 	 * @param productId
 	 * @param statisticsDate
-	 * @param statisticsType
 	 * @return
 	 */
 	public List<S_StatisticsBean> findRecord(
-			@Param("productId") int productId, 
+			@Param("productId") long productId,
 			@Param("statisticsDate") String statisticsDate);
 	
 	/**
@@ -36,7 +35,7 @@ public interface S_StatisticsMapper extends BaseMapper<S_StatisticsBean>{
 	public List<S_StatisticsBean> getRange(
 			@Param("start") String start, 
 			@Param("end") String end, 
-			@Param("productId") int productId,
+			@Param("productId") long productId,
 			@Param("status") int status);
 	
 }

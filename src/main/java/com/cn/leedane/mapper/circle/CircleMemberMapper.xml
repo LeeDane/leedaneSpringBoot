@@ -10,7 +10,7 @@
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
 
-	<select id="getMember" parameterType="int" resultMap="objectBean">
+	<select id="getMember" resultMap="objectBean">
 		select cm.id , cm.status, cm.member_id, cm.circle_id, cm.role_type, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time, cm.create_user_id, cm.member_recommend, cm.member_score
 		from t_circle_member cm 
 		where cm.member_id = #{memberId} and cm.circle_id = #{circleId} and cm.status = #{status} limit 1
@@ -28,13 +28,13 @@
         <result property="createTime" column="create_time"/>
    </resultMap>
    
-   <select id="getMembersByRoleType" parameterType="int" resultType="java.util.Map">
+   <select id="getMembersByRoleType" resultType="java.util.Map">
 		select cm.id , cm.member_id, cm.circle_id, cm.role_type, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time, cm.create_user_id, u.account
 		from t_circle_member cm inner join t_user u on u.id = cm.member_id
 		where cm.circle_id = #{circleId} and cm.status = #{status} and cm.role_type = #{roleType}
 	</select>
 	
-	<select id="getAllMembers" parameterType="int" resultType="java.util.Map">
+	<select id="getAllMembers" resultType="java.util.Map">
 		select cm.id , cm.member_id, cm.circle_id, cm.role_type, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time, cm.create_user_id, u.account
 		from t_circle_member cm inner join t_user u on u.id = cm.member_id
 		where cm.circle_id = #{circleId} and cm.status = #{status}
@@ -58,7 +58,7 @@
 	    </foreach>
     </update>
     
-    <select id="paging" parameterType="int" resultType="java.util.Map">
+    <select id="paging" resultType="java.util.Map">
 		select cm.id, cm.status, cm.circle_id, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time, cm.member_id,
 		cm.role_type, cm.member_recommend, (select cc.total_score from t_circle_contribution cc where cc.create_user_id = cm.member_id and cc.circle_id = #{circleId} order by cc.id desc limit 1) contribute
 		from t_circle_member cm 
@@ -78,13 +78,13 @@
 		where cm.circle_id = #{circleId} and cm.status = #{status} and cm.create_time > #{time} order by cm.member_score desc limit 0, #{pageSize};
 	</select>
 	
-	<select id="getNewests" parameterType="int" resultType="java.util.Map">
+	<select id="getNewests" resultType="java.util.Map">
 		select cm.id, cm.member_id, cm.status, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time
 		from t_circle_member cm 
 		where cm.circle_id = #{circleId} and cm.status = #{status} order by cm.id desc limit 0, #{pageSize};
 	</select>
 	
-	<select id="getRecommends" parameterType="int" resultType="java.util.Map">
+	<select id="getRecommends" resultType="java.util.Map">
 		select cm.id, cm.member_id, cm.status, date_format(cm.create_time,'%Y-%m-%d %H:%i:%s') create_time
 		from t_circle_member cm 
 		where cm.circle_id = #{circleId} and cm.status = #{status} and cm.member_recommend = true order by cm.id desc limit 0, #{pageSize};

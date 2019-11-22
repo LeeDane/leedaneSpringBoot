@@ -31,7 +31,7 @@ public class ChatBgUserHandler {
 	 * @param chatBgTableId  聊天背景资源的ID
 	 * @return
 	 */
-	public boolean isDownload(int userId, int chatBgTableId){
+	public boolean isDownload(long userId, int chatBgTableId){
 		String chatBgUserKey = getChatBgUserKey(userId, chatBgTableId);
 		boolean result = false;
 		//还没有缓存记录
@@ -81,7 +81,7 @@ public class ChatBgUserHandler {
 	 * @param tableId
 	 * @return
 	 */
-	public static String getChatBgUserKey(int userId, int tableId){
+	public static String getChatBgUserKey(long userId, long tableId){
 		return ConstantsUtil.CHAT_BG_USER +userId +"_" + tableId;
 	}
 }

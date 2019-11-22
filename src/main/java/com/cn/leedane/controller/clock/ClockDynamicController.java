@@ -42,7 +42,7 @@ public class ClockDynamicController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/dynamics", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> dynamics(@PathVariable("clockId") int clockId, Model model, HttpServletRequest request){
+	public Map<String, Object> dynamics(@PathVariable("clockId") long clockId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

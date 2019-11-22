@@ -19,5 +19,5 @@ public interface StockMapper extends BaseMapper<StockBean>{
 	 * @param userId
 	 * @return
 	 */
-	public List<StockBean> getStocks(@Param("createUserId") int userId, @Param("status") int status);
+	public List<StockBean> getStocks(@Param("createUserId") long userId, @Param("status") int status);
 }

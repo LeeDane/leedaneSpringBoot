@@ -58,7 +58,7 @@ public interface UserMapper  extends BaseMapper<UserBean>{
 	 * @param condition 没id根据条件查找
 	 * @return
 	 */
-	public UserBean find4OneUser(int id,String condition);
+	public UserBean find4OneUser(long id,String condition);
 	
 	/**
 	 * 检查验证码是否正确
@@ -164,13 +164,12 @@ public interface UserMapper  extends BaseMapper<UserBean>{
 	 * 摇一摇随机获取用户
 	 * @return
 	 */
-	public UserBean shakeSearch(@Param("createUserId")int createUserId, @Param("status")int status);
+	public UserBean shakeSearch(@Param("createUserId")long createUserId, @Param("status")int status);
 	
 	/**
 	 * 获取个人的设置
-	 * @param circleId
 	 * @param status
 	 * @return
 	 */
-	public List<UserSettingBean> getSetting(@Param("userId") int userId, @Param("status") int status);
+	public List<UserSettingBean> getSetting(@Param("userId") long userId, @Param("status") int status);
 }

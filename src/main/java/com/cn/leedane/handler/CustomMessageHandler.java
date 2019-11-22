@@ -208,14 +208,14 @@ public class CustomMessageHandler {
 	 * @param userId
 	 * @return
 	 */
-	public boolean deleteNoReadMessagesNumber(int userId){
+	public boolean deleteNoReadMessagesNumber(long userId){
 		String key = getNoReadMessageKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
 		return true;
 	}
 	
-	public static String getNoReadMessageKey(int userId){
+	public static String getNoReadMessageKey(long userId){
 		return ConstantsUtil.MESSAGE_REDIS + userId;
 	}
 }

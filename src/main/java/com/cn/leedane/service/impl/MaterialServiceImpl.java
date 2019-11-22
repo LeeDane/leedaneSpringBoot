@@ -88,7 +88,7 @@ public class MaterialServiceImpl extends AdminRoleCheckService implements Materi
 	}
 
 	@Override
-	public Map<String, Object> delete(int materialId, UserBean user,
+	public Map<String, Object> delete(long materialId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("MaterialServiceImpl-->delete():materialId="+materialId);
 		

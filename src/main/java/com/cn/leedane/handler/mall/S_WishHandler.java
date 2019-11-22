@@ -32,7 +32,7 @@ public class S_WishHandler {
 	 * @param userId
 	 * @return
 	 */
-	public int getWishNumber(int userId){
+	public int getWishNumber(long userId){
 		//deleteWishCache(userId);
 		String key = getWishKey(userId);
 		Object obj = systemCache.getCache(key);
@@ -58,7 +58,7 @@ public class S_WishHandler {
 	 * @param userId
 	 * @return
 	 */
-	public boolean deleteWishCache(int userId){
+	public boolean deleteWishCache(long userId){
 		String key = getWishKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -70,7 +70,7 @@ public class S_WishHandler {
 	 * @param userId
 	 * @return
 	 */
-	public static String getWishKey(int userId){
+	public static String getWishKey(long userId){
 		return ConstantsUtil.PRODUCT_WISH_REDIS + userId;
 	}
 

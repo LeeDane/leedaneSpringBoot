@@ -34,7 +34,7 @@ public class S_PromotionUserHandler {
 	 * @param userId
 	 * @return
 	 */
-	public S_PromotionUserBean getPromotion(int userId){
+	public S_PromotionUserBean getPromotion(long userId){
 		String key = getPromotionUserKey(userId);
 		Object obj = systemCache.getCache(key);
 		S_PromotionUserBean promotionUserBean = null;
@@ -89,7 +89,7 @@ public class S_PromotionUserHandler {
 	 * @param userId
 	 * @return
 	 */
-	public boolean deletePromotionUserCache(int userId){
+	public boolean deletePromotionUserCache(long userId){
 		String key = getPromotionUserKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -101,7 +101,7 @@ public class S_PromotionUserHandler {
 	 * @param userId
 	 * @return
 	 */
-	public static String getPromotionUserKey(int userId){
+	public static String getPromotionUserKey(long userId){
 		return ConstantsUtil.PROMOTION_USER_REDIS + userId;
 	}
 

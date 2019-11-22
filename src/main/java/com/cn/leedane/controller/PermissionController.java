@@ -69,7 +69,7 @@ public class PermissionController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/permission/{pmid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("pmid") int pmid){
+	public Map<String, Object> delete(Model model, HttpServletRequest request, @PathVariable("pmid") long pmid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -114,7 +114,7 @@ public class PermissionController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/permission/{pmid}/roles", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> roles(Model model, HttpServletRequest request, @PathVariable("pmid") int pmid){
+	public Map<String, Object> roles(Model model, HttpServletRequest request, @PathVariable("pmid") long pmid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -129,7 +129,7 @@ public class PermissionController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/permission/{pmid}/roles/allot", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> allot(Model model, HttpServletRequest request, @PathVariable("pmid") int pmid){
+	public Map<String, Object> allot(Model model, HttpServletRequest request, @PathVariable("pmid") long pmid){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

@@ -22,13 +22,13 @@ public class ClockDealBean extends RecordTimeBean{
 	 * 任务成员id，必须字段
 	 */
 	@Column(value="member_id", required = true)
-	private int memberId;
+	private long memberId;
 	
 	/**
 	 * 任务的ID，必须字段
 	 */
 	@Column(value="clock_id", required = true)
-	private int clockId;
+	private long clockId;
 	
 	/**
 	 * 任务的新状态，对方处理后的状态
@@ -36,19 +36,19 @@ public class ClockDealBean extends RecordTimeBean{
 	@Column(value="new_status", required = true)
 	private int newStatus;
 
-	public int getMemberId() {
+	public long getMemberId() {
 		return memberId;
 	}
 
-	public void setMemberId(int memberId) {
+	public void setMemberId(long memberId) {
 		this.memberId = memberId;
 	}
 
-	public int getClockId() {
+	public long getClockId() {
 		return clockId;
 	}
 
-	public void setClockId(int clockId) {
+	public void setClockId(long clockId) {
 		this.clockId = clockId;
 	}
 

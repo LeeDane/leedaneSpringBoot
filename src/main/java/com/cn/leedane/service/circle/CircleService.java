@@ -64,7 +64,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> update(int circleId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> update(long circleId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除圈子
@@ -73,12 +73,10 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(int cid, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> delete(long cid, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 检查是否能创建圈子
-	 * @param jsonFromMessage
-	 * @param userFromMessage
 	 * @param request
 	 * @return
 	 */
@@ -88,7 +86,6 @@ public interface CircleService <T extends IDBean>{
 	
 	 /**
 	 * 分页获取任务列表
-	 * @param jsonObject
 	 * @param user
 	 * @param request
 	 * @return
@@ -103,7 +100,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> joinCheck(int circleId, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> joinCheck(long circleId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 申请加入圈子
@@ -113,7 +110,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> join(int circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> join(long circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 保存访问圈子记录
@@ -121,7 +118,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param user
 	 * @param request
 	 */
-	public void saveVisitLog(int circleId, UserBean user, HttpRequestInfoBean request);
+	public void saveVisitLog(long circleId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 退出该圈子
@@ -130,7 +127,7 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> leave(int circleId, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> leave(long circleId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取最新的圈子
@@ -159,27 +156,25 @@ public interface CircleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> admins(int cid, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> admins(long cid, UserBean user, HttpRequestInfoBean request);
 
 	
 	/**
 	 * 圈子成员做分配管理员操作
 	 * @param cid
 	 * @param admins
-	 * @param userFromMessage
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> allot(int cid, String admins, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> allot(long cid, String admins, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取圈子首页的初始化
 	 * @param cid
-	 * @param user
 	 * @param request
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> initialize(int cid,
+	public Map<String, Object> initialize(long cid,
 			UserBean userFromMessage, HttpRequestInfoBean request);
 }

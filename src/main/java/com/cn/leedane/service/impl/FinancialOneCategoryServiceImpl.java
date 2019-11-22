@@ -47,7 +47,7 @@ public class FinancialOneCategoryServiceImpl implements FinancialOneCategoryServ
 	private OperateLogService<OperateLogBean> operateLogService;
 
 	@Override
-	public List<FinancialOneLevelCategoryBean> getAllDefault(int userId) {
+	public List<FinancialOneLevelCategoryBean> getAllDefault(long userId) {
 		logger.info("FinancialOneCategoryServiceImpl-->getAll():userId=" +userId);
 		return financialOneCategoryMapper.getBeans("select * from t_financial_one_category where create_user_id = ?", userId);
 	}
@@ -73,7 +73,7 @@ public class FinancialOneCategoryServiceImpl implements FinancialOneCategoryServ
 					ps.setInt(6, bean.getCategoryOrder());
 					ps.setBoolean(7, bean.isDefault());
 					ps.setBoolean(8, bean.isSystem());
-					ps.setInt(9, bean.getCreateUserId());
+					ps.setLong(9, bean.getCreateUserId());
 					ps.setTimestamp(10, DateUtil.getTimestamp(bean.getCreateTime()));
 				}
 				

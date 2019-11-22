@@ -13,7 +13,7 @@
 		select id from t_gallery where path = #{path} and create_user_id = #{userId} limit 1
 	</select>
 
-	<select id="paging" parameterType="int" resultType="java.util.Map">
+	<select id="paging" resultType="java.util.Map">
 		select g.id, g.status, g.gallery_desc, g.height,
 		g.length, g.width, g.path, g.category_id,
 		date_format(g.create_time,'%Y-%m-%d %H:%i:%s') create_time

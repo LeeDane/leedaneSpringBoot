@@ -21,12 +21,12 @@ public interface FanMapper extends BaseMapper<FanBean>{
 	 * @param to_user_id  对方用户的id
 	 * @return
 	 */
-	public List<Map<String, Object>> isFanEachOther(@Param("id")int id, @Param("toUserId")int to_user_id, @Param("status")int status);
+	public List<Map<String, Object>> isFanEachOther(@Param("id")long id, @Param("toUserId")long to_user_id, @Param("status")int status);
 	
 	/**
 	 * 获取标注名称
 	 * @param userId
 	 * @return
 	 */
-	public String getRemark(@Param("userId")int userId, @Param("toUserId")int toUserId, @Param("status")int status);
+	public String getRemark(@Param("userId")long userId, @Param("toUserId")long toUserId, @Param("status")int status);
 }

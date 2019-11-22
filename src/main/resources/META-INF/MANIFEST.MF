@@ -7,7 +7,7 @@ Class-Path: javax.inject-1.jar ezmorph-1.0.3.jar commons-codec-1.9.jar
  ernate-validator-5.2.4.Final.jar groovy-2.4.7.jar zkclient-0.1.jar co
  re-3.2.0.jar log4j-1.2.12.jar fastutil-6.6.1.jar httpcore-4.4.5.jar s
  nakeyaml-1.17.jar unbescape-1.1.0.RELEASE.jar tomcat-embed-websocket-
- 8.5.4.jar taobaoke-9.0.1.jar commons-logging-1.1.jar spring-boot-star
+ 8.5.4.jar taobaoke-9.0.2.jar commons-logging-1.1.jar spring-boot-star
  ter-web-1.4.0.RELEASE.jar javax.servlet-api-3.1.0.jar spring-beans-4.
  3.2.RELEASE.jar spring-boot-starter-1.4.0.RELEASE.jar jpush-3.2.7.jar
   axis-9.9.9.jar spring-context-support-4.3.2.RELEASE.jar annotations-

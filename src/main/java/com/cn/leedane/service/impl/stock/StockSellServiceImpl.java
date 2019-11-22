@@ -46,10 +46,10 @@ public class StockSellServiceImpl implements StockSellService<StockSellBean>{
 	private StockSellHandler stockSellHandler;
 
 	@Override
-	public Map<String, Object> add(int stockId, int stockBuyId, JSONObject json, UserBean user,
+	public Map<String, Object> add(long stockId, long stockBuyId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("StockBuyServiceImpl-->add(), stockId="+ stockId +", stockBuyId="+ stockBuyId +", user=" +user.getAccount());
-		int userId = user.getId();
+		long userId = user.getId();
 		SqlUtil sqlUtil = new SqlUtil();
 		StockSellBean stockSellBean = (StockSellBean) sqlUtil.getBean(json, StockSellBean.class);
 		ResponseMap message = new ResponseMap();
@@ -87,10 +87,10 @@ public class StockSellServiceImpl implements StockSellService<StockSellBean>{
 	}
 	
 	@Override
-	public Map<String, Object> update(int stockId, int stockBuyId, int stockSellId, JSONObject json, UserBean user,
+	public Map<String, Object> update(long stockId, long stockBuyId, long stockSellId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("StockBuyServiceImpl-->update(), stockId= " + stockId +", stockBuyId="+ stockBuyId +", stockSellId="+ stockSellId +",user=" +user.getAccount());
-		int userId = user.getId();
+		long userId = user.getId();
 		StockSellBean oldStockSellBean = stockSellHandler.getNormalStockSell(userId, stockId, stockBuyId, stockSellId);
 		ResponseMap message = new ResponseMap();
 		SqlUtil sqlUtil = new SqlUtil();
@@ -132,9 +132,9 @@ public class StockSellServiceImpl implements StockSellService<StockSellBean>{
 	}
 	
 	@Override
-	public Map<String, Object> delete(int stockId, int stockBuyId, int stockSellId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
+	public Map<String, Object> delete(long stockId, long stockBuyId, long stockSellId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("StockBuyServiceImpl-->delete(), stockId= " + ", stockBuyId="+ stockBuyId +", stockSellId="+ stockSellId +",user=" +user.getAccount());
-		int userId = user.getId();
+		long userId = user.getId();
 		StockSellBean stockSellBean = stockSellHandler.getNormalStockSell(userId, stockId, stockBuyId, stockSellId);
 		ResponseMap message = new ResponseMap();
 		

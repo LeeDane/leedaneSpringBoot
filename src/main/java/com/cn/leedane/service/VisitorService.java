@@ -21,13 +21,13 @@ public interface VisitorService<T extends IDBean>{
 	 * 保存访客记录
 	 * @return
 	 */
-	public boolean saveVisitor(UserBean user, String froms, String tableName, int tableId, int status);
+	public boolean saveVisitor(UserBean user, String froms, String tableName, long tableId, int status);
 	
 	/**
 	 * 删除访客记录
 	 * @return
 	 */
-	public boolean deleteVisitor(UserBean user, String tableName, int tableId);
+	public boolean deleteVisitor(UserBean user, String tableName, long tableId);
 
 	/**
 	 * 获取访客列表
@@ -38,7 +38,7 @@ public interface VisitorService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getVisitorsByLimit(int tableId,
+	public Map<String, Object> getVisitorsByLimit(long tableId,
 			JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
@@ -47,7 +47,7 @@ public interface VisitorService<T extends IDBean>{
 	 * @param tableId
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public int getTodayVisitors(String tableName, int tableId);
+	public int getTodayVisitors(String tableName, long tableId);
 	
 	/**
 	 * 获取访问数
@@ -57,7 +57,7 @@ public interface VisitorService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public int getVisitorsByTime(String tableName, int tableId, String time);
+	public int getVisitorsByTime(String tableName, long tableId, String time);
 	
 	/**
 	 * 获取所有的访问数
@@ -65,5 +65,5 @@ public interface VisitorService<T extends IDBean>{
 	 * @param tableId
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public int getAllVisitors(String tableName, int tableId);
+	public int getAllVisitors(String tableName, long tableId);
 }

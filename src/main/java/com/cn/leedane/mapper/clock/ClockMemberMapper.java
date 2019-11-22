@@ -21,7 +21,7 @@ public interface ClockMemberMapper extends BaseMapper<ClockMemberBean>{
 	 * @param clockId
 	 * @return
 	 */
-	public List<ClockMemberBean> members(@Param("clockId")int clockId);
+	public List<ClockMemberBean> members(@Param("clockId")long clockId);
 	
 	/**
 	 * 判断成员是否在任务成员中
@@ -39,9 +39,9 @@ public interface ClockMemberMapper extends BaseMapper<ClockMemberBean>{
 	 * @param userId
 	 * @return
 	 */
-	public boolean exitClock(@Param("clockId")int clockId
-			, @Param("userId")int userId
-			, @Param("modifyUserId")int modifyUserId
+	public boolean exitClock(@Param("clockId")long clockId
+			, @Param("userId")long userId
+			, @Param("modifyUserId")long modifyUserId
 			, @Param("status")int status);
 
 	/**
@@ -58,7 +58,7 @@ public interface ClockMemberMapper extends BaseMapper<ClockMemberBean>{
 	 * @param memberId
 	 * @return
 	 */
-	public ClockMemberBean findClockMember(@Param("clockId")int clockId, @Param("memberId")int memberId);
+	public ClockMemberBean findClockMember(@Param("clockId")long clockId, @Param("memberId")long memberId);
 
 	/**
 	 * 获取任务的成员列表(通过打卡次数进行排序)
@@ -66,5 +66,5 @@ public interface ClockMemberMapper extends BaseMapper<ClockMemberBean>{
 	 * @param limit
 	 * @return
 	 */
-	public List<Map<String, Object>> membersSortByIns(@Param("clockId")int clockId, @Param("limit")int limit);
+	public List<Map<String, Object>> membersSortByIns(@Param("clockId")long clockId, @Param("limit")int limit);
 }

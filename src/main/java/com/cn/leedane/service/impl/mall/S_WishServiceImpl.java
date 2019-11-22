@@ -104,7 +104,7 @@ public class S_WishServiceImpl extends MallRoleCheckService implements S_WishSer
 	}
 	
 	@Override
-	public Map<String, Object> delete(int wishId, UserBean user,
+	public Map<String, Object> delete(long wishId, UserBean user,
 			HttpRequestInfoBean request) {
 		
 		logger.info("S_WishServiceImpl-->delete():wishId="+wishId);
@@ -172,7 +172,7 @@ public class S_WishServiceImpl extends MallRoleCheckService implements S_WishSer
 	}
 
 	@Override
-	public int getWishTotal(int productId, String toDayString){
+	public int getWishTotal(long productId, String toDayString){
 		logger.info("S_WishServiceImpl-->getWishTotal():productId=" + productId +", toDayString ="+ toDayString);
 		return SqlUtil.getTotalByList(wishMapper.getTotal(DataTableType.商品心愿单.value, "where product_id = "+ productId +" and DATE_FORMAT(create_time, '%Y-%c-%d') = '" + toDayString +"'"));
 	}

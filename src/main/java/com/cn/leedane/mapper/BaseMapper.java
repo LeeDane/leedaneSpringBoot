@@ -35,7 +35,7 @@ public interface BaseMapper<T> {
     public int delete(T bean);
     
     @DeleteProvider(type = SqlProvider.class, method = "deleteById")
-    public int deleteById(Class<?> clazz, int id);
+    public int deleteById(Class<?> clazz, long id);
     
     /**
      * 批量删除
@@ -44,7 +44,7 @@ public interface BaseMapper<T> {
      * @return
      */
     @DeleteProvider(type = SqlProvider.class, method = "deleteByIds")
-    public int deleteByIds(Class<?> clazz, int ...ids);
+    public int deleteByIds(Class<?> clazz, long ...ids);
 
     /**
      * 批量删除
@@ -69,7 +69,7 @@ public interface BaseMapper<T> {
     public T findFirst(T bean);*/
     
     @SelectProvider(type = SqlProvider.class, method = "findById")
-    public T findById(Class<?> clazz, int id);
+    public T findById(Class<?> clazz, long id);
     
     @SelectProvider(type = SqlProvider.class, method = "getBeans")
     public List<T> getBeans(String sql, Object ...params);
@@ -85,7 +85,7 @@ public interface BaseMapper<T> {
 	 * @return
 	 */
     @SelectProvider(type = SqlProvider.class, method = "exists")
-	public List<Map<String, Object>> exists(Class<?> clazz, String tableName, int tableId, int userId);
+	public List<Map<String, Object>> exists(Class<?> clazz, String tableName, long tableId, long userId);
 	
 	/**
 	 * 判断记录在数据中是否存在
@@ -94,7 +94,7 @@ public interface BaseMapper<T> {
 	 * @return
 	 */
     @SelectProvider(type = SqlProvider.class, method = "recordExists")
-	public List<Map<String, Object>> recordExists(String tableName, int tableId);
+	public List<Map<String, Object>> recordExists(String tableName, long tableId);
 
     /**
      * 根据实体表的名称和ID获取其创建人ID
@@ -103,7 +103,7 @@ public interface BaseMapper<T> {
      * @return
      */
     @SelectProvider(type = SqlProvider.class, method = "getObjectCreateUserId")
-	public List<Map<String, Object>> getObjectCreateUserId(String tableName, int tableId);
+	public List<Map<String, Object>> getObjectCreateUserId(String tableName, long tableId);
     
     /**
 	 * 获取对应的用户的总数
@@ -111,7 +111,7 @@ public interface BaseMapper<T> {
 	 * @return
 	 */
     @SelectProvider(type = SqlProvider.class, method = "getTotalByUser")
-	public List<Map<String, Object>> getTotalByUser(String tableName, int userId);
+	public List<Map<String, Object>> getTotalByUser(String tableName, long userId);
     
     /**
 	 * 获取总数

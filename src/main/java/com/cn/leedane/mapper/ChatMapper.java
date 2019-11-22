@@ -19,5 +19,5 @@ public interface ChatMapper extends BaseMapper<ChatBean>{
 	 * @param status
 	 * @return
 	 */
-	public List<ChatBean> getOneChatByAllUser(@Param("to_user_id") int toUserId, @Param("status") int status);
+	public List<ChatBean> getOneChatByAllUser(@Param("to_user_id") long toUserId, @Param("status") int status);
 }

@@ -56,7 +56,7 @@ public class ClockHandler {
 	 * @param clockId
 	 * @return
 	 */
-	public ClockBean getNormalClock(int clockId){
+	public ClockBean getNormalClock(long clockId){
 		ClockBean clock = getClock(clockId);
 
 		if(clock == null ||  (clock.getStatus() != ConstantsUtil.STATUS_NORMAL
@@ -73,7 +73,7 @@ public class ClockHandler {
 	 * @param clockId
 	 * @return
 	 */
-	public ClockBean getClock(int clockId){
+	public ClockBean getClock(long clockId){
 		if(clockId < 1)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该提醒任务不存在或者不支持共享.value));
 		String key = getClockKey(clockId);
@@ -128,7 +128,7 @@ public class ClockHandler {
 	 * @param week
 	 * @return
 	 */
-	public List<ClockDisplay> dateClocks(int userId, Date systemTime, int week){
+	public List<ClockDisplay> dateClocks(long userId, Date systemTime, int week){
 		String key = getClocksKey(userId);
 		//Object obj = systemCache.getCache(key);
 		ClockDisplays clockDisplays = null;
@@ -309,7 +309,7 @@ public class ClockHandler {
 	 * 删除用户的所有进行中的任务列表的cache和redis缓存
 	 * @return
 	 */
-	public boolean deleteDateClocksCache(int userId){
+	public boolean deleteDateClocksCache(long userId){
 		String key = getClocksKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -321,7 +321,7 @@ public class ClockHandler {
 	 * @param clockId
 	 * @return
 	 */
-	public boolean deleteClockCache(int clockId){
+	public boolean deleteClockCache(long clockId){
 		String key = getClockKey(clockId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -345,7 +345,7 @@ public class ClockHandler {
 	 * @param clockId
 	 * @return
 	 */
-	public static String getClockKey(int clockId){
+	public static String getClockKey(long clockId){
 		return ConstantsUtil.CLOCK_REDIS + clockId;
 	}
 	
@@ -353,7 +353,7 @@ public class ClockHandler {
 	 * 获取该用户所有进行中的任务列表在redis的key
 	 * @return
 	 */
-	public static String getClocksKey(int userId){
+	public static String getClocksKey(long userId){
 		return ConstantsUtil.CLOCK_ONGOING_REDIS + userId;
 	}
 	

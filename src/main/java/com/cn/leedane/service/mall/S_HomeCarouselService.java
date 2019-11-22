@@ -33,7 +33,7 @@ public interface S_HomeCarouselService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(int carouselId, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> delete(long carouselId, UserBean user, HttpRequestInfoBean request);
 	
 	
 	/**

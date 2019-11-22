@@ -60,7 +60,7 @@ public class ClockInController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/{date}/ins", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> clockIns(@PathVariable("clockId") int clockId, @PathVariable("date") String date, Model model, HttpServletRequest request){
+	public Map<String, Object> clockIns(@PathVariable("clockId") long clockId, @PathVariable("date") String date, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -80,7 +80,7 @@ public class ClockInController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/user/{toUserId}/{date}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> userClockIns(@PathVariable("clockId") int clockId, @PathVariable("toUserId") int toUserId, @PathVariable("date") String date, Model model, HttpServletRequest request){
+	public Map<String, Object> userClockIns(@PathVariable("clockId") long clockId, @PathVariable("toUserId") long toUserId, @PathVariable("date") String date, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -99,7 +99,7 @@ public class ClockInController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/{clockInId}/notification", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> userClockInNotification(@PathVariable("clockId") int clockId, @PathVariable("clockInId") int clockInId, Model model, HttpServletRequest request){
+	public Map<String, Object> userClockInNotification(@PathVariable("clockId") long clockId, @PathVariable("clockInId") long clockInId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -118,7 +118,7 @@ public class ClockInController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/{clockInId}/check", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> userClockInCheck(@PathVariable("clockId") int clockId, @PathVariable("clockInId") int clockInId, Model model, HttpServletRequest request){
+	public Map<String, Object> userClockInCheck(@PathVariable("clockId") long clockId, @PathVariable("clockInId") long clockInId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -137,7 +137,7 @@ public class ClockInController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/{clockInId}/add/location", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> clockInAddLocation(@PathVariable("clockId") int clockId, @PathVariable("clockInId") int clockInId, Model model, HttpServletRequest request){
+	public Map<String, Object> clockInAddLocation(@PathVariable("clockId") long clockId, @PathVariable("clockInId") long clockInId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -156,7 +156,7 @@ public class ClockInController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/{clockInId}/add/image", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> clockInAddImage(@PathVariable("clockId") int clockId, @PathVariable("clockInId") int clockInId, Model model, HttpServletRequest request){
+	public Map<String, Object> clockInAddImage(@PathVariable("clockId") long clockId, @PathVariable("clockInId") long clockInId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -175,7 +175,7 @@ public class ClockInController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{clockId}/{clockInId}/{resourceId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deleteResource(@PathVariable("clockId") int clockId, @PathVariable("clockInId") int clockInId, @PathVariable("resourceId") int resourceId, Model model, HttpServletRequest request){
+	public Map<String, Object> deleteResource(@PathVariable("clockId") long clockId, @PathVariable("clockInId") long clockInId, @PathVariable("resourceId") long resourceId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

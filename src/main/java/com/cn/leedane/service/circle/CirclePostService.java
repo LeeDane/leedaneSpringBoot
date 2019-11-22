@@ -28,7 +28,7 @@ public interface CirclePostService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> add(int circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> add(long circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 更新帖子
@@ -38,7 +38,7 @@ public interface CirclePostService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> update(int circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> update(long circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 分页获取圈子的帖子列表
@@ -48,7 +48,7 @@ public interface CirclePostService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> paging(int circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> paging(long circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 评论帖子
@@ -59,7 +59,7 @@ public interface CirclePostService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> comment(int circleId, int postId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> comment(long circleId, long postId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 转发帖子
@@ -70,7 +70,7 @@ public interface CirclePostService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> transmit(int circleId, int postId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> transmit(long circleId, long postId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 点赞帖子
@@ -81,7 +81,7 @@ public interface CirclePostService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> zan(int circleId, int postId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> zan(long circleId, long postId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除帖子
@@ -92,7 +92,7 @@ public interface CirclePostService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int circleId, int postId, JSONObject jsonFromMessage, UserBean userFromMessage, HttpRequestInfoBean request);
+	public Map<String, Object> delete(long circleId, long postId, JSONObject jsonFromMessage, UserBean userFromMessage, HttpRequestInfoBean request);
 	
 	/**
 	 * 帖子详情初始化操作
@@ -111,7 +111,7 @@ public interface CirclePostService <T extends IDBean>{
 	 * @param user
 	 * @param request
 	 */
-	public void saveVisitLog(int postId, UserBean user,
+	public void saveVisitLog(long postId, UserBean user,
 			HttpRequestInfoBean request);
 	
 	/**
@@ -122,7 +122,7 @@ public interface CirclePostService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> noCheckTotal(int circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> noCheckTotal(long circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取等待审核帖子列表
@@ -132,7 +132,7 @@ public interface CirclePostService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> noCheckList(int circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> noCheckList(long circleId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 审核帖子
@@ -143,5 +143,5 @@ public interface CirclePostService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> check(int circleId, int postId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> check(long circleId, long postId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 }

@@ -20,10 +20,10 @@ public interface GalleryMapper extends BaseMapper<GalleryBean>{
 	 * @param path
 	 * @return
 	 */
-	public List<Map<String, Object>> isExist(@Param("userId")int userId, @Param("path")String path);
+	public List<Map<String, Object>> isExist(@Param("userId")long userId, @Param("path")String path);
 
 	public List<Map<String, Object>> paging(
-			@Param("createUserId")int createUserId,
+			@Param("createUserId")long createUserId,
 			@Param("start")int start,
 			@Param("pageSize")int pageSize,
 			@Param("status") int status);

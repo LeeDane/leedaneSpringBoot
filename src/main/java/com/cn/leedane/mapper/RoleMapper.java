@@ -14,7 +14,7 @@ import com.cn.leedane.model.RoleBean;
  * Version 1.0
  */
 public interface RoleMapper extends BaseMapper<RoleBean>{
-	public List<Map<String, Object>> users(@Param("rlid")int rlid, @Param("status")int status);
+	public List<Map<String, Object>> users(@Param("rlid")long rlid, @Param("status")int status);
 
-	public List<Map<String, Object>> usersByRole(@Param("rlid")int rlid, @Param("status")int status);
+	public List<Map<String, Object>> usersByRole(@Param("rlid")long rlid, @Param("status")int status);
 }

@@ -33,7 +33,7 @@ public class CircleMemberHandler {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	public CirclesMemberSerializeBean getHostest(int circleId) throws IOException, ClassNotFoundException{
+	public CirclesMemberSerializeBean getHostest(long circleId) throws IOException, ClassNotFoundException{
 		String hostestKey = getHostestMemberKey(circleId);
 		CirclesMemberSerializeBean circlesMemberSerializeBean = new CirclesMemberSerializeBean();
 		//redisUtil.delete(hostestKey);
@@ -55,7 +55,7 @@ public class CircleMemberHandler {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	public CirclesMemberSerializeBean getNestest(int circleId) throws IOException, ClassNotFoundException{
+	public CirclesMemberSerializeBean getNestest(long circleId) throws IOException, ClassNotFoundException{
 		String newestKey = getNewestMemberKey(circleId);
 		CirclesMemberSerializeBean circlesMemberSerializeBean = new CirclesMemberSerializeBean();
 		//redisUtil.delete(newestKey);
@@ -76,7 +76,7 @@ public class CircleMemberHandler {
 	 * @throws IOException 
 	 * @throws ClassNotFoundException 
 	 */
-	public CirclesMemberSerializeBean getRecommend(int circleId) throws IOException, ClassNotFoundException{
+	public CirclesMemberSerializeBean getRecommend(long circleId) throws IOException, ClassNotFoundException{
 		String recommendKey = getRecommendMemberKey(circleId);
 		CirclesMemberSerializeBean circlesMemberSerializeBean = new CirclesMemberSerializeBean();
 		//redisUtil.delete(recommendKey);
@@ -96,7 +96,7 @@ public class CircleMemberHandler {
 	 * @param circleId
 	 * @return
 	 */
-	public boolean deleteNewestMemberCache(int circleId){
+	public boolean deleteNewestMemberCache(long circleId){
 		String key = getNewestMemberKey(circleId);
 		redisUtil.delete(key);
 		return true;
@@ -107,7 +107,7 @@ public class CircleMemberHandler {
 	 * @param circleId
 	 * @return
 	 */
-	public boolean deleteHostestMemberCache(int circleId){
+	public boolean deleteHostestMemberCache(long circleId){
 		String key = getHostestMemberKey(circleId);
 		redisUtil.delete(key);
 		return true;
@@ -118,7 +118,7 @@ public class CircleMemberHandler {
 	 * @param circleId
 	 * @return
 	 */
-	public boolean deleteRecommendMemberCache(int circleId){
+	public boolean deleteRecommendMemberCache(long circleId){
 		String key = getRecommendMemberKey(circleId);
 		redisUtil.delete(key);
 		return true;
@@ -129,7 +129,7 @@ public class CircleMemberHandler {
 	 * @param circleId
 	 * @return
 	 */
-	public static String getHostestMemberKey(int circleId){
+	public static String getHostestMemberKey(long circleId){
 		return "t_member_hostest_"+ circleId;
 	}
 	
@@ -138,7 +138,7 @@ public class CircleMemberHandler {
 	 * @param circleId
 	 * @return
 	 */
-	public static String getNewestMemberKey(int circleId){
+	public static String getNewestMemberKey(long circleId){
 		return "t_member_newest_"+ circleId;
 	}
 	
@@ -147,7 +147,7 @@ public class CircleMemberHandler {
 	 * @param circleId
 	 * @return
 	 */
-	public static String getRecommendMemberKey(int circleId){
+	public static String getRecommendMemberKey(long circleId){
 		return "t_member_recommend_"+ circleId;
 	}
 }

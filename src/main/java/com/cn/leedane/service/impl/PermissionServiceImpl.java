@@ -98,7 +98,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 	}
 
 	@Override
-	public Map<String, Object> delete(int pmid, UserBean user,
+	public Map<String, Object> delete(long pmid, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("PermissionServiceImpl-->delete():pmid="+ pmid);
 		ResponseMap message = new ResponseMap();
@@ -165,7 +165,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value));
 		
 		String[] pmidArray = pmids.split(",");
-		int[] ids = new int[pmidArray.length];
+		long[] ids = new long[pmidArray.length];
 		
 		StringBuffer sql = new StringBuffer("delete from " + DataTableType.角色权限.value + " where ");
 		for(int i = 0; i < pmidArray.length; i++){
@@ -197,7 +197,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 	}
 
 	@Override
-	public Map<String, Object> roles(int pmid, UserBean user,
+	public Map<String, Object> roles(long pmid, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("PermissionServiceImpl-->roles():pmid="+pmid);
 		ResponseMap message = new ResponseMap();
@@ -213,7 +213,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 	}
 
 	@Override
-	public Map<String, Object> allot(int pmid, String roles, UserBean user,
+	public Map<String, Object> allot(long pmid, String roles, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("PermissionServiceImpl-->allot():pmid="+pmid +", roles="+ roles);
 		

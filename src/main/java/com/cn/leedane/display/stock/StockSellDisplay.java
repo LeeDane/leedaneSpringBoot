@@ -13,17 +13,17 @@ public class StockSellDisplay{
 	/**
 	 * 股票的id
 	 */
-	private int stockId;
+	private long stockId;
 	
 	/**
 	 * 股票购买记录的id
 	 */
-	private int stockBuyId;
+	private long stockBuyId;
 	
 	/**
 	 * 股票卖出记录的id
 	 */
-	private int id;
+	private long id;
 	
 	/**
 	 * 卖出价格
@@ -60,27 +60,27 @@ public class StockSellDisplay{
 	 */
 	private String modifyTime;
 
-	public int getStockId() {
+	public long getStockId() {
 		return stockId;
 	}
 
-	public void setStockId(int stockId) {
+	public void setStockId(long stockId) {
 		this.stockId = stockId;
 	}
 
-	public int getStockBuyId() {
+	public long getStockBuyId() {
 		return stockBuyId;
 	}
 
-	public void setStockBuyId(int stockBuyId) {
+	public void setStockBuyId(long stockBuyId) {
 		this.stockBuyId = stockBuyId;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

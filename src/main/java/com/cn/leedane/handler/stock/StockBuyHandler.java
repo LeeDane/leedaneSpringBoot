@@ -43,11 +43,11 @@ public class StockBuyHandler {
 	 * 获取正常状态的股票购买对象
 	 * 不是自己的股票购买将抛出权限异常
 	 * @param stockBuyId
-	 * @param user
+	 * @param userId
 	 * @param stockId
 	 * @return
 	 */
-	public StockBuyBean getNormalStockBuy(int stockBuyId, int userId, int stockId){
+	public StockBuyBean getNormalStockBuy(long stockBuyId, long userId, long stockId){
 		//校验对应的股票是否是自己的
 		StockBean stockBean = stockHandler.getNormalStock(stockId, userId);
 		StockBuyBean stockBuy = getStockBuy(userId, stockBean.getId(), stockBuyId);
@@ -69,7 +69,7 @@ public class StockBuyHandler {
 	 * @param stockId
 	 * @return
 	 */
-	public StockBuyBean getStockBuy(int userId, int stockId, int stockBuyId){
+	public StockBuyBean getStockBuy(long userId, long stockId, long stockBuyId){
 		if(stockBuyId < 1)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该股票购买记录不存在.value));
 		
@@ -132,7 +132,7 @@ public class StockBuyHandler {
 	 * @param stockId
 	 * @return
 	 */
-	public List<StockBuyBean> getStockBuys(int userId, int stockId){
+	public List<StockBuyBean> getStockBuys(long userId, long stockId){
 		//校验对应的股票是否是自己的
 		StockBean stockBean = stockHandler.getNormalStock(stockId, userId);
 		
@@ -196,7 +196,7 @@ public class StockBuyHandler {
 	 * @param stockBuyId
 	 * @return
 	 */
-	public boolean deleteStockBuyBeanCache(int stockBuyId){
+	public boolean deleteStockBuyBeanCache(long stockBuyId){
 		String key = getStockBuyKey(stockBuyId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -208,7 +208,7 @@ public class StockBuyHandler {
 	 * @param stockId
 	 * @return
 	 */
-	public boolean deleteStockBuyBeansCache(int stockId){
+	public boolean deleteStockBuyBeansCache(long stockId){
 		String key = getStockBuysKey(stockId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -220,7 +220,7 @@ public class StockBuyHandler {
 	 * @param stockBuyId
 	 * @return
 	 */
-	public static String getStockBuyKey(int stockBuyId){
+	public static String getStockBuyKey(long stockBuyId){
 		return ConstantsUtil.STOCK_BUY_REDIS + stockBuyId;
 	}
 	
@@ -229,7 +229,7 @@ public class StockBuyHandler {
 	 * @param stockId
 	 * @return
 	 */
-	public static String getStockBuysKey(int stockId){
+	public static String getStockBuysKey(long stockId){
 		return ConstantsUtil.STOCK_BUYS_REDIS + stockId;
 	}
 	

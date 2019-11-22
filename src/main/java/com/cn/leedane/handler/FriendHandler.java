@@ -41,7 +41,7 @@ public class FriendHandler {
 	 * @param getUserId
 	 * @return
 	 */
-	public JSONObject getFromToFriends(int getUserId){
+	public JSONObject getFromToFriends(long getUserId){
 		String friendKey = getFriendKey(getUserId);
 		JSONObject friendObject = new JSONObject();
 		//评论
@@ -51,13 +51,13 @@ public class FriendHandler {
 					+" select from_user_id id, (case when from_user_remark = '' || from_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = from_user_id and u.status = "+ConstantsUtil.STATUS_NORMAL+") else from_user_remark end ) remark from "+DataTableType.好友.value+" where to_user_id = ? and status = "+ConstantsUtil.STATUS_NORMAL;
 	
 			List<Map<String, Object>> friends = friendMapper.executeSQL(sql, getUserId, getUserId);
-			Set<Integer> fids = new HashSet<Integer>();
+			Set<Long> fids = new HashSet<Long>();
 			String friendIdKey = getFriendIdsKey(getUserId);
 			fids.add(getUserId);
 			if(friends != null && friends.size() > 0){
-				int id = 0;
+				long id = 0;
 				for(int i =0; i < friends.size(); i++){
-					id = StringUtil.changeObjectToInt(friends.get(i).get("id"));
+					id = StringUtil.changeObjectToLong(friends.get(i).get("id"));
 					fids.add(id);
 					friendObject.put("user_" +id, String.valueOf(friends.get(i).get("remark")));
 					friendObject.put("mobile_phone", userHandler.getUserMobilePhone(id));
@@ -79,7 +79,7 @@ public class FriendHandler {
 	 * @param fromUserId
 	 * @param toUserId
 	 */
-	public void delete(int fromUserId, int toUserId){
+	public void delete(long fromUserId, long toUserId){
 		redisUtil.delete(getFriendKey(fromUserId));
 		redisUtil.delete(getFriendKey(toUserId));
 		redisUtil.delete(getFriendIdsKey(fromUserId));
@@ -92,11 +92,11 @@ public class FriendHandler {
 	 * @param set
 	 * @return
 	 */
-	private String setToString(Set<Integer> set){
+	private String setToString(Set<Long> set){
 		String str = "";
 		if(set != null && set.size() > 0){
 			StringBuffer result = new StringBuffer();
-			for(Integer s: set){
+			for(Long s: set){
 				result.append(s);
 				result.append(";");
 			}
@@ -111,10 +111,10 @@ public class FriendHandler {
 	 * @param userId
 	 * @return
 	 */
-	public Set<Integer> getFromToFriendIds(int userId){
+	public Set<Long> getFromToFriendIds(long userId){
 		String friendIdKey = getFriendIdsKey(userId);
 		JSONObject friendObject = new JSONObject();
-		Set<Integer> fids = new HashSet<Integer>();
+		Set<Long> fids = new HashSet<Long>();
 		//评论
 		if(!redisUtil.hasKey(friendIdKey)){
 			String sql = " select to_user_id id, (case when to_user_remark = '' || to_user_remark = null then (select u.account from "+DataTableType.用户.value+" u where  u.id = to_user_id and u.status = "+ConstantsUtil.STATUS_NORMAL+") else to_user_remark end ) remark from "+DataTableType.好友.value+" where from_user_id =? and status = "+ConstantsUtil.STATUS_NORMAL+" "
@@ -125,7 +125,7 @@ public class FriendHandler {
 			String friendKey = getFriendKey(userId);
 			fids.add(userId);
 			if(friends != null && friends.size() > 0){
-				int id = 0;
+				long id = 0;
 				for(int i =0; i < friends.size(); i++){
 					id = StringUtil.changeObjectToInt(friends.get(i).get("id"));
 					fids.add(id);
@@ -146,7 +146,7 @@ public class FriendHandler {
 	 * @param toUserId
 	 * @param userId
 	 */
-	public boolean addFriends(int toUserId, int userId, String toUserRemark, String userRemark){
+	public boolean addFriends(long toUserId, long userId, String toUserRemark, String userRemark){
 		JSONObject toUserObject = getFromToFriends(toUserId);
 		JSONObject userObject = getFromToFriends(userId);
 		String toUserKey = getFriendKey(toUserId);
@@ -157,7 +157,7 @@ public class FriendHandler {
 		
 		//处理好友关系的id
 		//更新对方的好友列表
-		Set<Integer> ids = getFromToFriendIds(toUserId);
+		Set<Long> ids = getFromToFriendIds(toUserId);
 		ids.add(userId);
 		redisUtil.addString(toUserFriendIdKey, setToString(ids));
 			
@@ -191,11 +191,11 @@ public class FriendHandler {
 	 * @param toUserId
 	 * @return
 	 */
-	public boolean inFriend(int userId, int toUserId){
+	public boolean inFriend(long userId, long toUserId){
 		boolean result = false;
 		if(userId == toUserId || userId < 1 || toUserId < 1)
 			return result;
-		Set<Integer> set = getFromToFriendIds(userId);
+		Set<Long> set = getFromToFriendIds(userId);
 		if(set != null && set.size() >0){
 			result = set.contains(toUserId);
 		}
@@ -209,32 +209,32 @@ public class FriendHandler {
 	 * @param userId
 	 * @return
 	 */
-	private Set<Integer> stringToSet(String str, int userId){
+	private Set<Long> stringToSet(String str, long userId){
 		if(StringUtil.isNull(str)){
-			return new HashSet<Integer>();
+			return new HashSet<Long>();
 		}
-		Set<Integer> ids = new HashSet<Integer>();
+		Set<Long> ids = new HashSet<Long>();
 		Object[] objs = str.split(";");
 		for(int i =0; i < objs.length; i++){
-			ids.add(StringUtil.changeObjectToInt(objs[i]));
+			ids.add(StringUtil.changeObjectToLong(objs[i]));
 		}
 		return ids;
 	}
 	/**
 	 * 获取好友id列表在redis的key(包括自己)
-	 * @param id
+	 * @param userId
 	 * @return
 	 */
-	public static String getFriendIdsKey(int userId){
+	public static String getFriendIdsKey(long userId){
 		return ConstantsUtil.FRIEND_ID_REDIS +userId;
 	}
 	
 	/**
 	 * 获取评论在redis的key
-	 * @param id
+	 * @param userId
 	 * @return
 	 */
-	public static String getFriendKey(int userId){
+	public static String getFriendKey(long userId){
 		return ConstantsUtil.FRIEND_REDIS +userId;
 	}
 }

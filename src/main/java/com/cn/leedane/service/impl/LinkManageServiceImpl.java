@@ -132,7 +132,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 	}
 
 	@Override
-	public Map<String, Object> delete(int lnid, UserBean user,
+	public Map<String, Object> delete(long lnid, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("LinkManageServiceImpl-->delete():lnid="+ lnid);
 		ResponseMap message = new ResponseMap();
@@ -191,7 +191,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value));
 		
 		String[] lnidArray = lnids.split(",");
-		int[] ids = new int[lnidArray.length];
+		long[] ids = new long[lnidArray.length];
 		
 		StringBuffer sql = new StringBuffer("delete from " + DataTableType.用户角色.value + " where ");
 		for(int i = 0; i < lnidArray.length; i++){
@@ -223,7 +223,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 	}
 
 	@Override
-	public Map<String, Object> roleOrPermissions(int lnid, boolean role, UserBean user,
+	public Map<String, Object> roleOrPermissions(long lnid, boolean role, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("LinkManageServiceImpl-->roleOrPermissions():lnid="+lnid);
 		ResponseMap message = new ResponseMap();
@@ -243,7 +243,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 	}
 
 	@Override
-	public Map<String, Object> allot(int lnid, JSONObject json, UserBean user,
+	public Map<String, Object> allot(long lnid, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("LinkManageServiceImpl-->allot():lnid="+lnid +", json="+ json);
 		

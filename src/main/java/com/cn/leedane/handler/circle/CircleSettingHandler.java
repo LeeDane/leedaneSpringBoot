@@ -48,7 +48,7 @@ public class CircleSettingHandler {
 	 * @param circleId
 	 * @return
 	 */
-	public CircleSettingBean getNormalSettingBean(int circleId, UserBean user){
+	public CircleSettingBean getNormalSettingBean(long circleId, UserBean user){
 		CircleSettingBean settingBean = null;
 		String key = getCircleSettingKey(circleId);
 		Object obj = systemCache.getCache(key);
@@ -121,7 +121,7 @@ public class CircleSettingHandler {
 	 * @param circleId
 	 * @return
 	 */
-	public boolean deleteSettingBeanCache(int circleId){
+	public boolean deleteSettingBeanCache(long circleId){
 		String key = getCircleSettingKey(circleId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -132,7 +132,7 @@ public class CircleSettingHandler {
 	 * 获取圈子在redis的key
 	 * @return
 	 */
-	public static String getCircleSettingKey(int circleId){
+	public static String getCircleSettingKey(long circleId){
 		return ConstantsUtil.CIRCLE_REDIS  +circleId +"_st";
 	}
 }

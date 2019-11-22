@@ -27,7 +27,7 @@ public interface VisitorMapper extends BaseMapper<VisitorBean>{
 	 */
 	public List<Map<String, Object>> visitors(
 			@Param("tableName")String tableName,
-			@Param("tableId")int tableId,
+			@Param("tableId")long tableId,
 			@Param("start")int start,
 			@Param("pageSize")int pageSize,
 			@Param("status") int status);
@@ -58,12 +58,11 @@ public interface VisitorMapper extends BaseMapper<VisitorBean>{
 	public int getTodayVisitors(
 			@Param("createTime")Date createTime, 
 			@Param("tableName")String tableName,
-			@Param("tableId")int tableId, 
+			@Param("tableId")long tableId,
 			@Param("status") int status);
 	
 	/**
 	 * 获取访问量
-	 * @param createTime
 	 * @param tableName
 	 * @param tableId
 	 * @param status
@@ -72,7 +71,7 @@ public interface VisitorMapper extends BaseMapper<VisitorBean>{
 	 */
 	public int getVisitorsByTime(			
 			@Param("tableName")String tableName,
-			@Param("tableId")int tableId, 
+			@Param("tableId")long tableId,
 			@Param("status") int status, 
 			@Param("time") String time);
 	
@@ -84,5 +83,5 @@ public interface VisitorMapper extends BaseMapper<VisitorBean>{
 	 * @return
 	 */
 	public int getAllVisitors(@Param("tableName")String tableName,
-			@Param("tableId")int tableId, @Param("status") int status);
+			@Param("tableId")long tableId, @Param("status") int status);
 }

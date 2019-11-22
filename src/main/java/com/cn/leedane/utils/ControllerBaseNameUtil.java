@@ -342,6 +342,11 @@ public class ControllerBaseNameUtil {
 	 * 淘宝接口统一入口根路径
 	 */
 	public static final String taobao = "mall/taobao";
+
+	/**
+	 * 商城搜索接口统一入口根路径
+	 */
+	public static final String mall_search = "mall/search";
 	
 	/**
 	 * 管理员->商品管理

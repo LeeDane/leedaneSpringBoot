@@ -53,7 +53,7 @@ public class UserHandler {
 	 * @param userId
 	 * @return
 	 */
-	public UserSettingBean getNormalSettingBean(int userId){
+	public UserSettingBean getNormalSettingBean(long userId){
 		UserSettingBean settingBean = null;
 		String key = getUserSettingKey(userId);
 		Object obj = systemCache.getCache(key);
@@ -115,7 +115,7 @@ public class UserHandler {
 	 * @param userId
 	 * @return
 	 */
-	public boolean deleteSettingBeanCache(int userId){
+	public boolean deleteSettingBeanCache(long userId){
 		String key = getUserSettingKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -126,7 +126,7 @@ public class UserHandler {
 	 * 获取用户设置在redis的key
 	 * @return
 	 */
-	public static String getUserSettingKey(int userId){
+	public static String getUserSettingKey(long userId){
 		return ConstantsUtil.USER_REDIS  + "_st_"+ userId;
 	}
 	
@@ -153,7 +153,7 @@ public class UserHandler {
 	 * 保存用户操作的最新的请求时间记录
 	 * @param userId
 	 */
-	public void addLastRequestTime(int userId){
+	public void addLastRequestTime(long userId){
 		redisUtil.addString(getRequestTimeKey(userId), DateUtil.DateToString(new Date()));
 	}
 	
@@ -162,7 +162,7 @@ public class UserHandler {
 	 * @param userId
 	 * @return
 	 */
-	public String getLastRequestTime(int userId){
+	public String getLastRequestTime(long userId){
 		return StringUtil.changeNotNull(redisUtil.getString(getRequestTimeKey(userId)));
 	}
 	
@@ -170,7 +170,7 @@ public class UserHandler {
 	 * 获取用户的头像路径
 	 * @return
 	 */
-	public String getUserPicPath(int userId, String picSize){
+	public String getUserPicPath(long userId, String picSize){
 		String userPicKey = getRedisUserPicKey(userId, picSize);
 
 		//先从ehCache中读取缓存信息
@@ -219,7 +219,7 @@ public class UserHandler {
 	 * @param userId
 	 * @param picSize
 	 */
-	public void updateUserPicPath(int userId, String picSize){
+	public void updateUserPicPath(long userId, String picSize){
 		String userPicKey = getRedisUserPicKey(userId, picSize);
 		String userPicPath = null;
 		
@@ -243,7 +243,7 @@ public class UserHandler {
 	 * 获取用户的信息
 	 * @return
 	 */
-	public JSONObject getUserDetail(int userId){
+	public JSONObject getUserDetail(long userId){
 		UserBean user = getUserBean(userId);
 		if(user != null){
 			return JSONObject.fromObject(user);
@@ -256,7 +256,7 @@ public class UserHandler {
 	 * @param userId 用户Id
 	 * @return
 	 */
-	public UserBean getUserBean(int userId){
+	public UserBean getUserBean(long userId){
 		String userInfoKey = getRedisUserInfoKey(userId);
 		UserBean user = null;
 		//先从ehCache中读取缓存信息
@@ -318,7 +318,7 @@ public class UserHandler {
 	 * 删除用户的基本信息
 	 * @return
 	 */
-	public void deleteUserDetail(int userId){
+	public void deleteUserDetail(long userId){
 		String userInfoKey = getRedisUserInfoKey(userId);
 		redisUtil.delete(userInfoKey);
 		systemCache.removeCache(userInfoKey);
@@ -328,7 +328,7 @@ public class UserHandler {
 	 * 获取用户的名称
 	 * @return
 	 */
-	public String getUserName(int userId){
+	public String getUserName(long userId){
 		JSONObject userInfo = getUserDetail(userId);
 		return userInfo != null ? JsonUtil.getStringValue(userInfo, "account") : null;
 	}
@@ -356,7 +356,7 @@ public class UserHandler {
 	 * 获取用户的绑定的手机号码
 	 * @return
 	 */
-	public String getUserMobilePhone(int userId){
+	public String getUserMobilePhone(long userId){
 		JSONObject userInfo = getUserDetail(userId);
 		return JsonUtil.getStringValue(userInfo, "mobile_phone");
 	}
@@ -519,7 +519,7 @@ public class UserHandler {
 	 * @param toUserId
 	 * @return
 	 */
-	public Map<String, Object> getBaseUserInfo(int toUserId){
+	public Map<String, Object> getBaseUserInfo(long toUserId){
 		Map<String, Object> infoMap = new HashMap<String, Object>();
 		if(toUserId> 0){
 			//JSONObject friendObject = friendHandler.getFromToFriends(user.getId());
@@ -635,7 +635,7 @@ public class UserHandler {
 	 * @param userid
 	 * @return
 	 */
-	private Set<String> getTokens(int userid){
+	private Set<String> getTokens(long userid){
 		String key = getRedisUserTokenKey(userid, 0);
 		return redisUtil.keys(key);
 	}
@@ -645,7 +645,7 @@ public class UserHandler {
 	 * @param token
 	 * @return
 	 */
-	public boolean hasToken(int userid, String token){
+	public boolean hasToken(long userid, String token){
 		Set<String> set = getTokens(userid);
 		if(set != null && set.size() > 0){
 			for(String str: set){
@@ -680,11 +680,11 @@ public class UserHandler {
 		return " and (f.pic_size = '" + picSize +"' or f.pic_size = 'source') ";
 	}
 	
-	public static String getRedisUserPicKey(int userId, String picSize){
+	public static String getRedisUserPicKey(long userId, String picSize){
 		return "user_pic_"+userId +"_" +picSize;
 	}
 	
-	public static String getRedisUserInfoKey(int userId){
+	public static String getRedisUserInfoKey(long userId){
 		return "user_info_"+userId;
 	}
 	
@@ -693,7 +693,7 @@ public class UserHandler {
 	 * @param userId
 	 * @return
 	 */
-	public static String getRequestTimeKey(int userId){
+	public static String getRequestTimeKey(long userId){
 		return "last_request_time_"+userId;
 	}
 	
@@ -721,7 +721,7 @@ public class UserHandler {
 	 * @param userTokenId
 	 * @return
 	 */
-	public static String getRedisUserTokenKey(int userId, int userTokenId){
+	public static String getRedisUserTokenKey(long userId, long userTokenId){
 		return "user_token_a_"+userId +"_" + (userTokenId > 0? userTokenId : "*");
 	}
 	
@@ -730,7 +730,7 @@ public class UserHandler {
 	 * @param userid
 	 * @return
 	 */
-	public static String getRedisSessionKey(int userid){
+	public static String getRedisSessionKey(long userid){
 		return "session_mapper_"+userid;
 	}
 	/*private String getRedisUserAccountKey(int userId){

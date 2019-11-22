@@ -25,11 +25,10 @@ function doSearch(){
 		$SearchContainer.focus();
 		return;
 	}
-	
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
 		type : "get",
-		url : "/s/s?"+ jsonToGetRequestParams({keyword: searchText, sort: product_sort, desc: product_sort_desc,  start: (product_currentIndex * product_pageSize), current: product_currentIndex, type: 5, rows: product_pageSize, t: Math.random()}),
+		url : "/mall/search/product?"+ jsonToGetRequestParams({keyword: searchText, sort: product_sort, desc: product_sort_desc,  start: (product_currentIndex * product_pageSize), current: product_currentIndex, type: 5, rows: product_pageSize, t: Math.random()}),
 		dataType: 'json',
 		beforeSend:function(){
 		},
@@ -40,7 +39,7 @@ function doSearch(){
 			layer.close(loadi);
 			$(".search-need-time").text(data.consumeTime);
 			if(data.isSuccess && isNotEmpty(data.message)){
-				dealProductSearch(data.message[5], data.total);
+				dealProductSearch(data.message.list, data.total);
 			}else{
 				ajaxError(data);
 			}
@@ -58,7 +57,7 @@ function doSearch(){
  */
 function dealProductSearch(message, total){
 	$productContainer.empty();
-	if(message.length == 0){
+	if(!message || message.length == 0){
 		if(product_currentIndex == 0){
 			$productContainer.append("搜索不到符合条件的商品，请换条件试试！");
 		}else{
@@ -78,7 +77,7 @@ function dealProductSearch(message, total){
 		 laypage.render({
 		    elem: 'product-pager' //注意，这里的 test1 是 ID，不用加 # 号
 		    ,layout: ['prev', 'page', 'next', 'count', 'skip']
-		    ,count: total[5] //数据总数，从服务端得到
+		    ,count: total //数据总数，从服务端得到
 		    ,limit: product_pageSize
 		    , curr: product_currentIndex + 1
 		    ,jump: function(obj, first){
@@ -102,7 +101,7 @@ function dealProductSearch(message, total){
 function buildEachSearchProductRow(index, product){
 		var html = '<div class="layui-col-md6 layui-col-xs6" onclick="getSelectProductData('+ index +');">'+
 						'<div class="layui-col-md12 layui-col-xs12 m-product-item">'+
-							'<img alt="" src="'+ product.mainImgLinks.split(";")[0] +'" class="m-product-item-img"/>		'+						
+							'<img alt="" src="'+ product.img.split(";")[0] +'" class="m-product-item-img"/>		'+
 							'<div class="m-product-contrainer">'+
 								'<a class="m-product-desc" href="javascript:void(0);" title="'+ changeNotNullString(product.title) +'">'+ changeNotNullString(product.title) +'</a>'+
 								'<p style="text-align: left;"><span class="m-product-price">¥'+ product.price +'</span> <span style="float: right; margin-right: 8px; text-decoration: line-through; font-size: 0.6em;">原价: ¥'+product.oldPrice +'</span></p>'+

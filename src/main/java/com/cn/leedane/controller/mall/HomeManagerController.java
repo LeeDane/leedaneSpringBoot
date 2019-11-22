@@ -62,7 +62,7 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/carousel/{carouselId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deleteCarousel(@PathVariable("carouselId") int carouselId, Model model, HttpServletRequest request){
+	public Map<String, Object> deleteCarousel(@PathVariable("carouselId") long carouselId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -121,7 +121,7 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/item/{itemId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getItem(@PathVariable("itemId") int itemId, Model model, HttpServletRequest request){
+	public Map<String, Object> getItem(@PathVariable("itemId") long itemId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -136,7 +136,7 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/item/{itemId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> updateItem(@PathVariable("itemId") int itemId, Model model, HttpServletRequest request){
+	public Map<String, Object> updateItem(@PathVariable("itemId") long itemId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -151,7 +151,7 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/item/{itemId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deleteCategory(@PathVariable("itemId") int itemId,HttpServletRequest request){
+	public Map<String, Object> deleteCategory(@PathVariable("itemId") long itemId,HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -165,7 +165,7 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/item/{itemId}/matching", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> matching(@PathVariable("itemId") int itemId,HttpServletRequest request){
+	public Map<String, Object> matching(@PathVariable("itemId") long itemId,HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -178,7 +178,7 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/item/{itemId}/category", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> updateCategry(@PathVariable("itemId") int itemId,HttpServletRequest request){
+	public Map<String, Object> updateCategry(@PathVariable("itemId") long itemId,HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -192,7 +192,7 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/item/{itemId}/product", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> addProduct(@PathVariable("itemId") int itemId,HttpServletRequest request){
+	public Map<String, Object> addProduct(@PathVariable("itemId") long itemId,HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -206,7 +206,7 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/item/{itemId}/product/{productId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deleteProduct(@PathVariable("itemId") int itemId, @PathVariable("productId") int productId, HttpServletRequest request){
+	public Map<String, Object> deleteProduct(@PathVariable("itemId") long itemId, @PathVariable("productId") long productId, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -248,7 +248,7 @@ public class HomeManagerController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/shop/{shopId}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deleteShop(@PathVariable("shopId") int shopId, Model model, HttpServletRequest request){
+	public Map<String, Object> deleteShop(@PathVariable("shopId") long shopId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

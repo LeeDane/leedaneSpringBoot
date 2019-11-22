@@ -27,16 +27,12 @@ public interface CirclePostMapper extends BaseMapper<CirclePostBean>{
 	
 	/**
 	 * 分页获取帖子列表
-	 * @param id
-	 * @param toUserId
 	 * @param start
 	 * @param pageSize
-	 * @param statusNormal
-	 * @param statusSelf
 	 * @return
 	 */
 	public List<Map<String, Object>> paging(
-			@Param("circleId") int circleId, 
+			@Param("circleId") long circleId,
 			@Param("start") int start,
 			@Param("pageSize") int pageSize, 
 			@Param("status") int status);
@@ -50,7 +46,7 @@ public interface CirclePostMapper extends BaseMapper<CirclePostBean>{
 	 * @return
 	 */
 	public List<CirclePostBean> getUserCirclePosts(
-			@Param("userId") int userId, 
+			@Param("userId") long userId,
 			@Param("start") int start,
 			@Param("pageSize") int pageSize, 
 			@Param("status") int status);
@@ -65,22 +61,20 @@ public interface CirclePostMapper extends BaseMapper<CirclePostBean>{
 	 * @return
 	 */
 	public List<CirclePostBean> getUserPostPosts(
-			@Param("circleId") int circleId, 
-			@Param("userId") int userId, 
+			@Param("circleId") long circleId,
+			@Param("userId") long userId,
 			@Param("start") int start,
 			@Param("pageSize") int pageSize, 
 			@Param("status") int statusl);
 	
 	/**
 	 * 获取目前最热门的帖子(计算)
-	 * @param postId
 	 * @return
 	 */
 	public void calculateHotests(@Param("time") Date time, @Param("pageSize") int pageSize);
 	
 	/**
 	 * 在圈子中心获取用户的帖子列表
-	 * @param userId
 	 * @param start
 	 * @param pageSize
 	 * @param status

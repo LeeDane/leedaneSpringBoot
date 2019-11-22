@@ -105,7 +105,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			}
 			
 			//获取文章的作者
-			int createUserId = oldBean.getCreateUserId();
+			long createUserId = oldBean.getCreateUserId();
 			checkAdmin(user, createUserId);
 			
 			result = blogMapper.update(blog);
@@ -187,13 +187,13 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	}
 
 	@Override
-	public int getZanNum(int Bid) {
+	public int getZanNum(long Bid) {
 		logger.info("BlogServiceImpl-->getZanNum():Bid="+Bid);
 		return this.blogMapper.getZanNum(Bid);
 	}
 
 	@Override
-	public int getCommentNum(int Bid) {
+	public int getCommentNum(long Bid) {
 		logger.info("BlogServiceImpl-->getCommentNum():Bid="+Bid);
 		return this.blogMapper.getCommentNum(Bid);
 	}
@@ -217,7 +217,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	}
 
 	@Override
-	public int getReadNum(int Bid) {
+	public int getReadNum(long Bid) {
 		logger.info("BlogServiceImpl-->getReadNum():Bid="+Bid);
 		return this.blogMapper.getReadNum(Bid);
 	}
@@ -257,7 +257,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		}
 		
 		//获取该文章的作者
-		int createUserId = oldBean.getCreateUserId();
+		long createUserId = oldBean.getCreateUserId();
 		
 		checkAdmin(user, createUserId);
 		
@@ -457,7 +457,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	}
 
 	@Override
-	public Map<String, Object> edit(int blogId, UserBean user,
+	public Map<String, Object> edit(long blogId, UserBean user,
 									HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->edit():blogId=" +blogId +", user=" +user.getAccount());
 		
@@ -613,7 +613,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	}
 	
 	@Override
-	public Map<String, Object> getOneBlog(int blogId, UserBean user,
+	public Map<String, Object> getOneBlog(long blogId, UserBean user,
 										  HttpRequestInfoBean request) {
 		/*logger.info("BlogServiceImpl-->getOneBlog():id="+id);
 		return this.blogMapper.getOneBlog(status , id);*/

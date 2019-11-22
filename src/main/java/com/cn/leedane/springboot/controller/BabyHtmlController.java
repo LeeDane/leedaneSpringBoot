@@ -87,7 +87,7 @@ public class BabyHtmlController extends BaseController{
 	}
 	
 	@RequestMapping("/{babyId}")
-	public String index2(@PathVariable(value="babyId") int babyId, Model model, HttpServletRequest request){
+	public String index2(@PathVariable(value="babyId") long babyId, Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model,request);	
 		//model.addAttribute("babyName", "小公主");

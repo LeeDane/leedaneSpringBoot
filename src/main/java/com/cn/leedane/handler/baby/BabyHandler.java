@@ -43,7 +43,7 @@ public class BabyHandler {
 	 * @param babyId
 	 * @return
 	 */
-	public BabyBean getNormalBaby(int babyId, UserBean user){
+	public BabyBean getNormalBaby(long babyId, UserBean user){
 		BabyBean baby = getBaby(babyId);
 		
 		//不是自己的宝宝将抛出权限异常
@@ -60,7 +60,7 @@ public class BabyHandler {
 	 * @param babyId
 	 * @return
 	 */
-	public BabyBean getBaby(int babyId){
+	public BabyBean getBaby(long babyId){
 		if(babyId < 1)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该宝宝不存在.value));
 		String key = getBabyKey(babyId);
@@ -118,7 +118,7 @@ public class BabyHandler {
 	 * @param userId
 	 * @return
 	 */
-	public List<BabyBean> getBabys(int userId){
+	public List<BabyBean> getBabys(long userId){
 		String key = getBabysKey(userId);
 		Object obj = systemCache.getCache(key);
 		BabyBeans babyBeans = null;
@@ -179,7 +179,7 @@ public class BabyHandler {
 	 * @param babyId
 	 * @return
 	 */
-	public boolean deleteBabyBeanCache(int babyId){
+	public boolean deleteBabyBeanCache(long babyId){
 		String key = getBabyKey(babyId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -188,10 +188,9 @@ public class BabyHandler {
 	
 	/**
 	 * 根据用户ID删除该用户所有宝宝的cache和redis缓存
-	 * @param babyId
 	 * @return
 	 */
-	public boolean deleteBabyBeansCache(int userId){
+	public boolean deleteBabyBeansCache(long userId){
 		String key = getBabysKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -202,7 +201,7 @@ public class BabyHandler {
 	 * 获取宝宝在redis的key
 	 * @return
 	 */
-	public static String getBabyKey(int babyId){
+	public static String getBabyKey(long babyId){
 		return ConstantsUtil.BABY_REDIS + babyId;
 	}
 	
@@ -210,7 +209,7 @@ public class BabyHandler {
 	 * 获取所有宝宝在redis的key
 	 * @return
 	 */
-	public static String getBabysKey(int userId){
+	public static String getBabysKey(long userId){
 		return ConstantsUtil.BABYS_REDIS + userId;
 	}
 	

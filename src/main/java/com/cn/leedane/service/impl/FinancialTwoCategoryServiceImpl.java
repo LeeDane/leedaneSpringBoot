@@ -45,7 +45,7 @@ public class FinancialTwoCategoryServiceImpl implements FinancialTwoCategoryServ
 	private OperateLogService<OperateLogBean> operateLogService;
 	
 	@Override
-	public List<FinancialTwoLevelCategoryBean> getAllDefault(int userId) {
+	public List<FinancialTwoLevelCategoryBean> getAllDefault(long userId) {
 		logger.info("FinancialTwoCategoryServiceImpl-->getAll():userId=" +userId);
 		return financialTwoCategoryMapper.getBeans("select * from t_financial_two_category where create_user_id = ?", userId);
 	}
@@ -64,14 +64,14 @@ public class FinancialTwoCategoryServiceImpl implements FinancialTwoCategoryServ
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
 					FinancialTwoLevelCategoryBean bean = beans.get(i);
 					ps.setInt(1, bean.getStatus());
-					ps.setInt(2, bean.getOneLevelId());
+					ps.setLong(2, bean.getOneLevelId());
 					ps.setString(3, bean.getCategoryValue());
 					ps.setString(4, bean.getIconName());
 					ps.setFloat(5, bean.getBudget());
 					ps.setInt(6, bean.getCategoryOrder());
 					ps.setBoolean(7, bean.isDefault());
 					ps.setBoolean(8, bean.isSystem());
-					ps.setInt(9, bean.getCreateUserId());
+					ps.setLong(9, bean.getCreateUserId());
 					ps.setTimestamp(10, DateUtil.getTimestamp(bean.getCreateTime()));
 				}
 				

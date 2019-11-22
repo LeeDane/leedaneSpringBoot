@@ -51,7 +51,7 @@ public class ClockMemberHandler {
 	 * @param clockId
 	 * @return
 	 */
-	public List<ClockMemberBean> members(int clockId){
+	public List<ClockMemberBean> members(long clockId){
 		ClockBean clock = clockHandler.getNormalClock(clockId);
 		if(clock == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该提醒任务不存在或者不支持共享.value));
@@ -111,7 +111,7 @@ public class ClockMemberHandler {
 	 * @param clockId
 	 * @return
 	 */
-	public boolean inMember(int userId, int clockId){
+	public boolean inMember(long userId, long clockId){
 		List<ClockMemberBean> members = members(clockId);
 		if(CollectionUtil.isNotEmpty(members)){
 			for(ClockMemberBean member: members){
@@ -141,7 +141,7 @@ public class ClockMemberHandler {
 	 * 删除任务成员列表的cache和redis缓存
 	 * @return
 	 */
-	public boolean deleteClockMembersCache(int clockId){
+	public boolean deleteClockMembersCache(long clockId){
 		String key = getClockMembersKey(clockId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -153,7 +153,7 @@ public class ClockMemberHandler {
 	 * 获取任务成员列表在redis的key
 	 * @return
 	 */
-	public static String getClockMembersKey(int clockId){
+	public static String getClockMembersKey(long clockId){
 		return ConstantsUtil.CLOCK_MEMBERS_REDIS + clockId;
 	}
 }

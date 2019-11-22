@@ -25,7 +25,7 @@ public interface ClockDealService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> add(int clockId, int memberId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> add(long clockId, long memberId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 编辑任务关系
@@ -36,7 +36,7 @@ public interface ClockDealService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> update(int clockId, int memberId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> update(long clockId, long memberId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除任务关系
@@ -46,7 +46,7 @@ public interface ClockDealService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(int clockId, int memberId, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> delete(long clockId, long memberId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 请求加入对方的任务(必须是共享的任务，并且人数没有超过共享人数，时间不能超过报名时间)
@@ -56,7 +56,7 @@ public interface ClockDealService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> requestAdd(int clockId,
+	public Map<String, Object> requestAdd(long clockId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request);
 
@@ -69,7 +69,7 @@ public interface ClockDealService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> requestAgree(int clockId, int memberId,
+	public Map<String, Object> requestAgree(long clockId, long memberId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request);
 	
@@ -82,7 +82,7 @@ public interface ClockDealService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> inviteAdd(int clockId, int memberId,
+	public Map<String, Object> inviteAdd(long clockId, long memberId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request);
 
@@ -95,13 +95,12 @@ public interface ClockDealService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> inviteAgree(int clockId, int memberId,
+	public Map<String, Object> inviteAgree(long clockId, long memberId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request);
 	
 	/**
 	 * 获取我的请求加入任务的列表
-	 * @param clockId
 	 * @param json
 	 * @param user
 	 * @param request
@@ -113,7 +112,6 @@ public interface ClockDealService <T extends IDBean>{
 	
 	/**
 	 * 获取邀请我加入的任务的列表
-	 * @param clockId
 	 * @param json
 	 * @param user
 	 * @param request
@@ -125,7 +123,6 @@ public interface ClockDealService <T extends IDBean>{
 	
 	/**
 	 * 获取我邀请的任务的列表
-	 * @param clockId
 	 * @param json
 	 * @param user
 	 * @param request

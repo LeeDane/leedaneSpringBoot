@@ -19,5 +19,5 @@ public interface ChatBgUserMapper extends BaseMapper<ChatBgUserBean>{
 	 * @param chatBgTableId
 	 * @return
 	 */
-	public List<Map<String, Object>> hasDownload(int userId, int chatBgTableId);
+	public List<Map<String, Object>> hasDownload(long userId, long chatBgTableId);
 }

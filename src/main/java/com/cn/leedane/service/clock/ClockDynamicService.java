@@ -24,5 +24,5 @@ public interface ClockDynamicService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> dynamics(int clockId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> dynamics(long clockId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 }	

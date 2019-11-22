@@ -85,7 +85,7 @@ public class GalleryController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/photo/{gid}", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"}) 
-	public Map<String, Object> delete(@PathVariable("gid") int gid, Model model, HttpServletRequest request){
+	public Map<String, Object> delete(@PathVariable("gid") long gid, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

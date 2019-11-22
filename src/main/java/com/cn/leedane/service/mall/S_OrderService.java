@@ -55,7 +55,7 @@ public interface S_OrderService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int orderId,
+	public Map<String, Object> delete(long orderId,
 			UserBean user, HttpRequestInfoBean request);
 
 	/**
@@ -66,7 +66,7 @@ public interface S_OrderService <T extends IDBean>{
 	 * @return
 	 */
 	public Map<String, Object> update(
-			int orderId, 
+			long orderId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request);
 	

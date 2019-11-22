@@ -37,7 +37,7 @@ public class SignInHandler {
 	 * @param userId
 	 * @return
 	 */
-	public List<Map<String, Object>> marks(int userId){
+	public List<Map<String, Object>> marks(long userId){
 		SignInMarkBean datas = null;
 		String key = getSignInMarkKey(userId);
 		Object obj = systemCache.getCache(key);
@@ -92,7 +92,7 @@ public class SignInHandler {
 	 * @param userId
 	 * @return
 	 */
-	public boolean deleteSignInMarkKey(int userId){
+	public boolean deleteSignInMarkKey(long userId){
 		String key = getSignInMarkKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -103,7 +103,7 @@ public class SignInHandler {
 	 * 获取用户签到列表在redis的key
 	 * @return
 	 */
-	public static String getSignInMarkKey(int userId){
+	public static String getSignInMarkKey(long userId){
 		return ConstantsUtil.SIGNIN_MARK_REDIS + "_"+ userId;
 	}
 
@@ -112,7 +112,7 @@ public class SignInHandler {
 	 * @param userId
 	 * @return
 	 */
-	public boolean hasHistorySign(int userId){
+	public boolean hasHistorySign(long userId){
 		String firstSignInKey = getIsFirstSignInKey(userId);
 		boolean isFirst = false;
 		//是否第一次
@@ -129,7 +129,7 @@ public class SignInHandler {
 	 * 增加历史签到记录标记
 	 * @param userId
 	 */
-	public void addHistorySignIn(int userId){
+	public void addHistorySignIn(long userId){
 		String firstSignInKey = getIsFirstSignInKey(userId);
 		redisUtil.addString(firstSignInKey, String.valueOf("true"));
 	}
@@ -139,7 +139,7 @@ public class SignInHandler {
 	 * @param userId
 	 * @return
 	 */
-	public static String getIsFirstSignInKey(int userId){
+	public static String getIsFirstSignInKey(long userId){
 		return ConstantsUtil.FIRST_SIGN_IN_REDIS +userId;
 	}
 }

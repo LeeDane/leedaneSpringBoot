@@ -25,7 +25,7 @@ public interface CommentMapper extends BaseMapper<CommentBean>{
 	 */
 	//public boolean updateSQL(String sql, Object ... obj);
 	
-	public List<Map<String, Object>> getMessageBoards(@Param("tableId") int tableId, @Param("status") int status, 
+	public List<Map<String, Object>> getMessageBoards(@Param("tableId") long tableId, @Param("status") int status,
 			@Param("start")int start, @Param("pageSize") int pageSize);
 	
 	

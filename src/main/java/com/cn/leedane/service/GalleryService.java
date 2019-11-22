@@ -46,7 +46,7 @@ public interface GalleryService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int gid, JSONObject jo, UserBean user, HttpRequestInfoBean request) ;
+	public Map<String, Object> delete(long gid, JSONObject jo, UserBean user, HttpRequestInfoBean request) ;
 	
 	/**
 	 * 分页获取指定用户图库的图片的路径列表

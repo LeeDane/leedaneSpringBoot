@@ -22,7 +22,7 @@ public class FinancialTwoLevelCategoryBean extends RecordTimeBean{
 	/**
 	 * 一级分类的ID
 	 */
-	private int oneLevelId;
+	private long oneLevelId;
 
 	/**
 	 * 展示的大类名称
@@ -60,7 +60,7 @@ public class FinancialTwoLevelCategoryBean extends RecordTimeBean{
 	
 	public FinancialTwoLevelCategoryBean(){}
 	
-	public FinancialTwoLevelCategoryBean(int oneLevelId, String categoryValue, boolean isDefault, int categoryOrder, String iconName, boolean isSystem){
+	public FinancialTwoLevelCategoryBean(long oneLevelId, String categoryValue, boolean isDefault, int categoryOrder, String iconName, boolean isSystem){
 		this.oneLevelId = oneLevelId;
 		this.categoryValue = categoryValue;
 		this.isDefault = isDefault;
@@ -125,7 +125,7 @@ public class FinancialTwoLevelCategoryBean extends RecordTimeBean{
 		this.status = status;
 	}
 
-	public int getOneLevelId() {
+	public long getOneLevelId() {
 		return oneLevelId;
 	}
 

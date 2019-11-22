@@ -396,7 +396,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			String tabName;
 			int tabId;
 			int pid = 0;
-			int pCreateUserId = 0;
+			long pCreateUserId = 0;
 			String blockquoteAccount = ""; //@用户的名称
 			//为名字备注赋值comments
 			for(int i = 0; i < rs.size(); i++){
@@ -575,7 +575,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			HttpRequestInfoBean request){
 		logger.info("CommentServiceImpl-->getCountByUser():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
-		int uid = JsonUtil.getIntValue(jo, "uid", user.getId()); //计算的用户id
+		long uid = JsonUtil.getLongValue(jo, "uid", user.getId()); //计算的用户id
 		
 		StringBuffer sql = new StringBuffer();
 		sql.append(" where create_user_id = " + uid + " and status = " +ConstantsUtil.STATUS_NORMAL);
@@ -692,7 +692,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	}
 	
 	@Override
-	public Map<String, Object> getMessageBoards(int userId, JSONObject jo, UserBean user,
+	public Map<String, Object> getMessageBoards(long userId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CommentServiceImpl-->getMessageBoards():userId="+ userId +",jo="+jo.toString());
 		
@@ -751,7 +751,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		return message.getMap();
 	}
 
-	private Map<String, Object> getLevelMap(Map<String, Object> items, int id){
+	private Map<String, Object> getLevelMap(Map<String, Object> items, long id){
 		CommentBean commentBean = commentHandler.getComment(id);
 		if(commentBean == null)
 			return items;

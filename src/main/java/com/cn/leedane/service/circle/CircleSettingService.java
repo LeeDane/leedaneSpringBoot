@@ -26,6 +26,6 @@ public interface CircleSettingService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> update(int circleId, int settingId, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> update(long circleId, long settingId, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 }

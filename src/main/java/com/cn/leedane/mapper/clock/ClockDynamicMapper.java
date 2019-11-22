@@ -23,7 +23,7 @@ public interface ClockDynamicMapper extends BaseMapper<ClockDynamicBean>{
 	 * @return
 	 */
 	public List<ClockDynamicBean> dynamics(
-			@Param("clockId")int clockId, 
+			@Param("clockId")long clockId,
 			@Param("publicity")boolean publicity, 
 			@Param("start")int start, 
 			@Param("pageSize")int pageSize);

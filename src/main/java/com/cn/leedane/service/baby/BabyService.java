@@ -33,7 +33,7 @@ public interface BabyService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String,Object> update(int babyId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public Map<String,Object> update(long babyId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除宝宝
@@ -42,7 +42,7 @@ public interface BabyService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String,Object> delete(int babyId, UserBean user, HttpRequestInfoBean request);
+	public Map<String,Object> delete(long babyId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 将宝宝的状态改变成出生状态
@@ -52,7 +52,7 @@ public interface BabyService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> changeBorn(int babyId,
+	public Map<String, Object> changeBorn(long babyId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request);
 }	

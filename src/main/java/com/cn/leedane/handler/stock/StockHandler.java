@@ -42,7 +42,7 @@ public class StockHandler {
 	 * @param stockId
 	 * @return
 	 */
-	public StockBean getNormalStock(int stockId, int userId){
+	public StockBean getNormalStock(long stockId, long userId){
 		StockBean stock = getStock(stockId);
 		
 		//不是自己的股票将抛出权限异常
@@ -59,7 +59,7 @@ public class StockHandler {
 	 * @param stockId
 	 * @return
 	 */
-	public StockBean getStock(int stockId){
+	public StockBean getStock(long stockId){
 		if(stockId < 1)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该股票不存在.value));
 		String key = getStockKey(stockId);
@@ -117,7 +117,7 @@ public class StockHandler {
 	 * @param userId
 	 * @return
 	 */
-	public List<StockBean> getStocks(int userId){
+	public List<StockBean> getStocks(long userId){
 		String key = getStocksKey(userId);
 		Object obj = systemCache.getCache(key);
 		StockBeans stockBeans = null;
@@ -178,7 +178,7 @@ public class StockHandler {
 	 * @param stockId
 	 * @return
 	 */
-	public boolean deleteStockBeanCache(int stockId){
+	public boolean deleteStockBeanCache(long stockId){
 		String key = getStockKey(stockId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -190,7 +190,7 @@ public class StockHandler {
 	 * @param userId
 	 * @return
 	 */
-	public boolean deleteStockBeansCache(int userId){
+	public boolean deleteStockBeansCache(long userId){
 		String key = getStocksKey(userId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -202,7 +202,7 @@ public class StockHandler {
 	 * @param stockId
 	 * @return
 	 */
-	public static String getStockKey(int stockId){
+	public static String getStockKey(long stockId){
 		return ConstantsUtil.STOCK_REDIS + stockId;
 	}
 	
@@ -211,7 +211,7 @@ public class StockHandler {
 	 * @param userId
 	 * @return
 	 */
-	public static String getStocksKey(int userId){
+	public static String getStocksKey(long userId){
 		return ConstantsUtil.STOCKS_REDIS + userId;
 	}
 	

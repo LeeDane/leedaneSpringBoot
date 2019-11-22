@@ -46,7 +46,7 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 	private CircleHandler circleHandler;
 
 	@Override
-	public Map<String, Object> isClockIn(UserBean user, int circleId,
+	public Map<String, Object> isClockIn(UserBean user, long circleId,
 			Date dateTime) {
 		
 		ResponseMap message = new ResponseMap();
@@ -64,7 +64,7 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 	}
 
 	@Override
-	public Map<String, Object> saveClockIn(int circleId, JSONObject jo, UserBean user,
+	public Map<String, Object> saveClockIn(long circleId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		
 		CircleBean circleBean = circleHandler.getNormalCircleBean(circleId, user);

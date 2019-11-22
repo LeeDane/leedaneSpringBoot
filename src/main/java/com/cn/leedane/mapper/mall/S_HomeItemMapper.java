@@ -26,13 +26,13 @@ public interface S_HomeItemMapper extends BaseMapper<S_HomeItemBean>{
 	 * @return
 	 */
 	@Deprecated
-	public List<S_HomeItemBean> findItemByCategoryId(@Param("categoryId") int categoryId);
+	public List<S_HomeItemBean> findItemByCategoryId(@Param("categoryId") long categoryId);
 
 	/**
 	 * 根据分类项id获取分类项
 	 * @param itemId
 	 * @return
 	 */
-	public List<S_HomeItemBean> findItemById(@Param("itemId") int itemId);
+	public List<S_HomeItemBean> findItemById(@Param("itemId") long itemId);
 	
 }

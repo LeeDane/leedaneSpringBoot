@@ -14,13 +14,13 @@ public class TimeLineBean extends IDBean{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int tableId;
+	private long tableId;
 	private String tableName;
 	private String createTime; //避免转化json过程中的出现问题，用字符串yyyy-MM-dd HH:mm:ss字符串
 	private String source;
 	private String content;
 	private String froms;
-	private int createUserId;
+	private long createUserId;
 	private String account;
 	private String userPicPath;
 	
@@ -29,10 +29,10 @@ public class TimeLineBean extends IDBean{
 	 */
 	private boolean hasSource;
 	
-	public int getTableId() {
+	public long getTableId() {
 		return tableId;
 	}
-	public void setTableId(int tableId) {
+	public void setTableId(long tableId) {
 		this.tableId = tableId;
 	}
 	public String getTableName() {
@@ -65,10 +65,10 @@ public class TimeLineBean extends IDBean{
 	public void setFroms(String froms) {
 		this.froms = froms;
 	}
-	public int getCreateUserId() {
+	public long getCreateUserId() {
 		return createUserId;
 	}
-	public void setCreateUserId(int createUserId) {
+	public void setCreateUserId(long createUserId) {
 		this.createUserId = createUserId;
 	}
 	public String getAccount() {

@@ -77,7 +77,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 	private ClockDynamicHandler clockDynamicHandler;
 	
 	@Override
-	public Map<String, Object> add(int clockId, int memberId, JSONObject jo, UserBean user,
+	public Map<String, Object> add(long clockId, long memberId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ClockDealServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		//校验
@@ -199,7 +199,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 
 
 	@Override
-	public Map<String, Object> update(int clockId, int memberId, JSONObject jo, UserBean user,
+	public Map<String, Object> update(long clockId, long memberId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ClockDealServiceImpl-->update(): clockId="+ clockId +", memberId="+ memberId +",jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -208,7 +208,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 
 
 	@Override
-	public Map<String, Object> delete(int clockId, int memberId, UserBean user,
+	public Map<String, Object> delete(long clockId, long memberId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ClockDealServiceImpl-->delete():clockId=" +clockId +", memberId="+ memberId +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -277,7 +277,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 	}
 
 	@Override
-	public Map<String, Object> requestAdd(int clockId, JSONObject json,
+	public Map<String, Object> requestAdd(long clockId, JSONObject json,
 			UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockDealServiceImpl-->requestAdd():clockId = "+ clockId +",userId=" +user.getId() +", json=" +json.toString());
 //		json.put("status", ConstantsUtil.STATUS_WAIT_MANAGE_AGREE);
@@ -380,7 +380,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 
 
 	@Override
-	public Map<String, Object> requestAgree(int clockId, int memberId, JSONObject json,
+	public Map<String, Object> requestAgree(long clockId, long memberId, JSONObject json,
 			UserBean user, HttpRequestInfoBean request) {
 		logger.info("ClockDealServiceImpl-->requestAgree():clockId = "+ clockId +",userId=" +user.getId() +", json=" +json.toString());
 		//校验
@@ -419,7 +419,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 	}
 
 	@Override
-	public Map<String, Object> inviteAdd(int clockId, int memberId, JSONObject json,
+	public Map<String, Object> inviteAdd(long clockId, long memberId, JSONObject json,
 			UserBean user, HttpRequestInfoBean request) {
 		//邀请加入(对方不在该任务中)
 		ResponseMap message = new ResponseMap();
@@ -519,7 +519,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 
 
 	@Override
-	public Map<String, Object> inviteAgree(int clockId, int memberId, JSONObject json,
+	public Map<String, Object> inviteAgree(long clockId, long memberId, JSONObject json,
 			UserBean user, HttpRequestInfoBean request) {
 		ClockBean clockBean = clockHandler.getNormalClock(clockId);
 		
@@ -576,7 +576,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 	 * @param clockBean
 	 * @param memberId
 	 */
-	private void checkClockCanDo(ClockBean clockBean, int memberId){
+	private void checkClockCanDo(ClockBean clockBean, long memberId){
 		//自己不能加入自己的任务
 		if(memberId == clockBean.getCreateUserId())
 			throw new IllegalOperationException("已经在任务成员列表中，不支持此操作！");

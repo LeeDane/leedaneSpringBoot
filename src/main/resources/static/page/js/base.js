@@ -694,3 +694,10 @@ function recursive(json, html){
 
     return recursive(item, html) + '</blockquote>';
 }
+
+/**
+**  跳转到详情页面
+**/
+function toProductDetail(id){
+    window.open("/mall/product/"+ id+ "/detail", '_blank');
+}

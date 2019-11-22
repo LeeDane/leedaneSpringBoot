@@ -34,7 +34,7 @@ public class ReadHandler {
 	 * @param tableId
 	 * @return
 	 */
-	public int getReadNumber(String tableName, int tableId){
+	public int getReadNumber(String tableName, long tableId){
 		String readKey = getReadKey(tableName, tableId);
 		int readNumber;
 		Object obj = systemCache.getCache(readKey);
@@ -60,7 +60,7 @@ public class ReadHandler {
 	 * @param tableId
 	 * @return
 	 */
-	public boolean delete(String tableName, int tableId){
+	public boolean delete(String tableName, long tableId){
 		String readKey = getReadKey(tableName, tableId);
 		systemCache.removeCache(readKey);
 		return redisUtil.delete(readKey);
@@ -71,7 +71,7 @@ public class ReadHandler {
 	 * @param tableId
 	 * @return
 	 */
-	public static String getReadKey(String tableName, int tableId){
+	public static String getReadKey(String tableName, long tableId){
 		return ConstantsUtil.READ_REDIS +tableName+"_"+tableId;
 	}
 }

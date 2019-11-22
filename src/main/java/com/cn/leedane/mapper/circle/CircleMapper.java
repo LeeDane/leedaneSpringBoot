@@ -21,11 +21,11 @@ public interface CircleMapper extends BaseMapper<CircleBean>{
 	 * @param userId
 	 * @return
 	 */
-	public List<CircleBean> getAllCircles(@Param("createUserId") int userId, @Param("status") int status);
+	public List<CircleBean> getAllCircles(@Param("createUserId") long userId, @Param("status") int status);
 	
 	/**
 	 * 判断圈子是否已经存在
-	 * @param userId
+	 * @param name
 	 * @return
 	 */
 	public List<CircleBean> isExists(@Param("name") String name);
@@ -37,7 +37,7 @@ public interface CircleMapper extends BaseMapper<CircleBean>{
 	 * @return
 	 */
 	public List<Map<String, Object>> paging(
-			@Param("createUserId")int createUserId,
+			@Param("createUserId")long createUserId,
 			@Param("roleType")int roleType,
 			@Param("start")int start, 
 			@Param("pageSize")int pageSize, 
@@ -59,14 +59,12 @@ public interface CircleMapper extends BaseMapper<CircleBean>{
 	
 	/**
 	 * 获取目前最新的圈子
-	 * @param time
 	 * @return
 	 */
 	public List<CircleBean> getNewests(@Param("pageSize") int pageSize, @Param("status") int status);
 	
 	/**
 	 * 获取目前推荐的圈子
-	 * @param time
 	 * @return
 	 */
 	public List<CircleBean> getRecommends(@Param("pageSize") int pageSize, @Param("status") int status);

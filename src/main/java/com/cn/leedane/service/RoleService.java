@@ -42,7 +42,7 @@ public interface RoleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(int rlid, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> delete(long rlid, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 分页获取角色列表
@@ -71,7 +71,7 @@ public interface RoleService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> users(int rlid, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> users(long rlid, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 给用户分配角色
@@ -81,5 +81,5 @@ public interface RoleService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> allot(int rlid,String users, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> allot(long rlid,String users, UserBean user, HttpRequestInfoBean request);
 }

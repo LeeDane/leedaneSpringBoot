@@ -51,7 +51,7 @@ public class BabyLifeHandler {
 	 * @param user
 	 * @return
 	 */
-	public BabyLifeBean getNormalBabyLife(int babyId, int lifeId, UserBean user){
+	public BabyLifeBean getNormalBabyLife(long babyId, long lifeId, UserBean user){
 		BabyLifeBean baby = getBabyLife(babyId, lifeId, user);
 		
 		//不是自己的宝宝将抛出权限异常
@@ -68,7 +68,7 @@ public class BabyLifeHandler {
 	 * @param babyId
 	 * @return
 	 */
-	public BabyLifeBean getBabyLife(int babyId, int lifeId, UserBean user){
+	public BabyLifeBean getBabyLife(long babyId, long lifeId, UserBean user){
 		babyHandler.getNormalBaby(babyId, user);
 		
 		if(lifeId < 1)
@@ -129,7 +129,7 @@ public class BabyLifeHandler {
 	 * @param babyId
 	 * @return
 	 */
-	public boolean deleteBabyLifeCache(int babyId, int lifeId){
+	public boolean deleteBabyLifeCache(long babyId, long lifeId){
 		String key = getBabyLifeKey(babyId, lifeId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -142,7 +142,7 @@ public class BabyLifeHandler {
 	 * @param lifeId
 	 * @return
 	 */
-	public static String getBabyLifeKey(int babyId, int lifeId){
+	public static String getBabyLifeKey(long babyId, long lifeId){
 		return ConstantsUtil.BABY_REDIS + babyId +"_l_"+ lifeId;
 	}
 }

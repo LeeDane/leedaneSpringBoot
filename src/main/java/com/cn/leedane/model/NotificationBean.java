@@ -20,12 +20,12 @@ public class NotificationBean extends StatusBean{
 	/**
 	 * 发送通知的用户
 	 */
-	private int fromUserId; 
+	private long fromUserId;
 
 	/**
 	 * 接收通知的用户
 	 */
-	private int toUserId;
+	private long toUserId;
 	
 	/**
 	 * 消息的内容
@@ -55,7 +55,7 @@ public class NotificationBean extends StatusBean{
 	/**
 	 * 关联的表ID
 	 */
-	private int tableId;
+	private long tableId;
 	
 	/***
 	 * 标记是否推送成功，默认是false
@@ -68,20 +68,20 @@ public class NotificationBean extends StatusBean{
 	private boolean isRead;
 
 	//@Column(name="from_user_id")
-	public int getFromUserId() {
+	public long getFromUserId() {
 		return fromUserId;
 	}
 
-	public void setFromUserId(int fromUserId) {
+	public void setFromUserId(long fromUserId) {
 		this.fromUserId = fromUserId;
 	}
 
 	//@Column(name="to_user_id")
-	public int getToUserId() {
+	public long getToUserId() {
 		return toUserId;
 	}
 
-	public void setToUserId(int toUserId) {
+	public void setToUserId(long toUserId) {
 		this.toUserId = toUserId;
 	}
 
@@ -119,11 +119,11 @@ public class NotificationBean extends StatusBean{
 	}
 
 	//@Column(name="table_id")
-	public int getTableId() {
+	public long getTableId() {
 		return tableId;
 	}
 
-	public void setTableId(int tableId) {
+	public void setTableId(long tableId) {
 		this.tableId = tableId;
 	}
 

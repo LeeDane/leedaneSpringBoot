@@ -144,7 +144,7 @@ public class ReportServiceImpl extends AdminRoleCheckService implements ReportSe
 	public List<Map<String, Object>> getLimit(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ReportServiceImpl-->getLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		int userId = JsonUtil.getIntValue(jo, "uid", user.getId());
+		long userId = JsonUtil.getLongValue(jo, "uid", user.getId());
 //		String tableName = JsonUtil.getStringValue(jo, "table_name");
 //		int tableId = JsonUtil.getIntValue(jo, "table_id", 0);
 //		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式

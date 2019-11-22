@@ -26,7 +26,7 @@ public interface SignInService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public boolean isSign(int userId, String dateTime);
+	public boolean isSign(long userId, String dateTime);
 	
 	/**
 	 * 用户历史上是否有签到记录
@@ -34,7 +34,7 @@ public interface SignInService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public boolean hasHistorySign(int userId);
+	public boolean hasHistorySign(long userId);
 
 	
 	/**
@@ -43,7 +43,7 @@ public interface SignInService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<Map<String, Object>> getNewestRecore(int userId);
+	public List<Map<String, Object>> getNewestRecore(long userId);
 
 	/**
 	 * 保存(签到),当天已经签到的直接返回false
@@ -77,7 +77,7 @@ public interface SignInService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getSignInMark(int userId, JSONObject jo,
+	public Map<String, Object> getSignInMark(long userId, JSONObject jo,
 													  UserBean user, HttpRequestInfoBean request);
 
 	

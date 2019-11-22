@@ -21,28 +21,28 @@ public interface SignInMapper extends BaseMapper<SignInBean>{
 	 * @param dateTime 指定的日期
 	 * @return
 	 */
-	public List<Map<String, Object>> isSign(@Param("userId")int userId, @Param("dateTime")String dateTime);
+	public List<Map<String, Object>> isSign(@Param("userId")long userId, @Param("dateTime")String dateTime);
 	
 	/**
 	 * 用户历史上是否有签到记录
 	 * @param userId 用户ID
 	 * @return
 	 */
-	public List<Map<String, Object>> hasHistorySign(@Param("userId")int userId);
+	public List<Map<String, Object>> hasHistorySign(@Param("userId")long userId);
 	
 	/**
 	 * 获取数据库中最新的记录
 	 * @param userId
 	 * @return
 	 */
-	public List<Map<String, Object>> getNewestRecore(@Param("userId") int userId);
+	public List<Map<String, Object>> getNewestRecore(@Param("userId") long userId);
 	
 	/**
 	 * 获取昨天的签到记录
 	 * @param userId
 	 * @return
 	 */
-	public List<Map<String, Object>> getYesTodayRecore(@Param("userId") int userId, @Param("createTime") Date createTime, @Param("status") int status);
+	public List<Map<String, Object>> getYesTodayRecore(@Param("userId") long userId, @Param("createTime") Date createTime, @Param("status") int status);
 	
 	/**
 	 * 获取用户当前的积分
@@ -55,5 +55,5 @@ public interface SignInMapper extends BaseMapper<SignInBean>{
 	 * 获取用户签到标记列表
 	 * @return
 	 */
-	public List<Map<String, Object>> getSignInMark(@Param("userId") int userId);
+	public List<Map<String, Object>> getSignInMark(@Param("userId") long userId);
 }

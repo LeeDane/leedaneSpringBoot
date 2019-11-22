@@ -27,7 +27,7 @@ public class ClockInResourcesBean extends RecordTimeBean{
 	 * 打卡的任务ID
 	 */
 	@Column(value="clock_in_id", required = true)
-	private int clockInId;
+	private long clockInId;
 
 	/**
 	 * 资源的名称
@@ -47,11 +47,11 @@ public class ClockInResourcesBean extends RecordTimeBean{
 	@Column(value="resource_type", required = true)
 	private int resourceType;
 
-	public int getClockInId() {
+	public long getClockInId() {
 		return clockInId;
 	}
 
-	public void setClockInId(int clockInId) {
+	public void setClockInId(long clockInId) {
 		this.clockInId = clockInId;
 	}
 

@@ -13,7 +13,7 @@
 		select id from t_job_manage where job_name = #{name} and job_group = #{group} and status = #{status} limit 1
 	</select>
 	
-	<select id="paging" parameterType="int" resultType="java.util.Map">
+	<select id="paging" resultType="java.util.Map">
 		select jm.id, jm.job_name, jm.job_group, jm.class_name, jm.job_params,
 			jm.expression, jm.job_order, jm.job_desc, date_format(jm.create_time,'%Y-%m-%d %H:%i:%s') create_time , jm.create_user_id, jm.status
 		from t_job_manage jm 

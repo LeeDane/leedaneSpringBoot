@@ -22,8 +22,8 @@ public interface StockBuyMapper extends BaseMapper<StockBuyBean>{
 	 */
 	@Deprecated
 	public StockBuyBean getStockBuy(
-			@Param("createUserId") int userId, 
-			@Param("stockId") int stockId, 
+			@Param("createUserId") long userId,
+			@Param("stockId") long stockId,
 			@Param("status") int status);
 	
 	/**
@@ -32,7 +32,7 @@ public interface StockBuyMapper extends BaseMapper<StockBuyBean>{
 	 * @return
 	 */
 	public List<StockBuyBean> getStockBuys(
-			@Param("createUserId") int userId, 
-			@Param("stockId") int stockId, 
+			@Param("createUserId") long userId,
+			@Param("stockId") long stockId,
 			@Param("status") int status);
 }

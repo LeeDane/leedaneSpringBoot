@@ -9,7 +9,7 @@
 <mapper namespace="com.cn.leedane.mapper.circle.CircleContributionMapper">
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
-	<select id="getTotalScore" parameterType="int" resultType="java.util.Map">
+	<select id="getTotalScore" resultType="java.util.Map">
 		select cc.total_score ct from t_circle_contribution cc where cc.create_user_id = #{createUserId} and cc.circle_id = #{circleId} order by id desc limit 1
 	</select>
 

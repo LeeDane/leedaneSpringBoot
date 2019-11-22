@@ -73,7 +73,7 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 	private ClockMemberHandler clockMemberHandler;
 	
 	@Override
-	public boolean add(int clockId, int memberId, JSONObject jo, UserBean user,
+	public boolean add(long clockId, long memberId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ClockMemberServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		
@@ -85,7 +85,7 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 		}
 		
 		Date systemDate = new Date();
-		int userId = user.getId();
+		long userId = user.getId();
 		ClockMemberBean clockMemberBean = new ClockMemberBean();
 		clockMemberBean.setClockId(clockId);
 		clockMemberBean.setMemberId(memberId);
@@ -139,7 +139,7 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 
 
 	@Override
-	public Map<String, Object> update(int clockId, int memberId, JSONObject jo, UserBean user,
+	public Map<String, Object> update(long clockId, long memberId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ClockMemberServiceImpl-->update(): clockId="+ clockId +", memberId="+ memberId +",jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -168,7 +168,7 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 
 
 	@Override
-	public Map<String, Object> delete(int clockId, int memberId, UserBean user,
+	public Map<String, Object> delete(long clockId, long memberId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ClockMemberServiceImpl-->delete():clockId=" +clockId +", memberId="+ memberId +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -177,7 +177,7 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 
 	
 	@Override
-	public Map<String, Object> members(int clockId, UserBean user,
+	public Map<String, Object> members(long clockId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ClockMemberServiceImpl-->members():clockId = "+ clockId +",userId=" +user.getId() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();

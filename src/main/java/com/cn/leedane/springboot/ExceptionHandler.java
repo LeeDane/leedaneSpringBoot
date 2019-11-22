@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.cn.leedane.exception.*;
+import com.taobao.api.ApiException;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -234,6 +235,10 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			logger.error("ES索引不存在异常", exception);
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.ES索引不存在.value));
 			message.put("responseCode", ResponseCode.ES索引不存在.value);
+		}else if(exception instanceof ApiException){
+			logger.error("淘宝api异常", exception);
+			message.put("message", exception.getMessage());
+			message.put("responseCode", ResponseCode.淘宝api异常.value);
 		}else{
 //			StringPrintWriter strintPrintWriter = new StringPrintWriter();  
 //	        exception.printStackTrace(strintPrintWriter);

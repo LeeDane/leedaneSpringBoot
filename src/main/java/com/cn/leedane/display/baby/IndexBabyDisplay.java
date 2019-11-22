@@ -9,7 +9,7 @@ package com.cn.leedane.display.baby;
  */
 public class IndexBabyDisplay{
 	
-	private int id;
+	private long id;
 	
 	private String nickname;
 	
@@ -17,11 +17,11 @@ public class IndexBabyDisplay{
 	
 	private boolean current;
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
