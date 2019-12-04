@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.mall.S_HomeShopMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="shops" resultMap="objectBean">
+		select hs.id, hs.status, hs.create_user_id, date_format(hs.create_time,'%Y-%m-%d %H:%i:%s') create_time 
+		, hs.shop_id, hs.shop_order, s.shop_name, s.link, s.create_user_id s_create_user_id, date_format(s.create_time,'%Y-%m-%d %H:%i:%s') s_create_time
+		, s.validation, s.is_official, s.img s_img 
+		from t_mall_home_shop hs 
+		inner join t_mall_shop s on hs.shop_id = s.id 
+		where hs.status = #{status} order by hs.id desc limit #{limit}
+	</select>
+	
+	<resultMap type="com.cn.leedane.model.mall.S_HomeShopBean" id="objectBean">
+        <id property="id" column="id"/>
+        <result property="status" column="status"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="shopId" column="product_id"/>
+        <result property="shopOrder" column="shop_order"/>
+        <result property="shopBean.name" column="shop_name"/>
+        <result property="shopBean.createUserId" column="s_create_user_id"/>
+        <result property="shopBean.createTime" column="s_create_time"/>
+        <result property="shopBean.link" column="link"/>
+        <result property="shopBean.validation" column="validation"/>
+        <result property="shopBean.isOfficial" column="is_official"/>
+        <result property="shopBean.img" column="s_img"/>
+   </resultMap>
+</mapper>

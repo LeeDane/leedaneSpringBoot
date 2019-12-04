@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title th:text="慷慨捐赠"></title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<script th:src="@{/page/js/page.js}" type="text/javascript"></script>
+
+	<link th:if="${not isDebug}" rel="stylesheet" href="https://www.layuicdn.com/layui-v2.5.4/css/layui.css"  media="all" />
+	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.5.4/css/layui.css"  media="all" />
+	<style type="text/css">
+		
+		.container{
+			margin-top: 50px;
+		}
+		.row{
+			margin-top: 8px;
+		}
+		.panel-footer button{
+			margin-top: 5px;
+			margin-right: 5px;
+		}
+		.btn-group{
+			margin-top: 10px;
+		}
+		.row-content{
+			font-family: "华文宋体";
+			font-size: 14px;
+		}
+		.original{
+			border-color: #51BAE3;
+  			color: #51BAE3;
+  			box-sizing: inherit;
+  			-webkit-tap-highlight-color: transparent;
+  			border: 2px solid;
+		    border-radius: 50%;
+		    width: 25px;
+		    height: 25px;
+		    vertical-align: text-bottom;
+		    text-align: center;
+		    font-size: 16px;
+		    line-height: 26px;
+		    float: left;
+		}
+		.inline{
+			display: inline-block !important;
+		}
+		.marginRight{
+			margin-right: 12px;
+		}
+		.comment-list{
+			border:1px solid #f5f5f5;
+			box-shadow: 1px 0px 5px #888888;
+			margin-bottom: 10px;
+		}
+		.comment-list-padding{
+			padding-top: 5px;
+			border-radius: 3px; 
+		}
+		.comment-list-item{
+			background-color: #fff !important;
+			border-color: #f5f5f5 !important;
+		}
+		.publish-time{
+			color: #999;
+		}
+		.text-align-right{
+			text-align: right;
+		}
+		.comment-list:hover {
+			border: 1px dashed #999;
+		}
+		.tag{
+			margin-right: 5px;
+		}
+		
+   		.list-group-item{
+			padding: 5px 8px !important;
+		}
+	</style>
+</head>
+<body>
+<div th:include="common :: hello">what?</div>
+</body>
+	<div class="container">
+	   <div class="row">
+		   官宣：本app是一款致力于解决个人日常提醒事务的助手，再次承诺，本app使用完全免费。管理员、开发者等绝对不会也不能以个人名义向使用者索取非法的资金。
+		   但是由于这个是纯免费的应用， 毕竟开发者精力和时间有限，您们对我的鼓励将更大激励我进行版本更新和功能改进。谢谢！请捐赠者在捐赠完成后保留本次捐赠截图，
+		   并在问题反馈页面选择捐赠类别提交给管理员。
+	   </div>
+
+		<div class="row">
+			<img src="http://pic.onlyloveu.top/7_7_20160430173658_e68ec96c42065568cbc2dcfd9c975a61.jpg" width="40" height="40" class="img-rounded" />
+			请使用微信扫一扫向我捐赠
+		</div>
+		<div class="row">
+			<img src="http://pic.onlyloveu.top/7_7_20160430173658_e68ec96c42065568cbc2dcfd9c975a61.jpg" width="40" height="40" class="img-rounded" />
+			请使用支付宝扫一扫向我捐赠
+		</div>
+	</div>
+	
+<div th:include="common-js :: commJs">what?</div>
+<!-- scripts -->
+<script th:inline="javascript">//引用  
+
+</script> 
+</html>

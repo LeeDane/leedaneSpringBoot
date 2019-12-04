@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>大事件</title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<link th:if="${not isDebug}" rel="stylesheet" href="https://www.layuicdn.com/layui-v2.5.4/css/layui.css"  media="all" />
+	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.5.4/css/layui.css"  media="all" />
+	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{/page/css/event-manage.min.css}" />
+	<link th:if="${isDebug}" rel="stylesheet" th:href="@{/page/css/event-manage.css}" />
+
+	<link rel="stylesheet" th:href="@{/page/other/editor-md-master/css/editormd.min.css}" />
+	<style type="text/css"></style>
+</head>
+<body>
+	<div th:include="common :: hello">what?</div>
+	<div class="layui-container" style="margin-top: 80px;">
+		<div class="layui-row">
+			<div class="layui-col-md10 layui-col-md-offset1">
+				<hr class="layui-bg-blue" />
+				<div id="layout" class="editor">
+					<div id="test-editormd">
+						<textarea></textarea>
+					</div>
+				</div>
+				<div style="text-align:right; margin-top: 10px;">
+					<button id="publish" type="button" class="layui-btn layui-btn-normal layui-btn-radius" onclick="publish();">发布</button>
+				</div>
+				<hr class="layui-bg-blue" />
+				<a class="layui-btn layui-btn-xs" onclick="addEvent();">新增</a>
+				<table class="layui-hide" id="test" lay-filter="test"></table>
+
+				<script type="text/html" id="toolbarDemo">
+					<div class="layui-btn-container">
+						<button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+						<button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+						<button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+					</div>
+				</script>
+
+				<script type="text/html" id="barDemo">
+					<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+					<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+				</script>
+			</div>
+		</div>
+	</div>
+</body>
+<div th:include="common-bottom :: bottom">bottom?</div>
+<div th:include="common-js :: commJs">what?</div>
+<script th:src="@{/page/other/editor-md-master/editormd.min.js}" type="text/javascript"></script>
+<script th:if="${not isDebug}" th:src="@{/page/js/page.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/page.js}" type="text/javascript"></script>
+<script th:if="${not isDebug}" th:src="@{/page/js/event-manage.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/event-manage.js}" type="text/javascript"></script>
+<script></script>
+</html>

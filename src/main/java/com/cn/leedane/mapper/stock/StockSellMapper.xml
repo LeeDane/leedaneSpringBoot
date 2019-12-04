@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.stock.StockSellMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="getStockSells" resultMap="objectBean">
+		select ss.id, ss.stock_buy_id, ss.price, ss.number, ss.residue_number,
+		ss.create_user_id, date_format(ss.create_time,'%Y-%m-%d %H:%i:%s') create_time,
+		ss.modify_user_id, date_format(ss.modify_time,'%Y-%m-%d %H:%i:%s') modify_time
+		from t_stock_sell ss inner join t_stock_buy sb on sb.id = ss.stock_buy_id 
+		where ss.create_user_id = #{createUserId} and ss.status = #{status} and ss.stock_buy_id = #{stockBuyId} 
+		order by ss.create_time desc, ss.id desc
+	</select>
+	
+	<resultMap type="com.cn.leedane.model.stock.StockSellBean" id="objectBean">
+        <id property="id" column="id"/>
+        <result property="status" column="status"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyUserId" column="modify_user_id"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="stockBuyId" column="stock_buy_id"/>
+        <result property="price" column="price"/>
+        <result property="number" column="number"/>
+        <result property="residueNumber" column="residue_number"/>
+        
+   </resultMap>
+</mapper>

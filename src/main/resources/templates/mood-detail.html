@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<title>心情详情</title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{/page/css/mood-detail.min.css}" />
+	<link th:if="${isDebug}" rel="stylesheet" th:href="@{/page/css/mood-detail.css}" />
+	<style type="text/css"></style>
+</head>
+<body>
+<div th:include="common :: hello">what?</div>
+<!-- <link href="http://cdn.staticfile.org/emoji/0.2.2/emoji.css" rel="stylesheet" type="text/css" />
+<script src="http://cdn.staticfile.org/jquery/2.1.0/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/emoji/0.2.2/emoji.js"></script>
+jEmoji.unifiedToHTML(emojiText) -->
+</body>
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12" id="content-container">
+			   <div class="row">
+			   		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<p style="color: #666; margin: 0!important;">
+							<span id="b-account">
+								<img class="img-circle" style="width: 20px; height: 20px; margin-top: -3px;" src="" /> <span id="b-account-text"></span>
+							</span>
+							<span id="operate-list" style="margin-left: 16px;">
+								<span class="glyphicon glyphicon-time" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="时间"></span>
+								<label id="b-create-time"></label>&nbsp;&nbsp;
+								<span href="#comment" class="glyphicon glyphicon-comment" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="评论"></span>&nbsp;
+								<label id="b-comment-number"></label>&nbsp;&nbsp;
+								<span class="glyphicon glyphicon-share-alt" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="转发"></span>&nbsp;
+								<label id="b-transmit-number"></label>&nbsp;&nbsp;
+								<span class="glyphicon glyphicon-thumbs-up hand post-zan" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="很赞"></span>&nbsp;
+								<label id="b-zan-number"></label>&nbsp;&nbsp;
+								<span class="glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="left" title="" aria-hidden="true" data-original-title="阅读"></span>&nbsp;
+								<label id="b-read-number"></label>&nbsp;&nbsp;
+							</span>
+						</p>
+						<!--<a href="JavaScript:void(0);" target="_blank" class="marginRight" id="b-account"></a>
+						<span class="marginRight" id="b-create-time"></span>
+						<a href="#comment" class="marginRight" id="b-comment-number"></a>
+						<span class="marginRight" id="b-transmit-number"></span>
+						<span class="marginRight" id="b-zan-number"></span>-->
+					</div>
+			   		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="zan-users"></div>
+			   		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 row-content"></div>
+			   		<div  class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<div id="mood-media-contrainer" class="row"></div>
+					</div>
+			   </div>
+			   <div class="row to-comment-contrainer" id="comment">
+			   		<div class="col-lg-12" th:if="${not isLogin}" style="text-align: center;">
+					        您还未登录，无法参与评论 <a type="button" class="btn btn-info" href="javascript:void(0);" onclick="linkToLogin();">登录</a>
+					</div>
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${isLogin}" style="text-align: center;">
+						<div class="">
+							<textarea class="form-control" name="add-comment"  style="min-height: 125px;" autofocus ="true" onkeyup="updateNumber(this);"></textarea>
+						</div>
+						<div class="">
+							<span style="font-family: '微软雅黑'; font-size: 1.2em;">您还可以输入<font class="can-comment-number" color="red"></font>个文字</span>
+							<button class="btn btn-md btn-primary btn-block pull-right" type="button" style="margin-top: 10px; width: 60px;" onclick="addComment(this);" >评论</button>
+						</div>
+					</div>
+			   </div>
+			   <div class="row" id="comment-list-container"></div>
+			</div>
+		</div>
+	</div>
+<div th:include="common-bottom :: bottom">bottom?</div>
+<div th:include="common-js :: commJs">what?</div>
+<script th:inline="javascript">//引用
+	/*<![CDATA[*/
+	var mid = /*[[${mid}]]*/;//取值
+	/*]]>*/
+</script>
+
+<script th:if="${not isDebug}" th:src="@{/page/js/mood-detail.min.js}"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/mood-detail.js}"></script>
+</html>

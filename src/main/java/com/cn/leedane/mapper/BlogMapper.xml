@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.BlogMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="getLatestBlogById" resultType="java.util.Map">
+		<if test="last_blog_id == 0">
+			select b.id,b.title,b.img_url from t_blog b inner join t_user u on b.create_user_id = u.id 
+			where b.img_url is not null and b.title != '' order by b.id desc limit #{num}
+		</if>
+		<if test="last_blog_id > 0">
+				select b.id,b.title,b.img_url from t_blog b inner join t_user u on b.create_user_id = u.id 
+				where b.id &lt; #{last_blog_id} and b.img_url is not null and b.title != '' order by b.id desc limit #{num}
+		</if>
+	</select>
+	<select id="shakeSearch" resultType="Integer">
+		select id from t_blog where status = #{status} and create_user_id != #{createUserId} order by rand() limit 1
+	</select>
+
+	<select id="getMaxStick" resultType="Integer">
+		select max(stick) stick from t_mood
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="nullToEmptyMapper">  
+	    <result column="source" property="source" typeHandler="com.cn.leedane.handler.EmptyStringIfNullHandler"/>    
+	    <result column="origin_link" property="origin_link" typeHandler="com.cn.leedane.handler.EmptyStringIfNullHandler"/>    
+	    <result column="img_url" property="img_url" typeHandler="com.cn.leedane.handler.EmptyStringIfNullHandler"/>    
+	</resultMap>
+
+	<select id="getOneBlog" resultType="java.util.Map" resultMap="nullToEmptyMapper">
+		select b.id, b.content, b.img_url, b.title, b.has_img, b.tag, b.create_user_id, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time,
+		b.digest, b.froms, b.content, b.can_comment, b.can_transmit, b.origin_link, b.source, b.category,
+		b.is_recommend, b.stick
+		from t_blog b
+		where
+		status = #{status} and id = #{id} limit 1
+	</select>
+</mapper>

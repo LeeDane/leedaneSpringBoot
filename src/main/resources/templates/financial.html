@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title th:text="${account} +'的记账'">记账</title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<link rel="stylesheet" th:href="@{/page/css/financial.min.css}" />
+	<style type="text/css"></style>
+</head>
+<body data-spy="scroll" data-target="#myScrollspy" data-offset="90">
+<div th:include="common :: hello">what?</div>
+<div class="container main-container">
+	   <div class="row">
+		   <div class="col-lg-12">
+		   		<div class="row">
+		   			<div class="col-lg-4">
+		   				 <input type="text" name="searchKey" class="form-control" placeholder="请输入搜索关键字" onkeypress="if (event.keyCode == 13) search(this);" />
+		   			</div>
+		   			<div class="col-lg-4">
+		   				<button type="button" class="btn btn-primary" onclick="search(this);">搜索</button>
+		   				<button type="button" class="btn btn-primary senior-condition-btn">高级条件</button>
+		   			</div>
+		   		</div>
+		   		
+		   		<div class="row senior-condition">
+		   			<div class="col-lg-4">
+		   				<div class="row">
+		   					<div class="col-lg-12">
+		   						<label for="" class="col-sm-3 control-label">开始时间</label>
+		   					</div>
+		   				</div>
+		   				<div class="row">
+			   				 <div class="form-group">
+							    <div class="col-sm-12">
+							      <input type="date" name="startTime" class="form-control" placeholder="开始时间" />
+							   </div>
+							 </div>
+						 </div>
+		   			</div>
+		   		</div>
+		   		<div class="row senior-condition">
+		   			<div class="col-lg-4">
+		   				<div class="row">
+		   					<div class="col-lg-12">
+		   						<label for="" class="col-sm-3 control-label">结束时间</label>
+		   					</div>
+		   				</div>
+		   				<div class="row">
+			   				 <div class="form-group">
+							    <div class="col-sm-12">
+							      <input type="date" name="endTime" class="form-control" placeholder="开始时间" />
+							   </div>
+							 </div>
+						 </div>
+		   			</div>
+		   		</div>
+		   		<div class="row senior-condition">
+		   			<div class="col-lg-4">
+		   				 <div class="form-group">
+						     <select class="form-control" name="levels"></select>
+						 </div>
+		   			</div>
+		   		</div>
+		   </div>
+	   </div> 
+	   <div class="row" style="text-align: right;">
+	   		<button class="btn btn-success" onclick="addInfo();">记一笔</button>
+   			<button type="button" class="btn btn-primary chart-or-list">切换图表</button>
+	   </div>
+	    <div class="row financial-chart hide">
+	   		<div class="col-lg-6" id="chart-payments" style="height: 300px; "></div>
+   			<div class="col-lg-6" id="chart-categorys" style="height: 300px; "></div>
+	   </div>
+	    <div class="row financial-chart hide">
+	   		<div class="col-lg-12" id="chart-times" style="height: 300px; "></div>
+	   </div>
+</div>
+<!-- 模态框编辑 -->
+<div class="modal fade" id="edit-financial-info" tabindex="-1" role="dialog" aria-labelledby="editFinancialInfoModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="editFinancialInfoModalLabel">编辑记账基本信息</h4>
+			</div>
+			<div class="modal-body modal-body-edit-financialinfo">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-primary edit-financial-info-btn" onclick="editInfo(this);">编辑</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+</body>
+<div th:include="common-bottom :: bottom">bottom?</div>
+<div th:include="common-js :: commJs">what?</div>
+<script th:if="${not isDebug}" th:src="@{//cdn.staticfile.org/echarts/4.0.4/echarts.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/other/echarts.min.js}" type="text/javascript"></script>
+<script th:if="${not isDebug}" th:src="@{/page/js/financial.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/financial.js}" type="text/javascript"></script>
+</html>

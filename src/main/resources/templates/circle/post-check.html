@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>审核帖子</title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+
+	<link th:if="${not isDebug}" rel="stylesheet" href="https://www.layuicdn.com/layui-v2.5.4/css/layui.css"  media="all" />
+	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.5.4/css/layui.css"  media="all" />
+
+	<style type="text/css">
+		
+		.main-container{
+			margin-top: 50px;
+		}
+		#content-container .row{
+			margin-top: 15px;
+		}
+		.panel-footer button{
+			margin-top: 5px;
+			margin-right: 5px;
+		}
+		.btn-group{
+			margin-top: 10px;
+		}
+		.row-content{
+			font-family: "华文宋体";
+			font-size: 14px;
+		}
+	
+	</style>
+</head>
+<body th:attr="style='background-color: ' +(${setting.backgroundColor} == '#f5f5f5' ? '' : ${setting.backgroundColor})">
+	<div th:include="common :: hello">what?</div>
+	<div th:class="${nonav == null || nonav == false} ? 'container main-container': 'container' " >
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<button type="button" class="btn btn-warning btn-sm" data-placement="left" data-toggle="tooltip" title="点击进入圈子中心" th:text="${circle.name}" th:onclick="'linkToCircle('+ ${circle.id} +')'"></button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+			   <div class="row">
+			   		<div class="table-responsive">
+								<table class="table table-fix">
+									<!-- <caption>响应式表格布局</caption> -->
+									<thead>
+										<tr>
+											<th width="50">头像</th>
+											<th width="80">用户名</th>
+											<th width="250">标题</th>
+											<th>摘要</th>
+											<th width="100">创建时间</th>
+											<th width="140">操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td width="50"><img alt="" src="#" width="25" height="25"/></td>
+											<td width="80">Leedane</td>
+											<td width="250" class="cut-text">圈子圈子圈子圈子圈子圈子圈子名称名称名称名称名称名称名称</td>
+											<td>圈子摘要圈子摘要圈子摘要圈子摘要圈子摘要圈子摘要圈子摘要圈子摘要圈子摘要圈子摘要圈子摘要圈子摘要圈子摘要</td>
+											<td width="100">时间</td>
+											<td width="140">操作</td>
+										</tr>
+									</tbody>
+							</table>
+				    </div>
+			   </div>
+			   <div id="item-pager">
+			    	<!-- <nav aria-label="Page navigation">
+	  					<ul class="pagination"></ul>
+					</nav> -->
+			    </div>
+			</div>
+		</div>
+	</div>
+</body>
+<div th:include="common-bottom :: bottom">bottom?</div>
+<div th:include="common-js :: commJs">what?</div>
+<script th:src="@{/page/js/circle/post-check.js}" type="text/javascript"></script>
+<script th:src="@{/page/js/page.js}" type="text/javascript"></script>
+<script th:inline="javascript">//引用  
+	var circleId = /*[[${circle.id}]]*/;//取值
+</script> 
+</html>

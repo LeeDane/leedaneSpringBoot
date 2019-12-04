@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<!-- 当该 HTML 页面在手机上浏览时，该标签用于指定是否将网页内容中的手机号码显示为拨号的超链接 -->
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="format-detection" content="telephone=yes"/>
+	
+	<title th:text="我的股票"></title>
+	<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_733gvu39kn265hfr.css" />
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+
+	<link th:if="${not isDebug}" rel="stylesheet" href="https://www.layuicdn.com/layui-v2.5.4/css/layui.css"  media="all" />
+	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.5.4/css/layui.css"  media="all" />
+
+	<style type="text/css">
+		.clearFloat{
+			clear: both;
+		}
+		body{
+			background-color: #f5f5f5 !important;
+		}
+		.mainContainer{
+			padding-top: 60px;
+		}
+		. mainContainer .row{
+			margin-top: 15px;
+		}
+		.mainContainer .row img{
+			cursor: pointer;
+		}
+		body {
+			position: relative;
+		}
+		.mainContainer ul.nav-pills {
+			top: 80px;
+			position: fixed;
+		}
+		div.col-sm-9 div {
+			height: 250px;
+			font-size: 28px;
+		}
+		#section1 {color: #fff; background-color: #1E88E5;}
+		#section2 {color: #fff; background-color: #673ab7;}
+		#section3 {color: #fff; background-color: #ff9800;}
+		#section41 {color: #fff; background-color: #00bcd4;}
+		#section42 {color: #fff; background-color: #009688;}
+
+		@media screen and (max-width: 900px) {
+			#section1, #section2, #section3, #section41, #section42  {
+				margin-left: 150px;
+			}
+			.layui-table th{
+				padding: 2!important;
+			}
+			
+			.layui-table td{
+				padding: 3px!important;
+			}
+			.layui-table{
+				margin-top: 0!important;
+			}
+			.operate-button{
+				margin-top: 5px!important;
+				margin-bottom: 2px!important;
+			}
+		}
+		
+		/**  大屏样式 **/
+		@media screen and (min-width: 900px){
+			#addMoodContranier{
+				background-color: #fff;
+			}
+			
+			.layui-laydate-main{
+				width: 260px!important;
+			}
+		}
+		
+		
+		#user-img{
+			 text-align:center;
+			 margin-top: 10px;
+		}
+		#user-img img{
+			vertical-align:middle;
+			border: 5px double #eee;
+		}
+		#user-desc{
+			text-align:center;
+			padding-bottom: 20px;
+		}
+		
+		#edit-user-info{
+			padding-top:150px;
+		}
+		#float-month li{
+			text-align: center;
+		}
+		.cursor{
+			cursor: pointer;
+		}
+		.location{
+			color: #666;
+			font-family: "华文宋体";
+			font-size: 10px;
+			margin: 8px 0 8px 0 !important;
+		}
+		.zan_user{
+			margin: 8px 0 8px 0;
+		}
+		.list-group-item-operate > button{
+			margin-right: 5px;
+		}
+		#operate-item-list{
+			padding-top: 150px;
+		}
+		.tip-list{
+			padding-bottom: 3px;
+		}
+		.tip-list span{
+			padding: .3em .6em .3em !important;
+			margin-right: 5px;
+		}
+		
+		.list-group-item.active{
+			z-index: 0 !important; 
+		}
+		
+		.list-group-item.active:hover{
+			z-index: 0 !important; 
+		}
+		.list-group-item.active:focus{
+			z-index: 0 !important; 
+		}
+		
+		
+		.animate {
+		  font-size: 20px;
+		  margin: 20px 0 0;
+		  border-bottom: 0.5px solid #ccc;
+		}
+		
+		.animate span {
+		  display: inline-block;
+		}
+		
+		.animate span:nth-of-type(2) {
+		  animation-delay: .05s;
+		}
+		
+		.animate span:nth-of-type(3) {
+		  animation-delay: .1s;
+		}
+		
+		.animate span:nth-of-type(4) {
+		  animation-delay: .15s;
+		}
+		
+		.animate span:nth-of-type(5) {
+		  animation-delay: .2s;
+		}
+		
+		.animate span:nth-of-type(6) {
+		  animation-delay: .25s;
+		}
+		
+		.animate span:nth-of-type(7) {
+		  animation-delay: .3s;
+		}
+		
+		.animate span:nth-of-type(8) {
+		  animation-delay: .35s;
+		}
+		
+		.animate span:nth-of-type(9) {
+		  animation-delay: .4s;
+		}
+		
+		.animate span:nth-of-type(10) {
+		  animation-delay: .45s;
+		}
+		
+		.animate span:nth-of-type(11) {
+		  animation-delay: .5s;
+		}
+		
+		.animate span:nth-of-type(12) {
+		  animation-delay: .55s;
+		}
+		
+		.animate span:nth-of-type(13) {
+		  animation-delay: .6s;
+		}
+		
+		.animate span:nth-of-type(14) {
+		  animation-delay: .65s;
+		}
+
+
+		/* Animation Three */
+		
+		.three span {
+		  color: #b10e81;
+		  opacity: 0;
+		  transform: translate(-300px, 0) scale(0);
+		  animation: sideSlide .5s forwards;
+		}
+		
+		@keyframes sideSlide {
+		  60% {
+		    transform: translate(20px, 0) scale(1);
+		    color: #b10e81;
+		  }
+		  80% {
+		    transform: translate(20px, 0) scale(1);
+		    color: #b10e81;
+		  }
+		  99% {
+		    transform: translate(0) scale(1.2);
+		    color: #00f0ff;
+		  }
+		  100% {
+		    transform: translate(0) scale(1);
+		    opacity: 1;
+		    color: #b10e81;
+		  }
+		}
+		
+		.panel-body hr{
+			margin-top: 6px !important;
+			margin-bottom: 6px !important;
+		}
+		
+		#visitors-list .badge{
+			float: right!important;
+			margin-right: 5px!important;
+		}
+		
+		.current-focus{
+		    position: absolute; 
+		    width: 0; 
+		    margin: 10px auto; 
+		    color: red; 
+		    border: 8px solid transparent;
+        	border-top: 8px solid red; 
+        	box-shadow: 0 -12px 0 -4px;
+		}
+		
+	    .table{
+	    	margin-bottom: 0px!important;
+	    }
+	    
+	    fieldset{padding:.35em .625em .75em!important;margin:0 2px !important;border:1px solid #fff!important; margin-bottom: 5px!important;}
+
+		legend{padding:.5em!important;border:0!important;width:auto!important;margin-bottom: 0px!important;}
+
+	</style>
+</head>
+<body data-spy="scroll" data-target="#myScrollspy" data-offset="90">
+<div th:include="common :: hello">what?</div>
+<div class="container mainContainer clearFloat">
+		<div class="row">
+			<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+				<a onclick="addStock(this, event, -1);" class="btn btn-primary btn-sm create-circle" role="button" data-toggle="modal" title="" data-original-title="新增股票" data-target="#stock-operate">新增股票</a>
+			</div>
+		</div>
+	   <div id="stocks-contrainer" class="row" style="border: 1px solid #fff; margin-top: 10px; padding-right: 15px; padding-left: 15px;">
+		   <!-- <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+			   	<fieldset>
+				  <legend onclick="stockClick(this);"><span></span><small>2018.10.01</small><button type="button" class="btn btn-xs" style="margin-left: 10px;"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>  购买</button></legend>
+				  <div style="display:none" >
+				    	<div class="">
+						  <table class="layui-table">
+						    <colgroup>
+						      <col width="150" />
+						      <col width="150" />
+						      <col />
+						    </colgroup>
+						    <thead>
+						      <tr>
+						      	<th>买入(股)</th>
+						        <th>持股数</th>
+						        <th>操作时间</th>
+						        <th>操作</th>
+						      </tr> 
+						    </thead>
+						    <tbody>
+						      <tr onclick="buyLineClick(this);">
+						        <td>10000</td>
+						        <td>1000</td>
+						        <td>08-12 10:10</td>
+						        <td><button type="button" class="btn btn-primary btn-xs operate-button" onclick="sellOut(this, event);" style="margin-left: 10px;"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>  卖出</button><button type="button" class="btn btn-info btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>  编辑</button><button type="button" class="btn btn-danger btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  删除</button></td>
+						      </tr>
+						      <tr class="sell-contrainer" style="display: none;">
+						      	<td colspan="4">
+						      	
+						      		<table class="layui-table" lay-skin="line">
+									    <colgroup>
+									      <col width="150" />
+									      <col width="150" />
+									      <col />
+									    </colgroup>
+									    <thead>
+									      <tr>
+									        <th>卖出(股)</th>
+									        <th>操作时间</th>
+									        <th>操作</th>
+									      </tr> 
+									    </thead>
+									    <tbody>
+									      <tr>
+									        <td>10000</td>
+									        <td>08-12 10:10</td>
+									        <td><button type="button" class="btn btn-info btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>  编辑</button><button type="button" class="btn btn-danger btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  删除</button></td>
+									      </tr>
+									      <tr>
+									        <td>张爱玲</td>
+									        <td>汉族</td>
+									        <td><button type="button" class="btn btn-info btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>  编辑</button><button type="button" class="btn btn-danger btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  删除</button></td>
+									      </tr>
+									      <tr>
+									        <td>Helen Keller</td>
+									        <td>拉丁美裔</td>
+									        <td><button type="button" class="btn btn-info btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>  编辑</button><button type="button" class="btn btn-danger btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  删除</button></td>
+									      </tr>
+									      <tr>
+									        <td>岳飞</td>
+									        <td>汉族</td>
+									        <td><button type="button" class="btn btn-info btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>  编辑</button><button type="button" class="btn btn-danger btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  删除</button></td>
+									      </tr>
+									      <tr>
+									        <td>孟子</td>
+									        <td>华夏族（汉族）</td>
+									        <td><button type="button" class="btn btn-info btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>  编辑</button><button type="button" class="btn btn-danger btn-xs operate-button" style="margin-left: 10px;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  删除</button></td>
+									      </tr>
+									    </tbody>
+									  </table>
+						      	
+						      	</td>
+						      </tr>
+						    </tbody>
+						  </table>
+						</div>
+				  </div>
+				</fieldset>
+		   </div> -->
+	   </div> 
+</div>
+
+
+<!-- 模态框新增/修改股票 -->
+<div class="modal fade" id="stock-operate" tabindex="-1" role="dialog" aria-labelledby="stockOperateModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="stockOperateModalLabel">
+					新增/编辑股票信息
+				</h4>
+			</div>
+			<div class="modal-body modal-body-stock-operate" style="padding-bottom: 25px!important;">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭
+				</button>
+				<button type="button" class="btn btn-primary stock-operate-btn">
+					执行
+				</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+<!-- 模态框新增/修改股票购买记录 -->
+<div class="modal fade" id="stock-buy-operate" tabindex="-1" role="dialog" aria-labelledby="stockBuyOperateModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="stockBuyOperateModalLabel">
+					新增/编辑股票购买记录信息
+				</h4>
+			</div>
+			<div class="modal-body modal-body-stock-buy-operate" style="padding-bottom: 25px!important;">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭
+				</button>
+				<button type="button" class="btn btn-primary stock-buy-operate-btn">
+					执行
+				</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+<!-- 模态框新增/修改股票卖出记录 -->
+<div class="modal fade" id="stock-sell-operate" tabindex="-1" role="dialog" aria-labelledby="stockSellOperateModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="stockSellOperateModalLabel">
+					新增/编辑股票卖出记录信息
+				</h4>
+			</div>
+			<div class="modal-body modal-body-stock-sell-operate" style="padding-bottom: 25px!important;">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭
+				</button>
+				<button type="button" class="btn btn-primary stock-sell-operate-btn">
+					执行
+				</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+<!-- <div id="app">
+  {{ message }}
+</div> -->
+</body>
+
+<div th:include="common-js :: commJs">what?</div>
+
+<script th:if="${not isDebug}" th:src="@{//cdn.staticfile.org/echarts/4.0.4/echarts.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/other/echarts.min.js}" type="text/javascript"></script>
+
+<script th:src="@{/page/js/stock/index.js}"></script>
+<!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script> -->
+<script th:inline="javascript">//引用  
+	var isLoginUser = /*[[${isLoginUser}]]*/;//取值 
+	var uid = /*[[${uid}]]*/;//取值
+	var app = new Vue({
+		  el: '#app',
+		  data: {
+		    message: 'Hello Vue!'
+		  }
+		});
+</script>
+</html>

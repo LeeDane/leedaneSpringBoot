@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head>
+	 	<meta charset="utf-8" />
+	   	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	   	<style type="text/css">
+	   		.main-row {
+			    margin-top: 16px;
+			    border: 1px solid #ddd;
+			    background-color: #fff !important;
+			    border-radius: 4px;
+			    padding-bottom: 8px;
+			    padding-top: 8px;
+			}
+			
+			.padding-five{
+				padding: 5px;
+			}
+			
+	   	</style>
+	</head>
+	<body>
+		<div th:include="admin/common :: hello">what?</div>
+	  	<div class="container mainContainer clearFloat">
+		    <div class="row main-row">
+		    	<div class="col-lg-12">
+		    		 <div class="row">
+	    		 		<div class="col-lg-12">
+	    		 			<div class="row">
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="account">账号<font color="red"> *</font></label>
+		    		 					<input type="text" class="form-control" name="account" placeholder="请输入账号名称" />
+		    		 				</div>
+		    		 			</div>
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="account">真实姓名</label>
+		    		 					<input type="text" class="form-control" name="real_name" placeholder="请输入真实姓名" />
+		    		 				</div>
+		    		 			</div>
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="account">中文名</label>
+		    		 					<input type="text" class="form-control" name="china_name" placeholder="请输入中文名" />
+		    		 				</div>
+		    		 			</div>
+	    		 			</div>
+	    		 			<div class="row">
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="password">登录密码<font color="red"> *</font></label>
+		    		 					<input type="password" class="form-control" name="password" placeholder="请输入登录密码" />
+		    		 				</div>
+		    		 			</div>
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="confirm_password">登录密码<font color="red"> *</font></label>
+		    		 					<input type="password" class="form-control" name="confirm_password" placeholder="请再次输入登录密码" />
+		    		 				</div>
+		    		 			</div>
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="address">地址</label>
+		    		 					<input type="text" class="form-control" name="address" placeholder="请输入地址" />
+		    		 				</div>
+		    		 			</div>
+	    		 			</div>
+	    		 			<div class="row">
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="account">出生日期</label>
+		    		 					<input type="date" class="form-control" name="birth_day" placeholder="出生日期" />
+		    		 				</div>
+		    		 			</div>
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="sex">性别</label>
+		    		 					<select class="form-control" name="sex">
+		    		 						<option value="男">男</option>
+		    		 						<option value="女">女</option>
+		    		 						<option value="未知" selected="selected">未知</option>
+		    		 					</select>
+		    		 				</div>
+		    		 			</div>
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="nation">籍贯</label>
+		    		 					<select class="form-control" name="nation">
+		    		 						<option value="中国" selected="selected">中国</option>
+		    		 						<option value="外国">外国</option>
+		    		 					</select>
+		    		 				</div>
+		    		 			</div>
+	    		 			</div>
+	    		 			<div class="row">
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="qq">QQ</label>
+		    		 					<input type="number" class="form-control" name="qq" placeholder="请输入QQ号码" />
+		    		 				</div>
+		    		 			</div>
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="mobile_phone">手机号码<font color="red"> *</font></label>
+		    		 					<input type="number" class="form-control" name="mobile_phone" placeholder="请输入11位的号码" />
+		    		 				</div>
+		    		 			</div>
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="register_time">注册时间</label>
+		    		 					<input type="datetime-local" class="form-control" name="register_time" placeholder="注册时间" />
+		    		 				</div>
+		    		 			</div>
+	    		 			</div>
+	    		 			<div class="row">
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="email">邮件</label>
+		    		 					<input type="email" class="form-control" name="email" placeholder="请输入邮件地址" />
+		    		 				</div>
+		    		 			</div>
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="education_background">教育背景</label>
+		    		 					<select class="form-control" name="education_background">
+		    		 						<option value="博士后">博士后</option>
+		    		 						<option value="博士">博士</option>
+		    		 						<option value="硕士">硕士</option>
+		    		 						<option value="本科">本科</option>
+		    		 						<option value="大专">大专</option>
+		    		 						<option value="中专">中专</option>
+		    		 						<option value="高中">高中</option>
+		    		 						<option value="初中">初中</option>
+		    		 						<option value="小学">小学</option>
+		    		 						<option value="文盲" selected="selected">文盲</option>
+		    		 					</select>
+		    		 				</div>
+		    		 			</div>
+		    		 			<div class="col-lg-4">
+		    		 				<div class="form-group">
+		    		 					<label for="native_place">出生地</label>
+		    		 					<input type="text" class="form-control" name="native_place" placeholder="请输入出生地" />
+		    		 				</div>
+		    		 			</div>
+	    		 			</div>
+	    		 			<div class="row">
+	    		 				<div class="col-lg-12">
+		    		 				<div class="form-group">
+									  <textarea class="form-control" name="personal_introduction" placeholder="请输入个人简介"></textarea>
+									</div>
+								</div>
+	    		 			</div>
+	    		 		</div>
+		    		 </div>
+		    	</div>
+		    </div>
+		    <div class="row">
+		    	<div class="col-lg-12 col-sm-12" style="text-align: center;margin-top: 10px;">
+		    		<button type="button" class="btn btn-primary" style="min-width: 200px;" onclick="add(this);">提交</button>
+		    	</div>
+		    </div>
+		</div>
+	</body>
+	<div th:include="admin/commonAdjs :: commAdJs">what?</div>
+	<script th:src="@{/page/admin/user/new.js}" type="text/javascript"></script>
+</html>  

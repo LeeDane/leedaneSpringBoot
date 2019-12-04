@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>我的圈子广场</title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<style type="text/css">
+		
+		.main-container{
+				margin-top: 60px;
+				/* width: 100%; */
+			}
+			
+		/**  大屏样式 **/
+		@media screen and (min-width: 900px){
+			
+		}
+		
+		/**  小屏样式 **/
+		@media screen and (max-width: 900px){
+		}
+		
+		.panel-table-container{
+			padding: 0!important;
+		}
+		
+		.panel-table-container table{
+			margin-bottom: 0!important;
+			table-layout: fixed !important ;
+		}
+		.panel-table-container .list-group{
+			margin-bottom: 0 !important;
+		}
+		
+		.panel-table-container .list-group{
+			margin-bottom: 0 !important;
+		}
+		.border-right{
+			border-right: 1px solid #ddd !important;
+		}
+	</style>
+</head>
+<body>
+<div th:include="common :: hello">what?</div>
+<div id="particles-js"></div>
+<div th:class="${nonav == null || nonav == false} ? 'container main-container': 'container' " id="main-container">
+	<div class="row" style="z-index: 10; position: relative;">
+		<div class="col-lg-3">
+				<div class="row">
+					<div class="thumbnail">
+				      <div class="caption">
+				        <h4>欢迎您:
+				        		<span th:if="${isLogin}" th:utext="${account}"></span>
+				        		<a th:if="${not isLogin}" href="javascript:void(0);" class="btn btn-default btn-sm" role="button" data-toggle="tooltip" title="请先登录" onclick="linkToLogin();">登录</a>
+				        </h4>
+				        <p>贡献值：<span th:if="${isLogin}" th:utext="${scroe}"></span><span th:if="${not isLogin}">0</span></p>
+				        <p th:if="${isLogin}">创建/已加：
+				        	<a href="/cc/list" data-toggle="tooltip" title="您创建的圈子数" th:utext="${myCircleNumber}">0</a>/<a href="/cc/list" data-toggle="tooltip" title="您加入的圈子数" th:utext="${allCircleNumber}">0</a>
+				        </p>
+				        <p>
+				        	<!-- <a href="javascript:void(0);" class="btn btn-primary btn-sm" role="button" data-toggle="tooltip" title="签到的奖励为圈子专属">签到</a> -->
+							<a href="javascript:void(0);" class="btn btn-primary btn-sm create-circle" role="button" data-toggle="tooltip" title="创建一个专属于您的圈子">创建圈子</a>
+						</p>
+				      </div>
+				    </div>
+				</div>
+				<div class="row">
+					<div class="panel panel-default">
+					    <div class="panel-heading">
+					        <h3 class="panel-title">
+					            	我的圈子<span color="red" th:if="${allCircleNumber != null}" th:utext="'('+ ${allCircleNumber} +')'"></span>
+					        </h3>
+					    </div>
+					    <div class="panel-body">
+					        <div class="row" th:if="${isLogin}">
+					        	<div th:each="circle,iterStat : ${allCircles}" class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="padding-left: 5px; padding-right: 5px;">
+					        		 <img th:data="${circle.id}" data-toggle="tooltip" data-placement="left" th:title="${circle.name}" class="img-circle img-responsive hand" style="width: 100%; height: 65px;" th:src="${circle.path}" />
+					        	</div>
+					        	
+					        </div>
+					        
+					        <div th:if="${isLogin}" class="row pull-right" style="margin-top: 8px; margin-right: 0px;">
+					        	<a target="_blank" href="/cc/list">查看更多</a>
+					        </div>
+					        <div class="row" th:if="${not isLogin}">
+					        	<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+					         		登录才能查看
+					         	</div>
+					        </div>
+					    </div>
+					</div>
+					<div class="panel panel-default">
+					    <div class="panel-heading">
+					        <h3 class="panel-title">
+					            	我的帖子<span color="red" th:if="${circleUserPosts != null}" th:utext="'('+ ${circleUserPosts.total} +')'"></span>
+					        </h3>
+					    </div>
+					    <div th:if="${circleUserPosts != null}" class="panel-body panel-table-container">
+					        <table class="table table-fix" style="border: 0!important;">
+							  <tbody>
+							    <tr th:each="postEven,postStat : ${circleUserPosts.posts}">
+							      	<td valign="middle" class="cut-text border-right" data-toggle="tooltip" data-placement="right" th:title="${postEven.title}"><a target="_blank" th:href="'/cc/'+ ${postEven.circleId} +'/post/' + ${postEven.id}" th:utext="${postEven.title}">笑话精刚刚灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌灌选</a></td>
+							     	<td valign="middle" style="width: 80px;" th:text="${postEven.createTime}">
+							    		一个月前
+							    	</td>
+							    </tr>
+							  </tbody>
+							</table>
+					    </div>
+					</div>
+					<div class="panel panel-default">
+					    <script type="text/javascript">var jd_union_pid="899471079";var jd_union_euid="";</script><script type="text/javascript" src="//ads-union.jd.com/static/js/union.js"></script>
+					</div>
+				</div>
+		</div>
+		<div class="col-lg-9">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					热门帖子
+				</div>
+				<div class="panel-body panel-table-container">
+					<table class="table">
+					  <tbody>
+					    <tr th:each="postEven,iterStat : ${hotestPosts.posts}" th:if="${iterStat.even}">
+					      	<td valign="middle" class="border-right">
+					      		<div class="row">
+					      			<div class="col-lg-9 col-sm-9 col-md-12 col-xs-12">
+					      				<p><a th:href="'/cc/' + ${postEven.circleId} + '/post/'+ ${postEven.id}" class="cut-text" th:title="${postEven.digest}" th:utext="${postEven.digest}"></a></p>
+					      				<p th:utext="${postEven.createTime}"></p>
+					      			</div>
+					      			<div class="col-lg-3 col-sm-3 col-md-12 col-xs-12">
+					      				<img alt="" class="hand img-rounded img-responsive center-block" style="max-height: 60px;" th:src="${postEven.imgs}"/>
+					      			</div>
+					      		</div>
+					      	</td>
+					      	<td valign="middle" th:if="${#lists.size(hotestPosts.posts)} gt (${iterStat.index} + 1)" th:with="postOdd=${hotestPosts.posts[(iterStat.index+1)]}">
+					      		<div class="row">
+					      			<div class="col-lg-9 col-sm-9 col-md-12 col-xs-12">
+					      				<p><a th:href="'/cc/' + ${postOdd.circleId} + '/post/'+ ${postOdd.id}" class="cut-text" th:title="${postOdd.digest}" th:utext="${postOdd.digest}"></a></p>
+					      				<p th:utext="${postOdd.createTime}"></p>
+					      			</div>
+					      			<div class="col-lg-3 col-sm-3 col-md-12 col-xs-12">
+					      				<img alt="" class="hand img-rounded img-responsive center-block" style="max-height: 60px;" th:src="${postOdd.imgs}" />
+					      			</div>
+					      		</div>
+					      	</td>
+					    </tr>
+					  </tbody>
+					</table>
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					推荐圈子
+				</div>
+				<div class="panel-body panel-table-container">
+					<table class="table">
+					  <tbody>
+					    <tr th:each="circleEven,iterStat : ${recommends}" th:if="${iterStat.even}">
+					      	<td valign="middle" class="border-right"><img alt="" th:data="${circleEven.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleEven.circlePath}"/><a target="_blank" th:href="'/cc/'+ ${circleEven.id}" th:utext="${circleEven.name}">Bangalore</a></td>
+					     	<td valign="middle" th:if="${#lists.size(recommends)} gt (${iterStat.index} + 1)" th:with="circleOdd=${recommends[(iterStat.index+1)]}">
+					    		<img alt="" th:data="${circleOdd.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleOdd.circlePath}"/><a target="_blank" th:href="'/cc/'+ ${circleOdd.id}" th:utext="${circleOdd.name}">Bangalore</a>
+					    	</td>
+					    </tr>
+					  </tbody>
+					</table>
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					热门圈子
+				</div>
+				<div class="panel-body panel-table-container">
+					<table class="table">
+					  <tbody>
+					    <tr th:each="circleEven,iterStat : ${hotests}" th:if="${iterStat.even}">
+					      	<td valign="middle" class="border-right"><img alt="" th:data="${circleEven.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleEven.circlePath}"/><a target="_blank" th:href="'/cc/'+ ${circleEven.id}" th:utext="${circleEven.name}">Bangalore</a></td>
+					     	<td valign="middle" th:if="${#lists.size(hotests)} gt (${iterStat.index} + 1)" th:with="circleOdd=${hotests[(iterStat.index+1)]}">
+					    		<img alt="" th:data="${circleOdd.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleOdd.circlePath}"/><a target="_blank" th:href="'/cc/'+ ${circleOdd.id}" th:utext="${circleOdd.name}">Bangalore</a>
+					    	</td>
+					    </tr>
+					  </tbody>
+					</table>
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					最新圈子
+				</div>
+				<div class="panel-body panel-table-container">
+					<table class="table">
+					  <tbody>
+					    <tr th:each="circleEven,iterStat : ${newests}" th:if="${iterStat.even}">
+					      	<td valign="middle" class="border-right"><img alt="" th:data="${circleEven.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleEven.circlePath}"/><a target="_blank" th:href="'/cc/'+ ${circleEven.id}" th:utext="${circleEven.name}">Bangalore</a></td>
+					     	<td valign="middle" th:if="${#lists.size(newests)} gt (${iterStat.index} + 1)" th:with="circleOdd=${newests[(iterStat.index+1)]}">
+					    		<img alt="" th:data="${circleOdd.id}" class="img-circle hand" width="20" height="20" style="margin-right: 5px;" th:src="${circleOdd.circlePath}"/><a target="_blank" th:href="'/cc/'+ ${circleOdd.id}" th:utext="${circleOdd.name}">Bangalore</a>
+					    	</td>
+					    </tr>
+					  </tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<div th:include="common-bottom :: bottom">bottom?</div>
+<div th:include="common-js :: commJs">what?</div>
+
+<link th:if="${isDebug}" rel="stylesheet" th:href="@{/page/other/particles-js/particles-style.css}"  media="all" />
+<link th:if="${not isDebug}" rel="stylesheet" th:href="@{http://pic.onlyloveu.top/default_particles-style.css}"  media="all" />
+<!-- scripts -->
+<script th:if="${isDebug}" th:src="@{/page/other/particles-js/particles.min.js}" type="text/javascript"></script>
+<script th:if="${not isDebug}" th:src="@{http://pic.onlyloveu.top/default_particles.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/other/particles-js/particles-common.js}" type="text/javascript"></script>
+<script th:if="${not isDebug}" th:src="@{http://pic.onlyloveu.top/default_particles-common.js}" type="text/javascript"></script>
+
+<script th:src="@{/page/js/circle/index.js}" type="text/javascript"></script>
+</html>

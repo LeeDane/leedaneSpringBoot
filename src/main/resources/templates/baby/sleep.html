@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<!-- 当该 HTML 页面在手机上浏览时，该标签用于指定是否将网页内容中的手机号码显示为拨号的超链接 -->
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="format-detection" content="telephone=yes"/>
+	
+	<title th:text="我的宝宝-睡觉"></title>
+	<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_733gvu39kn265hfr.css" />
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+
+	<link th:if="${not isDebug}" rel="stylesheet" href="https://www.layuicdn.com/layui-v2.5.4/css/layui.css"  media="all" />
+	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.5.4/css/layui.css"  media="all" />
+	
+	<style type="text/css">
+		.clearFloat{
+			clear: both;
+		}
+		body{
+			background-color: #f5f5f5 !important;
+		}
+		.mainContainer{
+			padding-top: 60px;
+		}
+		. mainContainer .row{
+			margin-top: 15px;
+		}
+		.mainContainer .row img{
+			cursor: pointer;
+		}
+		body {
+			position: relative;
+		}
+		.mainContainer ul.nav-pills {
+			top: 80px;
+			position: fixed;
+		}
+		div.col-sm-9 div {
+			height: 250px;
+			font-size: 28px;
+		}
+		@media screen and (max-width: 900px) {
+			
+		}
+		
+		/**  大屏样式 **/
+		@media screen and (min-width: 900px){
+		}
+	</style>
+</head>
+<body data-spy="scroll" data-target="#myScrollspy" data-offset="90">
+<div th:include="common :: hello">what?</div>
+<div class="container mainContainer clearFloat">
+	   <div class="row">
+	      <div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-12 col-xs-12">
+	      		<div class="page-header">
+				    <h1>对宝宝《<span th:utext="${babyName}"></span>》睡觉操作
+				        <small th:text="!${isEdit} ? '编辑睡觉': '新增睡觉'"></small>
+				    </h1>
+				</div>
+				<form class="form-horizontal" role="form" id="myform">
+				  <div class="form-group">
+				    <label class="col-sm-2 control-label">睡眠时间<span style="font-size: 10px;"><font color="red">*</font>必填</span></label>
+				    <div class="col-sm-4">
+				      <input name="occur_date" class="form-control" type="date" th:attr="value=${defaultDate}" empty="false" placeholder="请选择睡觉日期"/>
+				    </div>
+				    <label class="col-sm-2 control-label"></label>
+				    <div class="col-sm-4">
+				      <input name="occur_time" class="form-control" type="time" th:attr="value=${defaultTime}" empty="false" placeholder="请选择睡觉时间"/>
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="col-sm-2 control-label">睡醒时间<span style="font-size: 10px;"><font color="red">*</font>必填</span></label>
+				    <div class="col-sm-4">
+				      <input name="wake_up_date" class="form-control" type="date" th:attr="value=${defaultDate}" empty="false" placeholder="请选择睡醒日期"/>
+				    </div>
+				    <label class="col-sm-2 control-label"></label>
+				    <div class="col-sm-4">
+				      <input name="wake_up_time" class="form-control" type="time" th:attr="value=${defaultTime}" empty="false" placeholder="请选择睡醒时间"/>
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="col-sm-2 control-label">宝宝反应情况</label>
+				    <div class="col-sm-4">
+				        <select name="reaction" class="form-control">
+				          <option value="1">积极配合</option>
+				          <option value="2">一般配合</option>
+				          <option value="3">不怎么配合</option>
+				          <option value="4">不配合</option>
+				        </select>
+				     </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="col-sm-2 control-label">其他描述</label>
+				    <div class="col-sm-10">
+				        <textarea name="baby_desc" class="form-control" rows="5" cols="4"></textarea>
+				     </div>
+				  </div>
+			    <div class="form-group">
+			      <label class="col-sm-2 control-label">地址</label>
+			      <div class="col-sm-10">
+			        <input name="occur_place" type="text" class="form-control" placeholder="请输入地址" />
+			      </div>
+			    </div>
+			    <div class="form-group" style="text-align: center;">
+			    	<button type="button" class="btn btn-info" style="min-width: 120px;" onclick="submitSleep();">提交</button>
+			    </div>
+			</form>
+	      </div>
+	   </div> 
+</div>
+</body>
+
+<div th:include="common-js :: commJs">what?</div>
+<script th:src="@{/page/js/baby/sleep.js}"></script>
+<script th:inline="javascript">//引用  
+	var isLoginUser = /*[[${isLoginUser}]]*/;//取值 
+	var uid = /*[[${uid}]]*/;//取值
+	var babyId = /*[[${babyId}]]*/;//取值babyId,当编辑的时候才有值
+	var dataId = /*[[${dataId}]]*/;//取值babyId,当编辑的时候才有值
+</script> 
+</html>

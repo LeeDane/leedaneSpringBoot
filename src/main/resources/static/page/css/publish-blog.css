@@ -1,0 +1,22 @@
+.clearFloat{
+    clear: both;
+}
+.container{
+    margin-top: 50px;
+}
+.blog-info{
+    margin-top: 15px;
+}
+.must-not-null{
+    margin-left: 2px;
+    color: red;
+}
+.tag-list{
+}
+.tag-item{
+     margin-right: 10px;
+}
+.badge {
+    background-color: #d9534f !important;
+    margin-right: 5px;
+}

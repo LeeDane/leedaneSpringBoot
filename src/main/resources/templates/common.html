@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html th:fragment="hello" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<style type="text/css">
+		::-webkit-scrollbar {
+			  width: 5px;
+		} /* 这是针对缺省样式 (必须的) */
+		::-webkit-scrollbar-track {
+		  background-color: #f5f5f5;
+		} /* 滚动条的滑轨背景颜色 */
+	
+		::-webkit-scrollbar-thumb {
+			  background-color: rgba(0, 0, 0, 0.2); 
+		} /* 滑块颜色 */
+	
+		/* ::-webkit-scrollbar-button {
+			  background-color: #7c2929;
+		} */ /* 滑轨两头的监听按钮颜色 */
+	
+		::-webkit-scrollbar-corner {
+			  background-color: black;
+		} /* 横向滚动条和纵向滚动条相交处尖角的颜色 */
+		
+		.container{
+			padding-bottom: 10px;
+		}
+		.side-open{
+			width: 25px;
+			height: 20px;
+			margin-top: 15px;
+			margin-right: 10px;
+		}
+		.left-sider-bg{
+			width: 100%;
+			height: 100%;
+			background-color: #999;
+			position: absolute;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			z-index: 1500;
+			opacity:0.5;
+			filter:alpha(opacity=50); 
+		}
+		.left-sider{
+			position: absolute;
+			left: -200px;
+			top: 0;
+			width: 200px;
+			height: 100%;
+			z-index: 2000;
+			
+		}
+		.side-open{
+			margin-right: 10px;
+			margin-top: 15px;
+		}
+		
+		.hand{
+			cursor: pointer;
+		}
+		.cut-text{
+			display: block;
+			white-space: nowrap; 
+			overflow: hidden; 
+			text-overflow: ellipsis;
+		}
+		/* 只显示两行数据 */
+		.cut-text2{
+		    line-height: 18px;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		    -o-text-overflow: ellipsis; /* 针对Opera */
+		    display: -webkit-box;
+		    -webkit-line-clamp: 2;
+		    -webkit-box-orient: vertical;
+		}
+		.color-red{
+			color: red;
+		}
+		.color-blue{
+			color: #428bca;
+		}
+		body {
+			  font-family: "Helvetica Neue",Helvetica,"Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+		}
+		.nav-msg .badge {
+		    background-color: #d9534f !important;
+		}
+		.pagination ul{
+   			list-style:none; /* 去掉ul前面的符号 */
+   			margin: 0px; /* 与外界元素的距离为0 */
+   			padding: 0px; /* 与内部元素的距离为0 */
+   			width: auto; /* 宽度根据元素内容调整 */
+   		}
+   		.pagination li{
+   			float: left;
+   			padding: 20px; 
+   			margin-left: 10px!important;
+   			margin-top: 10px!important;
+   			padding: 0 !important;
+   		}
+
+   		.navbar-brand{
+   		  padding: 0!important;
+   		}
+
+        .navbar-brand img{
+            width: 40px;
+            height: 40px;
+            display: inline-block!important;
+            line-height: 50px;
+            margin-top: 5px;
+        }
+
+        .navbar-brand label{
+            line-height: 50px;
+        }
+	</style>
+
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?804aaabfcd4f56231c428e79e222ac7a";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+</head>
+<!-- 默认是显示导航栏的，如果某些时候不需要，需要设置hasnav为false即可 -->
+<nav th:if="${nonav == null || nonav == false}" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse"
+                data-target="#example-navbar-collapse">
+            <span class="sr-only">切换导航</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="javascript:void(0);">
+            <img id="aa1" th:src="@{/page/images/chicken.png}"></img>
+            <!--<label>LeeDane</label>-->
+        </a>
+    </div>
+    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+        <ul class="nav navbar-nav">
+            <li class="nav-blog nav-main-li"><a th:href="@{/index}">博客</a></li>
+            <li class="nav-msg nav-main-li" th:if="${isLogin}"><a th:href="@{/msg}"><span class="badge pull-right">0</span>消息</a></li>
+            <li class="nav-baby nav-main-li" th:if="${isLogin and isBaby}"><a th:href="@{/baby}">宝宝</a></li>
+            <li class="nav-stock nav-main-li" th:if="${isLogin and isStock}"><a th:href="@{/stock}">股票</a></li>
+            <li class="nav-circle nav-main-li" th:if="${isLogin and isCircle}"><a th:href="@{/cc}">圈子</a></li>
+            <li class="nav-mall nav-main-li" th:if="${isLogin and isShopping}"><a th:href="@{/mall/index}">购物</a></li>
+            <li class="nav-my nav-main-li"><a th:href="@{/my}">中心</a></li>
+            <li class="nav-photo nav-main-li"><a th:href="@{/pt}">相册</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                			<span th:if="${isLogin}" th:text="${account}"></span>
+                			<span th:if="not ${isLogin}">我</span>
+                    	 <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                	<li th:if="${isLogin}"><a th:href="@{/pb}"><span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;&nbsp;&nbsp;记一博</a></li>
+               		<li th:if="${isAdmin}"><a th:href="@{/ad/index}"><span class="glyphicon glyphicon-wrench"></span>&nbsp;&nbsp;&nbsp;&nbsp;系统后台</a></li>
+               		<!--<li class="nav-my nav-main-li" th:if="${isLogin}"><a th:href="@{/my}"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;&nbsp;&nbsp;中心</a></li>-->
+               		<li class="nav-financial nav-main-li" th:if="${isLogin}"><a th:href="@{/fn}"><span class="glyphicon glyphicon-jpyglyphicon glyphicon-jpy"></span>&nbsp;&nbsp;&nbsp;&nbsp;记账</a></li>
+<!--
+               		<li class="nav-photo nav-main-li" th:if="${isLogin}"><a th:href="@{/pt}"><span class="glyphicon glyphicon-picture"></span>&nbsp;&nbsp;&nbsp;&nbsp;相册</a></li>
+-->
+               		<li th:if="${isLogin}"><a th:href="@{/mt}"><span class="glyphicon glyphicon-th"></span>&nbsp;&nbsp;&nbsp;&nbsp;素材管理</a></li>
+               		<li th:if="${isLogin}"><a th:href="@{/cg}"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;&nbsp;&nbsp;分类管理</a></li>
+               		<li><a th:href="@{/cs}"><span class="glyphicon glyphicon-transfer"></span>&nbsp;&nbsp;&nbsp;&nbsp;聊天室</a></li>
+               		<li><a th:href="@{/dl}"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;&nbsp;&nbsp;&nbsp;app下载</a></li>
+               		<li><a th:href="@{/ev}"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;&nbsp;&nbsp;大事件</a></li>
+                    <li><a th:href="@{/cc/35}"><span class="glyphicon glyphicon-ban-circle"></span>&nbsp;&nbsp;&nbsp;&nbsp;问题反馈</a></li>
+                    <li><a th:href="@{/about}"><span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;&nbsp;&nbsp;&nbsp;关于系统</a></li>
+                    <li th:if="${isLogin}"><a href="javascript:void(0);" onclick="logout()"><span class="glyphicon glyphicon-bell"></span>&nbsp;&nbsp;&nbsp;&nbsp;退出</a></li>
+                	<li th:if="${not isLogin}"><a th:href="@{/lg}"><span class="glyphicon glyphicon-bell"></span>&nbsp;&nbsp;&nbsp;&nbsp;登录</a></li>
+                </ul>
+            </li>
+            <li>
+            	<form class="navbar-form navbar-left common-search" role="search">  
+	                <div class="input-group">
+	                    <input type="text" id="common-search-text" class="form-control" onkeypress="if (event.keyCode == 13) searchCommon(this);" />
+	                    <span class="input-group-btn">
+	                        <button class="btn btn-primary btn-default" type="button" onclick="searchCommon(this);">Go!</button>
+	                    </span>
+	             	</div> 
+	            </form>
+            </li>
+            <li>
+            	<div th:if="${isTestRole}" class="alert alert-danger alert-dismissible" role="alert" style="margin-bottom: 0!important;">
+				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				  <strong>警告!</strong> 您当前是测试角色，将无法修改和删除数据。
+				</div>
+            </li>
+        </ul>
+    </div>
+    </div>
+</nav>
+</html>
