@@ -50,7 +50,7 @@ public class ChatSquareServiceImpl extends AdminRoleCheckService implements Chat
 	public Map<String, Object> getLimit(JSONObject jo, HttpRequestInfoBean request) {
 		logger.info("ChatSquareServiceImpl-->getLimit():jsonObject=" +jo.toString());
 		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int last = JsonUtil.getIntValue(jo, "last", 0); //当前的索引页
+		long last = JsonUtil.getLongValue(jo, "last", 0); //当前的索引页
 		ResponseMap message = new ResponseMap();
 		List<Map<String, Object>> result = chatSquareMapper.paging(ConstantsUtil.STATUS_NORMAL, last, pageSize);
 		if(CollectionUtil.isNotEmpty(result)){

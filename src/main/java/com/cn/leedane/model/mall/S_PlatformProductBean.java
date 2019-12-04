@@ -22,7 +22,7 @@ public class S_PlatformProductBean extends IDBean{
 	private String img; //主图片(取第一张)
 	private double cashBackRatio; //比率
 	private double cashBack; // 佣金
-	private double price; //当前的价格
+	private double price; //当前的价格(券后价)
 	private double oldPrice; //原先的价格
 	private long auctionId; //唯一id
 	private String platform; //平台

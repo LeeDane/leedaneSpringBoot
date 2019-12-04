@@ -106,8 +106,8 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
     public Map<String, Object> update(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws SchedulerException{
     	logger.info("JobManageServiceImpl-->update():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
-		
-		int jid = JsonUtil.getIntValue(jo, "id", 0);
+
+		long jid = JsonUtil.getLongValue(jo, "id", 0);
 		JobManageBean oldJobManageBean = null;
 		if(jid < 1 || (oldJobManageBean = jobManageMapper.findById(JobManageBean.class, jid)) == null)
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value));

@@ -82,7 +82,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 	public Map<String, Object> update(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request){
 		logger.info("FinancialLocationServiceImpl-->update():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		int flid = JsonUtil.getIntValue(jo, "flid"); //记录的ID
+		long flid = JsonUtil.getLongValue(jo, "flid"); //记录的ID
 		String location = JsonUtil.getStringValue(jo, "location");
 		String locationDesc = JsonUtil.getStringValue(jo, "locationDesc");
 		int status = JsonUtil.getIntValue(jo, "status", ConstantsUtil.STATUS_DISABLE);
@@ -121,8 +121,8 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 		logger.info("FinancialLocationServiceImpl-->paging():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
+		long lastId = JsonUtil.getLongValue(jo, "last_id"); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id"); //结束的页数
 		StringBuffer sql = new StringBuffer();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		ResponseMap message = new ResponseMap();
@@ -159,7 +159,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 	public Map<String, Object> delete(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("FinancialLocationServiceImpl-->delete():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		int flid = JsonUtil.getIntValue(jo, "flid");
+		long flid = JsonUtil.getLongValue(jo, "flid");
 		ResponseMap message = new ResponseMap();
 		
 		if(flid < 1){

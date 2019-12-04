@@ -431,8 +431,8 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 			UserBean user, HttpRequestInfoBean request) {
 		logger.info("FilePathServiceImpl-->getUploadFileByLimit():jo="+jo.toString());
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", 10); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id");
-		int firstId = JsonUtil.getIntValue(jo, "first_id");
+		long lastId = JsonUtil.getLongValue(jo, "last_id");
+		long firstId = JsonUtil.getLongValue(jo, "first_id");
 		//String tableName = ConstantsUtil.UPLOAD_FILE_TABLE_NAME;
 		
 		//执行的方式，现在支持：uploading(向上刷新)，lowloading(向下刷新)，firstloading(第一次刷新)

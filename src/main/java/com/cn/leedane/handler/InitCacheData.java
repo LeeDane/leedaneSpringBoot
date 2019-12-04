@@ -400,10 +400,11 @@ public class InitCacheData {
 	/**
 	 * 加载选项表中的键和值
 	 */
-	private void loadOptionTable(){
+	public void loadOptionTable(){
 		try {
 			long begin = System.currentTimeMillis();
-			List<Map<String, Object>> results = baseMapper.executeSQL("select option_key, option_value from t_option where STATUS = 1");
+			//最终只处理小version的数据
+			List<Map<String, Object>> results = baseMapper.executeSQL("select option_key, option_value from t_option where STATUS = 1 order by version");
 			if(CollectionUtil.isNotEmpty(results)){
 				for(Map<String, Object> result: results){
 					//OptionBean option = new OptionBean();  

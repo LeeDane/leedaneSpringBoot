@@ -34,7 +34,7 @@ public class S_ShopHandler {
 	 * @param shopId
 	 * @return
 	 */
-	public S_ShopBean getNormalShopBean(int shopId){
+	public S_ShopBean getNormalShopBean(long shopId){
 		S_ShopBean shop = getShopBean(shopId);
 		if(shop == null || shop.getStatus() != ConstantsUtil.STATUS_NORMAL){
 			return null;
@@ -47,7 +47,7 @@ public class S_ShopHandler {
 	 * @param shopId
 	 * @return
 	 */
-	public S_ShopBean getShopBean(int shopId){
+	public S_ShopBean getShopBean(long shopId){
 		String key = getShopKey(shopId);
 		Object obj = systemCache.getCache(key);
 		S_ShopBean shopBean = null;
@@ -103,7 +103,7 @@ public class S_ShopHandler {
 	 * @param shopId
 	 * @return
 	 */
-	public boolean deleteShopBeanCache(int shopId){
+	public boolean deleteShopBeanCache(long shopId){
 		String key = getShopKey(shopId);
 		redisUtil.delete(key);
 		systemCache.removeCache(key);
@@ -115,7 +115,7 @@ public class S_ShopHandler {
 	 * @param shopId
 	 * @return
 	 */
-	public static String getShopKey(int shopId){
+	public static String getShopKey(long shopId){
 		return ConstantsUtil.SHOP_REDIS + shopId;
 	}
 

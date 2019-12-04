@@ -48,12 +48,12 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 			HttpRequestInfoBean request) {
 		logger.info("ChatServiceImpl-->getLimit():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
-		int toUserId = JsonUtil.getIntValue(jo, "toUserId"); //发送给对方的用户ID
+		long toUserId = JsonUtil.getLongValue(jo, "toUserId"); //发送给对方的用户ID
 		if(toUserId < 1 || user.getId() == toUserId)
 			throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
-		
-		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //开始的页数
+
+		long lastId = JsonUtil.getLongValue(jo, "last_id", 0); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id"); //开始的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		
@@ -96,7 +96,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 			HttpRequestInfoBean request) {
 		logger.info("ChatServiceImpl-->send():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
-		int toUserId = JsonUtil.getIntValue(jo, "toUserId"); //发送给对方的用户ID
+		long toUserId = JsonUtil.getLongValue(jo, "toUserId"); //发送给对方的用户ID
 		if(toUserId < 1 || user.getId() == toUserId)
 			throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
 		
@@ -220,7 +220,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 			HttpRequestInfoBean request) {
 		logger.info("ChatServiceImpl-->deleteChat():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
-		int cid = JsonUtil.getIntValue(jo, "cid");
+		long cid = JsonUtil.getLongValue(jo, "cid");
 		if(cid < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
 			message.put("responseCode", EnumUtil.ResponseCode.缺少请求参数.value);

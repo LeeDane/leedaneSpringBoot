@@ -46,7 +46,7 @@ public class CategoryController extends BaseController{
 			return message.getMap();
 		
 		JSONObject params = getJsonFromMessage(message);
-		int pid = JsonUtil.getIntValue(params, "pid", 0);
+		long pid = JsonUtil.getLongValue(params, "pid", 0);
 		
 		if(pid < 1)
 			//必须是管理员权限才能操作此接口

@@ -62,6 +62,6 @@ public interface ScoreService<T extends IDBean>{
 	 * @param user
 	 * @return
 	 */
-	public Map<String, Object> reduceScore(int reduceScore, String desc, String tableName, int tableId, UserBean user);
+	public Map<String, Object> reduceScore(int reduceScore, String desc, String tableName, long tableId, UserBean user);
 	
 }

@@ -166,7 +166,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 		logger.info("CirclePostServiceImpl-->update(), circleId= " + circleId +",user=" +user.getAccount());
 		
 		ResponseMap message = new ResponseMap();
-		int postId = JsonUtil.getIntValue(json, "post_id", 0);
+		long postId = JsonUtil.getLongValue(json, "post_id", 0);
 		if(postId < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.参数不存在或为空.value);

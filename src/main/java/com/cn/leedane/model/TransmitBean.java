@@ -31,7 +31,7 @@ public class TransmitBean extends RecordTimeBean{
 	/**
 	 * 转发对象的ID，必须
 	 */
-	private int tableId;
+	private long tableId;
 	
 	//@Type(type="text")
 	//@Column(name="content", nullable=false)
@@ -51,10 +51,10 @@ public class TransmitBean extends RecordTimeBean{
 	}
 	
 	//@Column(name="table_id", nullable = false)
-	public int getTableId() {
+	public long getTableId() {
 		return tableId;
 	}
-	public void setTableId(int tableId) {
+	public void setTableId(long tableId) {
 		this.tableId = tableId;
 	}
 	public String getFroms() {

@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
+/**
+ * 操作日志controller
+ */
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.ol)
 public class OperateLogController extends BaseController{

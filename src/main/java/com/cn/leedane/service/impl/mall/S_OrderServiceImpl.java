@@ -4,17 +4,21 @@ import com.cn.leedane.exception.CompleteOrderDeleteException;
 import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.mall.S_OrderHandler;
+import com.cn.leedane.mall.taobao.api.DetailSimpleApi;
 import com.cn.leedane.mapper.mall.S_OrderMapper;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.model.mall.S_OrderBean;
+import com.cn.leedane.model.mall.S_PlatformProductBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.mall.MallRoleCheckService;
 import com.cn.leedane.service.mall.S_OrderService;
 import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.MallOrderType;
+import com.jd.open.api.sdk.JdException;
+import com.taobao.api.ApiException;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,21 +51,50 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 	
 	@Override
 	public Map<String, Object> add(JSONObject jo, UserBean user,
-			HttpRequestInfoBean request) {
+			HttpRequestInfoBean request) throws Exception {
 		
 		logger.info("S_OrderServiceImpl-->add():jo="+jo);
 		SqlUtil sqlUtil = new SqlUtil();
 		S_OrderBean orderBean = (S_OrderBean) sqlUtil.getBean(jo, S_OrderBean.class);
+
+		//j校验必须的参数
+		ParameterUnspecificationUtil.checkNullString(orderBean.getOrderCode(), "order code must not null.");
+		ParameterUnspecificationUtil.checkNullString(orderBean.getProductCode(), "product code must not null.");
+		ParameterUnspecificationUtil.checkNullString(orderBean.getPlatform(), "platform must not null.");
+
 		ResponseMap message = new ResponseMap();
-		if(orderBean.getOrderCode() == null)
-			throw new ParameterUnspecificationException("订单编号不能为空！");
-		
-		if(orderBean.getProductCode() == null)
-			throw new ParameterUnspecificationException("商品唯一编号不能为空！");
-		
+		if(!MallUtil.inPlatform(orderBean.getPlatform()))
+			throw new ParameterUnspecificationException("not support platform .");
+
+
+		//判断商品是否存在
+		S_PlatformProductBean productBean = null;
+		if(orderBean.getPlatform().equalsIgnoreCase(EnumUtil.ProductPlatformType.淘宝.value)){
+			productBean = DetailSimpleApi.getDetailByMaterial(orderBean.getProductCode());
+		}else if(orderBean.getPlatform().equalsIgnoreCase(EnumUtil.ProductPlatformType.京东.value)){
+			productBean = com.cn.leedane.mall.jingdong.api.DetailSimpleApi.getDetail(orderBean.getProductCode());
+		}else if(orderBean.getPlatform().equalsIgnoreCase(EnumUtil.ProductPlatformType.拼多多.value)){
+			productBean = com.cn.leedane.mall.pdd.api.DetailSimpleApi.getDetail(orderBean.getProductCode());
+		}else{
+		}
+		if(productBean == null)
+			throw new NullPointerException("该商品找不到了，平台无法处理");
+
+		orderBean.setPrice(MoneyUtil.twoDecimalPlaces(productBean.getPrice()));
+		orderBean.setCashBack(MoneyUtil.twoDecimalPlaces(productBean.getCashBack()));
+		orderBean.setCashBackRatio(MoneyUtil.twoDecimalPlaces(productBean.getCashBackRatio()));
+		if(StringUtil.isNull(orderBean.getTitle()))
+			orderBean.setTitle(productBean.getTitle());
+
+		//判断库里是否已经存在相同记录的订单信息
+		if(orderHandler.inRecode(orderBean.getPlatform(), orderBean.getOrderCode())){
+			//对新修改的记录跟原来的记录做评分，分数低直接返回提示用户重新修改更加完整的信息再提交或者去订单申诉平台处理
+			//如果分数高，将直接标记为审核中的状态保存，同时系统将原来的记录删掉，保存完整的记录并统一通过站内信息方式通知对方
+		}
+
 		String returnMsg = "已成功添加到订单！";
 		Date createTime = new Date();
-		orderBean.setStatus(MallOrderType.待结算佣金.value);
+		orderBean.setStatus(MallOrderType.已提交.value);
 		orderBean.setCreateTime(createTime);
 		orderBean.setCreateUserId(user.getId());
 		boolean result = false;
@@ -89,7 +122,7 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 	
 	@Override
 	public Map<String, Object> update(long orderId, JSONObject jo, UserBean user,
-			HttpRequestInfoBean request) {
+			HttpRequestInfoBean request) throws Exception {
 		
 		logger.info("S_OrderServiceImpl-->update(): orderId = "+ orderId +",jo="+jo);
 		SqlUtil sqlUtil = new SqlUtil();
@@ -98,25 +131,48 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 		S_OrderBean orderBean = orderMapper.findById(S_OrderBean.class, orderId);
 		if(orderBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该订单已不存在.value));
-		
+
+		if(orderBean.getStatus() != MallOrderType.已提交.value || orderBean.getStatus() != MallOrderType.有争议.value)
+			throw new UnsupportedOperationException("非《已提交》或《有争议》状态，无法编辑");
+
 		ResponseMap message = new ResponseMap();
-		if(updateOrderBean.getOrderCode() == null)
-			throw new ParameterUnspecificationException("订单编号不能为空！");
-		
-		if(updateOrderBean.getProductCode() == null)
-			throw new ParameterUnspecificationException("商品唯一编号不能为空！");
-		
-		if(orderBean.getStatus() == ConstantsUtil.STATUS_NORMAL)
-			throw new CompleteOrderDeleteException();
-		
+
+		//j校验必须的参数
+		ParameterUnspecificationUtil.checkNullString(updateOrderBean.getOrderCode(), "order code must not null.");
+		ParameterUnspecificationUtil.checkNullString(updateOrderBean.getProductCode(), "product code must not null.");
+		ParameterUnspecificationUtil.checkNullString(orderBean.getPlatform(), "platform must not null.");
+
+		if(!MallUtil.inPlatform(updateOrderBean.getPlatform()))
+			throw new ParameterUnspecificationException("not support platform .");
+
+		//判断商品是否存在
+		S_PlatformProductBean productBean = null;
+		if(updateOrderBean.getPlatform().equalsIgnoreCase(EnumUtil.ProductPlatformType.淘宝.value)){
+			productBean = DetailSimpleApi.getDetailByMaterial(updateOrderBean.getProductCode());
+		}else if(updateOrderBean.getPlatform().equalsIgnoreCase(EnumUtil.ProductPlatformType.京东.value)){
+			productBean = com.cn.leedane.mall.jingdong.api.DetailSimpleApi.getDetail(updateOrderBean.getProductCode());
+		}else if(updateOrderBean.getPlatform().equalsIgnoreCase(EnumUtil.ProductPlatformType.拼多多.value)){
+			productBean = com.cn.leedane.mall.pdd.api.DetailSimpleApi.getDetail(orderBean.getProductCode());
+		}else{
+		}
+		if(productBean == null)
+			throw new NullPointerException("该商品找不到了，平台无法处理");
+		orderBean.setPrice(MoneyUtil.twoDecimalPlaces(productBean.getPrice()));
+		orderBean.setCashBack(MoneyUtil.twoDecimalPlaces(productBean.getCashBack()));
+		orderBean.setCashBackRatio(MoneyUtil.twoDecimalPlaces(productBean.getCashBackRatio()));
+		orderBean.setTitle(productBean.getTitle());
+
 		String returnMsg = "已成功修改该订单！";
 		orderBean.setModifyTime(new Date());
 		orderBean.setModifyUserId(user.getId());
 		orderBean.setOrderCode(updateOrderBean.getOrderCode());
 		orderBean.setProductCode(updateOrderBean.getProductCode());
-		orderBean.setTitle(updateOrderBean.getTitle());
+//		orderBean.setTitle(updateOrderBean.getTitle());
 		orderBean.setReferrer(updateOrderBean.getReferrer());
 		orderBean.setPlatform(updateOrderBean.getPlatform());
+		orderBean.setOrderTime(updateOrderBean.getOrderTime());
+		orderBean.setPayTime(updateOrderBean.getPayTime());
+		orderBean.setOrderDetailId(updateOrderBean.getOrderDetailId());
 		boolean result = false;
 		try{
 			result = orderMapper.update(orderBean) > 0;
@@ -167,6 +223,7 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 			for(Map<String, Object> m: rs){
 				int status = StringUtil.changeObjectToInt(m.get("status"));
 				m.put("status_text", EnumUtil.getMallOrderType(status));
+				m.put("referrer", "<a class='layui-btn layui-btn-primary layui-btn-xs' lay-event='edit' style='height: 25px !important; line-height: 25px !important;'>详情</a>");
 			}
 		}
 		message.setCode(0);
@@ -189,8 +246,9 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 		
 		//只有自己的订单或者管理员才能做删除操作
 		checkMallAdmin(user, user.getId());
-					
-		if(orderBean.getStatus() == ConstantsUtil.STATUS_NORMAL)
+
+		//已完成的订单不做处理
+		if(orderBean.getStatus() == MallOrderType.已完成.value)
 			throw new CompleteOrderDeleteException();
 		
 		boolean result = orderMapper.delete(orderBean) > 0;

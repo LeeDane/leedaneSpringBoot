@@ -92,7 +92,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 			HttpRequestInfoBean request) {
 		logger.info("LinkManageServiceImpl-->edit():jo="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
-		int lnid = JsonUtil.getIntValue(jsonObject, "id");
+		long lnid = JsonUtil.getLongValue(jsonObject, "id");
 		LinkManageBean oldLinkManageBean = linkManageMapper.findById(LinkManageBean.class, lnid);
 		if(oldLinkManageBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));

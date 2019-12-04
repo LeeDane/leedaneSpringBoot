@@ -21,6 +21,6 @@ public interface ChatSquareMapper extends BaseMapper<ChatSquareBean>{
      */
     public List<Map<String, Object>> paging(
             @Param("status")int status,
-            @Param("last")int lastId,
+            @Param("last")long lastId,
             @Param("pageSize") int pageSize);
 }

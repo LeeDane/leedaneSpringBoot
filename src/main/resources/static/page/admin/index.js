@@ -1,141 +1,146 @@
 //退出登录
 function logout(){
-	$.ajax({
-	    type: "delete",
-		dataType: 'json',
-		url : "/us/logout?t="+Math.random(),
-		beforeSend:function(){
-		},
-		success : function(data) {
-			layer.msg(data.message);
-			if(data.isSuccess)
-				//刷新当前页面
-				window.location.reload();
-			else
-				ajaxError(data);
-		},
-		error : function(data) {
-			ajaxError(data);
-		}
-	});
+    $.ajax({
+        type: "delete",
+        dataType: 'json',
+        url : "/us/logout?t="+Math.random(),
+        beforeSend:function(){
+        },
+        success : function(data) {
+            layer.msg(data.message);
+            if(data.isSuccess)
+                //刷新当前页面
+                window.location.reload();
+            else
+                ajaxError(data);
+        },
+        error : function(data) {
+            ajaxError(data);
+        }
+    });
 }
 
 BUI.use('common/main',function(){
 var config = [{
-      id:'welcome', 
-      homePage : 'welcome',
-      menu:[{
-          text:'基本操作',
-          items:[
-            {id:'welcome',text:'欢迎页面',href:'/ad/wc/welcome'},
-            {id:'history',text:'登录历史',href:'/ad/wc/loginHistory'},
-            {id:'about',text:'关于我们',href:'/ad/wc/about'},
-            {id:'contact',text:'联系我们',href:'/ad/wc/contact'},
-            {id:'appdownload',text:'APP下载',href:'/ad/wc/download'}
-          ]
+        id:'welcome',
+        homePage : 'welcome',
+        menu:[{
+            text:'基本操作',
+            items:[
+                {id:'welcome',text:'欢迎页面',href:'/ad/wc/welcome'},
+                {id:'history',text:'登录历史',href:'/ad/wc/loginHistory'},
+                {id:'about',text:'关于我们',href:'/ad/wc/about'},
+                {id:'contact',text:'联系我们',href:'/ad/wc/contact'},
+                {id:'appdownload',text:'APP下载',href:'/ad/wc/download'}
+            ]
         }]
-      },{
-	      id: 'user', 
-	      homePage: 'search',
-	      menu:[{
-	          text: '用户管理',
-	          items:[
-	            {id: 'search', text: '查询用户', href: '/ad/us/search', closeable: false},
-	            {id:'new',text:'新增用户',href:'/ad/us/new'},
-	            {id:'active',text:'在线用户',href:'/ad/us/active'},
-	            {id:'black',text:'黑名单用户',href:'/ad/us/black'}
-	          ]
-	        },{
-	          text:'用户统计',
-	          items:[
-	            {id:'chart',text:'图表展示',href:'/ad/us/chart'},
-	          ]
-	        }]
-      },{
-          id: 'blog', 
-          homePage: 'publish',
-          menu:[{
-              text:'博客管理',
-              items:[
+    },{
+        id: 'user',
+        homePage: 'search',
+        menu:[{
+            text: '用户管理',
+            items:[
+                {id: 'search', text: '查询用户', href: '/ad/us/search', closeable: false},
+                {id:'new',text:'新增用户',href:'/ad/us/new'},
+                {id:'active',text:'在线用户',href:'/ad/us/active'},
+                {id:'black',text:'黑名单用户',href:'/ad/us/black'}
+            ]
+        },{
+            text:'用户统计',
+            items:[
+                {id:'chart',text:'图表展示',href:'/ad/us/chart'},
+            ]
+        }]
+    },{
+        id: 'blog',
+        homePage: 'publish',
+        menu:[{
+            text:'博客管理',
+            items:[
                 {id:'publish',text:'写一博',href:'/pb?noHeader=true',closeable : false},
                 {id:'search',text:'查询博客',href: '/ad/bg/search'},
                 {id:'manager',text:'管理博客',href: '/index?noHeader=true'},
                 {id:'draft',text:'博客草稿',href:'/ad/bg/draft.jsp'}
-              ]
-            },{
-              text:'博客统计',
-              items:[
+            ]
+        },{
+            text:'博客统计',
+            items:[
                 {id:'chart',text:'图表展示',href:'blog/chart.jsp'}
-              ]
-            },{
-              text:'博客审核',
-              items:[
+            ]
+        },{
+            text:'博客审核',
+            items:[
                 {id:'check',text:'博客审核',href:'/ad/bg/check'}
-              ]
-            }]
-         },{
-             id: 'circle', 
-             homePage: 'task',
-             menu:[{
-                 text:'任务配置',
-                 items:[
-                   {id:'task',text:'任务管理',href:'/ad/cc/task',closeable : false}
-                 ]
-               }]
-            },{
-             id: 'permission', 
-             homePage: 'permission',
-             menu:[{
-                 text:'权限管理',
-                 items:[
-                        {id:'permission',text:'权限管理',href:'/ad/pm/permission'}
-                 ]
-             },{
-                 text:'角色管理',
-                 items:[
-                        {id:'role',text:'角色管理',href:'/ad/pm/role'}
-                 ]
-             },{
-                 text:'链接管理',
-                 items:[
-                   {id:'link',text:'链接管理',href:'/ad/pm/link'}
-                 ]
-             }]
-         },{
-             id: 'mall', 
-             homePage: 'home',
-             menu:[{
-                 text:'首页管理',
-                 items:[
-                        {id:'home',text:'首页管理',href:'/ad/mall/home'}
-                 ]
-             },{
-                 text:'商品管理',
-                 items:[
-                        {id:'product',text:'商品管理',href:'/ad/mall/product'},
-                        {id:'product',text:'添加商品',href:'/ad/mall/product-add'}
-                 ]
-             },{
-                 text:'其他',
-                 items:[
-                   {id:'other',text:'其他',href:'/ad/mall/other'}
-                 ]
-             }]
-         },{
-             id: 'setting', 
-             homePage: 'job',
-             menu:[{
-                 text:'任务调度',
-                 items:[
-                        {id:'job',text:'任务管理',href:'/ad/st/job'}
-                 ]
-             },{
-                 text:'缓存管理',
-                 items:[
-                        {id:'clear',text:'清理缓存',href:'/ad/st/clearCache'}
-                 ]
-             }]
-         }];
+            ]
+        }]
+    },{
+        id: 'circle',
+        homePage: 'task',
+        menu:[{
+            text:'任务配置',
+            items:[
+                {id:'task',text:'任务管理',href:'/ad/cc/task',closeable : false}
+            ]
+        }]
+    },{
+        id: 'permission',
+        homePage: 'permission',
+        menu:[{
+            text:'权限管理',
+            items:[
+                {id:'permission',text:'权限管理',href:'/ad/pm/permission'}
+            ]
+        },{
+            text:'角色管理',
+            items:[
+                {id:'role',text:'角色管理',href:'/ad/pm/role'}
+            ]
+        },{
+            text:'链接管理',
+            items:[
+                {id:'link',text:'链接管理',href:'/ad/pm/link'}
+            ]
+        }]
+    },{
+        id: 'mall',
+        homePage: 'home',
+        menu:[{
+            text:'首页管理',
+            items:[
+                {id:'home',text:'首页管理',href:'/ad/mall/home'}
+            ]
+        },{
+            text:'商品管理',
+            items:[
+                {id:'product',text:'商品管理',href:'/ad/mall/product'},
+                {id:'product',text:'添加商品',href:'/ad/mall/product-add'}
+            ]
+        },{
+            text:'其他',
+            items:[
+                {id:'other',text:'其他',href:'/ad/mall/other'}
+            ]
+        }]
+    },{
+        id: 'setting',
+        homePage: 'job',
+        menu:[{
+            text:'任务调度',
+            items:[
+                {id:'job',text:'任务管理',href:'/ad/st/job'}
+            ]
+        },{
+            text:'选项配置',
+            items:[
+                {id:'option',text:'系统选项',href:'/ad/st/option'}
+            ]
+        },{
+            text:'缓存管理',
+            items:[
+                {id:'clear',text:'清理缓存',href:'/ad/st/clearCache'}
+            ]
+        }]
+    }];
   new PageUtil.MainPage({
     modulesConfig : config
   });

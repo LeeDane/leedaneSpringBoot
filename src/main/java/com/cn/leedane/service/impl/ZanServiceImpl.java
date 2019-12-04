@@ -57,7 +57,7 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
 		String content = JsonUtil.getStringValue(jo, "content");
 		String froms = JsonUtil.getStringValue(jo, "froms");
-		int tableId = JsonUtil.getIntValue(jo, "table_id", 0);
+		long tableId = JsonUtil.getLongValue(jo, "table_id", 0);
 		ResponseMap message = new ResponseMap();
 		if(SqlUtil.getBooleanByList(zanMapper.exists(ZanBean.class, tableName, tableId, user.getId()))){
 			message.put("message", "您已点赞，请勿重复操作！");
@@ -110,13 +110,13 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 	public List<Map<String, Object>> getLimit(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ZanServiceImpl-->getLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		int toUserId = JsonUtil.getIntValue(jo, "toUserId");
+		long toUserId = JsonUtil.getLongValue(jo, "toUserId");
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
-		int tableId = JsonUtil.getIntValue(jo, "table_id", 0);
+		long tableId = JsonUtil.getLongValue(jo, "table_id", 0);
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
+		long lastId = JsonUtil.getLongValue(jo, "last_id"); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id"); //结束的页数
 		boolean showUserInfo = JsonUtil.getBooleanValue(jo, "showUserInfo");
 		StringBuffer sql = new StringBuffer();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
@@ -193,8 +193,8 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 	public Map<String, Object> deleteZan(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ZanServiceImpl-->deleteZan():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		int zid = JsonUtil.getIntValue(jo, "zid");
-		int createUserId = JsonUtil.getIntValue(jo, "create_user_id");
+		long zid = JsonUtil.getLongValue(jo, "zid");
+		long createUserId = JsonUtil.getLongValue(jo, "create_user_id");
 		
 		ResponseMap message = new ResponseMap();
 		
@@ -240,7 +240,7 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 			HttpRequestInfoBean request) {
 		logger.info("ZanServiceImpl-->getAllZanUser():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
-		int tableId = JsonUtil.getIntValue(jo, "table_id");
+		long tableId = JsonUtil.getLongValue(jo, "table_id");
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
 
 		if(tableId == 0 || StringUtil.isNull(tableName)){

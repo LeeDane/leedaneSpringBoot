@@ -87,7 +87,7 @@ private Logger logger = Logger.getLogger(getClass());
 		roleBean.setDesc(JsonUtil.getStringValue(jsonObject, "desc"));
 		roleBean.setName(JsonUtil.getStringValue(jsonObject, "name"));
 		roleBean.setOrder(JsonUtil.getIntValue(jsonObject, "order", 1));
-		roleBean.setId(JsonUtil.getIntValue(jsonObject, "id", 0));
+		roleBean.setId(JsonUtil.getLongValue(jsonObject, "id", 0));
 		roleBean.setStatus(JsonUtil.getIntValue(jsonObject, "status", ConstantsUtil.STATUS_NORMAL));
 		boolean result = roleMapper.update(roleBean) > 0;
 		message.put("isSuccess", result);

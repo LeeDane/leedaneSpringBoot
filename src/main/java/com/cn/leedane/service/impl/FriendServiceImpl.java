@@ -63,7 +63,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		logger.info("FriendServiceImpl-->deleteFriends():jo="+jo.toString());
 		
 		ResponseMap message = new ResponseMap();
-		int fid = JsonUtil.getIntValue(jo, "fid");
+		long fid = JsonUtil.getLongValue(jo, "fid");
 		if(fid < 1) {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
 			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
@@ -106,7 +106,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 	public Map<String, Object> addFriend(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->addFriend():jo="+jo.toString());
-		int toUserId = JsonUtil.getIntValue(jo, "to_user_id");
+		long toUserId = JsonUtil.getLongValue(jo, "to_user_id");
 		ResponseMap message = new ResponseMap();
 		if(toUserId == 0) {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
@@ -165,7 +165,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 	public Map<String, Object> addAgree(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->addAgree():jo="+jo.toString());
-		int fid = JsonUtil.getIntValue(jo, "fid");
+		long fid = JsonUtil.getLongValue(jo, "fid");
 		ResponseMap message = new ResponseMap();
 		if(fid == 0){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.缺少请求参数.value));
@@ -234,8 +234,8 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->friendsAlreadyPaging():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
-		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id", 0); //结束的页数
+		long lastId = JsonUtil.getLongValue(jo, "last_id", 0); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id", 0); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		
@@ -286,8 +286,8 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->friendsNotyetPaging():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
-		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id", 0); //结束的页数
+		long lastId = JsonUtil.getLongValue(jo, "last_id", 0); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id", 0); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		
@@ -338,9 +338,9 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->requestPaging():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
-		
-		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id", 0); //结束的页数
+
+		long lastId = JsonUtil.getLongValue(jo, "last_id", 0); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id", 0); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		
@@ -388,9 +388,9 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			HttpRequestInfoBean request) {
 		logger.info("FriendServiceImpl-->responsePaging():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
-		
-		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id", 0); //结束的页数
+
+		long lastId = JsonUtil.getLongValue(jo, "last_id", 0); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id", 0); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		

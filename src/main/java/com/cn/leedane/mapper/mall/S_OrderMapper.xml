@@ -18,7 +18,10 @@
 	<!-- 分页获取心愿单列表 -->
 	<select id="paging" resultType="java.util.Map">
 		select o.id, o.status, o.create_user_id, date_format(o.create_time,'%Y-%m-%d %H:%i:%s') create_time,
-		o.order_code, o.product_code, o.title, o.referrer, o.platform, o.order_date 
+		o.order_code, o.product_code, o.title, o.referrer, o.platform,
+		date_format(o.order_time,'%Y-%m-%d %H:%i:%s') order_time,
+		date_format(o.pay_time,'%Y-%m-%d %H:%i:%s') pay_time,
+		o.price, o.expect_cash_back, o.expect_cash_back_ratio
 		from t_mall_order o
 		where o.create_user_id = #{userId} 
 		order by o.create_time desc, o.id desc limit #{start}, #{pageSize}

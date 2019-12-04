@@ -88,7 +88,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 
 	@Override
 	public Map<String, Object> update(JSONObject jsonObject, HttpRequestInfoBean request, UserBean user) {
-		int eid = JsonUtil.getIntValue(jsonObject, "eid");
+		long eid = JsonUtil.getLongValue(jsonObject, "eid");
 		logger.info("EventServiceImpl-->update():eid=" +eid + ",jsonObject="+jsonObject.toString());
 		checkAdmin(user);//必须管理员才能操作
 		ResponseMap message = new ResponseMap();
@@ -130,7 +130,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 
 	@Override
 	public Map<String, Object> delete(JSONObject jo, UserBean user, HttpRequestInfoBean request){
-		int eid = JsonUtil.getIntValue(jo, "eid");
+		long eid = JsonUtil.getLongValue(jo, "eid");
 		logger.info("EventServiceImpl-->delete():eid=" + eid +",jo="+jo.toString());
 		checkAdmin(user);//必须管理员才能操作
 		ResponseMap message = new ResponseMap();

@@ -46,7 +46,7 @@ public class S_HomeCarouselServiceImpl extends MallRoleCheckService implements S
 	public Map<String, Object> add(JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("S_CarouselServiceImpl-->add():json="+json);
-		int productId = JsonUtil.getIntValue(json, "product_id");
+		long productId = JsonUtil.getLongValue(json, "product_id");
 		int order = JsonUtil.getIntValue(json, "order", 1);
 		S_ProductBean productBean = productHandler.getNormalProductBean(productId);
 		if(productBean == null)

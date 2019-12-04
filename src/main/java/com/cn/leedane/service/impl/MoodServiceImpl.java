@@ -179,7 +179,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	
 	@Override
 	public Map<String, Object> updateMoodStatus(JSONObject jsonObject, int status, HttpRequestInfoBean request, UserBean user) {
-		int mid = JsonUtil.getIntValue(jsonObject, "mid");
+		long mid = JsonUtil.getLongValue(jsonObject, "mid");
 		logger.info("MoodServiceImpl-->updateMoodStatus():mid=" +mid +", status=" +status + ",jsonObject="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();
 		boolean result = false;
@@ -232,7 +232,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 
 	@Override
 	public Map<String, Object> deleteMood(JSONObject jo, UserBean user, HttpRequestInfoBean request){
-		int mid = JsonUtil.getIntValue(jo, "mid");
+		long mid = JsonUtil.getLongValue(jo, "mid");
 		logger.info("MoodServiceImpl-->deleteMood():mid=" +mid +",jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
 		if(mid < 1) 
@@ -296,8 +296,8 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		long toUserId = JsonUtil.getLongValue(jo, "to_user_id", user.getId()); //
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
+		long lastId = JsonUtil.getLongValue(jo, "last_id"); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id"); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		String picSize = ConstantsUtil.DEFAULT_PIC_SIZE; //JsonUtil.getStringValue(jo, "pic_size"); //图像的规格(大小)		
 				
@@ -534,7 +534,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	public Map<String, Object> detail(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request, String picSize){
 		logger.info("MoodServiceImpl-->detail():jsonObject=" +jo.toString() +", user=" + (user != null ? user.getAccount(): "未登录用户"));
-		final int mid = JsonUtil.getIntValue(jo, "mid", 0); //心情ID
+		final long mid = JsonUtil.getLongValue(jo, "mid", 0); //心情ID
 		ResponseMap message = new ResponseMap();
 		if(mid < 1)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
@@ -830,7 +830,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 	@Override
 	public Map<String, Object> detailImgs(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		logger.info("MoodServiceImpl-->detailImgs():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		int mid = JsonUtil.getIntValue(jo, "mid", 0); //心情ID
+		long mid = JsonUtil.getLongValue(jo, "mid", 0); //心情ID
 		ResponseMap message = new ResponseMap();
 		if(mid < 1)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
@@ -925,8 +925,8 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		long start = System.currentTimeMillis();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
+		long lastId = JsonUtil.getLongValue(jo, "last_id"); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id"); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		String picSize = ConstantsUtil.DEFAULT_PIC_SIZE; //图像的规格(大小)	
 		String topic = JsonUtil.getStringValue(jo, "topic");
@@ -1010,7 +1010,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 
 	@Override
 	public Map<String, Object> updateMoodStick(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request) {
-		int mid = JsonUtil.getIntValue(jsonObject, "mid");
+		long mid = JsonUtil.getLongValue(jsonObject, "mid");
 		boolean staick = JsonUtil.getBooleanValue(jsonObject, "stick");
 		logger.info("MoodServiceImpl-->updateMoodStick():mid=" +mid +"" + ",jsonObject="+jsonObject.toString());
 		ResponseMap message = new ResponseMap();

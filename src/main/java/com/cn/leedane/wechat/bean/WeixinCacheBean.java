@@ -9,7 +9,7 @@ package com.cn.leedane.wechat.bean;
 public class WeixinCacheBean{
 	
 	private String currentType; //当前的模式类型
-	private int lastBlogId; //获取的博客集合中最后一条博客的ID
+	private long lastBlogId; //获取的博客集合中最后一条博客的ID
 	private boolean bindLogin;//是否绑定登录
 	
 	public boolean isBindLogin() {
@@ -28,11 +28,11 @@ public class WeixinCacheBean{
 		this.currentType = currentType;
 	}
 
-	public int getLastBlogId() {
+	public long getLastBlogId() {
 		return lastBlogId;
 	}
 
-	public void setLastBlogId(int lastBlogId) {
+	public void setLastBlogId(long lastBlogId) {
 		this.lastBlogId = lastBlogId;
 	}
 

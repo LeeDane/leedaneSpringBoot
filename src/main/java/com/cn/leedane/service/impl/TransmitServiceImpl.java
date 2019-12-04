@@ -70,7 +70,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 		//{\"table_name\":\"t_mood\", \"table_id\":1, 'content':'转发信息'}
 		logger.info("TransmitServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
-		int tableId = JsonUtil.getIntValue(jo, "table_id", 0);
+		long tableId = JsonUtil.getLongValue(jo, "table_id", 0);
 		String content = JsonUtil.getStringValue(jo, "content");
 		ResponseMap message = new ResponseMap();
 		boolean result = false;
@@ -135,7 +135,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 	 * @param tableId
 	 * @param message
 	 */
-	private boolean checkTransmit(String tableName, int tableId, Map<String, Object> message) {
+	private boolean checkTransmit(String tableName, long tableId, Map<String, Object> message) {
 		
 		List<Map<String, Object>> list = transmitMapper.executeSQL("select id, can_transmit from "+tableName +" where id = ? limit 0,1", tableId);
 		//检查该实体数据是否数据存在,防止对不存在的对象添加转发
@@ -157,8 +157,8 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 	public Map<String, Object> deleteTransmit(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("TransmitServiceImpl-->deleteTransmit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		int tid = JsonUtil.getIntValue(jo, "tid");
-		int createUserId = JsonUtil.getIntValue(jo, "create_user_id");
+		long tid = JsonUtil.getLongValue(jo, "tid");
+		long createUserId = JsonUtil.getLongValue(jo, "create_user_id");
 		
 		ResponseMap message = new ResponseMap();
 		
@@ -194,13 +194,13 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 		if(user == null)
 			user = new UserBean();
 		logger.info("TransmitServiceImpl-->getLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		int toUserId = JsonUtil.getIntValue(jo, "toUserId"); //操作的对象用户的id，如获取指定心情的转发数，这个为0
+		long toUserId = JsonUtil.getLongValue(jo, "toUserId"); //操作的对象用户的id，如获取指定心情的转发数，这个为0
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
-		int tableId = JsonUtil.getIntValue(jo, "table_id", 0);
+		long tableId = JsonUtil.getLongValue(jo, "table_id", 0);
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
+		long lastId = JsonUtil.getLongValue(jo, "last_id"); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id"); //结束的页数
 		boolean showUserInfo = JsonUtil.getBooleanValue(jo, "showUserInfo");
 		/*if(userId < 1)
 			return new ArrayList<Map<String,Object>>();*/
@@ -284,7 +284,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 			HttpRequestInfoBean request) {
 		logger.info("TransmitServiceImpl-->updateTransmitStatus():jo="+jo.toString());
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
-		int tableId = JsonUtil.getIntValue(jo, "table_id");
+		long tableId = JsonUtil.getLongValue(jo, "table_id");
 		boolean canTransmit = JsonUtil.getBooleanValue(jo, "can_transmit", true);
 		ResponseMap message = new ResponseMap();
 		

@@ -22,7 +22,7 @@ public class CollectionBean extends RecordTimeBean{
 	/**
 	 * 收藏对象的ID，必须
 	 */
-	private int tableId;
+	private long tableId;
 
 	//@Column(name="table_name", length= 15, nullable=false)
 	public String getTableName() {
@@ -33,10 +33,10 @@ public class CollectionBean extends RecordTimeBean{
 	}
 	
 	//@Column(name="table_id", nullable = false)
-	public int getTableId() {
+	public long getTableId() {
 		return tableId;
 	}
-	public void setTableId(int tableId) {
+	public void setTableId(long tableId) {
 		this.tableId = tableId;
 	}
 }

@@ -30,12 +30,12 @@ public class TemporaryBase64Bean extends RecordTimeBean{
 	/**
 	 * 开始位置(必须)
 	 */
-	private int start; 
+	private long start;
 	
 	/**
 	 * 结束位置(必须)
 	 */
-	private int end;   
+	private long end;
 	
 	/**
 	 * 排序(必须)
@@ -81,18 +81,18 @@ public class TemporaryBase64Bean extends RecordTimeBean{
 	}
 	
 	//@Column(nullable=false)
-	public int getStart() {
+	public long getStart() {
 		return start;
 	}
-	public void setStart(int start) {
+	public void setStart(long start) {
 		this.start = start;
 	}
 	
 	//@Column(nullable=false)
-	public int getEnd() {
+	public long getEnd() {
 		return end;
 	}
-	public void setEnd(int end) {
+	public void setEnd(long end) {
 		this.end = end;
 	}
 	

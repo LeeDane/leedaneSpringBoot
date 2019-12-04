@@ -57,7 +57,7 @@ public class MoodHandler {
 	 * @param user
 	 * @return
 	 */
-	public List<Map<String, Object>> getMoodDetail(int moodId, UserBean user){
+	public List<Map<String, Object>> getMoodDetail(long moodId, UserBean user){
 		return getMoodDetail(moodId, user, false);
 	}
 	
@@ -69,7 +69,7 @@ public class MoodHandler {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Map<String, Object>> getMoodDetail(int moodId, UserBean user, boolean onlyContent){
+	public List<Map<String, Object>> getMoodDetail(long moodId, UserBean user, boolean onlyContent){
 		String moodKey = getMoodKey(moodId);
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		JSONArray jsonArray = new JSONArray();
@@ -203,7 +203,7 @@ public class MoodHandler {
 	 * @param tableUuid
 	 * @return
 	 */
-	public boolean delete(int moodId, String tableName, String tableUuid){
+	public boolean delete(long moodId, String tableName, String tableUuid){
 		
 		String moodKey = getMoodKey(moodId);
 		if(StringUtil.isNotNull(tableName) && StringUtil.isNotNull(tableUuid)){
@@ -251,7 +251,7 @@ public class MoodHandler {
 	 * @param moodId
 	 * @return
 	 */
-	public static String getMoodKey(int moodId){
+	public static String getMoodKey(long moodId){
 		return ConstantsUtil.MOOD_REDIS +moodId;
 	}
 	

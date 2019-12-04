@@ -4,6 +4,8 @@ import com.cn.leedane.model.RecordTimeBean;
 import com.cn.leedane.mybatis.table.annotation.Column;
 import com.cn.leedane.mybatis.table.annotation.Table;
 
+import java.util.Date;
+
 /**
  * 商品订单实体bean
  * @author LeeDane
@@ -18,7 +20,7 @@ public class S_OrderBean extends RecordTimeBean{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	//订单的状态：0：禁用， 1：已完成  2：删除  9:待结算佣金 10：待支付佣金 11：已支付佣金 
+	//订单的状态：0：禁用， 1：已提交  STATUS_SETTLEMENT：已结算  STATUS_PAY：已支付 STATUS_END：平台已经处理结束
 	
 	/**
 	 * 用于展示状态用的，不做数据库的存储
@@ -40,11 +42,17 @@ public class S_OrderBean extends RecordTimeBean{
 	
 	
 	/**
-	 * 下订单的日期
+	 * 下单时间
 	 */
-	@Column("order_date")
-	private String orderDate;
-	
+	@Column("order_time")
+	private Date orderTime;
+
+	/**
+	 * 付款时间
+	 */
+	@Column("pay_time")
+	private Date payTime;
+
 	/**
 	 * 描述的标题，可以为空，用于展示用的
 	 */
@@ -67,20 +75,32 @@ public class S_OrderBean extends RecordTimeBean{
 	 * 价格(是订单处理完成的时候计算的)
 	 */
 	@Column("price")
-	private float price;
+	private double price;
 	
 	/**
-	 * 返还比例(是订单处理完成的时候计算的)
+	 * 预计返还比例(是订单处理完成的时候计算的)
 	 */
-	@Column("cash_back_ratio")
-	private float cashBackRatio;
+	@Column("expect_cash_back_ratio")
+	private double cashBackRatio;
 	
 	
 	/**
-	 * 佣金(是订单处理完成的时候计算的)
+	 * 预计佣金(是订单处理完成的时候计算的)
 	 */
-	@Column("cash_back")
-	private float cashBack;
+	@Column("expect_cash_back")
+	private double cashBack;
+
+	/**
+	 * 关联订单详情ID(只有合法的订单（当时是非议的订单），才能关联以及查看)
+	 */
+	@Column("order_detail_id")
+	private long orderDetailId;
+
+	/**
+	 * 标记是否有争议，添加订单的时候判断是否存在相同的订单，有的话将双方的订单都标记为有争议状态
+	 */
+	/*@Column("dispute")
+	private boolean dispute;*/
 
 	public String getStatusText() {
 		return statusText;
@@ -130,37 +150,51 @@ public class S_OrderBean extends RecordTimeBean{
 		this.platform = platform;
 	}
 
-	public float getPrice() {
+	public double getPrice() {
 		return price;
 	}
 
-	public void setPrice(float price) {
+	public void setPrice(double price) {
 		this.price = price;
 	}
 
-	public float getCashBackRatio() {
+	public double getCashBackRatio() {
 		return cashBackRatio;
 	}
 
-	public void setCashBackRatio(float cashBackRatio) {
+	public void setCashBackRatio(double cashBackRatio) {
 		this.cashBackRatio = cashBackRatio;
 	}
 
-	public float getCashBack() {
+	public double getCashBack() {
 		return cashBack;
 	}
 
-	public void setCashBack(float cashBack) {
+	public void setCashBack(double cashBack) {
 		this.cashBack = cashBack;
 	}
 
-	public String getOrderDate() {
-		return orderDate;
+	public Date getOrderTime() {
+		return orderTime;
 	}
 
-	public void setOrderDate(String orderDate) {
-		this.orderDate = orderDate;
+	public void setOrderTime(Date orderTime) {
+		this.orderTime = orderTime;
 	}
-	
-	
+
+	public Date getPayTime() {
+		return payTime;
+	}
+
+	public void setPayTime(Date payTime) {
+		this.payTime = payTime;
+	}
+
+	public long getOrderDetailId() {
+		return orderDetailId;
+	}
+
+	public void setOrderDetailId(long orderDetailId) {
+		this.orderDetailId = orderDetailId;
+	}
 }

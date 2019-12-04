@@ -6,6 +6,8 @@ import com.cn.leedane.service.mall.S_OrderService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.LayuiTableResponseMap;
 import com.cn.leedane.utils.ResponseMap;
+import com.jd.open.api.sdk.JdException;
+import com.taobao.api.ApiException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,7 @@ public class OrderController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/order", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(Model model, HttpServletRequest request){
+	public Map<String, Object> add(Model model, HttpServletRequest request) throws Exception {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -51,7 +53,7 @@ public class OrderController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/order/{orderId}", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> update(@PathVariable("orderId") long orderId, Model model, HttpServletRequest request){
+	public Map<String, Object> update(@PathVariable("orderId") long orderId, Model model, HttpServletRequest request) throws Exception {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

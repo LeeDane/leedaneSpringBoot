@@ -25,7 +25,7 @@ public class OptionBean extends RecordTimeBean{
 	/**
 	 * 选项的版本
 	 */
-	private float version;
+	private int version;
 	
 	private String optionDesc;
 	
@@ -47,10 +47,10 @@ public class OptionBean extends RecordTimeBean{
 	}
 	
 	//@Column(nullable=false)
-	public float getVersion() {
+	public int getVersion() {
 		return version;
 	}
-	public void setVersion(float version) {
+	public void setVersion(int version) {
 		this.version = version;
 	}
 	

@@ -294,7 +294,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 	public Map<String, Object> addProduct(long itemId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
-		int productId = JsonUtil.getIntValue(json, "product_id");
+		long productId = JsonUtil.getLongValue(json, "product_id");
 		S_ProductBean productBean = productHandler.getNormalProductBean(productId);
 		if(productBean == null)
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商品不存在或已被删除.value));

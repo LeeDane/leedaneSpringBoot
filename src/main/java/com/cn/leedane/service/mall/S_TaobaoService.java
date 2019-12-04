@@ -12,11 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
 
 /**
- * 淘宝相关service接口类
+ * 淘宝相关service接口类(已经废弃，请参考MallSearchService使用）
  * @author LeeDane
  * 2017年12月6日 下午6:31:23
  * version 1.0
  */
+@Deprecated
 @Transactional
 public interface S_TaobaoService <T extends IDBean>{
 	/**
@@ -40,18 +41,6 @@ public interface S_TaobaoService <T extends IDBean>{
 	public Map<String, Object> buildShare(String taobaoId,UserBean user, HttpRequestInfoBean request);
 
 	/**
-	 *  商品推荐
-	 * @param productId
-	 * @param jo
-	 * @param user
-	 * @param request
-	 * @return
-	 * @throws ApiException
-	 */
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> productRecommend(long productId, JSONObject jo, UserBean user, HttpRequestInfoBean request)  throws ApiException;
-
-	/**
 	 *  长链接转化成短链接、淘宝口令、二维码等
 	 * @param jo
 	 * @param user
@@ -59,7 +48,7 @@ public interface S_TaobaoService <T extends IDBean>{
 	 * @return
 	 * @throws ApiException
 	 */
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> transform(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws ApiException, WriterException;
+	/*@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public  Map<String,Object> transform(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws ApiException, WriterException;*/
 
 }

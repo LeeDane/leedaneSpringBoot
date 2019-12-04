@@ -79,13 +79,13 @@ public class SqlUtil {
 		
 		return current* pageSize;
 	}
-	
+
 	/**
-     * 将一个 Map 对象转化为一个 JavaBean
-     * @param type
-     * @param map
-     * @return
-     */
+	 * 将一个 Map 对象转化为一个 JavaBean
+	 * @param clazz
+	 * @param maps
+	 * @return
+	 */
     @SuppressWarnings("rawtypes")
 	public static List convertMapsToBeans(Class<?> clazz, List<Map<String, Object>> maps) {
        return JSONArray.parseArray(JSONArray.toJSONString(maps), clazz);

@@ -20,11 +20,12 @@ import javax.websocket.server.PathParam;
 import java.util.Map;
 
 /**
- * 淘宝接口controller
+ * 淘宝接口controller(已经废弃，请参考MallSearchController/MallToolController使用）
  * @author LeeDane
  * 2017年12月6日 下午6:30:40
  * version 1.0
  */
+@Deprecated
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.taobao)
 public class TaobaoController extends BaseController{
@@ -63,31 +64,5 @@ public class TaobaoController extends BaseController{
 		return message.getMap();
 	}
 
-	/**
-	 * 查询淘宝商品
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(value = "/product/{itemId}/recommend", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> search(@PathVariable("itemId") long itemId, HttpServletRequest request) throws ApiException {
-		ResponseMap message = new ResponseMap();
-		checkParams(message, request);
 
-		message.putAll(taobaoService.productRecommend(itemId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
-	}
-
-	/**
-	 * 链接转化
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(value = "/link/transform", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> tranform(HttpServletRequest request) throws ApiException, WriterException {
-		ResponseMap message = new ResponseMap();
-		checkParams(message, request);
-
-		message.putAll(taobaoService.transform(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
-	}
 }

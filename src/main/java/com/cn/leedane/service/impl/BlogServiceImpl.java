@@ -229,7 +229,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	}
 
 	@Override
-	public List<Map<String, Object>> getLatestBlogById(int lastBlogId, int num) {
+	public List<Map<String, Object>> getLatestBlogById(long lastBlogId, int num) {
 		logger.info("BlogServiceImpl-->getLatestBlogById():lastBlogId="+lastBlogId+",num="+num);
 		return this.blogMapper.getLatestBlogById(lastBlogId,num);
 	}
@@ -242,7 +242,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 
 	@Override
 	public Map<String, Object> deleteById(JSONObject jo, HttpRequestInfoBean request, UserBean user){
-		int id = JsonUtil.getIntValue(jo, "b_id");
+		long id = JsonUtil.getLongValue(jo, "b_id");
 		logger.info("BlogServiceImpl-->deleteById():id="+id);
 		ResponseMap message = new ResponseMap();
 		if(id < 1)
@@ -326,7 +326,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	public Map<String, Object> addTag(JSONObject jo, UserBean user,
 									  HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->addTag():jo="+jo.toString());
-		int bid = JsonUtil.getIntValue(jo, "bid");
+		long bid = JsonUtil.getLongValue(jo, "bid");
 		String tag = JsonUtil.getStringValue(jo, "tag");
 		ResponseMap message = new ResponseMap();
 		
@@ -408,7 +408,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 									   HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->getInfo():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
-		int blogId = JsonUtil.getIntValue(jo, "blog_id");
+		long blogId = JsonUtil.getLongValue(jo, "blog_id");
 		
 		if(blogId < 1)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
@@ -510,8 +510,8 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		checkAdmin(user);
 		
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize"); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id");
-		int firstId = JsonUtil.getIntValue(jo, "first_id");
+		long lastId = JsonUtil.getLongValue(jo, "last_id");
+		long firstId = JsonUtil.getLongValue(jo, "first_id");
 
 		//执行的方式，现在支持：uploading(向上刷新)，lowloading(向下刷新)，firstloading(第一次刷新)
 		String method = JsonUtil.getStringValue(jo, "method");
@@ -564,8 +564,8 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		
 		//检查是否有管理员账户权限
 		checkAdmin(user);
-		
-		int blogId = JsonUtil.getIntValue(jo, "blog_id"); //文章ID
+
+		long blogId = JsonUtil.getLongValue(jo, "blog_id"); //文章ID
 		boolean agree = JsonUtil.getBooleanValue(jo, "agree");
 		BlogBean bean = blogMapper.findById(BlogBean.class, blogId);
 		if(bean == null){

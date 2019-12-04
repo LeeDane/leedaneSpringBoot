@@ -8,10 +8,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cn.leedane.exception.ParameterUnspecificationException;
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
 import eu.bitwalker.useragentutils.UserAgent;
@@ -391,4 +394,75 @@ public class CommonUtil {
 		}
 		return returnString;
 	}
+
+	/**
+	 * 从链接的参数中解析id=
+	 * 这里为了防止地址栏有多个，只解析第一个即可,如有：https://item.jd.com/100003661795.html?url=https://item.jd.com/1000519284.html
+	 * @param url
+	 * @return
+	 */
+	public static String parseLinkId(String url){
+		String pattern = "(?<=(\\.com/))\\d+[^\\.htm]";
+		// 创建 Pattern 对象
+		Pattern r = Pattern.compile(pattern);
+		// 现在创建 matcher 对象
+		Matcher m = r.matcher(url);
+		while(m.find()){
+			//这里为了防止地址栏有多个，只解析第一个即可
+			return m.group(0);
+		}
+		return null;
+	}
+
+	/**
+	 * 从连接中解析ID
+	 * 这里为了防止地址栏有多个，只解析第一个即可,如有：https://detail.tmall.com/item.htm?id=45114&spm=a220m.1000858.1000725.17.157424feoZKynL&id=591568958088&areaId=440100&user_id=2300221997&cat_id=2&is_b=1&rn=fc4725b55bc45642fb2117c08cc140ae&id=1234&pp=1
+	 * 宽断言
+	 * 			(?=exp)		匹配exp前面的位置
+	 * 			(?<=exp)	匹配exp后面的位置
+	 * 			(?!exp)		匹配后面跟的不是exp的位置
+	 *			(?<!exp)	匹配前面不是exp的位置
+	 * @param url
+	 * @return
+	 */
+	/**
+	 * 从连接中解析ID
+	 * 这里为了防止地址栏有多个，只解析第一个即可,如有：https://detail.tmall.com/item.htm?id=45114&spm=a220m.1000858.1000725.17.157424feoZKynL&id=591568958088&areaId=440100&user_id=2300221997&cat_id=2&is_b=1&rn=fc4725b55bc45642fb2117c08cc140ae&id=1234&pp=1
+	 * 宽断言
+	 * 			(?=exp)		匹配exp前面的位置
+	 * 			(?<=exp)	匹配exp后面的位置
+	 * 			(?!exp)		匹配后面跟的不是exp的位置
+	 *			(?<!exp)	匹配前面不是exp的位置
+	 * @param url 地址
+	 * @param params 可以支持多个匹配，或运算
+	 * @return
+	 */
+	public static String parseLinkParams(String url, String ...params){
+		if(params == null || params.length == 0)
+			throw new ParameterUnspecificationException("params must not null.");
+		StringBuffer paramsStr = new StringBuffer();
+		for(String param: params){
+			paramsStr.append(param);
+			paramsStr.append("|");
+		}
+
+		String rp = "(" + StringUtil.deleteLastStr(paramsStr.toString()) +")";
+//		String params = "(id|goods_id)";
+		String pattern =  "(?<=(^|&|\\?)"+ rp +"=)\\d+([^&]*)";
+		// 创建 Pattern 对象
+		Pattern r = Pattern.compile(pattern);
+		// 现在创建 matcher 对象
+		Matcher m = r.matcher(url);
+		while(m.find()){
+			//这里为了防止地址栏有多个，只解析第一个即可
+			return m.group(0);
+		}
+		return null;
+	}
+
+	/*public static void main(String[] args) {
+		String url = "https://mobile.yangkeduo.com/duo_coupon_landing.html?goods_id1=4946116872&pid=9503869_122542943&cpsSign=CC_191202_9503869_122542943_0a778a5cb045d934c818f82128872ce9&duoduo_type=2";
+		System.out.println(parseLinkParams(url, "id", "goods_id", "pid"));
+		System.out.println(parseLinkId(url));
+	}*/
 }

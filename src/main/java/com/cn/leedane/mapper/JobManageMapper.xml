@@ -10,7 +10,7 @@
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
 	<select id="isExist" resultType="java.util.Map">
-		select id from t_job_manage where job_name = #{name} and job_group = #{group} and status = #{status} limit 1
+		select id ct from t_job_manage where job_name = #{name} and job_group = #{group} and status = #{status} limit 1
 	</select>
 	
 	<select id="paging" resultType="java.util.Map">

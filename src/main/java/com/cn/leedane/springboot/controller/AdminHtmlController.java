@@ -155,6 +155,11 @@ public class AdminHtmlController extends BaseController{
 	public String stJob(Model model, HttpServletRequest request){
 		return adminLoginRoleCheck("admin/setting/job", model, request);
 	}
+
+	@RequestMapping(ControllerBaseNameUtil.adst + "/option")
+	public String stOption(Model model, HttpServletRequest request){
+		return adminLoginRoleCheck("admin/setting/option", model, request);
+	}
 	
 	@RequestMapping(ControllerBaseNameUtil.adst + "/clearCache")
 	public String stClearCache(Model model, HttpServletRequest request){

@@ -832,4 +832,15 @@ public class StringUtil {
 		Matcher m = p.matcher(str);
 		return m.find();
 	}
+
+	/**
+	 * 删除最后一个字符串
+	 * @param str
+	 * @return
+	 */
+	public static String deleteLastStr(String str){
+		if(isNull(str))
+			return str;
+		return str.substring(0, str.length() - 1);
+	}
 }

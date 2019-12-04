@@ -25,7 +25,7 @@ public class S_HomeCarouselBean extends RecordTimeBean{
 	
 	@Column(value="product_id")
 	@Field
-	private int productId; 
+	private long productId;
 	
 	@Column(value="carousel_order")
 	@Field
@@ -41,11 +41,11 @@ public class S_HomeCarouselBean extends RecordTimeBean{
 	@Column(required=false)
 	private S_ProductBean productBean;
 
-	public int getProductId() {
+	public long getProductId() {
 		return productId;
 	}
 
-	public void setProductId(int productId) {
+	public void setProductId(long productId) {
 		this.productId = productId;
 	}
 

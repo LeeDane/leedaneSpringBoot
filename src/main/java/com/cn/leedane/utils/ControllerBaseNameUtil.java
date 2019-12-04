@@ -290,6 +290,11 @@ public class ControllerBaseNameUtil {
 	 * 任务管理
 	 */
 	public static final String jm = "jm";
+
+	/**
+	 * 选项管理
+	 */
+	public static final String option = "option";
 	
 	/**
 	 * 管理员
@@ -342,6 +347,16 @@ public class ControllerBaseNameUtil {
 	 * 淘宝接口统一入口根路径
 	 */
 	public static final String taobao = "mall/taobao";
+
+	/**
+	 * 商城工具接口统一入口根路径
+	 */
+	public static final String mall_tool = "mall/tool";
+
+	/**
+	 * 京东接口统一入口根路径
+	 */
+	public static final String jingdong = "mall/jingdong";
 
 	/**
 	 * 商城搜索接口统一入口根路径

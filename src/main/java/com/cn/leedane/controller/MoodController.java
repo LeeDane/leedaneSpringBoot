@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
+/**
+ * 心情controller
+ */
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.md)
 public class MoodController extends BaseController{

@@ -37,7 +37,7 @@ public interface CommentMapper extends BaseMapper<CommentBean>{
 	 * @param pageSize
 	 * @return
 	 */
-	public List<Map<String, Object>> getAllByUser(@Param("userId") int userId, @Param("status") int status, 
+	public List<Map<String, Object>> getAllByUser(@Param("userId") long userId, @Param("status") int status,
 			@Param("start")int start, @Param("pageSize") int pageSize);
 
 	/**
@@ -51,7 +51,7 @@ public interface CommentMapper extends BaseMapper<CommentBean>{
 	 */
 	public List<Map<String, Object>> getAllByTable(
 			@Param("tableName") String tableName, 
-			@Param("tableId") int tableId, 
+			@Param("tableId") long tableId,
 			@Param("status") int status, 
 			@Param("start")int start, 
 			@Param("pageSize") int pageSize);
@@ -61,5 +61,5 @@ public interface CommentMapper extends BaseMapper<CommentBean>{
 	 * @param pid
 	 * @return
 	 */
-	public String getLevel(@Param("pid") int pid);
+	public String getLevel(@Param("pid") long pid);
 }

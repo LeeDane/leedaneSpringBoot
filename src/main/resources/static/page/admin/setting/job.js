@@ -1,5 +1,9 @@
-layui.use(['layer'], function(){
+var pageSize = 10;
+var currentIndex = 0;
+var totalPage  = 0;
+layui.use(['layer', 'laypage'], function(){
 	layer = layui.layer;
+	laypage = layui.laypage;
 	$addOrEditModal = $("#add-or-edit-job");
 	$("#totalCheckbox").change(function(){
 		if(!$(this).hasClass("checked")){
@@ -15,7 +19,7 @@ layui.use(['layer'], function(){
 		}
 			
 	});
-	initPage(".pagination", "getJobs");
+//	initPage(".pagination", "getJobs");
 	
 	$tableContainer = $(".table");
 	//默认查询操作
@@ -58,7 +62,24 @@ function getJobs(){
 						$tableContainer.find(".each-row").eq(i).addClass("status-disabled-row");
 				}
 				
-				pageDivUtil(data.total);
+				/*pageDivUtil(data.total);*/
+				//执行一个laypage实例
+                 laypage.render({
+                    elem: 'job-pager' //注意，这里的 test1 是 ID，不用加 # 号
+                    ,layout: ['prev', 'page', 'next', 'count', 'skip']
+                    ,count: data.total //数据总数，从服务端得到
+                    ,limit: pageSize
+                    ,curr: currentIndex + 1
+                    ,jump: function(obj, first){
+                        //obj包含了当前分页的所有参数，比如：
+                        console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                        console.log(obj.limit); //得到每页显示的条数
+                        if(!first){
+                            currentIndex = obj.curr -1;
+                            getJobs();
+                        }
+                      }
+                 });
 			}else{
 				ajaxError(data);
 			}

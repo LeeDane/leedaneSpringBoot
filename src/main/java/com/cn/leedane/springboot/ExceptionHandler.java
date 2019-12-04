@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.cn.leedane.exception.*;
+import com.jd.open.api.sdk.JdException;
 import com.taobao.api.ApiException;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -236,9 +237,13 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			message.put("message", EnumUtil.getResponseValue(ResponseCode.ES索引不存在.value));
 			message.put("responseCode", ResponseCode.ES索引不存在.value);
 		}else if(exception instanceof ApiException){
-			logger.error("淘宝api异常", exception);
-			message.put("message", exception.getMessage());
+			logger.error("淘宝联盟api异常", exception);
+			message.put("message", "淘宝开放平台：" +exception.getMessage());
 			message.put("responseCode", ResponseCode.淘宝api异常.value);
+		}else if(exception instanceof JdException){
+			logger.error("京东联盟api异常", exception);
+			message.put("message", "京东开放平台：" +exception.getMessage());
+			message.put("responseCode", ResponseCode.京东api异常.value);
 		}else{
 //			StringPrintWriter strintPrintWriter = new StringPrintWriter();  
 //	        exception.printStackTrace(strintPrintWriter);

@@ -30,8 +30,8 @@ public class TemporaryBase64ServiceImpl implements TemporaryBase64Service<Tempor
 	public boolean saveBase64Str(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request){
 		logger.info("TemporaryBase64ServiceImpl-->saveBase64Str():jo="+jo.toString());
-		int start = JsonUtil.getIntValue(jo, "start");
-		int end = JsonUtil.getIntValue(jo, "end");
+		long start = JsonUtil.getLongValue(jo, "start");
+		long end = JsonUtil.getLongValue(jo, "end");
 		String uuid = JsonUtil.getStringValue(jo, "uuid");
 		int order = JsonUtil.getIntValue(jo, "order");
 		String content = JsonUtil.getStringValue(jo, "content");	

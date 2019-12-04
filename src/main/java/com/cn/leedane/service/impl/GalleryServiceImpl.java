@@ -47,7 +47,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		logger.info("GalleryServiceImpl-->add():JSONObject="+jo.toString());
 		
 		ResponseMap message = new ResponseMap();
-		int id = JsonUtil.getIntValue(jo, "id", 0); //获取参数中宽度的值,可以为空
+		long id = JsonUtil.getLongValue(jo, "id", 0);
 
 		if(id > 0){
 			GalleryBean galleryBean = galleryMapper.findById(GalleryBean.class, id);
@@ -60,7 +60,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		long length = JsonUtil.getLongValue(jo, "length", 0); //获取参数中高度的值,可以为空
 		String path = JsonUtil.getStringValue(jo, "path"); //获取参数中图片路径的值，不能为空
 		String desc = JsonUtil.getStringValue(jo, "desc"); //获取参数中描述信息的值，可以为空
-		int category = JsonUtil.getIntValue(jo, "category"); //获取参数中描述信息的值，可以为空
+		long category = JsonUtil.getLongValue(jo, "category"); //获取参数中描述信息的值，可以为空
 		
 		//为了配合七牛云存储的文件的压缩获取，自动在链接添加了?imageslim，在此需要处理一下
 		path = path.replace("?imageslim", "");
@@ -174,9 +174,9 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		long uid = JsonUtil.getLongValue(jo, "uid", user.getId()); //操作的用户的id
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
-		int categoryId = JsonUtil.getIntValue(jo, "category", -1); //结束的页数
+		long lastId = JsonUtil.getLongValue(jo, "last_id"); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id"); //结束的页数
+		long categoryId = JsonUtil.getLongValue(jo, "category", -1); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		
 		logger.info("GalleryServiceImpl-->getGalleryByLimit():JSONObject="+jo.toString());
@@ -250,7 +250,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 	 * @param categoryId
 	 * @return
 	 */
-	public String getCategorySql(int categoryId){
+	public String getCategorySql(long categoryId){
 		if(categoryId < 0)
 			return "";
 		return " and category_id = "+ categoryId +" ";

@@ -809,13 +809,14 @@ CREATE TABLE `t_mall_order` (
   `modify_user_id` int(11) DEFAULT NULL,
   `order_code` varchar(50) NOT NULL COMMENT '订单编号',
   `product_code` varchar(50) NOT NULL COMMENT '商品的编号的唯一ID',
-  `title` varchar(50) COMMENT '描述的标题，可以为空，用于展示用的',
+  `title` varchar(255) COMMENT '描述的标题，可以为空，用于展示用的',
   `referrer` varchar(50) COMMENT '推荐人，可以为空',
   `platform` varchar(50) COMMENT '平台',
-  `order_date` varchar(20) NOT NULL COMMENT '下订单的日期',
-  `price` float NOT NULL DEFAULT '0.00' COMMENT '商品现价',
-  `cash_back_ratio` float NOT NULL DEFAULT '0.00' COMMENT '商品总的返现比率(百分比)',
-  `cash_back` float NOT NULL DEFAULT '0.00' COMMENT '商品返现的价钱',
+  `order_time` datetime DEFAULT NULL COMMENT '下单时间',
+  `pay_time` datetime DEFAULT NULL COMMENT '付款时间',
+  `price` double NOT NULL DEFAULT '0.00' COMMENT '商品现价',
+  `expect_cash_back_ratio` double NOT NULL DEFAULT '0.00' COMMENT '预计商品总的返现比率(百分比)',
+  `expect_cash_back` double NOT NULL DEFAULT '0.00' COMMENT '预计商品返现的价钱',
   PRIMARY KEY (`id`),
   KEY `FK_mall_order_create_user` (`create_user_id`),
   KEY `FK_mall_order_modify_user` (`modify_user_id`),
@@ -1351,3 +1352,60 @@ CREATE TABLE `t_read` (
   CONSTRAINT `FK_modify_create_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_read_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_option
+-- ----------------------------
+DROP TABLE IF EXISTS `t_option`;
+CREATE TABLE `t_option` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) DEFAULT '1' NOT NULL,,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `option_key` varchar(255) NOT NULL,
+  `option_value` varchar(255) NOT NULL,
+  `version` int(3) NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `option_desc` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `t_option_in_unique` (`option_key`,`version`),
+  KEY `FK_option_create_user` (`create_user_id`),
+  KEY `FK_option_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_option_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_option_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_order_detail  对接各个平台的订单详情
+-- ----------------------------
+DROP TABLE IF EXISTS `t_order_detail`;
+CREATE TABLE `t_order_detail` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
+  `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_user_id` int(11) DEFAULT NULL COMMENT '创建人',
+  `modify_user_id` int(11) DEFAULT NULL COMMENT '修改人',
+  `order_create_time` datetime NOT NULL COMMENT '订单实际创建时间',
+  `order_pay_time` datetime NOT NULL COMMENT '订单实际支付时间',
+  `order_settlement_time` datetime NULL COMMENT '订单结算时间，只有状态是结算状态才有结算时间',
+  `order_product_id` bigint(20) NOT NULL COMMENT '产品ID',
+  `order_code` bigint(20) NOT NULL COMMENT '订单编号',
+  `order_sub_code` bigint(20) NULL COMMENT '订单子编号',
+  `order_category` varchar(255) NULL COMMENT '订单分类',
+  `order_type` varchar(25) NULL COMMENT '订单类型，如：聚划算/天猫/淘宝等',
+  `order_pay_money` double NOT NULL COMMENT '订单实际支付金额',
+  `order_settlement_money` double NULL COMMENT '订单实际结算金额，只要订单是结算状态才有值',
+  `order_buy_numer` int(2) NOT NULL DEFAULT 1 COMMENT '订单商品购买数量，默认是1',
+  `platform` varchar(25) NOT NULL COMMENT '订单平台，如：淘宝网/京东/拼多多',
+  `order_cash_back_ratio` double NOT NULL COMMENT '订单预估佣金比率，百分比',
+  `order_cash_back` double NOT NULL COMMENT '订单预估佣金金额',
+  `order_settlement_cash_back` double NULL COMMENT '订单结算金额(只有结算状态才会大于0.0)',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `t_order_detail_in_unique` (`order_product_id`,`platform`,`order_code`),
+  KEY `FK_order_detail_create_user` (`create_user_id`),
+  KEY `FK_order_detail_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_order_detail_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_order_detail_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

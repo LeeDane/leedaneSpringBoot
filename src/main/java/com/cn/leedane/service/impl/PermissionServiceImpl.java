@@ -84,7 +84,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		permissionBean.setDesc(JsonUtil.getStringValue(jsonObject, "desc"));
 		permissionBean.setName(JsonUtil.getStringValue(jsonObject, "name"));
 		permissionBean.setOrder(JsonUtil.getIntValue(jsonObject, "order", 1));
-		permissionBean.setId(JsonUtil.getIntValue(jsonObject, "id", 0));
+		permissionBean.setId(JsonUtil.getLongValue(jsonObject, "id", 0));
 		permissionBean.setStatus(JsonUtil.getIntValue(jsonObject, "status", ConstantsUtil.STATUS_NORMAL));
 		boolean result = permissionMapper.update(permissionBean) > 0;
 		message.put("isSuccess", result);

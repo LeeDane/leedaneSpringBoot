@@ -382,7 +382,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	public String getHeadFilePathStrById(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request){
 		logger.info("UserServiceImpl-->获取用户头像路径:jo="+jo.toString()+",user_Account="+user.getAccount());
-		int uid = JsonUtil.getIntValue(jo, "uid");
+		long uid = JsonUtil.getLongValue(jo, "uid");
 		String size = JsonUtil.getStringValue(jo, "pic_size");
 		String sql = "select (case when is_upload_qiniu = 1 then qiniu_path else path end) path from "+DataTableType.文件.value+" where pic_size = ? and table_name = ? and table_uuid = ? and status = ?";
 		List<Map<String, Object>> list = filePathMapper.executeSQL(sql, size, DataTableType.用户.value, uid, ConstantsUtil.STATUS_NORMAL);
@@ -1088,7 +1088,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		//检查是否具有管理员权限
 		checkAdmin(user);
 		
-		final int toUserId = JsonUtil.getIntValue(jo, "to_user_id");
+		final long toUserId = JsonUtil.getLongValue(jo, "to_user_id");
 		String account = JsonUtil.getStringValue(jo, "account");
 		int status = JsonUtil.getIntValue(jo, "status", ConstantsUtil.STATUS_NORMAL);
 		if(toUserId < 1 || StringUtil.isNull(account)){
@@ -1199,7 +1199,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		checkAdmin(user);
 		
 		//都是经过第一次MD5加密后的字符串
-		final int toUserId = JsonUtil.getIntValue(jo, "to_user_id"); //重置密码的用户
+		final long toUserId = JsonUtil.getLongValue(jo, "to_user_id"); //重置密码的用户
 		UserBean updateUserBean = userMapper.findById(UserBean.class, toUserId);
 		if(updateUserBean == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在.value));
@@ -1482,7 +1482,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->sendMessage():jo=" +jo.toString());
 		//type: 1为通知，2为邮件，3为私信，4为短信
-		int toUserId = JsonUtil.getIntValue(jo, "to_user_id");
+		long toUserId = JsonUtil.getLongValue(jo, "to_user_id");
 		
 		ResponseMap message = new ResponseMap();
 		if(toUserId < 1){
@@ -1642,7 +1642,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			UserBean user, HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->uploadUserHeadImageLink():jo=" +jo.toString());
 		String link = JsonUtil.getStringValue(jo, "link"); //必须
-		int toUserId = JsonUtil.getIntValue(jo, "to_user_id"); //必须
+		long toUserId = JsonUtil.getLongValue(jo, "to_user_id"); //必须
 				
 		ResponseMap message = new ResponseMap();	
 		

@@ -82,14 +82,14 @@ public class NotificationController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/notification", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> delete(@RequestParam(value = "nid", required = false) Integer nid, Model model, HttpServletRequest request){
+	public Map<String, Object> delete(@RequestParam(value = "nid", required = false) long nid, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
 		if(nid < 1)
-			nid = JsonUtil.getIntValue(getJsonFromMessage(message), "nid");
+			nid = JsonUtil.getLongValue(getJsonFromMessage(message), "nid");
 		message.putAll(notificationService.deleteNotification(nid, getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}

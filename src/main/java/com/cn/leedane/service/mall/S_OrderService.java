@@ -3,6 +3,8 @@ package com.cn.leedane.service.mall;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.jd.open.api.sdk.JdException;
+import com.taobao.api.ApiException;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +26,7 @@ public interface S_OrderService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public  Map<String,Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception;
 	
 	/**
 	 * 获取用户的未处理订单数量
@@ -68,7 +70,7 @@ public interface S_OrderService <T extends IDBean>{
 	public Map<String, Object> update(
 			long orderId,
 			JSONObject json, UserBean user,
-			HttpRequestInfoBean request);
+			HttpRequestInfoBean request) throws Exception;
 	
 	
 }

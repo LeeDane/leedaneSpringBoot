@@ -6,6 +6,7 @@ import com.cn.leedane.handler.mall.S_HomeItemHandler;
 import com.cn.leedane.handler.mall.S_ProductHandler;
 import com.cn.leedane.handler.mall.S_ShopHandler;
 import com.cn.leedane.handler.mall.S_WishHandler;
+import com.cn.leedane.mall.taobao.api.DetailSimpleApi;
 import com.cn.leedane.mapper.mall.S_ProductMapper;
 import com.cn.leedane.mapper.mall.S_ShopMapper;
 import com.cn.leedane.model.CategoryBean;
@@ -19,10 +20,10 @@ import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.service.mall.S_HomeCarouselService;
 import com.cn.leedane.service.mall.S_HomeItemService;
 import com.cn.leedane.service.mall.S_ProductService;
-import com.cn.leedane.taobao.api.DetailSimpleApi;
 import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.ResponseCode;
+import com.jd.open.api.sdk.JdException;
 import com.taobao.api.ApiException;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -117,9 +118,9 @@ public class MallHtmlController extends BaseController{
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/product/{productId}/detail")
 	public String productDetail(Model model, 
-			@PathVariable(value="productId") String productId, HttpServletRequest request) throws ApiException {
+			@PathVariable(value="productId") String productId, HttpServletRequest request) throws Exception {
 		//检查权限，通过后台配置
-		checkRoleOrPermission(model, request);	
+//		checkRoleOrPermission(model, request);
 		/*new ThreadUtil().singleTask(new SolrAddThread<S_ShopBean>(ShopSolrHandler.getInstance(), shopMapper.findById(S_ShopBean.class, 1)));
 		new ThreadUtil().singleTask(new SolrAddThread<S_ProductBean>(ProductSolrHandler.getInstance(), productMapper.findById(S_ProductBean.class, 1)));
 		new ThreadUtil().singleTask(new SolrAddThread<S_ProductBean>(ProductSolrHandler.getInstance(), productMapper.findById(S_ProductBean.class, 2)));
@@ -137,20 +138,27 @@ public class MallHtmlController extends BaseController{
 
 		S_PlatformProductBean productBean = null;
 		if(productId.startsWith("tb_")){
-			productId = productId.substring(3, productId.length());
-			productBean = DetailSimpleApi.getDetailByMaterial(productId);
+			String productIdTemp = productId.substring(3, productId.length());
+			productBean = DetailSimpleApi.getDetailByMaterial(productIdTemp);
+		}else if(productId.startsWith("jd_")){
+			String productIdTemp = productId.substring(3, productId.length());
+			productBean = com.cn.leedane.mall.jingdong.api.DetailSimpleApi.getDetail(productIdTemp);
+		}else if(productId.startsWith("pdd_")){
+			String productIdTemp = productId.substring(4, productId.length());
+			productBean = com.cn.leedane.mall.pdd.api.DetailSimpleApi.getDetail(productIdTemp);
 		}else{
 			productBean = toPlatformProductBean(productHandler.getNormalProductBean(StringUtil.changeObjectToInt(productId)));
 			if(productBean == null)
 				throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商品不存在或已被删除.value));
+
+			int total = commentService.getTotal("t_comment", " where table_name='"+ DataTableType.商店商品.value +"' and table_id = " +productId +" and status = 1");
+			model.addAttribute("commentTotal", CommonUtil.getFormatTotal(total));
 		}
+
+		model.addAttribute("productSourceId", productId);
 		model.addAttribute("product", productBean);
 		List<String> ss = Arrays.asList(productBean.getImg().split(";"));
 		model.addAttribute("mainLinks", ss);
-		
-		int total = commentService.getTotal("t_comment", " where table_name='"+ DataTableType.商店商品.value +"' and table_id = " +productId +" and status = 1");
-		model.addAttribute("commentTotal", CommonUtil.getFormatTotal(total));
-		
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
         UserBean user = getUserFromShiro();
@@ -224,6 +232,36 @@ public class MallHtmlController extends BaseController{
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入订单模块首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("mall/order", true, model, request);
 	}
+
+	/**
+	 * 登记购买入口(也是跳转到订单页面，只是在跳转的时候需要带上订单号)
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/order/register/{productId}")
+	public String orderRegister(@PathVariable(value="productId") String productSourceId, Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入订单登记模块首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
+		String platform = EnumUtil.ProductPlatformType.淘宝.value;
+		String productId = productSourceId;
+		if(productSourceId.startsWith("tb_")){
+			productId = productSourceId.substring(3, productSourceId.length());
+		}else if(productSourceId.startsWith("jd_")){
+			productId = productSourceId.substring(3, productSourceId.length());
+			platform = EnumUtil.ProductPlatformType.京东.value;
+		}else if(productSourceId.startsWith("pdd_")){
+			productId = productSourceId.substring(4, productSourceId.length());
+			platform = EnumUtil.ProductPlatformType.拼多多.value;
+		}else{
+			platform = EnumUtil.ProductPlatformType.系统自营.value;
+		}
+		model.addAttribute("productSourceId", productSourceId);
+		model.addAttribute("productId", productId);
+		model.addAttribute("platform", platform);
+		return loginRoleCheck("mall/order", true, model, request);
+	}
 	
 	/**
 	 * 分类入口
@@ -259,7 +297,7 @@ public class MallHtmlController extends BaseController{
 	@RequestMapping(ControllerBaseNameUtil.s)
 	public String search(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
-		checkRoleOrPermission(model, request);
+//		checkRoleOrPermission(model, request);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入物品搜索页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("mall/search", model, request);
 	}
@@ -301,26 +339,30 @@ public class MallHtmlController extends BaseController{
 	 */
 	@RequestMapping("/product/{productId}/manage")
 	public String productManage(Model model,
-			@PathVariable(value="productId") String productId, HttpServletRequest request) throws ApiException {
+			@PathVariable(value="productId") String productId, HttpServletRequest request) throws ApiException, JdException {
 		//检查权限，通过后台配置
-		checkRoleOrPermission(model, request);
+		/*checkRoleOrPermission(model, request);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商品管理模块首页，商品ID"+ productId, "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
 		S_PlatformProductBean productBean = null;
 		if(productId.startsWith("tb_")){
 			productId = productId.substring(3, productId.length());
 			productBean = DetailSimpleApi.getDetailByMaterial(productId);
 			model.addAttribute("isThirdParty", true); //标记是第三方平台
+		}else if(productId.startsWith("jd_")){
+			productId = productId.substring(3, productId.length());
+			productBean = com.cn.leedane.mall.jingdong.api.DetailSimpleApi.getDetail(productId);
+			model.addAttribute("isThirdParty", true); //标记是第三方平台
 		}else{
 			model.addAttribute("isThirdParty", false); //标记不是第三方平台
 			productBean = toPlatformProductBean(productHandler.getNormalProductBean(StringUtil.changeObjectToInt(productId)));
 			if(productBean == null)
 				throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商品不存在或已被删除.value));
-		}
+		}*/
 			
 		String responseStr  = loginRoleCheck("mall/product-detail", true, model, request);
 		
 		//判断是否是创建者或者是管理员
-		Map<String, Object> modelMap = model.asMap();
+		/*Map<String, Object> modelMap = model.asMap();
 		if(!StringUtil.changeObjectToBoolean(modelMap.get("isAdmin")) && StringUtil.changeObjectToInt(modelMap.get("loginUserId")) != productBean.getCreateUserId()){
 			throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请使用有管理员权限的账号登录.value));
 		}
@@ -333,6 +375,7 @@ public class MallHtmlController extends BaseController{
 		operateLogService.saveOperateLog(user, getHttpRequestInfo(request), null, StringUtil.getStringBufferStr(user.getAccount(),"管理商品，该商品ID是", productId, StringUtil.getSuccessOrNoStr(true)).toString(), "productManager()", 1, EnumUtil.LogOperateType.网页端.value);
 		//保存访问记录
 		visitorService.saveVisitor(user, "web网页端", DataTableType.商店商品.value, StringUtil.changeObjectToInt(productId), ConstantsUtil.STATUS_NORMAL);
+		*/
 		return responseStr;
 	}
 	
@@ -399,6 +442,8 @@ public class MallHtmlController extends BaseController{
 
 	private S_PlatformProductBean toPlatformProductBean(S_ProductBean productBean){
 		S_PlatformProductBean platformProductBean = new S_PlatformProductBean();
+		if(productBean == null)
+			return platformProductBean;
 		platformProductBean.setShopTitle(productBean.getShop().getName());
 		platformProductBean.setImg(productBean.getMainImgLinks());
 		platformProductBean.setPlatform(productBean.getPlatform());
@@ -414,5 +459,13 @@ public class MallHtmlController extends BaseController{
 		platformProductBean.setSubtitle(productBean.getSubtitle());
 		platformProductBean.setDetail(productBean.getDetail());
 		return platformProductBean;
+	}
+
+	@RequestMapping("/manage")
+	public String manage(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入商城管理首页", "com.cn.leedane.springboot.controller.MallHtmlController.manage", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		return loginRoleCheck("mall/manage", model, request);
 	}
 }

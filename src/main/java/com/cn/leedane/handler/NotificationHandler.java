@@ -207,7 +207,7 @@ public class NotificationHandler {
 	 * @param toUserId
 	 * @param chatMap
 	 */
-	public void sendCustomMessageById(UserBean user, int toUserId, Map<String, Object> chatMap){
+	public void sendCustomMessageById(UserBean user, long toUserId, Map<String, Object> chatMap){
 		if(user.getId() == toUserId){
 			logger.error("自己不能给自己发信息");
 			return;

@@ -73,7 +73,7 @@ public class BlogHandler extends BaseCacheHandler<BlogsBean>{
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Map<String, Object>> getBlogDetail(int blogId, UserBean user, boolean onlyContent){
+	public List<Map<String, Object>> getBlogDetail(long blogId, UserBean user, boolean onlyContent){
 		Object obj = super.get(blogId, user, onlyContent);
 		List<Map<String, Object>> list = new ArrayList<>();
 		if(obj != null){

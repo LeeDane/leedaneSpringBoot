@@ -1,11 +1,13 @@
 layui.use(['carousel', 'form', 'laypage', "laydate", 'layer'], function(){
     var carousel = layui.carousel
     ,form = layui.form;
+    var detailInfoContrainerHeight = $("#detail-info-contrainer").height();
+    $("#images-carousel-contrainer").find(".carousel-img").css("height", detailInfoContrainerHeight + "px");
     //图片轮播
     carousel.render({
         elem: '#images-carousel-contrainer'
         ,width: '100%'
-        ,height: '295px'
+        ,height:  detailInfoContrainerHeight + 'px'
         ,interval: 5000
     });
     var layer = layui.layer;
@@ -47,7 +49,8 @@ layui.use(['carousel', 'form', 'laypage', "laydate", 'layer'], function(){
         var dataId = $(this).data("id");
         switch(dataId){
         case "base-detail":
-            resetParticlesHeight
+            resetParticlesHeight();
+            getBigField();
           break;
         case "generalize":
             //推广
@@ -104,7 +107,6 @@ layui.use(['carousel', 'form', 'laypage', "laydate", 'layer'], function(){
     });
 
     laypage = layui.laypage;
-    initClipBoard();
     //resetParticlesHeight();
     doRecommend();
     getShareLinks();
@@ -128,6 +130,40 @@ $(function(){
 	$recommendContainer = $("#recommend-container");
 });
 
+/********************************    获取大字段基本信息     *******************************************/
+/**
+ * 获取大字段信息
+ * @param obj
+ */
+function getBigField(){
+    //判断详情是否存在，有值的话就不用去重新获取了
+    if(isNotEmpty(productDetail)){
+        $("#bigfield-contrainer").html(productDetail);
+        return;
+    }
+	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+	$.ajax({
+		type : "post",
+		data: {productUrl: productUrl, couponUrl: couponUrl, title: productTitle},
+		url : "/mall/search/"+ productSourceId +"/bigfield",
+		dataType: 'json',
+		beforeSend:function(){
+		},
+		success : function(data) {
+			layer.close(loadi);
+			if(data.isSuccess){
+                $("#bigfield-contrainer").html(data.message);
+			}else{
+				ajaxError(data);
+			}
+		},
+		error : function(data) {
+			layer.close(loadi);
+			ajaxError(data);
+		}
+	});
+}
+
 /********************************    获取推广链接     *******************************************/
 /**
  * 获取推广信息
@@ -139,17 +175,11 @@ function getShareLinks(){
         return;
     }
 
-    //长连接
-    $("#longLink").val(productUrl);
-    if(isNotEmpty(couponUrl)){
-        $("#longCouponLink-contrainer").show();
-        $("#longCouponLink").val(couponUrl);
-    }
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
 		type : "post",
 		data: {productUrl: productUrl, couponUrl: couponUrl, title: productTitle},
-		url : "/mall/taobao/link/transform",
+		url : "/mall/tool/link/transform/"+ productSourceId,
 		dataType: 'json',
 		beforeSend:function(){
 		},
@@ -157,35 +187,87 @@ function getShareLinks(){
 			layer.close(loadi);
 			if(data.isSuccess){
 			    var bean = data.message;
-			    //短链接
-			     if(isNotEmpty(bean.shortLinkUrl)){
-                    $("#shortLink-contrainer").show();
-                    $("#shortLink").val(bean.shortLinkUrl);
-                }
-                if(isNotEmpty(bean.couponShortLinkUrl)){
-                    $("#shortCouponLink-contrainer").show();
-                    $("#shortCouponLink").val(bean.couponShortLinkUrl);
-                }
+			    var index = productSourceId.indexOf('tb_');
+			    if(index == 0){
+			        $("#taobao-links").show();
+			        //长连接
+                    $("#longLink").val(productUrl);
+                    if(isNotEmpty(couponUrl)){
+                        $(".longCouponLink-contrainer").show();
+                        $("#longCouponLink").val(couponUrl);
+                    }
 
-                //淘口令
-                 if(isNotEmpty(bean.taoToken)){
-                    $("#koulingLink-contrainer").show();
-                    $("#koulingLink").val(bean.taoToken);
-                }
-                if(isNotEmpty(bean.couponShortLinkUrl)){
-                    $("#koulingCouponLink-contrainer").show();
-                    $("#koulingCouponLink").val(bean.couponLinkTaoToken);
-                }
+			        //短链接
+                     if(isNotEmpty(bean.shortLinkUrl)){
+                        $(".shortLink-contrainer").show();
+                        $("#shortLink").val(bean.shortLinkUrl);
+                    }
+                    if(isNotEmpty(bean.couponShortLinkUrl)){
+                        $(".shortCouponLink-contrainer").show();
+                        $("#shortCouponLink").val(bean.couponShortLinkUrl);
+                    }
 
-                //二维码
-                if(isNotEmpty(bean.qrCodeUrl)){
-                    $("#koulingLink-contrainer").show();
-                    $("#qrCode").attr("src",bean.qrCodeUrl );
+                    //淘口令
+                     if(isNotEmpty(bean.taoToken)){
+                        $(".koulingLink-contrainer").show();
+                        $("#koulingLink").val(bean.taoToken);
+                    }
+                    if(isNotEmpty(bean.couponLinkTaoToken)){
+                        $(".koulingCouponLink-contrainer").show();
+                        $("#koulingCouponLink").val(bean.couponLinkTaoToken);
+                    }
+
+                    //二维码
+                    if(isNotEmpty(bean.qrCodeUrl)){
+                        $(".qrCode-contrainer").show();
+                        $("#qrCode").attr("src",bean.qrCodeUrl );
+                    }
+                   if(isNotEmpty(bean.qrCouponCodeUrl)){
+                       $(".qrCouponCode-contrainer").show();
+                       $("#qrCouponCode").attr("src",bean.qrCouponCodeUrl );
+                   }
+			    }
+                index = productSourceId.indexOf('jd_');
+			    if(index == 0){
+			        $("#jingdong-links").show();
+
+			        //长连接
+                    $("#longJDLink").val(productUrl);
+                    if(isNotEmpty(couponUrl)){
+                        $(".longCouponLink-contrainer").show();
+                        $("#longJDCouponLink").val(couponUrl);
+                    }
+			        //短链接
+                     if(isNotEmpty(bean.shortLinkUrl)){
+                        $(".shortLink-contrainer").show();
+                        $("#shortJDLink").val(bean.shortLinkUrl);
+                    }
+                    if(isNotEmpty(bean.couponShortLinkUrl)){
+                        $(".shortCouponLink-contrainer").show();
+                        $("#shortJDCouponLink").val(bean.couponShortLinkUrl);
+                    }
+			    }
+
+			    index = productSourceId.indexOf('pdd_');
+                if(index == 0){
+                    $("#pdd-links").show();
+
+                    //长连接
+                    $("#longPDDLink").val(productUrl);
+                    if(isNotEmpty(couponUrl)){
+                        $(".longCouponLink-contrainer").show();
+                        $("#longPDDCouponLink").val(couponUrl);
+                    }
+                    //短链接
+                     if(isNotEmpty(bean.shortLinkUrl)){
+                        $(".shortLink-contrainer").show();
+                        $("#shortPDDLink").val(bean.shortLinkUrl);
+                    }
+                    if(isNotEmpty(bean.couponShortLinkUrl)){
+                        $(".shortCouponLink-contrainer").show();
+                        $("#shortPDDCouponLink").val(bean.couponShortLinkUrl);
+                    }
                 }
-               if(isNotEmpty(bean.qrCouponCodeUrl)){
-                   $("#qrCouponCode-contrainer").show();
-                   $("#qrCouponCode").attr("src",bean.qrCouponCodeUrl );
-               }
 			}else{
 				ajaxError(data);
 			}
@@ -216,7 +298,7 @@ function doRecommend(){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
 	$.ajax({
 		type : "GET",
-		url : "/mall/taobao/product/"+ productId +"/recommend",
+		url : "/mall/search/product/"+ productId +"/recommend",
 		dataType: 'json',
 		beforeSend:function(){
 			$recommendContainer.empty();
@@ -268,14 +350,14 @@ function buildRecommendRow(index, recommend){
  * @param obj
  * @param type 商店固定是4，商品固定是5
  */
-function searchShop(obj, type){
+function searchProduct(obj, platform){
 	var $SearchKey = $("input[name='shop-search-value']");
 	if(isEmpty($SearchKey.val())){
 		layer.msg("请先输入检索的内容！");
 		$SearchKey.focus();
 		return;
 	}
-	window.open('/mall/s?q='+$SearchKey.val() +"&tp=" + type, '_blank');	
+	window.open('/mall/s?q='+$SearchKey.val() +"&platform=" + platform, '_blank');
 }
 
 /**

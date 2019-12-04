@@ -52,7 +52,7 @@ public class S_WishServiceImpl extends MallRoleCheckService implements S_WishSer
 			HttpRequestInfoBean request) {
 		
 		logger.info("S_WishServiceImpl-->add():json="+json);
-		int productId = JsonUtil.getIntValue(json, "product_id");
+		long productId = JsonUtil.getLongValue(json, "product_id");
 		S_ProductBean productBean = productHandler.getNormalProductBean(productId);
 		if(productBean == null)
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商品不存在或已被删除.value));

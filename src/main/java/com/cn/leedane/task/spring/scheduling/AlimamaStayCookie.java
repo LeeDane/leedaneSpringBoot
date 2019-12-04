@@ -1,13 +1,11 @@
 package com.cn.leedane.task.spring.scheduling;
 
+import com.cn.leedane.mall.taobao.api.AlimamaShareLink;
+import com.cn.leedane.utils.JsonUtil;
 import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
 import org.quartz.SchedulerException;
 import org.springframework.stereotype.Component;
-
-import com.cn.leedane.taobao.api.AlimamaShareLink;
-import com.cn.leedane.utils.JsonUtil;
 
 /**
  * 使阿里妈妈保持登录状态cookie的任务

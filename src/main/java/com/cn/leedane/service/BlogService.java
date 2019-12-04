@@ -86,7 +86,7 @@ public interface BlogService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<Map<String, Object>> getLatestBlogById(int lastBlogId,int num);
+	public List<Map<String, Object>> getLatestBlogById(long lastBlogId,int num);
 	
 	/**
 	 * 获得最热门的size条记录

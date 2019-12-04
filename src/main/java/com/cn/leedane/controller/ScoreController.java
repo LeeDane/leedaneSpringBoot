@@ -79,7 +79,7 @@ public class ScoreController extends BaseController{
 		UserBean user = getUserFromMessage(message);
 		int score = JsonUtil.getIntValue(json, "score", 0);
 		String desc = JsonUtil.getStringValue(json, "desc");
-		int tableId = JsonUtil.getIntValue(json, "tableId");
+		long tableId = JsonUtil.getLongValue(json, "tableId");
 		String tableName = JsonUtil.getStringValue(json, "tableName");
 		message.putAll(scoreService.reduceScore(score, desc, tableName, tableId, user));
 		return message.getMap();

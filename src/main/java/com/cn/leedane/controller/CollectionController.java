@@ -69,7 +69,7 @@ public class CollectionController extends BaseController{
 		
 		checkRoleOrPermission(model, request);;
 		//为了安全，必须是登录用户才能操作
-		int toUserId = JsonUtil.getIntValue(getJsonFromMessage(message), "toUserId");
+		long toUserId = JsonUtil.getLongValue(getJsonFromMessage(message), "toUserId");
 		if(toUserId != getUserFromMessage(message).getId()){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
 			message.put("responseCode", EnumUtil.ResponseCode.没有操作权限.value);

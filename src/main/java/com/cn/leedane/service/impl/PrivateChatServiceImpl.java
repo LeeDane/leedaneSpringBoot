@@ -56,7 +56,7 @@ public class PrivateChatServiceImpl implements PrivateChatService<PrivateChatBea
 			HttpRequestInfoBean request) {
 		logger.info("PrivateChatServiceImpl-->send():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
-		int toUserId = JsonUtil.getIntValue(jo, "to_user_id"); //发送给对方的用户ID
+		long toUserId = JsonUtil.getLongValue(jo, "to_user_id"); //发送给对方的用户ID
 		if(toUserId < 1 || user.getId() == toUserId){
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 		}

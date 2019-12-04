@@ -66,8 +66,8 @@ public class FanServiceImpl implements FanService<FanBean> {
 	public Map<String, Object> getMyAttentionsLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		long start = System.currentTimeMillis();
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
+		long lastId = JsonUtil.getLongValue(jo, "last_id"); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id"); //结束的页数
 		long toUserId = JsonUtil.getLongValue(jo, "toUserId", user.getId());
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		
@@ -133,9 +133,9 @@ public class FanServiceImpl implements FanService<FanBean> {
 	public Map<String, Object> getToAttentionsLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		long start = System.currentTimeMillis();
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
-		int toUserId = JsonUtil.getIntValue(jo, "toUserId");
+		long lastId = JsonUtil.getLongValue(jo, "last_id"); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id"); //结束的页数
+		long toUserId = JsonUtil.getLongValue(jo, "toUserId");
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		
 		logger.info("FanServiceImpl-->getToAttentionsLimit():jo="+jo.toString());
@@ -201,8 +201,8 @@ public class FanServiceImpl implements FanService<FanBean> {
 	public Map<String, Object> getMyFansLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		long start = System.currentTimeMillis();
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
+		long lastId = JsonUtil.getLongValue(jo, "last_id"); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id"); //结束的页数
 		long toUserId = JsonUtil.getLongValue(jo, "toUserId", user.getId());
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		
@@ -266,9 +266,9 @@ public class FanServiceImpl implements FanService<FanBean> {
 	public Map<String, Object> getToFansLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		long start = System.currentTimeMillis();
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
-		int toUserId = JsonUtil.getIntValue(jo, "toUserId");
+		long lastId = JsonUtil.getLongValue(jo, "last_id"); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id"); //结束的页数
+		long toUserId = JsonUtil.getLongValue(jo, "toUserId");
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		
 		logger.info("FanServiceImpl-->getToFansLimit():jo="+jo.toString());
@@ -370,7 +370,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 
 	@Override
 	public boolean isFanEachOther(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
-		int toUserId = JsonUtil.getIntValue(jo, "toUserId");
+		long toUserId = JsonUtil.getLongValue(jo, "toUserId");
 		logger.info("FanServiceImpl-->isFanEachOther():id="+user.getId()+",toUserId="+toUserId);
 		List<Map<String, Object>> list = this.fanMapper.isFanEachOther(user.getId(), toUserId, ConstantsUtil.STATUS_NORMAL);
 		if(!CollectionUtils.isEmpty(list) && list.size() == 2)
@@ -382,7 +382,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 	public Map<String, Object> addFan(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("FanServiceImpl-->addFan():jo="+jo.toString());
-		int toUserId = JsonUtil.getIntValue(jo, "toUserId");
+		long toUserId = JsonUtil.getLongValue(jo, "toUserId");
 		String remark = JsonUtil.getStringValue(jo, "remark");
 		ResponseMap message = new ResponseMap();
 		if(toUserId == 0) {
@@ -450,7 +450,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 			HttpRequestInfoBean request) {
 		logger.info("FanServiceImpl-->isFan():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
-		int toUserId = JsonUtil.getIntValue(jo, "toUserId");
+		long toUserId = JsonUtil.getLongValue(jo, "toUserId");
 		
 		if(toUserId == 0) {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));

@@ -127,7 +127,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 	public Map<String, Object> delete(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("FinancialServiceImpl-->delete():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		int fid = JsonUtil.getIntValue(jo, "fid");
+		long fid = JsonUtil.getLongValue(jo, "fid");
 		
 		ResponseMap message = new ResponseMap();
 		if(fid < 1){
@@ -454,7 +454,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 		long start = System.currentTimeMillis();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
+		long lastId = JsonUtil.getLongValue(jo, "last_id"); //开始的页数
 		String lastAdditionTime = JsonUtil.getStringValue(jo, "last_addition_time"); //开始的时间
 		if(StringUtil.isNull(lastAdditionTime)){
 			lastAdditionTime = DateUtil.DateToString(new Date(), "yyyy-MM-dd HH:mm") + ":00";

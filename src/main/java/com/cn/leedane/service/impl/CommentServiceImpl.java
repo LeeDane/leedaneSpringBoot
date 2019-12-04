@@ -71,7 +71,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		//, \"content\":\"我同意\" ,\"level\": 1, \"pid\":23, \"from\":\"Android客户端\"}
 		logger.info("CommentServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
-		int tableId = JsonUtil.getIntValue(jo, "table_id", 0);
+		long tableId = JsonUtil.getLongValue(jo, "table_id", 0);
 		String content = JsonUtil.getStringValue(jo, "content");
 		boolean check = JsonUtil.getBooleanValue(jo, "check", true);
 		ResponseMap message = new ResponseMap();
@@ -92,7 +92,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		}
 		
 		int level = JsonUtil.getIntValue(jo, "level", 5);
-		int pid = JsonUtil.getIntValue(jo, "pid", 0);
+		long pid = JsonUtil.getLongValue(jo, "pid", 0);
 		CommentBean bean = new CommentBean();
 		bean.setCommentLevel(level);
 		bean.setContent(content);
@@ -172,7 +172,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	 * @param tableId
 	 * @param message
 	 */
-	private boolean checkComment(String tableName, int tableId, Map<String, Object> message) {
+	private boolean checkComment(String tableName, long tableId, Map<String, Object> message) {
 		
 		List<Map<String, Object>> list = commentMapper.executeSQL("select id, can_comment from "+tableName +" where id = ? limit 1", tableId);
 		//检查该实体数据是否数据存在,防止对不存在的对象添加评论
@@ -195,7 +195,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	 * @param commentId
 	 * @return
 	 */
-	private int getCommentCreateUserId(int commentId){
+	private int getCommentCreateUserId(long commentId){
 		int createUserId = 0;
 		List<Map<String, Object>> list = commentMapper.executeSQL("select create_user_id from "+DataTableType.评论.value+" where status=? and id=? limit 1", ConstantsUtil.STATUS_NORMAL, commentId);
 		if(list != null && list.size() == 1){
@@ -214,11 +214,11 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		 //{\"uid\":2,\"table_name\":\"t_mood\", \"table_id\":123,\"pageSize\":5
 		//, \"first_id\": 2, \"last_id\":2, \"method\":\"firstloading\"}
 		String tableName = JsonUtil.getStringValue(jo, "table_name"); //操作表名
-		int tableId = JsonUtil.getIntValue(jo, "table_id", 0); //操作表中的id
+		long tableId = JsonUtil.getLongValue(jo, "table_id", 0); //操作表中的id
 		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
-		int toUserId = JsonUtil.getIntValue(jo, "to_user_id"); //操作的对象用户的id
-		int firstId = JsonUtil.getIntValue(jo, "first_id", 0); //结束的页数
+		long lastId = JsonUtil.getLongValue(jo, "last_id", 0); //开始的页数
+		long toUserId = JsonUtil.getLongValue(jo, "to_user_id"); //操作的对象用户的id
+		long firstId = JsonUtil.getLongValue(jo, "first_id", 0); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		boolean showUserInfo = JsonUtil.getBooleanValue(jo, "showUserInfo");
 		StringBuffer sql = new StringBuffer();
@@ -368,9 +368,9 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		if(user == null)
 			user = new UserBean();
 		String tableName = JsonUtil.getStringValue(jo, "table_name"); //操作表名
-		int tableId = JsonUtil.getIntValue(jo, "table_id", 0); //操作表中的id
+		long tableId = JsonUtil.getLongValue(jo, "table_id", 0); //操作表中的id
 		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int toUserId = JsonUtil.getIntValue(jo, "to_user_id"); //操作的对象用户的id
+		long toUserId = JsonUtil.getLongValue(jo, "to_user_id"); //操作的对象用户的id
 		boolean showUserInfo = JsonUtil.getBooleanValue(jo, "showUserInfo");
 		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
 		int currentIndex = JsonUtil.getIntValue(jo, "current", 0); //当前的索引
@@ -487,17 +487,17 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		//, \"first_id\": 2, \"last_id\":2, \"method\":\"firstloading\"}
 		ResponseMap message = new ResponseMap();
 		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
-		int cid = JsonUtil.getIntValue(jo, "cid");
+		long cid = JsonUtil.getLongValue(jo, "cid");
 		if(cid < 1){
 			message.put("message", "评论ID为空");
 			return message.getMap();
 		}
 		
 		String tableName = JsonUtil.getStringValue(jo, "table_name"); //操作表名
-		int tableId = JsonUtil.getIntValue(jo, "table_id", 0); //操作表中的id
+		long tableId = JsonUtil.getLongValue(jo, "table_id", 0); //操作表中的id
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize"); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id", 0); //结束的页数
+		long lastId = JsonUtil.getLongValue(jo, "last_id", 0); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id", 0); //结束的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		
 		StringBuffer sql = new StringBuffer();
@@ -555,7 +555,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		logger.info("CommentServiceImpl-->getCountByObject():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		String tableName = JsonUtil.getStringValue(jo, "table_name"); //操作表名
-		int tableId = JsonUtil.getIntValue(jo, "table_id", 0); //操作表中的id
+		long tableId = JsonUtil.getLongValue(jo, "table_id", 0); //操作表中的id
 		
 		StringBuffer sql = new StringBuffer();
 		sql.append("where table_name = '" + tableName +"'");
@@ -594,9 +594,9 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			HttpRequestInfoBean request) {
 		logger.info("CommentServiceImpl-->deleteComment():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
-		
-		int cid = JsonUtil.getIntValue(jo, "cid");
-		int createUserId = JsonUtil.getIntValue(jo, "create_user_id");
+
+		long cid = JsonUtil.getLongValue(jo, "cid");
+		long createUserId = JsonUtil.getLongValue(jo, "create_user_id");
 		
 		if(cid < 1)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
@@ -635,7 +635,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			HttpRequestInfoBean request) {
 		logger.info("CommentServiceImpl-->updateCommentStatus():jo="+jo.toString());
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
-		int tableId = JsonUtil.getIntValue(jo, "table_id");
+		long tableId = JsonUtil.getLongValue(jo, "table_id");
 		boolean canComment = JsonUtil.getBooleanValue(jo, "can_comment", true);
 		ResponseMap message = new ResponseMap();
 		

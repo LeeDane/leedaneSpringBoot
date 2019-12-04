@@ -62,7 +62,7 @@ public class BlogController extends BaseController{
 		 */
 		boolean hasImg = JsonUtil.getBooleanValue(json, "has_img");
 
-		int blogId = JsonUtil.getIntValue(json, "bid");
+		long blogId = JsonUtil.getLongValue(json, "bid");
 		
 		/**
 		 * 是否要自动截取摘要摘要

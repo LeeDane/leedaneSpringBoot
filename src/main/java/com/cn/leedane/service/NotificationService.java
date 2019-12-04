@@ -74,7 +74,7 @@ public interface NotificationService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deleteNotification(int nid, UserBean user, HttpRequestInfoBean request);
+	public Map<String, Object> deleteNotification(long nid, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 更新通知为已读状态

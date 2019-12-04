@@ -64,6 +64,16 @@ public class S_OrderHandler {
 		systemCache.removeCache(key);
 		return true;
 	}
+
+	/**
+	 * 判断订单记录是否存在
+	 * @param platform
+	 * @param orderCode
+	 * @return
+	 */
+	public boolean inRecode(String platform, String orderCode) {
+		return false;
+	}
 	
 	/**
 	 * 获取未处理订单在redis的key
@@ -73,5 +83,6 @@ public class S_OrderHandler {
 	public static String getNoDealOrderKey(long userId){
 		return ConstantsUtil.NO_DEAL_ORDER_REDIS + userId;
 	}
+
 
 }

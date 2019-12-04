@@ -54,3 +54,6 @@ alter table t_operate_log add COLUMN `stick` int(3) DEFAULT 0 COMMENT '排序字
 
 /*修改评论表，添加排序字段, 0:表示未置顶，大于1表示置顶*/
 alter table t_comment add COLUMN `stick` int(3) DEFAULT 0 COMMENT '排序字段，根据从大到小排序，大于0表示置顶字段';
+
+/*为选项表添加唯一性约束*/
+alter table t_option add constraint t_option_in_unique UNIQUE(option_key, version);

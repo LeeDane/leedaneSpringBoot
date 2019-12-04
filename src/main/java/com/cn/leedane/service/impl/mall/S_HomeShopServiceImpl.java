@@ -46,7 +46,7 @@ public class S_HomeShopServiceImpl extends MallRoleCheckService implements S_Hom
 	public Map<String, Object> add(JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("S_HomeShopServiceImpl-->add():json="+json);
-		int shopId = JsonUtil.getIntValue(json, "shop_id");
+		long shopId = JsonUtil.getLongValue(json, "shop_id");
 		int order = JsonUtil.getIntValue(json, "shop_order", 1);
 		S_ShopBean shopBean = shopHandler.getNormalShopBean(shopId);
 		if(shopBean == null)

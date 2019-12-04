@@ -25,7 +25,7 @@ public class S_HomeShopBean extends RecordTimeBean{
 	
 		@Column(value="shop_id")
 		@Field
-		private int shopId; 
+		private long shopId;
 		
 		@Column(value="shop_order")
 		@Field
@@ -34,11 +34,11 @@ public class S_HomeShopBean extends RecordTimeBean{
 		@Column(required=false)
 		private S_ShopBean shopBean;
 
-		public int getShopId() {
+		public long getShopId() {
 			return shopId;
 		}
 
-		public void setShopId(int shopId) {
+		public void setShopId(long shopId) {
 			this.shopId = shopId;
 		}
 

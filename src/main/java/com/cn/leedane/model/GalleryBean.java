@@ -39,7 +39,7 @@ public class GalleryBean extends RecordTimeBean{
 	private String galleryDesc;
 
 	@Column("category_id")
-	private int categoryId;
+	private long categoryId;
 
 	//@Column(length=255, nullable=false)
 	public String getPath() {
@@ -83,11 +83,11 @@ public class GalleryBean extends RecordTimeBean{
 		this.length = length;
 	}
 
-	public int getCategoryId() {
+	public long getCategoryId() {
 		return categoryId;
 	}
 
-	public void setCategoryId(int categoryId) {
+	public void setCategoryId(long categoryId) {
 		this.categoryId = categoryId;
 	}
 }

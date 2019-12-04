@@ -43,7 +43,7 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 								   HttpRequestInfoBean request){
 		logger.info("CategoryServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String text = JsonUtil.getStringValue(jo, "text");
-		int pid = JsonUtil.getIntValue(jo, "pid", 0);
+		long pid = JsonUtil.getLongValue(jo, "pid", 0);
 		ResponseMap message = new ResponseMap();
 		
 		if(StringUtil.isNull(text)){

@@ -96,7 +96,7 @@ public class WechatHandler {
 		JSONObject jsonObject = JSONObject.fromObject(value);	
 		String currentType = JsonUtil.getStringValue(jsonObject, "currentType", WeixinUtil.MODEL_MAIN_MENU);
 		boolean isBindLogin = JsonUtil.getBooleanValue(jsonObject, "bindLogin");
-		int lastBlogId = JsonUtil.getIntValue(jsonObject, "lastBlogId");
+		long lastBlogId = JsonUtil.getLongValue(jsonObject, "lastBlogId");
 		WeixinCacheBean cacheBean = new WeixinCacheBean();
 		cacheBean.setCurrentType(currentType);
 		cacheBean.setBindLogin(isBindLogin);

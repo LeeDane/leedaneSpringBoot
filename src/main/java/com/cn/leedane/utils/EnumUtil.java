@@ -92,7 +92,7 @@ public class EnumUtil {
 		角色("t_role"), 用户角色("t_user_role"), 链接管理("t_link_manage"), 留言("t_message_board"), 素材("t_material"), 
 		任务("t_job_manage"), 贡献值("t_circle_contribution"),圈子("t_circle"), 圈子成员("t_circle_member"), 帖子("t_circle_post"), 
 		不存在的表("t_inexistence"), 分类("t_category"), 商店("t_mall_shop"), 商店商品("t_mall_product"), 商品订单("t_mall_order"),
-		商品心愿单("t_mall_wish"), 大事件("t_event");
+		商品心愿单("t_mall_wish"), 大事件("t_event"), 选项配置("t_option");
 	
 		private DataTableType(String value) {
 			this.value = value;
@@ -484,6 +484,8 @@ public class EnumUtil {
 		该图库不存在(4038),
 		请输入正确验证码(4039),
 		淘宝api异常(4040),
+		京东api异常(4041),
+		系统无法解析出地址栏中的id(4042),
 		;
 		
 		private ResponseCode(int value) {
@@ -585,7 +587,7 @@ public class EnumUtil {
      * version 1.0
      */
 	public enum ProductPlatformType {
-		淘宝("淘宝网"),京东("京东"), 苏宁("苏宁"), 天猫("天猫");
+		淘宝("淘宝网"),京东("京东"), 苏宁("苏宁"), 天猫("天猫"), 拼多多("拼多多"), 系统自营("系统自营");
 	
 		private ProductPlatformType(String value) {
 			this.value = value;
@@ -593,6 +595,7 @@ public class EnumUtil {
 	
 		public final String value;
 	}
+
 	
 	/**
      * 商品统计类型类型
@@ -631,7 +634,14 @@ public class EnumUtil {
 	 * version 1.0
 	 */
 	public enum MallOrderType {
-		禁用(0),已完成(1), 已删除(2), 待结算佣金(9), 待支付佣金(10), 已支付佣金 (11);
+		禁用(0),
+		已提交(1),  //表示用户提交了订单申请
+		已删除(2),
+		待结算佣金(20),  //系统从第三方平台获取订单后进行匹配，匹配成功后的状态
+		待支付佣金(21),  //系统定时对待结算佣金的状态做结算佣金的处理、做统计后的状态
+		已支付佣金 (22), //系统对待支付佣金的订单做支付后订单的状态
+		有争议 (23), //对同时出现一个订单号对应多个人的情况，系统将订单修改为有争议状态，方便审核后再进入待结算佣金
+		已完成(24); //对该订单的结算用户或者非法交易的订单做完成处理，将不支持对此订单做任何操作
 	
 		private MallOrderType(int value) {
 			this.value = value;

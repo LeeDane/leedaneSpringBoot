@@ -50,7 +50,7 @@ public class ReportServiceImpl extends AdminRoleCheckService implements ReportSe
 		//{\"table_name\":\"t_mood\", \"table_id\":2334, 'reason':'青色'}
 		logger.info("ReportServiceImpl-->addReport():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		final String tableName = JsonUtil.getStringValue(jo, "table_name");
-		final int tableId = JsonUtil.getIntValue(jo, "table_id");
+		final long tableId = JsonUtil.getLongValue(jo, "table_id");
 		int type = JsonUtil.getIntValue(jo, "type", 0);
 		String reason = JsonUtil.getStringValue(jo, "reason");
 		final boolean anonymous = JsonUtil.getBooleanValue(jo, "anonymous", true); //是否匿名举报，默认是匿名
@@ -118,7 +118,7 @@ public class ReportServiceImpl extends AdminRoleCheckService implements ReportSe
 			HttpRequestInfoBean request) {
 		logger.info("ReportServiceImpl-->cancel():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
-		int tableId = JsonUtil.getIntValue(jo, "table_id");
+		long tableId = JsonUtil.getLongValue(jo, "table_id");
 		
 		ResponseMap message = new ResponseMap();
 	

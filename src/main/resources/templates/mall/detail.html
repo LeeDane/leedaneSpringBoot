@@ -7,7 +7,6 @@
 	<title th:text="'商品详情--'+${product.title}"></title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
 	<style type="text/css">
-	
 		.my-layui-input{
 			height: 38px;
 		    line-height: 1.3;
@@ -85,7 +84,7 @@
 		/**  大屏样式 **/
 		@media screen and (min-width: 900px){
 			.my-layui-input{
-				width: calc(100% - 169px);
+				width: calc(100% - 264px);
 				padding-left: 10px;
 			}
 			#active-container .image0{
@@ -331,6 +330,10 @@
 		.button_link:hover .line_bottom{height:100%;bottom:-2px;}
 		.button_link .line_left{height:2px;width:0;right:-50%;bottom:-2px;}
 		.button_link:hover .line_left{width:100%;right:-2px;}
+
+		#bigfield-contrainer img{
+			width: 100%!important;
+		}
 	</style>
 </head>
 <body>
@@ -355,8 +358,9 @@
 			</div>
 			<div class="" style="text-align: center; margin-top: 10px; margin-bottom: 10px;">
 				<input type="text" name="shop-search-value" placeholder="请输入关键字" autocomplete="off" class="my-layui-input" /><div class="layui-btn-group btn-product-search">
-				  <button class="layui-btn" onclick="searchShop(this, 5);">搜商品</button>
-				  <button class="layui-btn" onclick="searchShop(this, 4);">搜商店</button>
+				  	<button class="layui-btn" onclick="searchProduct(this, '淘宝网');">搜商品</button>
+				  	<button class="layui-btn" onclick="searchProduct(this, '京东');">搜京东</button>
+					<button class="layui-btn" onclick="searchProduct(this, '拼多多');">搜拼多多</button>
 				</div>
 			</div>
 			<div class="layui-row">
@@ -376,7 +380,7 @@
 								</div>
 					   		</div>
 						</div>
-						<div class="layui-col-md7 layui-col-xs12">
+						<div class="layui-col-md7 layui-col-xs12" id="detail-info-contrainer">
 							<div class="layui-row">
 								<div class="layui-col-md12 layui-col-xs12" style="background-color: #ffffff; min-height: 280px;">
 							    	<div class="layui-row" style="margin: 10px;">
@@ -400,11 +404,11 @@
 											<a th:href="'/mall/1'" target="view_window" th:text="'店铺：'+ ${product.shopTitle}"></a>
 										</p>
 							    		<div style="margin-top: 8px;">
-											<a th:if="${product.couponAmount > 0}" th:utext="'券后价: ¥'+ ${product.afterCouponPrice}" th:href="${product.couponShareUrl}" class="layui-btn layui-btn-danger layui-btn-small"></a>
+											<a th:if="${product.couponAmount > 0}" th:utext="'券后价: ¥'+ ${product.afterCouponPrice}" th:href="${product.couponShareUrl} != null and ${product.couponShareUrl} != '' ? ${product.couponShareUrl} : ${product.shareUrl}" class="layui-btn layui-btn-danger layui-btn-small"></a>
 											<a th:if="${product.couponAmount == 0}" th:utext="'在售价: ¥'+ ${product.price}" th:href="${product.shareUrl}" class="layui-btn layui-btn-danger layui-btn-small"></a>
 											<!--<a style="margin-top: 8px;" class="layui-btn layui-btn-small" th:href="${product.link}" th:utext="${product.platform} +'链接'" onclick=""></a>-->
 						    				<button class="layui-btn layui-btn-small" title="加入心愿单" onclick="addWish(this);"><i class="layui-icon">&#xe600;</i></button>
-						    				<a href="/mall/order" class="layui-btn layui-btn-small">登记购买</a>
+						    				<a th:href="${'/mall/order/register/' + productId}" class="layui-btn layui-btn-small">登记购买</a>
 											<a class="layui-btn layui-btn-normal layui-btn-small -mob-share-ui-button -mob-share-open">分享</a>
 											<!--MOB SHARE BEGIN-->
 											<div class="-mob-share-ui" style="display: none">
@@ -443,7 +447,9 @@
 					    <li>购买须知</li>
 					  </ul>
 					  <div class="layui-tab-content" style="min-height: 100px; border-left: 1px solid #e2e2e2; border-right: 1px solid #e2e2e2; border-bottom: 1px solid #e2e2e2; background: #fff;">
-					    <div class="layui-tab-item" th:utext="${product.detail}"></div>
+					    <div class="layui-tab-item" id="bigfield-contrainer">
+
+						</div>
 					    <div th:if="not isThirdParty" class="layui-tab-item" id="comment" >
 					    	<div class="layui-row">
 					    		<div class="layui-form-item layui-form-text">
@@ -467,8 +473,8 @@
 					    	</div>
 					    </div>
 					  	<div class="layui-tab-item layui-show" >
-							<div class="layui-row">
-								<div class="layui-col-md12 layui-col-xs12" id="transform-contrainer">
+							<div class="layui-row" id="taobao-links" style="display: none;">
+								<div class="layui-col-md12 layui-col-xs12 transform-contrainer">
 									<h4><label id="longLinkTip">长连接</label> <i class="layui-icon layui-icon-face-smile" style="font-size: 30px; color: #1E9FFF;"></i></h4>
 									<div style="margin-left: 10px;">
 										<label style="font-weight: 400; line-height: 20px;">下单链接：</label>
@@ -476,47 +482,115 @@
 										<button class="layui-btn layui-btn-sm layui-btn-tranform" data-clipboard-action="copy" data-clipboard-target="#longLink">复制链接</button>
 										<button class="layui-btn layui-btn-danger layui-btn-sm" onclick="openThirdLink(this);">跳转</button>
 									</div>
-									<div id="longCouponLink-contrainer" style="margin-left: 10px; margin-top: 5px; display: none;">
+									<div class="longCouponLink-contrainer" style="margin-left: 10px; margin-top: 5px; display: none;">
 										<label style="font-weight: 400; line-height: 20px;">领券链接：</label>
 										<input id="longCouponLink" type="text" class="tab-share-input tab-share-input-link" readonly="readonly">
 										<button class="layui-btn layui-btn-sm layui-btn-tranform" data-clipboard-action="copy" data-clipboard-target="#longCouponLink">复制链接</button>
 										<button class="layui-btn layui-btn-danger layui-btn-sm" onclick="openThirdLink(this);">跳转</button>
 									</div>
 									<h4><label id="shortLinkTip">短连接</label></h4>
-									<div id="shortLink-contrainer" style="margin-left: 10px;">
+									<div class="shortLink-contrainer" style="margin-left: 10px; display: none;">
 										<label style="font-weight: 400; line-height: 20px;">下单链接：</label>
 										<input id="shortLink" type="text" class="tab-share-input tab-share-input-link" readonly="readonly">
 										<button class="layui-btn layui-btn-sm layui-btn-tranform" data-clipboard-action="copy" data-clipboard-target="#shortLink">复制链接</button>
 										<button class="layui-btn layui-btn-danger layui-btn-sm" onclick="openThirdLink(this);">跳转</button>
 									</div>
-									<div id="shortCouponLink-contrainer" style="margin-left: 10px; margin-top: 5px;">
+									<div class="shortCouponLink-contrainer" style="margin-left: 10px; margin-top: 5px; display: none;">
 										<label style="font-weight: 400; line-height: 20px;">领券链接：</label>
 										<input id="shortCouponLink" type="text" class="tab-share-input tab-share-input-link" readonly="readonly">
 										<button class="layui-btn layui-btn-sm layui-btn-tranform" data-clipboard-action="copy" data-clipboard-target="#shortCouponLink">复制链接</button>
 										<button class="layui-btn layui-btn-danger layui-btn-sm" onclick="openThirdLink(this);">跳转</button>
 									</div>
 									<h4><label id="koulingLinkTip">淘口令</label></h4>
-									<div id="koulingLink-contrainer" style="margin-left: 10px;">
+									<div class="koulingLink-contrainer" style="margin-left: 10px; display: none;">
 										<label style="font-weight: 400; line-height: 20px;">下单口令：</label>
 										<input id="koulingLink" type="text" class="tab-share-input tab-share-input-link" readonly="readonly">
 										<button class="layui-btn layui-btn-sm layui-btn-tranform" data-clipboard-action="copy" data-clipboard-target="#koulingLink">复制口令</button>
 									</div>
-									<div id="koulingCouponLink-contrainer" style="margin-left: 10px; margin-top: 5px;">
+									<div class="koulingCouponLink-contrainer" style="margin-left: 10px; margin-top: 5px; display: none;">
 										<label style="font-weight: 400; line-height: 20px;">领券口令：</label>
 										<input id="koulingCouponLink" type="text" class="tab-share-input tab-share-input-link" readonly="readonly">
 										<button class="layui-btn layui-btn-sm layui-btn-tranform" data-clipboard-action="copy" data-clipboard-target="#koulingCouponLink">复制口令</button>
 									</div>
 									<h4><label id="qrcodeTip">二维码</label></h4>
-									<div id="qrCode-contrainer" style="margin-left: 10px;">
+									<div class="qrCode-contrainer" style="margin-left: 10px; display: none;">
 										<label style="font-weight: 400; line-height: 20px;">下单二维码：</label>
 										<img id="qrCode" style="width: 150px; height: 150px;"/>
 									</div>
-									<div id="qrCouponCode-contrainer" style="margin-left: 10px; margin-top:  10px;">
+									<div class="qrCouponCode-contrainer" style="margin-left: 10px; margin-top:  10px; display: none;">
 										<label style="font-weight: 400; line-height: 20px;">领券二维码：</label>
 										<img id="qrCouponCode" style="width: 150px; height: 150px;"/>
 									</div>
 								</div>
-
+							</div>
+							<div class="layui-row" id="jingdong-links" style="display: none;">
+								<div class="layui-col-md12 layui-col-xs12 transform-contrainer">
+									<h4><label>长连接</label> <i class="layui-icon layui-icon-face-smile" style="font-size: 30px; color: #1E9FFF;"></i></h4>
+									<div style="margin-left: 10px;">
+										<label style="font-weight: 400; line-height: 20px;">下单链接：</label>
+										<input id="longJDLink" type="text" class="tab-share-input tab-share-input-link" readonly="readonly">
+										<button class="layui-btn layui-btn-sm layui-btn-tranform" data-clipboard-action="copy" data-clipboard-target="#longJDLink">复制链接</button>
+										<button class="layui-btn layui-btn-danger layui-btn-sm" onclick="openThirdLink(this);">跳转</button>
+									</div>
+									<div class="longCouponLink-contrainer" style="margin-left: 10px; margin-top: 5px; display: none;">
+										<label style="font-weight: 400; line-height: 20px;">领券链接：</label>
+										<input id="longCouponJDLink" type="text" class="tab-share-input tab-share-input-link" readonly="readonly">
+										<button class="layui-btn layui-btn-sm layui-btn-tranform" data-clipboard-action="copy" data-clipboard-target="#longCouponJDLink">复制链接</button>
+										<button class="layui-btn layui-btn-danger layui-btn-sm" onclick="openThirdLink(this);">跳转</button>
+									</div>
+									<h4><label>短连接</label></h4>
+									<div class="shortLink-contrainer" style="margin-left: 10px; display: none;">
+										<label style="font-weight: 400; line-height: 20px;">下单链接：</label>
+										<input id="shortJDLink" type="text" class="tab-share-input tab-share-input-link" readonly="readonly">
+										<button class="layui-btn layui-btn-sm layui-btn-tranform" data-clipboard-action="copy" data-clipboard-target="#shortJDLink">复制链接</button>
+										<button class="layui-btn layui-btn-danger layui-btn-sm" onclick="openThirdLink(this);">跳转</button>
+									</div>
+									<div class="shortCouponLink-contrainer" style="margin-left: 10px; margin-top: 5px; display: none;">
+										<label style="font-weight: 400; line-height: 20px;">领券链接：</label>
+										<input id="shortJDCouponLink" type="text" class="tab-share-input tab-share-input-link" readonly="readonly">
+										<button class="layui-btn layui-btn-sm layui-btn-tranform" data-clipboard-action="copy" data-clipboard-target="#shortJDCouponLink">复制链接</button>
+										<button class="layui-btn layui-btn-danger layui-btn-sm" onclick="openThirdLink(this);">跳转</button>
+									</div>
+									<h4><label>二维码</label></h4>
+									<div class="qrCode-contrainer" style="margin-left: 10px; display: none;">
+										<label style="font-weight: 400; line-height: 20px;">下单二维码：</label>
+										<img id="qrJDCode" style="width: 150px; height: 150px;"/>
+									</div>
+									<div class="qrCouponCode-contrainer" style="margin-left: 10px; margin-top:  10px; display: none;">
+										<label style="font-weight: 400; line-height: 20px;">领券二维码：</label>
+										<img id="qrJDCouponCode" style="width: 150px; height: 150px;"/>
+									</div>
+								</div>
+							</div>
+							<div class="layui-row" id="pdd-links" style="display: none;">
+								<div class="layui-col-md12 layui-col-xs12 transform-contrainer">
+									<h4><label>长连接</label> <i class="layui-icon layui-icon-face-smile" style="font-size: 30px; color: #1E9FFF;"></i></h4>
+									<div style="margin-left: 10px;">
+										<label style="font-weight: 400; line-height: 20px;">下单链接：</label>
+										<input id="longPDDLink" type="text" class="tab-share-input tab-share-input-link" readonly="readonly">
+										<button class="layui-btn layui-btn-sm layui-btn-tranform" data-clipboard-action="copy" data-clipboard-target="#longJDLink">复制链接</button>
+										<button class="layui-btn layui-btn-danger layui-btn-sm" onclick="openThirdLink(this);">跳转</button>
+									</div>
+									<div class="longCouponLink-contrainer" style="margin-left: 10px; margin-top: 5px; display: none;">
+										<label style="font-weight: 400; line-height: 20px;">领券链接：</label>
+										<input id="longCouponPDDLink" type="text" class="tab-share-input tab-share-input-link" readonly="readonly">
+										<button class="layui-btn layui-btn-sm layui-btn-tranform" data-clipboard-action="copy" data-clipboard-target="#longCouponJDLink">复制链接</button>
+										<button class="layui-btn layui-btn-danger layui-btn-sm" onclick="openThirdLink(this);">跳转</button>
+									</div>
+									<h4><label>短连接</label></h4>
+									<div class="shortLink-contrainer" style="margin-left: 10px; display: none;">
+										<label style="font-weight: 400; line-height: 20px;">下单链接：</label>
+										<input id="shortPDDLink" type="text" class="tab-share-input tab-share-input-link" readonly="readonly">
+										<button class="layui-btn layui-btn-sm layui-btn-tranform" data-clipboard-action="copy" data-clipboard-target="#shortJDLink">复制链接</button>
+										<button class="layui-btn layui-btn-danger layui-btn-sm" onclick="openThirdLink(this);">跳转</button>
+									</div>
+									<div class="shortCouponLink-contrainer" style="margin-left: 10px; margin-top: 5px; display: none;">
+										<label style="font-weight: 400; line-height: 20px;">领券链接：</label>
+										<input id="shortPDDCouponLink" type="text" class="tab-share-input tab-share-input-link" readonly="readonly">
+										<button class="layui-btn layui-btn-sm layui-btn-tranform" data-clipboard-action="copy" data-clipboard-target="#shortJDCouponLink">复制链接</button>
+										<button class="layui-btn layui-btn-danger layui-btn-sm" onclick="openThirdLink(this);">跳转</button>
+									</div>
+								</div>
 							</div>
 					  	</div>
 					    <div th:if="not isThirdParty" class="layui-tab-item " >
@@ -605,7 +679,7 @@
 			</div>
 			<div class="layui-row" desc="" style="margin-top: 10px;">
 				<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-				   <legend>推荐商品</legend>
+				   <legend>猜你喜欢</legend>
 				 </fieldset>
 				 <div class="layui-row" id="recommend-container" desc="推荐墙" style="margin-top: 10px; background-color: #fff;"></div>
 			</div>	
@@ -616,9 +690,11 @@
 <script th:inline="javascript">
 	/*<![CDATA[*/  
 	var productId = /*[[${product.id}]]*/;//取值
+	var productSourceId = /*[[${productSourceId}]]*/;//取值
 	var couponUrl = /*[[${product.couponShareUrl}]]*/;//取值
 	var productUrl = /*[[${product.shareUrl}]]*/;//取值
 	var productTitle = /*[[${product.title}]]*/;//取值
+	var productDetail = /*[[${product.detail}]]*/;//取值
 	/*]]>*/
 	// 指定图表的配置项和数据
 	var option = {

@@ -61,10 +61,10 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 									  HttpRequestInfoBean request) {
 		logger.info("ChatBgServiceImpl-->paging():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
-		
-		int lastId = JsonUtil.getIntValue(jo, "last_id", 0); //开始的页数
+
+		long lastId = JsonUtil.getLongValue(jo, "last_id", 0); //开始的页数
 		int type = JsonUtil.getIntValue(jo, "type", 0); //聊天背景的类型，0：免费,1:收费, 2:全部
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id"); //开始的页数
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		int pageSize = JsonUtil.getIntValue(jo, "pageSize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		
@@ -187,7 +187,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 			HttpRequestInfoBean request) {
 		logger.info("ChatBgServiceImpl-->verifyChatBg():jo="+jo.toString());
 		ResponseMap message = new ResponseMap();
-		int cid = JsonUtil.getIntValue(jo, "cid", 0); //聊天背景的ID
+		long cid = JsonUtil.getLongValue(jo, "cid", 0); //聊天背景的ID
 		
 		ChatBgBean chatBg = null;
 		if(cid < 1 || (chatBg = chatBgMapper.findById(ChatBgBean.class, cid)) == null)

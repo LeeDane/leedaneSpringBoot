@@ -12,7 +12,7 @@ public class ChatBean extends RecordTimeBean{
 
 	private static final long serialVersionUID = 1L;
 	
-	private int toUserId; //接收好友的用户ID
+	private long toUserId; //接收好友的用户ID
 	
 	private String createUserName; //创建用户名称
 	
@@ -23,10 +23,10 @@ public class ChatBean extends RecordTimeBean{
 	private boolean isRead; //是否读取
 	
 	///@Column(name="to_user_id")
-	public int getToUserId() {
+	public long getToUserId() {
 		return toUserId;
 	}
-	public void setToUserId(int toUserId) {
+	public void setToUserId(long toUserId) {
 		this.toUserId = toUserId;
 	}
 	public String getContent() {

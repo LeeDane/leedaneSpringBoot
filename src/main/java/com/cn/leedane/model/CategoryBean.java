@@ -19,7 +19,7 @@ public class CategoryBean extends RecordTimeBean{
 	/**
 	 * 父分类的id
 	 */
-	private int pid;
+	private long pid;
 	/**
 	 * 分类显示的文本信息
 	 */
@@ -79,11 +79,11 @@ public class CategoryBean extends RecordTimeBean{
 	@Field
 	private int level = 1; 
 
-	public int getPid() {
+	public long getPid() {
 		return pid;
 	}
 
-	public void setPid(int pid) {
+	public void setPid(long pid) {
 		this.pid = pid;
 	}
 

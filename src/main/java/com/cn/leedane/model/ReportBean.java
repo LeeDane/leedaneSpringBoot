@@ -26,7 +26,7 @@ public class ReportBean extends RecordTimeBean{
 	/**
 	 * 举报对象的ID，必须
 	 */
-	private int tableId;
+	private long tableId;
 	
 	/**
 	 * 类型
@@ -51,10 +51,10 @@ public class ReportBean extends RecordTimeBean{
 	}
 	
 	//@Column(name="table_id", nullable = false)
-	public int getTableId() {
+	public long getTableId() {
 		return tableId;
 	}
-	public void setTableId(int tableId) {
+	public void setTableId(long tableId) {
 		this.tableId = tableId;
 	}
 	

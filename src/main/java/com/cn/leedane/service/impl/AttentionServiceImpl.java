@@ -55,7 +55,7 @@ public class AttentionServiceImpl extends AdminRoleCheckService implements Atten
 		//{\"table_name\":\""+DataTableType.心情.value+"\", \"table_id\":2334}
 		logger.info("AttentionServiceImpl-->addAttention():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
-		int tableId = JsonUtil.getIntValue(jo, "table_id");
+		long tableId = JsonUtil.getLongValue(jo, "table_id");
 		
 		ResponseMap message = new ResponseMap();
 		
@@ -93,7 +93,7 @@ public class AttentionServiceImpl extends AdminRoleCheckService implements Atten
 	public Map<String, Object> deleteAttention(JSONObject jo, UserBean user,
 											   HttpRequestInfoBean request) {
 		logger.info("AttentionServiceImpl-->deleteAttention():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		int aid = JsonUtil.getIntValue(jo, "aid");
+		long aid = JsonUtil.getLongValue(jo, "aid");
 		//int createUserId = JsonUtil.getIntValue(jo, "create_user_id");
 		
 		ResponseMap message = new ResponseMap();		
@@ -122,11 +122,11 @@ public class AttentionServiceImpl extends AdminRoleCheckService implements Atten
 	public List<Map<String, Object>> getLimit(JSONObject jo, UserBean user,
 											  HttpRequestInfoBean request) {
 		logger.info("AttentionServiceImpl-->getLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
-		int toUserId = JsonUtil.getIntValue(jo, "toUserId");
+		long toUserId = JsonUtil.getLongValue(jo, "toUserId");
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
 		int pageSize = JsonUtil.getIntValue(jo, "pageize", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
-		int lastId = JsonUtil.getIntValue(jo, "last_id"); //开始的页数
-		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
+		long lastId = JsonUtil.getLongValue(jo, "last_id"); //开始的页数
+		long firstId = JsonUtil.getLongValue(jo, "first_id"); //结束的页数
 		boolean showUserInfo = JsonUtil.getBooleanValue(jo, "showUserInfo");
 		
 		StringBuffer sql = new StringBuffer();

@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 
-import com.cn.leedane.mapper.OptionMapper;
+import com.cn.leedane.mapper.OptionManageMapper;
 import com.cn.leedane.model.OptionBean;
 import com.cn.leedane.service.TimeConsumingTest;
 
@@ -17,7 +17,7 @@ import com.cn.leedane.service.TimeConsumingTest;
 public class OptionTest extends BaseTest{
 	
 	@Resource
-	private OptionMapper optionMapper;
+	private OptionManageMapper optionMapper;
 
 	@Test
 	public void testSave() throws Exception {

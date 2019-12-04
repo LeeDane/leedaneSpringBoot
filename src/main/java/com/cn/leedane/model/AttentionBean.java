@@ -26,7 +26,7 @@ public class AttentionBean extends RecordTimeBean{
 	 * 关注对象的ID必须
 	 */
 	@Column("table_id")
-	private int tableId;
+	private long tableId;
 	
 
 	//@Column(name="table_name", length= 15, nullable=false)
@@ -38,10 +38,10 @@ public class AttentionBean extends RecordTimeBean{
 	}
 	
 	//@Column(name="table_id", nullable = false)
-	public int getTableId() {
+	public long getTableId() {
 		return tableId;
 	}
-	public void setTableId(int tableId) {
+	public void setTableId(long tableId) {
 		this.tableId = tableId;
 	}
 }

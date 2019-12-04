@@ -104,8 +104,8 @@ public class CircleOfFriendsHandler {
 					//找不到该条记录
 					jsonObject = JSONObject.fromObject(str);
 					if(JsonUtil.getStringValue(jsonObject, "tableName").equalsIgnoreCase(tableName)
-							&& JsonUtil.getIntValue(jsonObject, "tableId") == tableId
-							&& JsonUtil.getIntValue(jsonObject, "createUserId") == createUserId){
+							&& JsonUtil.getLongValue(jsonObject, "tableId") == tableId
+							&& JsonUtil.getLongValue(jsonObject, "createUserId") == createUserId){
 						continue;
 					}else{
 						scoreMembers.put((double)count, str);

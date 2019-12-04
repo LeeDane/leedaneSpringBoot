@@ -1,25 +1,21 @@
 package com.cn.leedane.test;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.junit.Test;
-
+import com.cn.leedane.mapper.BlogMapper;
+import com.cn.leedane.model.BlogBean;
+import com.cn.leedane.model.OperateLogBean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.OperateLogService;
+import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsoupUtil;
 import com.cn.leedane.utils.StringUtil;
-import com.cn.leedane.mapper.BlogMapper;
-import com.cn.leedane.model.BlogBean;
-import com.cn.leedane.model.OperateLogBean;
-import com.cn.leedane.model.OptionBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.service.OptionService;
-import com.cn.leedane.service.UserService;
+import org.junit.Test;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 博客相关的测试类
@@ -33,10 +29,6 @@ public class BlogTest extends BaseTest {
 	
 	@Resource
 	private UserService<UserBean> userService;
-	
-	@Resource
-	private OptionService<OptionBean> optionService;
-	
 	@Resource
 	private OperateLogService<OperateLogBean> operateLogService;
 

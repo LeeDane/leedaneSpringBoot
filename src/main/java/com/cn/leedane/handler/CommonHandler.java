@@ -50,7 +50,7 @@ public class CommonHandler {
 	 * @param user 当前登录的用户
 	 * @return
 	 */
-	public String getContentByTableNameAndId(String tableName, int tableId, UserBean user){
+	public String getContentByTableNameAndId(String tableName, long tableId, UserBean user){
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		
 		//只支持心情和博客获取源

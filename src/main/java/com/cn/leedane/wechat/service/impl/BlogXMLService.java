@@ -38,7 +38,7 @@ public class BlogXMLService extends BaseXMLWechatService {
 	/**
 	 * 最后一条博客的ID
 	 */
-	private int lastBlogId;
+	private long lastBlogId;
 	/**
 	 * 每次取得最新博客的数量
 	 */

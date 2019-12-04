@@ -27,13 +27,13 @@ public class S_WishBean extends RecordTimeBean{
 	 */
 	@Column("product_id")
 	@Field
-	private int productId;
+	private long productId;
 
-	public int getProductId() {
+	public long getProductId() {
 		return productId;
 	}
 
-	public void setProductId(int productId) {
+	public void setProductId(long productId) {
 		this.productId = productId;
 	}
 	
