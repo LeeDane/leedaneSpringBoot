@@ -201,7 +201,7 @@ function buildNewOrder(){
 **/
 function parseUrl(obj, event){
     //弹出输入链接地址的菜单
-    layer.prompt({title: '请输入所在平台的商品地址（长链接）', formType: 2}, function(pass, index){
+    layer.prompt({title: '请输入所在平台的商品地址（长链接）/淘口令等', formType: 2, content: '<textarea class="layui-layer-input" placeholder="目前支持淘宝/天猫、京东、拼多多等平台的商品长链接地址以及淘宝/天猫商品的淘口令中解析出商品的ID字段自动填充到商品编号里面。"></textarea>', maxlength: 1000}, function(pass, index){
         layer.close(index);
         var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
         $.ajax({

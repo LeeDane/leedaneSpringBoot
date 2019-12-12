@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.Oauth2Mapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<insert id="bind">
+        insert into t_mall_order_detail(
+            id,
+            status,
+            create_time,
+            create_user_id,
+            modify_time,
+            modify_user_id,
+            order_create_time,
+            order_pay_time,
+            order_settlement_time,
+            order_product_id,
+            order_code,
+            order_sub_code,
+            order_category,
+            order_type,
+            order_pay_money,
+            order_settlement_money,
+            order_buy_numer,
+            platform,
+            order_cash_back_ratio,
+            order_cash_back,
+            order_settlement_cash_back,
+            product_title
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+                #{item.id,jdbcType=BIGINT},
+                #{item.status,jdbcType=INTEGER},
+                #{item.createTime,jdbcType=TIMESTAMP},
+                #{item.createUserId,jdbcType=INTEGER},
+                #{item.modifyTime,jdbcType=TIMESTAMP},
+                #{item.modifyUserId,jdbcType=INTEGER},
+                #{item.orderCreateTime,jdbcType=TIMESTAMP},
+                #{item.orderPayTime,jdbcType=TIMESTAMP},
+                #{item.orderSettlementTime,jdbcType=TIMESTAMP},
+                #{item.orderProductId,jdbcType=BIGINT},
+                #{item.orderCode,jdbcType=BIGINT},
+                #{item.orderSubCode,jdbcType=BIGINT},
+                #{item.orderCategory,jdbcType=VARCHAR},
+                #{item.orderType,jdbcType=VARCHAR},
+                #{item.orderPayMoney,jdbcType=DOUBLE},
+                #{item.orderSettlementMoney,jdbcType=DOUBLE},
+                #{item.orderBuyNumer,jdbcType=INTEGER},
+                #{item.platform,jdbcType=VARCHAR},
+                #{item.orderCashBackRatio,jdbcType=DOUBLE},
+                #{item.orderCashBack,jdbcType=DOUBLE},
+                #{item.orderSettlementCashBack,jdbcType=DOUBLE},
+                #{item.productTitle,jdbcType=VARCHAR}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        status = VALUES(status),
+        modify_time = VALUES(modify_time),
+        modify_user_id = VALUES(modify_user_id),
+        order_create_time = VALUES(order_create_time),
+        order_pay_time = VALUES(order_pay_time),
+        order_settlement_time = VALUES(order_settlement_time),
+        order_product_id = VALUES(order_product_id),
+        order_code = VALUES(order_code),
+        order_sub_code = VALUES(order_sub_code),
+        order_category = VALUES(order_category),
+        order_type = VALUES(order_type),
+        order_pay_money = VALUES(order_pay_money),
+        order_settlement_money = VALUES(order_settlement_money),
+        order_buy_numer = VALUES(order_buy_numer),
+        platform = VALUES(platform),
+        order_cash_back_ratio = VALUES(order_cash_back_ratio),
+        order_cash_back = VALUES(order_cash_back),
+        order_settlement_cash_back = VALUES(order_settlement_cash_back),
+        product_title = VALUES(product_title)
+	</insert>
+</mapper>

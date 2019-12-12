@@ -52,7 +52,7 @@ public class S_HomeShopServiceImpl extends MallRoleCheckService implements S_Hom
 		if(shopBean == null)
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商店不存在或已被删除.value));
 		//检查权限
-		checMallkAdmin(user);
+		checkMallAdmin(user);
 		
 		S_HomeShopBean homeShopBean = new S_HomeShopBean();
 
@@ -83,10 +83,10 @@ public class S_HomeShopServiceImpl extends MallRoleCheckService implements S_Hom
 	public Map<String, Object> delete(long shopId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("S_HomeShopServiceImpl-->delete():shopId="+shopId);
-		
+
 		//检查权限
-		checMallkAdmin(user);
-		
+		checkMallAdmin(user);
+
 		boolean result = homeShopMapper.deleteById(S_HomeShopBean.class, shopId) > 0;
 		ResponseMap message = new ResponseMap();
 		if(result){

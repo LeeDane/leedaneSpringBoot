@@ -1,14 +1,13 @@
 var SEARCH_PRODUCT_PLATFORM; //搜索商品的平台
+var currentSort;
 layui.use(['form', 'laypage', "layer"], function(){
     layer = layui.layer;
     var element = layui.element;
     laypage = layui.laypage;
     //监听Tab切换，以改变地址hash值
     element.on('tab(resultTabBrief)', function(data){
-        console.log(this); //当前Tab标题所在的原始DOM元素
-        console.log(data.index); //得到当前Tab的所在下标
-        tb_product_start = 0;
-        tb_product_currentIndex = 0;
+        searchCurrentIndex = 0;
+        currentSort = "";
         switch(data.index){
             case 0: //淘宝商品搜索
                 SEARCH_PRODUCT_PLATFORM = "淘宝网";
@@ -28,86 +27,89 @@ layui.use(['form', 'laypage', "layer"], function(){
                 break;
         }
     });
-
     $(".common-search").remove();
     searchKey = getURLParam(decodeURI(window.location.href), "q");
     SEARCH_PRODUCT_PLATFORM = getURLParam(decodeURI(window.location.href), "platform");
-
-    $SearchContainer = $("#search-value");
-    $SearchContainer.bind("input propertychange", function() {
-        console.log($(this).val());
-    });
-
-    if(isEmpty(searchKey)){
-        console.log("获取不到您要检索的关键字！");
-        return;
-    }
-
-    $SearchContainer.val(searchKey);
     //默认是淘宝搜索
     if(isEmpty(SEARCH_PRODUCT_PLATFORM)){
         SEARCH_PRODUCT_PLATFORM = "淘宝网";
     }
+    $SearchContainer = $("#search-value");
+    $SearchContainer.bind("input propertychange", function() {
+        console.log($(this).val());
+    });
+    if(isNotEmpty(condition)){
+        condition = JSON.parse(condition); //可以将json字符串转换成json对象
+        buildSortConditionBtn();
+    }
+    if(isEmpty(searchKey)){
+        console.log("获取不到您要检索的关键字！");
+        return;
+    }
+    $SearchContainer.val(searchKey);
     doSearch();
     initClipBoard();
 });
 var $SearchContainer;
 var searchKey;
-$(function(){
-	
-});
-
-
 /**
 ** 按钮点击搜索商品
 **/
 function searchProductBtn(obj, platform){
-    searchKey = $SearchContainer.val();
     SEARCH_PRODUCT_PLATFORM = platform;
+    currentSort = "";
+    searchCurrentIndex = 0;
     doSearch();
 }
-
 /**
  * 执行搜索
  */
 function doSearch(){
-    $taobaoProductContainer = $("#tb-product-row-container");
-    $taobaoProductContainer.empty();
-
+    $productContainer = $("#product-row-container");
+    $productContainer.empty();
+    searchKey = $SearchContainer.val();
     if(isEmpty(searchKey)){
         console.log("获取不到您要检索的关键字！");
         layer.msg("请先输入检索字段");
         return;
     }
-    var	url = "/mall/search/product?"+ jsonToGetRequestParams(getTaobaosRequestParams());
-
     //搜索商品
     if(SEARCH_PRODUCT_PLATFORM == "淘宝网"){
         $("#li-tb-product").addClass("layui-this");
         $("#li-jd-product").removeClass("layui-this");
         $("#li-pdd-product").removeClass("layui-this");
+        if(condition){
+            buildSortConditionBtn();
+        }
     }else if(SEARCH_PRODUCT_PLATFORM == "京东"){
         $("#li-jd-product").addClass("layui-this");
         $("#li-tb-product").removeClass("layui-this");
         $("#li-pdd-product").removeClass("layui-this");
+        if(condition){
+            buildSortConditionBtn();
+        }
     }else if(SEARCH_PRODUCT_PLATFORM == "拼多多"){
         $("#li-pdd-product").addClass("layui-this");
         $("#li-tb-product").removeClass("layui-this");
         $("#li-jd-product").removeClass("layui-this");
+        if(condition){
+            buildSortConditionBtn();
+        }
     }
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+	var	url = "/mall/search/product?"+ jsonToGetRequestParams(getRequestParams());
 	$.ajax({
 		type : "get",
 		url : url,
 		dataType: 'json',
 		beforeSend:function(){
-			$taobaoProductContainer.empty();
+			$productContainer.empty();
 		},
 		success : function(data) {
 			layer.close(loadi);
 			$(".search-need-time").text(data.consumeTime);
 			if(data.isSuccess && isNotEmpty(data.message)){
-                dealTaobaoProductSearch(data.message.list, data.total, data.platform);
+                dealProductSearch(data.message.list, data.total, data.platform);
 			}else{
 				ajaxError(data);
 			}
@@ -119,27 +121,27 @@ function doSearch(){
 	});
 }
 
-/***********************************  淘宝商品搜索   *************************************************/
+/***********************************  商品搜索   *************************************************/
 /**
  * 处理是商品的搜索
  * @param message
  */
-function dealTaobaoProductSearch(message, total, platform){
-	$taobaoProductContainer.empty();
-	taobaos = message;
+function dealProductSearch(message, total, platform){
+	$productContainer.empty();
+	products = message;
 	if(message.length == 0){
-		if(tb_product_currentIndex == 0){
-			$taobaoProductContainer.append("搜索不到符合条件的商品，请换条件试试！");
+		if(searchCurrentIndex == 0){
+			$productContainer.append("搜索不到符合条件的商品，请换条件试试！");
 		}else{
-			$taobaoProductContainer.append("已经没有更多的商品啦，请重新选择！");
+			$productContainer.append("已经没有更多的商品啦，请重新选择！");
 		}
 	}else{
-		for(var i = 0; i < taobaos.length; i++){
-			buildEachSearchTaobaoProductRow(i, taobaos[i], platform);
+		for(var i = 0; i < products.length; i++){
+			buildEachSearchProductRow(i, products[i], platform);
 		}
 	}
 	
-	if(tb_product_currentIndex == 0 && (!taobaos || taobaos.length ==0)){
+	if(searchCurrentIndex == 0 && (!products || products.length ==0)){
 		$("#tb-product-pager").empty();
 		$("#tb-product-pager").css("padding", "0");
 	}else{
@@ -149,14 +151,14 @@ function dealTaobaoProductSearch(message, total, platform){
 		    elem: 'tb-product-pager' //注意，这里的 test1 是 ID，不用加 # 号
 		    ,layout: ['prev', 'page', 'next', 'count', 'skip']
 		    ,count: total //数据总数，从服务端得到
-		    ,limit: taobao_pageSize
-		    , curr: tb_product_currentIndex + 1
+		    ,limit: searchPageSize
+		    , curr: searchCurrentIndex + 1
 		    ,jump: function(obj, first){
 			    //obj包含了当前分页的所有参数，比如：
 			    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
 			    console.log(obj.limit); //得到每页显示的条数
 			    if(!first){
-			    	tb_product_currentIndex = obj.curr -1;
+			    	searchCurrentIndex = obj.curr -1;
 			    	doSearch();
 			    }
 			  }
@@ -164,44 +166,42 @@ function dealTaobaoProductSearch(message, total, platform){
 	}
 }
 
-var taobao_pageSize = 12;
-var taobao_start = 0;
-var tb_product_currentIndex = 0;
-var taobao_totalPage = 0;
-var taobaos;
-var $taobaoProductContainer;
+var searchPageSize = 12;
+var searchCurrentIndex = 0;
+var products;
+var $productContainer;
 /**
  * 获取商品请求列表参数
  */
-function getTaobaosRequestParams(){
-	return {platform: SEARCH_PRODUCT_PLATFORM, keyword: searchKey, current: tb_product_currentIndex, rows: taobao_pageSize, t: Math.random()};
+function getRequestParams(){
+	return {sort: currentSort,platform: SEARCH_PRODUCT_PLATFORM, keyword: searchKey, current: searchCurrentIndex, rows: searchPageSize, t: Math.random()};
 }
-
 /**
  * 构建每一行商品html
- * @param taobao
+ * @param product
  * @param index
+ * @param platform
  */
-function buildEachSearchTaobaoProductRow(index, taobao, platform){
+function buildEachSearchProductRow(index, product, platform){
     var auctionId = "";
     if(platform == "淘宝网" || platform == "天猫"){
-        auctionId = "tb_"+ taobao.auctionId;
+        auctionId = "tb_"+ product.auctionId;
     }else if(platform == "京东"){
-        auctionId = "jd_"+ taobao.auctionId;
+        auctionId = "jd_"+ product.auctionId;
     }else if(platform == "拼多多"){
-        auctionId = "pdd_"+ taobao.auctionId;
+        auctionId = "pdd_"+ product.auctionId;
     }
     var html = '<div class="layui-col-md3 layui-col-xs12 button_link" style="cursor: pointer;" onclick="toProductDetail(\''+ auctionId +'\');">'+
-                    '<div class="layui-col-md12 layui-col-xs12 m-taobao-item">'+
-                        '<img alt="" src="'+ taobao.img +'" class="m-product-item-img"/>		'+
+                    '<div class="layui-col-md12 layui-col-xs12 m-product-item">'+
+                        '<img alt="" src="'+ product.img +'" class="m-product-item-img"/>		'+
                         '<div class="m-product-contrainer">'+
-                            '<p style=" margin-top: 6px;"><a class="m-product-desc" title="'+ changeNotNullString(taobao.title) +'">'+ changeNotNullString(taobao.title) +'</a></p>';
-                if(taobao.couponAmount > 0){
-//						html +=	'<p style="margin-left: 5px; text-align: left;">券：<span style="color: red;">'+ taobao.couponAmount +'</span>元&nbsp;&nbsp;&nbsp;&nbsp;<span style="float: right; margin-right: 8px;">剩：'+ taobao.couponLeftCount +'</span></p>';
-                   html += '<p style="margin-left: 5px; text-align: left;"><span class="coupon-discount">'+ taobao.couponAmount +'元券</span><span class="coupon-left">剩'+ taobao.couponLeftCount +'张</span></p>';
+                            '<p style=" margin-top: 6px;"><a class="m-product-desc" title="'+ changeNotNullString(product.title) +'">'+ changeNotNullString(product.title) +'</a></p>';
+                if(product.couponAmount > 0){
+//						html +=	'<p style="margin-left: 5px; text-align: left;">券：<span style="color: red;">'+ product.couponAmount +'</span>元&nbsp;&nbsp;&nbsp;&nbsp;<span style="float: right; margin-right: 8px;">剩：'+ product.couponLeftCount +'</span></p>';
+                   html += '<p style="margin-left: 5px; text-align: left;"><span class="coupon-discount">'+ product.couponAmount +'元券</span><span class="coupon-left">剩'+ product.couponLeftCount +'张</span></p>';
                 }
-                    html += '<p style="margin-left: 5px; text-align: left; margin-top: 6px;"><span style="font-size: 0.9em;">'+ taobao.shopTitle +'</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="m-product-price" style="float: right; margin-right: 8px;">¥'+ taobao.price +'</span></p>'+
-                            '<p style="text-align: left; margin-top: 4px;"><span class="m-product-price" style="font-size: 1.0em;">比率：'+ taobao.cashBackRatio +'%</span>&nbsp;&nbsp;<span style="float: right; margin-right: 8px; font-size: 1.0em;">预估佣金: ¥'+taobao.cashBack +'</span></p>'+
+                    html += '<p style="margin-left: 5px; text-align: left; margin-top: 6px;"><span style="font-size: 0.9em;">'+ product.shopTitle +'</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="m-product-price" style="float: right; margin-right: 8px;">¥'+ product.price +'</span></p>'+
+                            '<p style="text-align: left; margin-top: 4px;"><span class="m-product-price" style="font-size: 1.0em;">比率：'+ product.cashBackRatio +'%</span>&nbsp;&nbsp;<span style="float: right; margin-right: 8px; font-size: 1.0em;">预估佣金: ¥'+product.cashBack +'</span></p>'+
                         '</div>'+
                     '</div>'+
                     '<span class="line line_top"></span>'+
@@ -209,5 +209,61 @@ function buildEachSearchTaobaoProductRow(index, taobao, platform){
                     '<span class="line line_bottom"></span>'+
                     '<span class="line line_left"></span>'+
                 '</div>';
-    $taobaoProductContainer.append(html);
+    $productContainer.append(html);
+}
+
+/**
+**动态构建排序按钮列表
+** @param currentSort 当前的排序
+*/
+function buildSortConditionBtn(){
+    var sortlist = condition.condition[SEARCH_PRODUCT_PLATFORM].sort;//获取相应平台的排序列表
+    //判断当前的饿排序，默认是空的
+    if(!currentSort || isEmpty(currentSort))
+        currentSort = condition.condition[SEARCH_PRODUCT_PLATFORM].default;
+    if(sortlist && sortlist.length > 0){
+        var html = "";
+        for(var i = 0; i < sortlist.length; i++){
+            var currentClass = currentSort && (currentSort == sortlist[i].desc || currentSort == sortlist[i].asc) ? "": "layui-btn-warm";
+            var iconHtml = "";
+            var hasSortIcon = isNotEmpty(sortlist[i].desc) && isNotEmpty(sortlist[i].asc); //满足有升序和减序的值才会出现升降序的按钮
+
+            if(currentSort && hasSortIcon){
+                iconHtml = "&#xe61a;"; //默认是降序
+                if(currentSort == sortlist[i].asc){
+                    iconHtml = "&#xe619;";
+                }
+            }
+            html += '<button class="layui-btn layui-btn-radius layui-btn-xs '+ currentClass +'" desc="true" index="'+ i +'" onclick="sortClick(this);" style="height: 30px !important; line-height: 30px!important;">'+ sortlist[i].value + (hasSortIcon ? ('<i class="layui-icon" style="margin-left: 5px;">'+ iconHtml +'</i>') : '') +'</button>';
+        }
+        $("#sort-btn-group").html(html);
+    }
+    return html;
+}
+
+/**
+**点击排序字段
+*/
+function sortClick(obj){
+    var $obj = $(obj);
+    //当前还没有被点击并且没有升降序，则直接忽略这次点击事件
+    if(!$obj.hasClass("layui-btn-warm") && $obj.find("i").length < 1){
+        return;
+    }
+    //判断当前点击是哪个
+    var index = parseInt($obj.attr("index"));
+    var sort = condition.condition[SEARCH_PRODUCT_PLATFORM].sort[index];
+    //没有点击过
+    if($obj.hasClass("layui-btn-warm")){
+        //先取desc,再取asc的值作为默认的
+        currentSort = sort.desc;
+        if(isEmpty(currentSort))
+            currentSort = sort.asc;
+    }else{
+        //判断当前点击的是哪个
+        currentSort = currentSort == sort.desc ? sort.asc : sort.desc;
+    }
+    //刷新一下列表
+    searchCurrentIndex = 0;
+    doSearch();
 }

@@ -1,26 +1,29 @@
 package com.cn.leedane.utils;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.cn.leedane.exception.ParameterUnspecificationException;
+import com.cn.leedane.security.sm4.SM4Utils;
+import com.cn.leedane.springboot.controller.Oauth2HtmlController;
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
 import eu.bitwalker.useragentutils.UserAgent;
+import net.sf.json.JSONObject;
+import org.apache.http.HttpHeaders;
 import org.apache.log4j.Logger;
 
 import com.cn.leedane.model.UserBean;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 
 /**
  * 系统中相同部分的工具类
@@ -460,9 +463,147 @@ public class CommonUtil {
 		return null;
 	}
 
+	/**
+	 * 解析文本中带有淘口令的文本，带$xxxxxxx$返回
+	 * @param text 带有淘口令的文本
+	 * @return
+	 */
+	public static String parseTaokouling(String text){
+		if(StringUtil.isNotNull(text)){
+			//\p{xx}：a character with the xx property - 表示一个拥有 xx 属性的字符
+			//Sc：Currency symbol - 货币字符属性
+			String pattern =  "([\\p{Sc}])\\w{8,12}([\\p{Sc}])";
+			// 创建 Pattern 对象
+			Pattern r = Pattern.compile(pattern);
+			// 现在创建 matcher 对象
+			Matcher m = r.matcher(text);
+			while(m.find()){
+				//这里为了防止地址栏有多个，只解析第一个即可
+				return m.group(0);
+			}
+			return text;
+		}
+		return text;
+	}
+
+	/**
+	 * 解析淘口令并获得其中的长连接
+	 * @param taokouling 带有淘口令的文本
+	 * @return 没有解析到结果返回null
+	 */
+	public static String getUrlByTaokouling(String taokouling){
+		if(StringUtil.isNotNull(taokouling)){
+			Connection conn = null;
+			try {
+				Map<String, String> dataMap = new HashMap<String, String>();
+				dataMap.put("text", taokouling);
+
+//				Connection.Request request = new Connection.Request();
+
+				conn = Jsoup.connect("http://www.taokouling.com/index/taobao_tkljm");
+
+				conn.ignoreContentType(true)
+						.userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36")
+						.header("Accept", "application/json, text/javascript, */*; q=0.01")
+						.header("Accept-Encoding", "gzip, deflate")
+						.header("Accept-Language", "zh-CN,zh;q=0.9")
+						.header("Connection", "keep-alive")
+						.header("Content-Type", "application/x-www-form-urlencoded")
+						.header("Host", "www.taokouling.com")
+						.header("Origin", "http://www.taokouling.com")
+						.header("Referer", "http://www.taokouling.com/index/taobao_tkljm")
+						.header("X-Requested-With", "XMLHttpRequest")
+						.header("Content-Length", "22")
+						.timeout(8000)
+						.data(dataMap)
+						.method(Connection.Method.POST);
+				conn.execute();
+				Connection.Response res = conn.response();
+				JSONObject object = JSONObject.fromObject(res.body());
+				if(object != null && object.optInt("code") == 1){
+					JSONObject data = object.optJSONObject("data");
+					String link = data.optString("url");
+					return getDetailUrlByTaobaoUrl(link);
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		return null;
+	}
+
+	/**
+	 * 在解析淘口令得到的商品链接需要再次请求才能获取真正商品详情的链接
+	 * @param link 通过淘口令获取的商品链接
+	 * @return 没有解析到结果返回null
+	 */
+	public static String getDetailUrlByTaobaoUrl(String link){
+		if(StringUtil.isNotNull(link)){
+//			Connection conn = null;
+			try {
+				HttpURLConnection conn = (HttpURLConnection) new URL(link).openConnection();
+				conn.setInstanceFollowRedirects(false);
+				conn.setConnectTimeout(8000);
+				conn.setRequestProperty(HttpHeaders.REFERER, "");
+				return getRedirectUrl(conn.getHeaderField("Location"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		return null;
+	}
+
+	/**
+	 * 通过获取重定向地址获取淘宝长链接
+	 * @param needRedirectUrl
+	 * @return
+	 * @throws Exception
+	 */
+	private static String getRedirectUrl(String needRedirectUrl) throws Exception {
+		HttpURLConnection conn = (HttpURLConnection) new URL(needRedirectUrl).openConnection();
+		conn.setInstanceFollowRedirects(false);
+		conn.setConnectTimeout(8000);
+		/**
+		 * 递归找到最终的url(包含location)
+		 */
+		if (conn.getHeaderField("location") == null)
+			return needRedirectUrl;
+		else
+			return getRedirectUrl(conn.getHeaderField("location"));
+	}
+
+	/**
+	 * 对数据进行加密，其中+号用*jia*代替
+	 * @param paramsMap
+	 * @return
+	 */
+	public static String sm4Encrypt(Map<String, Object> paramsMap){
+		//生成state
+		String plainText = JSONObject.fromObject(paramsMap).toString();
+		SM4Utils sm4 = new SM4Utils();
+		sm4.secretKey = Oauth2HtmlController.secretKey;
+		String cipherText = sm4.encryptData_ECB(plainText);
+		return cipherText.replaceAll("\\+","*jia*");
+	}
+
+	/**
+	 * 对数据进行解密，其中把*jia*还原成+号
+	 * @param cipherText 密文
+	 * @return
+	 */
+	public static JSONObject sm4Decrypt(String cipherText){
+		cipherText = cipherText.replaceAll("\\*jia\\*", "+"); //在网络传输过程中，会把+替换成%20，这里需要还原回来
+		SM4Utils sm4 = new SM4Utils();
+		sm4.secretKey = Oauth2HtmlController.secretKey;
+		return JSONObject.fromObject(sm4.decryptData_ECB(cipherText));
+	}
+
 	/*public static void main(String[] args) {
 		String url = "https://mobile.yangkeduo.com/duo_coupon_landing.html?goods_id1=4946116872&pid=9503869_122542943&cpsSign=CC_191202_9503869_122542943_0a778a5cb045d934c818f82128872ce9&duoduo_type=2";
 		System.out.println(parseLinkParams(url, "id", "goods_id", "pid"));
-		System.out.println(parseLinkId(url));
+		System.out.println(getUrlByTaokouling("$A5OZYBTfgdn$"));
 	}*/
 }

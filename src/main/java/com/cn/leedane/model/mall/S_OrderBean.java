@@ -64,13 +64,7 @@ public class S_OrderBean extends RecordTimeBean{
 	 */
 	@Column("platform")
 	private String platform;
-	
-	/**
-	 * 推荐人
-	 */
-	@Column("referrer")
-	private String referrer;
-	
+
 	/**
 	 * 价格(是订单处理完成的时候计算的)
 	 */
@@ -132,14 +126,6 @@ public class S_OrderBean extends RecordTimeBean{
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	public String getReferrer() {
-		return referrer;
-	}
-
-	public void setReferrer(String referrer) {
-		this.referrer = referrer;
 	}
 
 	public String getPlatform() {

@@ -71,6 +71,4 @@ public interface S_OrderService <T extends IDBean>{
 			long orderId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request) throws Exception;
-	
-	
 }

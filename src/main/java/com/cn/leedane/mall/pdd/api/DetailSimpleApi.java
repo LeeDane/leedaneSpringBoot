@@ -2,6 +2,7 @@ package com.cn.leedane.mall.pdd.api;
 
 import com.cn.leedane.mall.model.ProductPromotionLinkBean;
 import com.cn.leedane.mall.pdd.CommUtil;
+import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.model.mall.S_PlatformProductBean;
 import com.cn.leedane.model.mall.S_ShopBean;
 import com.cn.leedane.utils.CollectionUtil;
@@ -35,7 +36,7 @@ public class DetailSimpleApi {
      * @return
      * @throws ApiException
      */
-    public static S_PlatformProductBean getDetail(String itemId) throws Exception {
+    public static S_PlatformProductBean getDetail(String itemId) throws PddException {
         PopClient client = new PopHttpClient(CommUtil.clientId, CommUtil.clientSecret);
         PddDdkGoodsDetailRequest request = new PddDdkGoodsDetailRequest();
         List<Long> goodsIdList = new ArrayList<Long>();
@@ -46,9 +47,19 @@ public class DetailSimpleApi {
         request.setZsDuoId(0L);
         request.setPlanType(0);
         request.setSearchId("str");*/
-        PddDdkGoodsDetailResponse response = client.syncInvoke(request);
+        PddDdkGoodsDetailResponse response = null;
+        try {
+            response = client.syncInvoke(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new PddException("拼多多api链接异常");
+        }
         JSONObject resultObject = JSONObject.fromObject(JsonUtil.transferToJson(response));
         JSONObject responseObject = resultObject.optJSONObject("goods_detail_response");
+        JSONObject errResponse = resultObject.optJSONObject("error_response");
+        if(errResponse != null && !errResponse.isEmpty()){
+            throw new PddException(errResponse.optString("error_msg"));
+        }
         JSONArray items = responseObject.optJSONArray("goods_details");
         if(CollectionUtil.isEmpty(items))
             return null;
@@ -62,7 +73,7 @@ public class DetailSimpleApi {
      * @param item
      * @return
      */
-    private static S_PlatformProductBean createBean(JSONObject item){
+    private static S_PlatformProductBean createBean(JSONObject item) throws PddException {
         S_PlatformProductBean product = new S_PlatformProductBean();
 
         S_ShopBean shop = new S_ShopBean();

@@ -35,7 +35,7 @@ public class MallRoleCheckService {
 	 * 检查是否有管理员/商城管理员账户权限
 	 * @param user
 	 */
-	public void checMallkAdmin(UserBean user){
+	public void checkMallAdmin(UserBean user){
 		//获取当前的Subject  
         Subject currentUser = SecurityUtils.getSubject();
 		//后台只有管理员权限才能操作

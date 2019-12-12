@@ -38,7 +38,7 @@ public class SearchProductApi {
         TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
 //		req.setStartDsr(10L);
         req.setPageSize(productRequest.getPageSize());
-        req.setSort("tk_rate_desc");
+        req.setSort(productRequest.getSort());
         req.setPageNo(productRequest.getPageNo() + 1);
         /*req.setPlatform(1L);
         req.setEndTkRate(1234L);

@@ -56,13 +56,14 @@
     <a href="javascript:;"><img th:src="${user_pic_path}" style="width: 24px; height: 24px;" class="layui-nav-img" /><span th:utext="${account}"></span></a>
     <dl class="layui-nav-child">
       <dd><a href="/mall/order">我的订单<span class="layui-badge" id="noDealOrderNumber">0</span></a></dd>
-      <dd><a href="/mall/promotion/index">推广管理</a></dd>
-      <dd th:if="${isAdmin}"><a href="/mall/home/manager">首页管理</a></dd>
-      <dd><a href="javascript:;">修改信息</a></dd>
-      <dd><a href="/mall/product/manager">商品管理</a></dd>
-      <dd><a href="/mall/shop/manager">店铺管理</a></dd>
+      <dd th:if="${isAdmin}"><a href="/mall/promotion/index">推广管理</a></dd>
+      <dd th:if="${isMallManage}"><a href="/mall/promotion/seat">推广位管理-管理员</a></dd>
+      <dd th:if="${isMallManage}"><a href="/mall/home/manager">首页管理</a></dd>
+      <dd><a href="javascript:;">修改个人信息</a></dd>
+      <dd th:if="${isMallManage}"><a href="/mall/product/manager">商品管理</a></dd>
+      <dd th:if="${isMallManage}"><a href="/mall/shop/manager">店铺管理</a></dd>
       <dd><a href="javascript:;">安全管理</a></dd>
-      <dd th:if="${isAdmin}"><a href="/mall/manage">商城管理</a></dd>
+      <dd th:if="${isMallManage}"><a href="/mall/manage">商城管理</a></dd>
       <dd><a href="javascript:void(0);" onclick="logout();">退了</a></dd>
     </dl>
   </li>

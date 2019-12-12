@@ -3,6 +3,7 @@ package com.cn.leedane.mall.pdd.api;
 import com.cn.leedane.mall.model.SearchProductRequest;
 import com.cn.leedane.mall.model.SearchProductResult;
 import com.cn.leedane.mall.pdd.CommUtil;
+import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.model.mall.S_PlatformProductBean;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.MoneyUtil;
@@ -34,7 +35,7 @@ public class SearchProductApi {
      * @return
      * @throws ApiException
      */
-    public static SearchProductResult searchProduct(SearchProductRequest productRequest) throws Exception {
+    public static SearchProductResult searchProduct(SearchProductRequest productRequest) throws PddException {
         SearchProductResult searchProductResult = new SearchProductResult();
         PopClient client = new PopHttpClient(CommUtil.clientId, CommUtil.clientSecret);
 
@@ -44,8 +45,8 @@ public class SearchProductApi {
         request.setPage(StringUtil.changeObjectToInt((productRequest.getPageNo() + 1)));
         request.setPageSize(StringUtil.changeObjectToInt(productRequest.getPageSize()));
         request.setWithCoupon(false);
-        /*request.setSortType(0);
-        request.setWithCoupon(false);
+        request.setSortType(StringUtil.changeObjectToInt(productRequest.getSort()));
+        /*request.setWithCoupon(false);
         request.setRangeList("str");
         request.setCatId(0L);
         List<Long> goodsIdList = new ArrayList<Long>();
@@ -61,13 +62,19 @@ public class SearchProductApi {
         List<Integer> activityTags = new ArrayList<Integer>();
         activityTags.add(0);
         request.setActivityTags(activityTags);*/
-        PddDdkGoodsSearchResponse response = client.syncInvoke(request);
+        PddDdkGoodsSearchResponse response = null;
+        try {
+            response = client.syncInvoke(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new PddException("拼多多api链接异常");
+        }
         List<S_PlatformProductBean> pddItems = new ArrayList<S_PlatformProductBean>();
         JSONObject resultObject = JSONObject.fromObject(JsonUtil.transferToJson(response));
         JSONObject responseObject  = resultObject.optJSONObject("goods_search_response");
         JSONObject errResponse = resultObject.optJSONObject("error_response");
         if(errResponse != null && !errResponse.isEmpty()){
-            throw new ApiException(errResponse.optString("sub_msg"));
+            throw new PddException(errResponse.optString("error_msg"));
         }
 
         //设置总数

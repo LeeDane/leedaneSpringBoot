@@ -3,6 +3,7 @@ package com.cn.leedane.mall.pdd.api;
 import com.cn.leedane.handler.ZXingCodeHandler;
 import com.cn.leedane.mall.model.ProductPromotionLinkBean;
 import com.cn.leedane.mall.pdd.CommUtil;
+import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.mall.taobao.api.SpreadApi;
 import com.cn.leedane.mall.taobao.api.TpwdApi;
 import com.cn.leedane.utils.StringUtil;
@@ -33,7 +34,7 @@ public class PromotionApi {
      * @return
      * @throws ApiException
      */
-    public static ProductPromotionLinkBean getPromotion(long goodId, String title){
+    public static ProductPromotionLinkBean getPromotion(long goodId, String title) throws PddException {
         ProductPromotionLinkBean promotionLinkBean = new ProductPromotionLinkBean();
         PopClient client = new PopHttpClient(CommUtil.clientId, CommUtil.clientSecret);
         PddDdkGoodsPromotionUrlGenerateRequest request = new PddDdkGoodsPromotionUrlGenerateRequest();
@@ -62,6 +63,7 @@ public class PromotionApi {
 //            promotionLinkBean.setCouponLink(item.getShortUrl());
         } catch (Exception e) {
             e.printStackTrace();
+            throw new PddException("处理拼多多推广链接异常");
         }
         return promotionLinkBean;
     }

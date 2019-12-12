@@ -2,7 +2,6 @@ package com.cn.leedane.springboot.controller;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.controller.RoleController;
-import com.cn.leedane.controller.UserController;
 import com.cn.leedane.exception.MustLoginException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.MoodHandler;
@@ -14,7 +13,6 @@ import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import com.cn.leedane.service.AppVersionService;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.VisitorService;
-import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.springboot.ElasticSearchUtil;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.utils.*;
@@ -649,4 +647,8 @@ public class HtmlController extends BaseController{
 		currentUser.getSession().setAttribute("nonav", true);
 		return "forward:"+ ref;
 	}
+	/*public static void main(String[] args) {
+		String text = "dkkdkf+kkfkf+";
+		System.out.println(text.replaceAll("\\+", "*jia*"));
+	}*/
 }

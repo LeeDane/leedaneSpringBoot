@@ -1,5 +1,6 @@
 package com.cn.leedane.service.mall;
 
+import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
@@ -30,7 +31,7 @@ public interface MallToolService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> transform(String productId, JSONObject jo, UserBean user, HttpRequestInfoBean request) throws WriterException, JdException, ApiException;
+	public Map<String, Object> transform(String productId, JSONObject jo, UserBean user, HttpRequestInfoBean request) throws WriterException, JdException, ApiException, PddException;
 
 
 	/**

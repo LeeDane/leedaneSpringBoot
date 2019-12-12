@@ -31,17 +31,6 @@ CREATE TABLE `t_financial` (
   CONSTRAINT `FK_financial_modify_user_id` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-/*添加imei码和localId、add_day的唯一性约束，避免用户多次提交*/
-alter table t_financial add constraint imei_local_id_unique UNIQUE(imei, local_id, add_day);
-
-/* 在插入数据之前设置add_day列的值*/
-create trigger financial_add_day_trigger before INSERT on t_financial
-for EACH ROW
-BEGIN
- SET NEW.add_day = date_format(NEW.addition_time,'%Y-%m-%d');
-end;
-
-
 CREATE TABLE `t_mood` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `status` int(11) NOT NULL,
@@ -797,35 +786,6 @@ CREATE TABLE `t_mall_shop` (
 alter table t_mall_shop add constraint mall_shop_name_unique UNIQUE(shop_name);
 
 -- ----------------------------
--- Table structure for t_mall_order
--- ----------------------------
-DROP TABLE IF EXISTS `t_mall_order`;
-CREATE TABLE `t_mall_order` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `status` int(11) NOT NULL,
-  `create_time` datetime DEFAULT NULL,
-  `modify_time` datetime DEFAULT NULL,
-  `create_user_id` int(11) DEFAULT NULL,
-  `modify_user_id` int(11) DEFAULT NULL,
-  `order_code` varchar(50) NOT NULL COMMENT '订单编号',
-  `product_code` varchar(50) NOT NULL COMMENT '商品的编号的唯一ID',
-  `title` varchar(255) COMMENT '描述的标题，可以为空，用于展示用的',
-  `referrer` varchar(50) COMMENT '推荐人，可以为空',
-  `platform` varchar(50) COMMENT '平台',
-  `order_time` datetime DEFAULT NULL COMMENT '下单时间',
-  `pay_time` datetime DEFAULT NULL COMMENT '付款时间',
-  `price` double NOT NULL DEFAULT '0.00' COMMENT '商品现价',
-  `expect_cash_back_ratio` double NOT NULL DEFAULT '0.00' COMMENT '预计商品总的返现比率(百分比)',
-  `expect_cash_back` double NOT NULL DEFAULT '0.00' COMMENT '预计商品返现的价钱',
-  PRIMARY KEY (`id`),
-  KEY `FK_mall_order_create_user` (`create_user_id`),
-  KEY `FK_mall_order_modify_user` (`modify_user_id`),
-  CONSTRAINT `FK_mall_order_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_mall_order_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-alter table t_mall_order add constraint mall_order_code_product_unique UNIQUE(order_code, product_code);
-
--- ----------------------------
 -- Table structure for t_mall_home_carousel
 -- ----------------------------
 DROP TABLE IF EXISTS `t_mall_home_carousel`;
@@ -1311,6 +1271,28 @@ CREATE TABLE `t_clock_in_resources` (
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Table structure for t_oauth2
+-- ----------------------------
+DROP TABLE IF EXISTS `t_oauth2`;
+CREATE TABLE `t_oauth2` (
+    `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
+    `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态',
+    `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+    `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+    `create_user_id` int(11) DEFAULT NULL COMMENT '创建人',
+    `modify_user_id` int(11) DEFAULT NULL COMMENT '修改人',
+    `platform` varchar(25) NOT NULL COMMENT '平台名称',
+    `oauth2_id` bigint(20) NOT NULL COMMENT '对应所在平台的唯一关联id',
+    `open_id` varchar(100) NOT NULL COMMENT '对应所在平台的唯一openid',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `t_oauth2_in_unique` (`platform`,`create_user_id`),
+    KEY `FK_oauth2_create_user` (`create_user_id`),
+    KEY `FK_oauth2_modify_user` (`modify_user_id`),
+    CONSTRAINT `FK_oauth2_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+    CONSTRAINT `FK_oauth2_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
 -- Table structure for t_event
 -- ----------------------------
 DROP TABLE IF EXISTS `t_event`;
@@ -1363,7 +1345,7 @@ CREATE TABLE `t_option` (
   `create_time` datetime DEFAULT NULL,
   `modify_time` datetime DEFAULT NULL,
   `option_key` varchar(255) NOT NULL,
-  `option_value` varchar(255) NOT NULL,
+  `option_value` text NOT NULL COMMENT '选项的值，有可能是打的文本，所以用text',
   `version` int(3) NOT NULL,
   `create_user_id` int(11) DEFAULT NULL,
   `modify_user_id` int(11) DEFAULT NULL,
@@ -1377,10 +1359,50 @@ CREATE TABLE `t_option` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for t_order_detail  对接各个平台的订单详情
+-- Table structure for t_mall_order
 -- ----------------------------
-DROP TABLE IF EXISTS `t_order_detail`;
-CREATE TABLE `t_order_detail` (
+DROP TABLE IF EXISTS `t_mall_order`;
+CREATE TABLE `t_mall_order` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  `buyer_address` varchar(255) DEFAULT NULL,
+  `buyer_name` varchar(255) DEFAULT NULL,
+  `buyer_want_delivery_from_time` datetime DEFAULT NULL,
+  `buyer_want_delivery_to_time` datetime DEFAULT NULL,
+  `delivery_time` datetime DEFAULT NULL,
+  `goods_time` datetime DEFAULT NULL,
+  `invoice_content` varchar(255) DEFAULT NULL,
+  `invoice_effective_time` datetime DEFAULT NULL,
+  `invoice_title` varchar(255) DEFAULT NULL,
+  `invoice_type` int(11) DEFAULT NULL,
+  `is_invoice` int(11) DEFAULT '0',
+  `is_pay` int(11) DEFAULT '0',
+  `is_phone_before` int(11) DEFAULT '0',
+  `mail_code` int(11) DEFAULT NULL,
+  `money` float NOT NULL,
+  `note` varchar(255) DEFAULT NULL,
+  `phone_number` int(11) DEFAULT NULL,
+  `preferential` varchar(255) DEFAULT NULL,
+  `totalMoney` float NOT NULL,
+  `create_user_id` int(11) DEFAULT NULL,
+  `modify_user_id` int(11) DEFAULT NULL,
+  `order_detail_id` bigint(20) DEFAULT NULL,
+  `order_detail_status` int(11) DEFAULT NULL COMMENT '关联平台订单详情的状态,冗余字段，需要及时跟随订单详情更新',
+  PRIMARY KEY (`id`),
+  KEY `FK_mall_order_create_user` (`create_user_id`),
+  KEY `FK_mall_order_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_mall_order_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_order_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
+-- Table structure for t_mall_order_detail  对接各个平台的订单详情
+-- ----------------------------
+DROP TABLE IF EXISTS `t_mall_order_detail`;
+CREATE TABLE `t_mall_order_detail` (
   `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
   `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
@@ -1396,16 +1418,43 @@ CREATE TABLE `t_order_detail` (
   `order_category` varchar(255) NULL COMMENT '订单分类',
   `order_type` varchar(25) NULL COMMENT '订单类型，如：聚划算/天猫/淘宝等',
   `order_pay_money` double NOT NULL COMMENT '订单实际支付金额',
-  `order_settlement_money` double NULL COMMENT '订单实际结算金额，只要订单是结算状态才有值',
+  `order_settlement_money` double NULL COMMENT '订单实际结算总金额，只要订单是结算状态才有值',
   `order_buy_numer` int(2) NOT NULL DEFAULT 1 COMMENT '订单商品购买数量，默认是1',
+  `product_title` varchar(255) DEFAULT NULL COMMENT '订单商品的标题',
   `platform` varchar(25) NOT NULL COMMENT '订单平台，如：淘宝网/京东/拼多多',
   `order_cash_back_ratio` double NOT NULL COMMENT '订单预估佣金比率，百分比',
   `order_cash_back` double NOT NULL COMMENT '订单预估佣金金额',
-  `order_settlement_cash_back` double NULL COMMENT '订单结算金额(只有结算状态才会大于0.0)',
+  `order_settlement_cash_back` double NOT NULL COMMENT '订单结算佣金金额(只有结算状态才会大于0.0)',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `t_order_detail_in_unique` (`order_product_id`,`platform`,`order_code`),
-  KEY `FK_order_detail_create_user` (`create_user_id`),
-  KEY `FK_order_detail_modify_user` (`modify_user_id`),
-  CONSTRAINT `FK_order_detail_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
-  CONSTRAINT `FK_order_detail_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+  UNIQUE KEY `t_mall_order_detail_in_unique` (`order_product_id`,`platform`,`order_code`),
+  KEY `FK_mall_order_detail_create_user` (`create_user_id`),
+  KEY `FK_mall_order_detail_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_mall_order_detail_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_order_detail_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_mall_promotion_seat  推广位表
+-- ----------------------------
+DROP TABLE IF EXISTS `t_mall_promotion_seat`;
+CREATE TABLE `t_mall_promotion_seat` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
+  `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_user_id` int(11) DEFAULT NULL COMMENT '创建人',
+  `modify_user_id` int(11) DEFAULT NULL COMMENT '修改人',
+  `seat_id` bigint(20) NOT NULL COMMENT '推广位ID',
+  `seat_name` varchar(25) NOT NULL COMMENT '推广位名称',
+  `platform` varchar(25) NOT NULL COMMENT '订单平台，如：淘宝网/京东/拼多多',
+  `user_id` bigint(20) DEFAULT NULL COMMENT ' 推广位被使用的用户ID',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `t_mall_promotion_seat_in_unique` (`seat_id`,`platform`),
+  UNIQUE KEY `t_mall_promotion_seat_user_in_unique` (`user_id`,`platform`),
+  KEY `FK_mall_promotion_seat_create_user` (`create_user_id`),
+  KEY `FK_mall_promotion_seat_modify_user` (`modify_user_id`),
+  KEY `FK_mall_promotion_seat_user` (`user_id`),
+  CONSTRAINT `FK_mall_promotion_seat_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_promotion_seat_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_promotion_seat_user` FOREIGN KEY (`user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

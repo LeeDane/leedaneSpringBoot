@@ -9,10 +9,10 @@ import com.cn.leedane.mall.model.SearchProductRequest;
 import com.cn.leedane.mall.model.SearchProductResult;
 import com.cn.leedane.model.mall.S_PlatformProductBean;
 import com.cn.leedane.utils.EnumUtil;
+import com.cn.leedane.utils.StringUtil;
 import com.jd.open.api.sdk.JdException;
 import com.jd.open.api.sdk.internal.util.CodecUtil;
 import com.jd.open.api.sdk.internal.util.HttpUtil;
-import com.jd.open.api.sdk.internal.util.StringUtil;
 import com.jd.open.api.sdk.request.JdRequest;
 import com.taobao.api.ApiException;
 import net.sf.json.JSONArray;
@@ -50,7 +50,7 @@ public class SearchProductApi {
         PageParam pageParam=new PageParam();
         pageParam.setPageSize((int)productRequest.getPageSize());
         request.setPageParam(pageParam);
-        request.setOrderField(0);
+        request.setOrderField(StringUtil.changeObjectToInt(productRequest.getSort()));
         Connection.Response res = null;
         List<S_PlatformProductBean> jingdongItems = new ArrayList<S_PlatformProductBean>();
         try {

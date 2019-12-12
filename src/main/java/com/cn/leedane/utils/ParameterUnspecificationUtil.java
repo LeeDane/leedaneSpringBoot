@@ -51,4 +51,16 @@ public class ParameterUnspecificationUtil {
 		if(StringUtil.isNull(str))
 			throw new ParameterUnspecificationException(msg);
 	}
+
+	/**
+	 * 校验平台字段是否为空或者是不支持的平台
+	 * @param platform
+	 */
+	public static void checkPlatform(String  platform){
+		if(StringUtil.isNull(platform))
+			throw new ParameterUnspecificationException("platform code must not null.");
+
+		if(!MallUtil.inPlatform(platform))
+			throw new ParameterUnspecificationException("not support platform .");
+	}
 }

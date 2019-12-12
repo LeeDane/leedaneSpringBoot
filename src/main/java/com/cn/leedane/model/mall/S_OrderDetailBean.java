@@ -108,10 +108,17 @@ public class S_OrderDetailBean extends RecordTimeBean{
 
 	/**
 	 * 最终结算给平台用户依据这个
-	 * 订单结算金额(只有结算状态才会大于0.0)
+	 * 订单结算佣金金额(只有结算状态才会大于0.0),最终系统收到平台的钱
 	 */
 	@Column("order_settlement_cash_back")
 	private double orderSettlementCashBack;
+
+
+	/**
+	 * 商品的标题
+	 */
+	@Column("product_title")
+	private String productTitle;
 
 	public Date getOrderCreateTime() {
 		return orderCreateTime;
@@ -231,5 +238,13 @@ public class S_OrderDetailBean extends RecordTimeBean{
 
 	public void setOrderSettlementCashBack(double orderSettlementCashBack) {
 		this.orderSettlementCashBack = orderSettlementCashBack;
+	}
+
+	public String getProductTitle() {
+		return productTitle;
+	}
+
+	public void setProductTitle(String productTitle) {
+		this.productTitle = productTitle;
 	}
 }

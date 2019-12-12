@@ -38,6 +38,15 @@ public interface UserMapper  extends BaseMapper<UserBean>{
 	 * @return
 	 */
 	public UserBean loginUserByPhone(@Param("mobilePhone")String mobilePhone);
+
+	/**
+	 * 通过第三方授权验证登录账号
+	 * @param oauth2Id
+	 * @param openId
+	 * @param platform
+	 * @return
+	 */
+	public UserBean loginUserByOauth2Id(@Param("oauth2Id")long oauth2Id, @Param("openId")String openId, @Param("platform")String platform);
 	
 	/**
 	 * 用户注册

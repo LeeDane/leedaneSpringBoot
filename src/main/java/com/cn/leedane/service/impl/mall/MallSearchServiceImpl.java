@@ -19,9 +19,7 @@ import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.mall.MallRoleCheckService;
 import com.cn.leedane.service.mall.MallSearchService;
 import com.cn.leedane.service.mall.S_TaobaoService;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.JsonUtil;
-import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.*;
 import com.taobao.api.ApiException;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -61,11 +59,13 @@ public class MallSearchServiceImpl extends MallRoleCheckService implements MallS
 		long rows = JsonUtil.getLongValue(jo, "rows", 10);
 		String keyword = JsonUtil.getStringValue(jo, "keyword"); //搜索关键字
 		String platform = JsonUtil.getStringValue(jo, "platform", EnumUtil.ProductPlatformType.淘宝.value);
+		String sort = JsonUtil.getStringValue(jo, "sort");
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		SearchProductRequest productRequest = new SearchProductRequest();
 		productRequest.setKeyword(keyword);
 		productRequest.setPageSize(rows);
 		productRequest.setPageNo(current);
+		productRequest.setSort(sort);
 
 		SearchProductResult productResult = null;
 		if(EnumUtil.ProductPlatformType.淘宝.value.equalsIgnoreCase(platform) || EnumUtil.ProductPlatformType.淘宝.value.equalsIgnoreCase(platform)){
@@ -73,6 +73,13 @@ public class MallSearchServiceImpl extends MallRoleCheckService implements MallS
 		}else if(EnumUtil.ProductPlatformType.京东.value.equalsIgnoreCase(platform)){
 			productResult = com.cn.leedane.mall.jingdong.api.SearchProductApi.searchProduct(productRequest);
 		}else if(EnumUtil.ProductPlatformType.拼多多.value.equalsIgnoreCase(platform)){
+			//由于拼多多不支持链接查询，但是支持商品ID查询
+			if(StringUtil.isLink(productRequest.getKeyword())){
+				String productId = CommonUtil.parseLinkParams(productRequest.getKeyword(), "goods_id");
+				if(StringUtil.isNotNull(productId))
+					productRequest.setKeyword(productId);
+			}
+
 			productResult = com.cn.leedane.mall.pdd.api.SearchProductApi.searchProduct(productRequest);
 		}
 		message.put("platform", platform);

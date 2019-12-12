@@ -57,3 +57,6 @@ alter table t_comment add COLUMN `stick` int(3) DEFAULT 0 COMMENT '排序字段�
 
 /*为选项表添加唯一性约束*/
 alter table t_option add constraint t_option_in_unique UNIQUE(option_key, version);
+
+/*添加imei码和localId、add_day的唯一性约束，避免用户多次提交*/
+alter table t_financial add constraint imei_local_id_unique UNIQUE(imei, local_id, add_day);

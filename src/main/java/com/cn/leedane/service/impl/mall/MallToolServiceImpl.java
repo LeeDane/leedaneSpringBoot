@@ -1,6 +1,7 @@
 package com.cn.leedane.service.impl.mall;
 
 import com.cn.leedane.handler.mall.S_ProductHandler;
+import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.mall.taobao.api.PromotionApi;
 import com.cn.leedane.mapper.mall.S_ProductMapper;
 import com.cn.leedane.model.HttpRequestInfoBean;
@@ -40,13 +41,10 @@ public class MallToolServiceImpl extends MallRoleCheckService implements MallToo
 	
 	@Autowired
 	private OperateLogService<OperateLogBean> operateLogService;
-	
-	@Autowired
-	private S_TaobaoService<IDBean> taobaoService;
 
 	@Override
 	public Map<String, Object> transform(String productId, JSONObject json, UserBean user,
-										 HttpRequestInfoBean request) throws WriterException, JdException, ApiException {
+										 HttpRequestInfoBean request) throws WriterException, JdException, ApiException, PddException {
 		logger.info("MallToolServiceImpl-->transform():productId="+productId);
 		ResponseMap message = new ResponseMap();
 		if(productId.startsWith("tb_")){
@@ -87,13 +85,23 @@ public class MallToolServiceImpl extends MallRoleCheckService implements MallToo
 		ParameterUnspecificationUtil.checkNullString(url, "url must not null.");
 		ResponseMap message = new ResponseMap();
 		String id = null;
+		if(!StringUtil.isLink(url)){
+			//非链接，那么就解析看有没有淘口令
+			id = CommonUtil.parseTaokouling(url);
+			//能够解析到淘口令，那就去解析淘口令，获得链接
+			if(StringUtil.isNotNull(id)){
+				url = CommonUtil.getUrlByTaokouling(id);
+			}
+		}
 
-		//先获取链接中的id=字段
-		id = CommonUtil.parseLinkParams(url, "id", "goods_id");
+		if(StringUtil.isLink(url)){
+			//先获取链接中的id=字段
+			id = CommonUtil.parseLinkParams(url, "id", "goods_id");
 
-		//获取不到ID=的匹配字段，中解析地址中的.com/xxxxxx.html中的xxxxxx
-		if(StringUtil.isNull(id))
-			id = CommonUtil.parseLinkId(url);
+			//获取不到ID=的匹配字段，中解析地址中的.com/xxxxxx.html中的xxxxxx
+			if(StringUtil.isNull(id))
+				id = CommonUtil.parseLinkId(url);
+		}
 
 		if(StringUtil.isNotNull(id)){
 			message.put("message", id);

@@ -1,0 +1,12 @@
+/**  大屏样式 **/
+@media screen and (min-width: 900px){
+
+ }
+
+ /**  小屏样式 **/
+ @media screen and (max-width: 900px){
+
+ }
+ .laytable-cell-1-10{
+     width: 180px!important;
+ }

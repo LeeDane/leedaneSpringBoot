@@ -8,12 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.utils.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +40,7 @@ import com.cn.leedane.utils.EnumUtil.DataTableType;
  */
 @Component
 public class UserHandler {
-
+	Logger logger = Logger.getLogger(getClass());
 	@Autowired
 	private UserMapper userMapper;
 	
@@ -665,6 +668,39 @@ public class UserHandler {
 		String key = getRedisUserNameLoginErrorKey(account);
 		redisUtil.delete(key);
 		return true;
+	}
+
+	/**
+	 * 调用该方法，直接通过验证shiro进行验证用户进行登录
+	 * @param user
+	 */
+	public void loginUser(UserBean user){
+		String username = user.getAccount();
+		CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken();
+		authenticationToken.setUsername(username);
+		authenticationToken.setPassword(user.getPassword().toCharArray());
+		//这里只负责获取用户，不做校验，校验交给shiro的realm里面去做
+		authenticationToken.setUser(user);
+		//authenticationToken.setRememberMe(remember);
+
+		//获取当前的Subject
+		Subject currentUser = SecurityUtils.getSubject();
+		logger.info("对用户[" + username + "]进行登录验证..验证开始");
+		currentUser.login(authenticationToken);
+		logger.info("对用户[" + username + "]进行登录验证..验证通过");
+		//验证是否登录成功
+		if(currentUser.isAuthenticated()){
+			logger.info("用户[" + username + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)");
+			currentUser.getSession().setAttribute("hasnav", true);
+			//获取平台，如果是android就继续获取token
+
+			removeLoginErrorNumber(username);
+			Session session = SecurityUtils.getSubject().getSession();
+			session.setTimeout(1000 * 60 * 60 * 4); //设置4个小时过期
+			SessionManagerUtil.getInstance().addSession(SecurityUtils.getSubject(), session, user.getId());
+		}else{
+			authenticationToken.clear();
+		}
 	}
 	
 	

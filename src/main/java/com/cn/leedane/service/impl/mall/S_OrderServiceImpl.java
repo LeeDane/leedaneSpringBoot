@@ -103,15 +103,14 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 			if(result)
 				orderHandler.deleteNoDealOrderCache(user.getId());
 		}catch(DuplicateKeyException e){ //唯一键约束异常不做处理
-			result = true;
+			returnMsg = "该记录已经存在，如果不是您的操作，可以到订单反馈中心去申诉";
 		}
 		
 		message.put("isSuccess", result);
+		message.put("message", returnMsg);
 		if(result){
-			message.put("message", returnMsg);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		//保存操作日志
@@ -168,7 +167,7 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 		orderBean.setOrderCode(updateOrderBean.getOrderCode());
 		orderBean.setProductCode(updateOrderBean.getProductCode());
 //		orderBean.setTitle(updateOrderBean.getTitle());
-		orderBean.setReferrer(updateOrderBean.getReferrer());
+//		orderBean.setReferrer(updateOrderBean.getReferrer());
 		orderBean.setPlatform(updateOrderBean.getPlatform());
 		orderBean.setOrderTime(updateOrderBean.getOrderTime());
 		orderBean.setPayTime(updateOrderBean.getPayTime());
@@ -254,7 +253,7 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 		boolean result = orderMapper.delete(orderBean) > 0;
 		message.put("isSuccess", result);
 		if(result){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该成员已被移除出圈子.value));
+			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			orderHandler.deleteNoDealOrderCache(user.getId()); //删除缓存
 		}else{

@@ -795,6 +795,7 @@ public class BaseController {
 		boolean isStock = false; //判断用户是否有股票的权限
 		boolean isCircle = false; //判断用户是否有圈子的权限
 		boolean isShopping = false; //判断用户是否有购物的权限
+		boolean isMallManage = false; //判断用户是否有购物管理的权限
 		boolean isBaby = false; //判断用户是否有宝宝的权限
 		if(user != null){
 			isLogin = true;
@@ -802,6 +803,7 @@ public class BaseController {
 			isStock = currentUser.hasRole(RoleController.STOCK_ROLE_CODE);
 			isCircle = currentUser.hasRole(RoleController.CIRCLE_ROLE_CODE);
 			isShopping = currentUser.hasRole(RoleController.SHOPPING_ROLE_CODE);
+			isMallManage = currentUser.hasRole(RoleController.MALL_ROLE_CODE);
 			isBaby = currentUser.hasRole(RoleController.BABY_ROLE_CODE);
 			model.addAllAttributes(userHandler.getBaseUserInfo(user.getId()));
 			model.addAttribute("loginUserId", user.getId());
@@ -812,6 +814,7 @@ public class BaseController {
 		model.addAttribute("isStock", isStock);
 		model.addAttribute("isCircle", isCircle);
 		model.addAttribute("isShopping", isShopping);
+		model.addAttribute("isMallManage", isMallManage);
 		model.addAttribute("isBaby", isBaby);
 
 		model.addAttribute("onlineCount", SessionManagerUtil.getInstance().getAllActivesNumber());
@@ -839,6 +842,7 @@ public class BaseController {
 		model.addAttribute("isStock", currentUser.hasRole(RoleController.STOCK_ROLE_CODE));
 		model.addAttribute("isCircle", currentUser.hasRole(RoleController.CIRCLE_ROLE_CODE));
 		model.addAttribute("isShopping", currentUser.hasRole(RoleController.SHOPPING_ROLE_CODE));
+		model.addAttribute("isMallManage", currentUser.hasRole(RoleController.MALL_ROLE_CODE));
 		model.addAttribute("isBaby", currentUser.hasRole(RoleController.BABY_ROLE_CODE));
 
 		model.addAttribute("account", userBean.getAccount());

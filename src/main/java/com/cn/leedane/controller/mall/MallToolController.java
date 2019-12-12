@@ -1,6 +1,7 @@
 package com.cn.leedane.controller.mall;
 
 import com.cn.leedane.controller.BaseController;
+import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.service.mall.MallToolService;
 import com.cn.leedane.service.mall.S_TaobaoService;
@@ -45,7 +46,7 @@ public class MallToolController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/link/transform/{productId}", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> tranform(@PathVariable("productId") String productId, HttpServletRequest request) throws ApiException, WriterException, JdException {
+	public Map<String, Object> tranform(@PathVariable("productId") String productId, HttpServletRequest request) throws ApiException, WriterException, JdException, PddException {
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		message.putAll(mallToolService.transform(productId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));

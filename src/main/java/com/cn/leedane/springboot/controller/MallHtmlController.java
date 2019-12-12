@@ -1,5 +1,6 @@
 package com.cn.leedane.springboot.controller;
 
+import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.controller.RoleController;
 import com.cn.leedane.handler.mall.S_HomeItemHandler;
@@ -26,7 +27,6 @@ import com.cn.leedane.utils.EnumUtil.ResponseCode;
 import com.jd.open.api.sdk.JdException;
 import com.taobao.api.ApiException;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,7 +48,9 @@ import java.util.*;
 @RequestMapping(value = ControllerBaseNameUtil.mall)
 public class MallHtmlController extends BaseController{
 
-	
+	@Autowired
+	private SystemCache systemCache;
+
 	@Autowired
 	private S_ProductService<S_ProductBean> productService;
 	
@@ -234,6 +236,21 @@ public class MallHtmlController extends BaseController{
 	}
 
 	/**
+	 * 推广位管理入口
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/promotion/seat")
+	public String promotionSeat(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入推广位管理模块首页", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
+		return loginRoleCheck("mall/promotion-seat", true, model, request);
+	}
+
+	/**
 	 * 登记购买入口(也是跳转到订单页面，只是在跳转的时候需要带上订单号)
 	 * @param model
 	 * @param request
@@ -299,6 +316,7 @@ public class MallHtmlController extends BaseController{
 		//检查权限，通过后台配置
 //		checkRoleOrPermission(model, request);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入物品搜索页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
+		model.addAttribute("condition", systemCache.getCache("mallSearchCondition"));
 		return loginRoleCheck("mall/search", model, request);
 	}
 

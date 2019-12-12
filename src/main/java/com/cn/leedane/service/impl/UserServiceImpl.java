@@ -778,11 +778,11 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			return message.getMap();
 		}
 		
-		if(!password.equals(confirmPassword)){
+	/*	if(!password.equals(confirmPassword)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.两次密码不匹配.value));
 			message.put("responseCode", EnumUtil.ResponseCode.两次密码不匹配.value);
 			return message.getMap();
-		}
+		}*/
 		
 		if(StringUtil.isNull(phone) || phone.length() != 11){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.手机号为空或者不是11位数.value));

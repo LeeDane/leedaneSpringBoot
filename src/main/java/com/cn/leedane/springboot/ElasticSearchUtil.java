@@ -282,12 +282,15 @@ public class ElasticSearchUtil {
 			//判断是否是管理员，管理员可以查询所有的数据(无论状态)
 			//非管理员，只能查询公开的或者自己的私有的
 			if(!currentUser.hasRole(RoleController.ADMIN_ROLE_CODE)){
-				//日志只能看自己的
-				if(elasticSearchRequestBean.getSearchType() == ConstantsUtil.SEARCH_TYPE_OPERATE_LOG){
+				//非日志可以看自己私有的
+				if(elasticSearchRequestBean.getSearchType() != ConstantsUtil.SEARCH_TYPE_OPERATE_LOG){
 					BoolQueryBuilder boolQuerySelf = QueryBuilders.boolQuery();
 					boolQuerySelf.must(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_SELF));
 					boolQuerySelf.must(QueryBuilders.termQuery("create_user_id", elasticSearchRequestBean.getUser().getId()));
 					boolQueryStatus.should(boolQuerySelf);
+				}else{
+					//非管理员，日志只能看自己正常状态的
+					boolQueryStatus.must(QueryBuilders.termQuery("create_user_id", elasticSearchRequestBean.getUser().getId()));
 				}
 			}else{
 				//管理员可以查看所有人私有的数据

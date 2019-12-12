@@ -13,7 +13,7 @@ import sun.misc.BASE64Encoder;
  */
 public class SM4Utils
 {
-    private String secretKey = "";
+    public String secretKey = "";
     private String iv = "";
     private boolean hexString = false;
 

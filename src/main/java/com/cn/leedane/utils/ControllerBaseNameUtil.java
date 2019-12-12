@@ -342,6 +342,11 @@ public class ControllerBaseNameUtil {
 	 * 商城推广平台统一入口根路径
 	 */
 	public static final String mall_promotion = "mall/promotion";
+
+	/**
+	 * 商城推广位平台统一入口根路径
+	 */
+	public static final String mall_promotion_seat = "mall/promotion/seat";
 	
 	/**
 	 * 淘宝接口统一入口根路径

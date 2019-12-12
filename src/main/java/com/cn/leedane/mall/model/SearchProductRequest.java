@@ -10,6 +10,7 @@ public class SearchProductRequest {
     private long pageSize;
     private long pageNo;
     private String keyword;
+    private String sort; //排序的信息
 
     public void setKeyword(String keyword) {
         this.keyword = keyword;
@@ -33,5 +34,13 @@ public class SearchProductRequest {
 
     public void setPageNo(long pageNo) {
         this.pageNo = pageNo;
+    }
+
+    public String getSort() {
+        return sort;
+    }
+
+    public void setSort(String sort) {
+        this.sort = sort;
     }
 }

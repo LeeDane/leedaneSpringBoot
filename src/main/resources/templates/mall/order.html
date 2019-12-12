@@ -6,21 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title th:text="'我的订单'"></title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
-	<style type="text/css">
-		/**  大屏样式 **/
-		@media screen and (min-width: 900px){
-
-		}
-
-		/**  小屏样式 **/
-		@media screen and (max-width: 900px){
-
-		}
-		.laytable-cell-1-10{
-			width: 180px!important;
-		}
-		
-	</style>
+	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{/page/css/mall/order.min.css}" />
+	<link th:if="${isDebug}" rel="stylesheet" th:href="@{/page/css/mall/order.css}" />
 </head>
 <body>
 	<div th:include="mall/commonMall :: helloMall">what?</div>
@@ -88,13 +75,6 @@
 							<div class="layui-form-mid layui-word-aux">用于展示用的(非必填项, 不填系统默认拿商品标题填充)</div>
 						</div>
 					  	<div class="layui-form-item">
-							<label class="layui-form-label">推荐人</label>
-							<div class="layui-input-inline">
-								<input type="text" name="referrer" placeholder="请填写对方的推荐码" autocomplete="off" class="layui-input" />
-							</div>
-							<div class="layui-form-mid layui-word-aux">如果有推荐人，请如实填写对方的推荐码</div>
-					  	</div>
-					  	<div class="layui-form-item">
 							<div class="layui-input-block">
 							  	<button class="layui-btn" lay-submit="" lay-filter="new-order-form-submit">立即提交</button>
 							  	<button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -132,7 +112,6 @@
 	</div>
 </body>
 <div th:include="mall/commonMall-js :: mallJs">what?</div>
-<script th:src="@{/page/js/mall/order.js}" type="text/javascript"></script>
 <script th:inline="javascript">
 	/*<![CDATA[*/
 	var productId = /*[[${productId}]]*/;//取值
@@ -140,4 +119,6 @@
 	var platform = /*[[${platform}]]*/;//取值
 	/*]]>*/
 </script>
+<script th:if="${not isDebug}" th:src="@{/page/js/mall/order.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/mall/order.js}" type="text/javascript"></script>
 </html>

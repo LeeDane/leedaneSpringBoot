@@ -60,8 +60,8 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 		S_HomeItemBean homeItemBean = (S_HomeItemBean) sqlUtil.getBean(json, S_HomeItemBean.class);
 		if(homeItemBean.getCategoryId() < 1 || homeItemBean.getNumber() > 10 || homeItemBean.getNumber() < 1)
 			throw new ParameterUnspecificationException("分类为空或者数量不合法。");
-		
-		checMallkAdmin(user);
+
+		checkMallAdmin(user);
 
 		ResponseMap message = new ResponseMap();
 		String returnMsg = "新的分类已经发布成功！";
@@ -94,8 +94,8 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 		S_HomeItemBean homeItemBean = homeItemMapper.findById(S_HomeItemBean.class, itemId);
 		if(homeItemBean == null)
 			throw new ParameterUnspecificationException("分类项为空或者数量不合法。");
-		
-		checMallkAdmin(user);
+
+		checkMallAdmin(user);
 
 		ResponseMap message = new ResponseMap();
 		String returnMsg = "分类项修改成功！";
@@ -148,7 +148,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 			throw new NullPointerException("该分类项已经不存在或被删除了！");
 		
 		ResponseMap message = new ResponseMap();
-		checMallkAdmin(user);
+		checkMallAdmin(user);
 		
 		homeItemProductMapper.deleteProducts(itemId);
 		
@@ -332,7 +332,7 @@ public class S_HomeItemServiceImpl extends MallRoleCheckService implements S_Hom
 			UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_HomeItemServiceImpl-->deleteProduct():itemId="+itemId +", productId="+ productId);
 		ResponseMap message = new ResponseMap();
-		checMallkAdmin(user);
+		checkMallAdmin(user);
 		S_HomeItemShowBean homeItemShowBean = homeItemHandler.getCategory(itemId);
 		if(homeItemShowBean == null || homeItemShowBean.getItemId() < 1)
 			throw new NullPointerException("该分类项已经不存在或被删除了！");

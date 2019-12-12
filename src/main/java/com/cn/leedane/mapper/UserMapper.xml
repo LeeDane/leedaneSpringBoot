@@ -46,7 +46,11 @@
 	<select id="shakeSearch" resultType="UserBean">
 		select * from t_user where status = #{status} and id != #{createUserId} order by rand() limit 1
 	</select>
-	
+
+	<select id="loginUserByOauth2Id" resultType="UserBean">
+		select u.* from t_user u where u.id = (select o.create_user_id from t_oauth2 o where o.platform=#{platform} and o.open_id=#{openId} and o.oauth2_id = #{oauth2Id} limit 1) limit 1
+	</select>
+
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
 
 	<select id="getSetting" resultMap="userSettingBean">

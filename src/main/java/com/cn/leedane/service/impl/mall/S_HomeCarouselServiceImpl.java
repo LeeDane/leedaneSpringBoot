@@ -52,7 +52,7 @@ public class S_HomeCarouselServiceImpl extends MallRoleCheckService implements S
 		if(productBean == null)
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商品不存在或已被删除.value));
 		//检查权限
-		checMallkAdmin(user);
+		checkMallAdmin(user);
 		
 		S_HomeCarouselBean homeCarouselBean = new S_HomeCarouselBean();
 
@@ -86,7 +86,7 @@ public class S_HomeCarouselServiceImpl extends MallRoleCheckService implements S
 		logger.info("S_CarouselServiceImpl-->delete():carouselId="+carouselId);
 		
 		//检查权限
-		checMallkAdmin(user);
+		checkMallAdmin(user);
 		
 		boolean result = homeCarouselMapper.deleteById(S_HomeCarouselBean.class, carouselId) > 0;
 		ResponseMap message = new ResponseMap();
