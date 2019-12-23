@@ -4,6 +4,8 @@ import com.cn.leedane.model.RecordTimeBean;
 import com.cn.leedane.mybatis.table.annotation.Column;
 import com.cn.leedane.mybatis.table.annotation.Table;
 
+import java.util.Date;
+
 /**
  * 推广位实体bean
  * @author LeeDane
@@ -19,10 +21,10 @@ public class S_PromotionSeatBean extends RecordTimeBean{
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 推广位ID
+	 * 推广位ID(为了兼容拼多多的，必须用字符串)
 	 */
 	@Column("seat_id")
-	private long seatId;
+	private String seatId;
 	
 	/**
 	 * 推广位名称
@@ -37,16 +39,22 @@ public class S_PromotionSeatBean extends RecordTimeBean{
 	private String platform;
 
 	/**
+	 * 推广位分配给用户的时间
+	 */
+	@Column("allot_time")
+	private Date allotTime;
+
+	/**
 	 * 推广位被使用的用户ID
 	 */
 	@Column("user_id")
 	private long userId;
 
-	public long getSeatId() {
+	public String getSeatId() {
 		return seatId;
 	}
 
-	public void setSeatId(long seatId) {
+	public void setSeatId(String seatId) {
 		this.seatId = seatId;
 	}
 
@@ -72,5 +80,13 @@ public class S_PromotionSeatBean extends RecordTimeBean{
 
 	public void setUserId(long userId) {
 		this.userId = userId;
+	}
+
+	public Date getAllotTime() {
+		return allotTime;
+	}
+
+	public void setAllotTime(Date allotTime) {
+		this.allotTime = allotTime;
 	}
 }

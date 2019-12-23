@@ -428,4 +428,9 @@ public class ControllerBaseNameUtil {
 	 * 信纸统一入口根路径
 	 */
 	public static final String paper = "paper";
+
+	/**
+	 * 我的资料管理统一入口根路径
+	 */
+	public static final String myManage = "/my/manage";
 }

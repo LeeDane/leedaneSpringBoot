@@ -106,6 +106,8 @@ public class SearchProductApi {
             taobaoProductBean.setShareUrl(object.optString("url"));
             taobaoProductBean.setCouponShareUrl(object.optString("coupon_share_url"));
             taobaoProductBean.setId(object.optLong("item_id"));
+            taobaoProductBean.setClickId("tb_"+ object.optLong("item_id"));
+            taobaoProductBean.setSales("30天售量:"+ object.optLong("volume"));
             taobaoItems.add(taobaoProductBean);
         }
 

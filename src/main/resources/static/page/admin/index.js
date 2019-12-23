@@ -1,25 +1,3 @@
-//退出登录
-function logout(){
-    $.ajax({
-        type: "delete",
-        dataType: 'json',
-        url : "/us/logout?t="+Math.random(),
-        beforeSend:function(){
-        },
-        success : function(data) {
-            layer.msg(data.message);
-            if(data.isSuccess)
-                //刷新当前页面
-                window.location.reload();
-            else
-                ajaxError(data);
-        },
-        error : function(data) {
-            ajaxError(data);
-        }
-    });
-}
-
 BUI.use('common/main',function(){
 var config = [{
         id:'welcome',

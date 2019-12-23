@@ -593,7 +593,8 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			bean.setStatus(ConstantsUtil.STATUS_DELETE);
 			toUserContent = "您的文章《"+ bean.getTitle() +"》被管理员审核为不通过，并且已被删除，有异议请直接私信管理员处理！";
 		}
-		
+		bean.setModifyTime(new Date());
+		bean.setModifyUserId(user.getId());
 		boolean result = blogMapper.update(bean) > 0;
 		if(result){
 			new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(bean));

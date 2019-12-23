@@ -1,5 +1,6 @@
 package com.cn.leedane.handler;
 
+import com.cn.leedane.cache.JuheCache;
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.mapper.BaseMapper;
 import com.cn.leedane.mapper.circle.CircleMapper;
@@ -55,6 +56,9 @@ public class InitCacheData {
 	
 	@Autowired
 	private SystemCache systemCache;
+
+	@Autowired
+	private OptionHandler optionHandler;
 	
 	@Autowired
 	private BaseMapper<RecordTimeBean> baseMapper;
@@ -395,6 +399,8 @@ public class InitCacheData {
 		EhCacheCacheManager ehCacheCacheManager = (EhCacheCacheManager) SpringUtil.getBean("ehCacheCacheManager");
 		EhCacheCache cache = (EhCacheCache) ehCacheCacheManager.getCache("systemEhCache");
 		SystemCache.setSystemEhCache(cache);
+		EhCacheCache juheEhCache = (EhCacheCache) ehCacheCacheManager.getCache("juheEhCache");
+		JuheCache.setJuheEhCache(juheEhCache);
 	}
 
 	/**
@@ -414,8 +420,8 @@ public class InitCacheData {
 				}
 			}
 			long end = System.currentTimeMillis();  
-			logger.warn("加载选项表数据进缓存中结束，共计耗时："+(end - begin) +"ms");  
-			
+			logger.warn("加载选项表数据进缓存中结束，共计耗时："+(end - begin) +"ms");
+//			optionHandler.remove();
 			//logger.info("---->"+systemCache.getCache("page-size"));
 		} catch (Exception ex) {  
 			logger.error("初始化读取T_OPTION表出现异常");

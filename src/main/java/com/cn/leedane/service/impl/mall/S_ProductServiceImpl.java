@@ -3,7 +3,7 @@ package com.cn.leedane.service.impl.mall;
 import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.handler.mall.S_ProductHandler;
 import com.cn.leedane.lucene.solr.ProductSolrHandler;
-import com.cn.leedane.mall.taobao.api.AlimamaRecommend;
+import com.cn.leedane.mall.taobao.other.AlimamaRecommend;
 import com.cn.leedane.mapper.mall.S_ProductMapper;
 import com.cn.leedane.mapper.mall.S_StatisticsMapper;
 import com.cn.leedane.model.HttpRequestInfoBean;
@@ -301,14 +301,16 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 			if(items != null && items.size() > 0){
 				for(int i = 0; i < items.size(); i++){
 					S_PlatformProductBean taobaoProductBean = new S_PlatformProductBean();
-					taobaoProductBean.setAuctionId(items.getJSONObject(i).getLong("num_iid"));
+					JSONObject item = items.getJSONObject(i);
+					taobaoProductBean.setAuctionId(item.getLong("num_iid"));
 					taobaoProductBean.setCashBack(0); //此处获取不到
 					taobaoProductBean.setCashBackRatio(0); //此处获取不到
-					taobaoProductBean.setImg(items.getJSONObject(i).getString("pict_url"));
+					taobaoProductBean.setImg(item.getString("pict_url"));
 					taobaoProductBean.setPlatform(EnumUtil.ProductPlatformType.淘宝.value);
-					taobaoProductBean.setPrice(items.getJSONObject(i).getDouble("zk_final_price"));
-					taobaoProductBean.setOldPrice(items.getJSONObject(i).getDouble("reserve_price"));
-					taobaoProductBean.setTitle(items.getJSONObject(i).getString("title"));
+					taobaoProductBean.setPrice(item.getDouble("zk_final_price"));
+					taobaoProductBean.setOldPrice(item.getDouble("reserve_price"));
+					taobaoProductBean.setTitle(item.getString("title"));
+					taobaoProductBean.setClickId("tb_"+ item.getLong("num_iid"));
 					taobaoProductBean.setShopTitle(null);
 					taobaoItems.add(taobaoProductBean);
 				}

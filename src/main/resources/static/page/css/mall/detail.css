@@ -75,7 +75,7 @@
 /**  大屏样式 **/
 @media screen and (min-width: 900px){
     .my-layui-input{
-        width: calc(100% - 264px);
+        width: calc(100% - 335px);
         padding-left: 10px;
     }
     #active-container .image0{
@@ -183,6 +183,15 @@
     .tab-share-input{
         width: 100%;
         margin-bottom: 5px;
+    }
+
+    #my-btn-group .layui-btn{
+        margin-top: 8px;
+        margin-left: 0!important;
+    }
+
+    #my-search-btn-group{
+        margin-top: 8px;
     }
 }
 

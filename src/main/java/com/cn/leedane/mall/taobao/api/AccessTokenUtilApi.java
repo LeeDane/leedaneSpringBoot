@@ -30,14 +30,14 @@ public class AccessTokenUtilApi {
         props.put("code",code);
         props.put("client_id", CommUtil.appkey);
         props.put("client_secret", CommUtil.secret);
-        props.put("redirect_uri", CommUtil.redirectUrl);
+        props.put("redirect_uri", CommUtil.getRedirectUrl());
         props.put("view","web");
         props.put("state", state);
         String s="";
         try{
             WebUtils.setIgnoreSSLCheck(true);
             s= WebUtils.doPost(url, props, 8000, 8000);
-            System.out.println(s);
+//            System.out.println(s);
             return JSONObject.fromObject(s);
         }catch(IOException e){
             e.printStackTrace();

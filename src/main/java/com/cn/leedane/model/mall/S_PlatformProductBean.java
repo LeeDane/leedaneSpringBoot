@@ -27,6 +27,7 @@ public class S_PlatformProductBean extends IDBean{
 	private long auctionId; //唯一id
 	private String platform; //平台
 	private String shopTitle; //商铺名称
+	private String shopId; //商铺ID，考虑要兼容苏宁的0000000自营商品
 	private int couponAmount; //优惠券的金额
 	private long couponLeftCount; //优惠券的剩余数量
 	private String shareUrl;//商品推广的地址
@@ -36,6 +37,8 @@ public class S_PlatformProductBean extends IDBean{
 	private String subtitle;//子标题
 	private String detail;//详情
 	private Double afterCouponPrice;//券后价格
+	private String sales;//销量
+	private String clickId;//用于点击ID，如淘宝格式：tb_2562244
 
 	public String getTitle() {
 		return title;
@@ -161,5 +164,29 @@ public class S_PlatformProductBean extends IDBean{
 
 	public void setAfterCouponPrice(Double afterCouponPrice) {
 		this.afterCouponPrice = afterCouponPrice;
+	}
+
+	public String getSales() {
+		return sales;
+	}
+
+	public void setSales(String sales) {
+		this.sales = sales;
+	}
+
+	public String getShopId() {
+		return shopId;
+	}
+
+	public void setShopId(String shopId) {
+		this.shopId = shopId;
+	}
+
+	public String getClickId() {
+		return clickId;
+	}
+
+	public void setClickId(String clickId) {
+		this.clickId = clickId;
 	}
 }

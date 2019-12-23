@@ -12,7 +12,7 @@
 /**  大屏样式 **/
 @media screen and (min-width: 900px){
     .my-layui-input{
-        width: calc(100% - 265px);
+        width: calc(100% - 340px);
         padding-left: 10px;
     }
 

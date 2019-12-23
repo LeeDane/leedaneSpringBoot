@@ -5,8 +5,10 @@ import com.cn.leedane.mall.jingdong.api.DetailBigFieldApi;
 import com.cn.leedane.mall.model.SearchProductRequest;
 import com.cn.leedane.mall.model.SearchProductResult;
 import com.cn.leedane.mall.model.ProductPromotionLinkBean;
+import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.mall.pdd.api.DetailSimpleApi;
-import com.cn.leedane.mall.taobao.api.AlimamaShareLink;
+import com.cn.leedane.mall.taobao.api.RecommendProductApi;
+import com.cn.leedane.mall.taobao.other.AlimamaShareLink;
 import com.cn.leedane.mall.taobao.api.SearchMaterialApi;
 import com.cn.leedane.mall.taobao.api.SearchProductApi;
 import com.cn.leedane.mapper.mall.S_ProductMapper;
@@ -20,6 +22,7 @@ import com.cn.leedane.service.mall.MallRoleCheckService;
 import com.cn.leedane.service.mall.MallSearchService;
 import com.cn.leedane.service.mall.S_TaobaoService;
 import com.cn.leedane.utils.*;
+import com.suning.api.exception.SuningApiException;
 import com.taobao.api.ApiException;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -81,6 +84,14 @@ public class MallSearchServiceImpl extends MallRoleCheckService implements MallS
 			}
 
 			productResult = com.cn.leedane.mall.pdd.api.SearchProductApi.searchProduct(productRequest);
+		}else if(EnumUtil.ProductPlatformType.苏宁.value.equalsIgnoreCase(platform)){
+			productResult = com.cn.leedane.mall.suning.api.SearchProductApi.searchProduct(productRequest);
+		}
+		if(productResult == null){
+			message.put("isSuccess", false);
+			message.put("message", "返回结果为空。");
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+			return message.getMap();
 		}
 		message.put("platform", platform);
 		message.put("total", productResult.getTotal());
@@ -128,17 +139,37 @@ public class MallSearchServiceImpl extends MallRoleCheckService implements MallS
 	}
 
 	@Override
-	public Map<String, Object> productRecommend(long productId, JSONObject jo, UserBean user,
-												HttpRequestInfoBean request) throws ApiException {
+	public Map<String, Object> productRecommend(String itemId, JSONObject jo, UserBean user,
+												HttpRequestInfoBean request) throws ApiException, PddException, SuningApiException {
 
-		logger.info("MallSearchServiceImpl-->productRecommend(): productId="+ productId +", jo="+jo);
+		logger.info("MallSearchServiceImpl-->productRecommend(): itemId="+ itemId +", jo="+jo);
 		ResponseMap message = new ResponseMap();
 
 		long count = JsonUtil.getLongValue(jo, "count", 12);
-		message.put("message", SearchMaterialApi.search(productId, count).getTaobaoItems());
-		message.put("isSuccess", true);
-		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-
+		if(itemId.startsWith("tb_")){
+			long productIdTemp = StringUtil.changeObjectToLong(itemId.substring(4, itemId.length()));
+			message.put("message", com.cn.leedane.mall.taobao.api.RecommendProductApi.recommend(productIdTemp, count).getItems());
+			message.put("isSuccess", true);
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+			return message.getMap();
+		}else if(itemId.startsWith("jd_")){
+			message.put("message", "京东没有推荐商品的api");
+			message.put("isSuccess", true);
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+			return message.getMap();
+		}else if(itemId.startsWith("pdd_")){
+			message.put("message", "拼多多没有推荐商品的api");
+			message.put("isSuccess", true);
+			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+			return message.getMap();
+		}else if(itemId.startsWith("sn_")){
+			String productIdTemp = itemId.substring(3, itemId.length());
+			String commodityCode = productIdTemp.split("-")[0];
+			String supplierCode = productIdTemp.split("-")[0];
+			message.put("message",com.cn.leedane.mall.suning.api.RecommendProductApi.recommend(commodityCode, supplierCode, count).getItems());
+			message.put("isSuccess", true);
+			return message.getMap();
+		}
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user != null ? user.getAccount(): "","对淘宝的商品发起查询", "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "search()", ConstantsUtil.STATUS_NORMAL, 0);
 		return message.getMap();
@@ -161,6 +192,11 @@ public class MallSearchServiceImpl extends MallRoleCheckService implements MallS
 			S_PlatformProductBean platformProductBean = DetailSimpleApi.getDetail(productIdTemp);
 			message.put("message", platformProductBean == null? "商品不存在": platformProductBean.getDetail());
 			message.put("isSuccess", true);
+		}else if(productId.startsWith("sn")){
+			String productIdTemp = productId.substring(3, productId.length());
+			message.put("message", productIdTemp);
+			message.put("isSuccess", true);
+			return message.getMap();
 		}
 		return message.getMap();
 	}

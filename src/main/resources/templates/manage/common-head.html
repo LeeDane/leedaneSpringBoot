@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<title>common头部部分</title>
+	<meta name="renderer" content="webkit" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+</head>
+<body >
+	<div class="layui-header" th:fragment="helloManage(tabId)">
+		<div class="layui-logo">个人后台管理</div>
+		<ul class="layui-nav layui-layout-left">
+			<li class="layui-nav-item"><a href="/">系统首页</a></li>
+			<li class="layui-nav-item" th:if="${isLogin and isShopping}"><a href="/mall/">MALL商城</a></li>
+		</ul>
+		<ul class="layui-nav layui-layout-right">
+			<li class="layui-nav-item">
+				<a href="javascript:;">
+					<img th:src="${userPic}" class="layui-nav-img">
+					<label th:utext="${userName}">LeeDane</label>
+				</a>
+				<dl class="layui-nav-child">
+					<dd><a href="">基本资料</a></dd>
+					<dd><a href="">安全设置</a></dd>
+				</dl>
+			</li>
+			<li class="layui-nav-item"><a href="javascript:void(0);" onclick="logout();">安全退出</a></li>
+		</ul>
+	</div>
+</body>
+</html>

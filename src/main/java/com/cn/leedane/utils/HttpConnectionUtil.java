@@ -33,7 +33,7 @@ public class HttpConnectionUtil {
      * @throws IOException
      */
     public static String sendGetRequest(String serverPath) throws IOException {
-        return sendGetRequest(serverPath, 0, 0);
+        return sendGetRequest(serverPath, 5000, 5000);
     }
 
     /**
@@ -77,9 +77,9 @@ public class HttpConnectionUtil {
         //打开对服务器的连接
         HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
         //设置连接超时时间
-        urlConnection.setConnectTimeout(3000);
+        urlConnection.setConnectTimeout(requestTimeOut);
         //设置读取超时时间
-        urlConnection.setReadTimeout(3000);
+        urlConnection.setReadTimeout(responseTimeOut);
 
         //设置允许输入，输出
         urlConnection.setDoInput(true);
@@ -87,8 +87,8 @@ public class HttpConnectionUtil {
 
         //设置请求模式为GET
         urlConnection.setRequestMethod("GET");
-        urlConnection.setRequestProperty("userid", "10");
-        urlConnection.setRequestProperty("token", "eyJ1c2VybmFtZSI6IueuoeeQhuWRmCIsInB3ZCI6IjU0YTJlYzVmNDQyMWZhMjRiZmE5YmY2NDYxZTY0OWEyIiwidGltZSI6IjIwMTcwMzI0MDAwMDAwIiwib3ZlcmR1ZSI6IjIwMTcwNDI0MDAwMDAwIn0=");
+//        urlConnection.setRequestProperty("userid", "10");
+//        urlConnection.setRequestProperty("token", "eyJ1c2VybmFtZSI6IueuoeeQhuWRmCIsInB3ZCI6IjU0YTJlYzVmNDQyMWZhMjRiZmE5YmY2NDYxZTY0OWEyIiwidGltZSI6IjIwMTcwMzI0MDAwMDAwIiwib3ZlcmR1ZSI6IjIwMTcwNDI0MDAwMDAwIn0=");
         //连接服务器
         urlConnection.connect();
         InputStream is = null;

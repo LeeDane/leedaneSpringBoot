@@ -22,6 +22,11 @@ public class Oauth2Bean extends RecordTimeBean{
 	@Column(value = "open_id")
 	private String openId;
 
+	/** 所在平台的name, 可能为空*/
+	@Column(value = "name")
+	private String name;
+
+
 	public String getPlatform() {
 		return platform;
 	}
@@ -44,5 +49,13 @@ public class Oauth2Bean extends RecordTimeBean{
 
 	public void setOpenId(String openId) {
 		this.openId = openId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

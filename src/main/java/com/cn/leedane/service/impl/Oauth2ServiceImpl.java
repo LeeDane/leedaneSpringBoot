@@ -21,11 +21,13 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.util.UriEncoder;
 
 import javax.annotation.Resource;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -107,6 +109,7 @@ public class Oauth2ServiceImpl implements Oauth2Service<Oauth2Bean> {
 			oauth2Bean.setOauth2Id(JsonUtil.getLongValue(plainObject, "oauth2Id"));
 			oauth2Bean.setOpenId(JsonUtil.getStringValue(plainObject, "openId"));
 			oauth2Bean.setPlatform(JsonUtil.getStringValue(plainObject, "platform"));
+			oauth2Bean.setName(JsonUtil.getStringValue(plainObject, "name"));
 
 			int res = 0;
 			try{
@@ -144,6 +147,7 @@ public class Oauth2ServiceImpl implements Oauth2Service<Oauth2Bean> {
 				oauth2Bean.setOauth2Id(JsonUtil.getLongValue(plainObject, "oauth2Id"));
 				oauth2Bean.setOpenId(JsonUtil.getStringValue(plainObject, "openId"));
 				oauth2Bean.setPlatform(JsonUtil.getStringValue(plainObject, "platform"));
+				oauth2Bean.setName(JsonUtil.getStringValue(plainObject, "name"));
 				int res = 0;
 				try{
 					res = oauth2Mapper.save(oauth2Bean);
@@ -168,5 +172,14 @@ public class Oauth2ServiceImpl implements Oauth2Service<Oauth2Bean> {
 		return message.getMap();
 	}
 
+/*
+	public static void main(String[] args) throws UnsupportedEncodingException {
+		String s = "";
 
+		System.out.println(UriEncoder.decode(s));
+		byte[] b = s.getBytes();//编码
+		String sa = new String(b, "GBK");//解码:用什么字符集编码就用什么字符集解码
+		System.out.println(sa);
+
+	}*/
 }

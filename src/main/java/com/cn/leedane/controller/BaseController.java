@@ -807,7 +807,8 @@ public class BaseController {
 			isBaby = currentUser.hasRole(RoleController.BABY_ROLE_CODE);
 			model.addAllAttributes(userHandler.getBaseUserInfo(user.getId()));
 			model.addAttribute("loginUserId", user.getId());
-			model.addAttribute("user", user);
+			model.addAttribute("userName", userHandler.getUserName(user.getId()));
+			model.addAttribute("userPic", userHandler.getUserPicPath(user.getId(), "30x30"));
 		}
 		model.addAttribute("isLogin",  isLogin);
 		model.addAttribute("isAdmin", isAdmin);

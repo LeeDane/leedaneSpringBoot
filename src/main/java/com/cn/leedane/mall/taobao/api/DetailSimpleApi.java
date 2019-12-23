@@ -102,10 +102,10 @@ public class DetailSimpleApi {
      * @return
      */
     private static S_PlatformProductBean createBean(JSONObject item){
-        S_PlatformProductBean product = new S_PlatformProductBean();
+        S_PlatformProductBean taobaoProductBean = new S_PlatformProductBean();
 
         S_ShopBean shop = new S_ShopBean();
-        product.setShopTitle(item.optString("nick"));
+        taobaoProductBean.setShopTitle(item.optString("nick"));
 
         StringBuffer imgStr = new StringBuffer();
         JSONObject smallImages = item.optJSONObject("small_images");
@@ -126,20 +126,22 @@ public class DetailSimpleApi {
         //优惠券金额
         int couponAmount = item.optInt("coupon_amount");
 
-        product.setImg(imgStr.toString());
-        product.setPlatform(EnumUtil.ProductPlatformType.淘宝.value);
-        product.setPrice(item.optDouble("zk_final_price"));
-        product.setOldPrice(item.optDouble("reserve_price"));
-        product.setCashBack((item.optDouble("commission_rate") / 100 * (item.optDouble("zk_final_price") - couponAmount)));
-        product.setCashBackRatio(item.optDouble("commission_rate") / 100);
-        product.setCouponAmount(couponAmount);
-        product.setCouponShareUrl(item.optString("coupon_share_url"));
-        product.setTitle(item.optString("title"));
-        product.setId(item.optLong("num_iid"));
-        product.setAfterCouponPrice(MoneyUtil.twoDecimalPlaces(product.getPrice() - couponAmount));
-        product.setShareUrl(item.optString("url"));
-        product.setSubtitle(item.optString("short_title"));
-        product.setDetail(item.optString("item_description"));
-        return product;
+        taobaoProductBean.setImg(imgStr.toString());
+        taobaoProductBean.setPlatform(EnumUtil.ProductPlatformType.淘宝.value);
+        taobaoProductBean.setPrice(item.optDouble("zk_final_price"));
+        taobaoProductBean.setOldPrice(item.optDouble("reserve_price"));
+        taobaoProductBean.setCashBack((item.optDouble("commission_rate") / 100 * (item.optDouble("zk_final_price") - couponAmount)));
+        taobaoProductBean.setCashBackRatio(item.optDouble("commission_rate") / 100);
+        taobaoProductBean.setCouponAmount(couponAmount);
+        taobaoProductBean.setCouponShareUrl(item.optString("coupon_share_url"));
+        taobaoProductBean.setTitle(item.optString("title"));
+        taobaoProductBean.setId(item.optLong("num_iid"));
+        taobaoProductBean.setAfterCouponPrice(MoneyUtil.twoDecimalPlaces(taobaoProductBean.getPrice() - couponAmount));
+        taobaoProductBean.setShareUrl(item.optString("url"));
+        taobaoProductBean.setSubtitle(item.optString("short_title"));
+        taobaoProductBean.setDetail(item.optString("item_description"));
+        taobaoProductBean.setClickId("tb_"+ item.optLong("num_iid"));
+        taobaoProductBean.setSales("30天售量:"+ item.optLong("volume"));
+        return taobaoProductBean;
     }
 }

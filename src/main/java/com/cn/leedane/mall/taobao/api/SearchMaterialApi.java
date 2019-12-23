@@ -1,5 +1,6 @@
 package com.cn.leedane.mall.taobao.api;
 
+import com.cn.leedane.mall.model.RecommendResult;
 import com.cn.leedane.mall.taobao.CommUtil;
 import com.cn.leedane.model.mall.S_PlatformProductBean;
 import com.cn.leedane.utils.EnumUtil;
@@ -31,8 +32,8 @@ public class SearchMaterialApi {
      * @return
      * @throws ApiException
      */
-    public static MaterialResult search(long productId, long count) throws ApiException {
-        MaterialResult materialResult = new MaterialResult();
+    public static RecommendResult search(long productId, long count) throws ApiException {
+        RecommendResult recommendResult = new RecommendResult();
         TaobaoClient client = new DefaultTaobaoClient(CommUtil.url, CommUtil.appkey, CommUtil.secret);
         TbkDgOptimusMaterialRequest req = new TbkDgOptimusMaterialRequest();
         req.setPageSize(count);
@@ -59,39 +60,26 @@ public class SearchMaterialApi {
         JSONObject responseObject = resultObject.optJSONObject("tbk_dg_optimus_material_response");
         JSONObject resultListObject = responseObject.optJSONObject("result_list");
         if(resultListObject == null)
-            return materialResult;
+            return recommendResult;
         JSONArray mapDataArray = resultListObject.optJSONArray("map_data");
         List<S_PlatformProductBean> taobaoItems = new ArrayList<S_PlatformProductBean>();
         for (int i = 0; i < mapDataArray.size(); i++) {
-            S_PlatformProductBean productBean = new S_PlatformProductBean();
+            S_PlatformProductBean taobaoProductBean = new S_PlatformProductBean();
             JSONObject item = mapDataArray.optJSONObject(i);
-            productBean.setTitle(item.optString("title"));
-            productBean.setId(item.optLong("item_id"));
-            productBean.setImg(item.optString("pict_url"));
-            productBean.setOldPrice(item.optDouble("zk_final_price"));
-            productBean.setPrice(item.optDouble("zk_final_price") - item.optDouble("coupon_amount"));
-            productBean.setPlatform(EnumUtil.ProductPlatformType.淘宝.value);
-            productBean.setCouponShareUrl(item.optString("coupon_share_url"));
-            productBean.setShopTitle(item.optString("shop_title"));
-            taobaoItems.add(productBean);
+            taobaoProductBean.setTitle(item.optString("title"));
+            taobaoProductBean.setId(item.optLong("item_id"));
+            taobaoProductBean.setAuctionId(item.optLong("item_id"));
+            taobaoProductBean.setImg(item.optString("pict_url"));
+            taobaoProductBean.setOldPrice(item.optDouble("zk_final_price"));
+            taobaoProductBean.setPrice(item.optDouble("zk_final_price") - item.optDouble("coupon_amount"));
+            taobaoProductBean.setPlatform(EnumUtil.ProductPlatformType.淘宝.value);
+            taobaoProductBean.setCouponShareUrl(item.optString("coupon_share_url"));
+            taobaoProductBean.setShopTitle(item.optString("shop_title"));
+            taobaoProductBean.setClickId("tb_"+ item.optLong("item_id"));
+            taobaoItems.add(taobaoProductBean);
         }
         //设置结果集
-        materialResult.setTaobaoItems(taobaoItems);
-        return materialResult;
-    }
-
-    /**
-     * 封装商品推荐查询结果集
-     */
-    public static class MaterialResult{
-        private List<S_PlatformProductBean> taobaoItems = new ArrayList<S_PlatformProductBean>();
-
-        public void setTaobaoItems(List<S_PlatformProductBean> taobaoItems) {
-            this.taobaoItems = taobaoItems;
-        }
-
-        public List<S_PlatformProductBean> getTaobaoItems() {
-            return taobaoItems;
-        }
+        recommendResult.setItems(taobaoItems);
+        return recommendResult;
     }
 }

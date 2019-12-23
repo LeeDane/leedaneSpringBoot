@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>common左侧部分</title>
+	<meta name="renderer" content="webkit" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+</head>
+<body >
+	<div th:fragment="helloManage(tabId)" class="layui-side layui-bg-black">
+		<div class="layui-side-scroll">
+			<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+			<ul class="layui-nav layui-nav-tree"  lay-filter="test" >
+				<li th:class="'layui-nav-item'" th:each="setting, settingIndex : ${mysettings}">
+					<a class="" th:href="${setting.path}" th:utext="${setting.name}">个人信息</a>
+					<dl class="layui-nav-child" th:if="${setting.childern.size()} gt 0" th:each="childern : ${setting.childern}">
+						<dd><a th:href="${childern.path}" th:class="${tabId} == ${childern.id} ? 'layui-this':''" th:utext="${childern.name}">我的资料</a></dd>
+						<!--<dd><a href="javascript:;">修改密码</a></dd>
+						<dd><a href="javascript:;">修改邮箱</a></dd>
+						<dd><a href="javascript:;">第三方帐号绑定</a></dd>
+						<dd><a href="javascript:;">手机号码绑定</a></dd>
+						<dd><a href="javascript:;">个人标签</a></dd>-->
+					</dl>
+				</li>
+				<!--<li class="layui-nav-item">
+					<a href="javascript:;">商城管理</a>
+					<dl class="layui-nav-child">
+						<dd><a href="javascript:;">推广位</a></dd>
+						<dd><a href="javascript:;">收货地址</a></dd>
+						<dd><a href="">推广提现</a></dd>
+					</dl>
+				</li>
+				<li class="layui-nav-item">
+					<a href="javascript:;">心情管理</a>
+					<dl class="layui-nav-child">
+						<dd><a href="javascript:;">基础设置</a></dd>
+						<dd><a href="javascript:;">页面管理</a></dd>
+						<dd><a href="">超链接</a></dd>
+					</dl>
+				</li>
+				<li class="layui-nav-item"><a href="">我的关注</a></li>
+				<li class="layui-nav-item"><a href="">我的收藏</a></li>
+				<li class="layui-nav-item"><a href="">登录历史</a></li>-->
+			</ul>
+		</div>
+		<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+		<script th:inline="javascript">
+			jQuery(function(){
+				$("a.layui-this").closest("li").addClass("layui-nav-itemed");
+			});
+		</script>
+	</div>
+</body>
+
+</html>

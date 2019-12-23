@@ -1,10 +1,12 @@
 package com.cn.leedane.service.mall;
 
+import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
 import com.google.zxing.WriterException;
 import com.jd.open.api.sdk.JdException;
+import com.suning.api.exception.SuningApiException;
 import com.taobao.api.ApiException;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
@@ -63,7 +65,7 @@ public interface MallSearchService<T extends IDBean>{
 
 	/**
 	 *  商品推荐
-	 * @param productId
+	 * @param itemId
 	 * @param jo
 	 * @param user
 	 * @param request
@@ -71,7 +73,7 @@ public interface MallSearchService<T extends IDBean>{
 	 * @throws ApiException
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> productRecommend(long productId, JSONObject jo, UserBean user, HttpRequestInfoBean request)  throws ApiException;
+	public  Map<String,Object> productRecommend(String itemId, JSONObject jo, UserBean user, HttpRequestInfoBean request) throws ApiException, PddException, SuningApiException;
 
 	/**
 	 * 获取大字段

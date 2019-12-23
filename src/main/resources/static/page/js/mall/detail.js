@@ -1,6 +1,23 @@
 layui.use(['carousel', 'form', 'laypage', "laydate", 'layer'], function(){
     var carousel = layui.carousel
     ,form = layui.form;
+
+    //监听提交
+    form.on('submit(do-search-filter)', function(data){
+       var $SearchKey = $("#search-value");
+       	if(isEmpty($SearchKey.val())){
+//       		layer.msg("请先输入检索的内容！");
+       		layer.tips("请先输入检索字段", "#search-value",{tips:[3,'#FFB800'], time: 3000});
+       		$SearchKey.focus();
+       		return false;
+       	}
+       	var platform = data.field.platform;
+       	if(isEmpty(platform))
+       	    platform = "淘宝网";
+       	window.open('/mall/s?q='+$SearchKey.val() +"&platform=" + platform, '_blank');
+        return false;
+    });
+
     var detailInfoContrainerHeight = $("#detail-info-contrainer").height();
     $("#images-carousel-contrainer").find(".carousel-img").css("height", detailInfoContrainerHeight + "px");
     //图片轮播
@@ -113,7 +130,7 @@ layui.use(['carousel', 'form', 'laypage', "laydate", 'layer'], function(){
     initClipBoard();
 });
 function openTipMsg(domId, msg) {
-    subtips = layer.tips(msg, domId,{tips:[4,'#FFB800'], time: 20000});
+    subtips = layer.tips(msg, domId,{tips:[4,'#FFB800'], time: 8000});
 }
 var $container;
 var $commentContainer;
@@ -296,9 +313,11 @@ function openThirdLink(obj){
 /********************************    推荐     *******************************************/
 function doRecommend(){
 	var loadi = layer.load('努力加载中…'); //需关闭加载层时，执行layer.close(loadi)即可
+	//苏宁需要传商品编码和商店编码
+//	var id = (productSourceId.indexOf("sn") > -1 ? productSourceId: productId);
 	$.ajax({
 		type : "GET",
-		url : "/mall/search/product/"+ productId +"/recommend",
+		url : "/mall/search/product/"+ productSourceId +"/recommend",
 		dataType: 'json',
 		beforeSend:function(){
 			$recommendContainer.empty();
@@ -326,7 +345,7 @@ function doRecommend(){
  * @param recommend
  */
 function buildRecommendRow(index, recommend){
-	var html = '<div class="layui-col-md2 layui-col-xs12 m-product-item button_link" style="cursor: pointer;"  onclick="toProductDetail(\'tb_'+ recommend.id +'\');">'+
+	var html = '<div class="layui-col-md2 layui-col-xs12 m-product-item button_link" style="cursor: pointer;"  onclick="toProductDetail(\''+ recommend.clickId +'\');">'+
 					'<img alt="" src="'+ recommend.img +'" class="m-product-item-img"/>'+
 					'<div class="m-product-contrainer">'+
 						'<a class="m-product-desc">'+ recommend.title +'</a>'+

@@ -3,9 +3,6 @@
 <head>
   <meta charset="utf-8" />
 </head>
-
-
-
 <!-- 正式环境下的cdn引用-->
 <link th:if="${not isDebug}" rel="stylesheet" href="//www.layuicdn.com/layui-v2.2.5/css/layui.css"  media="all" />
 <script th:if="${not isDebug}" type="text/javascript" th:src="@{http://libs.baidu.com/jquery/1.9.1/jquery.min.js}"></script>
@@ -25,7 +22,7 @@
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
 <script th:inline="javascript">
 
-layui.use('element', function(){
+layui.use(['form', 'element'], function(){
 	  element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
 	  
 	  //监听导航点击
@@ -97,27 +94,6 @@ function getNoDealOrder(){
 		error : function(data) {
 			//刷新当前页面
 			ajaxError(data);
-		}
-	});
-}
-
-//退出登录
-function logout(){
-	$.ajax({
-	    type: "delete",
-		dataType: 'json',
-		url : "/us/logout",
-		beforeSend:function(){
-		},
-		success : function(data) {
-			layer.msg(data.message);
-			if(data.isSuccess)
-				//刷新当前页面
-				window.location.reload();					
-		},
-		error : function() {
-			//刷新当前页面
-			window.location.reload();	
 		}
 	});
 }

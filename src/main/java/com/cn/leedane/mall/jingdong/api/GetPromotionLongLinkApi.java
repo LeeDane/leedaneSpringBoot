@@ -71,22 +71,23 @@ public class GetPromotionLongLinkApi {
     private static S_PlatformProductBean createBean(PromotionGoodsResp goodsResp){
         if(goodsResp == null)
             return null;
-        S_PlatformProductBean product = new S_PlatformProductBean();
+        S_PlatformProductBean jingdongProductBean = new S_PlatformProductBean();
 
-        product.setShopTitle(StringUtil.changeNotNull(goodsResp.getShopId()));
-        product.setImg(goodsResp.getImgUrl());
-        product.setPlatform(EnumUtil.ProductPlatformType.京东.value);
-        product.setPrice(goodsResp.getUnitPrice());
-        product.setOldPrice(goodsResp.getWlUnitPrice());
-        product.setCashBack(0d);
-        product.setCashBackRatio(goodsResp.getCommisionRatioPc());
-        product.setCouponAmount(0);
-        product.setCouponShareUrl(null);
-        product.setTitle(goodsResp.getGoodsName());
-        product.setId(goodsResp.getSkuId());
-        product.setAfterCouponPrice(0d);
-        product.setShareUrl(null);
-        product.setSubtitle(goodsResp.getCidName() + "-" + goodsResp.getCid2Name() + "-" + goodsResp.getCid3Name());
-        return product;
+        jingdongProductBean.setShopTitle(StringUtil.changeNotNull(goodsResp.getShopId()));
+        jingdongProductBean.setImg(goodsResp.getImgUrl());
+        jingdongProductBean.setPlatform(EnumUtil.ProductPlatformType.京东.value);
+        jingdongProductBean.setPrice(goodsResp.getUnitPrice());
+        jingdongProductBean.setOldPrice(goodsResp.getWlUnitPrice());
+        jingdongProductBean.setCashBack(0d);
+        jingdongProductBean.setCashBackRatio(goodsResp.getCommisionRatioPc());
+        jingdongProductBean.setCouponAmount(0);
+        jingdongProductBean.setCouponShareUrl(null);
+        jingdongProductBean.setTitle(goodsResp.getGoodsName());
+        jingdongProductBean.setId(goodsResp.getSkuId());
+        jingdongProductBean.setAfterCouponPrice(0d);
+        jingdongProductBean.setShareUrl(null);
+        jingdongProductBean.setSubtitle(goodsResp.getCidName() + "-" + goodsResp.getCid2Name() + "-" + goodsResp.getCid3Name());
+        jingdongProductBean.setClickId("jd_"+ goodsResp.getSkuId());
+        return jingdongProductBean;
     }
 }

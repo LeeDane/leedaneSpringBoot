@@ -175,8 +175,7 @@ public class HtmlController extends BaseController{
 	        	return "redirect:/";
 	        }
 		}
-		String k = RSAKeyUtil.getInstance().getPublicKey();
-		model.addAttribute("publicKey", k);
+		model.addAttribute("publicKey",  RSAKeyUtil.getInstance().getPublicKey());
 		return loginRoleCheck("login", model, request);
 	}
 	

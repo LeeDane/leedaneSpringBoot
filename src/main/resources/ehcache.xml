@@ -78,4 +78,12 @@
         timeToIdleSeconds="120" 
         timeToLiveSeconds="600"
         overflowToDisk="true" />
+
+    <!-- 聚合级别的缓存，由于测试都是100次每天，所以设置15分钟有过期限制 -->
+    <cache
+        name="juheEhCache"
+        maxElementsInMemory="2000"
+        eternal="false"
+        timeToLiveSeconds="900"
+        overflowToDisk="true" />
 </ehcache>

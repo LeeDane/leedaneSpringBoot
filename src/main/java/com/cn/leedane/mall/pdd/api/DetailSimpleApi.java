@@ -74,10 +74,10 @@ public class DetailSimpleApi {
      * @return
      */
     private static S_PlatformProductBean createBean(JSONObject item) throws PddException {
-        S_PlatformProductBean product = new S_PlatformProductBean();
+        S_PlatformProductBean pddProductBean = new S_PlatformProductBean();
 
         S_ShopBean shop = new S_ShopBean();
-        product.setShopTitle(item.optString("mall_name"));
+        pddProductBean.setShopTitle(item.optString("mall_name"));
 
         StringBuffer imgStr = new StringBuffer();
         JSONArray imgs = item.optJSONArray("goods_gallery_urls");
@@ -92,21 +92,23 @@ public class DetailSimpleApi {
         //优惠券金额
         int couponAmount = item.optInt("coupon_discount") / 100;
 
-        product.setImg(imgStr.toString());
-        product.setPlatform(EnumUtil.ProductPlatformType.拼多多.value);
-        product.setPrice(item.optDouble("min_group_price") /100);
-        product.setOldPrice(item.optDouble("min_normal_price") / 100);
-        product.setCashBack(0d);
-        product.setCashBackRatio(item.optDouble("promotion_rate") / 10);
-        product.setCouponAmount(couponAmount);
-        product.setCouponShareUrl(item.optString("coupon_share_url"));
-        product.setTitle(item.optString("goods_name"));
-        product.setId(item.optLong("goods_id"));
-        product.setAfterCouponPrice(MoneyUtil.twoDecimalPlaces(product.getPrice() - couponAmount));
-        product.setSubtitle(item.optString("opt_name"));
-        product.setDetail(item.optString("goods_desc"));
+        pddProductBean.setImg(imgStr.toString());
+        pddProductBean.setPlatform(EnumUtil.ProductPlatformType.拼多多.value);
+        pddProductBean.setPrice(item.optDouble("min_group_price") /100);
+        pddProductBean.setOldPrice(item.optDouble("min_normal_price") / 100);
+        pddProductBean.setCashBack(0d);
+        pddProductBean.setCashBackRatio(item.optDouble("promotion_rate") / 10);
+        pddProductBean.setCouponAmount(couponAmount);
+        pddProductBean.setCouponShareUrl(item.optString("coupon_share_url"));
+        pddProductBean.setTitle(item.optString("goods_name"));
+        pddProductBean.setId(item.optLong("goods_id"));
+        pddProductBean.setAfterCouponPrice(MoneyUtil.twoDecimalPlaces(pddProductBean.getPrice() - couponAmount));
+        pddProductBean.setSubtitle(item.optString("opt_name"));
+        pddProductBean.setDetail(item.optString("goods_desc"));
+        pddProductBean.setClickId("pdd_"+ item.optLong("goods_id"));
+        pddProductBean.setSales("已售:"+item.optInt("sales_tip"));
         ProductPromotionLinkBean promotionLinkBean = PromotionApi.getPromotion(item.optLong("goods_id"), "");
-        product.setShareUrl(promotionLinkBean == null? "" : promotionLinkBean.getClickUrl());
-        return product;
+        pddProductBean.setShareUrl(promotionLinkBean == null? "" : promotionLinkBean.getClickUrl());
+        return pddProductBean;
     }
 }

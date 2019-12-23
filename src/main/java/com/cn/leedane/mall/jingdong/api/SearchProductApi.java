@@ -2,18 +2,15 @@ package com.cn.leedane.mall.jingdong.api;
 
 import com.cn.leedane.exception.JdAccessTokenException;
 import com.cn.leedane.mall.jingdong.CommUtil;
-import com.cn.leedane.mall.jingdong.KplOpenXuanpinSearchgoodsRequest;
-import com.cn.leedane.mall.jingdong.PageParam;
-import com.cn.leedane.mall.jingdong.QueryParam;
+import com.cn.leedane.mall.jingdong.other.KplOpenXuanpinSearchgoodsRequest;
+import com.cn.leedane.mall.jingdong.other.PageParam;
+import com.cn.leedane.mall.jingdong.other.QueryParam;
 import com.cn.leedane.mall.model.SearchProductRequest;
 import com.cn.leedane.mall.model.SearchProductResult;
 import com.cn.leedane.model.mall.S_PlatformProductBean;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.StringUtil;
 import com.jd.open.api.sdk.JdException;
-import com.jd.open.api.sdk.internal.util.CodecUtil;
-import com.jd.open.api.sdk.internal.util.HttpUtil;
-import com.jd.open.api.sdk.request.JdRequest;
 import com.taobao.api.ApiException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -49,6 +46,7 @@ public class SearchProductApi {
         request.setQueryParam(queryParam);
         PageParam pageParam=new PageParam();
         pageParam.setPageSize((int)productRequest.getPageSize());
+        pageParam.setPageNum(StringUtil.changeObjectToInt(productRequest.getPageNo() + 1));
         request.setPageParam(pageParam);
         request.setOrderField(StringUtil.changeObjectToInt(productRequest.getSort()));
         Connection.Response res = null;
@@ -78,6 +76,8 @@ public class SearchProductApi {
                 jingdongProductBean.setTitle(queryVo.optString("wareName"));
                 jingdongProductBean.setShopTitle(queryVo.optString("brand_id"));
                 jingdongProductBean.setId(queryVo.optLong("skuId"));
+                jingdongProductBean.setClickId("jd_"+ queryVo.optLong("skuId"));
+                jingdongProductBean.setSales("30天量:"+ queryVo.optLong("qtty_30"));
                 jingdongItems.add(jingdongProductBean);
             }
 //            throw new JdAccessTokenException(object.optString("msg"));

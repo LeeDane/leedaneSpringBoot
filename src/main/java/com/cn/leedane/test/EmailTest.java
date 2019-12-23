@@ -1,14 +1,19 @@
 package com.cn.leedane.test;
 
-import static org.junit.Assert.fail;
-
-import java.util.HashSet;
-import java.util.Set;
-
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
+import com.cn.leedane.utils.EmailUtil;
+import com.sun.mail.util.MailSSLSocketFactory;
 import org.junit.Test;
 
-import com.cn.leedane.utils.EmailUtil;
-import com.cn.leedane.model.UserBean;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+
+import static org.junit.Assert.fail;
 
 /**
  * 邮件相关的测试类
@@ -98,5 +103,76 @@ public class EmailTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void main(String[] args) {
+		EmailUtil emailUtil = EmailUtil.getInstance();
+		Set<UserBean> set = new HashSet<>();
+		UserBean userBean = new UserBean();
+		userBean.setId(1);
+		userBean.setChinaName("小轩");
+		userBean.setEmail("825711424@qq.com");
+		set.add(userBean);
+		emailUtil.initData(userBean, set, "你好啊", LeedanePropertiesConfig.newInstance().getString("constant.websit.name") +"注册验证");
+		try {
+			emailUtil.sendMore();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static void main1(String[] args) throws Exception {
+		//创建一个配置文件并保存
+		Properties properties = new Properties();
+
+		properties.setProperty("mail.host","smtp.qq.com");
+
+		properties.setProperty("mail.transport.protocol","smtp");
+
+		properties.setProperty("mail.smtp.auth","true");
+
+
+		//QQ存在一个特性设置SSL加密
+		MailSSLSocketFactory sf = new MailSSLSocketFactory();
+		sf.setTrustAllHosts(true);
+		properties.put("mail.smtp.ssl.enable", "true");
+		properties.put("mail.smtp.ssl.socketFactory", sf);
+
+		//创建一个session对象
+		Session session = Session.getDefaultInstance(properties, new Authenticator() {
+			@Override
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication("642034701@qq.com","tzlbvpjkgvzlbbch");
+			}
+		});
+
+		//开启debug模式
+		session.setDebug(true);
+
+		//获取连接对象
+		Transport transport = session.getTransport();
+
+		//连接服务器
+		transport.connect("smtp.qq.com","642034701@qq.com","tzlbvpjkgvzlbbch");
+
+		//创建邮件对象
+		MimeMessage mimeMessage = new MimeMessage(session);
+
+		//邮件发送人
+		mimeMessage.setFrom(new InternetAddress("642034701@qq.com"));
+
+		//邮件接收人
+		mimeMessage.setRecipient(Message.RecipientType.TO,new InternetAddress("825711424@qq.com"));
+
+		//邮件标题
+		mimeMessage.setSubject("Hello Mail");
+
+		//邮件内容
+		mimeMessage.setContent("我的想法是把代码放进一个循环里","text/html;charset=UTF-8");
+
+		//发送邮件
+		transport.sendMessage(mimeMessage,mimeMessage.getAllRecipients());
+
+		//关闭连接
+		transport.close();
 	}
 }

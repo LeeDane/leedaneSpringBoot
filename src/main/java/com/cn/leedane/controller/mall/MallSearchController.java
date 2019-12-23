@@ -1,13 +1,13 @@
 package com.cn.leedane.controller.mall;
 
 import com.cn.leedane.controller.BaseController;
+import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.service.mall.MallSearchService;
 import com.cn.leedane.service.mall.S_TaobaoService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
-import com.google.zxing.WriterException;
-import com.jd.open.api.sdk.JdException;
+import com.suning.api.exception.SuningApiException;
 import com.taobao.api.ApiException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -100,7 +100,7 @@ public class MallSearchController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/product/{itemId}/recommend", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> search(@PathVariable("itemId") long itemId, HttpServletRequest request) throws ApiException {
+	public Map<String, Object> search(@PathVariable("itemId") String itemId, HttpServletRequest request) throws ApiException, SuningApiException, PddException {
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 

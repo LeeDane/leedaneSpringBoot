@@ -590,7 +590,7 @@ public class EnumUtil {
      * version 1.0
      */
 	public enum ProductPlatformType {
-		淘宝("淘宝网"),京东("京东"), 苏宁("苏宁"), 天猫("天猫"), 拼多多("拼多多"), 系统自营("系统自营");
+		淘宝("淘宝网"),京东("京东"), 苏宁("苏宁"), 天猫("天猫"), 拼多多("拼多多"), 系统自营("系统自营"), github("github");
 	
 		private ProductPlatformType(String value) {
 			this.value = value;
@@ -853,6 +853,21 @@ public class EnumUtil {
 		登录(1),绑定(2), 注销(3);
 
 		private Oauth2Type(int value) {
+			this.value = value;
+		}
+		public final int value;
+	}
+
+	/**
+	 * 聚合apid类型
+	 * @author LeeDane
+	 * 2016年3月22日 上午10:16:46
+	 * Version 1.0
+	 */
+	public enum JuheApiType {
+		笑话精选(1),头条新闻(2), 历史今天(3);
+
+		private JuheApiType(int value) {
 			this.value = value;
 		}
 

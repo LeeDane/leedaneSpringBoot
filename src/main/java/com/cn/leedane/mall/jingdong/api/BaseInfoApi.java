@@ -1,22 +1,11 @@
 package com.cn.leedane.mall.jingdong.api;
 
 import com.cn.leedane.mall.jingdong.CommUtil;
-import com.cn.leedane.mall.jingdong.PublicProductBaseQueryRequest;
-import com.cn.leedane.model.mall.S_PlatformProductBean;
-import com.cn.leedane.utils.EnumUtil;
-import com.jd.open.api.sdk.DefaultJdClient;
-import com.jd.open.api.sdk.JdClient;
+import com.cn.leedane.mall.jingdong.other.PublicProductBaseQueryRequest;
 import com.jd.open.api.sdk.JdException;
-import com.jd.open.api.sdk.domain.mall.ProductWrapService.ProductBase;
-import com.jd.open.api.sdk.request.mall.WareProductbigfieldGetRequest;
-import com.jd.open.api.sdk.response.mall.WareProductbigfieldGetResponse;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 获取商品基本信息的api

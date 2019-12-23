@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" >
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title th:text="'邮箱绑定结果'"></title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	绑定邮箱结果<span th:utext="${success}" style="line-height: 38px;"></span>
+	<div class="layui-footer">
+		<!-- 底部固定区域 -->
+		<div th:include="/common-bottom :: bottom">bottom?</div>
+	</div>
+</div>
+<input type="hidden" id="publicKey" th:value="${publicKey}"/>
+</body>
+<script th:inline="javascript">
+
+</script>
+<div th:include="/mall/commonMall-js :: mallJs">what?</div>
+<script type="text/javascript" th:src="@{/page/other/jquery.md5.min.js}"></script>
+<script type="text/javascript" th:src="@{/page/js/jsencrypt.min.js}"></script>
+<script th:if="${not isDebug}" th:src="@{/page/js/manage/my/email.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/manage/my/email.js}" type="text/javascript"></script>
+</html>

@@ -1,7 +1,7 @@
 package com.cn.leedane.service.impl.mall;
 
 import com.cn.leedane.mall.model.ProductPromotionLinkBean;
-import com.cn.leedane.mall.taobao.api.AlimamaShareLink;
+import com.cn.leedane.mall.taobao.other.AlimamaShareLink;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.OperateLogBean;
@@ -198,17 +198,18 @@ public class S_TaobaoServiceImpl extends MallRoleCheckService implements S_Taoba
 				JSONArray pageList = resultData.getJSONArray("pageList");
 				for(int i = 0; i < pageList.size(); i++){
 					S_PlatformProductBean taobaoProductBean = new S_PlatformProductBean();
-					JSONObject object = pageList.getJSONObject(i);
-					taobaoProductBean.setAuctionId(object.getLong("auctionId"));
-					taobaoProductBean.setCashBack(object.getDouble("tkCommFee"));
-					taobaoProductBean.setCashBackRatio(object.getDouble("tkRate"));
-					taobaoProductBean.setImg(object.getString("pictUrl"));
+					JSONObject item = pageList.getJSONObject(i);
+					taobaoProductBean.setAuctionId(item.getLong("auctionId"));
+					taobaoProductBean.setCashBack(item.getDouble("tkCommFee"));
+					taobaoProductBean.setCashBackRatio(item.getDouble("tkRate"));
+					taobaoProductBean.setImg(item.getString("pictUrl"));
 					taobaoProductBean.setPlatform(EnumUtil.ProductPlatformType.淘宝.value);
-					taobaoProductBean.setPrice(object.getDouble("zkPrice"));
-					taobaoProductBean.setTitle(object.getString("title"));
-					taobaoProductBean.setShopTitle(object.getString("shopTitle"));
-					taobaoProductBean.setCouponAmount(object.getInt("couponAmount"));
-					taobaoProductBean.setCouponLeftCount(object.getLong("couponLeftCount"));
+					taobaoProductBean.setPrice(item.getDouble("zkPrice"));
+					taobaoProductBean.setTitle(item.getString("title"));
+					taobaoProductBean.setShopTitle(item.getString("shopTitle"));
+					taobaoProductBean.setCouponAmount(item.getInt("couponAmount"));
+					taobaoProductBean.setCouponLeftCount(item.getLong("couponLeftCount"));
+					taobaoProductBean.setClickId("tb_"+ item.getLong("num_iid"));
 					taobaoItems.add(taobaoProductBean);
 				}
 

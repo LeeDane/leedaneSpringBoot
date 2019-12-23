@@ -23,12 +23,34 @@
 				</span>
 			</div>
 		</div>
-		<div class="layui-col-md10 layui-col-xs12" style="margin-top: 10px;">
-			  <input type="text" id="search-value" placeholder="请输入您要搜索的商品关键字、ID或长链接" autocomplete="off" class="my-layui-input" /><div class="layui-btn-group" style="margin-bottom: 4px;">
-			  <button class="layui-btn" onclick="searchProductBtn(this, '淘宝网');">搜淘宝</button>
-			  <button class="layui-btn" onclick="searchProductBtn(this, '京东');">搜京东</button>
-			  <button class="layui-btn" onclick="searchProductBtn(this, '拼多多');">搜拼多多</button>
-			</div>
+		<div class="layui-col-md10 layui-col-xs12 " style="margin-top: 10px;">
+<!--
+			<input type="text" id="search-value" placeholder="请输入您要搜索的商品关键字、ID或长链接" autocomplete="off" class="my-layui-input" />
+-->
+
+			<form class="layui-form" style="margin-bottom: 4px;">
+				<div class="layui-form-item">
+					<input type="text" id="search-value" placeholder="请输入您要搜索的商品关键字、ID或长链接" autocomplete="off" class="my-layui-input" />
+					<div class="layui-inline">
+						<select name="platform" lay-verify="">
+							<option value="">请选择平台(默认淘宝网)</option>
+							<option value="淘宝网">淘宝网(包括天猫)</option>
+							<option value="京东">京东</option>
+							<option value="拼多多">拼多多</option>
+							<option value="苏宁">苏宁</option>
+						</select>
+					</div>
+					<div class="layui-inline">
+						<button class="layui-btn" lay-submit="" lay-filter="do-search-filter">搜产品</button>
+					</div>
+				</div>
+					<!--<button class="layui-btn" onclick="searchProductBtn(this, '淘宝网');">搜淘宝</button>
+                      <button class="layui-btn" onclick="searchProductBtn(this, '京东');">搜京东</button>
+                      <button class="layui-btn" onclick="searchProductBtn(this, '拼多多');">搜拼多多</button>-->
+			</form >
+				<!--<button class="layui-btn" onclick="searchProductBtn(this, '淘宝网');">搜淘宝</button>
+				  <button class="layui-btn" onclick="searchProductBtn(this, '京东');">搜京东</button>
+				  <button class="layui-btn" onclick="searchProductBtn(this, '拼多多');">搜拼多多</button>-->
 			<!-- <div style="position: absolute; z-index: 10; background-color: #fff; width: calc(100% - 179px); padding: 10px;">
 				<ul>
 					<li>苹果 <font style="float: right; font-size: 12px; color: gray;">搜索历史</font></li>
@@ -46,6 +68,7 @@
 					<li class="layui-this" id="li-tb-product">淘宝/天猫商品</li>
 					<li id="li-jd-product">京东商品</li>
 					<li id="li-pdd-product">拼多多商品</li>
+					<li id="li-sn-product">苏宁商品</li>
 			  	</ul>
 			  	<div class="layui-tab-content" style="height: 100px;">
 			    	<div class="layui-tab-item layui-show" id="tab-content-product">
@@ -62,7 +85,7 @@
 		   				<div class="layui-row" id="product-row-container">
 							
 						</div>
-						<div id="tb-product-pager" style="background-color: #fff; padding: 5px;">
+						<div id="product-pager" style="background-color: #fff; padding: 5px;">
 						</div>
 					</div>
 			    </div>

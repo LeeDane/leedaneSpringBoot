@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cn.leedane.cache.JuheCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,9 @@ public class CacheController extends BaseController{
 	
 	@Autowired
 	private SystemCache systemCache;
-	
+
+	@Autowired
+	private JuheCache juheCache;
 	/**
 	 * 删除redis
 	 * @return
@@ -74,8 +77,10 @@ public class CacheController extends BaseController{
 		SystemCache.getSystemEhCache().clear();
 		RedisUtil redisUtil = RedisUtil.getInstance();
 		boolean result = redisUtil.clearAll();
-		if(result)
+		if(result){
 			result = systemCache.removeAllCache();
+			result = juheCache.removeAllCache();
+		}
 		if(result){
 			message.put("isSuccess", true);
 		}else{

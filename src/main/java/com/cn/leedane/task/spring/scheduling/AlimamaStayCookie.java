@@ -1,6 +1,6 @@
 package com.cn.leedane.task.spring.scheduling;
 
-import com.cn.leedane.mall.taobao.api.AlimamaShareLink;
+import com.cn.leedane.mall.taobao.other.AlimamaShareLink;
 import com.cn.leedane.utils.JsonUtil;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;

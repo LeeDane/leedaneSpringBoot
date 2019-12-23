@@ -39,7 +39,7 @@ public class DetailSimpleApi {
         UnionOpenGoodsPromotiongoodsinfoQueryRequest request=new UnionOpenGoodsPromotiongoodsinfoQueryRequest();
         request.setSkuIds(skuIds);
         Connection.Response res = null;
-        S_PlatformProductBean product = new S_PlatformProductBean();
+        S_PlatformProductBean jingdongProductBean = new S_PlatformProductBean();
         try {
             String url = CommUtil.buildUrl(request);
             res = Jsoup.connect(url)
@@ -63,9 +63,9 @@ public class DetailSimpleApi {
                 //获取基本信息
                 JSONObject baseInfoMap = BaseInfoApi.get(Long.parseLong(skuIds));
                 JSONObject queryVo = queryVos.optJSONObject(0);
-                product.setAuctionId(queryVo.optLong("skuId"));
-                product.setCashBack(0d);
-                product.setCashBackRatio(queryVo.optDouble("commisionRatioWl"));
+                jingdongProductBean.setAuctionId(queryVo.optLong("skuId"));
+                jingdongProductBean.setCashBack(0d);
+                jingdongProductBean.setCashBackRatio(queryVo.optDouble("commisionRatioWl"));
 
                 JSONArray imgs = baseInfoMap.optJSONArray("images");
                 StringBuffer imgStr = new StringBuffer();
@@ -77,22 +77,24 @@ public class DetailSimpleApi {
                     }
                 }
 
-                product.setImg(imgStr.toString());
-                product.setPlatform(EnumUtil.ProductPlatformType.京东.value);
-                product.setPrice(queryVo.optDouble("unitPrice"));
-                product.setOldPrice(baseInfoMap.optDouble("mprice"));
-                product.setTitle(queryVo.optString("goodsName"));
-                product.setShopTitle(queryVo.optString("shopId"));
-                product.setId(queryVo.optLong("skuId"));
-                product.setSubtitle(queryVo.optString("cidName") + "-" + queryVo.optString("cid2Name") + "-" + queryVo.optString("cid3Name"));
-                product.setShopTitle(baseInfoMap.optString("shopName"));
-                product.setShareUrl(GetPromotionLongLinkApi.get(queryVo.optString("materialUrl")));
+                jingdongProductBean.setImg(imgStr.toString());
+                jingdongProductBean.setPlatform(EnumUtil.ProductPlatformType.京东.value);
+                jingdongProductBean.setPrice(queryVo.optDouble("unitPrice"));
+                jingdongProductBean.setOldPrice(baseInfoMap.optDouble("mprice"));
+                jingdongProductBean.setTitle(queryVo.optString("goodsName"));
+                jingdongProductBean.setShopTitle(queryVo.optString("shopId"));
+                jingdongProductBean.setId(queryVo.optLong("skuId"));
+                jingdongProductBean.setSubtitle(queryVo.optString("cidName") + "-" + queryVo.optString("cid2Name") + "-" + queryVo.optString("cid3Name"));
+                jingdongProductBean.setShopTitle(baseInfoMap.optString("shopName"));
+                jingdongProductBean.setShareUrl(GetPromotionLongLinkApi.get(queryVo.optString("materialUrl")));
+                jingdongProductBean.setClickId("jd_"+ queryVo.optLong("skuId"));
+                jingdongProductBean.setSales("30天量:"+ queryVo.optLong("inOrderCount"));
             }
 //            throw new JdAccessTokenException(object.optString("msg"));
         } catch (Exception e) {
             e.printStackTrace();
             throw new JdException("京东联盟网络连接异常");
         }
-        return product;
+        return jingdongProductBean;
     }
 }

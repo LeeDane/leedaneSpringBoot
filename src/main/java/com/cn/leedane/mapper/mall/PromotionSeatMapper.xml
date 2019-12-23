@@ -9,27 +9,89 @@
 <mapper namespace="com.cn.leedane.mapper.mall.PromotionSeatMapper">
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
-	
+
 	<!-- 分页获取心愿单列表 -->
 	<select id="paging" resultType="java.util.Map">
-		select s.id, s.status, s.create_user_id, date_format(s.create_time,'%Y-%m-%d %H:%i:%s') create_time,
+		select s.id, s.status, s.create_user_id, date_format(s.create_time,'%m-%d %H:%i') create_time,
 		s.seat_id, s.seat_name, s.platform, s.user_id,
-		date_format(s.allot_time,'%Y-%m-%d %H:%i:%s') allot_time,
-		s.modify_user_id, date_format(s.modify_time,'%Y-%m-%d %H:%i:%s') modify_time
+		date_format(s.allot_time,'%m-%d %H:%i') allot_time,
+		s.modify_user_id, date_format(s.modify_time,'%m-%d %H:%i') modify_time
 		from t_mall_promotion_seat s
 		<choose>
 			<when test="platform != null">
-				where (s.platform = #{platform}
+				where s.platform = #{platform}
 			</when>
 		</choose>
-		order by s.id desc limit #{start}, #{pageSize}
+		<if test="orderField != null and orderType != null ">
+			order by ${orderField} ${orderType}
+		</if>
+		limit #{start}, #{pageSize}
 	</select>
-	
-	<!-- <resultMap type="com.cn.leedane.model.mall.S_OrderBean" id="objectBean">
-        <id property="id" column="id"/>
-        <result property="productId" column="product_id"/>
-        <result property="status" column="status"/>
-        <result property="createUserId" column="create_user_id"/>
-        <result property="createTime" column="create_time"/>
-   </resultMap> -->
+
+	<!-- 分页获取心愿单列表总数 -->
+	<select id="pagingTotal" resultType="java.util.Map">
+		select count(s.id) ct
+		from t_mall_promotion_seat s
+		<choose>
+			<when test="platform != null">
+				where s.platform = #{platform}
+			</when>
+		</choose>
+	</select>
+
+	<select id="noallot" resultType="java.util.Map">
+		select u.id, u.account from t_user u
+		where u.`status` = #{status} and  NOT EXISTS(
+		SELECT 1 from t_mall_promotion_seat s
+			where s.`status` = #{status}
+			and s.platform = #{platform}
+			and u.id = s.user_id
+			and s.user_id > 0
+		)
+	</select>
+	<select id="getMaxId" resultType="String">
+		SELECT max(SUBSTRING(seat_name, 4, 12)) id from t_mall_promotion_seat where platform = #{platform}
+	</select>
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
+	<insert id="batchSave" parameterType="java.util.List">
+		insert into t_mall_promotion_seat(
+		id,
+		status,
+		create_time,
+		create_user_id,
+		modify_time,
+		modify_user_id,
+		seat_id,
+		seat_name,
+		platform,
+		user_id,
+		allot_time
+		)
+		values
+		<foreach collection="promotionSeatBeans" item="item" index="index" separator=",">
+			(
+			#{item.id,jdbcType=BIGINT},
+			#{item.status,jdbcType=INTEGER},
+			#{item.createTime,jdbcType=TIMESTAMP},
+			#{item.createUserId,jdbcType=INTEGER},
+			#{item.modifyTime,jdbcType=TIMESTAMP},
+			#{item.modifyUserId,jdbcType=INTEGER},
+			#{item.seatId,jdbcType=VARCHAR},
+			#{item.seatName,jdbcType=VARCHAR},
+			#{item.platform,jdbcType=VARCHAR},
+			#{item.userId,jdbcType=BIGINT},
+			#{item.allotTime,jdbcType=TIMESTAMP}
+			)
+		</foreach>
+		ON DUPLICATE KEY UPDATE
+		status = VALUES(status),
+		modify_time = VALUES(modify_time),
+		modify_user_id = VALUES(modify_user_id),
+		seat_id = VALUES(seat_id),
+		seat_name = VALUES(seat_name),
+		platform = VALUES(platform),
+		user_id = VALUES(user_id),
+		allot_time = VALUES(allot_time)
+	</insert>
 </mapper>

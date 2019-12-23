@@ -1,20 +1,19 @@
 package com.cn.leedane.utils;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.Set;
+
+import com.cn.leedane.handler.OptionHandler;
+import com.cn.leedane.model.EmailSenderBean;
+import com.cn.leedane.model.UserBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.mail.Address;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimeUtility;
-
-import com.cn.leedane.model.UserBean;
+import javax.mail.internet.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * 邮件信息的公共类
@@ -22,9 +21,16 @@ import com.cn.leedane.model.UserBean;
  * 2016年7月12日 上午10:26:02
  * Version 1.0
  */
+@Component
 public class EmailUtil {
 	
 	private static EmailUtil mEmailUtil;
+
+	/**
+	 *
+	 */
+	@Autowired
+	private OptionHandler optionHandler;
 
 	/**
 	 * 封装邮件的实体
@@ -45,8 +51,9 @@ public class EmailUtil {
 	 * 发件来自哪个用户的信息
 	 * 目前只支持QQ号码(64*******)
 	 */
-	private UserBean userFrom;
-	
+	private EmailSenderBean sender;
+//	private UserBean userFrom;
+//
 	/**
 	 * 发送到哪个用户的信息,是个set集合
 	 */
@@ -84,6 +91,38 @@ public class EmailUtil {
 	/**
 	 * 构建邮件的实体，同时发送，这样所有的内容将一样
 	 * @param userFrom  邮件发送来自的用户信息
+	 * @param toEmail   邮件发送到对方的邮箱
+	 * @param content   邮件的具体内容
+	 * @param subject  邮件的标题
+	 */
+	public void initData(UserBean userFrom, String toEmail, String content, String subject){
+		this.userTos = new HashSet<>();
+		UserBean userTo = new UserBean();
+		userTo.setEmail(toEmail);
+		userTos.add(userTo);
+		this.content = content;
+		this.subject= subject;
+		this.init();
+	}
+
+	/**
+	 * 构建邮件的实体，同时发送，这样所有的内容将一样
+	 * @param userFrom  邮件发送来自的用户信息
+	 * @param userTo   邮件发送到对方的用户信息
+	 * @param content   邮件的具体内容
+	 * @param subject  邮件的标题
+	 */
+	public void initData(UserBean userFrom, UserBean userTo, String content, String subject){
+		this.userTos = new HashSet<>();
+		userTos.add(userTo);
+		this.content = content;
+		this.subject= subject;
+		this.init();
+	}
+
+	/**
+	 * 构建邮件的实体，同时发送，这样所有的内容将一样
+	 * @param userFrom  邮件发送来自的用户信息
 	 * @param userTos   邮件发送到对方的用户信息
 	 * @param content   邮件的具体内容
 	 * @param subject  邮件的标题
@@ -101,7 +140,7 @@ public class EmailUtil {
 	 * 要是所有的内容都一样，推荐使用另外一个构造函数
 	 * @param userFrom  邮件发送来自的用户信息
 	 * @param userTos  邮件发送到对方的用户信息
-	 * @param content  邮件的具体内容数组
+	 * @param contents  邮件的具体内容数组
 	 * @param subject  邮件的标题
 	 */
 	public void initData(UserBean userFrom, Set<UserBean> userTos, String[] contents, String subject){
@@ -119,14 +158,12 @@ public class EmailUtil {
 	 * 初始化默认数据的方法
 	 */
 	private void init() {
-		if(userFrom == null){
-			userFrom = new UserBean();
-			userFrom.setAccount(ConstantsUtil.DEFAULT_USER_FROM_ACCOUNT);
-			userFrom.setChinaName(ConstantsUtil.DEFAULT_USER_FROM_CHINANAME);
-			userFrom.setEmail(ConstantsUtil.DEFAULT_USER_FROM_EMAIL);
-			userFrom.setQq(ConstantsUtil.DEFAULT_USER_FROM_QQ);
-			//将额外的str1字段保存QQ密码
-			userFrom.setStr1(ConstantsUtil.DEFAULT_USER_FROM_QQPSW);
+		if(sender == null){
+			sender = new EmailSenderBean();
+			sender.setEmail(StringUtil.changeNotNull(optionHandler.getData("sender-email")));
+			sender.setName(StringUtil.changeNotNull(optionHandler.getData("sender-name")));
+			sender.setToken(StringUtil.changeNotNull(optionHandler.getData("sender-token")));
+			sender.setHost(StringUtil.changeNotNull(optionHandler.getData("sender-host")));
 		}
 	}
 
@@ -136,8 +173,8 @@ public class EmailUtil {
 	 * 一次性全部都一起发
 	 * @throws Exception
 	 */
-	public void sendMore() throws Exception{	
-		send(buildAllInternetAddress(), this.content);
+	public boolean sendMore() throws Exception{
+		return send(buildAllInternetAddress(), this.content);
 	}
 	
 	/**
@@ -199,24 +236,16 @@ public class EmailUtil {
 	 * @param c 发送的内容
 	 * @throws Exception
 	 */
-	private void send(InternetAddress to[],String c) throws Exception{
-		
+	private boolean send(InternetAddress to[],String c) throws Exception{
 		props.setProperty("mail.transport.protocol", "smtp");
 		props.setProperty("mail.smtp.auth", "true");
 		Session session = Session.getInstance(props);
 		session.setDebug(true);
-		
-		String fromName = userFrom.getChinaName();
-		if(fromName == null || fromName ==""){
-			fromName = userFrom.getAccount();
-		}
-		
-		String fromUrl =userFrom.getEmail();
 		MimeMessage msg = new MimeMessage(session);//
-		msg.setFrom(new InternetAddress("\"" + MimeUtility.encodeText(fromName) + "\" <"+fromUrl+">"));
+		msg.setFrom(new InternetAddress("\"" + MimeUtility.encodeText(sender.getName()) + "\" <"+sender.getEmail()+">"));
 		msg.setSubject(this.subject);	 //邮件主题
 				
-		msg.setReplyTo(new Address[]{new InternetAddress(fromUrl)});
+		msg.setReplyTo(new Address[]{new InternetAddress(sender.getEmail())});
 		//msg.setRecipients(RecipientType.TO,InternetAddress.parse(MimeUtility.encodeText("小轩") + " <642034701@qq.com>," + MimeUtility.encodeText("xiaoxuan") + " <825711424@qq.com>"));
 		//msg.setRecipients(RecipientType.TO,InternetAddress.parse(MimeUtility.encodeText("小轩") + " <825711424@qq.com>" ));
 		MimeMultipart msgMultipart = new MimeMultipart("mixed");
@@ -231,10 +260,11 @@ public class EmailUtil {
 		htmlPart.setContent(c, "text/html;charset=gbk");//显示的内容	
 		
 		Transport transport = session.getTransport();
-		transport.connect("smtp.qq.com",587, userFrom.getQq(), userFrom.getStr1());
+		transport.connect(sender.getHost(), sender.getEmail(),sender.getToken());
 		for(int i = 0 ;i < 1 ; i++){
 			transport.sendMessage(msg, to);
 		}	
 		transport.close();
+		return true;
 	}
 }

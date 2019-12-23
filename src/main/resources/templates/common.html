@@ -155,6 +155,7 @@
             <li class="nav-stock nav-main-li" th:if="${isLogin and isStock}"><a th:href="@{/stock}">股票</a></li>
             <li class="nav-circle nav-main-li" th:if="${isLogin and isCircle}"><a th:href="@{/cc}">圈子</a></li>
             <li class="nav-mall nav-main-li" th:if="${isLogin and isShopping}"><a th:href="@{/mall/index}">购物</a></li>
+            <li class="nav-mall nav-main-li" th:if="${isLogin}"><a th:href="@{/my/manage/my/welcome}">设置</a></li>
             <li class="nav-my nav-main-li"><a th:href="@{/my}">中心</a></li>
             <li class="nav-photo nav-main-li"><a th:href="@{/pt}">相册</a></li>
             <li class="dropdown">

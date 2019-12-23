@@ -1174,6 +1174,9 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		
 		boolean result = userMapper.update(user) > 0;
 		if(result){
+			//把Redis缓存的信息删除掉
+			userHandler.deleteUserDetail(user.getId());
+
 			message.put("isSuccess", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.新密码修改成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);

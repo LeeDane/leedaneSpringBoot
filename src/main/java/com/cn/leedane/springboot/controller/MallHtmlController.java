@@ -148,6 +148,9 @@ public class MallHtmlController extends BaseController{
 		}else if(productId.startsWith("pdd_")){
 			String productIdTemp = productId.substring(4, productId.length());
 			productBean = com.cn.leedane.mall.pdd.api.DetailSimpleApi.getDetail(productIdTemp);
+		}else if(productId.startsWith("sn_")){
+			String productIdTemp = productId.substring(3, productId.length());
+			productBean = com.cn.leedane.mall.suning.api.DetailSimpleApi.getDetail(productIdTemp);
 		}else{
 			productBean = toPlatformProductBean(productHandler.getNormalProductBean(StringUtil.changeObjectToInt(productId)));
 			if(productBean == null)

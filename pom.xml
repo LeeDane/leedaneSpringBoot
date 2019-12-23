@@ -518,11 +518,11 @@
 	     	<version>3.2.7</version>
 	  	</dependency>
 	  	<!-- mailapi -->
-	  	<dependency>
+	  	<!--<dependency>
 	     	<groupId>com.leedane.other</groupId>
 	     	<artifactId>mailapi</artifactId>
 	     	<version>9.9.9</version>
-	  	</dependency>
+	  	</dependency>-->
 	  	<!-- Qrcode -->
 	  	<dependency>
 	     	<groupId>com.leedane.other</groupId>
@@ -535,6 +535,16 @@
 	     	<artifactId>smtp</artifactId>
 	     	<version>9.9.9</version>
 	  	</dependency>
+		<dependency>
+			<groupId>com.leedane.other</groupId>
+			<artifactId>mail</artifactId>
+			<version>9.9.8</version>
+		</dependency>
+		<dependency>
+			<groupId>com.leedane.other</groupId>
+			<artifactId>activation</artifactId>
+			<version>9.9.9</version>
+		</dependency>
 	  	<!-- taobao开放平台 -->
 	  	<dependency>
 	     	<groupId>com.leedane.other.taobao</groupId>
@@ -576,6 +586,13 @@
 			<groupId>com.leedane.other.pinduoduo</groupId>
 			<artifactId>pop</artifactId>
 			<version>1.2.5</version>
+		</dependency>
+
+		<!-- 苏宁开放平台 -->
+		<dependency>
+			<groupId>com.leedane.other.suning</groupId>
+			<artifactId>standard</artifactId>
+			<version>9.9.9</version>
 		</dependency>
 
 	  	<!-- ueditor.jar -->

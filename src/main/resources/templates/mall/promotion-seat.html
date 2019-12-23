@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" >
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" >
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,77 +10,99 @@
 	<link th:if="${isDebug}" rel="stylesheet" th:href="@{/page/css/mall/promotion-seat.css}" />
 </head>
 <body>
-	<div th:include="mall/commonMall :: helloMall">what?</div>
-	<div class="layui-container">
-		<div class="layui-row">
-			<div class="layui-col-md12 layui-col-xs12">
-				<div class="layui-btn-group promotion-seat-group" style="margin-top: 5px;">
-				  <button class="layui-btn new-promotion-seat-btn" data-type="newPromotionSeat">新增</button>
-				</div>
-				<div id="promotion-seat-container" style="display: none;">
-					<form class="layui-form" id="promotion-seat-form" action="" lay-filter="promotion-seat-form" style="border: 1px solid #fff; margin-top: 8px; padding: 8px;">
-						<div class="layui-form-item">
-							<div class="layui-inline">
-								<label class="layui-form-label">购物平台</label>
-								<div class="layui-input-inline">
-									<select name="platform" lay-verify="required" lay-search="">
-										<option value="">请选择购物平台</option>
-										<option value="淘宝网" th:selected="${platform == '淘宝网'}" >淘宝/天猫</option>
-										<option value="京东" th:selected="${platform == '京东'}">京东</option>
-										<option value="拼多多" th:selected="${platform == '拼多多'}">拼多多</option>
-										<option value="苏宁" th:selected="${platform == '苏宁'}">苏宁</option>
-										<option value="系统自营" th:selected="${platform == '系统自营'}">系统自营</option>
-									</select>
-								</div>
-								<div class="layui-form-mid layui-word-aux">必须选择项</div>
-							</div>
-						</div>
-					  	<div class="layui-form-item">
-							<label class="layui-form-label">推广位ID</label>
-							<div class="layui-input-inline">
-								<input type="text" name="seat_id" lay-verify="required" autocomplete="off" placeholder="请输入推广位ID" class="layui-input" />
-							</div>
-							<div class="layui-form-mid layui-word-aux">请填写所在平台下推广位ID(必填)</div>
-						</div>
-						<div class="layui-form-item">
-							<label class="layui-form-label">推广位名称</label>
-							<div class="layui-input-inline">
-								<input type="text" name="seat_name" placeholder="请输入商品编号" lay-verify="required" autocomplete="off" class="layui-input" th:value="${productId}"/>
-							</div>
-							<div class="layui-form-mid layui-word-aux">请必须填写所在平台下推广位名称</div>
-						</div>
-					  	<div class="layui-form-item">
-							<div class="layui-input-block">
-							  	<button class="layui-btn" lay-submit="" lay-filter="new-promotion-seat-form-submit">立即提交</button>
-							  	<button type="reset" class="layui-btn layui-btn-primary">重置</button>
-							</div>
-					  	</div>
-					</form>
-				</div>
-				<table class="layui-table" lay-data="{height:'full-240', url:'/mall/promotion/seat/paging', page:true, id:'idTest'}" lay-filter="demo">
-				  	<thead>
-						<tr>
-							<!-- <th lay-data="{type:'numbers'}"></th> -->
-							<!-- <th lay-data="{type:'checkbox'}"></th> -->
-							<th lay-data="{field:'id', width:60, sort: true}">ID</th>
-							<th lay-data="{field:'createUser', width:105}">创建人</th>
-							<th lay-data="{field:'create_time', width:165, sort: true}">创建时间</th>
-							<th lay-data="{field:'platform', width:80, sort: true}">平台</th>
-							<th lay-data="{field:'seat_id', width:150, sort: true}">推广位ID</th>
-							<th lay-data="{field:'seat_name', width:200}">推广位名称</th>
-							<th lay-data="{field:'allotUser', width:100}">分配对象</th>
-							<th lay-data="{field:'allot_time', width:160, sort: true}">分配时间</th>
-							<th lay-data="{width:200, align:'center', toolbar: '#operateBar'}"></th>
-						</tr>
-				  	</thead>
-				</table>
-				<script type="text/html" id="operateBar">
-					<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit" style="height: 25px !important; line-height: 25px !important;">编辑</a>
-					<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" style="height: 25px !important; line-height: 25px !important;">删除</a>
-				</script>
+<div th:include="mall/commonMall :: helloMall">what?</div>
+<div class="layui-container">
+	<div class="layui-row">
+		<div class="layui-col-md12 layui-col-xs12">
+			<div class="layui-row" style="margin-top: 8px;">
+				<span class="layui-breadcrumb">
+				  	<a href="/index"><cite>LeeDane</cite></a>
+				  	<a href="/mall/index">首页</a>
+					<a href="/mall/promotion/seat"><cite>推广位管理</cite></a>
+					<!-- <a href="/mall/index"><cite>首页</cite></a>
+				  	<a href="/mall/category/41"><cite>商品分类</cite></a>
+				  	<a href="/mall/category/60"><cite>手机</cite></a> -->
+					<!-- <a><cite>导航元素</cite></a> -->
+				</span>
 			</div>
+			<div class="layui-btn-group promotion-seat-group" style="margin-top: 5px;">
+				<button class="layui-btn new-promotion-seat-btn" data-type="newPromotionSeat">新增</button>
+				<button class="layui-btn" id="auto-create-pdd-seats">创建拼多多推广位</button>
+				<button class="layui-btn" id="auto-create-sn-seats">创建苏宁推广位</button>
+			</div>
+			<div id="promotion-seat-container" style="display: none;">
+				<form class="layui-form" id="promotion-seat-form" action="" lay-filter="promotion-seat-form" style="border: 1px solid #fff; margin-top: 8px; padding: 8px;">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">购物平台</label>
+							<div class="layui-input-inline">
+								<select name="platform" lay-verify="required" lay-search="">
+									<option value="">请选择购物平台</option>
+									<option value="淘宝网" th:selected="${platform == '淘宝网'}" >淘宝/天猫</option>
+									<option value="京东" th:selected="${platform == '京东'}">京东</option>
+									<option value="拼多多" th:selected="${platform == '拼多多'}">拼多多</option>
+									<option value="苏宁" th:selected="${platform == '苏宁'}">苏宁</option>
+									<option value="系统自营" th:selected="${platform == '系统自营'}">系统自营</option>
+								</select>
+							</div>
+							<div class="layui-form-mid layui-word-aux">必须选择项</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">推广位ID</label>
+						<div class="layui-input-inline">
+							<input type="text" name="seat_id" lay-verify="required" autocomplete="off" placeholder="请输入推广位ID" class="layui-input" />
+						</div>
+						<div class="layui-form-mid layui-word-aux">请填写所在平台下推广位ID(必填)</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">推广位名称</label>
+						<div class="layui-input-inline">
+							<input type="text" name="seat_name" placeholder="请输入商品编号" lay-verify="required" autocomplete="off" class="layui-input" th:value="${productId}"/>
+						</div>
+						<div class="layui-form-mid layui-word-aux">请必须填写所在平台下推广位名称</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn" lay-submit="" lay-filter="new-promotion-seat-form-submit">立即提交</button>
+							<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="row" style="margin-top: 10px;">
+				<div id="my-layui-btn-group" class="layui-btn-group">
+					<button type="button" class="layui-btn layui-btn-sm" value="">全部</button>
+					<button type="button" class="layui-btn layui-btn-sm layui-btn-primary" value="淘宝网">淘宝网</button>
+					<button type="button" class="layui-btn layui-btn-sm layui-btn-primary" value="京东">京东</button>
+					<button type="button" class="layui-btn layui-btn-sm layui-btn-primary" value="拼多多">拼多多</button>
+					<button type="button" class="layui-btn layui-btn-sm layui-btn-primary" value="苏宁">苏宁</button>
+				</div>
+			</div>
+			<table id="data-table" class="layui-table" lay-filter="seat-table-filter">
+				<!--<thead>
+                  <tr>
+                      &lt;!&ndash; <th lay-data="{type:'numbers'}"></th> &ndash;&gt;
+                      &lt;!&ndash; <th lay-data="{type:'checkbox'}"></th> &ndash;&gt;
+                      <th lay-data="{field:'id', width:60, sort: true}">ID</th>
+                      <th lay-data="{field:'createUser', width:105}">创建人</th>
+                      <th lay-data="{field:'create_time', width:165, sort: true}">创建时间</th>
+                      <th lay-data="{field:'platform', width:80, sort: true}">平台</th>
+                      <th lay-data="{field:'seat_id', width:150, sort: true}">推广位ID</th>
+                      <th lay-data="{field:'seat_name', width:200}">推广位名称</th>
+                      <th lay-data="{field:'allotUser', width:100}">分配对象</th>
+                      <th lay-data="{field:'allot_time', width:160, sort: true}">分配时间</th>
+                      <th lay-data="{width:200, align:'center', toolbar: '#operateBar'}"></th>
+                  </tr>
+                </thead>-->
+			</table>
+			<script type="text/html" id="operateBar">
+				<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit" style="height: 25px !important; line-height: 25px !important;">编辑</a>
+				<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" style="height: 25px !important; line-height: 25px !important;">删除</a>
+			</script>
 		</div>
 	</div>
+</div>
 </body>
 <div th:include="mall/commonMall-js :: mallJs">what?</div>
 <script th:inline="javascript">

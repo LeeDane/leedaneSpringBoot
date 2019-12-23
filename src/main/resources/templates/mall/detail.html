@@ -30,10 +30,27 @@
 				</span>
 			</div>
 			<div class="" style="text-align: center; margin-top: 10px; margin-bottom: 10px;">
-				<input type="text" name="shop-search-value" placeholder="请输入您要搜索的商品关键字、ID或长链接" autocomplete="off" class="my-layui-input" /><div class="layui-btn-group btn-product-search">
+				<form class="layui-form" style="margin-bottom: 4px;">
+					<div class="layui-form-item">
+						<input type="text" id="search-value" placeholder="请输入您要搜索的商品关键字、ID或长链接" autocomplete="off" class="my-layui-input" />
+						<div id="my-search-btn-group" class="layui-inline ">
+							<select name="platform" lay-verify="">
+								<option value="">请选择平台(默认淘宝网)</option>
+								<option value="淘宝网">淘宝网(包括天猫)</option>
+								<option value="京东">京东</option>
+								<option value="拼多多">拼多多</option>
+								<option value="苏宁">苏宁</option>
+							</select>
+						</div>
+						<div class="layui-inline">
+							<button class="layui-btn" lay-submit="" lay-filter="do-search-filter">搜产品</button>
+						</div>
+					</div>
+				</form >
+					<!--<input type="text" name="shop-search-value" placeholder="请输入您要搜索的商品关键字、ID或长链接" autocomplete="off" class="my-layui-input" /><div class="layui-btn-group btn-product-search">
 				  	<button class="layui-btn" onclick="searchProduct(this, '淘宝网');">搜商品</button>
 				  	<button class="layui-btn" onclick="searchProduct(this, '京东');">搜京东</button>
-					<button class="layui-btn" onclick="searchProduct(this, '拼多多');">搜拼多多</button>
+					<button class="layui-btn" onclick="searchProduct(this, '拼多多');">搜拼多多</button>-->
 				</div>
 			</div>
 			<div class="layui-row">
@@ -76,7 +93,7 @@
 										<p style="margin-top: 8px;" th:if="${product.shopTitle != null}">
 											<a th:href="'/mall/1'" target="view_window" th:text="'店铺：'+ ${product.shopTitle}"></a>
 										</p>
-							    		<div style="margin-top: 8px;">
+							    		<div id="my-btn-group" style="margin-top: 8px;">
 											<a th:if="${product.couponAmount > 0}" th:utext="'券后价: ¥'+ ${product.afterCouponPrice}" th:href="${product.couponShareUrl} != null and ${product.couponShareUrl} != '' ? ${product.couponShareUrl} : ${product.shareUrl}" class="layui-btn layui-btn-danger layui-btn-small"></a>
 											<a th:if="${product.couponAmount == 0}" th:utext="'在售价: ¥'+ ${product.price}" th:href="${product.shareUrl}" class="layui-btn layui-btn-danger layui-btn-small"></a>
 											<!--<a style="margin-top: 8px;" class="layui-btn layui-btn-small" th:href="${product.link}" th:utext="${product.platform} +'链接'" onclick=""></a>-->

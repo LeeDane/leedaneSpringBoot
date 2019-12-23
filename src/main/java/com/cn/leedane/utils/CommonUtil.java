@@ -598,7 +598,14 @@ public class CommonUtil {
 		cipherText = cipherText.replaceAll("\\*jia\\*", "+"); //在网络传输过程中，会把+替换成%20，这里需要还原回来
 		SM4Utils sm4 = new SM4Utils();
 		sm4.secretKey = Oauth2HtmlController.secretKey;
-		return JSONObject.fromObject(sm4.decryptData_ECB(cipherText));
+		try{
+			return JSONObject.fromObject(sm4.decryptData_ECB(cipherText));
+		}catch (Exception e){
+		    e.printStackTrace();
+		}finally {
+
+		}
+		return new JSONObject();
 	}
 
 	/*public static void main(String[] args) {
@@ -606,4 +613,5 @@ public class CommonUtil {
 		System.out.println(parseLinkParams(url, "id", "goods_id", "pid"));
 		System.out.println(getUrlByTaokouling("$A5OZYBTfgdn$"));
 	}*/
+
 }
