@@ -86,7 +86,7 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 			if(createUserId > 0 && createUserId != user.getId()){
 				Set<Long> ids = new HashSet<>();
 				ids.add(createUserId);
-				notificationHandler.sendNotificationByIds(false, user, ids, str, NotificationType.赞过我, tableName, tableId, bean);
+				notificationHandler.sendNotificationByIds(false, user.getId(), ids, str, NotificationType.赞过我, tableName, tableId, bean);
 			}
 		}
 		

@@ -666,7 +666,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			Set<String> usernames = StringUtil.getAtUserName(content);
 			if(usernames.size() > 0){
 				//String str = "{from_user_remark}在发表的心情中@您,点击查看详情";
-				notificationHandler.sendNotificationByNames(false, user, usernames, content, NotificationType.艾特我, DataTableType.心情.value, moodBean.getId(), moodBean);
+				notificationHandler.sendNotificationByNames(false, user.getId(), usernames, content, NotificationType.艾特我, DataTableType.心情.value, moodBean.getId(), moodBean);
 			}
 			message.put("isSuccess", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.发表心情成功.value));
@@ -807,7 +807,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 				Set<String> usernames = StringUtil.getAtUserName(content);
 				if(usernames.size() > 0){
 					//String str = "{from_user_remark}在发表的心情中@您,点击查看详情";
-					notificationHandler.sendNotificationByNames(false, user, usernames, content, NotificationType.艾特我, DataTableType.心情.value, moodBean.getId(), moodBean);
+					notificationHandler.sendNotificationByNames(false, user.getId(), usernames, content, NotificationType.艾特我, DataTableType.心情.value, moodBean.getId(), moodBean);
 				}
 				message.put("isSuccess", result);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.发表心情成功.value));

@@ -82,4 +82,23 @@
         order_settlement_cash_back = VALUES(order_settlement_cash_back),
         product_title = VALUES(product_title)
 	</insert>
+
+    <select id="myOauth2s" resultMap="oauth2Bean">
+        select o.id, o.status, o.create_user_id, date_format(o.create_time,'%Y-%m-%d %H:%i:%s') create_time
+        , o.modify_user_id, date_format(o.modify_time,'%Y-%m-%d %H:%i:%s') modify_time
+        ,o.platform, o.oauth2_id, o.open_id, o.name
+        from t_oauth2 o where o.create_user_id = #{userId}
+    </select>
+    <resultMap type="com.cn.leedane.model.Oauth2Bean" id="oauth2Bean">
+        <id property="id" column="id"/>
+        <result property="status" column="status"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="modifyUserId" column="modify_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="platform" column="platform"/>
+        <result property="oauth2Id" column="oauth2_id"/>
+        <result property="openId" column="open_id"/>
+        <result property="name" column="name"/>
+    </resultMap>
 </mapper>

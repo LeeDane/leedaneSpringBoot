@@ -1,6 +1,6 @@
 package com.cn.leedane.observer.template;
 
-import com.cn.leedane.enums.NotificationType;
+import com.cn.leedane.utils.EnumUtil;
 
 /**
  * 通知的模板类
@@ -10,11 +10,10 @@ import com.cn.leedane.enums.NotificationType;
  */
 public interface NotificationTemplate {
 	
-	public NotificationType getNotifitionType();
+	public EnumUtil.NoticeSMSType getNotifitionType();
 	
 	/**
 	 * 其中支持的参数{to_user_id}, {from_user_id}, {to_user_remark}, {from_user_remark}
-	 * @param content
 	 */
 	public String getNotifitionContent();
 

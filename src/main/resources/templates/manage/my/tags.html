@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" >
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title th:text="'我的标签'"></title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<div th:include="manage/common-js :: manageJs">what?</div>
+	<link href="//cdn.bootcss.com/jqcloud/1.0.4/jqcloud.min.css" rel="stylesheet">
+
+	<script src="//cdn.bootcss.com/jqcloud/1.0.4/jqcloud-1.0.4.min.js"></script>
+	<style>
+		#cloud span{
+			cursor: pointer;
+		}
+		#tags-contrainer button{
+			margin-top: 5px;
+		}
+	</style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	<div th:replace="~{manage/common-head :: helloManage(${tabId})} "></div>
+	<div th:replace="~{manage/common-left :: helloManage(${tabId})} "></div>
+	<div class="layui-body">
+		<!-- 内容主体区域 -->
+		<fieldset class="layui-elem-field layui-field-title">
+			<legend>个人标签管理</legend>
+		</fieldset>
+		<fieldset class="layui-elem-field">
+			<legend>我的标签<button type="button" onclick="addCustomTag();" class="layui-btn layui-btn-xs" style="margin-left: 10px;"><i class="layui-icon layui-icon-add-1"></i></button><small>（也可以点击下方标签云选择，最多10个标签）</small></legend>
+			<div class="layui-field-box">
+				<span id="no-tag" th:if="${tags.size()} == 0">您还没有标签，请添加</span>
+				<div id="tags-contrainer">
+					<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" th:each="tag,tagIndex: ${tags}" th:utext="${tag.tagName}"></button>
+				</div>
+				<button th:if="${tags.size()} == 0" type="button" onclick="uploadTags();" class="upload-tags layui-btn layui-btn-sm" style="margin-top: 10px; display: none;">提交标签</button>
+				<button th:if="${tags.size()} gt 0" type="button" onclick="uploadTags();" class="upload-tags layui-btn layui-btn-sm" style="margin-top: 10px;">提交标签</button>
+			</div>
+		</fieldset>
+		<div class="layui-row layui-col-space15">
+			<div id="cloud" style="width: 550px; height: 350px;"></div>
+		</div>
+	</div>
+
+	<div class="layui-footer">
+		<!-- 底部固定区域 -->
+		<div th:include="common-bottom :: bottom">bottom?</div>
+	</div>
+</div>
+</body>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	/*]]>*/
+</script>
+<script th:if="${not isDebug}" th:src="@{/page/js/manage/my/tags.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/manage/my/tags.js}" type="text/javascript"></script>
+</html>

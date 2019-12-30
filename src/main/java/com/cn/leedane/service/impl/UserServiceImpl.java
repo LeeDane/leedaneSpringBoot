@@ -2,8 +2,6 @@ package com.cn.leedane.service.impl;
 
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.chat_room.ScanLoginWebSocket;
-import com.cn.leedane.controller.UserController;
-import com.cn.leedane.enums.NotificationType;
 import com.cn.leedane.exception.ErrorException;
 import com.cn.leedane.exception.MobCodeErrorException;
 import com.cn.leedane.exception.RE404Exception;
@@ -11,12 +9,13 @@ import com.cn.leedane.handler.*;
 import com.cn.leedane.mapper.FanMapper;
 import com.cn.leedane.mapper.FilePathMapper;
 import com.cn.leedane.mapper.UserMapper;
-import com.cn.leedane.message.ISendNotification;
-import com.cn.leedane.message.SendNotificationImpl;
-import com.cn.leedane.message.notification.Notification;
 import com.cn.leedane.mob.sms.utils.MobClient;
 import com.cn.leedane.model.*;
 import com.cn.leedane.model.circle.CircleSettingBean;
+import com.cn.leedane.notice.NoticeException;
+import com.cn.leedane.notice.model.SMS;
+import com.cn.leedane.notice.send.INoticeFactory;
+import com.cn.leedane.notice.send.NoticeFactory;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.EmailSend;
 import com.cn.leedane.rabbitmq.send.ISend;
@@ -44,7 +43,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -231,13 +229,13 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	}
 
 	@Override
-	public boolean updateUserState(UserBean user) {		
+	public boolean updateUserState(UserBean updateUser) {
 		logger.info("UserServiceImpl-->updateUserState()");
-		if(userMapper.update(user) > 0){
+		if(userMapper.update(updateUser) > 0){
 			//删除ES缓存
-			elasticSearchUtil.delete(DataTableType.用户.value, user.getId());
+			elasticSearchUtil.delete(DataTableType.用户.value, updateUser.getId());
 			//添加ES缓存
-			new ThreadUtil().singleTask(new EsIndexAddThread<UserBean>(user));
+			new ThreadUtil().singleTask(new EsIndexAddThread<UserBean>(updateUser));
 			return true;
 		}
 
@@ -424,7 +422,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		logger.info("UserServiceImpl-->checkPhone():jo="+jo.toString());
 		String mobilePhone = JsonUtil.getStringValue(jo, "mobilePhone");
 				
-		if(StringUtil.isNull(mobilePhone)){
+		if(!StringUtil.isPhone(mobilePhone)){
 			return false;
 		}
 		return userMapper.executeSQL("select id from "+DataTableType.用户.value+" where mobile_phone = ?", mobilePhone).size() >0;
@@ -453,7 +451,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		ResponseMap message = new ResponseMap();
 		boolean result = false;
 		
-		if(StringUtil.isNull(mobilePhone) || mobilePhone.length() != 11){
+		if(!StringUtil.isPhone(mobilePhone)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.手机号为空或者不是11位数.value));
 			message.put("responseCode", EnumUtil.ResponseCode.手机号为空或者不是11位数.value);
 			return message.getMap();
@@ -508,12 +506,12 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		return message.getMap();
 	}
 	@Override
-	public Map<String, Object> getPhoneLoginCode(String mobilePhone, HttpRequestInfoBean request) {
+	public Map<String, Object> getPhoneLoginCode(String mobilePhone, HttpRequestInfoBean request) throws NoticeException {
 		logger.info("UserServiceImpl-->getPhoneLoginCode():mobilePhone="+mobilePhone);
 		ResponseMap message = new ResponseMap();
 		boolean result = false;
 		
-		if(StringUtil.isNull(mobilePhone) || mobilePhone.length() != 11){
+		if(!StringUtil.isPhone(mobilePhone)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.手机号为空或者不是11位数.value));
 			message.put("responseCode", EnumUtil.ResponseCode.手机号为空或者不是11位数.value);
 			return message.getMap();
@@ -521,8 +519,9 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		
 		//保存操作日志
 //		operateLogService.saveOperateLog(null, request, null, "手机号码："+mobilePhone+"用户获取手机登录验证码", "getPhoneLoginCode", ConstantsUtil.STATUS_NORMAL, 0);
-		
-		List<String> list = RedisUtil.getInstance().getMap("login_"+mobilePhone, "validationCode", "createTime", "endTime");
+
+		//这个已经移除到短信发送里面校验了
+		/*List<String> list = RedisUtil.getInstance().getMap("login_"+mobilePhone, "validationCode", "createTime", "endTime");
 		if(list.size() > 0){
 			if(list.get(0) != null){
 				String createTime = list.get(1);
@@ -533,29 +532,18 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 					return message.getMap();
 				}
 			}
-		}
+		}*/
 		
 		//执行创建新的验证码
 		String validationCode = StringUtil.build6ValidationCode();
 		if(validationCode != null && validationCode.length() ==6){
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("validationCode", validationCode);
-			Date createTime = new Date();
-			map.put("createTime", DateUtil.DateToString(createTime));
-			try {
-				map.put("endTime", DateUtil.DateToString(DateUtil.getOverdueTime(createTime, "1小时")));
-			} catch (ErrorException e) {
-				e.printStackTrace();
-			}
-			RedisUtil.getInstance().addMap("login_"+mobilePhone, map);
-			ISendNotification sendNotification = new SendNotificationImpl();
-			Notification notification = new Notification();
-			notification.setType(NotificationType.LOGIN_VALIDATION.value);
+			SMS sms = new SMS();
+			sms.setType(EnumUtil.NoticeSMSType.LOGIN_VALIDATION.value);
 			UserBean toUser = new UserBean();
 			toUser.setMobilePhone(mobilePhone);
-			notification.setToUser(toUser);
-			sendNotification.Send(notification);
-			result = true;
+			sms.setToUser(toUser);
+			INoticeFactory factory = new NoticeFactory();
+			result = factory.create(EnumUtil.NoticeType.短信).send(sms);
 		}
 		if(result){
 			message.put("isSuccess", result);
@@ -576,7 +564,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		String email = JsonUtil.getStringValue(jo, "email");
 		String password = JsonUtil.getStringValue(jo, "password");
 		UserBean userBean = new UserBean();
-		if(StringUtil.isNull(validationCode) || StringUtil.isNull(mobilePhone) || 
+		if(StringUtil.isNull(validationCode) || !StringUtil.isPhone(mobilePhone) ||
 				StringUtil.isNull(account) || StringUtil.isNull(email)|| StringUtil.isNull(password))	{
 			return userBean;
 		}
@@ -618,7 +606,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		
 		int zone = JsonUtil.getIntValue(jo, "zone", 86);
 		UserBean resultUser =  new UserBean();
-		if(StringUtil.isNull(validationCode) || StringUtil.isNull(mobilePhone)){
+		if(StringUtil.isNull(validationCode) || !StringUtil.isPhone(mobilePhone)){
 			return resultUser;
 		}
 		try {
@@ -684,10 +672,10 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	@Override
 	public boolean wechatUnBind(String FromUserName) {
 		try {
-			UserBean userBean = loginByWeChat(FromUserName);
-			if(userBean != null ){
-				userBean.setWechatUserName("");
-				return userMapper.update(userBean) > 0;
+			UserBean updateUser = loginByWeChat(FromUserName);
+			if(updateUser != null ){
+				updateUser.setWechatUserName("");
+				return userMapper.update(updateUser) > 0;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -987,17 +975,18 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		String educationBackground = JsonUtil.getStringValue(jo, "education_background");
 		String personalIntroduction = JsonUtil.getStringValue(jo, "personal_introduction");
 		ResponseMap message = new ResponseMap();
-		user.setSex(sex);
-		user.setMobilePhone(mobilePhone);
-		user.setQq(qq);
-		user.setEmail(email);
-		user.setEducationBackground(StringUtil.changeNotNull(educationBackground));
-		user.setPersonalIntroduction(StringUtil.changeNotNull(personalIntroduction));
+		UserBean updateUser = userMapper.findById(UserBean.class, user.getId());
+		updateUser.setSex(sex);
+		updateUser.setMobilePhone(mobilePhone);
+		updateUser.setQq(qq);
+		updateUser.setEmail(email);
+		updateUser.setEducationBackground(StringUtil.changeNotNull(educationBackground));
+		updateUser.setPersonalIntroduction(StringUtil.changeNotNull(personalIntroduction));
 		if(StringUtil.isNotNull(birthDay)){
 			Date day = DateUtil.stringToDate(birthDay, "yyyy-MM-dd");
-			user.setBirthDay(day);
+			updateUser.setBirthDay(day);
 		}else{
-			user.setBirthDay(null);
+			updateUser.setBirthDay(null);
 		}
 
 		boolean result = false;
@@ -1052,10 +1041,10 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			userHandler.updateUserPicPath(user.getId(), "30x30");
 		}
 
-		result = userMapper.update(user) > 0;
+		result = userMapper.update(updateUser) > 0;
 		if(result){
 			//添加ES缓存
-			new ThreadUtil().singleTask(new EsIndexAddThread<UserBean>(user));
+			new ThreadUtil().singleTask(new EsIndexAddThread<UserBean>(updateUser));
 
 			//异步修改用户solr索引
 //			new ThreadUtil().singleTask(new SolrUpdateThread<UserBean>(UserSolrHandler.getInstance(), user));
@@ -1066,7 +1055,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			//把Redis缓存的信息删除掉
 			userHandler.deleteUserDetail(user.getId());
-			message.put("userinfo", userHandler.getUserInfo(user, true));
+			message.put("userinfo", userHandler.getUserInfo(updateUser, true));
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
@@ -1129,7 +1118,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 				@Override
 				public void run() {
 					String content = "您的基本息已经被管理信员更新！";
-					notificationHandler.sendNotificationById(false, user, toUserId, content, com.cn.leedane.utils.EnumUtil.NotificationType.通知, EnumUtil.DataTableType.用户.value, toUserId, null);
+					notificationHandler.sendNotificationById(false, user.getId(), toUserId, content, com.cn.leedane.utils.EnumUtil.NotificationType.通知, EnumUtil.DataTableType.用户.value, toUserId, null);
 				}
 			}).start();
 		}else{
@@ -1169,14 +1158,14 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			message.put("responseCode", EnumUtil.ResponseCode.要修改的密码跟原密码相同.value);
 			return message.getMap();
 		}
+		UserBean updateUser = userMapper.findById(UserBean.class, user.getId());
+		updateUser.setPassword(MD5Util.compute(newPassword));
 		
-		user.setPassword(MD5Util.compute(newPassword));
-		
-		boolean result = userMapper.update(user) > 0;
+		boolean result = userMapper.update(updateUser) > 0;
 		if(result){
 			//把Redis缓存的信息删除掉
-			userHandler.deleteUserDetail(user.getId());
-
+			userHandler.deleteUserDetail(updateUser.getId());
+			user.setPassword(MD5Util.compute(newPassword));; //由于系统没有退出，需要重新赋值
 			message.put("isSuccess", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.新密码修改成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -1224,7 +1213,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 				@Override
 				public void run() {
 					String content = "您的登录密码已经被管理员重置为"+ DEFALULT_LOGIN_PASSWORD_STRING +",请尽快重新登录修改！";
-					notificationHandler.sendNotificationById(false, user, toUserId, content, com.cn.leedane.utils.EnumUtil.NotificationType.通知, EnumUtil.DataTableType.用户.value, toUserId, null);
+					notificationHandler.sendNotificationById(false, user.getId(), toUserId, content, com.cn.leedane.utils.EnumUtil.NotificationType.通知, EnumUtil.DataTableType.用户.value, toUserId, null);
 				}
 			}).start();
 			
@@ -1448,16 +1437,16 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		//
 		checkAdmin(user, toUserId);
 		
-		UserBean updateUserBean = userMapper.findById(UserBean.class, toUserId);
+		UserBean updateUser = userMapper.findById(UserBean.class, toUserId);
 		
-		if(updateUserBean == null){
+		if(updateUser == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户已经注销.value));
 			message.put("responseCode", EnumUtil.ResponseCode.用户已经注销.value);
 			return message.getMap();
 		}
-		
-		updateUserBean.setStatus(ConstantsUtil.STATUS_DELETE);
-		boolean result = userMapper.update(updateUserBean) > 0 ;
+
+		updateUser.setStatus(ConstantsUtil.STATUS_DELETE);
+		boolean result = userMapper.update(updateUser) > 0 ;
 
 		if (result) {
 			userHandler.deleteUserDetail(toUserId);
@@ -1511,7 +1500,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		String content = JsonUtil.getStringValue(jo, "content");
 		switch (type) {
 			case 1:  //1为通知
-				notificationHandler.sendNotificationById(false, user, toUserId, content, EnumUtil.NotificationType.通知, null, 0, null);
+				notificationHandler.sendNotificationById(false, user.getId(), toUserId, content, EnumUtil.NotificationType.通知, null, 0, null);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.通知已经发送.value));
 				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 				break;
@@ -1549,7 +1538,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 				}		
 				break;
 			case 3:  //3为私信
-				notificationHandler.sendNotificationById(false, user, toUserId, content, EnumUtil.NotificationType.私信, null, 0, null);
+				notificationHandler.sendNotificationById(false, user.getId(), toUserId, content, EnumUtil.NotificationType.私信, null, 0, null);
 				message.put("isSuccess", true);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.私信已经发送.value));
 				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);

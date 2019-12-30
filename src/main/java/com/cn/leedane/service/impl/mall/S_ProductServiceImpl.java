@@ -271,7 +271,7 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商品不存在或已被删除.value));
 		
 		ResponseMap message = new ResponseMap();
-		if(ProductPlatformType.淘宝.value.equals(productBean.getPlatform()) || ProductPlatformType.天猫.value.equals(productBean.getPlatform())){
+		if(ProductPlatformType.淘宝.value.equals(productBean.getPlatform())){
 			AlimamaRecommend recommend = new AlimamaRecommend();
 			JSONObject recommendJson;
 			try {

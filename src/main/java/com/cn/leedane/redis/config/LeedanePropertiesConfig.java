@@ -126,4 +126,15 @@ public class LeedanePropertiesConfig {
 	public boolean isDebug(){
 		return getBoolean("constant.is.debug");
 	}
+
+	/**
+	 * 获取系统地址
+	 * @return
+	 */
+	public static String getSystemUrl(){
+		if(LeedanePropertiesConfig.newInstance().isDebug()){
+			return "http://127.0.0.1:8089";
+		}
+		return LeedanePropertiesConfig.newInstance().getString("constant.system.server.url");
+	}
 }

@@ -1,5 +1,6 @@
-package com.cn.leedane.message.notification;
+package com.cn.leedane.notice.model;
 
+import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
 
 /**
@@ -8,7 +9,7 @@ import com.cn.leedane.model.UserBean;
  * 2016年7月12日 下午2:22:12
  * Version 1.0
  */
-public class Notification {
+public class SMS extends IDBean {
 	
 	/**
 	 * 发送通知的用户
@@ -29,6 +30,11 @@ public class Notification {
 	 * 通知的类型
 	 */
 	private String type;
+
+	/**
+	 * 短信过期时间(秒)， 默认是一个小时
+	 */
+	private int expire = 60 * 60;
 
 	public UserBean getFromUser() {
 		return fromUser;
@@ -60,7 +66,13 @@ public class Notification {
 
 	public void setType(String type) {
 		this.type = type;
-	} 
-	
-	
+	}
+
+	public int getExpire() {
+		return expire;
+	}
+
+	public void setExpire(int expire) {
+		this.expire = expire;
+	}
 }

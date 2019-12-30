@@ -420,7 +420,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		}else{
 			//发送通知给相应的用户
 			String content = user.getAccount() +"关注您";
-			notificationHandler.sendNotificationById(false, user, toUserId, content, NotificationType.通知, DataTableType.粉丝.value, fanBean.getId(), null);
+			notificationHandler.sendNotificationById(false, user.getId(), toUserId, content, NotificationType.通知, DataTableType.粉丝.value, fanBean.getId(), null);
 		}
 		
 		fanHandler.addAttention(user, toUser);

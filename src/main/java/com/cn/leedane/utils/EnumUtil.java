@@ -590,7 +590,7 @@ public class EnumUtil {
      * version 1.0
      */
 	public enum ProductPlatformType {
-		淘宝("淘宝网"),京东("京东"), 苏宁("苏宁"), 天猫("天猫"), 拼多多("拼多多"), 系统自营("系统自营"), github("github");
+		淘宝("淘宝网"),京东("京东"), 苏宁("苏宁"), 拼多多("拼多多"), 系统自营("系统自营");
 	
 		private ProductPlatformType(String value) {
 			this.value = value;
@@ -599,6 +599,21 @@ public class EnumUtil {
 		public final String value;
 	}
 
+	/**
+	 * 第三方授权平台类型
+	 * @author LeeDane
+	 * 2017年10月25日 下午3:13:31
+	 * version 1.0
+	 */
+	public enum Oauth2PlatformType {
+		淘宝("淘宝网"), 京东("京东"), 苏宁("苏宁"), 拼多多("拼多多"), github("github");
+
+		private Oauth2PlatformType(String value) {
+			this.value = value;
+		}
+
+		public final String value;
+	}
 	
 	/**
      * 商品统计类型类型
@@ -873,5 +888,47 @@ public class EnumUtil {
 
 		public final int value;
 
+	}
+
+	/**
+	 * 通知消息类型
+	 * @author LeeDane
+	 * 2019年12月22日 上午10:16:46
+	 * Version 1.0
+	 */
+	public enum NoticeType {
+		邮件(1),站内信(2), 短信(3), websocket(4);
+
+		private NoticeType(int value) {
+			this.value = value;
+		}
+
+		public final int value;
+	}
+
+	/**
+	 * 短信业务类型
+	 * @author LeeDane
+	 * 2016年7月12日 上午10:23:48
+	 * Version 1.0
+	 */
+	public enum NoticeSMSType {
+		ADD_FRIEND("addFriend"),  //增加好友
+		AGREE_FRIEND("agreeFriend"),  //同意好友
+		PUBLISHED_MOOD("publishedMood"),  //发表说说
+		ADD_COMMENT("addComment"),  //添加评论
+		REGISTER_VALIDATION("register"), //用户注册验证码
+		LOGIN_VALIDATION("login"), //用户登录验证码
+		UPDATE_PSW_VALIDATION("updatePSW"), //修改密码验证码
+		UPDATE_INFO_VALIDATION("updateInfo"), //信息变更验证码
+		LOGIN_ERROR_VALIDATION("loginError"), //登录异常验证码
+		IDENTITY_VALIDATION("identity"), //身份验证验证码
+		ACTIVITY_VALIDATION("activity"), //活动确认验证码
+		BIND_PHONE_VALIDATION("bindPhone"); //手机号码绑定验证码
+
+		public String value;
+		private NoticeSMSType(String value){
+			this.value = value;
+		}
 	}
 }

@@ -40,7 +40,7 @@ public class FinancialMonthReportRecieve implements IRecieve{
 			FinancialReport financialReport = (FinancialReport)obj;
 			NotificationHandler notificationHandler = (NotificationHandler) SpringUtil.getBean("notificationHandler");
 			UserBean userBean = financialReport.getUser();
-			notificationHandler.sendNotificationById(true, userBean, userBean.getId(), financialReport.getDesc(), NotificationType.通知, "t_financial_report", 1, financialReport);	
+			notificationHandler.sendNotificationById(true, userBean.getId(), userBean.getId(), financialReport.getDesc(), NotificationType.通知, "t_financial_report", 1, financialReport);
 			logger.info(JSON.toJSON(financialReport));
 			success = true;
 		}catch(Exception e){

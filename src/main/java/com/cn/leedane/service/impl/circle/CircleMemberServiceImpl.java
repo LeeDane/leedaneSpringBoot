@@ -171,7 +171,7 @@ public class CircleMemberServiceImpl extends AdminRoleCheckService implements Ci
 			String reason = JsonUtil.getStringValue(json, "reason", "没有原因");
 			String content = "您已被圈子《"+ circle.getName() +"》管理者：\""+ user.getAccount() +"\" 移除该圈子，原因是："+ reason;
 			//通知该用户
-			notificationHandler.sendNotificationById(false, user, memberId, content, NotificationType.通知, DataTableType.不存在的表.value, memberBean.getId(), null);
+			notificationHandler.sendNotificationById(false, user.getId(), memberId, content, NotificationType.通知, DataTableType.不存在的表.value, memberBean.getId(), null);
 			message.put("isSuccess", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该成员已被移除出圈子.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);

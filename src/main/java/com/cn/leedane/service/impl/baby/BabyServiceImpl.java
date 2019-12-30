@@ -65,7 +65,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 			message.put("message", content);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			//通知用户
-			notificationHandler.sendNotificationById(true, user, user.getId(), content, NotificationType.通知, DataTableType.不存在的表.value, -1, null);
+			notificationHandler.sendNotificationById(true, user.getId(), user.getId(), content, NotificationType.通知, DataTableType.不存在的表.value, -1, null);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
@@ -100,7 +100,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 			message.put("message", content);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			//通知用户
-			notificationHandler.sendNotificationById(true, user, user.getId(), content, NotificationType.通知, DataTableType.不存在的表.value, -1, null);
+			notificationHandler.sendNotificationById(true, user.getId(), user.getId(), content, NotificationType.通知, DataTableType.不存在的表.value, -1, null);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库修改失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
@@ -133,7 +133,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			
 			//通知用户
-			notificationHandler.sendNotificationById(true, user, user.getId(), content, NotificationType.通知, DataTableType.不存在的表.value, -1, null);
+			notificationHandler.sendNotificationById(true, user.getId(), user.getId(), content, NotificationType.通知, DataTableType.不存在的表.value, -1, null);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
@@ -165,7 +165,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 			message.put("message", content);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			//通知用户
-			notificationHandler.sendNotificationById(true, user, user.getId(), content, NotificationType.通知, DataTableType.不存在的表.value, -1, null);
+			notificationHandler.sendNotificationById(true, user.getId(), user.getId(), content, NotificationType.通知, DataTableType.不存在的表.value, -1, null);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库修改失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);

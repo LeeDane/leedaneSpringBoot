@@ -1,8 +1,10 @@
 package com.cn.leedane.service;
 
+import com.aliyuncs.exceptions.ClientException;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.notice.NoticeException;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -303,7 +305,7 @@ public interface UserService<T extends IDBean>{
 	 * @return 
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getPhoneLoginCode(String mobilePhone, HttpRequestInfoBean request);
+	public Map<String, Object> getPhoneLoginCode(String mobilePhone, HttpRequestInfoBean request) throws NoticeException;
 	
 	/**
 	 * 绑定微信号

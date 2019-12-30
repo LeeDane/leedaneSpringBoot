@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.cn.leedane.exception.*;
 import com.cn.leedane.mall.pdd.PddException;
+import com.cn.leedane.notice.NoticeException;
 import com.jd.open.api.sdk.JdException;
 import com.taobao.api.ApiException;
 import org.apache.log4j.Logger;
@@ -249,6 +250,10 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			logger.error("拼多多联盟api异常", exception);
 			message.put("message", "拼多多开放平台：" +exception.getMessage());
 			message.put("responseCode", ResponseCode.拼多多api异常.value);
+		}else if(exception instanceof NoticeException){
+			logger.error("信息发送异常", exception);
+			message.put("message", "信息发送异常：" +exception.getMessage());
+			message.put("responseCode", ResponseCode.服务器处理异常.value);
 		}else{
 //			StringPrintWriter strintPrintWriter = new StringPrintWriter();  
 //	        exception.printStackTrace(strintPrintWriter);

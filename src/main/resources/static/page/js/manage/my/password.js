@@ -1,6 +1,5 @@
-layui.use(['form', 'layedit', 'layer'], function(){
+layui.use(['layedit', 'form'], function(){
     form = layui.form;
-    layer = layui.layer;
     //监听提交
     form.on('submit(send-password)', function(data){
         if(data.field.newpassword != data.field.confirmpassword){

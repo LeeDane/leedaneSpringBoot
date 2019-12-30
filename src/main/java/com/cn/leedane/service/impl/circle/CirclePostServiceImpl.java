@@ -412,7 +412,7 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			if(circlePostBean.getPid() > 0)
 				circlePostHandler.deleteTransmit(circlePostBean.getPid());
 			//非自己的帖子，管理员/圈子删除的，将通知用户(这里用不存在的表目的的查询通知的时候不去获取源数据)
-			notificationHandler.sendNotificationById(false, user, createUserId, content, NotificationType.通知, DataTableType.不存在的表.value, postId, null);
+			notificationHandler.sendNotificationById(false, user.getId(), createUserId, content, NotificationType.通知, DataTableType.不存在的表.value, postId, null);
 			
 			//对删除帖子减少贡献值
 			if(circlePostBean.getCreateUserId() == user.getId())
@@ -609,10 +609,10 @@ public class CirclePostServiceImpl extends AdminRoleCheckService implements Circ
 			if(circlePostBean.getCreateUserId() != user.getId()){
 				if(status == ConstantsUtil.STATUS_DELETE){
 					//发送通知给用户
-					notificationHandler.sendNotificationById(false, user, circlePostBean.getCreateUserId(), "您的帖子《"+ circlePostBean.getTitle() +"》已经被审核，结果是：不通过" + reason, NotificationType.通知, DataTableType.不存在的表.value, 0, null);
+					notificationHandler.sendNotificationById(false, user.getId(), circlePostBean.getCreateUserId(), "您的帖子《"+ circlePostBean.getTitle() +"》已经被审核，结果是：不通过" + reason, NotificationType.通知, DataTableType.不存在的表.value, 0, null);
 				}else{
 					//发送通知给用户
-					notificationHandler.sendNotificationById(false, user, circlePostBean.getCreateUserId(), "您的帖子《"+ circlePostBean.getTitle() +"》已经被审核，结果是：通过" + reason, NotificationType.通知, DataTableType.帖子.value, postId, null);
+					notificationHandler.sendNotificationById(false, user.getId(), circlePostBean.getCreateUserId(), "您的帖子《"+ circlePostBean.getTitle() +"》已经被审核，结果是：通过" + reason, NotificationType.通知, DataTableType.帖子.value, postId, null);
 				}
 			}
 			

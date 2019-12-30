@@ -277,7 +277,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 				}
 				
 				//通知用户(不通知自己)
-				notificationHandler.sendNotificationById(false, user, member.getMemberId(), content, NotificationType.通知, DataTableType.不存在的表.value, -1, null);
+				notificationHandler.sendNotificationById(false, user.getId(), member.getMemberId(), content, NotificationType.通知, DataTableType.不存在的表.value, -1, null);
 				
 			}
 			

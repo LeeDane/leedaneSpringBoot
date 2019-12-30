@@ -1,9 +1,11 @@
 package com.cn.leedane.controller;
 
+import com.aliyuncs.exceptions.ClientException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.WechatHandler;
 import com.cn.leedane.lucene.solr.UserSolrHandler;
 import com.cn.leedane.model.*;
+import com.cn.leedane.notice.NoticeException;
 import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import com.cn.leedane.service.FriendService;
 import com.cn.leedane.service.OperateLogService;
@@ -755,7 +757,7 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/phone/login/code", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getPhoneLoginCode(@RequestParam("mobilePhone") String mobilePhone, Model model, HttpServletRequest request){
+	public Map<String, Object> getPhoneLoginCode(@RequestParam("mobilePhone") String mobilePhone, Model model, HttpServletRequest request) throws NoticeException {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();

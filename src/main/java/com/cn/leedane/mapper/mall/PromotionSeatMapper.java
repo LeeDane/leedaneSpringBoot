@@ -55,4 +55,11 @@ public interface PromotionSeatMapper extends BaseMapper<S_PromotionSeatBean>{
 	 * @return
 	 */
 	public int batchSave(@Param("promotionSeatBeans") List<S_PromotionSeatBean> promotionSeatBeans);
+
+	/**
+	 * 获取用户的推广位列表
+	 * @param userId
+	 * @return
+	 */
+	public List<S_PromotionSeatBean> myPromotions(@Param("userId") long userId);
 }

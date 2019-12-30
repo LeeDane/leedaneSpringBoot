@@ -1,6 +1,6 @@
 package com.cn.leedane.observer.template;
 
-import com.cn.leedane.enums.NotificationType;
+import com.cn.leedane.utils.EnumUtil;
 
 /**
  * 增加评论的通知模板类
@@ -11,8 +11,8 @@ import com.cn.leedane.enums.NotificationType;
 public class AddCommentTemplate implements NotificationTemplate {
 
 	@Override
-	public NotificationType getNotifitionType() {
-		return NotificationType.ADD_COMMENT;
+	public EnumUtil.NoticeSMSType getNotifitionType() {
+		return EnumUtil.NoticeSMSType.ADD_COMMENT;
 	}
 
 	@Override

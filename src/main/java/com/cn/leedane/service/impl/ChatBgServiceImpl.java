@@ -304,7 +304,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 			if(result){
 				//发送通知给相应的用户
 				String content = user.getAccount() +"下载您的聊天背景资源，您获得"+bgScore +"积分";
-				notificationHandler.sendNotificationById(false, user, chatBg.getCreateUserId(), content, NotificationType.通知, DataTableType.积分.value, scoreBean1.getId(), null);
+				notificationHandler.sendNotificationById(false, user.getId(), chatBg.getCreateUserId(), content, NotificationType.通知, DataTableType.积分.value, scoreBean1.getId(), null);
 			}
 		}
 		return result;

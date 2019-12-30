@@ -714,9 +714,9 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			circleMemberMapper.updateByBatch(data, CIRCLE_MANAGER, circleId);
 		
 		//发送删除管理员的通知
-		notificationHandler.sendNotificationByIds(false, user, deleteAdmins, "已经被"+user.getAccount()+"移除圈子《"+ circleBean.getName()+ "》的管理员权限", NotificationType.通知, "t_circle", circleBean.getId(), null);
+		notificationHandler.sendNotificationByIds(false, user.getId(), deleteAdmins, "已经被"+user.getAccount()+"移除圈子《"+ circleBean.getName()+ "》的管理员权限", NotificationType.通知, "t_circle", circleBean.getId(), null);
 		//发送授权管理员的通知
-		notificationHandler.sendNotificationByIds(false, user, addAdmins, "已经被"+user.getAccount()+"授予圈子《"+ circleBean.getName()+ "》的管理员权限", NotificationType.通知, "t_circle", circleBean.getId(), null);
+		notificationHandler.sendNotificationByIds(false, user.getId(), addAdmins, "已经被"+user.getAccount()+"授予圈子《"+ circleBean.getName()+ "》的管理员权限", NotificationType.通知, "t_circle", circleBean.getId(), null);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给圈子ID为"+ circleId +",分配管理员权限，成员为ids"+admins).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("message", "操作成功");

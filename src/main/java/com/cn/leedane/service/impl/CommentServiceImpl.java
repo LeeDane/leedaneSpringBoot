@@ -123,14 +123,14 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			}
 			if(createUserId > 0 && createUserId != user.getId()){
 				if(StringUtil.isNotNull(tableName) && DataTableType.留言.value.equals(tableName)){
-					notificationHandler.sendNotificationById(false, user, createUserId, content, NotificationType.留言, tableName, tableId, bean);
+					notificationHandler.sendNotificationById(false, user.getId(), createUserId, content, NotificationType.留言, tableName, tableId, bean);
 				}else{
-					notificationHandler.sendNotificationById(false, user, createUserId, content, NotificationType.评论, tableName, tableId, bean);
+					notificationHandler.sendNotificationById(false, user.getId(), createUserId, content, NotificationType.评论, tableName, tableId, bean);
 				}
 			}else{
 				//对留言，将消息发送给对应的用户
 				if(StringUtil.isNotNull(tableName) && DataTableType.留言.value.equals(tableName) && tableId > 0 && tableId != user.getId()){
-					notificationHandler.sendNotificationById(false, user, tableId, content, NotificationType.留言, tableName, tableId, bean);
+					notificationHandler.sendNotificationById(false, user.getId(), tableId, content, NotificationType.留言, tableName, tableId, bean);
 				}
 				
 			}
@@ -146,7 +146,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 				}
 				if(usernames.size() > 0){
 					//str = "{from_user_remark}在评论时候@您,点击查看详情";
-					notificationHandler.sendNotificationByNames(false, user, usernames, content, NotificationType.艾特我, tableName, tableId, bean);
+					notificationHandler.sendNotificationByNames(false, user.getId(), usernames, content, NotificationType.艾特我, tableName, tableId, bean);
 				}
 			}
 			

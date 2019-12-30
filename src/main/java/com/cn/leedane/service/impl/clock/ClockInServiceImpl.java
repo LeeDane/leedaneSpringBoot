@@ -431,7 +431,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 
 		//发送通知
 		String content = userHandler.getUserName(user.getId())+ "已经在任务<"+ clockBean.getTitle() +">打卡，请尽快审核";
-		notificationHandler.sendNotificationById(false, user, clockBean.getCreateUserId(), content, EnumUtil.NotificationType.通知, null, 0, null);
+		notificationHandler.sendNotificationById(false, user.getId(), clockBean.getCreateUserId(), content, EnumUtil.NotificationType.通知, null, 0, null);
 
 		clockInBean.setModifyTime(new Date());
 		clockInBean.setModifyUserId(user.getId());
@@ -478,7 +478,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 
 			//发送通知
 			String content = "您在任务<"+ clockBean.getTitle() +">打卡记录审核"+ (agree ? "通过": "不通过") +"请知悉";
-			notificationHandler.sendNotificationById(false, user, clockInBean.getCreateUserId(), content, EnumUtil.NotificationType.通知, null, 0, null);
+			notificationHandler.sendNotificationById(false, user.getId(), clockInBean.getCreateUserId(), content, EnumUtil.NotificationType.通知, null, 0, null);
 
 			//清空该用户的提醒任务列表缓存
 			clockHandler.deleteDateClocksCache(clockInBean.getCreateUserId());

@@ -6,19 +6,17 @@ import com.cn.leedane.controller.RoleController;
 import com.cn.leedane.handler.JuheApiHandler;
 import com.cn.leedane.handler.OptionHandler;
 import com.cn.leedane.handler.UserHandler;
-import com.cn.leedane.handler.mall.S_HomeItemHandler;
-import com.cn.leedane.handler.mall.S_ProductHandler;
-import com.cn.leedane.handler.mall.S_ShopHandler;
-import com.cn.leedane.handler.mall.S_WishHandler;
+import com.cn.leedane.handler.mall.*;
 import com.cn.leedane.juheapi.JuHeException;
 import com.cn.leedane.mall.taobao.api.DetailSimpleApi;
+import com.cn.leedane.mapper.MyTagsMapper;
+import com.cn.leedane.mapper.Oauth2Mapper;
 import com.cn.leedane.mapper.UserMapper;
+import com.cn.leedane.mapper.mall.PromotionSeatApplyMapper;
+import com.cn.leedane.mapper.mall.PromotionSeatMapper;
 import com.cn.leedane.mapper.mall.S_ProductMapper;
 import com.cn.leedane.mapper.mall.S_ShopMapper;
-import com.cn.leedane.model.CategoryBean;
-import com.cn.leedane.model.CommentBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.VisitorBean;
+import com.cn.leedane.model.*;
 import com.cn.leedane.model.mall.*;
 import com.cn.leedane.service.CategoryService;
 import com.cn.leedane.service.CommentService;
@@ -75,6 +73,15 @@ public class MyManagelHtmlController extends BaseController{
 	@Autowired
 	private VisitorService<VisitorBean> visitorService;
 
+	@Autowired
+	private Oauth2Mapper oauth2Mapper;
+
+	@Autowired
+	private MyTagsMapper myTagsMapper;
+
+	@Autowired
+	private S_PromotionSeatHandler promotionSeatHandler;
+
 	/**
 	 * 加载公共部分
 	 * @param userBean
@@ -102,9 +109,12 @@ public class MyManagelHtmlController extends BaseController{
 	public String myInfo(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
-		loadCommon(getMustLoginUserFromShiro(), model);
+		UserBean user = getMustLoginUserFromShiro();
+		loadCommon(user, model);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的资料首页", "com.cn.leedane.springboot.controller.MallHtmlController.myInfo", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
 		model.addAttribute("tabId", "my-info");
+		model.addAttribute("user", user);
+//		model.addAttribute("user", userHandler.getUserPicPath());
 		return loginRoleCheck("manage/my/info", true, model, request);
 	}
 
@@ -133,6 +143,108 @@ public class MyManagelHtmlController extends BaseController{
 		return loginRoleCheck("manage/my/email", true, model, request);
 	}
 
+	@RequestMapping("/my/phone")
+	public String myPhone(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入手机号码绑定首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		model.addAttribute("tabId", "my-phone");
+		model.addAttribute("user", userBean);
+		model.addAttribute("publicKey",  RSAKeyUtil.getInstance().getPublicKey());
+		return loginRoleCheck("manage/my/phone", true, model, request);
+	}
+
+	@RequestMapping("/my/tags")
+	public String myTags(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入手机号码绑定首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		model.addAttribute("tabId", "my-tags");
+		model.addAttribute("tags", myTagsMapper.getTags(userBean.getId()));
+		return loginRoleCheck("manage/my/tags", true, model, request);
+	}
+
+	/**
+	 * 推广位管理
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/mall/promotion/seat")
+	public String mallPromotionSeat(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入手机号码绑定首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		model.addAttribute("tabId", "mall-promotion");
+
+//		int i = 10 / 0;
+		//获取推广位列表
+		model.addAttribute("seats", promotionSeatHandler.getMySeats(userBean.getId()));
+		return loginRoleCheck("manage/mall/promotion", true, model, request);
+	}
+
+
+	/**
+	 * 第三方账号绑定
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/my/third")
+	public String myThird(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入第三方绑定首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		model.addAttribute("tabId", "my-third");
+		model.addAttribute("user", userBean);
+		List<Oauth2Bean> oauth2Beans = oauth2Mapper.myOauth2s(userBean.getId());
+		EnumUtil.Oauth2PlatformType[] types = EnumUtil.Oauth2PlatformType.values();
+		List<Oauth2Bean> oauth2s = new ArrayList<>(); //构建最终输出页面的列表
+		for(EnumUtil.Oauth2PlatformType type: types){
+			String value = type.value;
+			if(CollectionUtil.isNotEmpty(oauth2Beans)) {
+				boolean hasOauth = false;//标记是否已经授权绑定啦
+				int index = 0;
+				for (Oauth2Bean oauth2Bean : oauth2Beans) {
+					if(oauth2Bean.getOauth2Id() > 0 && oauth2Bean.getPlatform().equalsIgnoreCase(value)){
+						hasOauth = true;
+						break;
+					}
+					index = index + 1;
+				}
+				if(!hasOauth){
+					//不存在的情况下
+					Oauth2Bean oauth2Bean = new Oauth2Bean();
+					oauth2Bean.setPlatform(value);
+					oauth2Bean.setOpenId("/oauth2/login/"+ value);
+					oauth2s.add(oauth2Bean);
+				}else{
+					oauth2s.add(oauth2Beans.get(index));
+				}
+			}else{
+				//不存在的情况下
+				Oauth2Bean oauth2Bean = new Oauth2Bean();
+				oauth2Bean.setPlatform(value);
+				oauth2Bean.setOpenId("/oauth2/login/"+ value);
+				oauth2s.add(oauth2Bean);
+			}
+		}
+		model.addAttribute("oauth2s", oauth2s);
+		return loginRoleCheck("manage/my/third", true, model, request);
+	}
+
 	/**
 	 * 绑定电子邮箱,在电子邮箱里的链接点击
 	 * @param request
@@ -149,23 +261,42 @@ public class MyManagelHtmlController extends BaseController{
 			success = false;
 		}else{
 			long userId = plainObject.optLong("uid");
-			UserBean bindUser = userHandler.getUserBean(userId);
-			if(bindUser == null){
+			//这里必须要重新获取一份UserBean对象，不然直接修改参数user会导致shiro里面的user有值，Java是值传递
+			UserBean updateUser = userMapper.findById(UserBean.class, userId);
+			if(updateUser == null){
 				success = false;
 			}else{
 				String email = plainObject.optString("email");
-				bindUser.setEmail(email);
-				success = userMapper.update(bindUser) > 0;
+				updateUser.setEmail(email);
+				success = userMapper.update(updateUser) > 0;
 				if(success){
+					//对当前已经登录的用户
+					UserBean user = getUserFromShiro();
+					if(user != null)
+						user.setEmail(email); //由于系统没有退出，需要重新赋值
 					//添加ES缓存
-					new ThreadUtil().singleTask(new EsIndexAddThread<UserBean>(bindUser));
+					new ThreadUtil().singleTask(new EsIndexAddThread<UserBean>(updateUser));
 					//把Redis缓存的信息删除掉
-					userHandler.deleteUserDetail(bindUser.getId());
+					userHandler.deleteUserDetail(updateUser.getId());
 				}
 			}
 		}
 		model.addAttribute("success", success);
 		return loginRoleCheck("manage/my/email-click", model, request);
+	}
+
+	/**
+	 * 第三方授权绑定失败页面
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/my/third/oauth2/bind/error", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public String oauth2BindError(@RequestParam("message") String message, Model model, HttpServletRequest request) {
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		JSONObject object = CommonUtil.sm4Decrypt(message);
+		model.addAttribute("message", object.optString("msg"));
+		return loginRoleCheck("manage/my/oauth2-bind-error", model, request);
 	}
 }
 

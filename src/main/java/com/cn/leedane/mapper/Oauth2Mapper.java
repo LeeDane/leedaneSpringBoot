@@ -24,4 +24,11 @@ public interface Oauth2Mapper extends BaseMapper<Oauth2Bean>{
      */
     public int bind(@Param("openId") String openId, @Param("oauth2Id") long oauth2Id, @Param("platform") String platform, @Param("createUserId") long createUserId);
 
+    /**
+     * 获取用户已经绑定的授权列表
+     * @param userId
+     * @return
+     */
+    public List<Oauth2Bean> myOauth2s(@Param("userId") long userId);
+
 }

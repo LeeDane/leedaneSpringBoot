@@ -106,14 +106,14 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 			if(createUserId > 0 && createUserId != user.getId()){
 				Set<Long> ids = new HashSet<Long>();
 				ids.add(createUserId);
-				notificationHandler.sendNotificationByIds(false, user, ids, content, NotificationType.转发, tableName, tableId, bean);
+				notificationHandler.sendNotificationByIds(false, user.getId(), ids, content, NotificationType.转发, tableName, tableId, bean);
 			}
 			
 			//有@人通知相关人员
 			Set<String> usernames = StringUtil.getAtUserName(content);
 			if(usernames.size() > 0){
 				//str = "{from_user_remark}在转发时候@您,点击查看详情";
-				notificationHandler.sendNotificationByNames(false, user, usernames, content, NotificationType.艾特我, tableName, tableId, bean);
+				notificationHandler.sendNotificationByNames(false, user.getId(), usernames, content, NotificationType.艾特我, tableName, tableId, bean);
 			}
 			
 		}

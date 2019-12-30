@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.MyTagsMapper">
+	
+	 <!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
+	<select id="getTags" resultMap="myTagsBean">
+		select m.id, m.status, m.create_user_id, date_format(m.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		, m.modify_user_id, date_format(m.modify_time,'%Y-%m-%d %H:%i:%s') modify_time, m.tag_name
+		from t_my_tags m where m.create_user_id = #{userId}
+	</select>
+
+	<delete id="deleteTags">
+		delete from t_my_tags
+		where create_user_id = #{userId}
+	</delete>
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
+	<insert id="batchSave" parameterType="java.util.List">
+		insert into t_my_tags(
+		id,
+		status,
+		create_time,
+		create_user_id,
+		modify_time,
+		modify_user_id,
+		tag_name
+		)
+		values
+		<foreach collection="tags" item="item" index="index" separator=",">
+			(
+			#{item.id,jdbcType=BIGINT},
+			#{item.status,jdbcType=INTEGER},
+			#{item.createTime,jdbcType=TIMESTAMP},
+			#{item.createUserId,jdbcType=INTEGER},
+			#{item.modifyTime,jdbcType=TIMESTAMP},
+			#{item.modifyUserId,jdbcType=INTEGER},
+			#{item.tagName,jdbcType=VARCHAR}
+			)
+		</foreach>
+	</insert>
+	<resultMap type="com.cn.leedane.model.MyTagsBean" id="myTagsBean">
+		<id property="id" column="id"/>
+		<result property="status" column="status"/>
+		<result property="createUserId" column="create_user_id"/>
+		<result property="modifyUserId" column="modify_user_id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="modifyTime" column="modify_time"/>
+		<result property="tagName" column="tag_name"/>
+	</resultMap>
+</mapper>

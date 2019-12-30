@@ -3,13 +3,17 @@ package com.cn.leedane.utils;
 import com.cn.leedane.handler.OptionHandler;
 import com.cn.leedane.model.EmailSenderBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.notice.NoticeException;
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.mail.Address;
+import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.*;
+import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
@@ -164,6 +168,10 @@ public class EmailUtil {
 			sender.setName(StringUtil.changeNotNull(optionHandler.getData("sender-name")));
 			sender.setToken(StringUtil.changeNotNull(optionHandler.getData("sender-token")));
 			sender.setHost(StringUtil.changeNotNull(optionHandler.getData("sender-host")));
+			if(LeedanePropertiesConfig.newInstance().isDebug())
+				sender.setPort(StringUtil.changeNotNull(optionHandler.getData("sender-port")));
+			else
+				sender.setPort(StringUtil.changeNotNull(optionHandler.getData("sender-ssl-port")));
 		}
 	}
 
@@ -173,7 +181,7 @@ public class EmailUtil {
 	 * 一次性全部都一起发
 	 * @throws Exception
 	 */
-	public boolean sendMore() throws Exception{
+	public boolean sendMore() throws NoticeException, MessagingException, UnsupportedEncodingException {
 		return send(buildAllInternetAddress(), this.content);
 	}
 	
@@ -212,7 +220,7 @@ public class EmailUtil {
 	 * @return
 	 * @throws AddressException
 	 */
-	private InternetAddress[] buildAllInternetAddress() throws AddressException {
+	private InternetAddress[] buildAllInternetAddress() throws NoticeException, AddressException {
 		Set<String> addresses = new HashSet<String>();
 		for(UserBean us : userTos){
 			if(!StringUtil.isNull(us.getEmail())){
@@ -236,9 +244,11 @@ public class EmailUtil {
 	 * @param c 发送的内容
 	 * @throws Exception
 	 */
-	private boolean send(InternetAddress to[],String c) throws Exception{
+	private boolean send(InternetAddress to[],String c) throws UnsupportedEncodingException, MessagingException {
 		props.setProperty("mail.transport.protocol", "smtp");
 		props.setProperty("mail.smtp.auth", "true");
+		props.setProperty("mail.smtp.ssl.enable", "true");
+		props.setProperty("mail.smtp.port", sender.getPort());
 		Session session = Session.getInstance(props);
 		session.setDebug(true);
 		MimeMessage msg = new MimeMessage(session);//
@@ -257,7 +267,7 @@ public class EmailUtil {
 		mimeBodyPart.setContent(bodyMultipart);
 		MimeBodyPart htmlPart = new MimeBodyPart();				
 		bodyMultipart.addBodyPart(htmlPart);	
-		htmlPart.setContent(c, "text/html;charset=gbk");//显示的内容	
+		htmlPart.setContent(c, "text/html;charset=gbk");//显示的内容
 		
 		Transport transport = session.getTransport();
 		transport.connect(sender.getHost(), sender.getEmail(),sender.getToken());

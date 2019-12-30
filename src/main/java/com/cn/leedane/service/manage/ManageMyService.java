@@ -27,7 +27,34 @@ public interface ManageMyService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public  Map<String,Object> bindEmail(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception;
+
+	/**
+	 * 绑定手机号码
+	 * @param jo 参数
+	 * @param user 用户
+	 * @param request
+	 * @return
+	 */
+	public  Map<String,Object> bindPhone(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception;
+
+	/**
+	 * 第三方授权解绑
+	 * @param oid 关联ID
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public  Map<String,Object> thirdUnBind(long oid, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+
+	/**
+	 * 保存标签
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public  Map<String,Object> saveTags(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 }

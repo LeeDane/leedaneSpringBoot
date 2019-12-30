@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.mall.PromotionSeatApplyMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
+	<select id="applyList" resultMap="promotionSeatApplyBean">
+		select a.id, a.status, a.create_user_id, date_format(a.create_time,'%Y-%m-%d %H:%i:%s') create_time,
+		a.modify_user_id, date_format(a.modify_time,'%Y-%m-%d %H:%i:%s') modify_time,
+		a.seat_id, a.platform
+		from t_mall_promotion_seat_apply a
+		where create_user_id = #{userId} and status = 1
+	</select>
+
+	<select id="getApply" resultMap="promotionSeatApplyBean">
+		select a.id, a.status, a.create_user_id, date_format(a.create_time,'%Y-%m-%d %H:%i:%s') create_time,
+		a.modify_user_id, date_format(a.modify_time,'%Y-%m-%d %H:%i:%s') modify_time,
+		a.seat_id, a.platform
+		from t_mall_promotion_seat_apply a
+
+		where create_user_id = #{userId} and platform = #{platform} and status = 1
+	</select>
+
+	<resultMap type="com.cn.leedane.model.mall.S_PromotionSeatApplyBean" id="promotionSeatApplyBean">
+		<id property="id" column="id"/>
+		<result property="status" column="status"/>
+		<result property="createUserId" column="create_user_id"/>
+		<result property="modifyUserId" column="modify_user_id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="modifyTime" column="modify_time"/>
+		<result property="seatId" column="seat_id"/>
+		<result property="platform" column="platform"/>
+	</resultMap>
+</mapper>

@@ -53,6 +53,26 @@ public class ParameterUnspecificationUtil {
 	}
 
 	/**
+	 * 校验字符串是否是手机号码
+	 * @param str
+	 * @param msg 字符串为空后的提示信息
+	 */
+	public static void checkPhone(String  str, String msg){
+		if(!StringUtil.isPhone(str))
+			throw new ParameterUnspecificationException(msg);
+	}
+
+	/**
+	 * 校验字符串是否是电子邮箱
+	 * @param str
+	 * @param msg 字符串为空后的提示信息
+	 */
+	public static void checkEmail(String  str, String msg){
+		if(!StringUtil.isEmail(str))
+			throw new ParameterUnspecificationException(msg);
+	}
+
+	/**
 	 * 校验平台字段是否为空或者是不支持的平台
 	 * @param platform
 	 */

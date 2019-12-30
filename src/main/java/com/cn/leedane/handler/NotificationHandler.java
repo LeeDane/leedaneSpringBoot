@@ -96,14 +96,14 @@ public class NotificationHandler {
 	public void sendErrorNotification(String content, String tableName, long tableId, Object objectBean){
 		Set<Long> ids = new HashSet<Long>();
 		ids.add(OptionUtil.adminUser.getId());
-		sendNotificationByIds(true, OptionUtil.adminUser, ids, content, NotificationType.通知, tableName, tableId, objectBean);
+		sendNotificationByIds(true, OptionUtil.adminUser.getId(), ids, content, NotificationType.通知, tableName, tableId, objectBean);
 	}
 	
 	
 	/**
 	 * 发送通知
 	 * @param notifyMySelf  是否需要通知自己
-	 * @param user 当前登录用户
+	 * @param fromUserId 当前登录用户ID
 	 * @param id  单个用户
 	 * @param content
 	 * @param notificationType
@@ -111,16 +111,16 @@ public class NotificationHandler {
 	 * @param tableId
 	 * @param objectBean ids没有机器人的Id的时候可以为空
 	 */
-	public void sendNotificationById(boolean notifyMySelf, UserBean user, long id, String content, NotificationType notificationType, String tableName, long tableId, Object objectBean){
+	public void sendNotificationById(boolean notifyMySelf, long fromUserId, long id, String content, NotificationType notificationType, String tableName, long tableId, Object objectBean){
 		Set<Long> ids = new HashSet<Long>();
 		ids.add(id);
-		sendNotificationByIds(notifyMySelf, user, ids, content, notificationType, tableName, tableId, objectBean);
+		sendNotificationByIds(notifyMySelf, fromUserId, ids, content, notificationType, tableName, tableId, objectBean);
 	}
 	
 	/**
 	 * 发送通知
 	 * @param notifyMySelf 是否需要通知自己
-	 * @param user 当前登录用户
+	 * @param fromUserId 当前登录用户ID
 	 * @param ids
 	 * @param content
 	 * @param notificationType
@@ -128,10 +128,10 @@ public class NotificationHandler {
 	 * @param tableId
 	 * @param objectBean ids没有机器人的Id的时候可以为空
 	 */
-	public void sendNotificationByIds(boolean notifyMySelf, final UserBean user, Set<Long> ids, String content, NotificationType notificationType, String tableName, long tableId, final Object objectBean){
+	public void sendNotificationByIds(boolean notifyMySelf, final long fromUserId, Set<Long> ids, String content, NotificationType notificationType, String tableName, long tableId, final Object objectBean){
 		if(!notifyMySelf){
 			//先把自己过滤掉(自己不需要通知)
-			ids.remove(user.getId());	
+			ids.remove(fromUserId);
 		}
 		
 		//是否有人@机器人ID
@@ -142,7 +142,7 @@ public class NotificationHandler {
 				
 				@Override
 				public void run() {
-					robotReply(robotId, user, objectBean);
+					robotReply(robotId, fromUserId, objectBean);
 				}
 			}).start();
 			
@@ -167,18 +167,18 @@ public class NotificationHandler {
 		for(Long id: ids){
 			friendObject = friendHandler.getFromToFriends(id);
 			notificationBean = new NotificationBean();
-			notificationBean.setFromUserId(user.getId());
+			notificationBean.setFromUserId(fromUserId);
 			if(content.contains("{from_user_id}")){
-				content = content.replaceAll("\\{from_user_id\\}", String.valueOf(user.getId()));
+				content = content.replaceAll("\\{from_user_id\\}", String.valueOf(fromUserId));
 			}
 			if(content.contains("{to_user_id}")){
 				content = content.replaceAll("\\{to_user_id\\}", String.valueOf(id));
 			}
 			
 			if(content.contains("{from_user_remark}")){
-				account = JsonUtil.getStringValue(friendObject, "user_" +user.getId());
+				account = JsonUtil.getStringValue(friendObject, "user_" + fromUserId);
 				if(StringUtil.isNull(account)){
-					account = userHandler.getUserName(user.getId());
+					account = userHandler.getUserName(fromUserId);
 				}
 				content = content.replaceAll("\\{from_user_remark\\}", account);
 			}
@@ -220,10 +220,10 @@ public class NotificationHandler {
 	/**
 	 * leedane机器人回复
 	 * @param robotId
-	 * @param user
+	 * @param toUserId
 	 * @param objectBean
 	 */
-	private void robotReply(int robotId, UserBean user, Object objectBean) {
+	private void robotReply(int robotId, long toUserId, Object objectBean) {
 		
 		String tableName = null;
 		long tableId = 0;
@@ -300,7 +300,7 @@ public class NotificationHandler {
 						//更新评论数
 						commentHandler.addComment(tableName, tableId);
 						String notificationContent = robotName +"回复您："+robotReply;
-						sendNotificationById(true, robotUser, user.getId(), notificationContent, NotificationType.艾特我, tableName, tableId, objectBean);
+						sendNotificationById(true, robotUser.getId(), toUserId, notificationContent, NotificationType.艾特我, tableName, tableId, objectBean);
 					}else{
 						logger.error("失败");
 					}
@@ -333,7 +333,7 @@ public class NotificationHandler {
 	/**
 	 * 发送通知
 	 * @param notifyMySelf 是否需要通知自己
-	 * @param user
+	 * @param fromUserId
 	 * @param names
 	 * @param content
 	 * @param notificationType
@@ -341,7 +341,7 @@ public class NotificationHandler {
 	 * @param tableId
 	 * @param objectBean
 	 */
-	public void sendNotificationByNames(boolean notifyMySelf, UserBean user, Set<String> names, String content, NotificationType notificationType, String tableName, long tableId, Object objectBean){
+	public void sendNotificationByNames(boolean notifyMySelf, long fromUserId, Set<String> names, String content, NotificationType notificationType, String tableName, long tableId, Object objectBean){
 		int size = names.size();
 		if(size < 1)
 			return;
@@ -353,7 +353,7 @@ public class NotificationHandler {
 				ids.add(id);
 		}
 		if(ids.size() > 0 )
-			sendNotificationByIds(notifyMySelf, user, ids, content, notificationType, tableName, tableId, objectBean);
+			sendNotificationByIds(notifyMySelf, fromUserId, ids, content, notificationType, tableName, tableId, objectBean);
 	}
 	
 	/**

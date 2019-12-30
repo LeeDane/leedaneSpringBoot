@@ -17,6 +17,11 @@ public class EmailSenderBean extends IDBean{
 	 * 邮件发送者地址，如smtp.163.com
 	 */
 	private String host;
+
+	/**
+	 * 端口
+	 */
+	private String port;
 	/**
 	 * 邮件发送者名称
 	 */
@@ -62,5 +67,13 @@ public class EmailSenderBean extends IDBean{
 
 	public void setHost(String host) {
 		this.host = host;
+	}
+
+	public String getPort() {
+		return port;
+	}
+
+	public void setPort(String port) {
+		this.port = port;
 	}
 }

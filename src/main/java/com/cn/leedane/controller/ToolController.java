@@ -1,14 +1,14 @@
 package com.cn.leedane.controller;
 
-import com.cn.leedane.enums.NotificationType;
 import com.cn.leedane.handler.CloudStoreHandler;
 import com.cn.leedane.handler.ZXingCodeHandler;
-import com.cn.leedane.message.ISendNotification;
-import com.cn.leedane.message.SendNotificationImpl;
-import com.cn.leedane.message.notification.Notification;
 import com.cn.leedane.model.EmailBean;
 import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.notice.NoticeException;
+import com.cn.leedane.notice.model.SMS;
+import com.cn.leedane.notice.send.INoticeFactory;
+import com.cn.leedane.notice.send.NoticeFactory;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.EmailSend;
 import com.cn.leedane.rabbitmq.send.ISend;
@@ -155,33 +155,47 @@ public class ToolController extends BaseController{
 	 * @return
 	 */
 	@Deprecated
-	@RequestMapping(value = "/sendCode", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> sendCode(@RequestParam("phone") String phone, @RequestParam("type") int type, Model model, HttpServletRequest request){
+	@RequestMapping(value = "/sms/sendCode", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> sendCode(@RequestParam("phone") String phone, @RequestParam("type") String type, Model model, HttpServletRequest request) throws NoticeException {
 		ResponseMap message = new ResponseMap();
-		checkParams(message, request);
+		if(!checkParams(message, request))
+			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		String key = phone + "_"+ type;
-		RedisUtil redisUtil = RedisUtil.getInstance();
-		if(redisUtil.hasKey(key)){
-			message.put("isSuccess", true);
-			int seconds = (int) (120 - (System.currentTimeMillis() - Long.parseLong(redisUtil.getString(key))));
-			message.put("left", seconds);
-			message.put("message", "您操作太频繁啦！下次操作剩余："+ seconds +"秒");
-		}else{
-			
-			//发送短信
-			ISendNotification sendNotification = new SendNotificationImpl();
-			Notification notification = new Notification();
-			notification.setType(NotificationType.LOGIN_VALIDATION.value);
-			UserBean toUser = new UserBean();
-			toUser.setMobilePhone(phone);
-			notification.setToUser(toUser);
-			sendNotification.Send(notification);
-			
-			redisUtil.addString(key, System.currentTimeMillis() +"");
-			redisUtil.expire(key, 120);
-		}
+		//在发送短信部分已经做了处理，这里不再累赘做校验
+//		String key = phone + "_"+ type;
+//		RedisUtil redisUtil = RedisUtil.getInstance();
+//		if(redisUtil.hasKey(key)){
+//			message.put("isSuccess", true);
+//			int seconds = (int) (120 - (System.currentTimeMillis() - Long.parseLong(redisUtil.getString(key))));
+//			message.put("left", seconds);
+//			message.put("message", "您操作太频繁啦！下次操作剩余："+ seconds +"秒");
+//			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
+//		}else{
+		//发送短信
+		SMS sms = new SMS();
+		sms.setType(type);
+		sms.setExpire(60 * 10); //10分钟过期
+		UserBean toUser = new UserBean();
+		toUser.setMobilePhone(phone);
+		sms.setToUser(toUser);
+		INoticeFactory factory = new NoticeFactory();
+		boolean success = factory.create(EnumUtil.NoticeType.短信).send(sms);
+		/*boolean success = true;
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}*/
+		if(success){
+				message.put("isSuccess", true);
+				message.put("message", "发送成功，请留意手机查看");
+				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+			}else{
+				message.put("message", "发送失败，请稍后重试。");
+				message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
+			}
+//		}
 		return message.getMap();
 	}
 	

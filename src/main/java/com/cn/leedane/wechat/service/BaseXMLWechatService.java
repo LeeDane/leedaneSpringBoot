@@ -131,6 +131,6 @@ public abstract class BaseXMLWechatService {
 		 /*this.basePath = request.getScheme()+"://"+request.getServerName()
 				+":"+request.getServerPort()+request.getContextPath()+"/"; 
 		 return basePath;*/
-		return LeedanePropertiesConfig.newInstance().getString("constant.system.server.url");
+		return LeedanePropertiesConfig.getSystemUrl();
 	}
 }

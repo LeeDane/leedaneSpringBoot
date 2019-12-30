@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title th:text="'欢迎'"></title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
-	<div th:include="mall/commonMall-js :: mallJs">what?</div>
+	<div th:include="manage/common-js :: manageJs">what?</div>
 	<style>
 
 		.list-item-one{
@@ -42,7 +42,7 @@
 					<div class="layui-card">
 						<div class="layui-card-header">头条新闻 <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" style="right: 10px; top: 10px; position: absolute;">更多</button></div>
 						<div class="layui-card-body">
-							<div class="list-item-one" th:each="head,headIndex: ${heads}"><a th:href="${head.url}" th:utext="${head.title}" th:title="${head.title}" target="_blank">同为“双子车” 丰田威兰达和本田皓影 到底谁更值得买？</a></div>
+							<div class="list-item-one" th:each="head,headIndex: ${heads}"><a th:href="${head.url}" th:utext="${head.title}" th:title="${head.title} +  ${head.date}" target="_blank">同为“双子车” 丰田威兰达和本田皓影 到底谁更值得买？</a></div>
 						</div>
 					</div>
 				</div>

@@ -101,7 +101,7 @@ public class ReportServiceImpl extends AdminRoleCheckService implements ReportSe
 					String content = "您发布的《"+commonHandler.getContentByTableNameAndId(tableName, tableId, user)+"》被用户"+ (anonymous ? "" : user.getAccount())+"举报";
 					//Object beanObject = commonHandler.getBeanByTableNameAndId(tableName, tableId, user);
 					Object beanObject = null;
-					notificationHandler.sendNotificationById(false, user, resourcesCreateUserId, content , NotificationType.通知, tableName, tableId, beanObject);
+					notificationHandler.sendNotificationById(false, user.getId(), resourcesCreateUserId, content , NotificationType.通知, tableName, tableId, beanObject);
 					
 				}
 			}).start();

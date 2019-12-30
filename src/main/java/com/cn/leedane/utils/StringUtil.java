@@ -225,6 +225,42 @@ public class StringUtil {
 	}
 
 	/**
+	 * 判断字符串是否是手机号码
+	 * 参考layui
+	 * @link {https://blog.csdn.net/veloi/article/details/80757469}
+	 * @param origin 源字符串
+	 * @return
+	 */
+	public static boolean isPhone(String origin) {
+		if(isNull(origin))
+			return false;
+		Pattern pattern = Pattern.compile("^1\\d{10}$");
+		Matcher isNum = pattern.matcher(origin);
+		if (!isNum.matches()) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * 判断字符串是否是电子邮箱的格式
+	 * 参考layui
+	 * @link {https://blog.csdn.net/veloi/article/details/80757469}
+	 * @param origin 源字符串
+	 * @return
+	 */
+	public static boolean isEmail(String origin) {
+		if(isNull(origin))
+			return false;
+		Pattern pattern = Pattern.compile("^([a-zA-Z0-9_\\.\\-])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$");
+		Matcher isNum = pattern.matcher(origin);
+		if (!isNum.matches()) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * 判断字符串是否全部都是数字(整型和浮点型)
 	 *
 	 * @param origin 源字符串

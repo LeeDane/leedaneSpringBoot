@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,4 +45,46 @@ public class ManageMyController extends BaseController{
 		return message.getMap();
 	}
 
+	/**
+	 * 绑定手机
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/my/phone/bind", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> phoneGetCode(HttpServletRequest request) throws Exception {
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+
+		message.putAll(manageMyService.bindPhone(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
+		return message.getMap();
+	}
+
+	/**
+	 * 第三方授权解绑
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/my/third/unbind", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> thirdUnBind(@RequestParam("id") long id, HttpServletRequest request) throws Exception {
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getMap();
+
+		message.putAll(manageMyService.thirdUnBind(id, getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
+		return message.getMap();
+	}
+
+	/**
+	 * 保存标签
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/my/tags/save", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public Map<String, Object> saveTags(HttpServletRequest request) throws Exception {
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+
+		message.putAll(manageMyService.saveTags(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
+		return message.getMap();
+	}
 }

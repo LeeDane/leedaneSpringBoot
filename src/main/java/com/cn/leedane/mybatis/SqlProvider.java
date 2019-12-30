@@ -374,7 +374,7 @@ public class SqlProvider {
 		return executeSQL(sql, params);
 	}
 	
-	public String getObjectCreateUserId(String tableName, int tableId){
+	public String getObjectCreateUserId(String tableName, long tableId){
 		return "select create_user_id from "+tableName +" where id="+tableId;
 	}
 	

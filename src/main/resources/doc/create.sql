@@ -1459,3 +1459,44 @@ CREATE TABLE `t_mall_promotion_seat` (
   CONSTRAINT `FK_mall_promotion_seat_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_mall_promotion_seat_user` FOREIGN KEY (`user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_mall_promotion_seat_apply 推广位申请
+-- ----------------------------
+DROP TABLE IF EXISTS `t_mall_promotion_seat_apply`;
+CREATE TABLE `t_mall_promotion_seat_apply` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
+  `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_user_id` int(11) DEFAULT NULL COMMENT '创建人',
+  `modify_user_id` int(11) DEFAULT NULL COMMENT '修改人',
+  `seat_id` bigint(11) DEFAULT 0 COMMENT '推广位ID, 对应t_mall_promotion_seat的id字段, 冗余字段，为空表示没有分配',
+  `platform` varchar(25) NOT NULL COMMENT '订单平台，如：淘宝网/京东/拼多多',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `t_mall_promotion_seat_apply_in_unique` (`create_user_id`,`platform`),
+  KEY `FK_mall_promotion_seat_apply_create_user` (`create_user_id`),
+  KEY `FK_mall_promotion_seat_apply_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_mall_promotion_seat_apply_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_promotion_seat_apply_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_my_tags  我的标签
+-- ----------------------------
+DROP TABLE IF EXISTS `t_my_tags`;
+CREATE TABLE `t_my_tags` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
+  `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_user_id` int(11) DEFAULT NULL COMMENT '创建人',
+  `modify_user_id` int(11) DEFAULT NULL COMMENT '修改人',
+  `tag_name` varchar(25) NOT NULL COMMENT '标签名称',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `t_my_tags_name_unique` (`create_user_id`,`tag_name`),
+  KEY `FK_my_tags_create_user` (`create_user_id`),
+  KEY `FK_my_tags_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_my_tags_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_my_tags_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

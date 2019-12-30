@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" >
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title th:text="'第三方账号的绑定'"></title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<div th:include="manage/common-js :: manageJs">what?</div>
+	<style>
+
+	</style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	<div th:replace="~{manage/common-head :: helloManage(${tabId})} "></div>
+	<div th:replace="~{manage/common-left :: helloManage(${tabId})} "></div>
+	<div class="layui-body">
+		<!-- 内容主体区域 -->
+		<fieldset class="layui-elem-field layui-field-title">
+			<legend>第三方账号绑定</legend>
+		</fieldset>
+		<div class="layui-row layui-col-space15">
+			<div class="layui-col-md2 layui-col-md-offset1">
+				<h2>平台</h2>
+			</div>
+			<div class="layui-col-md2">
+				<h2>名称</h2>
+			</div>
+			<div class="layui-col-md2">
+
+			</div>
+		</div>
+		<div class="layui-row layui-col-space15" th:each="oauth2,oauth2Index: ${oauth2s}">
+			<div class="layui-col-md2 layui-col-md-offset1" th:utext="${oauth2.platform}">
+				淘宝网
+			</div>
+			<div class="layui-col-md2" th:utext="${oauth2.name}">
+				qq最爱雨佳
+			</div>
+			<div class="layui-col-md2">
+				<button th:if="${oauth2.oauth2Id} gt 0" th:attr="data-id=${oauth2.id}"type="button" class="third-unbind layui-btn layui-btn-sm layui-btn-danger">解除绑定</button>
+				<button th:if="${oauth2.oauth2Id} lt 1" th:attr="data-link=${oauth2.openId}" type="button" class="third-bind layui-btn layui-btn-sm">立即绑定</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-footer">
+		<!-- 底部固定区域 -->
+		<div th:include="common-bottom :: bottom">bottom?</div>
+	</div>
+</div>
+</body>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	/*]]>*/
+
+</script>
+<script th:if="${not isDebug}" th:src="@{/page/js/manage/my/third.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/manage/my/third.js}" type="text/javascript"></script>
+</html>

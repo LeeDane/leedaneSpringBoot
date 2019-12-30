@@ -1,6 +1,6 @@
 package com.cn.leedane.observer.template;
 
-import com.cn.leedane.enums.NotificationType;
+import com.cn.leedane.utils.EnumUtil;
 
 /**
  * 更新心情的通知模板类
@@ -11,8 +11,8 @@ import com.cn.leedane.enums.NotificationType;
 public class UpdateMoodTemplate implements NotificationTemplate {
 
 	@Override
-	public NotificationType getNotifitionType() {
-		return NotificationType.PUBLISHED_MOOD;
+	public EnumUtil.NoticeSMSType getNotifitionType() {
+		return EnumUtil.NoticeSMSType.PUBLISHED_MOOD;
 	}
 
 	@Override

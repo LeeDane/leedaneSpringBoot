@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title th:text="'邮箱绑定'"></title>
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
-	<div th:include="mall/commonMall-js :: mallJs">what?</div>
+	<div th:include="manage/common-js :: manageJs">what?</div>
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
@@ -18,12 +18,17 @@
 		<fieldset class="layui-elem-field layui-field-title">
 			<legend>绑定新邮箱</legend>
 		</fieldset>
+		<blockquote class="layui-elem-quote">
+			<ul>
+				<li>绑定邮箱，以后可以接收更多有灵魂的消息</li>
+			</ul>
+		</blockquote>
 		<form class="layui-form" action="">
 			<div class="layui-form-item" th:if="${oldEmail} != null and ${oldEmail} != ''">
 				<div class="layui-inline">
 					<label class="layui-form-label">当前的邮箱</label>
 					<div class="layui-input-inline">
-						<span th:utext="${oldEmail}" style="line-height: 38px;"></span>
+						<span id="old-email" th:utext="${oldEmail}" style="line-height: 38px;"></span>
 					</div>
 				</div>
 			</div>
@@ -31,7 +36,7 @@
 				<div class="layui-inline">
 					<label class="layui-form-label">您的邮箱</label>
 					<div class="layui-input-inline">
-						<input type="email" name="email" lay-verify="required|email" autocomplete="new-password" class="layui-input" />
+						<input id="email" type="email" name="email" lay-verify="required|email" autocomplete="new-password" class="layui-input" />
 					</div>
 				</div>
 			</div>

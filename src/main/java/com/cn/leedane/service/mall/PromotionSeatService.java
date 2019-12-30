@@ -4,6 +4,7 @@ import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.notice.NoticeException;
 import com.google.zxing.WriterException;
 import com.jd.open.api.sdk.JdException;
 import com.taobao.api.ApiException;
@@ -78,7 +79,7 @@ public interface PromotionSeatService<T extends IDBean>{
 			long seatId,
 			long userId,
 			UserBean user,
-			HttpRequestInfoBean request);
+			HttpRequestInfoBean request) throws NoticeException;
 
 	/**
 	 *  给推广位删除用户对象
@@ -90,7 +91,7 @@ public interface PromotionSeatService<T extends IDBean>{
 	public Map<String, Object> deleteAllot(
 			long seatId,
 			UserBean user,
-			HttpRequestInfoBean request);
+			HttpRequestInfoBean request) throws NoticeException;
 
 
 	/**

@@ -3,23 +3,20 @@ package com.cn.leedane.springboot.controller;
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mall.github.GithubException;
-import com.cn.leedane.mall.jingdong.api.AccessTokenUtilApi;
 import com.cn.leedane.mall.pdd.CommUtil;
 import com.cn.leedane.mall.pdd.PddException;
+import com.cn.leedane.mapper.Oauth2Mapper;
 import com.cn.leedane.mapper.UserMapper;
+import com.cn.leedane.model.Oauth2Bean;
 import com.cn.leedane.model.UserBean;
-import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.utils.*;
-import com.google.common.base.Splitter;
 import com.jd.open.api.sdk.JdException;
 import com.pdd.pop.sdk.http.token.AccessTokenResponse;
 import com.taobao.api.ApiException;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,9 +28,6 @@ import org.yaml.snakeyaml.util.UriEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -54,20 +48,33 @@ public class Oauth2HtmlController extends BaseController {
 	@Autowired
 	private UserMapper userMapper;
 
+	@Autowired
+	private Oauth2Mapper oauth2Mapper;
+
+	/**
+	 *
+	 * @param platform
+	 * @param oldUrl
+	 * @param model
+	 * @param request
+	 * @return
+	 */
 	/**
 	 * 跳转到授权登录页面
-	 * @param platform
+	 * @param platform 相应的平台
 	 * @param oldUrl 需要先encodeURI后再base64处理一遍
+	 * @param typeStr 类型，默认是登录
 	 * @param model
 	 * @param request
 	 * @return
 	 */
 	@RequestMapping("/login/{platform}")
-	public String oauth2Login(@PathVariable("platform") String platform, @RequestParam("url")String oldUrl , Model model, HttpServletRequest request){
+	public String oauth2Login(@PathVariable("platform") String platform, @RequestParam("url")String oldUrl, @RequestParam(value = "type", required = false)String typeStr , Model model, HttpServletRequest request){
 		checkRoleOrPermission(model, request);
 		UserBean user = getUserFromShiro();
+		int type = StringUtil.isNull(typeStr)? 1: StringUtil.changeObjectToInt(typeStr);
 		//当前用户已经登录，直接跳转到首页
-		if(user != null){
+		if(user != null && EnumUtil.Oauth2Type.登录.value == type){
 			return "redirect:/index";
 		}
 
@@ -75,17 +82,17 @@ public class Oauth2HtmlController extends BaseController {
 		Map<String, Object> stateMap = new HashMap<>();
 		Calendar calendar2 = Calendar.getInstance();
 		calendar2.add(Calendar.MINUTE, 10); //10分钟过期
-		stateMap.put("type", EnumUtil.Oauth2Type.登录.value);
+		stateMap.put("type", type < 1 ? EnumUtil.Oauth2Type.登录.value: type); //默认是登录
 		stateMap.put("end", DateUtil.DateToString(new Date(calendar2.getTimeInMillis())));
 		stateMap.put("url", oldUrl);
 		String cipherText = CommonUtil.sm4Encrypt(stateMap);
-		if(EnumUtil.ProductPlatformType.淘宝.value.equalsIgnoreCase(platform)){
+		if(EnumUtil.Oauth2PlatformType.淘宝.value.equalsIgnoreCase(platform)){
 			redirectUrl = "redirect:https://oauth.taobao.com/authorize?response_type=code&client_id="+ com.cn.leedane.mall.taobao.CommUtil.appkey +"&redirect_uri="+ com.cn.leedane.mall.taobao.CommUtil.getRedirectUrl() +"&state="+ cipherText +"&view=web";
-		}else if(EnumUtil.ProductPlatformType.京东.value.equalsIgnoreCase(platform)){
+		}else if(EnumUtil.Oauth2PlatformType.京东.value.equalsIgnoreCase(platform)){
 			redirectUrl =  "redirect:https://open-oauth.jd.com/oauth2/to_login?app_key="+ com.cn.leedane.mall.jingdong.CommUtil.appkey +"&response_type=code&redirect_uri="+ com.cn.leedane.mall.jingdong.CommUtil.getRedirectUrl() +"&state="+ cipherText +"&scope=snsapi_base";
-		}else if(EnumUtil.ProductPlatformType.拼多多.value.equalsIgnoreCase(platform)){
+		}else if(EnumUtil.Oauth2PlatformType.拼多多.value.equalsIgnoreCase(platform)){
 			redirectUrl = "redirect:https://ddjb.pinduoduo.com/open.html?client_id="+ CommUtil.clientId +"&response_type=code&redirect_uri="+ com.cn.leedane.mall.pdd.CommUtil.getRedirectUrl()+"&state="+ cipherText;
-		}else if(EnumUtil.ProductPlatformType.github.value.equalsIgnoreCase(platform)){
+		}else if(EnumUtil.Oauth2PlatformType.github.value.equalsIgnoreCase(platform)){
 			redirectUrl =  "redirect:https://github.com/login/oauth/authorize?client_id="+ com.cn.leedane.mall.github.CommUtil.client_id +"&redirect_uri="+ com.cn.leedane.mall.github.CommUtil.getRedirectUrl() +"&state="+ cipherText;
 		}
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "打开"+ platform +"授权登录页面", "", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.网页端.value);
@@ -103,7 +110,7 @@ public class Oauth2HtmlController extends BaseController {
 	public ModelAndView taobao(HttpServletRequest request, Model model) throws ApiException, JdException, PddException, GithubException {
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
-		return verify(message, EnumUtil.ProductPlatformType.淘宝);
+		return verify(message, EnumUtil.Oauth2PlatformType.淘宝);
 	}
 
 
@@ -119,7 +126,7 @@ public class Oauth2HtmlController extends BaseController {
 		logger.info("进入授权校验界面0");
 		checkParams(message, request);
 		logger.info("进入授权校验界面1");
-		return verify(message, EnumUtil.ProductPlatformType.京东);
+		return verify(message, EnumUtil.Oauth2PlatformType.京东);
 	}
 
 	/**
@@ -132,7 +139,7 @@ public class Oauth2HtmlController extends BaseController {
 	public ModelAndView github(HttpServletRequest request, Model model) throws JdException, ApiException, PddException, GithubException {
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
-		return verify(message, EnumUtil.ProductPlatformType.github);
+		return verify(message, EnumUtil.Oauth2PlatformType.github);
 	}
 
 	/**
@@ -145,7 +152,7 @@ public class Oauth2HtmlController extends BaseController {
 	public ModelAndView pinduoduo(HttpServletRequest request, Model model) throws PddException, JdException, ApiException, GithubException {
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
-		return verify(message, EnumUtil.ProductPlatformType.拼多多);
+		return verify(message, EnumUtil.Oauth2PlatformType.拼多多);
 	}
 
 	/**
@@ -153,7 +160,7 @@ public class Oauth2HtmlController extends BaseController {
 	 * @param message
 	 * @return
 	 */
-	private ModelAndView verify(ResponseMap message, EnumUtil.ProductPlatformType platformType) throws JdException, ApiException, PddException, GithubException {
+	private ModelAndView verify(ResponseMap message, EnumUtil.Oauth2PlatformType platformType) throws JdException, ApiException, PddException, GithubException {
 		logger.info("进入授权校验界面");
 		UserBean user = getUserFromMessage(message);
 		JSONObject json = getJsonFromMessage(message);
@@ -185,32 +192,10 @@ public class Oauth2HtmlController extends BaseController {
 			}
 			logger.debug("进入授权校验界面， 进入登录类型， 用户为空");
 			//获取access_token,从其中获取唯一绑定的id
-			long oauth2Id = 0L;
-			String openId = null;
-			String name = null;
-			if(platformType == EnumUtil.ProductPlatformType.淘宝){
-				JSONObject accessTokenObject = com.cn.leedane.mall.taobao.api.AccessTokenUtilApi.getAccessToken(code, state);
-				oauth2Id = accessTokenObject.optLong("taobao_user_id");
-				openId = accessTokenObject.optString("taobao_open_uid");
-				name = UriEncoder.decode(accessTokenObject.optString("taobao_user_nick"));//需要解码中文
-			}else if(platformType == EnumUtil.ProductPlatformType.京东){
-				JSONObject accessTokenObject = com.cn.leedane.mall.jingdong.api.AccessTokenUtilApi.getAccessToken(code);
-				oauth2Id = accessTokenObject.optLong("uid");
-				openId = accessTokenObject.optString("open_id");
-			}else if(platformType == EnumUtil.ProductPlatformType.拼多多){
-				AccessTokenResponse accessTokenObject = com.cn.leedane.mall.pdd.api.AccessTokenUtilApi.getAccessToken(code);
-				oauth2Id = StringUtil.changeObjectToLong(accessTokenObject.getOwnerId());
-				openId = accessTokenObject.getOwnerName();
-				name =  accessTokenObject.getOwnerName();
-			}else if(platformType == EnumUtil.ProductPlatformType.github){
-				JSONObject accessTokenObject = com.cn.leedane.mall.github.api.AccessTokenUtilApi.getAccessToken(code);
-				oauth2Id = accessTokenObject.optLong("id");
-				openId = accessTokenObject.optString("node_id");
-				name = accessTokenObject.optString("login");
-			}
+			Oauth2Bean oauth2Bean = getOauth2Bean(code, state, platformType);
 
 			//跟库中用户做比较，找到用户信息
-			user = userMapper.loginUserByOauth2Id(oauth2Id, openId, platformType.value);
+			user = userMapper.loginUserByOauth2Id(oauth2Bean.getOauth2Id(), oauth2Bean.getOpenId(), platformType.value);
 			if(user != null) {
 				userHandler.loginUser(user);
 				modelAndView = new ModelAndView("redirect:" + redirectUrl);
@@ -219,9 +204,9 @@ public class Oauth2HtmlController extends BaseController {
 				//没有找到用户，说明是第一次，跳转到引导用户注册页面
 				modelAndView = new ModelAndView("redirect:/oauth2/bindFirst");//跳转到第一次授权绑定页面
 				Map<String, Object> stateMap = new HashMap<>();
-				stateMap.put("oauth2Id", oauth2Id);
-				stateMap.put("openId", openId);
-				stateMap.put("name", StringUtil.changeNotNull(name));
+				stateMap.put("oauth2Id", oauth2Bean.getOauth2Id());
+				stateMap.put("openId", oauth2Bean.getOpenId());
+				stateMap.put("name", StringUtil.changeNotNull(oauth2Bean.getName()));
 				stateMap.put("platform", platformType.value);
 				Calendar calendar2 = Calendar.getInstance();
 				calendar2.add(Calendar.MINUTE, 10); //10分钟过期
@@ -238,14 +223,79 @@ public class Oauth2HtmlController extends BaseController {
 			}
 
 			//获取access_token,从其中获取唯一绑定的id
-
-
+			Oauth2Bean oauth2Bean = getOauth2Bean(code, state, platformType);
+			if(oauth2Bean == null){
+				Map<String, Object> error = new HashMap<>();
+				error.put("msg", "授权失败，请稍后重试。");
+				modelAndView = new ModelAndView("redirect:/my/manage/my/third/oauth2/bind/error?message="+ CommonUtil.sm4Encrypt(error));
+				return modelAndView;
+			}
+			//进行授权记录保存
 			//跟当前用户绑定
+			oauth2Bean.setStatus(ConstantsUtil.STATUS_NORMAL);
+			oauth2Bean.setCreateUserId(user.getId());
+			oauth2Bean.setCreateTime(new Date());
+			oauth2Bean.setPlatform(platformType.value);
 
-			//返回成功信息
+			int res = 0;
+			try{
+				res = oauth2Mapper.save(oauth2Bean);
+			}catch (DuplicateKeyException e){
+				Map<String, Object> error = new HashMap<>();
+				error.put("msg", "您在"+ JsonUtil.getStringValue(plainObject, "platform") +"平台已经绑定过，请切换账号或直接登录以前的账号解绑再操作。");
+				modelAndView = new ModelAndView("redirect:/my/manage/my/third/oauth2/bind/error?message="+ CommonUtil.sm4Encrypt(error));
+				return modelAndView;
+			}
+			if(res > 0){
+				//绑定成功，跳转回来以前的页面
+				modelAndView = new ModelAndView("redirect:" + redirectUrl);
+				return modelAndView;
+			}
+			Map<String, Object> error = new HashMap<>();
+			error.put("msg", "绑定失败，请稍后重试！");
+			modelAndView = new ModelAndView("redirect:/my/manage/my/third/oauth2/bind/error?message="+ CommonUtil.sm4Encrypt(error));
+			return modelAndView;
 
 		}
 		return null;
+	}
+
+	/**
+	 * 获取授权成功后返回的对象信息
+	 * @param code
+	 * @param state
+	 * @param platformType
+	 * @return
+	 * @throws JdException
+	 * @throws ApiException
+	 * @throws PddException
+	 * @throws GithubException
+	 */
+	private Oauth2Bean getOauth2Bean(String code, String state, EnumUtil.Oauth2PlatformType platformType) throws JdException, ApiException, PddException, GithubException {
+
+		Oauth2Bean oauth2Bean = new Oauth2Bean();
+		if(platformType == EnumUtil.Oauth2PlatformType.淘宝){
+			JSONObject accessTokenObject = com.cn.leedane.mall.taobao.api.AccessTokenUtilApi.getAccessToken(code, state);
+			oauth2Bean.setOauth2Id(accessTokenObject.optLong("taobao_user_id"));
+			oauth2Bean.setOpenId(accessTokenObject.optString("taobao_open_uid"));
+			oauth2Bean.setName(UriEncoder.decode(accessTokenObject.optString("taobao_user_nick")));//需要解码中文
+		}else if(platformType == EnumUtil.Oauth2PlatformType.京东){
+			JSONObject accessTokenObject = com.cn.leedane.mall.jingdong.api.AccessTokenUtilApi.getAccessToken(code);
+			oauth2Bean.setOauth2Id(accessTokenObject.optLong("uid"));
+			oauth2Bean.setOpenId(accessTokenObject.optString("open_id"));
+			oauth2Bean.setName("");
+		}else if(platformType == EnumUtil.Oauth2PlatformType.拼多多){
+			AccessTokenResponse accessTokenObject = com.cn.leedane.mall.pdd.api.AccessTokenUtilApi.getAccessToken(code);
+			oauth2Bean.setOauth2Id(StringUtil.changeObjectToLong(accessTokenObject.getOwnerId()));
+			oauth2Bean.setOpenId(accessTokenObject.getOwnerName());
+			oauth2Bean.setName(accessTokenObject.getOwnerName());
+		}else if(platformType == EnumUtil.Oauth2PlatformType.github){
+			JSONObject accessTokenObject = com.cn.leedane.mall.github.api.AccessTokenUtilApi.getAccessToken(code);
+			oauth2Bean.setOauth2Id(accessTokenObject.optLong("id"));
+			oauth2Bean.setOpenId(accessTokenObject.optString("node_id"));
+			oauth2Bean.setName(accessTokenObject.optString("login"));
+		}
+		return oauth2Bean;
 	}
 
 	/**

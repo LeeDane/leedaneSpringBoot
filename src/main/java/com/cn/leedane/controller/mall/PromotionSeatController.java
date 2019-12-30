@@ -2,6 +2,7 @@ package com.cn.leedane.controller.mall;
 
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.model.mall.S_PromotionSeatBean;
+import com.cn.leedane.notice.NoticeException;
 import com.cn.leedane.service.mall.PromotionSeatService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.LayuiTableResponseMap;
@@ -113,7 +114,7 @@ public class PromotionSeatController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{seatId}/allot/{userId}", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> allotObject(@PathVariable("seatId") long seatId, @PathVariable("userId") long userId, Model model, HttpServletRequest request){
+	public Map<String, Object> allotObject(@PathVariable("seatId") long seatId, @PathVariable("userId") long userId, Model model, HttpServletRequest request) throws NoticeException {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
@@ -128,7 +129,7 @@ public class PromotionSeatController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/{seatId}/noallot", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deleteAllot(@PathVariable("seatId") long seatId, Model model, HttpServletRequest request){
+	public Map<String, Object> deleteAllot(@PathVariable("seatId") long seatId, Model model, HttpServletRequest request) throws NoticeException {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
 			return message.getMap();
