@@ -36,20 +36,14 @@ public class S_BigEventServiceImpl extends MallRoleCheckService implements S_Big
 	private OperateLogService<OperateLogBean> operateLogService;
 	
 	@Override
-	public Map<String, Object> save(JSONObject jo, UserBean user,
-			HttpRequestInfoBean request) {
-		
+	public ResponseModel save(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_BigEventServiceImpl-->save():jo="+jo);
 		SqlUtil sqlUtil = new SqlUtil();
 		S_BigEventBean bigEventBean = (S_BigEventBean) sqlUtil.getBean(jo, S_BigEventBean.class);
 
-		ResponseMap message = new ResponseMap();
-		if(StringUtil.isNull(bigEventBean.getText()) || bigEventBean.getProductId() < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.参数不存在或为空.value);
-			return message.getMap();
-		}
-		
+		if(StringUtil.isNull(bigEventBean.getText()) || bigEventBean.getProductId() < 1)
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value)).code(EnumUtil.ResponseCode.参数不存在或为空.value);
+
 		String returnMsg = "大事件已经发布成功！";
 		bigEventBean.setStatus(ConstantsUtil.STATUS_NORMAL);
 		Date createTime = new Date();
@@ -57,24 +51,19 @@ public class S_BigEventServiceImpl extends MallRoleCheckService implements S_Big
 		bigEventBean.setCreateUserId(user.getId());
 		
 		boolean result = bigEventMapper.save(bigEventBean) > 0;
-		if(result){
-			message.put("isSuccess", true);
-			message.put("message", returnMsg);
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
+		ResponseModel responseModel = new ResponseModel();
+		if(result)
+			responseModel.ok().message(returnMsg);
+		else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value)).code(EnumUtil.ResponseCode.数据库保存失败.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"发布商品的大事件:", bigEventBean.getText() , "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "save()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-				
-		return message.getMap();
+		return responseModel;
 	}
 	
 	@Override
-	public Map<String, Object> paging(long productId, JSONObject jo, UserBean user, HttpRequestInfoBean request){
+	public ResponseModel paging(long productId, JSONObject jo, UserBean user, HttpRequestInfoBean request){
 		logger.info("S_BigEventServiceImpl-->paging():jsonObject=" +jo.toString() +", productId=" +productId);
-		ResponseMap message = new ResponseMap();
 		if(user == null)
 			user = OptionUtil.adminUser;
 		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
@@ -83,16 +72,12 @@ public class S_BigEventServiceImpl extends MallRoleCheckService implements S_Big
 		int total = JsonUtil.getIntValue(jo, "total", 0); //总数
 		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
 		rs = bigEventMapper.getEvents(productId, ConstantsUtil.STATUS_NORMAL, start, pageSize);
-			
 		if(rs !=null && rs.size() > 0){
 			
 		}
-		
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取商品ID为：",productId,"的大事件列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("isSuccess", true);
-		message.put("message", rs);
-		return message.getMap();
+		return new ResponseModel().ok().message(rs);
 	}
 
 }

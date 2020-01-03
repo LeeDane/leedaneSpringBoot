@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
+import com.cn.leedane.utils.*;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Store;
@@ -30,10 +31,6 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.BlogService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.springboot.SpringUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.OptionUtil;
-import com.cn.leedane.utils.SqlUtil;
-import com.cn.leedane.utils.StringUtil;
 
 /**
  * 爬虫相关的测试类
@@ -123,8 +120,8 @@ public class CrawlTest extends BaseTest {
 					blog.setIndex(true);//是否检索标记为true
 					
 					
-					Map<String,Object> result = blogService.addBlog(blog, user);
-					if(Boolean.parseBoolean(String.valueOf(result.get("isSuccess"))) == true){
+					ResponseModel result = blogService.addBlog(blog, user);
+					if(result.isSuccess()){
 						bean.setCrawl(true);
 						//将抓取标记为已经抓取
 						crawlMapper.update(bean);
@@ -273,9 +270,9 @@ public class CrawlTest extends BaseTest {
 									blog.setImgUrl(mainImgUrl);
 									blog.setOriginLink(bean.getUrl());
 								}
-									
-								Map<String,Object> result = blogService.addBlog(blog, user);
-								if(Boolean.parseBoolean(String.valueOf(result.get("isSuccess"))) == true){
+
+								ResponseModel result = blogService.addBlog(blog, user);
+								if(result.isSuccess()){
 									bean.setCrawl(true);
 									//将抓取标记为已经抓取
 									crawlMapper.update(bean);

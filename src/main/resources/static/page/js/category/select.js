@@ -27,7 +27,7 @@ function getChildNodes(nodeId, pid){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				var treeData = data.message;
 				if(!isFirst){
 					/**

@@ -37,7 +37,7 @@ public class FanController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);;
-		message.put("isSuccess", fanService.cancel(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
+		message.put("success", fanService.cancel(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	/**

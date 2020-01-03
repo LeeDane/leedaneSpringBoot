@@ -251,7 +251,7 @@ public class ClockController extends BaseController{
 		checkParams(message, request);
 
 		Map<String, Object> msg = new HashMap<String, Object>();
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", msg);
 		msg.put("tip", "<font color='#ff0000'>官宣</font>：本app是一款致力于解决个人日常提醒事务的助手，再次承诺，本app使用完全免费。管理员、开发者等绝对不会也不能以个人名义向使用者索取非法的资金。由于这个是纯免费的应用， 并且持续开发精力和时间有限，您们对我的鼓励将更大激励我进行版本更新和功能改进。谢谢！为了感谢您的捐赠，请捐赠者在捐赠完成后保留本次捐赠截图，并在问题反馈页面选择捐赠类别提交给管理员，管理员将把您的名字放到捐赠榜中。");
 		msg.put("wxqrcode", "http://pic.onlyloveu.top/leedane_20190128172847%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20190128172814.jpg?imageslim");

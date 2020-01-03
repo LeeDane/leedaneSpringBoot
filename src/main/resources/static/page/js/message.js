@@ -56,7 +56,7 @@ layui.use(['layer', 'laypage', 'util'], function(){
 				},
 				success : function(data) {
 					layer.close(loadi);
-					if(data.isSuccess){
+					if(data.success){
 						layer.msg(data.message + ",1秒后自动刷新");
 						setTimeout(linkToSpecifiedTab(type), 1000);
 					}else{
@@ -86,7 +86,7 @@ layui.use(['layer', 'laypage', 'util'], function(){
 					},
 					success : function(data) {
 						layer.close(loadi);
-						if(data.isSuccess){
+						if(data.success){
 							layer.msg(data.message + ",1秒后自动刷新");
 							setTimeout(linkToSpecifiedTab(type), 1000);
 						}else{
@@ -154,7 +154,7 @@ function allRead(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message + ",1秒后自动刷新");
 				setTimeout(linkToSpecifiedTab(type), 1000);
 			}else{
@@ -192,7 +192,7 @@ function getMessages(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				messages = data.message;
 				if(messages.length == 0){
 					if(currentIndex == 0){

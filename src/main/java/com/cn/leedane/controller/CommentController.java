@@ -4,6 +4,7 @@ import com.cn.leedane.model.CommentBean;
 import com.cn.leedane.service.CommentService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.ResponseModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +32,13 @@ public class CommentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/comment", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> add(Model model, HttpServletRequest request){
+	public ResponseModel add(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
+			return message.getModel();
 		
-		checkRoleOrPermission(model, request);;
-		message.putAll(commentService.add(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+		checkRoleOrPermission(model, request);
+		return commentService.add(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 
 	/**

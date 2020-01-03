@@ -105,7 +105,7 @@ function doLogin(){
         },
         success : function(data) {
             layer.close(loadi);
-            if(data.isSuccess){
+            if(data.success){
                 layer.msg(data.message);
                 var ref = getURLParam(window.location.href, "ref");
                 if(isEmpty(ref))
@@ -184,7 +184,7 @@ function doRegister(){
         },
         success : function(data) {
             layer.close(loadi);
-            if(data.isSuccess){
+            if(data.success){
                 layer.msg(data.message);
                 reloadPage(100);
             }else{
@@ -284,7 +284,7 @@ function checkToken(token, userid){
             request.setRequestHeader("userid", userid);
         },
         success : function(data) {
-            if(data.isSuccess)
+            if(data.success)
                 reloadPage(1);
             else
                 ajaxError(data);
@@ -312,7 +312,7 @@ function loadQRCode(connId){
         },
         success : function(data) {
             layer.close(loadi);
-            if(data.isSuccess){
+            if(data.success){
                 $("#modal-qr-code-img").attr("src", data.message);
             }else{
                 layer.msg(data.message);

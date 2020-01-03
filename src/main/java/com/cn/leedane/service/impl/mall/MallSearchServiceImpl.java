@@ -54,10 +54,9 @@ public class MallSearchServiceImpl extends MallRoleCheckService implements MallS
 	@Autowired
 	private S_TaobaoService<IDBean> taobaoService;
 	@Override
-	public Map<String, Object> product(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception {
+	public ResponseModel product(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception {
 		logger.info("MallSearchServiceImpl-->product():jo="+jo);
-		ResponseMap message = new ResponseMap();
-
+		long start = System.currentTimeMillis();
 		long current = JsonUtil.getLongValue(jo, "current", 0);
 		long rows = JsonUtil.getLongValue(jo, "rows", 10);
 		String keyword = JsonUtil.getStringValue(jo, "keyword"); //搜索关键字
@@ -87,28 +86,18 @@ public class MallSearchServiceImpl extends MallRoleCheckService implements MallS
 		}else if(EnumUtil.ProductPlatformType.苏宁.value.equalsIgnoreCase(platform)){
 			productResult = com.cn.leedane.mall.suning.api.SearchProductApi.searchProduct(productRequest);
 		}
-		if(productResult == null){
-			message.put("isSuccess", false);
-			message.put("message", "返回结果为空。");
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			return message.getMap();
-		}
-		message.put("platform", platform);
-		message.put("total", productResult.getTotal());
+		if(productResult == null)
+			return new ResponseModel().error().message("返回结果为空。").code(EnumUtil.ResponseCode.请求返回成功码.value);
 		resultMap.put("list", productResult.getTaobaoItems());
-		message.put("isSuccess", true);
-		message.put("message", resultMap);
-		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user != null ? user.getAccount(): "","对淘宝的商品发起查询", "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "search()", ConstantsUtil.STATUS_NORMAL, 0);
-		return message.getMap();
+		return new ResponseModel().ok().message(resultMap).total(productResult.getTotal());
 	}
 	@Override
-	public Map<String, Object> buildShare(String taobaoId, UserBean user,
-										 HttpRequestInfoBean request) {
+	public ResponseModel buildShare(String taobaoId, UserBean user, HttpRequestInfoBean request) {
 		logger.info("MallSearchServiceImpl-->buildShare():taobaoId="+taobaoId);
-		ResponseMap message = new ResponseMap();
+		ResponseModel responseModel = new ResponseModel();
 		try {
 			AlimamaShareLink alimama = new AlimamaShareLink();
 			JSONObject dataJson = alimama.doParse(taobaoId).getJSONObject("data");
@@ -121,93 +110,70 @@ public class MallSearchServiceImpl extends MallRoleCheckService implements MallS
 				promotionLinkBean.setQrCodeUrl(JsonUtil.getStringValue(dataJson, "qrCodeUrl"));
 				promotionLinkBean.setShortLinkUrl(JsonUtil.getStringValue(dataJson, "shortLinkUrl"));
 				promotionLinkBean.setTaoToken(JsonUtil.getStringValue(dataJson, "taoToken"));
-				message.put("message", promotionLinkBean);
-				message.put("isSuccess", true);
-			}else{
-				message.put("message", "该商品暂时没有佣金，无法生成共享链接！");
-			}
-
+				responseModel.ok().message(promotionLinkBean);
+			}else
+				responseModel.error().message("该商品暂时没有佣金，无法生成共享链接！");
 		} catch (Exception  e) {
 			e.printStackTrace();
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.淘宝api请求失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.淘宝api请求失败.value);
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.淘宝api请求失败.value)).code(EnumUtil.ResponseCode.淘宝api请求失败.value);
 		}
 
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"对淘宝的商品ID为", taobaoId, "生成分享链接。", "结果是：", StringUtil.getSuccessOrNoStr(true)).toString(), "buildShare()", ConstantsUtil.STATUS_NORMAL, 0);
-		return message.getMap();
+		return responseModel;
 	}
 
 	@Override
-	public Map<String, Object> productRecommend(String itemId, JSONObject jo, UserBean user,
-												HttpRequestInfoBean request) throws ApiException, PddException, SuningApiException {
-
+	public ResponseModel productRecommend(String itemId, JSONObject jo, UserBean user, HttpRequestInfoBean request) throws ApiException, PddException, SuningApiException {
 		logger.info("MallSearchServiceImpl-->productRecommend(): itemId="+ itemId +", jo="+jo);
 		ResponseMap message = new ResponseMap();
 
 		long count = JsonUtil.getLongValue(jo, "count", 12);
 		if(itemId.startsWith("tb_")){
 			long productIdTemp = StringUtil.changeObjectToLong(itemId.substring(4, itemId.length()));
-			message.put("message", com.cn.leedane.mall.taobao.api.RecommendProductApi.recommend(productIdTemp, count).getItems());
-			message.put("isSuccess", true);
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			return message.getMap();
+			return new ResponseModel().ok().message(com.cn.leedane.mall.taobao.api.RecommendProductApi.recommend(productIdTemp, count).getItems());
 		}else if(itemId.startsWith("jd_")){
-			message.put("message", "京东没有推荐商品的api");
-			message.put("isSuccess", true);
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			return message.getMap();
+			return new ResponseModel().ok().message( "京东没有推荐商品的api");
 		}else if(itemId.startsWith("pdd_")){
-			message.put("message", "拼多多没有推荐商品的api");
-			message.put("isSuccess", true);
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			return message.getMap();
+			return new ResponseModel().ok().message("拼多多没有推荐商品的api");
 		}else if(itemId.startsWith("sn_")){
 			String productIdTemp = itemId.substring(3, itemId.length());
 			String commodityCode = productIdTemp.split("-")[0];
 			String supplierCode = productIdTemp.split("-")[0];
-			message.put("message",com.cn.leedane.mall.suning.api.RecommendProductApi.recommend(commodityCode, supplierCode, count).getItems());
-			message.put("isSuccess", true);
-			return message.getMap();
+			return new ResponseModel().ok().message(com.cn.leedane.mall.suning.api.RecommendProductApi.recommend(commodityCode, supplierCode, count).getItems());
 		}
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user != null ? user.getAccount(): "","对淘宝的商品发起查询", "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "search()", ConstantsUtil.STATUS_NORMAL, 0);
-		return message.getMap();
+		return new ResponseModel().error();
 	}
 
 	@Override
-	public Map<String, Object> bigfield(String productId, JSONObject json, UserBean user,
-										 HttpRequestInfoBean request) throws Exception {
+	public ResponseModel bigfield(String productId, JSONObject json, UserBean user, HttpRequestInfoBean request) throws Exception {
 		logger.info("MallSearchServiceImpl-->bigfield():productId="+productId);
 		ResponseMap message = new ResponseMap();
 		if(productId.startsWith("tb_")){
 			//return taobaoService.transform(json, user, request);
 		}else if(productId.startsWith("jd_")){
 			String productIdTemp = productId.substring(3, productId.length());
-			message.put("message", DetailBigFieldApi.get(productIdTemp));
-			message.put("isSuccess", true);
-			return message.getMap();
+			return new ResponseModel().ok().message(DetailBigFieldApi.get(productIdTemp));
 		}else if(productId.startsWith("pdd_")){
 			String productIdTemp = productId.substring(4, productId.length());
 			S_PlatformProductBean platformProductBean = DetailSimpleApi.getDetail(productIdTemp);
-			message.put("message", platformProductBean == null? "商品不存在": platformProductBean.getDetail());
-			message.put("isSuccess", true);
+			return new ResponseModel().ok().message(platformProductBean == null? "商品不存在": platformProductBean.getDetail());
 		}else if(productId.startsWith("sn")){
 			String productIdTemp = productId.substring(3, productId.length());
-			message.put("message", productIdTemp);
-			message.put("isSuccess", true);
-			return message.getMap();
+			return new ResponseModel().ok().message(productIdTemp);
 		}
-		return message.getMap();
+		return new ResponseModel().error();
 	}
 
 	@Override
-	public Map<String, Object> shop(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
+	public ResponseModel shop(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		return null;
 	}
 
 	@Override
-	public Map<String, Object> activity(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
+	public ResponseModel activity(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		return null;
 	}
 }

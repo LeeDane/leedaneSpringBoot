@@ -29,7 +29,7 @@ layui.use(['layer', 'util'], function(){
 					},
 					success : function(data) {
 						layer.close(loadi);
-						if(data.isSuccess){
+						if(data.success){
 							layer.msg(data.message + ",1秒后自动刷新");
 							reloadPage(1000);
 						}else{
@@ -91,7 +91,7 @@ function getInfo(bid){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess && data.message.length > 0){
+			if(data.success && data.message.length > 0){
 				var blog = data.message[0];
 				document.title = data.message[0].title;
 				$("#b-title").html(changeNotNullString(blog.title));
@@ -169,7 +169,7 @@ function getComments(bid){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				if(method == 'firstloading')
 					$(".comment-list").remove();
 				
@@ -358,7 +358,7 @@ function doAddComment(params){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg("评论成功,1秒钟后自动刷新");
 				setTimeout("window.location.reload();", 1000);
 			}else{

@@ -95,7 +95,7 @@ public class CircleSettingServiceImpl extends AdminRoleCheckService implements C
 			circleHandler.deleteNewest();
 			circleHandler.deleteRecommend();
 			circlePostHandler.deleteHotestPosts();
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{

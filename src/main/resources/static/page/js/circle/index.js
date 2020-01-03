@@ -17,7 +17,7 @@ layui.use(['layer'], function(){
 			beforeSend:function(){
 			},
 			success : function(data) {
-				if(data.isSuccess){
+				if(data.success){
 					showCreateModal(data.message);
 				}else{
 					ajaxError(data);
@@ -63,7 +63,7 @@ function showCreateModal(number){
 			success : function(data) {
 				//关闭弹出loading
 				layer.close(index);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message+ "，1秒后自动刷新");
 					//添加圈子成功，关闭窗口
 					layer.close(promptIndex);

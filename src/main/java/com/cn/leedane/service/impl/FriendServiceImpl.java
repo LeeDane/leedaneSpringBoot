@@ -88,7 +88,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库删除数据失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库删除数据失败.value);
 		}
-		message.put("isSuccess", result);
+		message.put("success", result);
 		String subject = user.getAccount()+"解除关系ID为"+fid+"的好友关系"+StringUtil.getSuccessOrNoStr(result);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, subject, "deleteFriends()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
@@ -116,7 +116,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		
 		if(isFriendRecord(user.getId(), toUserId)){
 			message.put("message", "等待对方确认..."); 
-			message.put("isSuccess", true);
+			message.put("success", true);
 			return message.getMap();	
 		}
 		
@@ -155,7 +155,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		notificationHandler.sendNotificationById(false, user.getId(), toUserId, content, NotificationType.通知, DataTableType.好友.value, friendBean.getId(), null);
 	
 		message.put("message", "等待对方确认..."); 
-		message.put("isSuccess", true);
+		message.put("success", true);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"请求添加账号："+toUser.getAccount()+"为好友", "addFriend()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
@@ -186,7 +186,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		}
 		
 		if(friendBean.getStatus() == ConstantsUtil.STATUS_NORMAL){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "恭喜，TA已经是好友"); 
 			return message.getMap();	
 		}
@@ -211,7 +211,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		}
 		
 		//更新redis的朋友关系
-		message.put("isSuccess", friendHandler.addFriends(friendBean.getToUserId(), friendBean.getFromUserId(), friendBean.getToUserRemark(), friendBean.getFromUserRemark()));
+		message.put("success", friendHandler.addFriends(friendBean.getToUserId(), friendBean.getFromUserId(), friendBean.getToUserRemark(), friendBean.getFromUserRemark()));
 		message.put("message", "恭喜，TA已经是好友"); 
 		
 		//发送通知给相应的用户
@@ -276,7 +276,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"读取已经跟我成为好友关系的分页列表").toString(), "friendsAlreadyPaging()", ConstantsUtil.STATUS_NORMAL, 0);
 			
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}
@@ -328,7 +328,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取暂时未跟我成为好友关系的分页列表").toString(), "friendsNotyetPaging()", ConstantsUtil.STATUS_NORMAL, 0);
 			
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}
@@ -378,7 +378,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取我发送的好友请求列表").toString(), "requestPaging()", ConstantsUtil.STATUS_NORMAL, 0);
 			
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}
@@ -428,7 +428,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取等待我同意的好友关系列表").toString(), "responsePaging()", ConstantsUtil.STATUS_NORMAL, 0);
 			
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}
@@ -458,7 +458,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"本地联系人跟服务器上的好友进行匹配").toString(), "matchContact()", ConstantsUtil.STATUS_NORMAL, 0);
 			
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", null);
 		return message.getMap();
 	}
@@ -482,7 +482,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 				rs.get(i).putAll(userHandler.getBaseUserInfo(fId));
 			}
 		}
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}

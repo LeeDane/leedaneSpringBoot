@@ -168,7 +168,7 @@ function getBigField(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
                 $("#bigfield-contrainer").html(data.message);
 			}else{
 				ajaxError(data);
@@ -202,7 +202,7 @@ function getShareLinks(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 			    var bean = data.message;
 			    var index = productSourceId.indexOf('tb_');
 			    if(index == 0){
@@ -324,7 +324,7 @@ function doRecommend(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				for(var i = 0; i < data.message.length; i++)
 					$recommendContainer.append(buildRecommendRow(i, data.message[i]));
 			}else{
@@ -394,7 +394,7 @@ function addWish(obj){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message +"，1秒后自动刷新");
 				reloadPage(1000);
 			}else{
@@ -424,7 +424,7 @@ function getBigEvents(){
 		success : function(data) {
 			layer.close(loadi);
 			$bigEventContainer.empty();
-			if(data.isSuccess){
+			if(data.success){
 				bigEvents = data.message;
 				if(bigEvents.length == 0){
 					if(bigEvent_currentIndex == 0){
@@ -502,7 +502,7 @@ function getComments(bid){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				comments = data.message;
 				if(data.message.length == 0){
 					if(comment_currentIndex == 0){
@@ -625,7 +625,7 @@ function doAddComment(params){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg("评论成功,1秒钟后自动刷新");
 				setTimeout("window.location.reload();", 1000);
 			}else{
@@ -656,7 +656,7 @@ function doStatistics(start, end){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				//删除Json数据中的age属性  
 		        delete data.message["title"];
 		        delete data.message["toolbox"];

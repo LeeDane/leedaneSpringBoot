@@ -43,7 +43,7 @@ function doSearch(){
 			$("#search-blog-number").text(0);
 		},
 		success : function(data) {
-			if(data.isSuccess && isNotEmpty(data.message)){
+			if(data.success && isNotEmpty(data.message)){
 				$("#search-need-time").text(data.consumeTime);
 				
 				var blogs = data.message["1"];

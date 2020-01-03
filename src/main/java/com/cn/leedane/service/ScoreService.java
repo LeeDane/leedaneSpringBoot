@@ -4,6 +4,7 @@ import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.ScoreBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +42,7 @@ public interface ScoreService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel getLimit(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取当前用户的总积分
@@ -51,7 +52,7 @@ public interface ScoreService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getTotalScore(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel getTotalScore(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 减少分数
@@ -62,6 +63,6 @@ public interface ScoreService<T extends IDBean>{
 	 * @param user
 	 * @return
 	 */
-	public Map<String, Object> reduceScore(int reduceScore, String desc, String tableName, long tableId, UserBean user);
+	public ResponseModel reduceScore(int reduceScore, String desc, String tableName, long tableId, UserBean user);
 	
 }

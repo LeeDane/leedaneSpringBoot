@@ -3,6 +3,7 @@ package com.cn.leedane.service.manage;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,6 @@ public interface ManageMallService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> promotionApply(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel promotionApply(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 }

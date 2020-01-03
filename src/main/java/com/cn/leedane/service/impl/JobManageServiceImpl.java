@@ -96,7 +96,7 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
             scheduler.scheduleJob(jobDetail, trigger);
     	}
 		
-        message.put("isSuccess", true);
+        message.put("success", true);
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		return message.getMap();
@@ -159,7 +159,7 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
                 }
             }
             
-        	message.put("isSuccess", true);
+        	message.put("success", true);
     		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
     		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
         }else{
@@ -189,7 +189,7 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
                 scheduler.deleteJob(trigger.getJobKey());
             }
             
-        	message.put("isSuccess", true);
+        	message.put("success", true);
     		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
     		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
         }else{
@@ -222,7 +222,7 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取任务列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 
@@ -257,7 +257,7 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
 		if(result){
 			//保存操作日志
 			operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"批量删除任务,jobids="+ jobids).toString(), "deletes()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{

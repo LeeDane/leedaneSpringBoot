@@ -528,7 +528,7 @@ public class BaseController {
 	            logger.info("用户[" + userId + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)"); 
 	            message.put("message", "恭喜您登录成功"); 
 	            result = true;
-	            message.put("isSuccess", result); 
+	            message.put("success", result);
 //	            currentUser.getSession().setAttribute(UserController.USER_INFO_KEY, user);
 	            return user;
 	        }else{  

@@ -489,6 +489,8 @@ public class EnumUtil {
 		拼多多api异常(4043),
 		页面授权已经过期(4044),
 		该推广位不存在(4045),
+		苏宁api异常(4046),
+		GitHub异常(4047),
 		;
 		
 		private ResponseCode(int value) {

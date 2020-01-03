@@ -25,7 +25,7 @@ function getCarouselImgs(){
 		},
 		success : function(data) {
 			$carouselContainer.empty();
-			if(data != null && data.isSuccess){
+			if(data != null && data.success){
 				var homeCarouselBeans = data.message.homeCarouselBeans;
 				if(homeCarouselBeans.length >0){
 					var product;
@@ -69,7 +69,7 @@ function getItems(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data != null && data.isSuccess && data.message){
+			if(data != null && data.success && data.message){
 				if(data.message.length > 0){
 					for(var i = 0; i < data.message.length; i++){
 						$itemsContainer.append(itemsEachRow(i, data.message[i]));
@@ -204,7 +204,7 @@ function getShops(){
 		success : function(data) {
 			layer.close(loadi);
 			
-			if(data.isSuccess && data.message){
+			if(data.success && data.message){
 				if(data.message.homeShopBeans == null || data.message.homeShopBeans.length == 0){
 					
 				}else{

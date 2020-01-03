@@ -20,7 +20,7 @@ function getActive(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				//清空原来的数据
 				$(".each-row").remove();
 				
@@ -72,7 +72,7 @@ function logout(obj){
     			},
     			success : function(data) {
     				layer.close(loadi);
-    				if(data.isSuccess){
+    				if(data.success){
     					layer.msg(data.message + ",1秒后自动刷新");
     					reloadPage(1000);
     				}else{

@@ -48,17 +48,13 @@ public class S_WishServiceImpl extends MallRoleCheckService implements S_WishSer
 	private S_WishMapper wishMapper;
 	
 	@Override
-	public Map<String, Object> add(JSONObject json, UserBean user,
-			HttpRequestInfoBean request) {
-		
+	public ResponseModel add(JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_WishServiceImpl-->add():json="+json);
 		long productId = JsonUtil.getLongValue(json, "product_id");
 		S_ProductBean productBean = productHandler.getNormalProductBean(productId);
 		if(productBean == null)
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商品不存在或已被删除.value));
-		
-		ResponseMap message = new ResponseMap();
-		
+
 		S_WishBean wishBean = new S_WishBean();
 		String returnMsg = "已成功添加到心愿单！";
 		wishBean.setStatus(ConstantsUtil.STATUS_NORMAL);
@@ -74,64 +70,45 @@ public class S_WishServiceImpl extends MallRoleCheckService implements S_WishSer
 		}catch(DuplicateKeyException e){ //唯一键约束异常不做处理
 			result = true;
 		}
-		
-		message.put("isSuccess", result);
-		if(result){
-			message.put("message", returnMsg);
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
+		ResponseModel responseModel = new ResponseModel();
+		if(result)
+			responseModel.ok().message(returnMsg);
+		else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value)).code(EnumUtil.ResponseCode.数据库保存失败.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"把商品ID为", productId, "添加到心愿单:", productBean.getTitle() , "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 				
-		return message.getMap();
+		return responseModel;
 	}
 	
 	@Override
-	public Map<String, Object> getWishNumber(UserBean user,
-			HttpRequestInfoBean request) {
-		
+	public ResponseModel getWishNumber(UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_WishServiceImpl-->getWishNumber():user="+user.getId());
-		ResponseMap message = new ResponseMap();
-		
-		message.put("isSuccess", true);
-		message.put("message", wishHandler.getWishNumber(user.getId()));
-		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		
-		return message.getMap();
+		return new ResponseModel().ok().message(wishHandler.getWishNumber(user.getId()));
 	}
 	
 	@Override
-	public Map<String, Object> delete(long wishId, UserBean user,
-			HttpRequestInfoBean request) {
-		
+	public ResponseModel delete(long wishId, UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_WishServiceImpl-->delete():wishId="+wishId);
-		ResponseMap message = new ResponseMap();
-		
 		String returnMsg = "已成功删除该心愿单！";
 		boolean result = wishMapper.deleteById(S_WishBean.class, wishId) > 0;
+		ResponseModel responseModel = new ResponseModel();
 		if(result){
-			message.put("isSuccess", true);
-			message.put("message", returnMsg);
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+			responseModel.ok().message(returnMsg);
 			wishHandler.deleteWishCache(user.getId());
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
-		}
+		}else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value)).code(EnumUtil.ResponseCode.删除失败.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除心愿单ID为", wishId, "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 				
-		return message.getMap();
+		return responseModel;
 	}
 	
 	
 	@Override
-	public Map<String, Object> paging(int current, int pageSize, UserBean user, HttpRequestInfoBean request){
+	public LayuiTableResponseModel paging(int current, int pageSize, UserBean user, HttpRequestInfoBean request){
 		logger.info("S_WishServiceImpl-->paging():current=" +current +", pageSize="+ pageSize);
-		LayuiTableResponseMap message = new LayuiTableResponseMap();
+		LayuiTableResponseModel responseModel = new LayuiTableResponseModel();
 		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
 		int start = SqlUtil.getPageStart(current, pageSize, 0);
 		rs = wishMapper.paging(user.getId(), ConstantsUtil.STATUS_NORMAL, start, pageSize);
@@ -162,13 +139,10 @@ public class S_WishServiceImpl extends MallRoleCheckService implements S_WishSer
 				}
 			}
 		}
-		message.setCode(0);
-		message.setCount(wishHandler.getWishNumber(user.getId()));
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取心愿单列表，current="+ current, ", pageSize=", pageSize).toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("isSuccess", true);
-		message.put("data", rs);
-		return message.getMap();
+		responseModel.setData(rs).setCount(wishHandler.getWishNumber(user.getId())).code(0);
+		return responseModel;
 	}
 
 	@Override

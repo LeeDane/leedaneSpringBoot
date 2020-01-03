@@ -72,7 +72,7 @@ public class UserTokenServiceImpl implements UserTokenService<UserTokenBean> {
 		
 		if(result){
 			if(userHandler.addTokenCode(userTokenBean)){
-				message.put("isSuccess", true);
+				message.put("success", true);
 				//保存操作日志
 //				operateLogService.saveOperateLog(user, request, null, "用户id为"+ user.getId()+"添加token成功", "addUserToken()", ConstantsUtil.STATUS_NORMAL, 0);
 				message.put("message", "添加token成功！");

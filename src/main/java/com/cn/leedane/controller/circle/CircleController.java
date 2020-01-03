@@ -220,7 +220,7 @@ public class CircleController extends BaseController{
 		
 		checkRoleOrPermission(model, request);
 		message.putAll(circleService.init(getUserFromMessage(message), getHttpRequestInfo(request)));
-		message.put("isSuccess", true);
+		message.put("success", true);
 		System.out.println(JSONObject.fromObject(message.getMap()).toString());
 		return message.getMap();
 	}

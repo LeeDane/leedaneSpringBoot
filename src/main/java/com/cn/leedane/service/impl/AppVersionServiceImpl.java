@@ -71,7 +71,7 @@ public class AppVersionServiceImpl implements AppVersionService<FilePathBean> {
 		
 		
 		if(list != null && list.size() ==1){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", list);
 		}else{
 			message.put("message", "暂无新版本！");
@@ -139,7 +139,7 @@ public class AppVersionServiceImpl implements AppVersionService<FilePathBean> {
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取app版本列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 				
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		logger.info("获得app版本的数量：" +rs.size());
 		return message.getMap();

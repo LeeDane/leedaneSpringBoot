@@ -6,6 +6,7 @@ import com.cn.leedane.service.ScoreService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.JsonUtil;
 import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.sc)
@@ -38,14 +38,12 @@ public class ScoreController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/scores", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(Model model, HttpServletRequest request){
+	public ResponseModel paging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
-		
-		checkRoleOrPermission(model, request);;
-		message.putAll(scoreService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+			return message.getModel();
+		checkRoleOrPermission(model, request);
+		return scoreService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 	
 	
@@ -54,14 +52,13 @@ public class ScoreController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/score/total", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getTotalScore(Model model, HttpServletRequest request){
+	public ResponseModel getTotalScore(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
+			return message.getModel();
 		
-		checkRoleOrPermission(model, request);;
-		message.putAll(scoreService.getTotalScore(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+		checkRoleOrPermission(model, request);
+		return scoreService.getTotalScore(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 	
 	/**
@@ -69,19 +66,17 @@ public class ScoreController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/score/reduce", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> reduceScore(Model model, HttpServletRequest request){
+	public ResponseModel reduceScore(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
-		
-		checkRoleOrPermission(model, request);;
+			return message.getModel();
+		checkRoleOrPermission(model, request);
 		JSONObject json = getJsonFromMessage(message);
 		UserBean user = getUserFromMessage(message);
 		int score = JsonUtil.getIntValue(json, "score", 0);
 		String desc = JsonUtil.getStringValue(json, "desc");
 		long tableId = JsonUtil.getLongValue(json, "tableId");
 		String tableName = JsonUtil.getStringValue(json, "tableName");
-		message.putAll(scoreService.reduceScore(score, desc, tableName, tableId, user));
-		return message.getMap();
+		return scoreService.reduceScore(score, desc, tableName, tableId, user);
 	}
 }

@@ -4,6 +4,7 @@ import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import com.suning.api.exception.SuningApiException;
 import com.taobao.api.ApiException;
 import net.sf.json.JSONObject;
@@ -27,7 +28,7 @@ public interface ManageMyService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> bindEmail(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception;
+	public ResponseModel bindEmail(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception;
 
 	/**
 	 * 绑定手机号码
@@ -36,7 +37,7 @@ public interface ManageMyService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> bindPhone(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception;
+	public ResponseModel bindPhone(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception;
 
 	/**
 	 * 第三方授权解绑
@@ -46,7 +47,7 @@ public interface ManageMyService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> thirdUnBind(long oid, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel thirdUnBind(long oid, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 保存标签
@@ -55,6 +56,6 @@ public interface ManageMyService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> saveTags(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel saveTags(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 }

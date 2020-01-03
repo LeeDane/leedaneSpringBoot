@@ -53,7 +53,7 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 		//判断当天是否已经打卡
 		List<CircleClockInBean> circleClockInBeans = circleClockInMapper.getClockInBean(circleId, user.getId(), ConstantsUtil.STATUS_NORMAL, DateUtil.DateToString(dateTime, "yyyy-MM-dd"));
 		if(CollectionUtil.isNotEmpty(circleClockInBeans)){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.今天已经打卡.value));
 			message.put("responseCode", EnumUtil.ResponseCode.今天已经打卡.value);
 		}else{
@@ -102,10 +102,10 @@ public class CircleClockInServiceImpl extends AdminRoleCheckService implements C
 		boolean result = circleClockInMapper.save(circleClockInBean) > 0 ;
 		if(result){
 			int preScore = StringUtil.getScoreBySignin(circleClockInBean.getContinuous() - 1);
-			Map<String, Object> results = circleContributionService.addScore(preScore, "给圈子《"+ circleBean.getName() +"》每日打卡得贡献值", circleId, user);
-			result = results != null && !results.isEmpty() && results.containsKey("isSuccess")? StringUtil.changeObjectToBoolean(results.get("isSuccess")) : false;
+			ResponseModel model = circleContributionService.addScore(preScore, "给圈子《"+ circleBean.getName() +"》每日打卡得贡献值", circleId, user);
+			result = model != null && model.isSuccess();
 			if(result){
-				message.put("isSuccess", true);
+				message.put("success", true);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.贡献打卡成功.value));
 				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			}else{

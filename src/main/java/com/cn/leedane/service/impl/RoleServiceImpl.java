@@ -65,7 +65,7 @@ private Logger logger = Logger.getLogger(getClass());
 		roleBean.setOrder(JsonUtil.getIntValue(jsonObject, "order", 1));
 		roleBean.setStatus(JsonUtil.getIntValue(jsonObject, "status", ConstantsUtil.STATUS_NORMAL));
 		boolean result = roleMapper.save(roleBean) > 0;
-		message.put("isSuccess", result);
+		message.put("success", result);
 		if(result){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -90,7 +90,7 @@ private Logger logger = Logger.getLogger(getClass());
 		roleBean.setId(JsonUtil.getLongValue(jsonObject, "id", 0));
 		roleBean.setStatus(JsonUtil.getIntValue(jsonObject, "status", ConstantsUtil.STATUS_NORMAL));
 		boolean result = roleMapper.update(roleBean) > 0;
-		message.put("isSuccess", result);
+		message.put("success", result);
 		if(result){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -116,7 +116,7 @@ private Logger logger = Logger.getLogger(getClass());
 		userRoleMapper.deleteByField(UserRoleBean.class, "role_id", rlid);
 		
 		boolean result = roleMapper.deleteById(RoleBean.class, rlid) > 0;
-		message.put("isSuccess", result);
+		message.put("success", result);
 		if(result){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -155,7 +155,7 @@ private Logger logger = Logger.getLogger(getClass());
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取角色列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		
 		return message.getMap();
 	}
@@ -189,7 +189,7 @@ private Logger logger = Logger.getLogger(getClass());
 		 userRoleMapper.deleteByField(UserRoleBean.class, "role_id", rlidArray);
 		 
 		 boolean result = roleMapper.deleteByIds(RoleBean.class, ids) == rlidArray.length;
-			message.put("isSuccess", result);
+			message.put("success", result);
 			if(result){
 				//清空用户的角色redis
 				for(String roleId: rlidArray)
@@ -213,7 +213,7 @@ private Logger logger = Logger.getLogger(getClass());
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户列表").toString(), "users()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		
 		return message.getMap();
 	}
@@ -276,7 +276,7 @@ private Logger logger = Logger.getLogger(getClass());
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给角色ID为"+ rlid +",分配用户ids"+users).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("message", "操作成功");
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		
 		return message.getMap();
 	}

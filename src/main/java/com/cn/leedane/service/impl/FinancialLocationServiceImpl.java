@@ -66,7 +66,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 			bean.setLocationDesc(locationDesc);
 		boolean result = financialLocationMapper.save(bean) > 0;
 		if(result){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.添加成功.value));
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.添加失败.value));
@@ -74,7 +74,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"添加位置信息为：", location, StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 					
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -104,7 +104,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 			bean.setLocationDesc(locationDesc);
 		boolean result = financialLocationMapper.update(bean) > 0;
 		if(result){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改失败.value));
@@ -149,7 +149,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "读取记账位置列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 				
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		logger.info("获得记账位置的数量：" +rs.size());
 		return message.getMap();
@@ -175,7 +175,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 		
 		result = financialLocationMapper.deleteById(FinancialLocationBean.class, flid) > 0;
 		if(result){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
@@ -201,7 +201,7 @@ public class FinancialLocationServiceImpl extends AdminRoleCheckService implemen
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"用户ID为：",user.getId() , "获取所有记账位置列表").toString(), "getAll()", ConstantsUtil.STATUS_NORMAL, 0);
 				
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		logger.info("获得记账位置的数量：" +rs.size());
 		return message.getMap();

@@ -3,6 +3,7 @@ package com.cn.leedane.service;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ public interface GalleryService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> manageLink(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel manageLink(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	/**
 	 * 检查该图片是否已经加入图库
 	 * @param user
@@ -46,7 +47,7 @@ public interface GalleryService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(long gid, JSONObject jo, UserBean user, HttpRequestInfoBean request) ;
+	public ResponseModel delete(long gid, JSONObject jo, UserBean user, HttpRequestInfoBean request) ;
 	
 	/**
 	 * 分页获取指定用户图库的图片的路径列表
@@ -57,7 +58,7 @@ public interface GalleryService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<Map<String, Object>> all(JSONObject jo,
+	public ResponseModel all(JSONObject jo,
 			UserBean user, HttpRequestInfoBean request);
 
 	/**
@@ -69,7 +70,7 @@ public interface GalleryService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(JSONObject jo,
+	public ResponseModel paging(JSONObject jo,
 										 UserBean user, HttpRequestInfoBean request);
 	
 }

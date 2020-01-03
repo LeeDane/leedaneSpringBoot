@@ -156,7 +156,7 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 		clockMemberBean.setModifyTime(new Date());
 		boolean result = clockMemberMapper.update(clockMemberBean) > 0;
 		if(result){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "信息修改成功！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -199,7 +199,7 @@ public class ClockMemberServiceImpl extends AdminRoleCheckService implements Clo
 			}
 		}
 		message.put("message", displays);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		//保存动态信息
 		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), "查看任务成员列表", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 		return message.getMap();

@@ -83,7 +83,7 @@
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					$("#download-link").attr("href", data.message[0].path);
 					$("#file-version").text(data.message[0].file_version);
 					$("#file-lenght").text(parseInt(data.message[0].lenght / 1024 / 1024) + "M");

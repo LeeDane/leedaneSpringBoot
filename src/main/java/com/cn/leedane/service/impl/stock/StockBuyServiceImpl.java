@@ -59,7 +59,7 @@ public class StockBuyServiceImpl implements StockBuyService<StockBuyBean>{
 		boolean result = stockBuyMapper.save(stockBuyBean) > 0;
 		if(result){
 			stockBuyHandler.deleteStockBuyBeansCache(stockId); //删除缓存该用户全部股票购买的缓存
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "您已经成功添加一条股票购买信息！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -88,7 +88,7 @@ public class StockBuyServiceImpl implements StockBuyService<StockBuyBean>{
 		if(result){
 			stockBuyHandler.deleteStockBuyBeanCache(stockBuyId); //删除缓存该股票购买的缓存
 			stockBuyHandler.deleteStockBuyBeansCache(stockId); //删除缓存该用户全部股票购买的缓存
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "您的股票购买记录已经更新成功！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -120,7 +120,7 @@ public class StockBuyServiceImpl implements StockBuyService<StockBuyBean>{
 		if(result){
 			stockBuyHandler.deleteStockBuyBeanCache(stockBuyId); //删除缓存该股票购买的缓存
 			stockBuyHandler.deleteStockBuyBeansCache(stockId); //删除缓存该用户全部股票购买的缓存
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "您已成功删除股票购买记录！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{

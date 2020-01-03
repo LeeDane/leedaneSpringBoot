@@ -61,7 +61,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
 		
 		if(method.equalsIgnoreCase("uploading") && firstId < 1){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", rs);
 			return message.getMap();
 		}
@@ -86,7 +86,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取聊天分页列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 			
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}
@@ -134,7 +134,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 			//给对方发送通知
 			notificationHandler.sendCustomMessageById(user, toUserId, chatMap);
 			
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", chatMap);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
@@ -186,7 +186,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 		} 
 	
 		if(result){
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -209,7 +209,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 		sql.append(" from "+DataTableType.聊天.value+" c where c.to_user_id =? and c.is_read = ? and c.status=?");
 		rs = chatMapper.executeSQL(sql.toString(), user.getId(), false, ConstantsUtil.STATUS_NORMAL);
 		
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		
 		return message.getMap();
@@ -246,7 +246,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"刪除聊天记录Id为：", cid , ",内容为：", content, StringUtil.getSuccessOrNoStr(result)).toString(), "deleteChat()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		message.put("isSuccess", result);
+		message.put("success", result);
 		return message.getMap();
 	}
 
@@ -255,7 +255,7 @@ public class ChatServiceImpl implements ChatService<ChatBean> {
 			UserBean user, HttpRequestInfoBean request) {
 		logger.info("ChatServiceImpl-->getOneChatByAllUser():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
-		message.put("isSuccess", true);
+		message.put("success", true);
 		List<ChatBean> rs = chatMapper.getOneChatByAllUser(user.getId(), ConstantsUtil.STATUS_NORMAL);
 		List<Map<String, Object>> resList = new ArrayList<Map<String,Object>>();
 		for(ChatBean chatBean: rs){

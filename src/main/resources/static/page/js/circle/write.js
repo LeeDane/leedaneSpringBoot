@@ -35,7 +35,7 @@ function getEditBlog(bid){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data != null && data.isSuccess && data.message.length == 1){
+			if(data != null && data.success && data.message.length == 1){
 				addToEdit(data.message[0]);
 			}else{
 				ajaxError(data);
@@ -216,7 +216,7 @@ function clearTag(obj){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data != null && data.isSuccess){
+				if(data != null && data.success){
 					layer.msg(data.message);
 					reloadPage(1000);
 				}else{

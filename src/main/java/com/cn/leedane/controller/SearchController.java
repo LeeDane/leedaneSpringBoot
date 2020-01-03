@@ -267,7 +267,7 @@ public class SearchController extends BaseController{
 			}
 			result.put("hits", rs);
 			message.put("message", results);
-			message.put("isSuccess", true);
+			message.put("success", true);
 			results.add(result);
 			//搜索得到的结果数
 			logger.info("Find:" + response.getHits().totalHits);

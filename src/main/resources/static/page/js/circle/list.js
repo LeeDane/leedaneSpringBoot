@@ -21,7 +21,7 @@ layui.use(['layer'], function(){
 				beforeSend:function(){
 				},
 				success : function(data) {
-					if(data.isSuccess){
+					if(data.success){
 						showCreateModal(data.message);
 					}else{
 						ajaxError(data);
@@ -55,7 +55,7 @@ function getCircles(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				circles = data.message;
 				if(circles.length == 0){
 					if(currentIndex == 0){
@@ -142,7 +142,7 @@ function showAllotAdminList(obj, circleId){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				for(var i = 0 ; i < data.message.length; i++){
 					if(data.message[i].role_type == 0){
 						buildNotAdminsHtml(data.message[i]);
@@ -227,7 +227,7 @@ function admin(obj){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message + ",1秒后自动刷新");
 				reloadPage(1000);
 			}else{
@@ -316,7 +316,7 @@ function doEdit(obj){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message +",1秒钟后自动刷新");
 					setTimeout("window.location.reload();", 1000);
 				}else{
@@ -350,7 +350,7 @@ function doDelete(obj, index){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message + ",1秒后自动刷新");
 					reloadPage(1000);
 				}else{
@@ -398,7 +398,7 @@ function showCreateModal(number){
 			success : function(data) {
 				//关闭弹出loading
 				layer.close(index);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message);
 					//添加圈子成功，关闭窗口
 					layer.close(promptIndex);

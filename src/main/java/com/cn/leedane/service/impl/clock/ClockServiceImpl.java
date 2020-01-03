@@ -135,7 +135,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 			//清空该用户的任务列表缓存
 			if (clockBean.getParentId() > 0 || clockBean.getCategoryId() < 1)
 				clockHandler.deleteDateClocksCache(user.getId());
-			message.put("isSuccess", true);
+			message.put("success", true);
 			String content = "您已成功创建新的任务，请准时打卡！";
 			message.put("message", content);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -181,7 +181,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 				//清除任务缓存
 				clockHandler.deleteClockCache(clockId);
 				String content= "修改任务《"+ clockBean.getTitle() +"》成功！";
-				message.put("isSuccess", true);
+				message.put("success", true);
 				message.put("message", content);
 				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 				String userName = userHandler.getUserName(userId);
@@ -284,7 +284,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 			//保存动态信息
 			clockDynamicHandler.saveDynamic(clockBean.getId(), new Date(), user.getId(), "删除了任务", true, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 			
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -324,7 +324,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 				}
 			}
 		}
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", clockDisplays);
 		return message.getMap();
 	}
@@ -346,7 +346,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 				clockDisplay.setTotalDay(findDates(DateUtil.stringToDate(clockDisplay.getStartDate(), "yyyy-MM-dd"), DateUtil.stringToDate(clockDisplay.getEndDate(), "yyyy-MM-dd"), clockDisplay.getClockRepeat()).size());
 			}
 		}
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", clockDisplays);
 		return message.getMap();
 	}
@@ -370,7 +370,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 				clockDisplay.setTotalDay(totalDay);
 			}
 		}
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", clockDisplays);
 		return message.getMap();
 	}
@@ -444,7 +444,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 //			}
 //		}
 //				
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", groups);
 		return message.getMap();
 	}
@@ -464,7 +464,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 
 		ClockDisplay display = clockDisplays.get(0);
 		display.setMembers(clockMemberHandler.members(clockId).size());
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", display);
 		return message.getMap();
 	}
@@ -479,7 +479,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 			throw new ParameterUnspecificationException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.检索关键字不能为空.value));
 		ResponseMap message = new ResponseMap();
 		List<ClockSearchDisplay> clockSearchDisplays = clockMapper.search(user.getId(), keyword);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", clockSearchDisplays);
 		return message.getMap();
 	}
@@ -509,7 +509,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), "查看任务的缩略信息", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 				
 		clockSearchDisplay.setMemberNumber(clockMemberHandler.members(clockId).size());
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", clockSearchDisplay);
 		return message.getMap();
 	}
@@ -556,7 +556,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 			statisticsDisplay.setResults(getClockIns(searchDates, data));
 		}
 		statisticsDisplay.setMembers(getTop3Member(clockId));
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", statisticsDisplay);
 		return message.getMap();
 	}
@@ -586,7 +586,7 @@ public class ClockServiceImpl extends AdminRoleCheckService implements ClockServ
 			for(ClockInResourceDisplay clockInResourceDisplay: resourceDisplays)
 				clockInResourceDisplay.setPicPath(userHandler.getUserPicPath(clockInResourceDisplay.getCreateUserId(), "30x30"));
 		}
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", resourceDisplays);
 		return message.getMap();
 	}

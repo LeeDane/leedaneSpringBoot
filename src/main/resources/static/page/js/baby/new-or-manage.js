@@ -64,7 +64,7 @@ function submitThis(){
 			success : function(data) {
 					
 					layer.close(loadi);
-					if(data.isSuccess){
+					if(data.success){
 						layer.msg("添加成功");
 						if(babyId > 0)
 							window.location.reload();
@@ -99,7 +99,7 @@ function deleteThis(obj){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message + ",1秒后自动刷新");
 					window.open("/baby", "_self");
 				}else{

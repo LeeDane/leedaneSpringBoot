@@ -98,7 +98,7 @@ function getOneCategorys(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess && data.message.length > 0){
+			if(data.success && data.message.length > 0){
 				oneCategorys = data.message;
 				//获取二级分类
 				getTwoCategorys();
@@ -122,7 +122,7 @@ function getTwoCategorys(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess){
+			if(data.success){
 				twoCategorys = data.message;
 				$('[name="levels"]').append('<option>请选择</option>');
 				for(var i = 0; i < twoCategorys.length; i++){
@@ -155,7 +155,7 @@ function getLocations(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess){
+			if(data.success){
 				locations = data.message;
 			}else{
 				ajaxError(data);
@@ -179,7 +179,7 @@ function querySearch(params){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				//清空原来的数据
 				$(".financial-list-row").remove();
 				
@@ -229,7 +229,7 @@ function queryPaging(params){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				if(data.message.length == 0){
 					canLoadData = false;
 					layer.msg("无更多数据");
@@ -406,7 +406,7 @@ function deleteFinancial(index){
 				},
 				success : function(data) {
 					layer.close(loadi);
-					if(data.isSuccess){
+					if(data.success){
 						layer.msg("记账信息删除成功,1秒钟后自动刷新");
 						setTimeout("window.location.reload();", 1000);
 					}else{
@@ -564,7 +564,7 @@ function doAddOrEdit(params){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg("修改记账信息成功,1秒钟后自动刷新");
 				setTimeout("window.location.reload();", 1000);
 			}else{

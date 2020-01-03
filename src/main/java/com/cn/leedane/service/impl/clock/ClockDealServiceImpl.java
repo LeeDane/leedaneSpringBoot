@@ -140,7 +140,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 		}
 		
 		if(result){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			String content = null;
 			String userName = userHandler.getUserName(memberId);
 			if(newStatus != ConstantsUtil.STATUS_NORMAL){
@@ -225,7 +225,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 		int total = JsonUtil.getIntValue(json, "total", 0); //当前的索引页
 		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
 		List<ClockMemberDisplay> clockMemberDisplays = clockDealMapper.addClocks(user.getId(), start, pageSize);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", clockMemberDisplays);
 		return message.getMap();
 	}
@@ -240,7 +240,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 		int total = JsonUtil.getIntValue(json, "total", 0); //当前的索引页
 		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
 		List<ClockMemberDisplay> clockMemberDisplays = clockDealMapper.inviteClocks(user.getId(), start, pageSize);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", clockMemberDisplays);
 		return message.getMap();
 	}
@@ -255,7 +255,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 		int total = JsonUtil.getIntValue(json, "total", 0); //当前的索引页
 		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
 		List<ClockMemberDisplay> clockMemberDisplays = clockDealMapper.myInviteClocks(user.getId(), start, pageSize);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", clockMemberDisplays);
 		return message.getMap();
 	}
@@ -271,7 +271,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 		int total = JsonUtil.getIntValue(json, "total", 0); //当前的索引页
 		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
 		List<ClockMemberDisplay> clockMemberDisplays = clockDealMapper.agreeClocks(user.getId(), start, pageSize);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", clockMemberDisplays);
 		return message.getMap();
 	}
@@ -304,12 +304,12 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 				mp.put("clock_id", clockId);
 				CustomMessage customMessage = new JpushCustomMessage();
 				customMessage.sendToAlias("leedane_user_"+ clockBean.getCreateUserId(),  JSONObject.fromObject(mp).toString(), EnumUtil.CustomMessageExtraType.请求加入任务.value);
-				message.put("isSuccess", true);
+				message.put("success", true);
 				message.put("message", "您的请求已经发送，请耐心等待管理者审核！");
 				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 				return message.getMap();
 			}else{
-				message.put("isSuccess", false);
+				message.put("success", false);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
 				message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
 				return message.getMap();
@@ -368,7 +368,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 					mp.put("clock_id", clockId);
 					CustomMessage customMessage = new JpushCustomMessage();
 					customMessage.sendToAlias("leedane_user_"+ clockBean.getCreateUserId(),  JSONObject.fromObject(mp).toString(), EnumUtil.CustomMessageExtraType.请求加入任务.value);
-					message.put("isSuccess", true);
+					message.put("success", true);
 					message.put("message", "您的请求已经发送，请耐心等待管理者审核！");
 					message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 					return message.getMap();
@@ -409,7 +409,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 			mp.put("clock_id", clockId);
 			CustomMessage customMessage = new JpushCustomMessage();
 			customMessage.sendToAlias("leedane_user_"+ memberId,  JSONObject.fromObject(mp).toString(), EnumUtil.CustomMessageExtraType.同意加入任务.value);
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.操作成功.value);
 			return message.getMap();
@@ -472,12 +472,12 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 				mp.put("clock_id", clockId);
 				CustomMessage customMessage = new JpushCustomMessage();
 				customMessage.sendToAlias("leedane_user_"+ memberId,  JSONObject.fromObject(mp).toString(), EnumUtil.CustomMessageExtraType.邀请加入任务.value);
-				message.put("isSuccess", true);
+				message.put("success", true);
 				message.put("message", "您的邀请已经发送，请耐心等待《"+ userHandler.getUserName(memberId) +"》同意！");
 				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 				return message.getMap();
 			}else{
-				message.put("isSuccess", false);
+				message.put("success", false);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
 				message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
 				return message.getMap();
@@ -508,7 +508,7 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 				mp.put("clock_id", clockId);
 				CustomMessage customMessage = new JpushCustomMessage();
 				customMessage.sendToAlias("leedane_user_"+ memberId,  JSONObject.fromObject(mp).toString(), EnumUtil.CustomMessageExtraType.邀请加入任务.value);
-				message.put("isSuccess", true);
+				message.put("success", true);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 				message.put("responseCode", EnumUtil.ResponseCode.操作成功.value);
 				return message.getMap();
@@ -560,12 +560,12 @@ public class ClockDealServiceImpl extends AdminRoleCheckService implements Clock
 				}
 			}
 			
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.操作成功.value);
 		}else{
 			//暂时无法同意邀请，可以联系任务管理者处理
-			message.put("isSuccess", false);
+			message.put("success", false);
 			message.put("message", "您没有权限同意邀请，可以联系该任务管理者处理！");
 		}
 		return message.getMap();

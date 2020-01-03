@@ -44,10 +44,10 @@ public class BlogController extends BaseController{
 	 * @throws Exception 
 	 */
 	@RequestMapping(value = "/blog", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> releaseBlog(Model model, HttpServletRequest request){
+	public ResponseModel releaseBlog(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
+			return message.getModel();
 		
 		checkRoleOrPermission(model, request);
 		JSONObject json = getJsonFromMessage(message);
@@ -154,8 +154,7 @@ public class BlogController extends BaseController{
 		blog.setCreateUserId(JsonUtil.getLongValue(json, "create_user_id", user.getId()));
 		blog.setCreateTime(new Date());
 
-		message.putAll(blogService.addBlog(blog, user));   
-		return message.getMap();
+		return blogService.addBlog(blog, user);
 	}
 	
 	/**
@@ -163,14 +162,13 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/blog", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> deleteBlog(Model model, HttpServletRequest request){
+	public ResponseModel deleteBlog(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-				return message.getMap();
+				return message.getModel();
 		
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.deleteById(getJsonFromMessage(message), getHttpRequestInfo(request), getUserFromMessage(message)));
-		return message.getMap();
+		return blogService.deleteById(getJsonFromMessage(message), getHttpRequestInfo(request), getUserFromMessage(message));
 	}
 	
 	/**
@@ -178,7 +176,7 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/blogs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> paging(@RequestParam(value="pageSize", required = false) Integer pageSize,
+	public ResponseModel paging(@RequestParam(value="pageSize", required = false) Integer pageSize,
 				@RequestParam(value="last_id", required = false) Integer lastId,
 				@RequestParam(value="first_id", required = false) Integer firstId,
 				@RequestParam(value="method", required = true) String method,
@@ -219,44 +217,35 @@ public class BlogController extends BaseController{
 			sql.append(" from "+DataTableType.博客.value+" b inner join "+DataTableType.用户.value+" u on b.create_user_id = u.id ");
 			sql.append(" where b.status = ?  order by b.id desc limit 0,?");
 			r = blogService.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, pageSize);
-		}else{
-			message.put("isSuccess", false);
-			message.put("message", "目前暂不支持的操作方法");
-			return message;
-		}
+		}else
+			return new ResponseModel().error().message("目前暂不支持的操作方法。");
 		
 		logger.info("数量："+r.size());
 		if(r.size() == 5){
 			logger.info("开始ID:"+r.get(0).get("id"));
 			logger.info("结束ID:"+r.get(4).get("id"));
 		}
-		message.put("isSuccess", true);
-		message.put("message", r);
-		return message.getMap();
+		return new ResponseModel().ok().message(r);
 	}
 
 	@RequestMapping(value = "/blogs/paging", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> blogPaging(HttpServletRequest request){
+	public ResponseModel blogPaging(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
-		message.putAll(blogService.paging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+		return blogService.paging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 	}
-
 	
 	/**
 	 * 获取博客的的基本信息(不包括内容)
 	 * @return
 	 */
 	@RequestMapping(value = "/info", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getInfo(Model model, HttpServletRequest request){
+	public ResponseModel getInfo(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
-		
+			return message.getModel();
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.getInfo(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+		return blogService.getInfo(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 	
 	/**
@@ -265,14 +254,12 @@ public class BlogController extends BaseController{
 	 * @throws Exception 
 	 */
 	@RequestMapping(value="/blog/{blogId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getOneBlog(
+	public ResponseModel getOneBlog(
 			@PathVariable("blogId") long blogId,
 			HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
-		
-		message.putAll(blogService.getOneBlog(blogId, getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+		return blogService.getOneBlog(blogId, getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 	
 	/**
@@ -280,12 +267,8 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/hotestBlogs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getHotestBlogs(HttpServletRequest request){
-		ResponseMap message = new ResponseMap();
-		List<Map<String, Object>> ls = this.blogService.getHotestBlogs(5);
-		message.put("isSuccess", true);
-		message.put("message", ls);
-		return message.getMap();
+	public ResponseModel getHotestBlogs(HttpServletRequest request){
+		return new ResponseModel().ok().message(this.blogService.getHotestBlogs(5));
 	}
 	
 	/**
@@ -293,12 +276,8 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/newestBlogs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getNewestBlogs(HttpServletRequest request){
-		ResponseMap message = new ResponseMap();
-		List<Map<String, Object>> ls = this.blogService.getNewestBlogs(5);
-		message.put("isSuccess", true);
-		message.put("message", ls);
-		return message.getMap();
+	public ResponseModel getNewestBlogs(HttpServletRequest request){
+		return new ResponseModel().ok().message(this.blogService.getNewestBlogs(5));
 	}
 	
 	/**
@@ -306,12 +285,8 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/recommendBlogs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getRecommendBlogs(HttpServletRequest request){
-		ResponseMap message = new ResponseMap();
-		List<Map<String, Object>> ls = this.blogService.getHotestBlogs(5);
-		message.put("isSuccess", true);
-		message.put("message", ls);
-		return message.getMap();
+	public ResponseModel getRecommendBlogs(HttpServletRequest request){
+		return new ResponseModel().ok().message(this.blogService.getHotestBlogs(5));
 	}
 	
 	/**
@@ -319,7 +294,7 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/carouselImgs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getCarouselImgs(HttpServletRequest request){
+	public ResponseModel getCarouselImgs(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		JSONObject json = getJsonFromMessage(message);
@@ -342,14 +317,10 @@ public class BlogController extends BaseController{
 		}else if(method.equalsIgnoreCase("recommend")){
 			sql = "select id, img_url, title, digest from "+DataTableType.博客.value+" where status=?  and img_url != '' and is_recommend=? order by id desc limit 0,?";
 			r = blogService.executeSQL(sql, ConstantsUtil.STATUS_NORMAL, true, num);	
-		}else{
-			message.put("message", "目前暂不支持的操作方法");
-			return message.getMap();
-		}
-		
-		message.put("isSuccess", true);
-		message.put("message", r);
-		return message.getMap();
+		}else
+			return new ResponseModel().error().message("目前暂不支持的操作方法");
+
+		return new ResponseModel().ok().message(r);
 	}
 	
 	/**
@@ -357,14 +328,12 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/tag", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> addTag(Model model, HttpServletRequest request){
+	public ResponseModel addTag(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
-		
+			return message.getModel();
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.addTag(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+		return blogService.addTag(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 	
 	/**
@@ -372,14 +341,12 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/drafts", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> draftList(Model model, HttpServletRequest request){
+	public ResponseModel draftList(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
-		
+			return message.getModel();
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.draftList(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+		return blogService.draftList(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 	
 	/**
@@ -387,14 +354,12 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/blog/edit/{blog_id}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> edit(@PathVariable("blog_id") long blogId, Model model, HttpServletRequest request){
+	public ResponseModel edit(@PathVariable("blog_id") long blogId, Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
-		
+			return message.getModel();
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.edit(blogId, getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+		return blogService.edit(blogId, getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 	
 	/**
@@ -402,14 +367,12 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/noChecks", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> noCheckPaging(Model model, HttpServletRequest request){
+	public ResponseModel noCheckPaging(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
-		
+			return message.getModel();
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.noCheckPaging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+		return blogService.noCheckPaging(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 	
 	/**
@@ -417,13 +380,11 @@ public class BlogController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/check", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> check(Model model, HttpServletRequest request){
+	public ResponseModel check(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
-		
+			return message.getModel();
 		checkRoleOrPermission(model, request);
-		message.putAll(blogService.check(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+		return blogService.check(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 }

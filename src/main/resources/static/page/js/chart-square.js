@@ -147,7 +147,7 @@ function init(){
         success : function(data) {
             layer.close(loadi);
             flagLoadHistory = false;
-            if(data.isSuccess){
+            if(data.success){
                 container.find("#load-history").remove();
                 var chats = data.message;
                 if(chats && chats.length > 0){
@@ -232,7 +232,7 @@ function init(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess){
+			if(data.success){
 				var sc = data.message;
 				if(sc < 1){
 					//设置无法发弹屏
@@ -261,7 +261,7 @@ function getActiveUsers(){
 		success : function(data) {
 			//layer.msg(data.message);
 			$("#active-users").find(".active-users-item").remove();
-			if(data.isSuccess){
+			if(data.success){
 				var message = data.message;
 				if(message.length > 0){
 					var colorClass = "";

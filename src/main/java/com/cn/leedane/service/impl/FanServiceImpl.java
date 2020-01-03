@@ -125,7 +125,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		long end = System.currentTimeMillis();
 		logger.info("获取我关注对象列表总计耗时：" +(end - start) +"毫秒");
 		message.put("message", rs);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -193,7 +193,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		long end = System.currentTimeMillis();
 		logger.info("获取TA关注对象列表总计耗时：" +(end - start) +"毫秒");
 		message.put("message", rs);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -258,7 +258,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		long end = System.currentTimeMillis();
 		logger.info("获取我的粉丝列表总计耗时：" +(end - start) +"毫秒");
 		message.put("message", rs);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -325,7 +325,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		long end = System.currentTimeMillis();
 		logger.info("获取TA的粉丝列表总计耗时：" +(end - start) +"毫秒");
 		message.put("message", rs);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 
@@ -429,7 +429,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 		//myCircleOfFriendsHandler.mergeTimeLine(user.getId(), toUserId);
 		
 		message.put("message", "恭喜您成为"+toUser.getAccount()+"的粉丝，今后他/她的动态将在您的朋友圈出现"); 
-		message.put("isSuccess", true);
+		message.put("success", true);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"成为："+toUser.getAccount()+"的粉丝", "addFan()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
@@ -460,14 +460,14 @@ public class FanServiceImpl implements FanService<FanBean> {
 		
 		if(isFanEachOther(jo, user, request)){
 			message.put("message", "已互相关注");
-			message.put("isSuccess", true);
+			message.put("success", true);
 			return message.getMap();
 		}
 		
 		boolean isFan = fanMapper.executeSQL("select id from "+DataTableType.粉丝.value+" where status=? and create_user_id=? and to_user_id=?", ConstantsUtil.STATUS_NORMAL, user.getId(), toUserId).size() > 0;
 		if(isFan){
 			message.put("message", "已关注");
-			message.put("isSuccess", true);
+			message.put("success", true);
 			return message.getMap();
 		}else{
 			message.put("message", "关注Ta");

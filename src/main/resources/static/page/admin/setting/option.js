@@ -42,7 +42,7 @@ function getOptions(){
 			layer.close(loadi);
 			//清空原来的数据
 			$tableContainer.find(".each-row").remove();
-			if(data.isSuccess){
+			if(data.success){
 				if(data.message.length == 0){
 					if(currentIndex == 0){
 						$tableContainer.append('<tr class="each-row"><td colspan="11">暂时还没有任何option！</td></tr>');
@@ -224,7 +224,7 @@ function deletesOption(){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message + ",1秒后自动刷新");
 					reloadPage(1000);
 				}else{
@@ -281,7 +281,7 @@ function addOrEditCommit(obj){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message +",1秒钟后自动刷新");
 					setTimeout("window.location.reload();", 1000);
 				}else{

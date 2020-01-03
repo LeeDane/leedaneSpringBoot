@@ -4,6 +4,7 @@ import com.cn.leedane.model.CommentBean;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +44,7 @@ public interface CommentService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel add(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取分页的评论

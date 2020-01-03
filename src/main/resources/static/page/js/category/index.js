@@ -27,7 +27,7 @@ function getChildNodes(nodeId, pid){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				var treeData = data.message;
 				if(pid < 1){
 					
@@ -74,7 +74,7 @@ function addRoot(obj){
 			beforeSend:function(){
 			},
 			success : function(data) {
-				if(data.isSuccess){
+				if(data.success){
 					//关闭弹出loading
 					layer.closeAll();
 					layer.msg("根节点添加成功，1秒后自动刷新");
@@ -114,7 +114,7 @@ function addNode(obj){
 					beforeSend:function(){
 					},
 					success : function(data) {
-						if(data.isSuccess){
+						if(data.success){
 							//关闭弹出loading
 							layer.closeAll();
 							var addNode = data.message;
@@ -164,7 +164,7 @@ function updateNode(obj){
 					beforeSend:function(){
 					},
 					success : function(data) {
-						if(data.isSuccess){
+						if(data.success){
 							//关闭弹出loading
 							layer.closeAll();
 							layer.msg(data.message);
@@ -211,7 +211,7 @@ function deleteNode(obj){
 				},
 				success : function(data) {
 					layer.close(loadi);
-					if(data.isSuccess){
+					if(data.success){
 						layer.msg(data.message);
 						$tree.treeview('deleteNode', [ nodeSelect[0].nodeId, { silent: true} ]); 
 					}else{

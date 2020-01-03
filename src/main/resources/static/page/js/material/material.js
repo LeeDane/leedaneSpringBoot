@@ -83,7 +83,7 @@ function getMaterials(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				materials = data.message;
 				if(materials.length == 0){
 					if(currentIndex == 0){
@@ -253,7 +253,7 @@ function uploadFiles(){
 			isUploading = false;
 			clearInterval(task);
 			layer.closeAll();
-			if(data == null || data.isSuccess){
+			if(data == null || data.success){
 				var qiniuLinks = data.message;
 				for(var i = 0; i < qiniuLinks.length; i++){
 					var index = $formUpload.find("input").eq(i).data("index");
@@ -273,7 +273,7 @@ function uploadFiles(){
 		}).error(function(data) {
 			isUploading = false;
 			clearInterval(task);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message);
 			}
 			else{
@@ -310,7 +310,7 @@ function getProgress(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data != null && data.isSuccess){
+			if(data != null && data.success){
 				var status = data.message;
 				var pro = Math.round(status.bytesRead / status.contentLength *100 );
 				if(pro == 100){
@@ -493,7 +493,7 @@ function deleteMaterial(event, materialId){
 				},
 				success : function(data) {
 					layer.close(loadi);
-					if(data.isSuccess){
+					if(data.success){
 						layer.msg(data.message + ",1秒后自动刷新");
 						reloadPage(1000);
 					}else{
@@ -554,7 +554,7 @@ function getData(){
 	}).success(function(data) {
 		try{
 			layer.close(loadi);//关闭
-			if(data != null && data.isSuccess){
+			if(data != null && data.success){
 				fileIndex++; //新增1
 				var qiniuPath = data.message;//获取新的链接
 				$("#upload-material-table").append('<tr class="complete each-row" id="add-file-row-'+ fileIndex +'" data-index="'+ fileIndex +'">'+
@@ -614,7 +614,7 @@ function submitFiles(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data != null && data.isSuccess){
+			if(data != null && data.success){
 				layer.msg(data.message +",1秒钟后自动刷新");
 				setTimeout("window.location.reload();", 1000);
 			}else{

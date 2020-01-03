@@ -4,6 +4,7 @@ import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import com.google.zxing.WriterException;
 import com.jd.open.api.sdk.JdException;
 import com.suning.api.exception.SuningApiException;
@@ -30,7 +31,7 @@ public interface MallSearchService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> product (JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception;
+	public ResponseModel product (JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception;
 
 	/**
 	 * 搜索商店
@@ -40,7 +41,7 @@ public interface MallSearchService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> shop(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel shop(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 搜索活动
@@ -50,7 +51,7 @@ public interface MallSearchService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> activity(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public  ResponseModel activity(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 构建淘宝分享的链接
@@ -61,7 +62,7 @@ public interface MallSearchService<T extends IDBean>{
 	 */
 	@Deprecated
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> buildShare(String productId, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel buildShare(String productId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 *  商品推荐
@@ -73,7 +74,7 @@ public interface MallSearchService<T extends IDBean>{
 	 * @throws ApiException
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> productRecommend(String itemId, JSONObject jo, UserBean user, HttpRequestInfoBean request) throws ApiException, PddException, SuningApiException;
+	public  ResponseModel productRecommend(String itemId, JSONObject jo, UserBean user, HttpRequestInfoBean request) throws ApiException, PddException, SuningApiException;
 
 	/**
 	 * 获取大字段
@@ -83,5 +84,5 @@ public interface MallSearchService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> bigfield(String productId, JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception;
+	public ResponseModel bigfield(String productId, JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception;
 }

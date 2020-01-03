@@ -96,7 +96,7 @@ public class WebFileUploadController extends BaseController{
             }
             message.put("message", qiniuLinks);
        		message.put("responseCode", ResponseCode.请求返回成功码.value);
-       		message.put("isSuccess", true);
+       		message.put("success", true);
         	return message.getMap();
         } catch (Exception e) {
         	logger.error("上传文件发生异常,错误原因 : ", e);
@@ -151,7 +151,7 @@ public class WebFileUploadController extends BaseController{
 	            
                 message.put("message", qiniuPath);
            		message.put("responseCode", ResponseCode.请求返回成功码.value);
-           		message.put("isSuccess", true);
+           		message.put("success", true);
            		return message.getMap();
             }  
         } catch (Exception e) {  
@@ -213,7 +213,7 @@ public class WebFileUploadController extends BaseController{
         	//从session中获取进度
             message.put("message", status);
             message.put("responseCode", ResponseCode.请求返回成功码.value);
-            message.put("isSuccess", true);
+            message.put("success", true);
             return message.getMap();
         } catch (Exception e) {
         	logger.error("上传文件发生异常,错误原因 : " + e.getMessage());
@@ -240,7 +240,7 @@ public class WebFileUploadController extends BaseController{
         	//从session中获取进度
             message.put("message", currentUser.getSession().getAttribute("qiniu-"+ item));
             message.put("responseCode", ResponseCode.请求返回成功码.value);
-            message.put("isSuccess", true);
+            message.put("success", true);
             //把session缓存的信息清掉
             currentUser.getSession().removeAttribute("qiniu-"+ item);
             return message.getMap();

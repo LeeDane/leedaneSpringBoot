@@ -50,7 +50,7 @@ public class SignInController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.put("isSuccess", signInService.saveSignIn(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
+		message.put("success", signInService.saveSignIn(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
 	
@@ -66,11 +66,11 @@ public class SignInController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		UserBean user = getUserFromMessage(message);
 		long id = JsonUtil.getLongValue(getJsonFromMessage(message), "id", getUserFromMessage(message).getId());
 		String dateTime = DateUtil.DateToString(new Date(), "yyyy-MM-dd");		
-		message.put("isSuccess", signInService.isSign(id, dateTime));
+		message.put("success", signInService.isSign(id, dateTime));
 		
 		// 保存操作日志信息
 		String subject = user.getAccount()+"判断当天是否签到";
@@ -91,7 +91,7 @@ public class SignInController extends BaseController{
 		checkRoleOrPermission(model, request);
 		List<Map<String, Object>> result= signInService.getSignInByLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 		logger.info("获得签到的数量：" +result.size());
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", result);
 		return message.getMap();
 	}

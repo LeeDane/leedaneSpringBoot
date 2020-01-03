@@ -4,6 +4,7 @@ import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import com.google.zxing.WriterException;
 import com.jd.open.api.sdk.JdException;
 import com.taobao.api.ApiException;
@@ -31,7 +32,7 @@ public interface MallToolService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> transform(String productId, JSONObject jo, UserBean user, HttpRequestInfoBean request) throws WriterException, JdException, ApiException, PddException;
+	public ResponseModel transform(String productId, JSONObject jo, UserBean user, HttpRequestInfoBean request) throws WriterException, JdException, ApiException, PddException;
 
 
 	/**
@@ -41,5 +42,5 @@ public interface MallToolService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> parseUrlGetId(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws JdException, ApiException;
+	public ResponseModel parseUrlGetId(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws JdException, ApiException;
 }

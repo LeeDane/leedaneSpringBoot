@@ -92,7 +92,7 @@ $(function(){
 			beforeSend:function(){
 			},
 			success : function(data) {
-				if(data.isSuccess){
+				if(data.success){
 					if(data.message){
 						var question = data.question;
 						layer.prompt({title: question, formType: 0}, function(pass, promptIndex){
@@ -151,7 +151,7 @@ function getInit(){
 			
 		},
 		success : function(data) {
-			if(data.isSuccess){
+			if(data.success){
 				$("#todayVisitors").text(data.message.todayVisitors);
 				$("#visitors").text(data.message.visitors);
 				$("#allContribute").text(data.message.allContribute);
@@ -187,7 +187,7 @@ function getPosts(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				posts = data.message;
 				if(posts.length == 0){
 					if(currentIndex == 0){
@@ -378,7 +378,7 @@ function joinCircle(answer){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message + "，1秒后自动刷新");
 				reloadPage(1000);
 			}else{
@@ -405,7 +405,7 @@ function leaveCircle(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg("离开该圈子成功，1秒后自动刷新");
 				reloadPage(1000);
 			}else{
@@ -433,7 +433,7 @@ function doClockIn(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg("您已经打卡成功，明天记得早点过来，1秒后自动刷新");
 				reloadPage(1000);
 			}else{
@@ -463,7 +463,7 @@ function addZan(obj){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message + "，1秒后自动刷新");
 					reloadPage(1000);
 				}else
@@ -501,7 +501,7 @@ function addComment(obj){
 			},
 			success : function(data) {
 					layer.close(loadi);
-					if(data.isSuccess){
+					if(data.success){
 						layer.msg(data.message+ "，1秒后自动刷新");
 						reloadPage(1000);
 					}else{
@@ -543,7 +543,7 @@ function addTransmit(obj){
 			},
 			success : function(data) {
 					layer.close(loadi);
-					if(data.isSuccess){
+					if(data.success){
 						layer.msg(data.message+ "，1秒后自动刷新");
 						reloadPage(1000);
 					}else{
@@ -600,7 +600,7 @@ function doDelete(postId, reason){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message+ "，1秒后自动刷新");
 					reloadPage(1000);
 				}else{

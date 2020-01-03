@@ -62,7 +62,7 @@ function getWish(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess){
+			if(data.success){
 				$("#wishNumber").text(data.message);
 			}else{
 				ajaxError(data);
@@ -85,7 +85,7 @@ function getNoDealOrder(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess){
+			if(data.success){
 				$("#noDealOrderNumber").text(data.message);
 			}else{
 				ajaxError(data);

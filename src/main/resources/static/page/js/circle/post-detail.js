@@ -60,7 +60,7 @@ layui.use(['layer', 'laypage', 'util'], function(){
 					},
 					success : function(data) {
 						layer.close(loadi);
-						if(data.isSuccess){
+						if(data.success){
 							layer.msg(data.message + ",1秒后自动刷新");
 							reloadPage(1000);
 						}else{
@@ -172,7 +172,7 @@ function doDelete(postId, reason){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message+ "，1秒后自动刷新");
 					reloadPage(1000);
 				}else{
@@ -202,7 +202,7 @@ function addZan(obj){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message + "，1秒后自动刷新");
 					reloadPage(1000);
 				}else
@@ -238,7 +238,7 @@ function getComments(bid){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				if(data.message.length == 0){
 					if(currentIndex == 0){
 						$commentContainer.append("还没有发表过任何评论，请给TA评论吧！");
@@ -390,7 +390,7 @@ function addTransmit(obj){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message+ "，1秒后自动刷新");
 					reloadPage(1000);
 				}else{
@@ -435,7 +435,7 @@ function doAddComment(params){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg("评论成功,1秒钟后自动刷新");
 				setTimeout("window.location.reload();", 1000);
 			}else{

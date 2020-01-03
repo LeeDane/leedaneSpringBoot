@@ -22,7 +22,7 @@ layui.use(['layedit'], function(){
             dataType: 'json',
             success : function(data) {
                 layer.close(loadi);
-                if(data.isSuccess){
+                if(data.success){
                     //发送成功，页面开始倒计时
                     layer.msg(data.message +" 2秒后自动刷新");
                     reloadPage(2000);

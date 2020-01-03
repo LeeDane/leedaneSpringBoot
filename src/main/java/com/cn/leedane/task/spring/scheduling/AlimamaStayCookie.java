@@ -29,7 +29,7 @@ public class AlimamaStayCookie extends AbstractScheduling{
 		AlimamaShareLink.cookie2 = JsonUtil.getStringValue(params, "cookie2" );
 		
 		//如果是3分钟内已经发送过的请求，则不做处理
-		if(AlimamaShareLink.isSuccess && start - LAST_REQUEST_TIME < 3 * 60 * 1000){
+		if(AlimamaShareLink.success && start - LAST_REQUEST_TIME < 3 * 60 * 1000){
 			logger.info("不继续执行保持阿里妈妈登录状态任务");
 			return;
 		}

@@ -109,7 +109,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取聊天背景分页列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 			
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}
@@ -172,7 +172,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "发布聊天背景到平台", StringUtil.getSuccessOrNoStr(result)).toString(), "send()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		if(result){
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", "发布聊天背景成功");
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
@@ -195,7 +195,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 		
 		if(chatBg.getCreateUserId() == user.getId()){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.自己上传的聊天背景资源.value));
-			message.put("isSuccess", true);
+			message.put("success", true);
 			return message.getMap();
 		}
 		
@@ -218,14 +218,14 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 				result = chatBgUserMapper.save(t) > 0;
 				if(chatBg.getType() == 0){
 					message.put("message", "这个是免费的资源，不需要扣下载积分");
-					message.put("isSuccess", true);
+					message.put("success", true);
 					return message.getMap();
 				}
 				result = saveScore(chatBg, user);
 			}else{
 				redisUtil.addString(chatBgUserKey, "false");
 				message.put("message", "已经下载过该资源");
-				message.put("isSuccess", true);
+				message.put("success", true);
 				return message.getMap();
 			}
 		}else{
@@ -244,13 +244,13 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 					result = chatBgUserMapper.save(t) > 0;
 					if(chatBg.getType() == 0){
 						message.put("message", "这个是免费的资源，不需要扣下载积分");
-						message.put("isSuccess", true);
+						message.put("success", true);
 						return message.getMap();
 					}
 					result = saveScore(chatBg, user);
 				}else{
 					message.put("message", "已经下载过该资源");
-					message.put("isSuccess", true);
+					message.put("success", true);
 					return message.getMap();
 				}
 			}else{
@@ -263,7 +263,7 @@ public class ChatBgServiceImpl implements ChatBgService<ChatBgBean> {
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(), "下载聊天背景的资源", StringUtil.getSuccessOrNoStr(result)).toString(), "verifyChatBg()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		if(result){
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", "扣除下载积分成功!");
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));

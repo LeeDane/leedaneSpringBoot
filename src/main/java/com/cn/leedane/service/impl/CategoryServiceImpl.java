@@ -39,18 +39,11 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 	private OperateLogService<OperateLogBean> operateLogService;
 	
 	@Override
-	public Map<String, Object> add(JSONObject jo, UserBean user,
-								   HttpRequestInfoBean request){
+	public ResponseModel add(JSONObject jo, UserBean user, HttpRequestInfoBean request){
 		logger.info("CategoryServiceImpl-->add():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String text = JsonUtil.getStringValue(jo, "text");
 		long pid = JsonUtil.getLongValue(jo, "pid", 0);
-		ResponseMap message = new ResponseMap();
-		
-		if(StringUtil.isNull(text)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message.getMap();
-		}
+		ParameterUnspecificationUtil.checkNullString(text, "text must not null.");
 		CategoryBean bean = new CategoryBean();
 		bean.setCreateTime(new Date());
 		bean.setCreateUserId(user.getId());
@@ -60,25 +53,19 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 		if(pid < 1)
 			bean.setSystem(true);
 		boolean result = categoryMapper.save(bean) > 0;
-		if(result){
-			message.put("isSuccess", true);
-			message.put("message", bean);
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
+		ResponseModel responseModel = new ResponseModel();
+		if(result)
+			responseModel.ok().message(bean);
+		else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value)).code(EnumUtil.ResponseCode.数据库保存失败.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"添加节点， 节点名称是", text,", 父节点id是：", pid).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+		return responseModel;
 	}
 	
 	@Override
-	public Map<String, Object> children(boolean isAdmin, long pid, UserBean user,
-										HttpRequestInfoBean request){
+	public ResponseModel children(boolean isAdmin, long pid, UserBean user, HttpRequestInfoBean request){
 		logger.info("CategoryServiceImpl-->children():pid=" +pid +", user=" +user.getAccount());
-		ResponseMap message = new ResponseMap();
-		
 		pid = pid < 1 ? 0: pid;
 		List<Map<String, Object>> rs = categoryMapper.children(pid, user.getId());
 		if(CollectionUtil.isNotEmpty(rs)){
@@ -98,17 +85,12 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 				}
 			}
 		}
-		message.put("isSuccess", true);
-		message.put("message", rs);
-		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		return message.getMap();
+		return new ResponseModel().ok().message(rs);
 	}
 	
 	@Override
-	public Map<String, Object> mallCategory(int pid){
+	public ResponseModel mallCategory(int pid){
 		logger.info("CategoryServiceImpl-->mallCategory():pid=" +pid);
-		ResponseMap message = new ResponseMap();
-		
 		pid = pid < 1 ? 0: pid;
 		List<Map<String, Object>> rs = categoryMapper.getParentCategorys(pid);
 		List<String[]> relations = new ArrayList<String[]>();
@@ -128,25 +110,14 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 				}
 			}
 		}
-		message.put("isSuccess", true);
-		message.put("message", relations);
-		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		return message.getMap();
+		return new ResponseModel().ok().message(relations);
 	}
 	
 	@Override
-	public Map<String, Object> update(boolean isAdmin, long cid, JSONObject json, UserBean user,
-									  HttpRequestInfoBean request) {
+	public ResponseModel update(boolean isAdmin, long cid, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("CategoryServiceImpl-->delete():cid=" +cid + ", json="+ json +", user=" +user.getAccount());
-		ResponseMap message = new ResponseMap();
-		
 		String text = JsonUtil.getStringValue(json, "text");
-		if(StringUtil.isNull(text)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message.getMap();
-		}
-		
+		ParameterUnspecificationUtil.checkNullString(text, "text must not null.");
 		if(!isAdmin){
 			//判断是否是属于自己的分类
 			if(!SqlUtil.getBooleanByList(categoryMapper.canDelete(cid, user.getId())))
@@ -154,23 +125,18 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 		}
 		
 		boolean result = categoryMapper.updateSql(CategoryBean.class, " set text = ? where id = ?", text, cid) > 0;
-		if(result){
-			message.put("isSuccess", true);
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.修改失败.value);
-		}
-		return message.getMap();
+		ResponseModel responseModel = new ResponseModel();
+		if(result)
+			responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
+		else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改失败.value)).code(EnumUtil.ResponseCode.修改失败.value);
+
+		return responseModel;
 	}
 	
 	@Override
-	public Map<String, Object> delete(boolean isAdmin, long cid, UserBean user,
-									  HttpRequestInfoBean request) {
+	public ResponseModel delete(boolean isAdmin, long cid, UserBean user, HttpRequestInfoBean request) {
 		logger.info("CategoryServiceImpl-->delete():cid=" +cid +", user=" +user.getAccount());
-		ResponseMap message = new ResponseMap();
-		
 		if(!isAdmin){
 			//判断是否是属于自己的分类
 			if(!SqlUtil.getBooleanByList(categoryMapper.canDelete(cid, user.getId())))
@@ -178,15 +144,11 @@ public class CategoryServiceImpl implements CategoryService<CategoryBean>{
 		}
 		
 		boolean result = categoryMapper.deleteById(CategoryBean.class, cid) > 0;
-		if(result){
-			message.put("isSuccess", true);
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
-		}
-		return message.getMap();
+		ResponseModel responseModel = new ResponseModel();
+		if(result)
+			responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
+		else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value)).code(EnumUtil.ResponseCode.删除失败.value);
+		return responseModel;
 	}
-	
 }

@@ -3,6 +3,8 @@ package com.cn.leedane.service.mall;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.LayuiTableResponseModel;
+import com.cn.leedane.utils.ResponseModel;
 import com.jd.open.api.sdk.JdException;
 import com.taobao.api.ApiException;
 import net.sf.json.JSONObject;
@@ -26,7 +28,7 @@ public interface S_OrderService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception;
+	public ResponseModel add(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception;
 	
 	/**
 	 * 获取用户的未处理订单数量
@@ -35,7 +37,7 @@ public interface S_OrderService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> getNoDealOrderNumber(UserBean user, HttpRequestInfoBean request);
+	public ResponseModel getNoDealOrderNumber(UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 分页获取订列表
@@ -46,9 +48,9 @@ public interface S_OrderService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(int current,
-			int pageSize, UserBean user,
-			HttpRequestInfoBean request);
+	public LayuiTableResponseModel paging(int current,
+										  int pageSize, UserBean user,
+										  HttpRequestInfoBean request);
 
 	/**
 	 * 删除订单
@@ -57,7 +59,7 @@ public interface S_OrderService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(long orderId,
+	public ResponseModel delete(long orderId,
 			UserBean user, HttpRequestInfoBean request);
 
 	/**
@@ -67,7 +69,7 @@ public interface S_OrderService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> update(
+	public ResponseModel update(
 			long orderId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request) throws Exception;

@@ -133,7 +133,7 @@ public class AppFileUploadController extends BaseController{
             
             
            if(serialNumber == 0 ){ 	   
-        	   message.put("isSuccess", filePathService.saveSourceAndEachFile(fileFullPath.toString(), user, tableUuid, tableName, order, null, null));
+        	   message.put("success", filePathService.saveSourceAndEachFile(fileFullPath.toString(), user, tableUuid, tableName, order, null, null));
         	   return message.getMap();
            }else{
         	   UploadBean upload = new UploadBean();
@@ -146,7 +146,7 @@ public class AppFileUploadController extends BaseController{
         	   upload.setTableName(tableName);
         	   upload.setTableUuid(tableUuid);
         	   if(uploadService.addUpload(upload, user, getHttpRequestInfo(request))){
-        		   	message.put("isSuccess", true);
+        		   	message.put("success", true);
         	   }else{
         		   	message.put("message", EnumUtil.getResponseValue(ResponseCode.文件上传失败.value));
                		message.put("responseCode", ResponseCode.文件上传失败.value);

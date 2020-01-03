@@ -34,7 +34,7 @@ public class ManageMallServiceImpl implements ManageMallService<IDBean> {
 	private PromotionSeatApplyMapper promotionSeatApplyMapper;
 
 	@Override
-	public Map<String, Object> promotionApply(JSONObject jo, UserBean user, HttpRequestInfoBean request){
+	public ResponseModel promotionApply(JSONObject jo, UserBean user, HttpRequestInfoBean request){
 		logger.info("ManageMallServiceImpl-->promotionApply():jo="+jo);
 		ResponseMap message = new ResponseMap();
 
@@ -51,14 +51,9 @@ public class ManageMallServiceImpl implements ManageMallService<IDBean> {
 		boolean success = promotionSeatApplyMapper.save(promotionSeatApplyBean) > 0;
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"申请", platform, "推广位， 结果是：", StringUtil.getSuccessOrNoStr(success)).toString(), "promotionApply()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		if(success){
-			message.put("isSuccess", true);
-			message.put("message", "申请成功，请稍等管理员审核！");
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			return message.getMap();
-		}
-		message.put("message", "申请失败，请稍后重试。");
-		message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-		return message.getMap();
+		if(success)
+			return new ResponseModel().ok().message("申请成功，请稍等管理员审核！");
+
+		return new ResponseModel().error().message("申请失败，请稍后重试。");
 	}
 }

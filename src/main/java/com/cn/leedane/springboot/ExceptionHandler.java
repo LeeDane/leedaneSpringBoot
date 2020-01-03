@@ -12,9 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.cn.leedane.exception.*;
+import com.cn.leedane.mall.github.GithubException;
 import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.notice.NoticeException;
 import com.jd.open.api.sdk.JdException;
+import com.suning.api.exception.SuningApiException;
 import com.taobao.api.ApiException;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -62,7 +64,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 		boolean isPageRequest = CommonUtil.isPageRequest(request);
 		
 		Map<String, Object> message = new HashMap<String, Object>();
-        message.put("isSuccess", false);
+        message.put("success", false);
 		if(exception instanceof org.apache.shiro.authz.UnauthorizedException){//没有授权异常
 			logger.error(EnumUtil.getResponseValue(ResponseCode.没有操作权限.value), exception);
 			if(isPageRequest){
@@ -250,6 +252,14 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			logger.error("拼多多联盟api异常", exception);
 			message.put("message", "拼多多开放平台：" +exception.getMessage());
 			message.put("responseCode", ResponseCode.拼多多api异常.value);
+		}else if(exception instanceof SuningApiException){
+			logger.error("苏宁联盟api异常", exception);
+			message.put("message", "苏宁平台：" +exception.getMessage());
+			message.put("responseCode", ResponseCode.苏宁api异常.value);
+		}else if(exception instanceof GithubException){
+			logger.error("github异常", exception);
+			message.put("message", "github开放平台：" +exception.getMessage());
+			message.put("responseCode", ResponseCode.GitHub异常.value);
 		}else if(exception instanceof NoticeException){
 			logger.error("信息发送异常", exception);
 			message.put("message", "信息发送异常：" +exception.getMessage());

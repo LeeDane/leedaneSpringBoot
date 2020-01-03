@@ -61,19 +61,12 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 	private S_StatisticsMapper statisticsMapper;
 	
 	@Override
-	public Map<String, Object> save(JSONObject jo, UserBean user,
-			HttpRequestInfoBean request) {
-		
+	public ResponseModel save(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_ProductServiceImpl-->save():jo="+jo);
 		SqlUtil sqlUtil = new SqlUtil();
 		S_ProductBean productBean = (S_ProductBean) sqlUtil.getBean(jo, S_ProductBean.class);
-
-		ResponseMap message = new ResponseMap();
-		if(StringUtil.isNull(productBean.getTitle()) || StringUtil.isNull(productBean.getDetailSource())){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.参数不存在或为空.value);
-			return message.getMap();
-		}
+		if(StringUtil.isNull(productBean.getTitle()) || StringUtil.isNull(productBean.getDetailSource()))
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value)).code(EnumUtil.ResponseCode.参数不存在或为空.value);
 		
 		String returnMsg = "商品已经发布成功！";
 		productBean.setStatus(ConstantsUtil.STATUS_NORMAL);
@@ -100,14 +93,12 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 			}
 		}
 		
-		if(StringUtil.isNull(productBean.getMainImgLinks())){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.无法从详情中解析到主图.value));
-			message.put("responseCode", EnumUtil.ResponseCode.无法从详情中解析到主图.value);
-			return message.getMap();
-		}
+		if(StringUtil.isNull(productBean.getMainImgLinks()))
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.无法从详情中解析到主图.value)).code(EnumUtil.ResponseCode.无法从详情中解析到主图.value);
 		//测试模拟的店铺ID
 		productBean.setShopId(1);
 		boolean result = productMapper.save(productBean) > 0;
+		ResponseModel responseModel = new ResponseModel();
 		if(result){
 			//先保存大事件
 			Map<String, Object> bigEventMap = new HashMap<String, Object>();
@@ -117,30 +108,24 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 			
 			//加入索引
 			new ThreadUtil().singleTask(new SolrAddThread<S_ProductBean>(ProductSolrHandler.getInstance(), productBean));
-			
-			message.put("isSuccess", true);
-			message.put("message", returnMsg);
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
+			responseModel.ok().message(returnMsg);
+		}else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value)).code(EnumUtil.ResponseCode.数据库保存失败.value);
+
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"发布新的商品:", productBean.getTitle() , "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "save()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 				
-		return message.getMap();
+		return responseModel;
 	}
 
 	@Override
-	public Map<String, Object> statistics(long productId, JSONObject json, UserBean user,
+	public ResponseModel statistics(long productId, JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		
 		logger.info("S_ProductServiceImpl-->statistics():productId="+productId);
 		S_ProductBean productBean = productHandler.getNormalProductBean(productId);
 		if(productBean == null)
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商品不存在或已被删除.value));
-		
-		ResponseMap message = new ResponseMap();
 		String start = JsonUtil.getStringValue(json, "start");
 		String end = JsonUtil.getStringValue(json, "end");
 		//验证时间
@@ -170,14 +155,11 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 			for(S_StatisticsBean s: statisticsBeans)
 				mapStatisticsBean.put(DateUtil.DateToString(s.getDate(), "yyyy-MM-dd"), s);
 		}
-		
-		message.put("message", getLineOption(listDate, start, end, productId, mapStatisticsBean));
-		message.put("isSuccess", true);
-		return message.getMap();
+
+		return new ResponseModel().ok().message(getLineOption(listDate, start, end, productId, mapStatisticsBean));
 	}
 	
 	private LineOption getLineOption(List<Date> listDate, String start, String end, long productId, Map<String, S_StatisticsBean> mapStatisticsBean){
-		
 		List<String> legendData = new ArrayList<String>();
 		legendData.add(EnumUtil.getMallProductStatisticsType(MallProductStatisticsType.心愿单.value));
 		legendData.add(EnumUtil.getMallProductStatisticsType(MallProductStatisticsType.评论数.value));
@@ -262,31 +244,29 @@ public class S_ProductServiceImpl extends MallRoleCheckService implements S_Prod
 	}
 	
 	@Override
-	public Map<String, Object> recommend(long productId, JSONObject json, UserBean user,
-			HttpRequestInfoBean request) {
-		
+	public ResponseModel recommend(long productId, JSONObject json, UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_ProductServiceImpl-->recommend():productId="+productId);
 		S_ProductBean productBean = productHandler.getNormalProductBean(productId);
 		if(productBean == null)
 			throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该商品不存在或已被删除.value));
-		
-		ResponseMap message = new ResponseMap();
+
+		ResponseModel responseModel = new ResponseModel();
 		if(ProductPlatformType.淘宝.value.equals(productBean.getPlatform())){
 			AlimamaRecommend recommend = new AlimamaRecommend();
 			JSONObject recommendJson;
 			try {
 				//recommendJson = recommend.doParse(Long.parseLong(productBean.getCode() +""));
 				//message.put("message", getTaoBaoRecommend(recommendJson));
-				message.put("isSuccess", true);
+				responseModel.ok().message("推荐成功");
 			} catch (NumberFormatException e) {
-				message.put("message", "获取淘宝/天猫推荐商品失败");
+				responseModel.error().message("获取淘宝/天猫推荐商品失败");
 				e.printStackTrace();
 			} catch (Exception e) {
-				message.put("message", "获取淘宝/天猫推荐商品失败");
+				responseModel.error().message("获取淘宝/天猫推荐商品失败");
 				e.printStackTrace();
 			}
 		}
-		return message.getMap();
+		return responseModel;
 	}
 
 	/**

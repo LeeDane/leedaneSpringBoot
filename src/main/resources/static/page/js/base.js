@@ -712,7 +712,7 @@ function logout(){
         },
         success : function(data) {
             layer.msg(data.message);
-            if(data.isSuccess)
+            if(data.success)
                 //刷新当前页面
                 window.location.reload();
             else

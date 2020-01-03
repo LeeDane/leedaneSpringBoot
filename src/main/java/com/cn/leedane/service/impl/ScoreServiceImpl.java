@@ -39,7 +39,7 @@ public class ScoreServiceImpl implements ScoreService<ScoreBean>{
 	}
 
 	@Override
-	public Map<String, Object> getLimit(JSONObject jo, UserBean user,
+	public ResponseModel getLimit(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ScoreServiceImpl-->getLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
@@ -48,7 +48,6 @@ public class ScoreServiceImpl implements ScoreService<ScoreBean>{
 		long firstId = JsonUtil.getLongValue(jo, "first_id"); //结束的页数
 		StringBuffer sql = new StringBuffer();
 		
-		ResponseMap message = new ResponseMap();
 		//只有登录用户才能
 		/*if(user == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value));
@@ -78,9 +77,7 @@ public class ScoreServiceImpl implements ScoreService<ScoreBean>{
 		}
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取积分记录").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("message", rs);
-		message.put("isSuccess", true);
-		return message.getMap();		
+		return new ResponseModel().ok().message(rs);
 	}
 
 	@Override
@@ -90,23 +87,18 @@ public class ScoreServiceImpl implements ScoreService<ScoreBean>{
 	}
 
 	@Override
-	public Map<String, Object> getTotalScore(JSONObject jo, UserBean user,
+	public ResponseModel getTotalScore(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ScoreServiceImpl-->getTotalScore():jsonObject=" +jo.toString() +", user=" +user.getAccount()); 		
-		ResponseMap message = new ResponseMap();
 		int score = getTotalScore(user.getId());
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取总积分").toString(), "getTotalScore()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("message", score);
-		message.put("isSuccess", true);
-		return message.getMap();		
+		return new ResponseModel().ok().message(score);
 	}
 
 	@Override
-	public Map<String, Object> reduceScore(int reduceScore, String desc, String tableName, long tableId, UserBean user) {
-		logger.info("ScoreServiceImpl-->reduceScore():user=" +user.getAccount()); 		
-		
-		ResponseMap message = new ResponseMap();
+	public ResponseModel reduceScore(int reduceScore, String desc, String tableName, long tableId, UserBean user) {
+		logger.info("ScoreServiceImpl-->reduceScore():user=" +user.getAccount());
 		int sc = getTotalScore(user.getId());
 		ScoreBean scoreBean = new ScoreBean();
 		scoreBean.setTotalScore(sc - reduceScore);
@@ -120,14 +112,12 @@ public class ScoreServiceImpl implements ScoreService<ScoreBean>{
 		boolean result = scoreMapper.save(scoreBean) > 0;
 		//保存操作日志
 		operateLogService.saveOperateLog(user, null, null, StringUtil.getStringBufferStr(user.getAccount(),"扣除积分").toString(), "reduceScore()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		if(result){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
-		message.put("isSuccess", result);
-		return message.getMap();
+		ResponseModel responseModel = new ResponseModel();
+		if(result)
+			responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
+		else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value)).code(EnumUtil.ResponseCode.数据库保存失败.value);
+
+		return responseModel;
 	}
 }

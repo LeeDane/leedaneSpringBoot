@@ -17,8 +17,6 @@ import com.cn.leedane.service.mall.S_OrderService;
 import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.MallOrderType;
-import com.jd.open.api.sdk.JdException;
-import com.taobao.api.ApiException;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +48,8 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 	private S_OrderMapper orderMapper;
 	
 	@Override
-	public Map<String, Object> add(JSONObject jo, UserBean user,
+	public ResponseModel add(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) throws Exception {
-		
 		logger.info("S_OrderServiceImpl-->add():jo="+jo);
 		SqlUtil sqlUtil = new SqlUtil();
 		S_OrderBean orderBean = (S_OrderBean) sqlUtil.getBean(jo, S_OrderBean.class);
@@ -62,7 +59,6 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 		ParameterUnspecificationUtil.checkNullString(orderBean.getProductCode(), "product code must not null.");
 		ParameterUnspecificationUtil.checkNullString(orderBean.getPlatform(), "platform must not null.");
 
-		ResponseMap message = new ResponseMap();
 		if(!MallUtil.inPlatform(orderBean.getPlatform()))
 			throw new ParameterUnspecificationException("not support platform .");
 
@@ -91,7 +87,6 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 			//对新修改的记录跟原来的记录做评分，分数低直接返回提示用户重新修改更加完整的信息再提交或者去订单申诉平台处理
 			//如果分数高，将直接标记为审核中的状态保存，同时系统将原来的记录删掉，保存完整的记录并统一通过站内信息方式通知对方
 		}
-
 		String returnMsg = "已成功添加到订单！";
 		Date createTime = new Date();
 		orderBean.setStatus(MallOrderType.已提交.value);
@@ -105,37 +100,27 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 		}catch(DuplicateKeyException e){ //唯一键约束异常不做处理
 			returnMsg = "该记录已经存在，如果不是您的操作，可以到订单反馈中心去申诉";
 		}
-		
-		message.put("isSuccess", result);
-		message.put("message", returnMsg);
-		if(result){
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
+		ResponseModel responseModel = new ResponseModel();
+		if(result)
+			responseModel.ok().message(returnMsg);
+		else
+			responseModel.error().message(returnMsg).code(EnumUtil.ResponseCode.数据库保存失败.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"添加订单，编号为", orderBean.getOrderCode(), ",商品唯一编号为：", orderBean.getProductCode(), "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-				
-		return message.getMap();
+		return responseModel;
 	}
 	
 	@Override
-	public Map<String, Object> update(long orderId, JSONObject jo, UserBean user,
-			HttpRequestInfoBean request) throws Exception {
-		
+	public ResponseModel update(long orderId, JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception {
 		logger.info("S_OrderServiceImpl-->update(): orderId = "+ orderId +",jo="+jo);
 		SqlUtil sqlUtil = new SqlUtil();
 		S_OrderBean updateOrderBean = (S_OrderBean) sqlUtil.getUpdateBean(jo, S_OrderBean.class);
-		
 		S_OrderBean orderBean = orderMapper.findById(S_OrderBean.class, orderId);
 		if(orderBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该订单已不存在.value));
 
 		if(orderBean.getStatus() != MallOrderType.已提交.value || orderBean.getStatus() != MallOrderType.有争议.value)
 			throw new UnsupportedOperationException("非《已提交》或《有争议》状态，无法编辑");
-
-		ResponseMap message = new ResponseMap();
-
 		//j校验必须的参数
 		ParameterUnspecificationUtil.checkNullString(updateOrderBean.getOrderCode(), "order code must not null.");
 		ParameterUnspecificationUtil.checkNullString(updateOrderBean.getProductCode(), "product code must not null.");
@@ -180,40 +165,25 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 		}catch(DuplicateKeyException e){ //唯一键约束异常不做处理
 			result = true;
 		}
-		
-		message.put("isSuccess", result);
-		if(result){
-			message.put("message", returnMsg);
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库修改失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
-		}
+		ResponseModel responseModel = new ResponseModel();
+		if(result)
+			responseModel.ok().message(returnMsg);
+		else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库修改失败.value)).code(EnumUtil.ResponseCode.数据库修改失败.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改订单，订单ID为", orderBean.getId(), "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-				
-		return message.getMap();
+		return responseModel;
 	}
 	
 	@Override
-	public Map<String, Object> getNoDealOrderNumber(UserBean user,
-			HttpRequestInfoBean request) {
-		
+	public ResponseModel getNoDealOrderNumber(UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_OrderServiceImpl-->getNoDealOrderNumber():user="+user.getId());
-		ResponseMap message = new ResponseMap();
-		
-		message.put("isSuccess", true);
-		message.put("message", orderHandler.getNoDealOrderNumber(user.getId()));
-		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		
-		return message.getMap();
+		return  new ResponseModel().ok().message(orderHandler.getNoDealOrderNumber(user.getId()));
 	}
-	
-	
+
 	@Override
-	public Map<String, Object> paging(int current, int pageSize, UserBean user, HttpRequestInfoBean request){
+	public LayuiTableResponseModel paging(int current, int pageSize, UserBean user, HttpRequestInfoBean request){
 		logger.info("S_OrderServiceImpl-->paging():current=" +current +", pageSize="+ pageSize);
-		LayuiTableResponseMap message = new LayuiTableResponseMap();
 		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
 		int start = SqlUtil.getPageStart(current, pageSize, 0);
 		rs = orderMapper.paging(user.getId(), ConstantsUtil.STATUS_NORMAL, start, pageSize);
@@ -225,44 +195,38 @@ public class S_OrderServiceImpl extends MallRoleCheckService implements S_OrderS
 				m.put("referrer", "<a class='layui-btn layui-btn-primary layui-btn-xs' lay-event='edit' style='height: 25px !important; line-height: 25px !important;'>详情</a>");
 			}
 		}
-		message.setCode(0);
-		message.setCount(SqlUtil.getTotalByList(orderMapper.getTotal(DataTableType.商品订单.value, "")));
+//		message.setCode(0);
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取订单列表，current="+ current, ", pageSize=", pageSize).toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("isSuccess", true);
-		message.put("data", rs);
-		return message.getMap();
+		LayuiTableResponseModel responseModel = new LayuiTableResponseModel();
+		responseModel.setData(rs).setCount(SqlUtil.getTotalByList(orderMapper.getTotal(DataTableType.商品订单.value, ""))).code(0);
+		return responseModel;
+//		return message.getMap();
 	}
 	
 	@Override
-	public Map<String, Object> delete(long orderId, UserBean user, HttpRequestInfoBean request){
+	public ResponseModel delete(long orderId, UserBean user, HttpRequestInfoBean request){
 		logger.info("S_OrderServiceImpl-->delete():orderId=" +orderId);
-		ResponseMap message = new ResponseMap();
 		S_OrderBean orderBean = orderMapper.findById(S_OrderBean.class, orderId);
 		if(orderBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该订单已不存在.value));
 		
-		
 		//只有自己的订单或者管理员才能做删除操作
 		checkMallAdmin(user, user.getId());
-
 		//已完成的订单不做处理
 		if(orderBean.getStatus() == MallOrderType.已完成.value)
 			throw new CompleteOrderDeleteException();
 		
 		boolean result = orderMapper.delete(orderBean) > 0;
-		message.put("isSuccess", result);
+		ResponseModel responseModel = new ResponseModel();
 		if(result){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+			responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
 			orderHandler.deleteNoDealOrderCache(user.getId()); //删除缓存
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
-		}
+		}else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value)).code(EnumUtil.ResponseCode.删除失败.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除订单ID为："+ orderId, "的订单").toString(), "delete()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+		return responseModel;
 	}
 
 }

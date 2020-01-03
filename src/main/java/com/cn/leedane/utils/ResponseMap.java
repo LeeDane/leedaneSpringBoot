@@ -24,13 +24,13 @@ public class ResponseMap extends HashMap<String, Object>{
 	
 	public ResponseMap(){
 		start = System.currentTimeMillis();
-		put("isSuccess", false);
+		put("success", false);
 	}
 	
 	public HashMap<String, Object> getMap(){
 		if(containsKey("json"))
 			remove("json");
-		
+
 		if(containsKey("user"))
 			remove("user");
 
@@ -42,6 +42,14 @@ public class ResponseMap extends HashMap<String, Object>{
 		}
 
 		return this;
+	}
+
+	public ResponseModel getModel(){
+		if(start > 0){
+			long end = System.currentTimeMillis();
+			this.put("consumeTime", (end - start) +"ms");
+		}
+		return new ResponseModel().code(StringUtil.changeObjectToInt(get("code"))).message(get("message")).setConsumeTime(StringUtil.changeNotNull(get("consumeTime")));
 	}
 
 }

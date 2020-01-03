@@ -65,7 +65,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 	private ElasticSearchUtil elasticSearchUtil;
 
 	@Override
-	public Map<String, Object> add(JSONObject jo, UserBean user,
+	public ResponseModel add(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request){
 		// {\"table_name\":\""+DataTableType.心情.value+"\", \"table_id\":123
 		//, \"content\":\"我同意\" ,\"level\": 1, \"pid\":23, \"from\":\"Android客户端\"}
@@ -78,17 +78,14 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		
 		//进行敏感词过滤和emoji过滤
 		if(FilterUtil.filter(content, message, request))
-			return message.getMap();
+			return message.getModel();
 		
-		if(StringUtil.isNull(tableName) || tableId < 1 || StringUtil.isNull(content)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message.getMap();
-		}
+		if(StringUtil.isNull(tableName) || tableId < 1 || StringUtil.isNull(content))
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value)).code(EnumUtil.ResponseCode.某些参数为空.value);
 		
 		//评论权限校验
 		if(check && !checkComment(tableName, tableId, message)){
-			return message.getMap();
+			return message.getModel();
 		}
 		
 		int level = JsonUtil.getIntValue(jo, "level", 5);
@@ -155,15 +152,10 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			 */
 			commentHandler.addComment(tableName, tableId);
 		}
-		if(result){
-			message.put("isSuccess", result);
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.评论成功.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.评论失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.评论失败.value);
-		}
-		return message.getMap();
+		if(result)
+			return new ResponseModel().ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.评论成功.value));
+		else
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.评论失败.value)).code(EnumUtil.ResponseCode.评论失败.value);
 	}
 	
 	/**
@@ -355,7 +347,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户ID为：",toUserId,",表名：",tableName,"，表id为：",tableId,"的评论列表").toString(), "rolling()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}
@@ -451,7 +443,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		
 		//保存操作日志
 		//operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户ID为：",toUserId,",表名：",tableName,"，表id为：",tableId,"的评论列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}
@@ -534,7 +526,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"查看表：",tableName,"，表id为：",tableId,"，评论ID为：", cid, "的评论详情列表").toString(), "getOneCommentItemsByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}
@@ -565,7 +557,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		count = SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, sql.toString()));
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"查看表：",tableName,"，表id为：",tableId,"，查询得到的总数是：", count, "条").toString(), "getCountByObject()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", count);
 		return message.getMap();
 	}
@@ -584,7 +576,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"查询用户ID为：", uid, "得到其评论总数是：", count, "条").toString(), "getCountByUser()", ConstantsUtil.STATUS_NORMAL, 0);
 				
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", count);
 		return message.getMap();
 	}
@@ -613,7 +605,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		if(result){
 			commentHandler.deleteComment(cid);
 			commentHandler.deleteComment(commentBean.getTableName(), commentBean.getTableId());
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除评论成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -662,7 +654,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 				new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(blogBean));
 			}
 
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.更新评论状态成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -672,7 +664,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"更新表名为：", tableName ,",表ID为：", tableId, "评论状态为", canComment, "，结果更新", StringUtil.getSuccessOrNoStr(result)).toString(), "updateCommentStatus()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
-		message.put("isSuccess", result);
+		message.put("success", result);
 		return message.getMap();
 	}
 
@@ -744,7 +736,7 @@ public class CommentServiceImpl extends AdminRoleCheckService implements Comment
 			}
 		}
 		message.put("total", SqlUtil.getTotalByList(commentMapper.getTotal(DataTableType.评论.value, "where table_name='"+ DataTableType.留言.value +"' and table_id='"+ userId +"' and status="+ ConstantsUtil.STATUS_NORMAL)));
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"分页获取留言板列表", ",表ID为：", userId, StringUtil.getSuccessOrNoStr(true)).toString(), "getMessageBoards()", 1, 0);

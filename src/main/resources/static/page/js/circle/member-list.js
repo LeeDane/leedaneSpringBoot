@@ -101,7 +101,7 @@ function getNoCheckTotal(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess){
+			if(data.success){
 				if(data.message > 0)
 					$("button.post-check").text("审核帖子("+ data.message +")");
 			}else{
@@ -130,7 +130,7 @@ function getCircleMembers(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				circles = data.message;
 				if(circles.length == 0){
 					if(currentIndex == 0){
@@ -216,7 +216,7 @@ function deleteMember(obj){
 				},
 				success : function(data) {
 						layer.close(loadi);
-						if(data.isSuccess){
+						if(data.success){
 							layer.msg(data.message+ "，1秒后自动刷新");
 							reloadPage(1000);
 						}else{
@@ -274,7 +274,7 @@ function doRecommend(memberId, recommend){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg("推荐成功，1秒后自动刷新");
 				reloadPage(1000);
 			}else{
@@ -352,7 +352,7 @@ function admin(obj){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message + ",1秒后自动刷新");
 				reloadPage(1000);
 			}else{
@@ -435,7 +435,7 @@ function doEdit(obj){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message +",1秒钟后自动刷新");
 					setTimeout("window.location.reload();", 1000);
 				}else{
@@ -469,7 +469,7 @@ function doDelete(obj, index){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message + ",1秒后自动刷新");
 					reloadPage(1000);
 				}else{
@@ -508,7 +508,7 @@ function showCreateModal(number){
 			success : function(data) {
 				//关闭弹出loading
 				layer.close(index);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message);
 					//添加圈子成功，关闭窗口
 					layer.close(promptIndex);
@@ -547,7 +547,7 @@ function saveSetting(field){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message + ",1秒后自动刷新");
 				reloadPage(1000);
 			}else{

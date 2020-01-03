@@ -47,7 +47,7 @@ ServletResponseAware, SessionAware*/ {
 	}
 	
 	//返回结果中包含的是否成功
-	protected boolean resIsSuccess = false;
+	protected boolean success = false;
 	//返回结果中包含的提示信息
 	protected String resmessage;
 	//返回的编码

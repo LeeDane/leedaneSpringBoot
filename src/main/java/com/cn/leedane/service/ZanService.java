@@ -3,6 +3,7 @@ package com.cn.leedane.service;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ public interface ZanService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> addZan(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel addZan(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	
 
@@ -38,7 +39,7 @@ public interface ZanService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deleteZan(JSONObject jo, UserBean user, HttpRequestInfoBean request) ;
+	public ResponseModel deleteZan(JSONObject jo, UserBean user, HttpRequestInfoBean request) ;
 
 
 
@@ -54,7 +55,7 @@ public interface ZanService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public List<Map<String, Object>> getLimit(JSONObject jo, UserBean user,
+	public ResponseModel getLimit(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request);
 	
 	/**
@@ -66,7 +67,7 @@ public interface ZanService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getAllZanUser(JSONObject jo, UserBean user,
+	public ResponseModel getAllZanUser(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request);
 	
 	/**

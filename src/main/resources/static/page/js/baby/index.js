@@ -247,7 +247,7 @@ function getLifes(start, end, type, keyword){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data != null && data.isSuccess){
+			if(data != null && data.success){
 				$("#eat-number").text(data.message.eatNumber);
 				$("#sleep-number").text(data.message.sleepNumber);
 				$("#wash-number").text(data.message.washNumber);
@@ -391,7 +391,7 @@ function changeBorn(){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data != null && data.isSuccess){
+				if(data != null && data.success){
 					layer.msg(data.message);
 					window.location.reload();
 				}else{
@@ -426,7 +426,7 @@ function deleteLife(lifeId){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data != null && data.isSuccess){
+				if(data != null && data.success){
 					layer.msg(data.message);
 					window.location.reload();
 				}else{

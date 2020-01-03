@@ -128,7 +128,7 @@ public class SungoalController extends BaseController{
 		
 		message.remove("responseCode");
 		message.remove("json");
-		message.remove("isSuccess");
+		message.remove("success");
 		
 		HashMap<String, Object> map = message.getMap();
 		System.out.println("-------"+ map);

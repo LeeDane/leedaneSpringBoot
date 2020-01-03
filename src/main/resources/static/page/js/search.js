@@ -82,7 +82,7 @@ function doSearch(){
 		},
 		success : function(data) {
 		    layer.close(loadi);
-			if(data.isSuccess && isNotEmpty(data.message)){
+			if(data.success && isNotEmpty(data.message)){
 				$("#search-need-time").text(data.consumeTime);
 
 				var lists = data.message[0];

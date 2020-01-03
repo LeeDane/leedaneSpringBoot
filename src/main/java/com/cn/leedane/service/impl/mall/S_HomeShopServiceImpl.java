@@ -43,7 +43,7 @@ public class S_HomeShopServiceImpl extends MallRoleCheckService implements S_Hom
 	private OperateLogService<OperateLogBean> operateLogService;
 
 	@Override
-	public Map<String, Object> add(JSONObject json, UserBean user,
+	public ResponseModel add(JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("S_HomeShopServiceImpl-->add():json="+json);
 		long shopId = JsonUtil.getLongValue(json, "shop_id");
@@ -55,8 +55,6 @@ public class S_HomeShopServiceImpl extends MallRoleCheckService implements S_Hom
 		checkMallAdmin(user);
 		
 		S_HomeShopBean homeShopBean = new S_HomeShopBean();
-
-		ResponseMap message = new ResponseMap();
 		String returnMsg = "店铺已经发布成功！";
 		homeShopBean.setStatus(ConstantsUtil.STATUS_NORMAL);
 		Date createTime = new Date();
@@ -65,50 +63,39 @@ public class S_HomeShopServiceImpl extends MallRoleCheckService implements S_Hom
 		homeShopBean.setShopOrder(order);
 		homeShopBean.setShopId(shopId);
 		boolean result = homeShopMapper.save(homeShopBean) > 0;
+		ResponseModel responseModel = new ResponseModel();
 		if(result){
 			homeShopHandler.deleteShopBeansCache();
-			message.put("isSuccess", true);
-			message.put("message", returnMsg);
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
+			responseModel.ok().message(returnMsg);
+		}else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value)).code(EnumUtil.ResponseCode.数据库保存失败.value);
+
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"发布新的店铺:", shopBean.getName() , "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+		return responseModel;
 	}
 	
 	@Override
-	public Map<String, Object> delete(long shopId, UserBean user,
-			HttpRequestInfoBean request) {
+	public ResponseModel delete(long shopId, UserBean user, HttpRequestInfoBean request) {
 		logger.info("S_HomeShopServiceImpl-->delete():shopId="+shopId);
-
 		//检查权限
 		checkMallAdmin(user);
 
 		boolean result = homeShopMapper.deleteById(S_HomeShopBean.class, shopId) > 0;
-		ResponseMap message = new ResponseMap();
+		ResponseModel responseModel = new ResponseModel();
 		if(result){
 			homeShopHandler.deleteShopBeansCache();
-			message.put("isSuccess", true);
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
-		}
+			responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
+		}else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value)).code(EnumUtil.ResponseCode.删除失败.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除商店, 店铺id为：", shopId, "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+		return responseModel;
 	}
 
 	@Override
-	public Map<String, Object> shops() {
+	public ResponseModel shops() {
 		logger.info("S_HomeShopServiceImpl-->shops()");
-		ResponseMap message = new ResponseMap();
-		message.put("message", homeShopHandler.getShopBeans());
-		message.put("isSuccess", true);
-		return message.getMap();
+		return new ResponseModel().ok().message(homeShopHandler.getShopBeans());
 	}
 }

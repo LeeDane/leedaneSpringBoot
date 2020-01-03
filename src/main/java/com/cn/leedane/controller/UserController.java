@@ -226,7 +226,7 @@ public class UserController extends BaseController{
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您登录成功.value));
 				message.put("responseCode", EnumUtil.ResponseCode.恭喜您登录成功.value);
 				isSuccess = true;
-				message.put("isSuccess", isSuccess);
+				message.put("success", isSuccess);
 				//对session进行添加管理
 				/*Session session = SecurityUtils.getSubject().getSession();
 				HttpRequestInfoBean requestInfoBean = getHttpRequestInfo(request);
@@ -286,7 +286,7 @@ public class UserController extends BaseController{
 				String subject = user.getAccount() + "查看" + searchUser.getAccount() + "个人基本信息";
 				this.operateLogService.saveOperateLog(user, request, new Date(), subject, "searchUserByUserId", 1, 0);
 				message.put("userinfo", userHandler.getUserInfo(searchUser, false));
-				message.put("isSuccess", true);
+				message.put("success", true);
 			}else{
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 				message.put("responseCode", EnumUtil.ResponseCode.用户不存在或请求参数不对.value);
@@ -406,7 +406,7 @@ public class UserController extends BaseController{
 					//UserSolrHandler.getInstance().updateBean(user);
 				}
 					
-				message.put("isSuccess", true);
+				message.put("success", true);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件已发送成功.value));
 				message.put("responseCode", EnumUtil.ResponseCode.邮件已发送成功.value);
 				return message.getMap();
@@ -462,7 +462,7 @@ public class UserController extends BaseController{
 				this.operateLogService.saveOperateLog(user, request, null, user.getAccount()+"退出系统", "logout", 1, 0);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注销成功.value));
 				message.put("responseCode", EnumUtil.ResponseCode.注销成功.value);
-				message.put("isSuccess", true);
+				message.put("success", true);
 				SessionManagerUtil.getInstance().removeSession(user.getId());
 				return message.getMap();
 			} catch (Exception e) {
@@ -471,7 +471,7 @@ public class UserController extends BaseController{
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注销成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.注销成功.value);
-			message.put("isSuccess", true);
+			message.put("success", true);
 		}
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);*/
@@ -497,7 +497,7 @@ public class UserController extends BaseController{
 		}
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注销成功.value));
 		message.put("responseCode", EnumUtil.ResponseCode.注销成功.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -530,7 +530,7 @@ public class UserController extends BaseController{
 		
 		checkRoleOrPermission(model, request);
 		message.put("message", userService.getHeadBase64StrById(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -547,7 +547,7 @@ public class UserController extends BaseController{
 		checkRoleOrPermission(model, request);
 		String picSize = JsonUtil.getStringValue(getJsonFromMessage(message), "picSize", "30x30");
 		message.put("message", userHandler.getUserPicPath(getUserFromMessage(message).getId(), picSize));
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -565,7 +565,7 @@ public class UserController extends BaseController{
 		
 		checkRoleOrPermission(model, request);
 		UserBean user = getUserFromMessage(message);
-		message.put("isSuccess", userService.uploadHeadBase64StrById(getJsonFromMessage(message), user, getHttpRequestInfo(request)));
+		message.put("success", userService.uploadHeadBase64StrById(getJsonFromMessage(message), user, getHttpRequestInfo(request)));
 		operateLogService.saveOperateLog(user, getHttpRequestInfo(request), null, user.getAccount()+"上传头像" + StringUtil.getSuccessOrNoStr(true), "uploadHeadBase64Str", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		return message.getMap();
 	}
@@ -796,7 +796,7 @@ public class UserController extends BaseController{
 				//UserSolrHandler.getInstance().addBean(user);
 				
 				message.put("userinfo", userHandler.getUserInfo(user, true));
-				message.put("isSuccess", true);
+				message.put("success", true);
 				message.put("message", "登录成功，正在为您跳转...");
 				return message.getMap();
 			}
@@ -875,7 +875,7 @@ public class UserController extends BaseController{
 				message.put("userinfo", userinfo);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您登录成功.value));
 				message.put("responseCode", EnumUtil.ResponseCode.恭喜您登录成功.value);
-				message.put("isSuccess", true);
+				message.put("success", true);
 				return message.getMap();
 			}else{
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.非正常登录状态.value));
@@ -953,7 +953,7 @@ public class UserController extends BaseController{
 //            currentUser.getSession().setAttribute(USER_INFO_KEY, user);
 			message.put("message", user.getId());
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			message.put("isSuccess", true);		
+			message.put("success", true);
 			// 保存用户绑定日志信息
 //			operateLogService.saveOperateLog(user, request, new Date(), subject, "bingWechat", 1, 0);
 			operateLogService.saveOperateLog(null, getHttpRequestInfo(request), null, "绑定账号微信账号："+ FromUserName +"成功", "bindWechat", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
@@ -1039,7 +1039,7 @@ public class UserController extends BaseController{
         Subject currentUser = SecurityUtils.getSubject();
         if(currentUser.isRemembered() || currentUser.isAuthenticated()){
 //        	currentUser.getSession().setAttribute(USER_INFO_KEY, getUserFromMessage(message));
-        	message.put("isSuccess", true);
+        	message.put("success", true);
         	message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.恭喜您登录成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.恭喜您登录成功.value);
         	return message.getMap();

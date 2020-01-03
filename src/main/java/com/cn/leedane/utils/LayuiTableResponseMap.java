@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Map;
 /**
  * 请求响应的Map
+ * 请参考 @link{com.cn.leedane.utils.LayuiTableResponseModel}
  * @author LeeDane
  * 2017年3月19日 下午10:27:49
  * Version 1.0
  */
+@Deprecated
 public class LayuiTableResponseMap extends ResponseMap{
 	/**
 	 * 

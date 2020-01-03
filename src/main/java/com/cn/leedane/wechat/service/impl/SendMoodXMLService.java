@@ -55,7 +55,7 @@ public class SendMoodXMLService extends BaseXMLWechatService {
 			String str = "{'content':'"+Content+"','froms':'微信leedane公众号'}";
 			JSONObject jsonObject = JSONObject.fromObject(str);
 			Map<String, Object> result = moodService.sendWord(jsonObject, user,ConstantsUtil.STATUS_NORMAL, null);
-			if(result.containsKey("isSuccess") && StringUtil.changeObjectToBoolean(result.get("isSuccess"))){
+			if(result.containsKey("success") && StringUtil.changeObjectToBoolean(result.get("success"))){
 				return "发布心情成功";
 			}else{
 				return "发布心情失败";

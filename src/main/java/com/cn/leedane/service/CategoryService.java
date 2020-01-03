@@ -3,6 +3,7 @@ package com.cn.leedane.service;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,7 @@ public interface CategoryService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel add(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取直接下一级的全部节点(注意，只获取直接一级)
@@ -33,14 +34,14 @@ public interface CategoryService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> children(boolean isAdmin, long pid, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel children(boolean isAdmin, long pid, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取该节点以及其上所有直接节点
 	 * @param pid
 	 * @return
 	 */
-	public Map<String, Object> mallCategory(int pid);
+	public ResponseModel mallCategory(int pid);
 	
 	/**
 	 * 修改节点
@@ -51,7 +52,7 @@ public interface CategoryService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> update(boolean isAdmin, long cid, JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel update(boolean isAdmin, long cid, JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除节点以及其全部子节点
@@ -61,5 +62,5 @@ public interface CategoryService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(boolean isAdmin, long cid, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel delete(boolean isAdmin, long cid, UserBean user, HttpRequestInfoBean request);
 }

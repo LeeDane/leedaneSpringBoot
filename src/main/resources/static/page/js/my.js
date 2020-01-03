@@ -145,7 +145,7 @@ function getSiginMark(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess){
+			if(data.success){
 				for(var i = 0; i < data.message.length; i++){
 					mark[data.message[i].create_date] = '签';
 				}
@@ -171,7 +171,7 @@ function getMessageBoards(){
 		},
 		success : function(data) {
 			$("#message-boards tr").remove();
-			if(data.isSuccess){
+			if(data.success){
 				for(var i = 0; i < data.message.length; i++){
 					var board = data.message[i];
 					var html = '<div>'+
@@ -202,7 +202,7 @@ function getVisitors(){
 		},
 		success : function(data) {
 			$("#visitors-list li").remove();
-			if(data.isSuccess){
+			if(data.success){
 				if(data.message.length == 0){
 					$("#visitors-list").append('<li class="list-group-item">暂无访客数据</li>');
 					return;
@@ -243,7 +243,7 @@ function getAttentions(){
 		},
 		success : function(data) {
 			//$("#attentions").remove();
-			if(data.isSuccess){
+			if(data.success){
 				if(data.message.length == 0){
 					$("#attentions").append('<div class="list-group-item">TA暂无关注数据</div>');
 					return;
@@ -277,7 +277,7 @@ function getFans(){
 		},
 		success : function(data) {
 			//$("#visitors-list li").remove();
-			if(data.isSuccess){
+			if(data.success){
 				if(data.message.length == 0){
 					//$("#visitors-list").append('<li class="list-group-item">暂无访客数据</li>');
 					$("#fans").append('<div class="list-group-item">TA暂无粉丝数据</div>');
@@ -315,7 +315,7 @@ function loadUserInfo(){
 		success : function(data) {
 			layer.close(loadi);
 			//layer.msg(JSON.stringify(userinfo));
-			if(data.isSuccess){
+			if(data.success){
 				
 				userinfo = data.userinfo;
 				if(isNotEmpty(userinfo.user_pic_path))
@@ -399,7 +399,7 @@ function attentionTa(){
 					},
 					success : function(data) {
 						layer.close(loadi);
-						if(data != null && data.isSuccess){
+						if(data != null && data.success){
 							layer.msg(data.message);
 							window.location.reload();
 						}else{
@@ -426,7 +426,7 @@ function attentionTa(){
 				},
 				success : function(data) {
 					layer.close(loadi);
-					if(data != null && data.isSuccess){
+					if(data != null && data.success){
 						layer.msg(data.message);
 						window.location.reload();
 					}else{
@@ -461,7 +461,7 @@ function cancelAttentionTa(){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data != null && data.isSuccess){
+				if(data != null && data.success){
 					layer.msg(data.message);
 					window.location.reload();
 				}else{
@@ -490,7 +490,7 @@ function getMoods(){
 		success : function(data) {
 			layer.close(loadi);
 			$moodContainer.empty();
-			if(data != null && data.isSuccess){
+			if(data != null && data.success){
 				if(data.message.length == 0){
 					if(currentIndex == 0){
 						$moodContainer.append("还没有发表过任何心情，请发一篇心情吧！");
@@ -806,7 +806,7 @@ function editUserinfo(params){
 		success : function(data) {
 			layer.close(loadi);
 			
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg("基本信息更新成功！");
 				window.location.reload();
 			}else{
@@ -875,7 +875,7 @@ function updateStick(stick, mid){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
                     layer.msg(data.message+", 1秒后自动刷新");
                     reloadPage(1500);
                 }else{
@@ -904,7 +904,7 @@ function addZan(id){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg("点赞成功");
 				window.location.reload();
 			}else
@@ -934,7 +934,7 @@ function translation(index){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					$("#fanValue-"+index).text("翻译结果："+data.message);
 					$operateItemsContrainer.modal("hide");
 				}else
@@ -967,7 +967,7 @@ function deleteMood(id){
 			success : function(data) {
 					layer.close(loadi);
 					layer.msg(data.message);
-					if(data.isSuccess){
+					if(data.success){
 						window.location.reload();
 					}
 			},
@@ -998,7 +998,7 @@ function updateIsSelfStatus(status, id, newStatus){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
                     layer.msg(data.message+", 1秒后自动刷新");
                     reloadPage(1500);
                 }else{
@@ -1028,7 +1028,7 @@ function updateCommentStatus(can, table_id){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
                     layer.msg(data.message+", 1秒后自动刷新");
                     reloadPage(1500);
                 }else{
@@ -1058,7 +1058,7 @@ function updateTransmitStatus(can, table_id){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message+", 1秒后自动刷新");
 					reloadPage(1500);
 				}else{
@@ -1082,7 +1082,7 @@ function isTodaySignIn(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess){
+			if(data.success){
 				$("#sign_button").html('<span class="glyphicon glyphicon-time" ></span> 已签到');
 			}else{
 				$("#sign_button").removeAttr("disabled");
@@ -1110,7 +1110,7 @@ function signin(){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg("签到成功");
 					$("#sign_button").attr("disabled", "disabled");
 					$("#sign_button").html('<span class="glyphicon glyphicon-time" ></span> 已签到');
@@ -1211,7 +1211,7 @@ function asynchronousLoadData(){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				if(data != null && data.isSuccess){
+				if(data != null && data.success){
 					if(ct_method == 'firstloading')
 						$cOTItemContainer.empty();
 						//$moodContainer.empty();
@@ -1328,7 +1328,7 @@ function sendCommentOrTransmit(){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg("评论成功");
 					window.location.reload();
 				}else{
@@ -1389,7 +1389,7 @@ function sendMood(){
 		},
 		success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg("心情发表成功，1秒后自动刷新");
 					reloadPage(1000);
 				}else{

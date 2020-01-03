@@ -70,7 +70,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 		int firstId = JsonUtil.getIntValue(jo, "first_id"); //结束的页数
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
 		ResponseMap message = new ResponseMap();
-		message.put("isSuccess", false);
+		message.put("success", false);
 		
 		int start = 0;
 		int end = 0;
@@ -110,7 +110,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 				
 			}	
 		}
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取朋友圈列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
@@ -195,7 +195,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取朋友圈列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 				
 		message.put("message", rs);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -288,7 +288,7 @@ public class CircleOfFriendServiceImpl implements CircleOfFriendService<TimeLine
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取朋友圈列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 				
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}

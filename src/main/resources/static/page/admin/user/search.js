@@ -58,7 +58,7 @@ function querySearch(params){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				//清空原来的数据
 				$(".each-row").remove();
 				
@@ -247,7 +247,7 @@ function editUser(obj){
 		success : function(data) {
 			layer.close(loadi);
 			
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message +",1秒钟后自动刷新");
 				setTimeout("window.location.reload();", 1000);
 			}else{
@@ -279,7 +279,7 @@ function deleteUser(obj, index){
 				},
 				success : function(data) {
 					layer.close(loadi);
-					if(data.isSuccess){
+					if(data.success){
 						layer.msg(data.message +",1秒钟后自动刷新");
 						setTimeout("window.location.reload();", 1000);
 					}else{
@@ -318,7 +318,7 @@ function resetPassword(obj, index){
 				},
 				success : function(data) {
 					layer.close(loadi);
-					if(data.isSuccess){
+					if(data.success){
 						layer.msg(data.message +",1秒钟后自动刷新");
 						reloadPage(1000);
 					}else{
@@ -378,7 +378,7 @@ function sendMessage(obj){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message);
 				$("#send-message").modal("hide");
 			}else{
@@ -425,7 +425,7 @@ function uploadHeadLink(obj){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message +",1秒钟后自动刷新");
 				reloadPage(1000);
 			}else{

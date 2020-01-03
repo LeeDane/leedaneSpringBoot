@@ -96,7 +96,7 @@ layui.use('table', function(){
 			dataType: 'json',
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					obj.del();
 					layer.msg("心愿单删除成功，2秒后将自动刷新");
 					reloadPage(2000);

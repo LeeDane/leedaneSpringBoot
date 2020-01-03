@@ -15,6 +15,7 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import com.cn.leedane.redis.config.LeedanePropertiesConfig;
+import com.cn.leedane.utils.*;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -28,10 +29,6 @@ import com.cn.leedane.service.ChatSquareService;
 import com.cn.leedane.service.ScoreService;
 import com.cn.leedane.service.UserService;
 import com.cn.leedane.springboot.SpringUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.FilterUtil;
-import com.cn.leedane.utils.JsoupUtil;
-import com.cn.leedane.utils.StringUtil;
 
 @ServerEndpoint(value = "/websocket")
 @Component
@@ -242,9 +239,8 @@ public class ChatWebSocket {
 			return;
 		}else{
 			//扣除积分
-			Map<String, Object> map= scoreService.reduceScore(1, "发弹屏扣积分", "", 0, userService.findById(userId));
-			if(StringUtil.changeObjectToBoolean(map.get("isSuccess"))){
-				
+			ResponseModel model = scoreService.reduceScore(1, "发弹屏扣积分", "", 0, userService.findById(userId));
+			if(model.isSuccess()){
 				jsonObject.put("screenText", screenText); //弹屏内容，纯文本
 				sendMessageToAll((StringUtil.isNull(type) || !"welcome".equals(type)), jsonObject, userId);
 				return;
@@ -254,8 +250,6 @@ public class ChatWebSocket {
 				sendMessageToSelf(jsonObject, userId);
 				return;
 			}
-			
-			
 		}
     }
     

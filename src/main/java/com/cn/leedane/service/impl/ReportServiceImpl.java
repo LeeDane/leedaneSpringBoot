@@ -86,7 +86,7 @@ public class ReportServiceImpl extends AdminRoleCheckService implements ReportSe
 		}
 		bean.setReportType(type);
 		boolean result = reportMapper.save(bean) > 0;
-		message.put("isSuccess", result);
+		message.put("success", result);
 		if(!result){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
@@ -128,7 +128,7 @@ public class ReportServiceImpl extends AdminRoleCheckService implements ReportSe
 		
 		boolean result = reportMapper.deleteSql(EnumUtil.getBeanClass(EnumUtil.getTableCNName(DataTableType.举报.value)), " where table_id = ? and table_name = ? and create_user_id=?", tableId, tableName, user.getId()) > 0;
 		if(result){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "取消举报成功");
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据删除失败.value));

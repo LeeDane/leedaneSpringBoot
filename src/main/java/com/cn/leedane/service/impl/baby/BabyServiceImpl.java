@@ -60,7 +60,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 		if(result){
 			//清空该用户的宝宝列表缓存
 			babyHandler.deleteBabyBeansCache(user.getId());
-			message.put("isSuccess", true);
+			message.put("success", true);
 			String content = "您已成功创建新的宝宝《"+ babyBean.getNickname() +"》。";
 			message.put("message", content);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -95,7 +95,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 			babyHandler.deleteBabyBeanCache(baby.getId());
 			//清空该用户的宝宝列表缓存
 			babyHandler.deleteBabyBeansCache(user.getId());
-			message.put("isSuccess", true);
+			message.put("success", true);
 			String content= "您已成功修改宝宝《"+ baby.getNickname() +"》的信息！";
 			message.put("message", content);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -127,7 +127,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 			babyHandler.deleteBabyBeanCache(babyId);
 			//清空该用户的宝宝列表缓存
 			babyHandler.deleteBabyBeansCache(user.getId());
-			message.put("isSuccess", true);
+			message.put("success", true);
 			String content = "您已成功删除宝宝《"+ baby.getNickname() +"》！";
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -160,7 +160,7 @@ public class BabyServiceImpl extends AdminRoleCheckService implements BabyServic
 			babyHandler.deleteBabyBeanCache(babyBean.getId());
 			//清空该用户的宝宝列表缓存
 			babyHandler.deleteBabyBeansCache(user.getId());
-			message.put("isSuccess", true);
+			message.put("success", true);
 			String content= "您已成功修改宝宝《"+ babyBean.getNickname() +"》的信息为出生状态！";
 			message.put("message", content);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);

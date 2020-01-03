@@ -119,7 +119,7 @@
 			url: "/us/wechat/checkBind?FromUserName="+ FromUserName,
 			dataType:'json',
 			success:function(data){
-				if(data.isSuccess){
+				if(data.success){
 					alert("恭喜你成功绑定当前微信账号");
 					//跳转到首页
 					linkToMy(data.message);
@@ -154,7 +154,7 @@
 			url: "/us/wechat/bind?"+ jsonToGetRequestParams(params),
 			dataType:'json',
 			success:function(data){
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg("恭喜你成功绑定当前微信账号, 1秒后自动跳转");
 					//跳转到首页
 					setTimeout(function(){

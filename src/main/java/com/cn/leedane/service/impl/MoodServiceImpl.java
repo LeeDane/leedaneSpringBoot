@@ -158,7 +158,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		        watched.addWatcher(watcher);
 		        watched.notifyWatchers(userService.findById(user.getId()), new UpdateMoodTemplate());      
 	        	message.put("message", i);
-		        message.put("isSuccess", true);
+		        message.put("success", true);
 	        }
 			new ThreadUtil().singleTask(new EsIndexAddThread<MoodBean>(moodBean));
 
@@ -214,7 +214,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		if(result){
 			//删除该心情的缓存
 			moodHandler.delete(mid, null, null);
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", "更新心情状态成功");
 			//异步修改心情solr索引
 //	        new ThreadUtil().singleTask(new SolrUpdateThread<MoodBean>(MoodSolrHandler.getInstance(), oldMoodBean));
@@ -281,7 +281,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 //	        new ThreadUtil().singleTask(new SolrDeleteThread<MoodBean>(MoodSolrHandler.getInstance(), String.valueOf(mid)));
 			//MoodSolrHandler.getInstance().deleteBean(String.valueOf(mid));
 			message.put("message", "该心情删除成功");
-			message.put("isSuccess", result);
+			message.put("success", result);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
@@ -354,7 +354,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户id为"+toUserId+"个人中心", "rolling()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -430,7 +430,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户id为"+toUserId+"个人中心", "getMoodPaging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", result);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -492,7 +492,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		boolean result = moodMapper.save(moodBean) > 0;
 
         if(result){
-			message.put("isSuccess", result);
+			message.put("success", result);
 			
 			//异步添加心情solr索引
 	        new ThreadUtil().singleTask(new SolrAddThread<MoodBean>(MoodSolrHandler.getInstance(), moodBean));
@@ -525,7 +525,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"查询用户ID为：", uid, "得到其已经发表成功的心情总数是：", count, "条").toString(), "getCountByUser()", ConstantsUtil.STATUS_NORMAL, 0);
 		ResponseMap message = new ResponseMap();
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", count);
 		return message.getMap();
 	}
@@ -572,7 +572,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 				throw new UnauthorizedException("私有信息，您无法查看！");
 
 
-			message.put("isSuccess", true);
+			message.put("success", true);
 			boolean hasImg = StringUtil.changeObjectToBoolean(mood.get("has_img"));
 			String uuid = StringUtil.changeNotNull(mood.get("uuid"));
 			//有图片的获取图片的路径
@@ -668,7 +668,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 				//String str = "{from_user_remark}在发表的心情中@您,点击查看详情";
 				notificationHandler.sendNotificationByNames(false, user.getId(), usernames, content, NotificationType.艾特我, DataTableType.心情.value, moodBean.getId(), moodBean);
 			}
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.发表心情成功.value));
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
@@ -809,7 +809,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 					//String str = "{from_user_remark}在发表的心情中@您,点击查看详情";
 					notificationHandler.sendNotificationByNames(false, user.getId(), usernames, content, NotificationType.艾特我, DataTableType.心情.value, moodBean.getId(), moodBean);
 				}
-				message.put("isSuccess", result);
+				message.put("success", result);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.发表心情成功.value));
 			}else{
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
@@ -838,7 +838,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		String tableName = JsonUtil.getStringValue(jo, "table_name"); //数据量表名
 		String tableUuid = JsonUtil.getStringValue(jo, "table_uuid"); //uuid
 		message.put("imgs", moodHandler.getMoodImg(tableName, tableUuid, ConstantsUtil.DEFAULT_PIC_SIZE));
-		message.put("isSuccess", true);
+		message.put("success", true);
 		//list = moodHandler.getMoodIms(tableName, tableUuid);
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取心情ID为", mid, "的图像列表").toString(), "detailImgs()", ConstantsUtil.STATUS_NORMAL, 0);
@@ -875,7 +875,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 				}
 			}
 		}
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}
@@ -889,7 +889,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		
 		moodId = moodMapper.shakeSearch(user.getId(), ConstantsUtil.STATUS_NORMAL);
 		if(moodId > 0 ){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			List<Map<String, Object>> rs = moodHandler.getMoodDetail(moodId, user);
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			if(CollectionUtil.isNotEmpty(rs)){
@@ -999,7 +999,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		long end = System.currentTimeMillis();
 		logger.info("获取话题列表总计耗时：" +(end - start) +"毫秒，总数是："+rs.size());
 		message.put("message", rs);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 
@@ -1043,7 +1043,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		if(result){
 			//删除该心情的缓存
 			moodHandler.delete(mid, null, null);
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", "更新心情置顶状态成功");
 			//异步修改心情solr索引
 //	        new ThreadUtil().singleTask(new SolrUpdateThread<MoodBean>(MoodSolrHandler.getInstance(), oldMoodBean));

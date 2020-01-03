@@ -1,8 +1,5 @@
 package com.cn.leedane.service.impl;
 
-import com.cn.leedane.controller.RoleController;
-import com.cn.leedane.exception.MustLoginException;
-import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.exception.RE404Exception;
 import com.cn.leedane.handler.*;
 import com.cn.leedane.mapper.BlogMapper;
@@ -22,17 +19,13 @@ import com.cn.leedane.utils.EnumUtil.NotificationType;
 import com.hankcs.hanlp.HanLP;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +81,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	@Autowired
 	private ReadHandler readHandler;
 	@Override
-	public Map<String,Object> addBlog(BlogBean blog, UserBean user){	
+	public ResponseModel addBlog(BlogBean blog, UserBean user){
 		logger.info("BlogServiceImpl-->addBlog():blog="+blog);
 		ResponseMap message = new ResponseMap();
 		int result = 0;
@@ -98,10 +91,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			if(oldBean == null){
 				//删除缓存
 				elasticSearchUtil.delete(DataTableType.博客.value, blog.getId());
-
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
-				message.put("responseCode", EnumUtil.ResponseCode.该博客不存在.value);
-				return message.getMap();
+				return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value)).code(EnumUtil.ResponseCode.该博客不存在.value);
 			}
 			
 			//获取文章的作者
@@ -114,12 +104,10 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		}
 		if(result > 0){
 			new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(blog));
-			message.put("isSuccess",true);
-			message.put("message","文章发布成功");
+			return new ResponseModel().ok().message("文章发布成功！");
 		}else{
-			message.put("message","文章发布失败");
+			return new ResponseModel().error().message("文章发布失败！");
 		}
-		return message.getMap();
 	}
 
 	@Override
@@ -139,7 +127,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		
 		blogId = blogMapper.shakeSearch(user.getId(), ConstantsUtil.STATUS_NORMAL);
 		if(blogId > 0 ){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			List<Map<String, Object>> rs = blogHandler.getBlogDetail(blogId, user);
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			if(CollectionUtil.isNotEmpty(rs))
@@ -164,7 +152,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		List<BlogBean> blogs = this.blogMapper.getMoreBlog(start, end, showType);
 		ResponseMap message = new ResponseMap();
 		if(blogs.size()>0){
-			message.put("isSuccess",true);
+			message.put("success",true);
 			message.put("message",blogs);	
 		}else{
 			//没有找到相关的文章
@@ -241,7 +229,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	}
 
 	@Override
-	public Map<String, Object> deleteById(JSONObject jo, HttpRequestInfoBean request, UserBean user){
+	public ResponseModel deleteById(JSONObject jo, HttpRequestInfoBean request, UserBean user){
 		long id = JsonUtil.getLongValue(jo, "b_id");
 		logger.info("BlogServiceImpl-->deleteById():id="+id);
 		ResponseMap message = new ResponseMap();
@@ -262,8 +250,8 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		checkAdmin(user, createUserId);
 		
 		boolean result = this.blogMapper.deleteById(BlogBean.class, id) > 0;
+		ResponseModel responseModel = new ResponseModel();
 		if(result){
-
 			//删除es缓存
 			elasticSearchUtil.delete(DataTableType.博客.value, id);
 
@@ -271,17 +259,13 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			blogHandler.delete(id);
 			//异步删除solr
 //			new ThreadUtil().singleTask(new SolrDeleteThread<BlogBean>(BlogSolrHandler.getInstance(), String.valueOf(id)));
-			
-			message.put("isSuccess", true);
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-		}
+			responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
+		}else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value)).code(EnumUtil.ResponseCode.操作失败.value);
+
 		String subject = user.getAccount() + "删除了博客《"+ oldBean.getTitle() + "》" + StringUtil.getSuccessOrNoStr(result);
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "deleteById()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+		return responseModel;
 	}
 
 	@Override
@@ -317,30 +301,24 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 				rs.get(i).putAll(userHandler.getBaseUserInfo(createUserId));
 			}
 		}
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}
 	
 	@Override
-	public Map<String, Object> addTag(JSONObject jo, UserBean user,
+	public ResponseModel addTag(JSONObject jo, UserBean user,
 									  HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->addTag():jo="+jo.toString());
 		long bid = JsonUtil.getLongValue(jo, "bid");
 		String tag = JsonUtil.getStringValue(jo, "tag");
 		ResponseMap message = new ResponseMap();
 		
-		if(bid < 1 || StringUtil.isNull(tag)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message.getMap();
-		}
+		if(bid < 1 || StringUtil.isNull(tag))
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value)).code(EnumUtil.ResponseCode.某些参数为空.value);
 		
-		if(tag.length() > 5){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.标签长度不能超过5位.value));
-			message.put("responseCode", EnumUtil.ResponseCode.标签长度不能超过5位.value);
-			return message.getMap();
-		}
+		if(tag.length() > 5)
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.标签长度不能超过5位.value)).code(EnumUtil.ResponseCode.标签长度不能超过5位.value);
 		
 		BlogBean blogBean = blogMapper.findById(BlogBean.class, bid);
 		
@@ -368,29 +346,20 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		}
 		
 		blogBean.setTag(tag);
-		
 		boolean result = blogMapper.update(blogBean) > 0;
-		
 		String subject = user.getAccount() + "为博客《"+blogBean.getTitle() + "》添加标签:" + tag + StringUtil.getSuccessOrNoStr(result);
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "addTag()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		
 		if(result){
-			if(cut){
-				message.put("message", "添加成功，标签数量超过3个，已自动删掉第一个");
-			}else{
+			if(cut)
+				return new ResponseModel().ok().message("添加成功，标签数量超过3个，已自动删掉第一个");
+			else{
 				new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(blogBean));
 				//异步修改solr索引
 //				new ThreadUtil().singleTask(new SolrUpdateThread<BlogBean>(BlogSolrHandler.getInstance(), blogBean));
-				
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.标签添加成功.value));
+				return new ResponseModel().ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.标签添加成功.value));
 			}
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
-		
-		message.put("isSuccess", result);
-		return message.getMap();
+		}else
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value)).code(EnumUtil.ResponseCode.数据库保存失败.value);
 	}
 
 	@Override
@@ -404,7 +373,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 	}
 
 	@Override
-	public Map<String, Object> getInfo(JSONObject jo, UserBean user,
+	public ResponseModel getInfo(JSONObject jo, UserBean user,
 									   HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->getInfo():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -421,22 +390,17 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		sql.append(" where b.status = ?  and b.id = ? ");
 		
 		List<BlogBean> r = getBlogBeans(sql.toString(), ConstantsUtil.STATUS_NORMAL, blogId);				
-		if(r.size() == 1){
-			message.put("message", r.get(0));
-			message.put("isSuccess", true);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库对象数量不符合要求.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库对象数量不符合要求.value);
-		}
+		if(r.size() == 1)
+			return new ResponseModel().ok().message(r.get(0));
+		else
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库对象数量不符合要求.value)).code(EnumUtil.ResponseCode.数据库对象数量不符合要求.value);
 		
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取文章ID为：", blogId, ",的基本信息", StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "getInfo()", ConstantsUtil.STATUS_NORMAL, 0);
-		
-		return message.getMap();
 	}
 
 	@Override
-	public Map<String, Object> draftList(JSONObject jo, UserBean user,
+	public ResponseModel draftList(JSONObject jo, UserBean user,
 										 HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->draftList():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();		
@@ -446,18 +410,13 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		sql.append(" from "+DataTableType.博客.value+" b ");
 		sql.append(" where status = ? and create_user_id = ? order by id desc ");
 		
-		List<Map<String, Object>> r = blogMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_DRAFT, user.getId());				
-		message.put("message", r);
-		message.put("isSuccess", true);
-		
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取草稿列表", StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "draftList()", ConstantsUtil.STATUS_NORMAL, 0);
-		
-		return message.getMap();
+		return new ResponseModel().ok().message(blogMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_DRAFT, user.getId()));
 	}
 
 	@Override
-	public Map<String, Object> edit(long blogId, UserBean user,
+	public ResponseModel edit(long blogId, UserBean user,
 									HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->edit():blogId=" +blogId +", user=" +user.getAccount());
 		
@@ -488,21 +447,16 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		checkAdmin(user, createUserId);
 
 		new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(blogMapper.findById(BlogBean.class, blogId)));
-
-		message.put("message", r);
-		message.put("isSuccess", true);
-		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		//异步修改solr索引
 		//new ThreadUtil().task(new BlogSolrUpdateThread(blogBean));
 		//BlogSolrHandler.getInstance().updateBean(blogBean);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"编辑博客ID:", blogId, StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "edit()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		
-		return message.getMap();
+		return new ResponseModel().ok().message(r);
 	}
 
 	@Override
-	public Map<String, Object> noCheckPaging(JSONObject jo, UserBean user,
+	public ResponseModel noCheckPaging(JSONObject jo, UserBean user,
 											 HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->noCheckPaging():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -541,23 +495,16 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			sql.append(" from "+DataTableType.博客.value+" b inner join "+DataTableType.用户.value+" u on b.create_user_id = u.id ");
 			sql.append(" where b.status = ?  order by b.id desc limit 0,?");
 			r = executeSQL(sql.toString(), ConstantsUtil.STATUS_AUDIT, pageSize);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.目前暂不支持的操作方法.value));
-			message.put("responseCode", EnumUtil.ResponseCode.目前暂不支持的操作方法.value);
-			return message.getMap();
-		}
-
-		message.put("isSuccess", true);
-		message.put("message", r);
-		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+		}else
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.目前暂不支持的操作方法.value)).code(EnumUtil.ResponseCode.目前暂不支持的操作方法.value);
 
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取未审核文章列表，查询条件是："+jo.toString(), StringUtil.getSuccessOrNoStr(r.size() == 1)).toString(), "noCheckPaging()", ConstantsUtil.STATUS_NORMAL, 0);
-		return message.getMap();
+		return new ResponseModel().ok().message(r);
 	}
 
 	@Override
-	public Map<String, Object> check(JSONObject jo, UserBean user,
+	public ResponseModel check(JSONObject jo, UserBean user,
 									 HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->check():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
@@ -574,18 +521,12 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
 		}
 
-		if(bean.getStatus() != ConstantsUtil.STATUS_AUDIT){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该文章不需要审核.value));
-			message.put("responseCode", EnumUtil.ResponseCode.该文章不需要审核.value);
-			return message.getMap();
-		}
+		if(bean.getStatus() != ConstantsUtil.STATUS_AUDIT)
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该文章不需要审核.value)).code(EnumUtil.ResponseCode.该文章不需要审核.value);
 		
 		String toUserContent = JsonUtil.getStringValue(jo, "reason");
-		if(!agree && StringUtil.isNull(toUserContent)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message.getMap();
-		}
+		if(!agree && StringUtil.isNull(toUserContent))
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value)).code(EnumUtil.ResponseCode.某些参数为空.value);
 		if(agree){
 			bean.setStatus(ConstantsUtil.STATUS_NORMAL);
 			toUserContent = "您的文章《"+ bean.getTitle() +"》已经被管理员审核通过！";
@@ -600,32 +541,20 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(bean));
 			//给用户发送消息
 			notificationHandler.sendNotificationById(false, user.getId(), bean.getCreateUserId(), toUserContent, NotificationType.通知, (bean.getStatus() == ConstantsUtil.STATUS_DELETE ? DataTableType.不存在的表.value: DataTableType.博客.value), bean.getId(), bean);
-			message.put("isSuccess", true);
-			message.put("message", "审核处理成功！");
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);			
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据更新失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据更新失败.value);
-		}
-		
+			return new ResponseModel().ok().message("审核处理成功！");
+		}else
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据更新失败.value)).code(EnumUtil.ResponseCode.数据更新失败.value);
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"审核文章Id为", blogId, StringUtil.getSuccessOrNoStr(result)).toString(), "check()", StringUtil.changeBooleanToInt(result), 0);
-		return message.getMap();
 	}
 	
 	@Override
-	public Map<String, Object> getOneBlog(long blogId, UserBean user,
+	public ResponseModel getOneBlog(long blogId, UserBean user,
 										  HttpRequestInfoBean request) {
 		/*logger.info("BlogServiceImpl-->getOneBlog():id="+id);
 		return this.blogMapper.getOneBlog(status , id);*/
 		logger.info("BlogServiceImpl-->getOneBlog():blogId=" +blogId);
-		ResponseMap message = new ResponseMap();
-		if(blogId < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message.getMap();
-		}
-
+		ParameterUnspecificationUtil.checkLong(blogId, "blodId must not null.");
 		List<Map<String, Object>> ls = blogMapper.getOneBlog(ConstantsUtil.STATUS_NORMAL, blogId);
 		if(CollectionUtil.isEmpty(ls)){
 			//删除缓存
@@ -672,24 +601,19 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 			e.printStackTrace();
 		}
 		blogMap.putAll(userHandler.getBaseUserInfo(StringUtil.changeObjectToInt(blogMap.get("create_user_id"))));
-		message.put("message", ls);
-		message.put("isSuccess", true);
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr("获取博客ID为", blogId, "详情", StringUtil.getSuccessOrNoStr(result)).toString(), "check()", StringUtil.changeBooleanToInt(result), 0);
-		return message.getMap();
+		return new ResponseModel().ok().message(ls);
 	}
 
 	@Override
-	public Map<String, Object> paging(JSONObject jo,
+	public ResponseModel paging(JSONObject jo,
 									  UserBean user, HttpRequestInfoBean request){
 		logger.info("BlogServiceImpl-->paging():jo=" +jo.toString());
 		int pageSize = JsonUtil.getIntValue(jo, "page_size", ConstantsUtil.DEFAULT_PAGE_SIZE); //每页的大小
 		int currentIndex = JsonUtil.getIntValue(jo, "current", 0); //当前的索引页
 		int total = JsonUtil.getIntValue(jo, "total", 0); //当前的索引页
 		int start = SqlUtil.getPageStart(currentIndex, pageSize, total);
-
-		ResponseMap message = new ResponseMap();
-
 		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 		boolQuery.must(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_NORMAL));
 		SearchRequestBuilder builder = transportClient.prepareSearch(ElasticSearchUtil.getDefaultIndexName(DataTableType.博客.value)).setTypes(DataTableType.博客.value)
@@ -703,11 +627,8 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		//控制是否新增排序
 		builder.addSort("stick", SortOrder.DESC);
 		builder.addSort("create_time", SortOrder.DESC);
-
 		logger.info(builder.toString());
-
 		SearchResponse response = builder.get();
-
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		for (SearchHit hit : response.getHits()) {
 			Map<String, HighlightField> fieldMap = hit.getHighlightFields();
@@ -720,10 +641,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 //				map.put("content", JsoupUtil.getInstance().getContentNoTag(StringUtil.changeNotNull(map.get("content"))));
 			}
 		}
-		message.put("total", response.getHits().totalHits);
-		message.put("message", result);
-		message.put("isSuccess", true);
-		return message.getMap();
+		return new ResponseModel().ok().message(result).code(EnumUtil.ResponseCode.操作失败.value).total(response.getHits().totalHits);
 	}
 
 	@Override

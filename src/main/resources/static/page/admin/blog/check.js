@@ -57,7 +57,7 @@ function queryNoChecks(params){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				if(data.message.length == 0){
 					canLoadData = false;
 					layer.msg("无更多数据");
@@ -164,7 +164,7 @@ function check(obj){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message);
 				$("#check-blog").modal("hide");
 				layer.msg(data.message +",1秒钟后自动刷新");

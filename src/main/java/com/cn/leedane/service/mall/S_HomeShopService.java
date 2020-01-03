@@ -3,6 +3,7 @@ package com.cn.leedane.service.mall;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,7 @@ public interface S_HomeShopService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> add(JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel add(JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 删除商店
@@ -33,7 +34,7 @@ public interface S_HomeShopService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> delete(long shopId, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel delete(long shopId, UserBean user, HttpRequestInfoBean request);
 	
 	
 	/**
@@ -41,6 +42,6 @@ public interface S_HomeShopService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> shops();
+	public ResponseModel shops();
 
 }

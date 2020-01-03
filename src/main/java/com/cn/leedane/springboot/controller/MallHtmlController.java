@@ -178,9 +178,9 @@ public class MallHtmlController extends BaseController{
         List<String[]> categorys = new ArrayList<String[]>();
         categorys.add(new String[]{"-1", "LeeDane", "/"});
        // categorys.add(new String[]{"-1", "首页", "/mall/index"});
-        Map<String, Object> relationMap = categoryService.mallCategory(productBean.getCategoryId());
-        if(StringUtil.changeObjectToBoolean(relationMap.get("isSuccess"))){
-        	categorys.addAll((List<String[]>)relationMap.get("message"));
+        ResponseModel responseModel = categoryService.mallCategory(productBean.getCategoryId());
+        if(responseModel.isSuccess()){
+        	categorys.addAll((List<String[]>)responseModel.getMessage());
         }
         model.addAttribute("categorys", categorys);
 		//保存访问记录
@@ -299,9 +299,9 @@ public class MallHtmlController extends BaseController{
         List<String[]> categorys = new ArrayList<String[]>();
         categorys.add(new String[]{"-1", "LeeDane", "/"});
        // categorys.add(new String[]{"-1", "首页", "/shop/index"});
-        Map<String, Object> relationMap = categoryService.mallCategory(categoryId);
-        if(StringUtil.changeObjectToBoolean(relationMap.get("isSuccess"))){
-        	categorys.addAll((List<String[]>)relationMap.get("message"));
+		ResponseModel responseModel = categoryService.mallCategory(categoryId);
+        if(responseModel.isSuccess()){
+        	categorys.addAll((List<String[]>)responseModel.getMessage());
         }
         model.addAttribute("categorys", categorys);
         
@@ -441,11 +441,11 @@ public class MallHtmlController extends BaseController{
 		String url = loginRoleCheck("mall/home-manager", true, model, request);
 		//获取分类列表
 		List<S_HomeItemBean> homeItemBeans = homeItemHandler.showCategoryList();
-		Map<String, Object> categorys = categoryService.children(true, MALL_HOME_CATEGORY_ID, OptionUtil.adminUser, getHttpRequestInfo(request));
+		ResponseModel responseModel = categoryService.children(true, MALL_HOME_CATEGORY_ID, OptionUtil.adminUser, getHttpRequestInfo(request));
 		
 		List<Map<String, Object>> categoryList = new ArrayList<Map<String,Object>>();
-		if(StringUtil.changeObjectToBoolean(categorys.get("isSuccess"))){
-			categoryList = (List<Map<String, Object>>) categorys.get("message");
+		if(responseModel.isSuccess()){
+			categoryList = (List<Map<String, Object>>) responseModel.getMessage();
 		}
 		
 		model.addAttribute("categorys", categoryList);

@@ -47,7 +47,7 @@ function queryPaging(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				if(data.message.length == 0){
 					canLoadData = false;
 					layer.msg("无更多数据");

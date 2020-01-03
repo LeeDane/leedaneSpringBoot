@@ -106,7 +106,7 @@ function getMaterials(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				materials = data.message;
 				if(materials.length == 0){
 					if(currentIndex == 0){

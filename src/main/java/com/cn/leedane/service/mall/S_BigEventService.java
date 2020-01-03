@@ -3,6 +3,7 @@ package com.cn.leedane.service.mall;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,7 @@ public interface S_BigEventService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> save(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel save(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 分页获取大事件列表
@@ -34,6 +35,6 @@ public interface S_BigEventService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(long productId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel paging(long productId, JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 }

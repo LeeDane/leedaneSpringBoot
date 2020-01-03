@@ -81,7 +81,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		}
 		//清空缓存的全部链接
 		linkManageHandler.deleteAllLinkManagesCache();
-		message.put("isSuccess", result);
+		message.put("success", result);
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		return message.getMap();
@@ -125,7 +125,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		}
 		linkRoleOrPermissionMapper.deleteByField(LinkRoleOrPermissionBean.class, "link_id", linkManageBean.getId());
 		
-		message.put("isSuccess", result);
+		message.put("success", result);
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		return message.getMap();
@@ -138,7 +138,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		ResponseMap message = new ResponseMap();
 				
 		boolean result = linkManageMapper.deleteById(LinkManageBean.class, lnid) > 0;
-		message.put("isSuccess", result);
+		message.put("success", result);
 		if(result){
 			//删除所有的角色或者权限
 			List<Map<String, Object>> uids = linkRoleOrPermissionMapper.getUsersByLinkId(lnid);
@@ -177,7 +177,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取链接管理列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		
 		return message.getMap();
 	}
@@ -212,7 +212,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		linkRoleOrPermissionMapper.deleteByField(LinkRoleOrPermissionBean.class, "link_id", lnidArray);
 		
 		boolean result = linkManageMapper.deleteByIds(LinkManageBean.class, ids) == lnidArray.length;
-		message.put("isSuccess", result);
+		message.put("success", result);
 		if(result){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -237,7 +237,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取角色权限列表").toString(), "users()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		
 		return message.getMap();
 	}
@@ -306,7 +306,7 @@ public class LinkManageServiceImpl implements LinkManageService<LinkManageBean> 
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给链接ID为"+ lnid +",分配角色获取权限ids"+roleOrPermissions).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("message", "操作成功");
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 }

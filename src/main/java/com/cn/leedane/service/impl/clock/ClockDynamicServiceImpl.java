@@ -101,7 +101,7 @@ public class ClockDynamicServiceImpl extends AdminRoleCheckService implements Cl
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取任务动态列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", dynamicDisplays);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 }

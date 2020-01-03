@@ -11,7 +11,6 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.mall.MallRoleCheckService;
 import com.cn.leedane.service.mall.MallToolService;
-import com.cn.leedane.service.mall.S_TaobaoService;
 import com.cn.leedane.utils.*;
 import com.google.zxing.WriterException;
 import com.jd.open.api.sdk.JdException;
@@ -20,8 +19,6 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 /**
  * 淘宝商品的service的实现类
@@ -43,10 +40,10 @@ public class MallToolServiceImpl extends MallRoleCheckService implements MallToo
 	private OperateLogService<OperateLogBean> operateLogService;
 
 	@Override
-	public Map<String, Object> transform(String productId, JSONObject json, UserBean user,
+	public ResponseModel transform(String productId, JSONObject json, UserBean user,
 										 HttpRequestInfoBean request) throws WriterException, JdException, ApiException, PddException {
 		logger.info("MallToolServiceImpl-->transform():productId="+productId);
-		ResponseMap message = new ResponseMap();
+		ResponseModel responseModel = new ResponseModel();
 		if(productId.startsWith("tb_")){
 			//标题，不能为空，不然无法转发淘口令
 			String title = JsonUtil.getStringValue(json, "title");
@@ -54,36 +51,30 @@ public class MallToolServiceImpl extends MallRoleCheckService implements MallToo
 			String longLink = JsonUtil.getStringValue(json, "productUrl");
 			ParameterUnspecificationUtil.checkNullString(longLink, "param productUrl must not null.");
 			try{
-				message.put("message", PromotionApi.getPromotion(title, JsonUtil.getStringValue(json, "img"), longLink,
+				responseModel.ok().message(PromotionApi.getPromotion(title, JsonUtil.getStringValue(json, "img"), longLink,
 						JsonUtil.getStringValue(json, "couponUrl")));
-				message.put("isSuccess", true);
 			}catch (ApiException e){
-				message.put("message", "无法生成共享链接！");
+				responseModel.error().message("无法生成共享链接！");
 			}finally {
-				return message.getMap();
+				return responseModel;
 			}
 		}else if(productId.startsWith("pdd_")){
 			String productIdTemp = productId.substring(4, productId.length());
-			message.put("message", com.cn.leedane.mall.pdd.api.PromotionApi.getPromotion(StringUtil.changeObjectToLong(productIdTemp), JsonUtil.getStringValue(json,"title")));
-			message.put("isSuccess", true);
-			return message.getMap();
+			return responseModel.ok().message(com.cn.leedane.mall.pdd.api.PromotionApi.getPromotion(StringUtil.changeObjectToLong(productIdTemp), JsonUtil.getStringValue(json,"title")));
 		}else if(productId.startsWith("jd_")){
-			message.put("message", EnumUtil.ResponseCode.请求返回成功码.value);
-			message.put("isSuccess", true);
-			return message.getMap();
+			return responseModel.ok().message(EnumUtil.ResponseCode.请求返回成功码.value);
 		}
 
-		return message.getMap();
+		return responseModel.error();
 	}
 
 
 	@Override
-	public Map<String, Object> parseUrlGetId(JSONObject json, UserBean user,
+	public ResponseModel parseUrlGetId(JSONObject json, UserBean user,
 										 HttpRequestInfoBean request) throws JdException, ApiException {
 		String url = JsonUtil.getStringValue(json, "url");
 		logger.info("MallToolServiceImpl-->parseUrlGetId():url=" + url);
 		ParameterUnspecificationUtil.checkNullString(url, "url must not null.");
-		ResponseMap message = new ResponseMap();
 		String id = null;
 		if(!StringUtil.isLink(url)){
 			//非链接，那么就解析看有没有淘口令
@@ -102,16 +93,11 @@ public class MallToolServiceImpl extends MallRoleCheckService implements MallToo
 			if(StringUtil.isNull(id))
 				id = CommonUtil.parseLinkId(url);
 		}
-
-		if(StringUtil.isNotNull(id)){
-			message.put("message", id);
-			message.put("isSuccess", true);
-		}else{
-			message.put("responseCode", EnumUtil.ResponseCode.系统无法解析出地址栏中的id.value);
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.系统无法解析出地址栏中的id.value));
-			message.put("isSuccess", false);
-		}
-
-		return message.getMap();
+		ResponseModel responseModel = new ResponseModel();
+		if(StringUtil.isNotNull(id))
+			responseModel.ok().message(id);
+		else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.系统无法解析出地址栏中的id.value)).code(EnumUtil.ResponseCode.系统无法解析出地址栏中的id.value);
+		return responseModel;
 	}
 }

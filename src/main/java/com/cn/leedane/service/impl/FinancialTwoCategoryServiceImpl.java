@@ -99,7 +99,7 @@ public class FinancialTwoCategoryServiceImpl implements FinancialTwoCategoryServ
 			}
 		}
 		message.put("message", categorysList);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 
@@ -130,7 +130,7 @@ public class FinancialTwoCategoryServiceImpl implements FinancialTwoCategoryServ
 			
 		}
 		message.put("message", r);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取全部二级分类列表", StringUtil.getSuccessOrNoStr(result)).toString(), "getAll()", StringUtil.changeBooleanToInt(result), 0);
 		return message.getMap();

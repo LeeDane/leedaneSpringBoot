@@ -52,7 +52,7 @@
 			beforeSend:function(){
 			},
 			success : function(data) {
-				if(data.isSuccess){
+				if(data.success){
 					var currentMsg = $(".nav-msg").hasClass("active");
 					/*<![CDATA[*/
 					for(var i = 0 ; i < data.message.length; i++){
@@ -91,7 +91,7 @@
 			},
 			success : function(data) {
 				layer.msg(data.message);
-				if(data.isSuccess)
+				if(data.success)
 					//刷新当前页面
 					window.location.reload();					
 			},

@@ -98,7 +98,7 @@ public class FriendController extends BaseController{
 			int to_user_id = json.getInt("to_user_id");			
 			UserBean toUser = userService.findById(to_user_id);
 			if(toUser!= null){
-				message.put("isSuccess", friendService.isFriend(getUserFromMessage(message).getId(), to_user_id));
+				message.put("success", friendService.isFriend(getUserFromMessage(message).getId(), to_user_id));
 				
 				// 保存操作日志信息
 				String subject = user.getAccount()+"判断跟"+toUser.getAccount()+"是否是朋友";

@@ -72,7 +72,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 		if(result){
 			//清空该用户的宝宝列表缓存
 			babyLifeHandler.deleteBabyLifeCache(babyId, babyLife.getId());
-			message.put("isSuccess", true);
+			message.put("success", true);
 			String content = "您成功为宝宝《"+ babyBean.getNickname() +"》添加一条新的生活方式记录！";
 			message.put("message", content);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -106,7 +106,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 		if(result){
 			//清除该生活方式缓存
 			babyLifeHandler.deleteBabyLifeCache(babyBean.getId(), babyLifeBean.getId());
-			message.put("isSuccess", true);
+			message.put("success", true);
 			String content = "您已修改了宝宝《"+ babyBean.getNickname() +"》的生活方式！";
 			message.put("message", content);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -140,7 +140,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 		if(result){
 			//清除该宝宝生活方式的缓存
 			babyLifeHandler.deleteBabyLifeCache(babyId, lifeId);
-			message.put("isSuccess", true);
+			message.put("success", true);
 			String content = "您已成功删除了宝宝《"+ baby.getNickname() +"》的生活方式记录！";
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -282,7 +282,7 @@ public class BabyLifeServiceImpl extends AdminRoleCheckService implements BabyLi
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看宝宝id为"+babyId+"的生活方式列表", "lifes()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", display);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 

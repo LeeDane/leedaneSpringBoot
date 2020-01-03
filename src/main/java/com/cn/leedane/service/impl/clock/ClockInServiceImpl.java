@@ -231,7 +231,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 				CustomMessage customMessage = new JpushCustomMessage();
 				customMessage.sendToAlias("leedane_user_"+ clock.getCreateUserId(),  JSONObject.fromObject(mp).toString(), EnumUtil.CustomMessageExtraType.打卡等待审核.value);
 
-				message.put("isSuccess", true);
+				message.put("success", true);
 				message.put("message", "今日打卡成功,请耐心等待管理员审核");
 				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 				return message.getMap();
@@ -256,7 +256,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 				}
 			}
 			
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "今日打卡成功！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -289,7 +289,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 //			babyHandler.deleteBabyBeanCache(baby.getId());
 //			//清空该用户的宝宝列表缓存
 //			babyHandler.deleteBabyBeansCache(user.getId());
-//			message.put("isSuccess", true);
+//			message.put("success", true);
 //			String content= "您已成功修改宝宝《"+ baby.getNickname() +"》的信息！";
 //			message.put("message", content);
 //			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -322,7 +322,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 //			babyHandler.deleteBabyBeanCache(babyId);
 //			//清空该用户的宝宝列表缓存
 //			babyHandler.deleteBabyBeansCache(user.getId());
-//			message.put("isSuccess", true);
+//			message.put("success", true);
 //			String content = "您已成功删除宝宝《"+ baby.getNickname() +"》！";
 //			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
 //			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -361,7 +361,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 			}
 		}
 		message.put("message", displays);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		//保存动态信息
 		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), "查看"+date+"的打卡情况", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 		return message.getMap();
@@ -406,7 +406,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 		clockInDisplay.setAccount(userHandler.getUserName(toUserId));
 
 		message.put("message", clockInDisplay);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		//保存动态信息
 		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), "查看用户"+ userHandler.getUserName(toUserId)+"在"+date+"的打卡记录情况", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 		return message.getMap();
@@ -436,7 +436,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 		clockInBean.setModifyTime(new Date());
 		clockInBean.setModifyUserId(user.getId());
 		message.put("message", "提醒成功");
-		message.put("isSuccess", true);
+		message.put("success", true);
 		//保存动态信息
 		clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), userHandler.getUserName(user.getId())+"提醒管理员审核打卡", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
 		return message.getMap();
@@ -473,7 +473,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 		boolean result = clockInMapper.update(clockInBean) > 0;
 		if(result){
 			message.put("message", "操作成功！");
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 
 			//发送通知
@@ -530,7 +530,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 		boolean result = clockInResourceMapper.save(resourcesBean) > 0;
 		if(result){
 			message.put("message", "操作成功！");
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			//保存动态信息
 			clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), user.getAccount() + "补充位置信息", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
@@ -579,7 +579,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 		boolean result = clockInResourceMapper.save(resourcesBean) > 0;
 		if(result){
 			message.put("message", "操作成功！");
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			//保存动态信息
 			clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), user.getAccount() + "补充位置信息", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);
@@ -622,7 +622,7 @@ public class ClockInServiceImpl extends AdminRoleCheckService implements ClockIn
 		boolean result = clockInResourceMapper.update(clockInResourcesBean) > 0;
 		if(result){
 			message.put("message", "删除成功！");
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			//保存动态信息
 			clockDynamicHandler.saveDynamic(clockId, new Date(), user.getId(), user.getAccount() + "删除资源", false, EnumUtil.CustomMessageExtraType.其他未知类型.value);

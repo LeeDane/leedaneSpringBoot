@@ -58,7 +58,7 @@ layui.use(['table', 'laydate', 'form', 'layedit'], function(){
                     dataType: 'json',
                     success : function(data) {
                         layer.close(loadi);
-                        if(data.isSuccess){
+                        if(data.success){
                             obj.del();
                             layer.msg("订单删除成功，2秒后将自动刷新");
                             reloadPage(2000);
@@ -143,7 +143,7 @@ layui.use(['table', 'laydate', 'form', 'layedit'], function(){
             dataType: 'json',
             success : function(data) {
                 layer.close(loadi);
-                if(data.isSuccess){
+                if(data.success){
                     layer.msg(edit ? '订单修改成功，2秒后将自动刷新' :"新的订单添加成功，2秒后将自动刷新");
                     reloadPage(2000);
                 }else{
@@ -211,7 +211,7 @@ function parseUrl(obj, event){
             dataType: 'json',
             success : function(data) {
                 layer.close(loadi);
-                if(data.isSuccess){
+                if(data.success){
                     $("input[name='product_code']").val(data.message);
                 }else{
                     ajaxError(data);

@@ -3,6 +3,7 @@ package com.cn.leedane.service.mall;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,7 @@ public interface S_ProductService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> save(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel save(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 统计商品
@@ -35,7 +36,7 @@ public interface S_ProductService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> statistics(long productId, JSONObject json,
+	public ResponseModel statistics(long productId, JSONObject json,
 			UserBean user, HttpRequestInfoBean request);
 
 	/**
@@ -47,7 +48,7 @@ public interface S_ProductService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> recommend(long productId,
+	public ResponseModel recommend(long productId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request);
 	

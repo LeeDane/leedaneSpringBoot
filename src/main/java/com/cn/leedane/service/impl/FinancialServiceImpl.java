@@ -44,7 +44,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 		if(financialBean == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有要同步的数据.value));
 			message.put("responseCode", EnumUtil.ResponseCode.没有要同步的数据.value);
-			message.put("isSuccess", true);
+			message.put("success", true);
 			return message.getMap();
 		}
 		
@@ -56,7 +56,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 			if(checkExists(imei, financialBean.getLocalId(), financialBean.getAdditionTime())){
 				message.put("message", "您已添加过该记账记录，请勿重复操作！");
 				message.put("responseCode", EnumUtil.ResponseCode.添加的记录已经存在.value);
-				message.put("isSuccess", true);
+				message.put("success", true);
 				return message.getMap();
 			}
 			result = financialMapper.save(financialBean) > 0;
@@ -66,7 +66,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 			Map<String, Long> r = new HashMap<String, Long>();
 			r.put("local_id", financialBean.getLocalId());
 			r.put("id", financialBean.getId());
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", r);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
@@ -107,13 +107,13 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 		if(financialBean == null || financialBean.getId() < 1){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有要同步的数据.value));
 			message.put("responseCode", EnumUtil.ResponseCode.没有要同步的数据.value);
-			message.put("isSuccess", true);
+			message.put("success", true);
 			return message.getMap();
 		}
 		
 		boolean result = financialMapper.update(financialBean) > 0;
 		if(result){
-			message.put("isSuccess", true);
+			message.put("success", true);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据更新失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据更新失败.value);
@@ -142,7 +142,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 		
 		boolean result = financialMapper.deleteById(FinancialBean.class, fid) > 0;
 		if(result){
-			message.put("isSuccess", true);
+			message.put("success", true);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据删除失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据删除失败.value);
@@ -162,7 +162,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 		if(CollectionUtils.isEmpty(appFinancialBeans)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有要同步的数据.value));
 			message.put("responseCode", EnumUtil.ResponseCode.没有要同步的数据.value);
-			message.put("isSuccess", true);
+			message.put("success", true);
 			return message.getMap();
 		}
 		
@@ -229,7 +229,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"同步记账数据，").toString(), "synchronous()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		//message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据同步成功.value));
 		message.put("message", jsonObject);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 
@@ -244,7 +244,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 		if(type == 0 || CollectionUtils.isEmpty(financialBeans)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有要同步的数据.value));
 			message.put("responseCode", EnumUtil.ResponseCode.没有要同步的数据.value);
-			message.put("isSuccess", true);
+			message.put("success", true);
 			return message.getMap();
 		}
 
@@ -276,7 +276,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"强制同步记录").toString(), "force()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("message", returnBeans);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -379,7 +379,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取", year, "年的记账数据").toString(), "getByYear()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("message", list);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -394,7 +394,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取全部的记账数据").toString(), "getAll()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("message", list);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 
@@ -443,7 +443,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"查询记账列表，查询条件：", json.toString()).toString(), "query()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("message", list);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 
@@ -514,7 +514,7 @@ public class FinancialServiceImpl extends AdminRoleCheckService implements Finan
 		long end = System.currentTimeMillis();
 		logger.info("获取记账列表总计耗时：" +(end - start) +"毫秒, 总数是："+rs.size());
 		message.put("message", rs);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 }

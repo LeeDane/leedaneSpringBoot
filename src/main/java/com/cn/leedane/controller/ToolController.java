@@ -64,7 +64,7 @@ public class ToolController extends BaseController{
 		String content = JsonUtil.getStringValue(getJsonFromMessage(message), "content");
 		String msg = HttpRequestUtil.sendAndRecieveFromYoudao(content);
 		msg = StringUtil.getYoudaoFanyiContent(msg);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", msg);
 		return message.getMap();
 	}
@@ -119,7 +119,7 @@ public class ToolController extends BaseController{
 			ISend send = new EmailSend(emailBean);
 			SendMessage sendMessage = new SendMessage(send);
 			sendMessage.sendMsg();//发送消息队列到消息队列
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件已经发送.value));
 
 		} catch (Exception e) {
@@ -166,7 +166,7 @@ public class ToolController extends BaseController{
 //		String key = phone + "_"+ type;
 //		RedisUtil redisUtil = RedisUtil.getInstance();
 //		if(redisUtil.hasKey(key)){
-//			message.put("isSuccess", true);
+//			message.put("success", true);
 //			int seconds = (int) (120 - (System.currentTimeMillis() - Long.parseLong(redisUtil.getString(key))));
 //			message.put("left", seconds);
 //			message.put("message", "您操作太频繁啦！下次操作剩余："+ seconds +"秒");
@@ -188,7 +188,7 @@ public class ToolController extends BaseController{
 			e.printStackTrace();
 		}*/
 		if(success){
-				message.put("isSuccess", true);
+				message.put("success", true);
 				message.put("message", "发送成功，请留意手机查看");
 				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			}else{
@@ -210,7 +210,7 @@ public class ToolController extends BaseController{
 			return message.getMap();
 		
 		checkRoleOrPermission(model, request);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", getToken());
 		return message.getMap();
 	}
@@ -224,7 +224,7 @@ public class ToolController extends BaseController{
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", RSAKeyUtil.getInstance().getPublicKey());
 		return message.getMap();
 	}
@@ -249,7 +249,7 @@ public class ToolController extends BaseController{
 			while((i = is.read())!=-1)   { 
 				out.write(i); 
 			}
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", ConstantsUtil.BASE64_JPG_IMAGE_HEAD + new String(Base64Util.encode(out.toByteArray())));
 			return message.getMap();
 		} catch (Exception e) {
@@ -303,7 +303,7 @@ public class ToolController extends BaseController{
 				+request.getContextPath()+"/";
 		String bpath = bp +"dl?scan_login=" + cnid;
 		message.put("message", ZXingCodeHandler.createQRCode(bpath, 200));
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -335,7 +335,7 @@ public class ToolController extends BaseController{
 		//获得指定的环境变量
 //       String path = System.getenv("path");
 		String result = CommonUtil.execMult("java -version");
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", result);
 		return message.getMap();
 	}

@@ -152,7 +152,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 				message.put("responseCode", EnumUtil.ResponseCode.该用户已被占用.value);
 				message.put("isAccount", true);
 			}
-			message.put("isSuccess", false);
+			message.put("success", false);
 		}else{
 			boolean isSave = userMapper.save(user) > 0;
 			if(isSave){
@@ -164,12 +164,12 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 				//UserSolrHandler.getInstance().addBean(user);
 				
 				saveRegisterScore(user);
-				message.put("isSuccess", true);
+				message.put("success", true);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先验证邮箱.value));
 				message.put("responseCode", EnumUtil.ResponseCode.请先验证邮箱.value);
 				afterRegister(user);
 			}else{
-				message.put("isSuccess", false);
+				message.put("success", false);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注册失败.value));
 				message.put("responseCode", EnumUtil.ResponseCode.注册失败.value);
 			}
@@ -406,7 +406,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		}
 		result = userMapper.executeSQL("select id from "+DataTableType.用户.value+" where account = ?", account).size() >0;
 		if(result){
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -496,7 +496,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			result = true;
 		}
 		if(result){
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
@@ -546,7 +546,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			result = factory.create(EnumUtil.NoticeType.短信).send(sms);
 		}
 		if(result){
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
@@ -715,7 +715,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		rs.add(map);
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取自己的基本数据").toString(), "getUserInfoData()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		return message.getMap();
@@ -814,7 +814,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 //			new ThreadUtil().singleTask(new SolrAddThread<UserBean>(UserSolrHandler.getInstance(), user));
 			//UserSolrHandler.getInstance().addBean(user);
 			
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", "恭喜您注册成功,请登录");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -855,7 +855,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 					
 			}
 		}
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		return message.getMap();
@@ -927,7 +927,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			}
 		}
 		
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		//保存操作日志
@@ -945,7 +945,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		
 		UserBean userBean = userMapper.shakeSearch(user.getId(), ConstantsUtil.STATUS_NORMAL);
 		if(userBean != null ){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			userId = userBean.getId();
 			message.put("message", userHandler.getUserInfo(userBean, false));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -1050,7 +1050,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 //			new ThreadUtil().singleTask(new SolrUpdateThread<UserBean>(UserSolrHandler.getInstance(), user));
 			//UserSolrHandler.getInstance().updateBean(user);
 			
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			//把Redis缓存的信息删除掉
@@ -1096,7 +1096,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		updateUserBean.setStatus(status);
 		boolean result = userMapper.update(updateUserBean) > 0;
 		if(result){
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			//把Redis缓存的信息删除掉
@@ -1166,7 +1166,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			//把Redis缓存的信息删除掉
 			userHandler.deleteUserDetail(updateUser.getId());
 			user.setPassword(MD5Util.compute(newPassword));; //由于系统没有退出，需要重新赋值
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.新密码修改成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -1204,7 +1204,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		
 		boolean result = userMapper.update(updateUserBean) > 0;
 		if(result){
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.密码重置成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.密码重置成功.value);
 			//通知相关用户
@@ -1292,7 +1292,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		if (searchUser != null) {
 			// 保存操作日志信息
 			message.put("userinfo", userHandler.getUserInfo(searchUser, user.getId() == searchUserId));
-			message.put("isSuccess", true);
+			message.put("success", true);
 		}else{
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 		}
@@ -1381,11 +1381,11 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 				map.put("userid", useridq);
 			}
 			
-			map.put("isSuccess", true);
+			map.put("success", true);
 			scanLoginWebSocket.sendMessage(JSONObject.fromObject(map).toString());
 			//session.setAttribute(UserController.USER_INFO_KEY, user);
 			userHandler.removeLoginErrorNumber(account);
-			message.put("isSuccess", true);
+			message.put("success", true);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.登录页面已经过期.value));
 			message.put("responseCode", EnumUtil.ResponseCode.登录页面已经过期.value);
@@ -1415,9 +1415,9 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			return message.getMap();
 		}
 		
-		message.put("isSuccess", true);
+		message.put("success", true);
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("isSuccess", true);
+		map.put("success", true);
 		map.put("message", "cancel");
 		ScanLoginWebSocket scanLoginWebSocket = ScanLoginWebSocket.scanLoginSocket.get(cid);
 		if(scanLoginWebSocket != null){
@@ -1452,7 +1452,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			userHandler.deleteUserDetail(toUserId);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户注销成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			message.put("isSuccess", true);
+			message.put("success", true);
 
 			//删除ES缓存
 			elasticSearchUtil.delete(DataTableType.用户.value, user.getId());
@@ -1528,7 +1528,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 					ISend send = new EmailSend(emailBean);
 					SendMessage sendMessage = new SendMessage(send);
 					sendMessage.sendMsg();//发送消息队列到消息队列
-					message.put("isSuccess", true);
+					message.put("success", true);
 					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件已经发送.value) +", 请注意查收！");
 					message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 				} catch (Exception e) {
@@ -1539,7 +1539,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 				break;
 			case 3:  //3为私信
 				notificationHandler.sendNotificationById(false, user.getId(), toUserId, content, EnumUtil.NotificationType.私信, null, 0, null);
-				message.put("isSuccess", true);
+				message.put("success", true);
 				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.私信已经发送.value));
 				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 				break;
@@ -1614,7 +1614,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 //			new ThreadUtil().singleTask(new SolrAddThread<UserBean>(UserSolrHandler.getInstance(), user));
 			//UserSolrHandler.getInstance().addBean(addUserBean);
 			
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.添加成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -1703,7 +1703,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		
 		if(result){
 			userHandler.deleteUserDetail(toUserId);
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.头像上传成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -1779,7 +1779,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 				}
 			}
 		}
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", users);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		
@@ -1805,7 +1805,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		SessionKey key = new DefaultSessionKey(sessionStr);
 		Session session = SecurityUtils.getSecurityManager().getSession(key);
 		boolean success = SessionManagerUtil.getInstance().removeSession(session, true);
-		message.put("isSuccess", success);
+		message.put("success", success);
 		if(success){
 			message.put("message", "操作成功");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);

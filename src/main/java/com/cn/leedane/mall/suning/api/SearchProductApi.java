@@ -114,7 +114,12 @@ public class SearchProductApi {
             searchProductResult.setTaobaoItems(suningBeans);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new SuningApiException("苏宁网络连接异常");
+            if("biz.handler.data-get:no-result".equalsIgnoreCase(e.getMessage())){
+                throw new SuningApiException("没有结果");
+            }else{
+                throw new SuningApiException("苏宁网络连接异常");
+            }
+
         }
         return searchProductResult;
     }

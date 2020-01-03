@@ -103,7 +103,7 @@ function doBind(){
         },
         success : function(data) {
             layer.close(loadi);
-            if(data.isSuccess){
+            if(data.success){
                 layer.msg(data.message);
                 window.open("/lg", '_self');
             }else{

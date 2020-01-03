@@ -89,7 +89,7 @@ public class PrivateChatServiceImpl implements PrivateChatService<PrivateChatBea
 			//给对方发送通知
 			notificationHandler.sendNotificationById(false, user.getId(), toUserId, content, NotificationType.私信, DataTableType.私信.value, privateChatBean.getId(), null);
 			
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", chatMap);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));

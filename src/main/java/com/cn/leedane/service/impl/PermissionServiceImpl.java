@@ -62,7 +62,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		permissionBean.setOrder(JsonUtil.getIntValue(jsonObject, "order", 1));
 		permissionBean.setStatus(JsonUtil.getIntValue(jsonObject, "status", ConstantsUtil.STATUS_NORMAL));
 		boolean result = permissionMapper.save(permissionBean) > 0;
-		message.put("isSuccess", result);
+		message.put("success", result);
 		if(result){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -87,7 +87,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		permissionBean.setId(JsonUtil.getLongValue(jsonObject, "id", 0));
 		permissionBean.setStatus(JsonUtil.getIntValue(jsonObject, "status", ConstantsUtil.STATUS_NORMAL));
 		boolean result = permissionMapper.update(permissionBean) > 0;
-		message.put("isSuccess", result);
+		message.put("success", result);
 		if(result){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -113,7 +113,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		rolePermissionMapper.deleteByField(RolePermissionBean.class, "permission_id", pmid);
 		
 		boolean result = permissionMapper.deleteById(PermissionBean.class, pmid) > 0;
-		message.put("isSuccess", result);
+		message.put("success", result);
 		if(result){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -152,7 +152,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取权限列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 
@@ -186,7 +186,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		rolePermissionMapper.deleteByField(RolePermissionBean.class, "permission_id", pmidArray);
 		 
 	 	boolean result = permissionMapper.deleteByIds(PermissionBean.class, ids) == pmidArray.length;
-		message.put("isSuccess", result);
+		message.put("success", result);
 		if(result){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -207,7 +207,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取角色列表").toString(), "roles()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		
 		return message.getMap();
 	}
@@ -275,7 +275,7 @@ public class PermissionServiceImpl implements PermissionService<PermissionBean> 
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给权限ID为"+ pmid +",分配角色ids"+roles).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("message", "操作成功");
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		
 		return message.getMap();
 	}

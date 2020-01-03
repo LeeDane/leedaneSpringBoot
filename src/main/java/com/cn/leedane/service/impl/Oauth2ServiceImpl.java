@@ -123,7 +123,7 @@ public class Oauth2ServiceImpl implements Oauth2Service<Oauth2Bean> {
 				//登录用户loginUser
 				userHandler.loginUser(user);
 				message.put("message","绑定账号成功，请登录！");
-				message.put("isSuccess", true);
+				message.put("success", true);
 				return message.getMap();
 			}
 
@@ -160,7 +160,7 @@ public class Oauth2ServiceImpl implements Oauth2Service<Oauth2Bean> {
 					//登录用户loginUser
 					userHandler.loginUser(user);
 					message.put("message","绑定账号成功，请登录！");
-					message.put("isSuccess", true);
+					message.put("success", true);
 					return message.getMap();
 				}
 			}else{

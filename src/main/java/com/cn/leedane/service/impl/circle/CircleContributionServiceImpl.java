@@ -39,7 +39,7 @@ public class CircleContributionServiceImpl implements CircleContributionService<
 	private NotificationHandler notificationHandler;
 
 	@Override
-	public Map<String, Object> paging(JSONObject jo, UserBean user,
+	public ResponseModel paging(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("CircleContributionServiceImpl-->paging():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		String method = JsonUtil.getStringValue(jo, "method", "firstloading"); //操作方式
@@ -47,8 +47,6 @@ public class CircleContributionServiceImpl implements CircleContributionService<
 		long lastId = JsonUtil.getLongValue(jo, "last_id"); //开始的页数
 		long firstId = JsonUtil.getLongValue(jo, "first_id"); //结束的页数
 		StringBuffer sql = new StringBuffer();
-		
-		ResponseMap message = new ResponseMap();
 		//只有登录用户才能
 		/*if(user == null){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value));
@@ -78,13 +76,11 @@ public class CircleContributionServiceImpl implements CircleContributionService<
 		}
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取贡献值记录").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("message", rs);
-		message.put("isSuccess", true);
-		return message.getMap();		
+		return new ResponseModel().ok().message(rs);
 	}
 	
 	@Override
-	public Map<String, Object> reduceScore(int reduceScore, String desc, long circleId, UserBean user) {
+	public ResponseModel reduceScore(int reduceScore, String desc, long circleId, UserBean user) {
 		logger.info("CircleContributionServiceImpl-->reduceScore():user=" +user.getAccount()); 		
 		
 		reduceScore = reduceScore < 1 ? 0 : reduceScore;
@@ -102,22 +98,19 @@ public class CircleContributionServiceImpl implements CircleContributionService<
 		boolean result = circleContributionMapper.save(contributionBean) > 0;
 		//保存操作日志
 		operateLogService.saveOperateLog(user, null, null, StringUtil.getStringBufferStr(user.getAccount(),"扣除贡献值").toString(), "reduceScore()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
+		ResponseModel responseModel = new ResponseModel();
 		if(result){
 			//通知用户
 			notificationHandler.sendNotificationById(true, user.getId(), user.getId(), "您的贡献值减少"+ reduceScore +"分，原因："+ (StringUtil.isNotNull(desc) ? desc : "暂无"), NotificationType.通知, DataTableType.不存在的表.value, -1, null);
-			
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
-		message.put("isSuccess", result);
-		return message.getMap();
+
+			responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
+		}else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value)).code(EnumUtil.ResponseCode.数据库保存失败.value);
+		return responseModel;
 	}
 
 	@Override
-	public Map<String, Object> addScore(int addScore, String desc, long circleId, UserBean user) {
+	public ResponseModel addScore(int addScore, String desc, long circleId, UserBean user) {
 		logger.info("CircleContributionServiceImpl-->addScore():user=" +user.getAccount()); 		
 		
 		addScore = addScore < 1 ? 0 : addScore;
@@ -134,17 +127,14 @@ public class CircleContributionServiceImpl implements CircleContributionService<
 		boolean result = circleContributionMapper.save(contributionBean) > 0;
 		//保存操作日志
 		operateLogService.saveOperateLog(user, null, null, StringUtil.getStringBufferStr(user.getAccount(),"增加贡献值").toString(), "addScore()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
+		ResponseModel responseModel = new ResponseModel();
 		if(result){
 			//通知用户
 			notificationHandler.sendNotificationById(true, user.getId(), user.getId(), "您的贡献值增加"+ addScore+"分，原因："+ (StringUtil.isNotNull(desc) ? desc : "暂无"), NotificationType.通知, DataTableType.不存在的表.value, -1, null);
-			
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
-		message.put("isSuccess", result);
-		return message.getMap();
+			responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
+		}else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value)).code(EnumUtil.ResponseCode.数据库保存失败.value);
+
+		return responseModel;
 	}
 }

@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Map;
 
 /**
  * 首页轮播商品的service的实现类
@@ -43,7 +42,7 @@ public class S_HomeCarouselServiceImpl extends MallRoleCheckService implements S
 	private OperateLogService<OperateLogBean> operateLogService;
 
 	@Override
-	public Map<String, Object> add(JSONObject json, UserBean user,
+	public ResponseModel add(JSONObject json, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("S_CarouselServiceImpl-->add():json="+json);
 		long productId = JsonUtil.getLongValue(json, "product_id");
@@ -56,7 +55,7 @@ public class S_HomeCarouselServiceImpl extends MallRoleCheckService implements S
 		
 		S_HomeCarouselBean homeCarouselBean = new S_HomeCarouselBean();
 
-		ResponseMap message = new ResponseMap();
+		ResponseModel responseModel = new ResponseModel();
 		String returnMsg = "轮播已经发布成功！";
 		homeCarouselBean.setStatus(ConstantsUtil.STATUS_NORMAL);
 		Date createTime = new Date();
@@ -68,20 +67,17 @@ public class S_HomeCarouselServiceImpl extends MallRoleCheckService implements S
 		boolean result = homeCarouselMapper.save(homeCarouselBean) > 0;
 		if(result){
 			homeCarouselHandler.deleteCarouselBeansCache();
-			message.put("isSuccess", true);
-			message.put("message", returnMsg);
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
+			responseModel.ok().message(returnMsg);
+		}else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value)).code(EnumUtil.ResponseCode.数据库保存失败.value);
+
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"发布新的轮播商品:", productBean.getTitle() , "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+		return responseModel;
 	}
 	
 	@Override
-	public Map<String, Object> delete(long carouselId, UserBean user,
+	public ResponseModel delete(long carouselId, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("S_CarouselServiceImpl-->delete():carouselId="+carouselId);
 		
@@ -89,27 +85,20 @@ public class S_HomeCarouselServiceImpl extends MallRoleCheckService implements S
 		checkMallAdmin(user);
 		
 		boolean result = homeCarouselMapper.deleteById(S_HomeCarouselBean.class, carouselId) > 0;
-		ResponseMap message = new ResponseMap();
+		ResponseModel responseModel = new ResponseModel();
 		if(result){
 			homeCarouselHandler.deleteCarouselBeansCache();
-			message.put("isSuccess", true);
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
-		}
+			responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
+		}else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value)).code(EnumUtil.ResponseCode.删除失败.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除轮播商品, 轮播id为：", carouselId, "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+		return responseModel;
 	}
 
 	@Override
-	public Map<String, Object> carousel() {
+	public ResponseModel carousel() {
 		logger.info("S_CarouselServiceImpl-->carousel()");
-		ResponseMap message = new ResponseMap();
-		message.put("message", homeCarouselHandler.getCarouselBeans());
-		message.put("isSuccess", true);
-		return message.getMap();
+		return new ResponseModel().ok().message(homeCarouselHandler.getCarouselBeans());
 	}
 }

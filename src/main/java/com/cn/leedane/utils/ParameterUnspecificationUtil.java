@@ -53,6 +53,26 @@ public class ParameterUnspecificationUtil {
 	}
 
 	/**
+	 * 校验long是否大于0
+	 * @param l
+	 * @param msg 字符串为空后的提示信息
+	 */
+	public static void checkLong(long  l, String msg){
+		if(l < 1L)
+			throw new ParameterUnspecificationException(msg);
+	}
+
+	/**
+	 * 校验Object是否是null
+	 * @param obj
+	 * @param msg 字符串为空后的提示信息
+	 */
+	public static void checkObject(Object obj, String msg){
+		if(obj == null)
+			throw new ParameterUnspecificationException(msg);
+	}
+
+	/**
 	 * 校验字符串是否是手机号码
 	 * @param str
 	 * @param msg 字符串为空后的提示信息

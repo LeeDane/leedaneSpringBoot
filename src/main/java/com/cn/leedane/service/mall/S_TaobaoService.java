@@ -3,6 +3,7 @@ package com.cn.leedane.service.mall;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import com.google.zxing.WriterException;
 import com.taobao.api.ApiException;
 import net.sf.json.JSONObject;
@@ -28,7 +29,7 @@ public interface S_TaobaoService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> search(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel search(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 构建淘宝分享的链接
@@ -38,7 +39,7 @@ public interface S_TaobaoService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> buildShare(String taobaoId,UserBean user, HttpRequestInfoBean request);
+	public ResponseModel buildShare(String taobaoId,UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 *  长链接转化成短链接、淘宝口令、二维码等
@@ -49,6 +50,6 @@ public interface S_TaobaoService <T extends IDBean>{
 	 * @throws ApiException
 	 */
 	/*@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> transform(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws ApiException, WriterException;*/
+	public  ResponseModel transform(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws ApiException, WriterException;*/
 
 }

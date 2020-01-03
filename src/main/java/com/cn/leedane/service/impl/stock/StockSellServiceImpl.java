@@ -73,7 +73,7 @@ public class StockSellServiceImpl implements StockSellService<StockSellBean>{
 		boolean result = stockSellMapper.save(stockSellBean) > 0;
 		if(result){
 			stockSellHandler.deleteStockSellBeansCache(stockBuyId);
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "您已经成功添加一条股票卖出信息！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -118,7 +118,7 @@ public class StockSellServiceImpl implements StockSellService<StockSellBean>{
 		if(result){
 			stockSellHandler.deleteStockSellBeanCache(stockSellId); //删除缓存该股票卖出的缓存
 			stockSellHandler.deleteStockSellBeansCache(stockBuyId); //删除缓存该用户全部股票卖出的缓存
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "您的股票卖出记录已经更新成功！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -142,7 +142,7 @@ public class StockSellServiceImpl implements StockSellService<StockSellBean>{
 		if(result){
 			stockSellHandler.deleteStockSellBeanCache(stockSellId); //删除缓存该股票卖出的缓存
 			stockSellHandler.deleteStockSellBeansCache(stockBuyId); //删除缓存该用户全部股票卖出的缓存
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "您已成功删除股票卖出记录！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{

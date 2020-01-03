@@ -88,7 +88,7 @@ public class OperateLogServiceImpl implements OperateLogService<OperateLogBean>{
 		//保存操作日志
 //		saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取登录记录列表").toString(), "getUserLoginLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();		
 	}
 

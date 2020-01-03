@@ -156,7 +156,7 @@ public class AppFileDownloadController extends BaseController{
         }
         
     	Map<String, Object> m = new HashMap<String, Object>();
-    	message.put("isSuccess", true);
+    	message.put("success", true);
     	m.put("size", file.length());
     	String downloadCode = StringUtil.produceDownloadCode(uid, fileName, tableUuid);
     	RedisUtil.getInstance().addString(downloadCode, fileName);

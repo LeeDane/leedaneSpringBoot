@@ -47,7 +47,7 @@ public class MessageController extends BaseController{
 		object.setMsg(msg);
 		SendMessage sender = new SendMessage(object);
 		sender.sendMsg();
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", "发送消息成功");*/
 		return message.getMap();
 	}
@@ -70,15 +70,15 @@ public class MessageController extends BaseController{
 					object.setFromUserID(array[0]);
 					object.setMsg(array[1]);
 					object.setCreateTime(DateUtil.stringToDate(array[2]));
-					message.put("isSuccess", true);
+					message.put("success", true);
 					message.put("message", object);
 					return SUCCESS;
 				}
 			}
-			message.put("isSuccess", false);
+			message.put("success", false);
 			message.put("message", "获取信息出错");
 		}else{
-			message.put("isSuccess", false);
+			message.put("success", false);
 			message.put("message", "请先登录");
 		}*/
 		ResponseMap message = new ResponseMap();

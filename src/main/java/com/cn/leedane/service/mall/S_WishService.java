@@ -3,6 +3,8 @@ package com.cn.leedane.service.mall;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.LayuiTableResponseModel;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +26,7 @@ public interface S_WishService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> add(JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel add(JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取用户的心愿单数量
@@ -33,7 +35,7 @@ public interface S_WishService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public  Map<String,Object> getWishNumber(UserBean user, HttpRequestInfoBean request);
+	public ResponseModel getWishNumber(UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 分页获取心愿单列表
@@ -44,9 +46,9 @@ public interface S_WishService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(int current,
-			int pageSize, UserBean user,
-			HttpRequestInfoBean request);
+	public LayuiTableResponseModel paging(int current,
+										  int pageSize, UserBean user,
+										  HttpRequestInfoBean request);
 
 	/**
 	 * 获取该商品的心愿单的总数
@@ -64,7 +66,7 @@ public interface S_WishService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(long wishId,
+	public ResponseModel delete(long wishId,
 			UserBean user, HttpRequestInfoBean request);
 	
 	

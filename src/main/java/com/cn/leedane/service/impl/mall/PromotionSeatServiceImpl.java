@@ -15,18 +15,15 @@ import com.cn.leedane.notice.NoticeException;
 import com.cn.leedane.notice.model.Notification;
 import com.cn.leedane.notice.send.INoticeFactory;
 import com.cn.leedane.notice.send.NoticeFactory;
-import com.cn.leedane.notice.send.NotificationNotice;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.mall.MallRoleCheckService;
 import com.cn.leedane.service.mall.PromotionSeatService;
 import com.cn.leedane.utils.*;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,9 +53,7 @@ public class PromotionSeatServiceImpl extends MallRoleCheckService implements Pr
 	private UserHandler userHandler;
 
 	@Override
-	public Map<String, Object> add(JSONObject jo, UserBean user,
-			HttpRequestInfoBean request) {
-
+	public ResponseModel add(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
 		logger.info("PromotionSeatServiceImpl-->add():jo="+jo);
 		SqlUtil sqlUtil = new SqlUtil();
 		S_PromotionSeatBean promotionSeatBean = (S_PromotionSeatBean) sqlUtil.getBean(jo, S_PromotionSeatBean.class);
@@ -67,8 +62,7 @@ public class PromotionSeatServiceImpl extends MallRoleCheckService implements Pr
 		ParameterUnspecificationUtil.checkPlatform(promotionSeatBean.getPlatform());
 		ParameterUnspecificationUtil.checkNullString(promotionSeatBean.getSeatName(), "seat name must not null.");
 
-		ResponseMap message = new ResponseMap();
-
+		ResponseModel responseModel = new ResponseModel();
 		//只有商城管理员才能做删除操作
 		checkMallAdmin(user);
 
@@ -84,21 +78,18 @@ public class PromotionSeatServiceImpl extends MallRoleCheckService implements Pr
 			returnMsg = "该记录已经存在，请认真核实。";
 		}
 
-		message.put("isSuccess", result);
-		message.put("message", returnMsg);
-		if(result){
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
+		if(result)
+			responseModel.ok().message(returnMsg);
+		else
+			responseModel.error().message(returnMsg).code(EnumUtil.ResponseCode.数据库保存失败.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"添加推广位，推广位ID为", promotionSeatBean.getSeatId(), ",推广位唯一编号为：", promotionSeatBean.getId(), "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 
-		return message.getMap();
+		return responseModel;
 	}
 
 	@Override
-	public Map<String, Object> autoCreatePdd(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws PddException {
+	public ResponseModel autoCreatePdd(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws PddException {
 		logger.info("PromotionSeatServiceImpl-->autoCreatePdd():jo="+jo);
 		//只有商城管理员才能做删除操作
 		checkMallAdmin(user);
@@ -109,13 +100,9 @@ public class PromotionSeatServiceImpl extends MallRoleCheckService implements Pr
 			String value = String.format("%05d", maxId + i);
 			pIdNameList.add("tgw"+ value);
 		}
-		ResponseMap message = new ResponseMap();
 		List<S_PromotionSeatBean> promotionSeatBeans = CreateSeatApi.create(pIdNameList);
-		if(promotionSeatBeans.size() != pIdNameList.size()){
-			message.put("message", "有某些推广位创建失败，本次操作结束。");
-			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-			return message.getMap();
-		}
+		if(promotionSeatBeans.size() != pIdNameList.size())
+			return new ResponseModel().error().message("有某些推广位创建失败，本次操作结束。").code(EnumUtil.ResponseCode.操作失败.value);
 
 		Date createTime = new Date();
 		for(S_PromotionSeatBean promotionSeatBean: promotionSeatBeans){
@@ -137,24 +124,20 @@ public class PromotionSeatServiceImpl extends MallRoleCheckService implements Pr
 		}catch(DuplicateKeyException e){ //唯一键约束异常不做处理
 			returnMsg = "该记录已经存在，请认真核实。";
 		}
+		ResponseModel responseModel = new ResponseModel();
+		if(result)
+			responseModel.ok().message(returnMsg);
+		else
+			responseModel.error().message(returnMsg).code(EnumUtil.ResponseCode.数据库保存失败.value);
 
-		message.put("isSuccess", result);
-		message.put("message", returnMsg);
-		if(result){
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"自动添加拼多多推广位， 结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "add()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 
-		return message.getMap();
+		return responseModel;
 	}
 
 	@Override
-	public Map<String, Object> update(long seatId, JSONObject jo, UserBean user,
-			HttpRequestInfoBean request) throws Exception {
-
+	public ResponseModel update(long seatId, JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception {
 		logger.info("PromotionSeatServiceImpl-->update(): seatId = "+ seatId +",jo="+jo);
 		SqlUtil sqlUtil = new SqlUtil();
 		S_PromotionSeatBean updatePromotionSeatBean = (S_PromotionSeatBean) sqlUtil.getUpdateBean(jo, S_PromotionSeatBean.class);
@@ -163,7 +146,6 @@ public class PromotionSeatServiceImpl extends MallRoleCheckService implements Pr
 		if(promotionSeatBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该推广位不存在.value));
 
-		ResponseMap message = new ResponseMap();
 		//只有商城管理员才能做删除操作
 		checkMallAdmin(user);
 		//j校验必须的参数
@@ -184,29 +166,24 @@ public class PromotionSeatServiceImpl extends MallRoleCheckService implements Pr
 		}catch(DuplicateKeyException e){ //唯一键约束异常不做处理
 			result = true;
 		}
-		message.put("isSuccess", result);
-		if(result){
-			message.put("message", returnMsg);
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库修改失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
-		}
+		ResponseModel responseModel = new ResponseModel();
+		if(result)
+			responseModel.ok().message(returnMsg);
+		else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库修改失败.value)).code(EnumUtil.ResponseCode.数据库修改失败.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改推广位，推广位ID为", promotionSeatBean.getId(), "结果是：", StringUtil.getSuccessOrNoStr(result)).toString(), "update()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-
-		return message.getMap();
+		return responseModel;
 	}
 
 	@Override
-	public Map<String, Object> paging(JSONObject json, UserBean user, HttpRequestInfoBean request){
+	public LayuiTableResponseModel paging(JSONObject json, UserBean user, HttpRequestInfoBean request){
 		logger.info("PromotionSeatServiceImpl-->paging():json="+ json);
 
 		String orderField = JsonUtil.getStringValue(json, "field", "id"); //排序字段
 		String orderType = JsonUtil.getStringValue(json, "order", "asc"); //排序类型
 		int current = JsonUtil.getIntValue(json, "page", 1) -1;
 		int pageSize = JsonUtil.getIntValue(json, "limit", 10);
-		LayuiTableResponseMap message = new LayuiTableResponseMap();
 		List<Map<String, Object>> rs = new ArrayList<Map<String, Object>>();
 		int start = SqlUtil.getPageStart(current, pageSize, 0);
 		String platform = JsonUtil.getStringValue(json, "platform", null);
@@ -224,46 +201,34 @@ public class PromotionSeatServiceImpl extends MallRoleCheckService implements Pr
 				}
 			}
 		}
-		message.setCode(0);
-		message.setCount(SqlUtil.getTotalByList(promotionSeatMapper.pagingTotal(platform, ConstantsUtil.STATUS_NORMAL)));
-		message.put("isSuccess", true);
-		message.put("data", rs);
-		return message.getMap();
+		LayuiTableResponseModel responseModel = new LayuiTableResponseModel();
+		responseModel.setData(rs).setCount(SqlUtil.getTotalByList(promotionSeatMapper.pagingTotal(platform, ConstantsUtil.STATUS_NORMAL))).code(0);
+		return responseModel;
 	}
 
 	@Override
-	public Map<String, Object> noallot(long seatId, JSONObject json, UserBean user, HttpRequestInfoBean request){
+	public ResponseModel noallot(long seatId, JSONObject json, UserBean user, HttpRequestInfoBean request){
 		logger.info("PromotionSeatServiceImpl-->noallot():seatId = "+ seatId +",json="+ json);
 
 		S_PromotionSeatBean promotionSeatBean = promotionSeatMapper.findById(S_PromotionSeatBean.class, seatId);
 		if(promotionSeatBean == null)
 			throw new NullPointerException("该推广位已经不存在");
-		ResponseMap message = new ResponseMap();
-		if(promotionSeatBean.getUserId() > 0){
-			message.put("message", "该推广位已经分配给用户："+ userHandler.getUserName(promotionSeatBean.getUserId()));
-			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-			return message.getMap();
-		}
-		String platform = promotionSeatBean.getPlatform();
-		List<Map<String, Object>> rs = promotionSeatMapper.noallot(platform, ConstantsUtil.STATUS_NORMAL);
-		message.put("isSuccess", true);
-		message.put("data", rs);
-		return message.getMap();
+
+		if(promotionSeatBean.getUserId() > 0)
+			return new ResponseModel().error().message("该推广位已经分配给用户："+ userHandler.getUserName(promotionSeatBean.getUserId())).code(EnumUtil.ResponseCode.操作失败.value);
+
+		return new ResponseModel().ok().message(promotionSeatMapper.noallot(promotionSeatBean.getPlatform(), ConstantsUtil.STATUS_NORMAL));
 	}
 
 	@Override
-	public Map<String, Object> allotObject(long seatId, long userId, UserBean user, HttpRequestInfoBean request) throws NoticeException {
+	public ResponseModel allotObject(long seatId, long userId, UserBean user, HttpRequestInfoBean request) throws NoticeException {
 		logger.info("PromotionSeatServiceImpl-->allotObject():seatId = "+ seatId +", userId="+ userId);
 
 		S_PromotionSeatBean promotionSeatBean = promotionSeatMapper.findById(S_PromotionSeatBean.class, seatId);
 		if(promotionSeatBean == null)
 			throw new NullPointerException("该推广位已经不存在");
-		ResponseMap message = new ResponseMap();
-		if(promotionSeatBean.getUserId() > 0){
-			message.put("message", "该推广位已经分配给用户："+ userHandler.getUserName(promotionSeatBean.getUserId()));
-			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-			return message.getMap();
-		}
+		if(promotionSeatBean.getUserId() > 0)
+			return new ResponseModel().error().message("该推广位已经分配给用户："+ userHandler.getUserName(promotionSeatBean.getUserId())).code(EnumUtil.ResponseCode.操作失败.value);
 
 		promotionSeatBean.setUserId(userId);
 		promotionSeatBean.setAllotTime(new Date());
@@ -271,6 +236,7 @@ public class PromotionSeatServiceImpl extends MallRoleCheckService implements Pr
 		promotionSeatBean.setModifyUserId(user.getId());
 		boolean result = promotionSeatMapper.update(promotionSeatBean) > 0;
 
+		ResponseModel responseModel = new ResponseModel();
 		if(result){
 			//找看看有没有申请记录，有的话修改申请记录状态
 			S_PromotionSeatApplyBean applyBean = promotionSeatApplyMapper.getApply(userId, promotionSeatBean.getPlatform());
@@ -290,39 +256,32 @@ public class PromotionSeatServiceImpl extends MallRoleCheckService implements Pr
 				INoticeFactory factory = new NoticeFactory();
 				result = factory.create(EnumUtil.NoticeType.站内信).send(notification);
 			}
-			message.put("message", "分配成功");
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			message.put("isSuccess", true);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
+			responseModel.ok().message("分配成功");
+		}else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value)).code(EnumUtil.ResponseCode.数据库保存失败.value);
+
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给推广位ID为："+ promotionSeatBean.getId() +" 分配给用户："+ userId+", 结果是"+ StringUtil.getSuccessOrNoStr(result)).toString(), "allotObject()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+		return responseModel;
 	}
 
 	@Override
-	public Map<String, Object> deleteAllot(long seatId, UserBean user, HttpRequestInfoBean request) throws NoticeException {
+	public ResponseModel deleteAllot(long seatId, UserBean user, HttpRequestInfoBean request) throws NoticeException {
 		logger.info("PromotionSeatServiceImpl-->deleteAllot():seatId = "+ seatId);
 
 		S_PromotionSeatBean promotionSeatBean = promotionSeatMapper.findById(S_PromotionSeatBean.class, seatId);
 		if(promotionSeatBean == null)
 			throw new NullPointerException("该推广位已经不存在");
-		ResponseMap message = new ResponseMap();
 		long userId = promotionSeatBean.getUserId();
-		if(userId == 0){
-			message.put("message", "该推广位暂时还没有分配给任何用户");
-			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-			return message.getMap();
-		}
+		if(userId == 0)
+			return new ResponseModel().error().message("该推广位暂时还没有分配给任何用户");
 
 		promotionSeatBean.setUserId(0L);
 		promotionSeatBean.setAllotTime(null);
 		promotionSeatBean.setModifyTime(new Date());
 		promotionSeatBean.setModifyUserId(user.getId());
 		boolean result = promotionSeatMapper.update(promotionSeatBean) > 0;
-
+		ResponseModel responseModel = new ResponseModel();
 		if(result){
 			//找看看有没有申请记录，有的话删除申请记录状态
 			S_PromotionSeatApplyBean applyBean = promotionSeatApplyMapper.getApply(userId, promotionSeatBean.getPlatform());
@@ -339,22 +298,18 @@ public class PromotionSeatServiceImpl extends MallRoleCheckService implements Pr
 				INoticeFactory factory = new NoticeFactory();
 				result = factory.create(EnumUtil.NoticeType.站内信).send(notification);
 			}
-			message.put("message", "解除绑定分配对象成功");
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			message.put("isSuccess", true);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-		}
+			responseModel.ok().message("解除绑定分配对象成功");
+		}else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value)).code(EnumUtil.ResponseCode.数据库保存失败.value);
+
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除推广位ID为："+ promotionSeatBean.getId() +" 的用户："+ userId+", 结果是"+ StringUtil.getSuccessOrNoStr(result)).toString(), "deleteAllot()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+		return responseModel;
 	}
 
 	@Override
-	public Map<String, Object> delete(long seatId, UserBean user, HttpRequestInfoBean request){
+	public ResponseModel delete(long seatId, UserBean user, HttpRequestInfoBean request){
 		logger.info("PromotionSeatServiceImpl-->delete():seatId=" +seatId);
-		ResponseMap message = new ResponseMap();
 		S_PromotionSeatBean promotionSeatBean = promotionSeatMapper.findById(S_PromotionSeatBean.class, seatId);
 		if(promotionSeatBean == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该推广位不存在.value));
@@ -364,17 +319,15 @@ public class PromotionSeatServiceImpl extends MallRoleCheckService implements Pr
 		checkMallAdmin(user, user.getId());
 
 		boolean result = promotionSeatMapper.delete(promotionSeatBean) > 0;
-		message.put("isSuccess", result);
-		if(result){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.删除失败.value);
-		}
+		ResponseModel responseModel = new ResponseModel();
+		if(result)
+			responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请求返回成功码.value));
+		else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value)).code(EnumUtil.ResponseCode.删除失败.value);
+
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除推广位ID为："+ promotionSeatBean).toString(), "delete()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+		return responseModel;
 	}
 
 }

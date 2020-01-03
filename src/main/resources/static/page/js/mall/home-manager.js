@@ -38,7 +38,7 @@ layui.use(['layer', 'form', 'element'], function(){
 				dataType: 'json',
 				success : function(data) {
 					layer.close(loadi);
-					if(data.isSuccess){
+					if(data.success){
 						var layId = thisObj.closest("li").attr("lay-id");
 						element.tabDelete("categoryListFilter", layId);
 						layer.closeAll();
@@ -100,7 +100,7 @@ function getCarousels(){
 		success : function(data) {
 			layer.close(loadi);
 			
-			if(data.isSuccess && data.message){
+			if(data.success && data.message){
 				if(data.message.homeCarouselBeans == null || data.message.homeCarouselBeans.length == 0){
 					
 				}else{
@@ -161,7 +161,7 @@ function deleteCarousel(obj, carouselId){
     		},
     		success : function(data) {
     			layer.close(loadi);
-    			if(data.isSuccess){
+    			if(data.success){
     				layer.msg(data.message + "，1秒后将自动刷新");
     				reloadPage(1000);
     			}else{
@@ -193,7 +193,7 @@ function addCarousel(product){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message + "，1秒后将自动刷新");
 				reloadPage(1000);
 			}else{
@@ -225,7 +225,7 @@ function addShop(shop){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message + "，1秒后将自动刷新");
 				reloadPage(1000);
 			}else{
@@ -253,7 +253,7 @@ function getShops(){
 		success : function(data) {
 			layer.close(loadi);
 			
-			if(data.isSuccess && data.message){
+			if(data.success && data.message){
 				if(data.message.homeShopBeans == null || data.message.homeShopBeans.length == 0){
 					
 				}else{
@@ -310,7 +310,7 @@ function deleteShop(obj, shopId){
     		},
     		success : function(data) {
     			layer.close(loadi);
-    			if(data.isSuccess){
+    			if(data.success){
     				layer.msg(data.message + "，1秒后将自动刷新");
     				reloadPage(1000);
     			}else{
@@ -337,7 +337,7 @@ function addItem(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess && data.message.no){
+			if(data.success && data.message.no){
 				//页面层-自定义
 				layer.open({
 				  type: 1,
@@ -372,7 +372,7 @@ function addItem(){
 							dataType: 'json',
 							success : function(data) {
 								layer.close(loadi);
-								if(data.isSuccess){
+								if(data.success){
 									layer.msg(data.message + "，1秒后将自动刷新");
 									reloadPage(1000);
 								}else{
@@ -458,7 +458,7 @@ function getMallHomeCategory(itemId){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				if(data.message){
 					var baseInfoHtml = '<div>展示的数量： <span>'+ data.message.number +'<i class="layui-icon hand" onclick="updateItemNumber(this, '+ data.message.number +', '+ data.message.itemId +');" style="font-size: 15px; color: #1E9FFF;">&#xe642;</i></span></div>'+
 				    					'<div>排序号： <span>'+ data.message.order +'<i class="layui-icon hand" onclick="updateItemOrder(this, '+ data.message.order +', '+ data.message.itemId +');" style="font-size: 15px; color: #1E9FFF;">&#xe642;</i></span></div>';
@@ -519,7 +519,7 @@ function submitUpdateItemNumber(obj, itemId){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				if(data.message){
 					layer.closeAll();
 					layer.msg(data.message + "，1秒后将自动刷新");
@@ -576,7 +576,7 @@ function submitUpdateItemOrder(obj, itemId){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				if(data.message){
 					layer.closeAll();
 					layer.msg(data.message + "，1秒后将自动刷新");
@@ -644,7 +644,7 @@ function manageCategory(obj){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				//页面层-自定义
 				layer.open({
 				  type: 1,
@@ -720,7 +720,7 @@ function submitCategory(itemId){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.closeAll();
 				layer.msg(data.message + "，1秒后将自动刷新");
 				reloadPage(1000);
@@ -757,7 +757,7 @@ function manageProduct(obj){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				//页面层-自定义
 				layer.open({
 				  type: 1,
@@ -796,7 +796,7 @@ function getItemProduct(product){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message + "，1秒后将自动刷新");
 				reloadPage(1000);
 			}else{
@@ -828,7 +828,7 @@ function deleteItemProduct(obj, itemId, itemProductId){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message + "，1秒后将自动刷新");
 					reloadPage(1000);
 				}else{

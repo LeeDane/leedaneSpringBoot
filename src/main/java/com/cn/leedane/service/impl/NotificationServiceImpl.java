@@ -102,7 +102,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取收到的通知列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}
@@ -135,7 +135,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		message.put("total", SqlUtil.getTotalByList(notificationMapper.getTotal(DataTableType.通知.value, "where to_user_id = " + user.getId() +" and status = "+ConstantsUtil.STATUS_NORMAL+" and type ='"+ type +"'")));
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"分页获取收到的通知列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}
@@ -157,7 +157,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"向所有在线用户发送通知", StringUtil.getSuccessOrNoStr(result)).toString(), "sendBroadcast()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
-		message.put("isSuccess", result);
+		message.put("success", result);
 		return message.getMap();
 	}
 	
@@ -188,7 +188,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"刪除通知Id为：", nid , StringUtil.getSuccessOrNoStr(result)).toString(), "deleteNotification()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
-		message.put("isSuccess", result);
+		message.put("success", result);
 		return message.getMap();
 	}
 	
@@ -223,7 +223,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改通知Id为：", nid , "的状态已读为：" , read, StringUtil.getSuccessOrNoStr(result)).toString(), "updateRead()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
-		message.put("isSuccess", result);
+		message.put("success", result);
 		return message.getMap();
 	}
 	
@@ -249,7 +249,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		message.put("responseCode", EnumUtil.ResponseCode.修改成功.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"修改通知类型为：", type , "的状态全部已读为：" , read, StringUtil.getSuccessOrNoStr(result)).toString(), "updateAllRead()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
-		message.put("isSuccess", result);
+		message.put("success", result);
 		return message.getMap();
 	}
 	
@@ -276,7 +276,7 @@ public class NotificationServiceImpl extends AdminRoleCheckService implements No
 		message.put("responseCode", EnumUtil.ResponseCode.修改成功.value);
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取未读的消息列表").toString(), "noReadNumber()", 1, 0);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	

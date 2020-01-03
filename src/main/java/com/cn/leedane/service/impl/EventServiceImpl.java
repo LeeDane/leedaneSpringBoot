@@ -74,7 +74,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 		if(result){
 			//清空缓存
 			eventHandler.delete();
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "添加事件成功");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -117,7 +117,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 		if(result){
 			//清空缓存
 			eventHandler.delete();
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "修改事件成功");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -142,7 +142,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 
 			//清空缓存
 			eventHandler.delete();
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "删除事件成功");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 
@@ -199,7 +199,7 @@ public class EventServiceImpl extends AdminRoleCheckService implements EventServ
 									  UserBean user, HttpRequestInfoBean request){
 		logger.info("EventServiceImpl-->all():jo=" +jo.toString());
 		ResponseMap message = new ResponseMap();
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", eventHandler.get());
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		return message.getMap();

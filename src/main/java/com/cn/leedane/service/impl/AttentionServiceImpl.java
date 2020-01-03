@@ -85,7 +85,7 @@ public class AttentionServiceImpl extends AdminRoleCheckService implements Atten
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
 		}
-		message.put("isSuccess", result);
+		message.put("success", result);
 		return message.getMap();
 	}
 	
@@ -107,7 +107,7 @@ public class AttentionServiceImpl extends AdminRoleCheckService implements Atten
 		
 		boolean result = attentionMapper.deleteById(AttentionBean.class, attentionBean.getId()) > 0;
 		if(result){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除失败.value));

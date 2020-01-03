@@ -40,7 +40,7 @@ public class CommentTest extends BaseTest {
 
         JSONObject jo = JSONObject.fromObject(str);
         try {
-            logger.info("isSuccess:" +commentService.add(jo, user, null));
+            logger.info("success:" +commentService.add(jo, user, null));
         } catch (Exception e) {
             e.printStackTrace();
         }

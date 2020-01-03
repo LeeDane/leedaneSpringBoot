@@ -59,7 +59,7 @@ public class ChatSquareServiceImpl extends AdminRoleCheckService implements Chat
 			}
 		}
 		message.put("message", result);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 
@@ -86,7 +86,7 @@ public class ChatSquareServiceImpl extends AdminRoleCheckService implements Chat
 	public Map<String, Object> getActiveUser(Date date, int top) {
 		logger.info("ChatSquareServiceImpl-->getActiveUser()");
 		ResponseMap message = new ResponseMap();
-		message.put("isSuccess", true);
+		message.put("success", true);
 		
 		StringBuffer sql = new StringBuffer();
 		sql.append("SELECT COUNT(id) count, create_user_id from t_chat_square WHERE create_time > ?");

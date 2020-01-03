@@ -7,6 +7,7 @@ import com.cn.leedane.service.mall.MallToolService;
 import com.cn.leedane.service.mall.S_TaobaoService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.ResponseModel;
 import com.google.zxing.WriterException;
 import com.jd.open.api.sdk.JdException;
 import com.taobao.api.ApiException;
@@ -46,11 +47,10 @@ public class MallToolController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/link/transform/{productId}", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> tranform(@PathVariable("productId") String productId, HttpServletRequest request) throws ApiException, WriterException, JdException, PddException {
+	public ResponseModel tranform(@PathVariable("productId") String productId, HttpServletRequest request) throws ApiException, WriterException, JdException, PddException {
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
-		message.putAll(mallToolService.transform(productId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+		return mallToolService.transform(productId, getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 
 
@@ -60,10 +60,9 @@ public class MallToolController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/parse/url", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> parseUrlGetId(HttpServletRequest request)throws JdException, ApiException {
+	public ResponseModel parseUrlGetId(HttpServletRequest request)throws JdException, ApiException {
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
-		message.putAll(mallToolService.parseUrlGetId(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+		return mallToolService.parseUrlGetId(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 }

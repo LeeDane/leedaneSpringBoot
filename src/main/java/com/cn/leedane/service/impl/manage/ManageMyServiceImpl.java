@@ -1,7 +1,6 @@
 package com.cn.leedane.service.impl.manage;
 
 import com.cn.leedane.exception.OperateException;
-import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.MyTagsMapper;
 import com.cn.leedane.mapper.Oauth2Mapper;
@@ -56,35 +55,26 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 	private MyTagsMapper myTagsMapper;
 
 	@Override
-	public Map<String, Object> bindEmail(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception {
+	public ResponseModel bindEmail(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception {
 		logger.info("ManageMyServiceImpl-->bindEmail():jo="+jo);
-		ResponseMap message = new ResponseMap();
-
 		String email = JsonUtil.getStringValue(jo, "email");
 		String password = JsonUtil.getStringValue(jo, "pwd");
 
 		ParameterUnspecificationUtil.checkNullString(email, "email must not null.");
 		ParameterUnspecificationUtil.checkNullString(password, "password must not null.");
 		String oldEmail = user.getEmail();
-		if(StringUtil.isNotNull(oldEmail) && oldEmail.equalsIgnoreCase(email)){
-			message.put("message", "与原先的邮箱一致，不需要重新绑定。");
-			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-			return message.getMap();
-		}
+		if(StringUtil.isNotNull(oldEmail) && oldEmail.equalsIgnoreCase(email))
+			return new ResponseModel().error().message("与原先的邮箱一致，不需要重新绑定。");
 
 		try {
 			byte[] decodedData = RSACoder.decryptByPrivateKey(password, RSAKeyUtil.getInstance().getPrivateKey());
 			password = new String(decodedData, "UTF-8");
-			if(!user.getPassword().equalsIgnoreCase(MD5Util.compute(password))){
-				message.put("message", "登录密码验证失败，请重试");
-				message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-				return message.getMap();
-			}
+			if(!user.getPassword().equalsIgnoreCase(MD5Util.compute(password)))
+				return new ResponseModel().error().message("登录密码验证失败，请重试");
+
 		} catch (BadPaddingException e1) {
 			e1.printStackTrace();
-			message.put("message", "该页面过期, 请刷新当前页面，重新操作！");
-			message.put("responseCode", EnumUtil.ResponseCode.RSA加密解密异常.value);
-			return message.getMap();
+			return new ResponseModel().error().message("该页面过期, 请刷新当前页面，重新操作！").code(EnumUtil.ResponseCode.RSA加密解密异常.value);
 		}
 
 		Date date = new Date();
@@ -113,19 +103,15 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 		emailBean.setReplyTo(replyTo);
 		factory.create(EnumUtil.NoticeType.邮件).send(emailBean);
 
-		message.put("isSuccess", true);
-		message.put("message", "已经发送，请注意查收！");
-		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"想绑定新的电子邮箱，地址是：", email).toString(), "bindEmail()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+//		return message.getMap();
+		return new ResponseModel().ok().message("已经发送，请注意查收！");
 	}
 
 	@Override
-	public Map<String, Object> bindPhone(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception {
+	public ResponseModel bindPhone(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception {
 		logger.info("ManageMyServiceImpl-->bindPhone():jo="+jo);
-		ResponseMap message = new ResponseMap();
-
 		String phone = JsonUtil.getStringValue(jo, "phone");
 		String code = JsonUtil.getStringValue(jo, "code");
 		String password = JsonUtil.getStringValue(jo, "pwd");
@@ -136,32 +122,21 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 		ParameterUnspecificationUtil.checkNullString(type, "sms type must not null.");
 
 		String oldPhone = user.getMobilePhone();
-		if(StringUtil.isNotNull(oldPhone) && oldPhone.equalsIgnoreCase(phone)){
-			message.put("message", "与原先的手机号码一致，不需要重新绑定。");
-			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-			return message.getMap();
-		}
+		if(StringUtil.isNotNull(oldPhone) && oldPhone.equalsIgnoreCase(phone))
+			return new ResponseModel().error().message("与原先的手机号码一致，不需要重新绑定。");
 
 		try {
 			byte[] decodedData = RSACoder.decryptByPrivateKey(password, RSAKeyUtil.getInstance().getPrivateKey());
 			password = new String(decodedData, "UTF-8");
-			if(!user.getPassword().equalsIgnoreCase(MD5Util.compute(password))){
-				message.put("message", "登录密码验证失败，请重试");
-				message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-				return message.getMap();
-			}
+			if(!user.getPassword().equalsIgnoreCase(MD5Util.compute(password)))
+				return new ResponseModel().error().message("登录密码验证失败，请重试。");
 		} catch (BadPaddingException e1) {
 			e1.printStackTrace();
-			message.put("message", "该页面过期, 请刷新当前页面，重新操作！");
-			message.put("responseCode", EnumUtil.ResponseCode.RSA加密解密异常.value);
-			return message.getMap();
+			return new ResponseModel().error().message("该页面过期, 请刷新当前页面，重新操作！").code(EnumUtil.ResponseCode.RSA加密解密异常.value);
 		}
 
-		if(!smsNotice.check(phone, code, type)){
-			message.put("message", "短信验证码校验失败，请检查是否正确或者过期");
-			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-			return message.getMap();
-		}
+		if(!smsNotice.check(phone, code, type))
+			return new ResponseModel().error().message("短信验证码校验失败，请检查是否正确或者过期。");
 
 		//这里必须要重新获取一份UserBean对象，不然直接修改参数user会导致shiro里面的user有值，Java是值传递
 		UserBean updateUser = userMapper.findById(UserBean.class, user.getId());
@@ -169,10 +144,8 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 		boolean success = false;
 		try{
 			success = userMapper.update(updateUser) > 0;
-		}catch (DuplicateKeyException e){
-			message.put("message", "绑定失败，手机号码已经被绑定！");
-			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-			return message.getMap();
+		}catch (DuplicateKeyException e) {
+			return new ResponseModel().error().error().message("绑定失败，手机号码已经被绑定！");
 		}
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"想绑定新手机，号码是：", phone, ",结果是："+ StringUtil.getSuccessOrNoStr(success)).toString(), "bindPhone()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		if(success){
@@ -181,30 +154,18 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 			//把Redis缓存的信息删除掉
 			userHandler.deleteUserDetail(user.getId());
 			user = updateUser; //由于系统没有退出，需要重新赋值
-			message.put("isSuccess", true);
-			message.put("message", "绑定成功！");
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			return message.getMap();
+			return new ResponseModel().ok().message("绑定成功！");
 		}
-
-		message.put("message", "绑定失败，请稍后重试。");
-		message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-		return message.getMap();
+		return new ResponseModel().message("绑定失败，请稍后重试。");
 	}
 
 	@Override
-	public Map<String, Object> thirdUnBind(long oid, JSONObject jo, UserBean user, HttpRequestInfoBean request){
+	public ResponseModel thirdUnBind(long oid, JSONObject jo, UserBean user, HttpRequestInfoBean request){
 		logger.info("ManageMyServiceImpl-->thirdUnBind():oid="+ oid +"&jo="+jo);
-		ResponseMap message = new ResponseMap();
-
-
-		if(oid < 1){
-			throw new ParameterUnspecificationException("oid must not null.");
-		}
+		ParameterUnspecificationUtil.checkLong(oid, "oid must not null.");
 
 		Oauth2Bean oauth2Bean = oauth2Mapper.findById(Oauth2Bean.class, oid);
-		if(oauth2Bean == null)
-			throw new NullPointerException("oauth object must not null.");
+		ParameterUnspecificationUtil.checkObject(oauth2Bean, "oauth object must not null.");
 
 		if(oauth2Bean.getCreateUserId() != user.getId())
 			throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
@@ -212,19 +173,14 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 		String platform = oauth2Bean.getPlatform();
 		boolean success = oauth2Mapper.delete(oauth2Bean) > 0;
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"解除绑定第三方平台：", platform , ",结果是："+ StringUtil.getSuccessOrNoStr(success)).toString(), "thirdUnBind()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		if(success){
-			message.put("isSuccess", true);
-			message.put("message", "解除绑定成功！");
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			return message.getMap();
-		}
-		message.put("message", "解除绑定失败，请稍后重试。");
-		message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-		return message.getMap();
+		if(success)
+			return new ResponseModel().ok().message("解除绑定成功！");
+
+		return new ResponseModel().error().message("解除绑定失败，请稍后重试。");
 	}
 
 	@Override
-	public Map<String, Object> saveTags(JSONObject jo, UserBean user, HttpRequestInfoBean request){
+	public ResponseModel saveTags(JSONObject jo, UserBean user, HttpRequestInfoBean request){
 		logger.info("ManageMyServiceImpl-->saveTags():jo="+jo);
 		ResponseMap message = new ResponseMap();
 
@@ -249,13 +205,8 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 		boolean success = myTagsMapper.batchSave(tagsBeans) == tagsBeans.size();
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"保存新的标签组合：", tags , ",结果是："+ StringUtil.getSuccessOrNoStr(success)).toString(), "saveTags()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		if(success){
-			message.put("isSuccess", true);
-			message.put("message", "添加成功！");
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			return message.getMap();
+			return new ResponseModel().ok().message("添加成功！");
 		}
-		message.put("message", "添加失败，请稍后重试。");
-		message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-		return message.getMap();
+		return new ResponseModel().error().message("添加失败，请稍后重试。");
 	}
 }

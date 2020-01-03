@@ -69,7 +69,7 @@ layui.use(['table', 'form', 'layedit'], function(){
                     dataType: 'json',
                     success : function(dataAfter) {
                         layer.close(loadi);
-                        if(dataAfter.isSuccess){
+                        if(dataAfter.success){
                             obj.del();
                             layer.msg("推广位删除成功，2秒后将自动刷新");
                             reloadPage(2000);
@@ -113,11 +113,11 @@ layui.use(['table', 'form', 'layedit'], function(){
                 dataType: 'json',
                 success : function(dataAfter) {
                     layer.close(loadi);
-                    if(dataAfter.isSuccess){
-                        if(dataAfter.data.length > 0){
+                    if(dataAfter.success){
+                        if(dataAfter.message.length > 0){
                             var contentHtml = '<dl id="allot-dl">';
-                            for(var i = 0; i < dataAfter.data.length; i++){
-                                var user = dataAfter.data[i];
+                            for(var i = 0; i < dataAfter.message.length; i++){
+                                var user = dataAfter.message[i];
                                 contentHtml += '<dd><span>'+ user.account +'</span><a onclick="allotObject('+ data.id +', '+ user.id +');" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="del" style="height: 25px !important; line-height: 25px !important;">分配</a></dd>';
                             }
                             contentHtml += '</dl>';
@@ -152,7 +152,7 @@ layui.use(['table', 'form', 'layedit'], function(){
                     dataType: 'json',
                     success : function(dataAfter) {
                         layer.close(loadi);
-                        if(dataAfter.isSuccess){
+                        if(dataAfter.success){
                             layer.msg("解除绑定对象成功，2秒后将自动刷新");
                             reloadPage(2000);
                         }else{
@@ -215,7 +215,7 @@ layui.use(['table', 'form', 'layedit'], function(){
                 dataType: 'json',
                 success : function(data) {
                     layer.close(loadi);
-                    if(data.isSuccess){
+                    if(data.success){
                         layer.msg(data.message + ", 2秒后自动刷新");
                         reloadPage(2000);
                     }else{

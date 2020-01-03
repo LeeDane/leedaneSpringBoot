@@ -184,10 +184,10 @@ public class MoodController extends BaseController{
 		//上传该base64字符串结束
 		if(isEnd){
 			filePathService.saveEachTemporaryBase64ToFilePath(json, user, getHttpRequestInfo(request));
-			message.put("isSuccess", true);
+			message.put("success", true);
 		//直接保存上传记录
 		}else{
-			message.put("isSuccess", temporaryBase64Service.saveBase64Str(json, user, getHttpRequestInfo(request)));
+			message.put("success", temporaryBase64Service.saveBase64Str(json, user, getHttpRequestInfo(request)));
 		}
 		return message.getMap();
 	}
@@ -235,7 +235,7 @@ public class MoodController extends BaseController{
 		if(!checkParams(message, request))
 			return message.getMap();
 		
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", filePathService.downloadBase64Str(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
 		return message.getMap();
 	}
@@ -246,7 +246,7 @@ public class MoodController extends BaseController{
 	 * @return 图片地址列表
 	 */
 	/*public String getOneMoodImgs(){
-		message.put("isSuccess", resIsSuccess);
+		message.put("success", success);
 		try {
 			JSONObject jo = HttpUtils.getJsonObjectFromInputStream(params,request);
 			if(jo.isEmpty()) {	
@@ -254,11 +254,11 @@ public class MoodController extends BaseController{
 			}
 			
 			resmessage = filePathService.getOneMoodImgs(jo, user, request);
-			resIsSuccess = true;
+			success = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		message.put("isSuccess", resIsSuccess);
+		message.put("success", success);
 		message.put("message", resmessage);
         return SUCCESS;
 	}*/

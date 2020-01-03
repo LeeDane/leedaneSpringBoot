@@ -42,7 +42,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 	}
 	
 	@Override
-	public Map<String, Object> manageLink(JSONObject jo, UserBean user,
+	public ResponseModel manageLink(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request){
 		logger.info("GalleryServiceImpl-->add():JSONObject="+jo.toString());
 		
@@ -64,27 +64,16 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		
 		//为了配合七牛云存储的文件的压缩获取，自动在链接添加了?imageslim，在此需要处理一下
 		path = path.replace("?imageslim", "");
-		
-		if(StringUtil.isNull(path)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message.getMap();
-		}
-		
-		if(isExist(user, path)){
-			message.put("message", "您已添加过该链接，请勿重复操作！");
-			message.put("responseCode", EnumUtil.ResponseCode.添加的记录已经存在.value);
-			return message.getMap();
-		}
+
+		ParameterUnspecificationUtil.checkNullString(path, "path must not null.");
+		if(isExist(user, path))
+			return new ResponseModel().error().message("您已添加过该链接，请勿重复操作！").code(EnumUtil.ResponseCode.添加的记录已经存在.value);
 		
 		//宽高有为0，需要网络获取宽高
 		if(width ==0 || height == 0){
 			GalleryBean gBean = FileUtil.getNetWorkImgAttrs(user, path);
-			if(gBean == null){
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-				message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-				return message.getMap();
-			}
+			if(gBean == null)
+				return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value)).code(EnumUtil.ResponseCode.服务器处理异常.value);
 			
 			width = gBean.getWidth();
 			height = gBean.getHeight();
@@ -92,11 +81,8 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 			path = gBean.getPath();
 		}
 		
-		if(length > 1024 * 1024 * 5){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.图片大于5M无法上传.value));
-			message.put("responseCode", EnumUtil.ResponseCode.图片大于5M无法上传.value);
-			return message.getMap();
-		}
+		if(length > 1024 * 1024 * 5)
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.图片大于5M无法上传.value)).code(EnumUtil.ResponseCode.图片大于5M无法上传.value);
 		
 		GalleryBean bean = new GalleryBean();
 		bean.setCreateUserId(user.getId());
@@ -107,68 +93,59 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 		bean.setPath(path+"?imageslim");
 		bean.setStatus(ConstantsUtil.STATUS_NORMAL);
 		bean.setWidth(width);
+		ResponseModel model = new ResponseModel();
+
 		if(category > 0)
 			bean.setCategoryId(category);
 		if(id > 0){
 			bean.setId(id);
-			if(galleryMapper.update(bean) > 0){
-				message.put("isSuccess", true);
-				message.put("message", "编辑图库成功");
-			}else{
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库修改失败.value));
-				message.put("responseCode", EnumUtil.ResponseCode.数据库修改失败.value);
-			}
+			if(galleryMapper.update(bean) > 0)
+				model.ok().message("编辑图库成功");
+			else
+				model.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库修改失败.value)).code(EnumUtil.ResponseCode.数据库修改失败.value);
 		}else{
-			if(galleryMapper.save(bean) > 0){
-				message.put("isSuccess", true);
-				message.put("message", "添加到图库成功");
-			}else{
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value));
-				message.put("responseCode", EnumUtil.ResponseCode.数据库保存失败.value);
-			}
+			if(galleryMapper.save(bean) > 0)
+				model.ok().message("编辑图库成功");
+			else
+				model.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库保存失败.value)).code(EnumUtil.ResponseCode.数据库保存失败.value);
 		}
 		
 		//保存操作日志
 		String subject = user.getAccount() + "操作加入图库，链接是：" + path;
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "manageLink", 1 , EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+		return model;
 	}
 
 	@Override
-	public Map<String, Object> delete(long galleryId, JSONObject jo, UserBean user,
+	public ResponseModel delete(long galleryId, JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("GalleryServiceImpl-->delete():JSONObject="+jo.toString() +", gid="+ galleryId);
 		
 		ResponseMap message = new ResponseMap();
 		
-		if(galleryId == 0){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message.getMap();
-		}
+		if(galleryId == 0)
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value)).code(EnumUtil.ResponseCode.某些参数为空.value);
+
 		GalleryBean galleryBean = galleryMapper.findById(GalleryBean.class, galleryId);
 		
 		//检验是否是管理员或者创建者权限
 		checkAdmin(user, galleryBean.getCreateUserId());
 		
 		boolean result = galleryMapper.deleteById(GalleryBean.class, galleryId) > 0;
-		if(result){
-			message.put("isSuccess", true);
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库删除数据失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.数据库删除数据失败.value);
-		}
+		ResponseModel model = new ResponseModel();
+		if(result)
+			model.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
+		else
+			model.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.数据库删除数据失败.value)).code(EnumUtil.ResponseCode.数据库删除数据失败.value);
 		
 		//保存操作日志
 		String subject = user.getAccount() + "删除图库ID为："+galleryId+"的数据"+StringUtil.getSuccessOrNoStr(result);
 		this.operateLogService.saveOperateLog(user, request, new Date(), subject, "delete()", StringUtil.changeBooleanToInt(result) , EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+		return model;
 	}
 	
 	@Override
-	public List<Map<String, Object>> all(JSONObject jo,
+	public ResponseModel all(JSONObject jo,
 			UserBean user, HttpRequestInfoBean request) {	
 		long start = System.currentTimeMillis();
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
@@ -209,17 +186,16 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 			sql.append(" and g.id > ? limit 0,?  ");
 			rs = galleryMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, uid, firstId, pageSize);
 		}
-		
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"获取用户ID为"+uid +"的用户的图库列表", "getGalleryByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		
 		long end = System.currentTimeMillis();
 		logger.info("获取图库列表总计耗时：" +(end - start) +"毫秒");
-		return rs;
+		return new ResponseModel().ok().message(rs);
 	}
 
 	@Override
-	public Map<String, Object> paging(JSONObject jo,
+	public ResponseModel paging(JSONObject jo,
 									  UserBean user, HttpRequestInfoBean request){
 		logger.info("EventServiceImpl-->paging():jo=" +jo.toString());
 		List<Map<String, Object>> rs = new ArrayList<Map<String,Object>>();
@@ -238,11 +214,7 @@ public class GalleryServiceImpl extends AdminRoleCheckService implements Gallery
 			}
 
 		}
-		message.put("data", rs);
-		message.put("count", SqlUtil.getTotalByList(galleryMapper.getTotal(DataTableType.图库.value, " e where create_user_id="+ user.getId())));
-		message.put("msg", "");
-		message.put("code", 0);
-		return message.getMap();
+		return new ResponseModel().ok().message(rs).total(SqlUtil.getTotalByList(galleryMapper.getTotal(DataTableType.图库.value, " e where create_user_id="+ user.getId())));
 	}
 
 	/**

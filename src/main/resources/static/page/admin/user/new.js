@@ -60,7 +60,7 @@ function add(obj){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message +",1秒钟后自动刷新");
 				setTimeout("window.location.reload();", 1000);
 			}else{

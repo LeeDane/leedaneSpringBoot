@@ -79,7 +79,7 @@ public class AttentionController extends BaseController{
 		}
 		List<Map<String, Object>> result= attentionService.getLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 		logger.info("获得关注的数量：" +result.size());
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", result);
 		return message.getMap();
 	}

@@ -119,7 +119,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 		}
 		transmitHandler.addTransmit(tableName, tableId);
 		if(result){
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.转发成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -175,7 +175,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 		}
 		if(result){
 			transmitHandler.deleteTransmit(transmitBean.getTableName(), transmitBean.getTableId());
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除转发成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -311,7 +311,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 				new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(blogBean));
 			}
 
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.更新转发状态成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -321,7 +321,7 @@ public class TransmitServiceImpl extends AdminRoleCheckService implements Transm
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"更新表名为：", tableName ,",表ID为：", tableId, "转发状态为", canTransmit, "，结果更新", StringUtil.getSuccessOrNoStr(result)).toString(), "updateTransmitStatus()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
-		message.put("isSuccess", result);
+		message.put("success", result);
 		return message.getMap();
 	}
 

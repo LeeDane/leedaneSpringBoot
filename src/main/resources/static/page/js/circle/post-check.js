@@ -31,7 +31,7 @@ layui.use(['layer', 'laypage'], function(){
 					},
 					success : function(data) {
 						layer.close(loadi);
-						if(data.isSuccess){
+						if(data.success){
 							layer.msg(data.message +"，1秒后自动刷新");
 							reloadPage(1000);
 						}else{
@@ -69,7 +69,7 @@ layui.use(['layer', 'laypage'], function(){
 					},
 					success : function(data) {
 							layer.close(loadi);
-							if(data.isSuccess){
+							if(data.success){
 								layer.msg(data.message+ "，1秒后自动刷新");
 								reloadPage(1000);
 							}else{
@@ -109,7 +109,7 @@ function getNoCheckList(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				posts = data.message;
 				if(posts.length == 0){
 					if(currentIndex == 0){

@@ -6,6 +6,7 @@ import com.cn.leedane.service.manage.ManageMallService;
 import com.cn.leedane.service.manage.ManageMyService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.ResponseModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +39,12 @@ public class ManageMallController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/mall/promotion/apply", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> thirdUnBind(HttpServletRequest request) throws Exception {
+	public ResponseModel thirdUnBind(HttpServletRequest request) throws Exception {
 		ResponseMap message = new ResponseMap();
-		if(!checkParams(message, request))
-			return message.getMap();
-
-		message.putAll(manageMallService.promotionApply(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request)));
-		return message.getMap();
+		if(!checkParams(message, request)){
+			return message.getModel();
+		}
+		return manageMallService.promotionApply(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request));
 	}
 
 }

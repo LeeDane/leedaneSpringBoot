@@ -4,6 +4,7 @@ import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +35,7 @@ public interface BlogService <T extends IDBean>{
 	 * @param user
 	 * @return
 	 */
-	public  Map<String,Object> addBlog(BlogBean blog, UserBean user);	
+	public ResponseModel addBlog(BlogBean blog, UserBean user);
 	
 	/**
 	 * 根据条件查询记录，where语句，"where"需要用户自己写
@@ -120,7 +121,7 @@ public interface BlogService <T extends IDBean>{
 	 * @param user
 	 * @return
 	 */
-	public Map<String, Object> deleteById(JSONObject jo, HttpRequestInfoBean request, UserBean user);
+	public ResponseModel deleteById(JSONObject jo, HttpRequestInfoBean request, UserBean user);
 
 	/**
 	 * 搜索博客
@@ -148,7 +149,7 @@ public interface BlogService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> addTag(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel addTag(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 获取博客对象列表
@@ -167,7 +168,7 @@ public interface BlogService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getInfo(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel getInfo(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取草稿列表
@@ -177,7 +178,7 @@ public interface BlogService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> draftList(JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel draftList(JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 编辑文章
@@ -186,7 +187,7 @@ public interface BlogService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> edit(long blogId, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel edit(long blogId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 未审核文章列表
@@ -196,7 +197,7 @@ public interface BlogService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> noCheckPaging(JSONObject json, UserBean user,HttpRequestInfoBean request);
+	public ResponseModel noCheckPaging(JSONObject json, UserBean user,HttpRequestInfoBean request);
 
 	/**
 	 * 审核文章(管理员操作)
@@ -205,7 +206,7 @@ public interface BlogService <T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> check(JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel check(JSONObject json, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 查找一条博客信息(跟findById的区别是字段可以自定义显示，去掉冗余字段)
@@ -215,7 +216,7 @@ public interface BlogService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> getOneBlog(long blogId, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel getOneBlog(long blogId, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 分页获取博客列表列表
@@ -225,7 +226,7 @@ public interface BlogService <T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel paging(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 获取博客最大的置顶数

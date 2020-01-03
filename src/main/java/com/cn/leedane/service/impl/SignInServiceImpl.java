@@ -189,7 +189,7 @@ public class SignInServiceImpl implements SignInService<SignInBean> {
 									  UserBean user, HttpRequestInfoBean request){
 		logger.info("SignInServiceImpl-->getSignInMark():jo=" +jo.toString());
 		ResponseMap message = new ResponseMap();
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", signInHandler.marks(userId));
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		return message.getMap();

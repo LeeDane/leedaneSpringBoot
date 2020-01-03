@@ -38,7 +38,7 @@ layui.use(['layer', 'util'], function(){
 					},
 					success : function(data) {
 						layer.close(loadi);
-						if(data.isSuccess){
+						if(data.success){
 							layer.msg(data.message + ",1秒后自动刷新");
 							reloadPage(1000);
 						}else{
@@ -98,7 +98,7 @@ function getDetail(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess && data.message.length > 0){
+			if(data.success && data.message.length > 0){
 				var mood = data.message[0];
 				var moodCreateTime = setTimeAgo(mood.create_time);
 				$("#b-account").find("span").html(changeNotNullString(mood.account));
@@ -191,7 +191,7 @@ function getComments(bid){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				if(method == 'firstloading')
 					$(".comment-list").remove();
 				
@@ -389,7 +389,7 @@ function doAddComment(params){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg("评论成功,1秒钟后自动刷新");
 				setTimeout("window.location.reload();", 1000);
 			}else{

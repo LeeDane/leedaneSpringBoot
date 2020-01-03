@@ -47,7 +47,7 @@ function submitSleep(){
 			success : function(data) {
 					
 					layer.close(loadi);
-					if(data.isSuccess){
+					if(data.success){
 						layer.msg("添加成功");
 						window.location.reload();
 					}else

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 
 import org.junit.Test;
@@ -190,17 +191,16 @@ public class GalleryTest extends BaseTest {
 		
 		UserBean user = userService.findById(1);
 		String str;
-		Map<String, Object> message;
 		for(String url: urls){
 			if(!StringUtil.isNull(url)){
 				try {
 					str = "{'path':'"+url+"', 'desc':'测试添加的网络图片'}";
 					JSONObject jo = JSONObject.fromObject(str);
-					message = galleryService.manageLink(jo, user, null);
-					if(StringUtil.changeObjectToBoolean(message.get("isSuccess"))){
+					ResponseModel model = galleryService.manageLink(jo, user, null);
+					if(model.isSuccess()){
 						//logger.info("加入图库成功："+url);
 					}else{
-						logger.error("加入图库失败，失败原因："+message.get("message")+"------>"+url);
+						logger.error("加入图库失败，失败原因："+ model.getMessage()+"------>"+url);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -290,16 +290,15 @@ public class GalleryTest extends BaseTest {
 		urls.add("http://192.168.42.21:8080/leedane/test/image/");*/
 		UserBean user = userService.findById(1);
 		String str;
-		Map<String, Object> message;
 		for(String url: urls){
 			try {
 				str = "{'path':'"+url+"', 'desc':'测试添加的网络图片'}";
 				JSONObject jo = JSONObject.fromObject(str);
-				message = galleryService.manageLink(jo, user, null);
-				if(StringUtil.changeObjectToBoolean(message.get("isSuccess"))){
+				ResponseModel model = galleryService.manageLink(jo, user, null);
+				if(model.isSuccess()){
 					//logger.info("加入图库成功："+url);
 				}else{
-					logger.error("加入图库失败，失败原因："+message.get("message")+"------>"+url);
+					logger.error("加入图库失败，失败原因："+model.getMessage()+"------>"+url);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -318,8 +317,9 @@ public class GalleryTest extends BaseTest {
 		String str = "{'uid':1,'method':'firstloading','pageSize':10}";
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
-			List<Map<String, Object>> ls = galleryService.all(jo, user, null);
-			logger.info("总数:" +ls.size());
+			ResponseModel model = galleryService.all(jo, user, null);
+			List<Map<String, Object>> ls = (List<Map<String, Object>>) model.getMessage();
+			logger.info("总数:" + ls.size());
 			for(Map<String, Object> m: ls){
 				logger.info("ID:" +m.get("id"));
 			}

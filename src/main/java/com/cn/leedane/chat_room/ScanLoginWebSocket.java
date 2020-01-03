@@ -44,7 +44,7 @@ public class ScanLoginWebSocket {
         scanLoginSocket.put(cnid, this);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("message", cnid);
-		map.put("isSuccess", true);
+		map.put("success", true);
 		sendMessage(JSONObject.fromObject(map).toString());
     }
 

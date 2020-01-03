@@ -38,7 +38,7 @@ function doSearch(){
 		success : function(data) {
 			layer.close(loadi);
 			$(".search-need-time").text(data.consumeTime);
-			if(data.isSuccess && isNotEmpty(data.message)){
+			if(data.success && isNotEmpty(data.message)){
 				dealProductSearch(data.message.list, data.total);
 			}else{
 				ajaxError(data);

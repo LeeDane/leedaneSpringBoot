@@ -51,7 +51,7 @@ public class FilePathController extends BaseController{
 		checkRoleOrPermission(model, request);;
 		List<Map<String, Object>> result= filePathService.getUserImageByLimit(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 		logger.info("获得文件路径的数量：" +result.size());
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", result);
 		return message.getMap();
 	}
@@ -125,7 +125,7 @@ public class FilePathController extends BaseController{
         		out.flush();
         		out.close();
         	}
-        	message.put("isSuccess", filePathService.saveSourceAndEachFile(sourcePath.toString(), user, tableUuid, tableName, order, version, desc));
+        	message.put("success", filePathService.saveSourceAndEachFile(sourcePath.toString(), user, tableUuid, tableName, order, version, desc));
     		return message.getMap();
         }else{
         	message.put("message", ResponseCode.没有操作实例.value);
@@ -157,7 +157,7 @@ public class FilePathController extends BaseController{
     	}
     	int order = JsonUtil.getIntValue(json, "order", 0); //多张图片时候的图片的位置，必须，为空默认是0	
         List<Map<String, Object>> list = uploadService.getOneUpload(tableUuid, tableName, order, user, getHttpRequestInfo(request));
-        message.put("isSuccess", true);
+        message.put("success", true);
         
         if(list != null && list.size() >0){   	
         	logger.info("删除的文件的数量："+list.size());
@@ -173,7 +173,7 @@ public class FilePathController extends BaseController{
     				return message.getMap();
     			
         	}
-        	message.put("isSuccess", true);
+        	message.put("success", true);
     		return message.getMap();
         }else{
         	logger.error("删除的文件的数量为0");

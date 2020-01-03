@@ -45,7 +45,7 @@ public class WebConfigController extends BaseController{
 		checkParams(message, request);
 		
 		message.put("message", webBackground.getImage());
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	

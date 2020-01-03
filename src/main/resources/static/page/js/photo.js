@@ -73,7 +73,7 @@ function getChildNodes(nodeId, pid){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				var treeData = data.message;
 				if(!isFirst){
 				    var all = {id: -1, text: "全部"};
@@ -146,7 +146,7 @@ function getWebPhotos(){
                 $(".column-item3").empty();
                 $(".column-item4").empty();
             }
-			if(data != null && data.isSuccess){
+			if(data != null && data.success){
                 $("#fh5co-board").closest(".my-container").find(".no-result").remove();
 				if(data.message.length == 0){
 					canLoadData = false;
@@ -307,7 +307,7 @@ function asynchronousPhotos(){
 			beforeSend:function(){
 			},
 			success : function(data) {
-				if(data.isSuccess){
+				if(data.success){
 					var dd = $(".out-link").eq(index);
 					object.attr("src", data.message);
 					object.removeClass("out-link");

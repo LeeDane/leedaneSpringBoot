@@ -61,7 +61,7 @@ function getWebBackgroud(){
 			beforeSend:function(){
 			},
 			success : function(data) {
-				if(data != null && data.isSuccess){
+				if(data != null && data.success){
 					$(".main_bg").css('background', 'url("'+data.message+'")');
 				}else
 					ajaxError(data);
@@ -84,7 +84,7 @@ function getMainContentData(){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data != null && data.isSuccess){
+			if(data != null && data.success){
 				if(method == 'firstloading')
 					$(".container").find(".row-list").remove();
 				
@@ -298,7 +298,7 @@ function getCarouselImgs(){
 		success : function(data) {
 			$("#main-container .carousel-indicators").empty();
 			$("#main-container .carousel-inner").empty();
-			if(data != null && data.isSuccess){
+			if(data != null && data.success){
 				if(data.message.length >0){
 					for(var i = 0; i < data.message.length; i++){
 						var html = '<li data-target="#carousel-example-generic" data-slide-to="0" '+(i == 0 ? 'class="active"': '')+'></li>';
@@ -365,7 +365,7 @@ function attention(id, index){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message);
 				$(".row_"+index).find(".attention").text("已关注");
 			}else{
@@ -395,7 +395,7 @@ function collect(id, index){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message);
 				$(".row_"+index).find(".collection").text("已收藏");
 			}else{
@@ -428,7 +428,7 @@ function deleteBlog(id, index){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message);
 					$(".row_"+index).remove();
 				}else{
@@ -507,7 +507,7 @@ function deleteBlog(id, index){
 				layer.close(loadi);
 				layer.msg(data.message);
 				
-				if(data.isSuccess)
+				if(data.success)
 					$("#report-blog").modal('hide'); 
 			},
 			error : function() {

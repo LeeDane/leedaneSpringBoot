@@ -72,7 +72,7 @@ public class MaterialServiceImpl extends AdminRoleCheckService implements Materi
 				data.get(i).put("status", ConstantsUtil.STATUS_NORMAL);
 			}
 			materialMapper.insertByBatch(data);
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "添加素材成功");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -100,7 +100,7 @@ public class MaterialServiceImpl extends AdminRoleCheckService implements Materi
 		
 		boolean result = materialMapper.deleteById(MaterialBean.class, materialId) > 0;
 		if(result){
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -130,7 +130,7 @@ public class MaterialServiceImpl extends AdminRoleCheckService implements Materi
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取素材列表").toString(), "getMaterialByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		
 		return message.getMap();
 	}

@@ -3,6 +3,7 @@ package com.cn.leedane.service.circle;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,7 @@ public interface CircleContributionService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel paging(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 	
 	/**
 	 * 增加分数(并通知用户)
@@ -33,7 +34,7 @@ public interface CircleContributionService<T extends IDBean>{
 	 * @param desc
 	 * @return
 	 */
-	public Map<String, Object> addScore(int addScore, String desc, long circleId, UserBean user);
+	public ResponseModel addScore(int addScore, String desc, long circleId, UserBean user);
 	
 	/**
 	 * 减少分数(并通知用户)
@@ -43,6 +44,6 @@ public interface CircleContributionService<T extends IDBean>{
 	 * @param user
 	 * @return
 	 */
-	public Map<String, Object> reduceScore(int reduceScore, String desc, long circleId ,UserBean user);
+	public ResponseModel reduceScore(int reduceScore, String desc, long circleId ,UserBean user);
 	
 }

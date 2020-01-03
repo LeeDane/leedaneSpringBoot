@@ -5,14 +5,11 @@ import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.notice.NoticeException;
-import com.google.zxing.WriterException;
-import com.jd.open.api.sdk.JdException;
-import com.taobao.api.ApiException;
+import com.cn.leedane.utils.LayuiTableResponseModel;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Map;
 
 /**
  * 商城工具service接口类
@@ -29,7 +26,7 @@ public interface PromotionSeatService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel add(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 自动添加拼多多推广位
@@ -38,7 +35,7 @@ public interface PromotionSeatService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public  Map<String,Object> autoCreatePdd(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws PddException;
+	public ResponseModel autoCreatePdd(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws PddException;
 
 	/**
 	 * 分页获取订列表
@@ -47,7 +44,7 @@ public interface PromotionSeatService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> paging(
+	public LayuiTableResponseModel paging(
 									  JSONObject json,
 									  UserBean user,
 									  HttpRequestInfoBean request);
@@ -61,7 +58,7 @@ public interface PromotionSeatService<T extends IDBean>{
 	 * @return
 	 */
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public Map<String, Object> noallot(
+	public ResponseModel noallot(
 			long seatId,
 			JSONObject json,
 			UserBean user,
@@ -75,7 +72,7 @@ public interface PromotionSeatService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> allotObject(
+	public ResponseModel allotObject(
 			long seatId,
 			long userId,
 			UserBean user,
@@ -88,7 +85,7 @@ public interface PromotionSeatService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> deleteAllot(
+	public ResponseModel deleteAllot(
 			long seatId,
 			UserBean user,
 			HttpRequestInfoBean request) throws NoticeException;
@@ -101,7 +98,7 @@ public interface PromotionSeatService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> delete(long seatId,
+	public ResponseModel delete(long seatId,
 									  UserBean user, HttpRequestInfoBean request);
 
 
@@ -114,7 +111,7 @@ public interface PromotionSeatService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> update(
+	public ResponseModel update(
 			long seatId,
 			JSONObject json, UserBean user,
 			HttpRequestInfoBean request) throws Exception;

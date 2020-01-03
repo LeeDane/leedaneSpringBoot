@@ -133,8 +133,8 @@ function doSearch(){
 		success : function(data) {
 			layer.close(loadi);
 			$(".search-need-time").text(data.consumeTime);
-			if(data.isSuccess && isNotEmpty(data.message)){
-                dealProductSearch(data.message.list, data.total, data.platform);
+			if(data.success && isNotEmpty(data.message)){
+                dealProductSearch(data.message.list, data.total);
 			}else{
 				ajaxError(data);
 			}
@@ -151,7 +151,7 @@ function doSearch(){
  * 处理是商品的搜索
  * @param message
  */
-function dealProductSearch(message, total, platform){
+function dealProductSearch(message, total){
 	$productContainer.empty();
 	products = message;
 	if(message.length == 0){
@@ -162,7 +162,7 @@ function dealProductSearch(message, total, platform){
 		}
 	}else{
 		for(var i = 0; i < products.length; i++){
-			buildEachSearchProductRow(i, products[i], platform);
+			buildEachSearchProductRow(i, products[i]);
 		}
 	}
 	
@@ -208,7 +208,7 @@ function getRequestParams(){
  * @param index
  * @param platform
  */
-function buildEachSearchProductRow(index, product, platform){
+function buildEachSearchProductRow(index, product){
     var html = '<div class="layui-col-md3 layui-col-xs12 button_link" style="cursor: pointer;" onclick="toProductDetail(\''+ product.clickId +'\');">'+
                     '<div class="layui-col-md12 layui-col-xs12 m-product-item">'+
                         '<img alt="" src="'+ product.img +'" class="m-product-item-img"/>		'+

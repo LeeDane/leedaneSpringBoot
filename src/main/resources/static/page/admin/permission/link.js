@@ -41,7 +41,7 @@ function getLinks(){
 			layer.close(loadi);
 			//清空原来的数据
 			$tableContainer.find(".each-row").remove();
-			if(data.isSuccess){
+			if(data.success){
 				if(data.message.length == 0){
 					if(currentIndex == 0){
 						$tableContainer.append('<tr class="each-row"><td colspan="10">暂时还没有任何链接！</td></tr>');

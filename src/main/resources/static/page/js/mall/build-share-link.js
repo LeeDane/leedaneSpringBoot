@@ -61,7 +61,7 @@ function loadShareLink(taobaoId, width){
 		dataType: 'json',
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				//页面层
 				layer.open({
 				  type: 1,

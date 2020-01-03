@@ -21,7 +21,7 @@ public class AlimamaShareLink {
 	
 	//保存当前登录的cookie
 	public static String cookie2 = "136bf80df755debc3ada9d716b3e023a";
-	public static boolean isSuccess = false; //标记是否成功
+	public static boolean success = false; //标记是否成功
 	/**
 	 * 执行解析阿里妈妈的平台获取分享的地址、二维码等信息
 	 * @param taobaoId
@@ -30,7 +30,7 @@ public class AlimamaShareLink {
 	public JSONObject doParse(String taobaoId) throws Exception{
 		Connection.Response res;
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("isSuccess", false);
+		resultMap.put("success", false);
 		
 		Map<String, String> cookieMap = new HashMap<String, String>();
 		//cookieMap.put("_user_behavior_", "df6ef2e4-7814-4368-b377-fe76678007650");
@@ -78,11 +78,11 @@ public class AlimamaShareLink {
 		JSONObject resultJson;
 		try{
 			resultJson = JSONObject.fromObject(res.body());
-			isSuccess = true;
+			success = true;
 			//System.out.println(res.body().toString());
 			AlimamaStayCookie.LAST_REQUEST_TIME = System.currentTimeMillis();
 		}catch(JSONException e){
-			isSuccess = false;
+			success = false;
 			resultMap.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value));
 			resultMap.put("responseCode", EnumUtil.ResponseCode.请先登录.value);
 			resultJson = JSONObject.fromObject(resultMap);

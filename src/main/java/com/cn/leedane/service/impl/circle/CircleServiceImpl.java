@@ -284,7 +284,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			return message.getMap();
 		}
 		
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", number);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		return message.getMap();
@@ -346,7 +346,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			setting.setLimitNumber(memberMax);//总的限制人数
 			result = circleSettingMapper.save(setting) > 0;
 			if(result){
-				message.put("isSuccess", true);
+				message.put("success", true);
 				message.put("message", "您已成功创建名称为《"+ name +"》的圈子。");
 				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			}else{
@@ -392,7 +392,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		if(result){
 			//清除该圈子的缓存
 			circleHandler.deleteCircleBeanCache(circleBean.getId());
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.修改成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -424,7 +424,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			//通知所有的成员该圈子已经被删除
 			
 			visitorService.deleteVisitor(user, DataTableType.圈子.value, cid);
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -469,7 +469,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取圈子列表").toString(), "paging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -524,7 +524,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 			message.put("message", false);
 		}
 		
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -605,7 +605,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"申请加入圈子--", circleId).toString(), "join()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", msg);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		return message.getMap();
@@ -640,7 +640,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		if(result){
 			//保存操作日志
 			operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"离开圈子--", circleId).toString(), "leave()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "退出圈子成功");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 			//清理缓存
@@ -665,7 +665,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取圈子id为", cid, "的管理员列表").toString(), "roles()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", rs);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		
 		return message.getMap();
 	}
@@ -721,7 +721,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"给圈子ID为"+ circleId +",分配管理员权限，成员为ids"+admins).toString(), "allot()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
 		message.put("message", "操作成功");
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		
 		return message.getMap();
 	}
@@ -760,7 +760,7 @@ public class CircleServiceImpl extends AdminRoleCheckService implements CircleSe
 				
 		message.put("message", data);
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 }

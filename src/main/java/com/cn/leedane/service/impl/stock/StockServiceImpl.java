@@ -119,7 +119,7 @@ public class StockServiceImpl implements StockService<StockBean>{
 		}
 		
 		message.put("message", stockDisplays);
-		message.put("isSuccess", true);		
+		message.put("success", true);
 		return message.getMap();
 	}
 	
@@ -136,7 +136,7 @@ public class StockServiceImpl implements StockService<StockBean>{
 		boolean result = stockMapper.save(stockBean) > 0;
 		if(result){
 			stockHandler.deleteStockBeansCache(user.getId()); //删除缓存该用户全部股票的缓存
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "您已经成功添加一条股票信息！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -165,7 +165,7 @@ public class StockServiceImpl implements StockService<StockBean>{
 		if(result){
 			stockHandler.deleteStockBeanCache(stockId); //删除缓存该股票的缓存
 			stockHandler.deleteStockBeansCache(userId); //删除缓存该用户全部股票的缓存
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "您的股票信息已经更新成功！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{
@@ -197,7 +197,7 @@ public class StockServiceImpl implements StockService<StockBean>{
 		if(result){
 			stockHandler.deleteStockBeanCache(stockId); //删除缓存该股票的缓存
 			stockHandler.deleteStockBeansCache(userId); //删除缓存该用户全部股票的缓存
-			message.put("isSuccess", true);
+			message.put("success", true);
 			message.put("message", "您已成功删除股票！");
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
 		}else{

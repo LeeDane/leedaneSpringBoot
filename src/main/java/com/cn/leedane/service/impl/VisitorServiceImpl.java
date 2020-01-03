@@ -98,7 +98,7 @@ public class VisitorServiceImpl extends AdminRoleCheckService implements Visitor
 		
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取表名：",tableName,"，表id为：",tableId,"的访客列表").toString(), "getCommentByLimit()", ConstantsUtil.STATUS_NORMAL, 0);
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", rs);
 		return message.getMap();
 	}

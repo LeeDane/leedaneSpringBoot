@@ -50,7 +50,7 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 	private NotificationHandler notificationHandler;
 	
 	@Override
-	public Map<String, Object> addZan(JSONObject jo, UserBean user,
+	public ResponseModel addZan(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request){
 		//{\"table_name\":\"t_mood\", \"table_id\":1}
 		logger.info("ZanServiceImpl-->addZan():jsonObject=" +jo.toString() +", user=" +user.getAccount());
@@ -59,17 +59,11 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 		String froms = JsonUtil.getStringValue(jo, "froms");
 		long tableId = JsonUtil.getLongValue(jo, "table_id", 0);
 		ResponseMap message = new ResponseMap();
-		if(SqlUtil.getBooleanByList(zanMapper.exists(ZanBean.class, tableName, tableId, user.getId()))){
-			message.put("message", "您已点赞，请勿重复操作！");
-			message.put("responseCode", EnumUtil.ResponseCode.添加的记录已经存在.value);
-			return message.getMap();
-		}
+		if(SqlUtil.getBooleanByList(zanMapper.exists(ZanBean.class, tableName, tableId, user.getId())))
+			return new ResponseModel().error().message("您已点赞，请勿重复操作！").code(EnumUtil.ResponseCode.添加的记录已经存在.value);
 		
-		if(!SqlUtil.getBooleanByList(zanMapper.recordExists(tableName, tableId))){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-			return message.getMap();
-		}
+		if(!SqlUtil.getBooleanByList(zanMapper.recordExists(tableName, tableId)))
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value)).code(EnumUtil.ResponseCode.操作对象不存在.value);
 		ZanBean bean = new ZanBean();
 		bean.setCreateTime(new Date());
 		bean.setCreateUserId(user.getId());
@@ -96,18 +90,16 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 		//记录到redis服务器中
 		zanHandler.addZanUser(tableId, tableName, user);
 		if(result){
-			message.put("isSuccess", result);
+			message.put("success", result);
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.点赞成功.value));
 			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.点赞失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.点赞失败.value);
-		}
-		return message.getMap();
+			return new ResponseModel().ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.点赞成功.value));
+		}else
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.点赞失败.value)).code(EnumUtil.ResponseCode.点赞失败.value);
 	}
 
 	@Override
-	public List<Map<String, Object>> getLimit(JSONObject jo, UserBean user,
+	public ResponseModel getLimit(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ZanServiceImpl-->getLimit():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		long toUserId = JsonUtil.getLongValue(jo, "toUserId");
@@ -185,68 +177,52 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 		
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取用户ID为：",toUserId , ",表名为：", tableName,"，表id为：",tableId,"的赞列表").toString(), "getLimit()", ConstantsUtil.STATUS_NORMAL, 0);
-				
-		return rs;
+
+		return new ResponseModel().ok().message(rs);
 	}
 
 	@Override
-	public Map<String, Object> deleteZan(JSONObject jo, UserBean user,
+	public ResponseModel deleteZan(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ZanServiceImpl-->deleteZan():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		long zid = JsonUtil.getLongValue(jo, "zid");
 		long createUserId = JsonUtil.getLongValue(jo, "create_user_id");
-		
-		ResponseMap message = new ResponseMap();
-		
 		//非登录用户不能删除操作
-		if(createUserId != user.getId()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请先登录.value);
-			return message.getMap();
-		}
+		if(createUserId != user.getId())
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.请先登录.value)).code(EnumUtil.ResponseCode.请先登录.value);
 		
-		if(zid < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value));
-			message.put("responseCode", EnumUtil.ResponseCode.没有操作实例.value);
-			return message.getMap();
-		}
+		if(zid < 1)
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作实例.value)).code(EnumUtil.ResponseCode.没有操作实例.value);
 		
 		boolean result = false;
+		ResponseModel responseModel = new ResponseModel();
 		ZanBean zanBean = zanMapper.findById(ZanBean.class, zid);
 		if(zanBean != null && zanBean.getCreateUserId() == createUserId){
 			result = zanMapper.deleteById(ZanBean.class, zid) > 0;
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-		}
+		}else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value)).code(EnumUtil.ResponseCode.操作对象不存在.value);
+
 		if(result){
 			//取消赞的数据
 			zanHandler.cancelZan(zanBean.getTableId(), zanBean.getTableName(), user);
-			message.put("isSuccess", result);
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.取消点赞成功.value));
-			message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		}else{
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.取消点赞失败.value));
-			message.put("responseCode", EnumUtil.ResponseCode.取消点赞失败.value);
-		}
-		
+			responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.取消点赞成功.value));
+		}else
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.取消点赞失败.value)).code(EnumUtil.ResponseCode.取消点赞失败.value);
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"删除赞ID为", zid, "的数据", StringUtil.getSuccessOrNoStr(result)).toString(), "deleteZan()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+		return responseModel;
 	}
 
 	@Override
-	public Map<String, Object> getAllZanUser(JSONObject jo, UserBean user,
+	public ResponseModel getAllZanUser(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("ZanServiceImpl-->getAllZanUser():jsonObject=" +jo.toString() +", user=" +user.getAccount());
 		ResponseMap message = new ResponseMap();
 		long tableId = JsonUtil.getLongValue(jo, "table_id");
 		String tableName = JsonUtil.getStringValue(jo, "table_name");
 
-		if(tableId == 0 || StringUtil.isNull(tableName)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.操作对象不存在.value);
-		}
+		if(tableId == 0 || StringUtil.isNull(tableName))
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value)).code(EnumUtil.ResponseCode.操作对象不存在.value);
 		
 		List<Map<String, Object>> rs = zanMapper.executeSQL("select z.id, u.id create_user_id, date_format(z.create_time,'%Y-%m-%d %H:%i:%s') create_time  from "+DataTableType.赞.value+" z inner join "+DataTableType.用户.value+" u on z.create_user_id = u.id where z.table_name=? and z.table_id = ?", tableName, tableId);
 		if(rs != null && rs.size() > 0){
@@ -267,14 +243,10 @@ public class ZanServiceImpl implements ZanService<ZanBean>{
 			redisUtil.addSet(zanUserKey, userArray);
 			redisUtil.addString(zanKey, String.valueOf(rs.size()));
 		}
-		
-		message.put("isSuccess", true);
-		message.put("message", rs);
-		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-		
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, StringUtil.getStringBufferStr(user.getAccount(),"获取表ID为：", tableId, ",表名为：", tableName, "的全部赞用户", StringUtil.getSuccessOrNoStr(true)).toString(), "getAllZanUser()", ConstantsUtil.STATUS_NORMAL, 0);
-		return message.getMap();
+		return new ResponseModel().ok().message(rs);
+
 	}
 
 	@Override

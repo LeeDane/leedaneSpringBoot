@@ -137,7 +137,7 @@ public class DownloadController extends BaseController{
 			e.printStackTrace();
 			return message.getMap();
 		}
-		message.put("isSuccess", true);
+		message.put("success", true);
 		return message.getMap();
 	}
 }

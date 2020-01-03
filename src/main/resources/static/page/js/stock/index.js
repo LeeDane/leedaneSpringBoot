@@ -64,7 +64,7 @@ layui.use(['layer', 'laydate', 'util'], function(){
  				success : function(data) {
  						layer.close(loadi);
  						layer.msg(data.message);
- 						if(data.isSuccess){
+ 						if(data.success){
  							if(dataId > 0)
  								window.location.reload();
  							else
@@ -118,7 +118,7 @@ layui.use(['layer', 'laydate', 'util'], function(){
  				success : function(data) {
  						layer.close(loadi);
  						layer.msg(data.message);
- 						if(data.isSuccess){
+ 						if(data.success){
  							if(dataId > 0)
  								window.location.reload();
  							else
@@ -175,7 +175,7 @@ layui.use(['layer', 'laydate', 'util'], function(){
  				success : function(data) {
  						layer.close(loadi);
  						layer.msg(data.message);
- 						if(data.isSuccess){
+ 						if(data.success){
  							if(dataId > 0)
  								window.location.reload();
  							else
@@ -204,7 +204,7 @@ function init(){
 		beforeSend:function(){
 		},
 		success : function(data) {
-			if(data.isSuccess){
+			if(data.success){
 				if(data.message.length == 0){
 					$stocksContrainer.append('请先添加一支股票！');
 					return;
@@ -378,7 +378,7 @@ function stockDelete(obj, e, id){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data != null && data.isSuccess){
+				if(data != null && data.success){
 					layer.msg(data.message);
 					window.location.reload();
 				}else{
@@ -471,7 +471,7 @@ function stockBuyDelete(obj, e, stockId, stockBuyId){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data != null && data.isSuccess){
+				if(data != null && data.success){
 					layer.msg(data.message);
 					window.location.reload();
 				}else{
@@ -568,7 +568,7 @@ function stockSellDelete(obj, e, stockId, stockBuyId, stockSellId){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data != null && data.isSuccess){
+				if(data != null && data.success){
 					layer.msg(data.message);
 					window.location.reload();
 				}else{

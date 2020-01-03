@@ -5,6 +5,7 @@ import com.cn.leedane.model.IDBean;
 import com.cn.leedane.service.mall.S_TaobaoService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
+import com.cn.leedane.utils.ResponseModel;
 import com.google.zxing.WriterException;
 import com.taobao.api.ApiException;
 import org.apache.commons.logging.Log;
@@ -41,12 +42,10 @@ public class TaobaoController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/search", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> search(HttpServletRequest request){
+	public ResponseModel search(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
-		
-		message.putAll(taobaoService.search(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+		return taobaoService.search(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 	
 	/**
@@ -55,13 +54,11 @@ public class TaobaoController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/build/share/link", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> buildShareLink(@PathParam("taobaoId") String taobaoId, HttpServletRequest request){
+	public ResponseModel buildShareLink(@PathParam("taobaoId") String taobaoId, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
-		
-		message.putAll(taobaoService.buildShare(taobaoId, getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+			return message.getModel();
+		return taobaoService.buildShare(taobaoId, getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 
 

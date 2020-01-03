@@ -464,7 +464,7 @@ public class FilePathServiceImpl implements FilePathService<FilePathBean> {
 			sql.append(" where f.status = ? and f.create_user_id = ? order by f.id desc limit 0,?");
 			r = filePathMapper.executeSQL(sql.toString(), ConstantsUtil.STATUS_NORMAL, user.getId(), pageSize);
 		}
-		message.put("isSuccess", true);
+		message.put("success", true);
 		message.put("message", r);
 		return message.getMap();
 	}

@@ -58,7 +58,7 @@ public class CacheController extends BaseController{
 		systemCache.removeCache(key);
 		boolean result = redisUtil.delete(key);
 		if(result){
-			message.put("isSuccess", true);
+			message.put("success", true);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
@@ -82,7 +82,7 @@ public class CacheController extends BaseController{
 			result = juheCache.removeAllCache();
 		}
 		if(result){
-			message.put("isSuccess", true);
+			message.put("success", true);
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作失败.value));
 			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
