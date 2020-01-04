@@ -47,4 +47,31 @@ public class ManageMallController extends BaseController{
 		return manageMallService.promotionApply(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request));
 	}
 
+	/**
+	 * 生成推荐码
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/mall/referrer/code", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public ResponseModel buildReferrerCode(HttpServletRequest request) throws Exception {
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request)){
+			return message.getModel();
+		}
+		return manageMallService.buildReferrerCode(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request));
+	}
+
+	/**
+	 * 绑定推荐人
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/mall/referrer/bind", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	public ResponseModel bindReferrer(HttpServletRequest request) throws Exception {
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request)){
+			return message.getModel();
+		}
+		return manageMallService.bindReferrer(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request));
+	}
 }

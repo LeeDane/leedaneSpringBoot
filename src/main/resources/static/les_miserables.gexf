@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gexf xmlns="http://www.gexf.net/1.2draft" version="1.2" xmlns:viz="http://www.gexf.net/1.2draft/viz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd">
+  <meta lastmodifieddate="2014-01-30">
+    <creator>Gephi 0.8.1</creator>
+    <description></description>
+  </meta>
+  <graph defaultedgetype="undirected" mode="static">
+    <attributes class="node" mode="static">
+      <attribute id="modularity_class" title="Modularity Class" type="integer"></attribute>
+    </attributes>
+    <nodes>
+      <node id="0" label="上上级">
+        <attvalues>
+          <attvalue for="modularity_class" value="0"></attvalue>
+        </attvalues>
+        <viz:size value="14"></viz:size>
+        <viz:position x="430" y="50" z="0.0"></viz:position>
+        <viz:color r="0" g="134" b="139"></viz:color>
+      </node>
+      <node id="1" label="上级">
+        <attvalues>
+          <attvalue for="modularity_class" value="1"></attvalue>
+        </attvalues>
+        <viz:size value="18"></viz:size>
+        <viz:position x="430" y="70" z="0.0"></viz:position>
+        <viz:color r="123" g="104" b="238"></viz:color>
+      </node>
+      <node id="2" label="您">
+        <attvalues>
+          <attvalue for="modularity_class" value="2"></attvalue>
+        </attvalues>
+        <viz:size value="25"></viz:size>
+         <viz:position x="430" y="90" z="0.0"></viz:position>
+         <viz:color r="255" g="0" b="0"></viz:color>
+      </node>
+      <node id="3" label="下级1">
+        <attvalues>
+          <attvalue for="modularity_class" value="3"></attvalue>
+        </attvalues>
+        <viz:size value="12"></viz:size>
+        <viz:color r="205" g="92" b="92"></viz:color>
+      </node>
+      <node id="4" label="下级2">
+        <attvalues>
+          <attvalue for="modularity_class" value="3"></attvalue>
+        </attvalues>
+        <viz:size value="12"></viz:size>
+        <viz:color r="205" g="92" b="92"></viz:color>
+      </node>
+      <node id="5" label="下级3">
+        <attvalues>
+          <attvalue for="modularity_class" value="3"></attvalue>
+        </attvalues>
+        <viz:size value="12"></viz:size>
+        <viz:color r="205" g="92" b="92"></viz:color>
+      </node>
+      <node id="6" label="下级4">
+        <attvalues>
+          <attvalue for="modularity_class" value="3"></attvalue>
+        </attvalues>
+        <viz:size value="12"></viz:size>
+        <viz:color r="205" g="92" b="92"></viz:color>
+      </node>
+      <node id="7" label="下级5">
+        <attvalues>
+          <attvalue for="modularity_class" value="3"></attvalue>
+        </attvalues>
+        <viz:size value="12"></viz:size>
+        <viz:color r="205" g="92" b="92"></viz:color>
+      </node>
+      <node id="8" label="下下级1-1">
+        <attvalues>
+          <attvalue for="modularity_class" value="4"></attvalue>
+        </attvalues>
+        <viz:size value="12"></viz:size>
+        <viz:color r="255" g="248" b="220"></viz:color>
+      </node>
+      <node id="9" label="下下级1-2">
+        <attvalues>
+          <attvalue for="modularity_class" value="4"></attvalue>
+        </attvalues>
+        <viz:size value="10"></viz:size>
+        <viz:color r="255" g="248" b="220"></viz:color>
+      </node>
+      <node id="10" label="下下级1-3">
+        <attvalues>
+          <attvalue for="modularity_class" value="4"></attvalue>
+        </attvalues>
+        <viz:size value="10"></viz:size>
+        <viz:color r="255" g="248" b="220"></viz:color>
+      </node>
+      <node id="11" label="下下级1-4">
+        <attvalues>
+          <attvalue for="modularity_class" value="4"></attvalue>
+        </attvalues>
+        <viz:size value="10"></viz:size>
+        <viz:color r="255" g="248" b="220"></viz:color>
+      </node>
+      <node id="12" label="下下级1-5">
+        <attvalues>
+          <attvalue for="modularity_class" value="4"></attvalue>
+        </attvalues>
+        <viz:size value="10"></viz:size>
+        <viz:color r="255" g="248" b="220"></viz:color>
+      </node>
+      <node id="13" label="下下级2-1">
+        <attvalues>
+          <attvalue for="modularity_class" value="4"></attvalue>
+        </attvalues>
+        <viz:size value="10"></viz:size>
+        <viz:color r="255" g="248" b="220"></viz:color>
+      </node>
+      <node id="14" label="下下级2-2">
+        <attvalues>
+          <attvalue for="modularity_class" value="4"></attvalue>
+        </attvalues>
+        <viz:size value="10"></viz:size>
+        <viz:color r="255" g="248" b="220"></viz:color>
+      </node>
+      <node id="15" label="下下级3-1">
+        <attvalues>
+          <attvalue for="modularity_class" value="4"></attvalue>
+        </attvalues>
+        <viz:size value="10"></viz:size>
+        <viz:color r="255" g="248" b="220"></viz:color>
+      </node>
+      <node id="16" label="下下级4-1">
+        <attvalues>
+          <attvalue for="modularity_class" value="4"></attvalue>
+        </attvalues>
+        <viz:size value="10"></viz:size>
+        <viz:color r="255" g="248" b="220"></viz:color>
+      </node>
+      <node id="17" label="下下级5-1">
+        <attvalues>
+          <attvalue for="modularity_class" value="4"></attvalue>
+        </attvalues>
+        <viz:size value="10"></viz:size>
+        <viz:color r="255" g="248" b="220"></viz:color>
+      </node>
+      <node id="18" label="下下级5-2">
+        <attvalues>
+          <attvalue for="modularity_class" value="4"></attvalue>
+        </attvalues>
+        <viz:size value="10"></viz:size>
+        <viz:color r="255" g="248" b="220"></viz:color>
+      </node>
+      <node id="19" label="下下级5-3">
+        <attvalues>
+          <attvalue for="modularity_class" value="4"></attvalue>
+        </attvalues>
+        <viz:size value="10"></viz:size>
+        <viz:color r="255" g="248" b="220"></viz:color>
+      </node>
+      <node id="20" label="下下级5-4">
+        <attvalues>
+          <attvalue for="modularity_class" value="4"></attvalue>
+        </attvalues>
+        <viz:size value="10"></viz:size>
+        <viz:color r="255" g="248" b="220"></viz:color>
+      </node>
+    </nodes>
+    <edges>
+      <edge id="0" source="1" target="0" weight="15.0">
+        <attvalues>sssss</attvalues>
+      </edge>
+      <edge id="1" source="2" target="1" weight="8.0">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="2" source="3" target="2" weight="10.0">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="3" source="4" target="2" weight="6.0">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="4" source="5" target="2">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="5" source="6" target="2">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="6" source="7" target="2">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="7" source="8" target="3">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="8" source="9" target="3" weight="2.0">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="9" source="10" target="3">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="13" source="11" target="3" weight="5.0">
+        <attvalues></attvalues>
+      </edge>
+      <edge source="12" target="3" weight="3.0">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="11" source="13" target="4" weight="3.0">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="10" source="14" target="4">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="14" source="15" target="5">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="15" source="16" target="6">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="16" source="17" target="7">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="17" source="18" target="7">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="18" source="19" target="7" weight="4.0">
+        <attvalues></attvalues>
+      </edge>
+      <edge id="19" source="20" target="7" weight="4.0">
+        <attvalues></attvalues>
+      </edge>
+    </edges>
+  </graph>
+</gexf>

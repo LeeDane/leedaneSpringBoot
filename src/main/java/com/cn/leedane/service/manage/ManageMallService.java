@@ -20,11 +20,28 @@ public interface ManageMallService<T extends IDBean>{
 
 	/**
 	 * 推广位申请
-	 * @param jo
+	 * @param json
 	 * @param user
 	 * @param request
 	 * @return
 	 */
-	public ResponseModel promotionApply(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel promotionApply(JSONObject json, UserBean user, HttpRequestInfoBean request);
 
+	/**
+	 * 生成邀请码
+	 * @param json
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public ResponseModel buildReferrerCode(JSONObject json, UserBean user, HttpRequestInfoBean request);
+
+	/**
+	 * 绑定推荐人
+	 * @param json
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public ResponseModel bindReferrer(JSONObject json, UserBean user, HttpRequestInfoBean request);
 }

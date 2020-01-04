@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" >
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title th:text="'推荐关系管理'"></title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<div th:include="manage/common-js :: manageJs">what?</div>
+	<style>
+
+	</style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	<div th:replace="~{manage/common-head :: helloManage(${tabId})} "></div>
+	<div th:replace="~{manage/common-left :: helloManage(${tabId})} "></div>
+	<div class="layui-body">
+		<!-- 内容主体区域 -->
+		<fieldset class="layui-elem-field layui-field-title">
+			<legend>我的推荐人</legend>
+		</fieldset>
+		<form class="layui-form" action="">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">您的推荐人</label>
+					<div th:if="${referrerRecord} != null" class="layui-input-inline">
+						<span th:utext="${referrerRecord.name}" style="line-height: 38px; font-size: 18px;"></span>
+					</div>
+					<div th:if="${referrerRecord} == null" class="layui-input-inline">
+						<input type="text" id="referrer-code" placeholder="请输入推荐人的推荐码" class="layui-input"/>
+					</div>
+					<div th:if="${referrerRecord} == null" class="layui-form-mid layui-word-aux"><button type="button" class="layui-btn layui-btn-xs" onclick="bindReferrer();"><i class="layui-icon layui-icon-user"></i>绑定推荐人</button>&nbsp;&nbsp;注意：只能绑定一次</div>
+				</div>
+			</div>
+		</form>
+		<fieldset class="layui-elem-field layui-field-title">
+			<legend>我推荐的人</legend>
+		</fieldset>
+		<form class="layui-form" action="">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">您的推荐码</label>
+					<div th:if="${referrer} != null" class="layui-input-inline">
+						<span th:utext="${referrer.code}" style="line-height: 38px; font-size: 18px;"></span>
+					</div>
+					<div th:if="${referrer} == null" class="layui-form-mid layui-word-aux"><button type="button" class="layui-btn layui-btn-xs" onclick="buildReferrerCode();"><i class="layui-icon layui-icon-group"></i>生成推荐码</button>&nbsp;&nbsp;注意：每人只能生成一次</div>
+					<!--<div th:if="${referrer} == null" class="layui-form-mid layui-word-aux"><button type="button" class="layui-btn layui-btn-xs" style=""><i class="layui-icon layui-icon-group"></i></button></div>-->
+				</div>
+			</div>
+		</form>
+		<div id="my-chart" style="width: 500px; height: 500px;"></div>
+	</div>
+
+	<div class="layui-footer">
+		<!-- 底部固定区域 -->
+		<div th:include="common-bottom :: bottom">bottom?</div>
+	</div>
+</div>
+</body>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	/*]]>*/
+
+</script>
+<script th:if="${not isDebug}" th:src="@{//cdn.staticfile.org/echarts/4.0.4/echarts.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/other/echarts.min.js}" type="text/javascript"></script>
+<script th:if="${not isDebug}" th:src="@{//cdn.staticfile.org/echarts/4.6.0/extension/dataTool.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/other/dataTool.min.js}" type="text/javascript"></script>
+
+<!--
+<script th:src="@{http://cdn.staticfile.org/echarts/4.6.0/extension/dataTool.js.map}" type="text/javascript"></script>
+-->
+<script th:if="${not isDebug}" th:src="@{/page/js/manage/mall/referrer.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/manage/mall/referrer.js}" type="text/javascript"></script>
+
+</html>

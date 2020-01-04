@@ -491,6 +491,8 @@ public class EnumUtil {
 		该推广位不存在(4045),
 		苏宁api异常(4046),
 		GitHub异常(4047),
+		您已经有推荐码(4048),
+		已经绑定过推荐人(4049),
 		;
 		
 		private ResponseCode(int value) {

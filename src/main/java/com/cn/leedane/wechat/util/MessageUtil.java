@@ -107,7 +107,7 @@ public class MessageUtil {
 					news.setTitle(StringUtil.changeNotNull(bean.get("title")));
 					news.setDescription(StringUtil.changeNotNull(bean.get("title")));
 					news.setPicUrl(StringUtil.changeNotNull(bean.get("img_url")));
-					news.setUrl(basePath +"dt/"+StringUtil.changeObjectToInt(bean.get("id")));
+					news.setUrl(basePath +"/dt/"+StringUtil.changeObjectToInt(bean.get("id")));
 					
 					newsList.add(news);
 				}
@@ -118,7 +118,7 @@ public class MessageUtil {
 					news.setTitle(StringUtil.changeNotNull(beans.get(i).get("title")));
 					news.setDescription(StringUtil.changeNotNull(beans.get(i).get("title")));
 					news.setPicUrl(StringUtil.changeNotNull(beans.get(i).get("img_url")));
-					news.setUrl(basePath +"dt/"+StringUtil.changeObjectToInt(beans.get(i).get("id")));
+					news.setUrl(basePath +"/dt/"+StringUtil.changeObjectToInt(beans.get(i).get("id")));
 					newsList.add(news);
 				}
 			}	

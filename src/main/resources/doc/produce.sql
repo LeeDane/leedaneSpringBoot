@@ -242,11 +242,10 @@ DECLARE categorys varchar(1000) default concat($pid);
 WHILE $pid > 0  do   
     SELECT c.pid into pid FROM t_category c WHERE c.id = $pid;   
     IF pid > 0 THEN   
-        SET categorys = concat(categorys, ',' , pid);   
-        SET $pid = pid;   
-    ELSE   
-        SET $pid = pid;   
-    END IF;   
+        SET categorys = concat(categorys, ',' , pid);
+    END IF;
+    SET $pid = pid;
+    SET pid = 0;
 END WHILE;   
 select categorys;  
 END $$
@@ -275,4 +274,48 @@ BEGIN
 	END WHILE;
 	SELECT sTemp;
 	END $$
+delimiter
+
+-- 获取所有上级推荐人(包括自身)的ID字符串组合的存储过程
+drop PROCEDURE if EXISTS `getSupperReferrerRelation`;
+delimiter $$
+-- $pid 当前用户的ID
+-- $level 遍历的最大深度，目前获取到上上级，传2进来即可
+CREATE PROCEDURE `getSupperReferrerRelation` (in rootId INT, in $level INT)
+BEGIN
+DECLARE uid INT default 0; -- 临时存放推荐人的ID
+DECLARE userIds varchar(255) default concat(rootId);
+DECLARE count INT default 0;  -- 计数器，当前遍历的深度
+WHILE (count < $level and rootId > 0)  do
+    SELECT r.user_id into uid FROM t_mall_referrer_record r WHERE r.create_user_id = rootId and r.status = 1;
+    IF uid > 0 THEN
+				SET userIds = concat(userIds, ',' , uid);
+    END IF;
+    SET rootId = uid;
+    SET uid = 0;
+    SET count = count + 1;
+END WHILE;
+select userIds;
+END $$
+delimiter
+
+-- 获取所有下级推荐人(包括自身)的ID字符串组合的存储过程
+drop PROCEDURE if EXISTS `getLowerReferrerRelation`;
+delimiter $$
+CREATE PROCEDURE `getLowerReferrerRelation`(in rootId int)
+BEGIN
+	DECLARE str varchar(2000) DEFAULT NULL;
+	DECLARE cid varchar(100);
+	SET cid = rootId;
+	WHILE cid is not null DO
+			if str IS NULL then
+				SET str = cid;
+			ELSE
+				SET str = concat(str, ',', cid);
+			end if;
+
+			SELECT group_concat(create_user_id) INTO cid FROM t_mall_referrer_record where FIND_IN_SET(user_id, cid) > 0;
+	END WHILE;
+	select str;
+END $$
 delimiter

@@ -2,49 +2,29 @@ package com.cn.leedane.springboot.controller;
 
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.controller.BaseController;
-import com.cn.leedane.controller.RoleController;
 import com.cn.leedane.handler.JuheApiHandler;
 import com.cn.leedane.handler.OptionHandler;
-import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.handler.mall.*;
 import com.cn.leedane.juheapi.JuHeException;
-import com.cn.leedane.mall.taobao.api.DetailSimpleApi;
 import com.cn.leedane.mapper.MyTagsMapper;
 import com.cn.leedane.mapper.Oauth2Mapper;
 import com.cn.leedane.mapper.UserMapper;
-import com.cn.leedane.mapper.mall.PromotionSeatApplyMapper;
-import com.cn.leedane.mapper.mall.PromotionSeatMapper;
-import com.cn.leedane.mapper.mall.S_ProductMapper;
-import com.cn.leedane.mapper.mall.S_ShopMapper;
+import com.cn.leedane.mapper.mall.*;
 import com.cn.leedane.model.*;
 import com.cn.leedane.model.mall.*;
-import com.cn.leedane.service.CategoryService;
-import com.cn.leedane.service.CommentService;
 import com.cn.leedane.service.VisitorService;
-import com.cn.leedane.service.mall.S_HomeCarouselService;
-import com.cn.leedane.service.mall.S_HomeItemService;
-import com.cn.leedane.service.mall.S_ProductService;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.EsIndexAddThread;
 import com.cn.leedane.utils.*;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
-import com.cn.leedane.utils.EnumUtil.ResponseCode;
-import com.jd.open.api.sdk.JdException;
-import com.taobao.api.ApiException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
@@ -78,6 +58,12 @@ public class MyManagelHtmlController extends BaseController{
 
 	@Autowired
 	private MyTagsMapper myTagsMapper;
+
+	@Autowired
+	private ReferrerMapper referrerMapper;
+
+	@Autowired
+	private ReferrerRecordMapper referrerRecordMapper;
 
 	@Autowired
 	private S_PromotionSeatHandler promotionSeatHandler;
@@ -183,13 +169,36 @@ public class MyManagelHtmlController extends BaseController{
 		//获取当前登录用户
 		UserBean userBean = getMustLoginUserFromShiro();
 		loadCommon(userBean, model);
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入手机号码绑定首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的推广位管理首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
 		model.addAttribute("tabId", "mall-promotion");
-
-//		int i = 10 / 0;
 		//获取推广位列表
 		model.addAttribute("seats", promotionSeatHandler.getMySeats(userBean.getId()));
 		return loginRoleCheck("manage/mall/promotion", true, model, request);
+	}
+
+	/**
+	 * 推荐关系管理
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/mall/referrer")
+	public String mallReferrer(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入推荐关系管理首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		model.addAttribute("tabId", "mall-referrer");
+		S_ReferrerBean referrerBean = referrerMapper.findReferrerCode(userBean.getId());
+		S_ReferrerRecordBean referrerRecord = referrerRecordMapper.findReferrer(userBean.getId());
+		model.addAttribute("referrer", referrerBean);
+		model.addAttribute("referrerRecord", referrerRecord);
+		if(referrerRecord != null){
+			referrerRecord.setName(userHandler.getUserName(referrerRecord.getUserId()));
+		}
+		return loginRoleCheck("manage/mall/referrer", true, model, request);
 	}
 
 

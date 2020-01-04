@@ -70,7 +70,7 @@ public interface BaseMapper<T> {
     
     @SelectProvider(type = SqlProvider.class, method = "findById")
     public T findById(Class<?> clazz, long id);
-    
+
     @SelectProvider(type = SqlProvider.class, method = "getBeans")
     public List<T> getBeans(String sql, Object ...params);
     

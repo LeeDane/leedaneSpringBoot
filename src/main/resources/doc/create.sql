@@ -1500,3 +1500,46 @@ CREATE TABLE `t_my_tags` (
   CONSTRAINT `FK_my_tags_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_my_tags_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_mall_referrer  商城推荐人
+-- ----------------------------
+DROP TABLE IF EXISTS `t_mall_referrer`;
+CREATE TABLE `t_mall_referrer` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
+  `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_user_id` int(11) DEFAULT NULL COMMENT '创建人',
+  `modify_user_id` int(11) DEFAULT NULL COMMENT '修改人',
+  `code` varchar(25) NOT NULL COMMENT '推荐码',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `t_mall_referrer_unique` (`code`),
+  KEY `FK_mall_referrer_create_user` (`create_user_id`),
+  KEY `FK_mall_referrer_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_mall_referrer_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_referrer_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_mall_referrer_record  商城推荐历史记录
+-- ----------------------------
+DROP TABLE IF EXISTS `t_mall_referrer_record`;
+CREATE TABLE `t_mall_referrer_record` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
+  `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_user_id` int(11) DEFAULT NULL COMMENT '创建人',
+  `modify_user_id` int(11) DEFAULT NULL COMMENT '修改人',
+  `user_id` int(11) NOT NULL COMMENT '推荐人的ID',
+  `code` varchar(25) NOT NULL COMMENT '推荐码,冗余字段',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `t_mall_referrer_record_unique` (`create_user_id`,`user_id`),
+  KEY `FK_mall_referrer_record_create_user` (`create_user_id`),
+  KEY `FK_mall_referrer_record_modify_user` (`modify_user_id`),
+  KEY `FK_mall_referrer_record_user` (`user_id`),
+  CONSTRAINT `FK_mall_referrer_record_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_referrer_record_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_mall_referrer_record_user` FOREIGN KEY (`user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
