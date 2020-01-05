@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 笑话精选api
+ * 历史上的今天api
  * @author LeeDane
  * 2019年12月19日 10:21
  * Version 1.0
@@ -33,7 +33,7 @@ public class HistoryTodayApi {
         String url ="http://v.juhe.cn/todayOnhistory/queryEvent.php";//请求接口地址
         Map params = new HashMap();//请求参数
         params.put("key",APPKEY);//应用APPKEY(应用详细页查询)
-        params.put("date", DateUtil.DateToString(new Date(), "MM/dd"));//日，如：1
+        params.put("date", DateUtil.DateToString(new Date(), "M/d"));//日，如：1
 
         result =net(url, params, "GET");
         JSONObject object = JSONObject.fromObject(result);
