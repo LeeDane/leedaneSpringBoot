@@ -1,10 +1,16 @@
 package com.cn.leedane.controller;
 
+import com.cn.leedane.handler.CitysHandle;
 import com.cn.leedane.handler.CloudStoreHandler;
 import com.cn.leedane.handler.ZXingCodeHandler;
+import com.cn.leedane.mapper.util.CityMapper;
+import com.cn.leedane.mapper.util.CountyMapper;
+import com.cn.leedane.mapper.util.ProvinceMapper;
 import com.cn.leedane.model.EmailBean;
 import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.util.CityBean;
+import com.cn.leedane.model.util.ProvinceBean;
 import com.cn.leedane.notice.NoticeException;
 import com.cn.leedane.notice.model.SMS;
 import com.cn.leedane.notice.send.INoticeFactory;
@@ -12,7 +18,6 @@ import com.cn.leedane.notice.send.NoticeFactory;
 import com.cn.leedane.rabbitmq.SendMessage;
 import com.cn.leedane.rabbitmq.send.EmailSend;
 import com.cn.leedane.rabbitmq.send.ISend;
-import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.service.AppVersionService;
 import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.EmailType;
@@ -35,10 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = ControllerBaseNameUtil.tl)
@@ -48,25 +50,32 @@ public class ToolController extends BaseController{
 	
 	@Autowired
 	private AppVersionService<FilePathBean> appVersionService;
-	
+
+	@Autowired
+	private CitysHandle citysHandle;
+
+	@Autowired
+	private ProvinceMapper provinceMapper;
+
+	@Autowired
+	private CityMapper cityMapper;
+	@Autowired
+	private CountyMapper countyMapper;
 	/**
 	 * 翻译
 	 * @return
 	 * @throws IOException 
 	 */
 	@RequestMapping(value = "/fanyi", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> fanyi(Model model, HttpServletRequest request) throws IOException{
+	public ResponseModel fanyi(Model model, HttpServletRequest request) throws IOException{
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
+			return message.getModel();
 		
 		checkRoleOrPermission(model, request);
 		String content = JsonUtil.getStringValue(getJsonFromMessage(message), "content");
 		String msg = HttpRequestUtil.sendAndRecieveFromYoudao(content);
-		msg = StringUtil.getYoudaoFanyiContent(msg);
-		message.put("success", true);
-		message.put("message", msg);
-		return message.getMap();
+		return new ResponseModel().ok().message(StringUtil.getYoudaoFanyiContent(msg));
 	}
 	
 	/**
@@ -74,34 +83,26 @@ public class ToolController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/sendEmail", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> sendEmail(Model model, HttpServletRequest request){
+	public ResponseModel sendEmail(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		//{"id":1, "to_user_id": 2}
 		if(!checkParams(message, request))
-			return message.getMap();
+			return message.getModel();
 		
 		checkRoleOrPermission(model, request);
 		JSONObject json = getJsonFromMessage(message);
 		String toUserId = JsonUtil.getStringValue(json, "to_user_id");//接收邮件的用户的Id，必须
 		String content = JsonUtil.getStringValue(json, "content"); //邮件的内容，必须
 		String object = JsonUtil.getStringValue(json, "object"); //邮件的标题，必须
-		if(StringUtil.isNull(toUserId) || StringUtil.isNull(content) || StringUtil.isNull(object)){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.参数不存在或为空.value);
-			return message.getMap();
-		}
+		if(StringUtil.isNull(toUserId) || StringUtil.isNull(content) || StringUtil.isNull(object))
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value)).code(EnumUtil.ResponseCode.参数不存在或为空.value);
 		
 		UserBean toUser = userService.findById(StringUtil.changeObjectToInt(toUserId));
-		if(toUser == null){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该用户不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.该用户不存在.value);
-			return message.getMap();
-		}
-		if(StringUtil.isNull(toUser.getEmail())){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.对方还没有绑定电子邮箱.value));
-			message.put("responseCode", EnumUtil.ResponseCode.对方还没有绑定电子邮箱.value);
-			return message.getMap();
-		}
+		if(toUser == null)
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该用户不存在.value)).code(EnumUtil.ResponseCode.该用户不存在.value);
+
+		if(StringUtil.isNull(toUser.getEmail()))
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.对方还没有绑定电子邮箱.value)).code(EnumUtil.ResponseCode.对方还没有绑定电子邮箱.value);
 		
 		//String content = "用户："+user.getAccount() +"已经添加您为好友，请您尽快处理，谢谢！";
 		//String object = "LeeDane好友添加请求确认";
@@ -114,20 +115,18 @@ public class ToolController extends BaseController{
 		emailBean.setSubject(object);
 		emailBean.setReplyTo(set);
 		emailBean.setType(EmailType.新邮件.value); //新邮件
-
+		ResponseModel responseModel = new ResponseModel();
 		try {
 			ISend send = new EmailSend(emailBean);
 			SendMessage sendMessage = new SendMessage(send);
 			sendMessage.sendMsg();//发送消息队列到消息队列
-			message.put("success", true);
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件已经发送.value));
+			responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件已经发送.value));
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件发送失败.value)+",失败原因是："+e.toString());
-			message.put("responseCode", EnumUtil.ResponseCode.邮件发送失败.value);
+			responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件发送失败.value)+",失败原因是："+e.toString()).code(EnumUtil.ResponseCode.邮件发送失败.value);
 		}
-		return message.getMap();
+		return responseModel;
 	}
 	
 	/**
@@ -135,15 +134,14 @@ public class ToolController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/sendMsg", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> sendMessage(Model model, HttpServletRequest request){
+	public ResponseModel sendMessage(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
+			return message.getModel();
 		
 		checkRoleOrPermission(model, request);
 		//type: 1为通知，2为邮件，3为私信，4为短信
-		message.putAll(userService.sendMessage(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request)));
-		return message.getMap();
+		return userService.sendMessage(getJsonFromMessage(message), getUserFromMessage(message), getHttpRequestInfo(request));
 	}
 	
 	/**
@@ -156,22 +154,12 @@ public class ToolController extends BaseController{
 	 */
 	@Deprecated
 	@RequestMapping(value = "/sms/sendCode", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> sendCode(@RequestParam("phone") String phone, @RequestParam("type") String type, Model model, HttpServletRequest request) throws NoticeException {
+	public ResponseModel sendCode(@RequestParam("phone") String phone, @RequestParam("type") String type, Model model, HttpServletRequest request) throws NoticeException {
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
+			return message.getModel();
 		
 		checkRoleOrPermission(model, request);
-		//在发送短信部分已经做了处理，这里不再累赘做校验
-//		String key = phone + "_"+ type;
-//		RedisUtil redisUtil = RedisUtil.getInstance();
-//		if(redisUtil.hasKey(key)){
-//			message.put("success", true);
-//			int seconds = (int) (120 - (System.currentTimeMillis() - Long.parseLong(redisUtil.getString(key))));
-//			message.put("left", seconds);
-//			message.put("message", "您操作太频繁啦！下次操作剩余："+ seconds +"秒");
-//			message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-//		}else{
 		//发送短信
 		SMS sms = new SMS();
 		sms.setType(type);
@@ -181,22 +169,10 @@ public class ToolController extends BaseController{
 		sms.setToUser(toUser);
 		INoticeFactory factory = new NoticeFactory();
 		boolean success = factory.create(EnumUtil.NoticeType.短信).send(sms);
-		/*boolean success = true;
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}*/
-		if(success){
-				message.put("success", true);
-				message.put("message", "发送成功，请留意手机查看");
-				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
-			}else{
-				message.put("message", "发送失败，请稍后重试。");
-				message.put("responseCode", EnumUtil.ResponseCode.操作失败.value);
-			}
-//		}
-		return message.getMap();
+		if(success)
+			return new ResponseModel().ok().message("发送成功，请留意手机查看");
+		else
+			return new ResponseModel().message("发送失败，请稍后重试。");
 	}
 	
 	/**
@@ -204,15 +180,13 @@ public class ToolController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/qiNiuToken", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getQiNiuToken(Model model, HttpServletRequest request){
+	public ResponseModel getQiNiuToken(Model model, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		if(!checkParams(message, request))
-			return message.getMap();
+			return message.getModel();
 		
 		checkRoleOrPermission(model, request);
-		message.put("success", true);
-		message.put("message", getToken());
-		return message.getMap();
+		return new ResponseModel().ok().message(getToken());
 	}
 	
 	/**
@@ -220,13 +194,10 @@ public class ToolController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/publicKey", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> publicKey(HttpServletRequest request){
+	public ResponseModel publicKey(HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
-		
-		message.put("success", true);
-		message.put("message", RSAKeyUtil.getInstance().getPublicKey());
-		return message.getMap();
+		return new ResponseModel().ok().message(RSAKeyUtil.getInstance().getPublicKey());
 	}
 
 	/**
@@ -236,7 +207,7 @@ public class ToolController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/networdImage", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getNetwordImage(@RequestParam("url") String imgUrl, HttpServletRequest request){
+	public ResponseModel getNetwordImage(@RequestParam("url") String imgUrl, HttpServletRequest request){
 		ResponseMap message = new ResponseMap();
 		InputStream is = null;
 		ByteArrayOutputStream out = null;
@@ -249,9 +220,7 @@ public class ToolController extends BaseController{
 			while((i = is.read())!=-1)   { 
 				out.write(i); 
 			}
-			message.put("success", true);
-			message.put("message", ConstantsUtil.BASE64_JPG_IMAGE_HEAD + new String(Base64Util.encode(out.toByteArray())));
-			return message.getMap();
+			return new ResponseModel().ok().message(ConstantsUtil.BASE64_JPG_IMAGE_HEAD + new String(Base64Util.encode(out.toByteArray())));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
@@ -268,9 +237,7 @@ public class ToolController extends BaseController{
 					e.printStackTrace();
 				}
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
-		message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
-		return message.getMap();
+		return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value)).code(EnumUtil.ResponseCode.服务器处理异常.value);
 	}
 	
 	/**
@@ -291,20 +258,14 @@ public class ToolController extends BaseController{
 	 * @throws WriterException
 	 */
 	@RequestMapping(value = "/loginQrCode", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> loginQrCode(@RequestParam("cnid") String cnid, HttpServletRequest request) throws WriterException{
-		ResponseMap message = new ResponseMap();
-		if(StringUtil.isNull(cnid)){
-			message.put("message", "连接id为空");
-			message.put("responseCode", EnumUtil.ResponseCode.参数不存在或为空.value);
-			return message.getMap();
-		}
+	public ResponseModel loginQrCode(@RequestParam("cnid") String cnid, HttpServletRequest request) throws WriterException{
+		if(StringUtil.isNull(cnid))
+			return new ResponseModel().error().message("连接id为空").code(EnumUtil.ResponseCode.参数不存在或为空.value);
 		String bp = request.getScheme()+"://"+request.getServerName() +
 				(request.getServerName().endsWith("com")? "" : ":"+request.getServerPort())
 				+request.getContextPath()+"/";
 		String bpath = bp +"dl?scan_login=" + cnid;
-		message.put("message", ZXingCodeHandler.createQRCode(bpath, 200));
-		message.put("success", true);
-		return message.getMap();
+		return new ResponseModel().ok().message(ZXingCodeHandler.createQRCode(bpath, 200));
 	}
 	
 	/**
@@ -327,16 +288,100 @@ public class ToolController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/system/info", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> getSystemInfo(HttpServletRequest request) throws InterruptedException {
+	public ResponseModel getSystemInfo(HttpServletRequest request) throws InterruptedException {
 		ResponseMap message = new ResponseMap();
 		checkParams(message, request);
 		//获得所有的环境变量
 //       Map<String, String> env = System.getenv();
 		//获得指定的环境变量
 //       String path = System.getenv("path");
-		String result = CommonUtil.execMult("java -version");
-		message.put("success", true);
-		message.put("message", result);
-		return message.getMap();
+		return new ResponseModel().ok().message(CommonUtil.execMult("java -version"));
+	}
+
+	/**
+	 * 获取目前所有的省数据
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/util/province", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public ResponseModel utilProvince(Model model, HttpServletRequest request) throws InterruptedException {
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getModel();
+
+		checkRoleOrPermission(model, request);
+
+		provinceMapper.emptyTableData("t_util_province");//清空表数据
+		citysHandle.parseProvince();
+		return new ResponseModel().ok().message("本次已经处理完成");
+	}
+
+	/**
+	 * 获取目前所有的市数据
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/util/city", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public ResponseModel utilCity(Model model, HttpServletRequest request) throws InterruptedException {
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getModel();
+
+		checkRoleOrPermission(model, request);
+
+		cityMapper.emptyTableData("t_util_city");//清空表数据
+		//读取所有的省
+		List<ProvinceBean> provinces = provinceMapper.getProvinces();
+		for(ProvinceBean province: provinces){
+			try {
+				citysHandle.parseCity(province.getCode());
+				Thread.sleep(15000); //休息15秒
+			} catch (IOException e) {
+				e.printStackTrace();
+				Thread.sleep(15000); //休息15秒后重试
+				try {
+					citysHandle.parseCity(province.getCode());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					return new ResponseModel().ok().message("程序无法处理:"+ province.getCode());
+				}
+			}
+
+		}
+		return new ResponseModel().ok().message("本次已经处理完成");
+	}
+
+	/**
+	 * 获取目前所有的县数据
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/admin/util/county", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public ResponseModel utilCounty(Model model, HttpServletRequest request) throws InterruptedException {
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request))
+			return message.getModel();
+
+		checkRoleOrPermission(model, request);
+		countyMapper.emptyTableData("t_util_county");//清空表数据
+		//读取所有的省
+		List<CityBean> citys = cityMapper.getCitys();
+		for(CityBean city: citys){
+			try {
+				citysHandle.parseCounty(city.getCode());
+				Thread.sleep(15000); //休息15秒
+			} catch (IOException e) {
+				e.printStackTrace();
+				Thread.sleep(15000); //休息15秒后重试
+				try {
+					citysHandle.parseCounty(city.getCode());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					return new ResponseModel().ok().message("程序无法处理:"+ city.getCode());
+				}
+			}
+
+		}
+		return new ResponseModel().ok().message("本次已经处理完成");
 	}
 }

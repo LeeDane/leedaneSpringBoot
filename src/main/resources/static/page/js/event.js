@@ -20,7 +20,7 @@ layui.use(['layer', 'util'], function(){
         success : function(data) {
             layer.close(loadi);
             var events = data.message;
-            if(data != null && data.isSuccess){
+            if(data != null && data.success){
                 if(events.length == 0){
                     $(".layui-timeline").append("<li>还没有发布任何大事件</li>");
                     return;

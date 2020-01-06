@@ -74,4 +74,18 @@ public class ManageMallController extends BaseController{
 		}
 		return manageMallService.bindReferrer(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request));
 	}
+
+	/**
+	 * 获取推荐关系
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/mall/referrer/relation", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public ResponseModel referrerRelation(HttpServletRequest request) throws Exception {
+		ResponseMap message = new ResponseMap();
+		if(!checkParams(message, request)){
+			return message.getModel();
+		}
+		return manageMallService.referrerRelation(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request));
+	}
 }

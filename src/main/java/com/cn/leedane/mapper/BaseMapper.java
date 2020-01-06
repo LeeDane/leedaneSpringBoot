@@ -36,6 +36,9 @@ public interface BaseMapper<T> {
     
     @DeleteProvider(type = SqlProvider.class, method = "deleteById")
     public int deleteById(Class<?> clazz, long id);
+
+    @SelectProvider(type = SqlProvider.class, method = "emptyTableData")
+    public void emptyTableData(String table);
     
     /**
      * 批量删除

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.util.ProvinceMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
+    <insert id="batchSave" parameterType="java.util.List">
+        insert into t_util_province(
+        id,
+        status,
+        create_time,
+        create_user_id,
+        modify_time,
+        modify_user_id,
+        name,
+        code
+        )
+        values
+        <foreach collection="provinces" item="item" index="index" separator=",">
+            (
+            #{item.id,jdbcType=BIGINT},
+            #{item.status,jdbcType=INTEGER},
+            #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.createUserId,jdbcType=INTEGER},
+            #{item.modifyTime,jdbcType=TIMESTAMP},
+            #{item.modifyUserId,jdbcType=INTEGER},
+            #{item.name,jdbcType=VARCHAR},
+            #{item.code,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+    <select id="getProvinces" resultMap="objectBean">
+        select p.id, p.status, p.create_user_id, date_format(p.create_time,'%Y-%m-%d %H:%i:%s') create_time
+        ,p.modify_user_id, date_format(p.modify_time,'%Y-%m-%d %H:%i:%s') modify_time, p.code, p.name
+        from t_util_province p
+    </select>
+
+    <resultMap type="com.cn.leedane.model.util.ProvinceBean" id="objectBean">
+        <id property="id" column="id"/>
+        <result property="status" column="status"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyUserId" column="modify_user_id"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+
+</mapper>

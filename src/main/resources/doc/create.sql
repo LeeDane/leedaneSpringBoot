@@ -1543,3 +1543,68 @@ CREATE TABLE `t_mall_referrer_record` (
   CONSTRAINT `FK_mall_referrer_record_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_mall_referrer_record_user` FOREIGN KEY (`user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_util_province  省表
+-- ----------------------------
+DROP TABLE IF EXISTS `t_util_province`;
+CREATE TABLE `t_util_province` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
+  `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_user_id` int(11) DEFAULT NULL COMMENT '创建人',
+  `modify_user_id` int(11) DEFAULT NULL COMMENT '修改人',
+  `name` varchar(15) NOT NULL COMMENT '省的名称',
+  `code` varchar(15) NOT NULL COMMENT '省的编码',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `t_util_province_unique` (`name`,`code`),
+  KEY `FK_util_province_create_user` (`create_user_id`),
+  KEY `FK_util_province_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_util_province_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_util_province_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_util_city  市表
+-- ----------------------------
+DROP TABLE IF EXISTS `t_util_city`;
+CREATE TABLE `t_util_city` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
+  `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_user_id` int(11) DEFAULT NULL COMMENT '创建人',
+  `modify_user_id` int(11) DEFAULT NULL COMMENT '修改人',
+  `pcode` varchar(15) NOT NULL COMMENT '省的编码',
+  `name` varchar(15) NOT NULL COMMENT '市的名称',
+  `code` varchar(15) NOT NULL COMMENT '市的编码',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `t_util_city_unique` (`name`,`code`),
+  KEY `FK_util_city_create_user` (`create_user_id`),
+  KEY `FK_util_city_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_util_city_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_util_city_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_util_county  县表
+-- ----------------------------
+DROP TABLE IF EXISTS `t_util_county`;
+CREATE TABLE `t_util_county` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
+  `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_user_id` int(11) DEFAULT NULL COMMENT '创建人',
+  `modify_user_id` int(11) DEFAULT NULL COMMENT '修改人',
+  `ccode` varchar(15) NOT NULL COMMENT '市的编码',
+  `name` varchar(15) NOT NULL COMMENT '县的名称',
+  `code` varchar(15) NOT NULL COMMENT '县的编码',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `t_util_county_unique` (`name`,`code`),
+  KEY `FK_util_county_create_user` (`create_user_id`),
+  KEY `FK_util_county_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_util_county_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_util_county_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

@@ -401,6 +401,10 @@ public class SqlProvider {
 		return "select id from "+tableName +" where id = "+tableId;
 	}
 
+	public String emptyTableData(String tableName){
+		return "truncate table "+ tableName;
+	}
+
 	/**
 	 * 执行最基本的sql语句
 	 * @param sql

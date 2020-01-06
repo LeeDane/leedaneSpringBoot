@@ -15,6 +15,8 @@ public class Node {
     private float z;
     private int value;
     private int category;
+    private long sourceId;
+    private long parentId;
     private boolean draggable = true;
 
     public long getId() {
@@ -95,5 +97,21 @@ public class Node {
 
     public void setDraggable(boolean draggable) {
         this.draggable = draggable;
+    }
+
+    public long getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(long sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    public long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(long parentId) {
+        this.parentId = parentId;
     }
 }

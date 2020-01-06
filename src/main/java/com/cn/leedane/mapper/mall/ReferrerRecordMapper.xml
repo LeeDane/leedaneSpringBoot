@@ -14,8 +14,8 @@
         ,r.modify_user_id, date_format(r.modify_time,'%Y-%m-%d %H:%i:%s') modify_time, r.code, r.user_id
         from t_mall_referrer_record r where r.create_user_id = #{userId}
 	</select>
-	
-	<resultMap type="com.cn.leedane.model.mall.S_ReferrerRecordBean" id="objectBean">
+
+    <resultMap type="com.cn.leedane.model.mall.S_ReferrerRecordBean" id="objectBean">
         <id property="id" column="id"/>
         <result property="status" column="status"/>
         <result property="createUserId" column="create_user_id"/>
@@ -24,5 +24,17 @@
         <result property="modifyTime" column="modify_time"/>
         <result property="code" column="code"/>
         <result property="userId" column="user_id"/>
-   </resultMap>
+    </resultMap>
+
+    <select id="getReferrerRelation" resultMap="referrerRelationBean" statementType="CALLABLE">
+        {
+            call getReferrerRelation(#{userId}, #{level})
+        }
+    </select>
+    <resultMap type="com.cn.leedane.model.mall.ReferrerRelationBean" id="referrerRelationBean">
+        <id property="id" column="id"/>
+        <result property="parent" column="parent"/>
+        <result property="account" column="account"/>
+    </resultMap>
+
 </mapper>

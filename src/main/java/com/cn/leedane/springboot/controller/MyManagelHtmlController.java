@@ -200,7 +200,23 @@ public class MyManagelHtmlController extends BaseController{
 		}
 		return loginRoleCheck("manage/mall/referrer", true, model, request);
 	}
-
+	/**
+	 * 我的收获地址管理
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/mall/address")
+	public String mallAddress(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的地址管理首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		model.addAttribute("tabId", "mall-address");
+		return loginRoleCheck("manage/mall/address", true, model, request);
+	}
 
 	/**
 	 * 第三方账号绑定

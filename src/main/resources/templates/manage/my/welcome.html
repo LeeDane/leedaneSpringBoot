@@ -8,7 +8,6 @@
 	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
 	<div th:include="manage/common-js :: manageJs">what?</div>
 	<style>
-
 		.list-item-one{
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -42,7 +41,7 @@
 					<div class="layui-card">
 						<div class="layui-card-header">头条新闻 <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" style="right: 10px; top: 10px; position: absolute;">更多</button></div>
 						<div class="layui-card-body">
-							<div class="list-item-one" th:each="head,headIndex: ${heads}"><a th:href="${head.url}" th:utext="${head.title}" th:title="${head.title} +  ${head.date}" target="_blank">同为“双子车” 丰田威兰达和本田皓影 到底谁更值得买？</a></div>
+							<div class="list-item-one" th:each="head,headIndex: ${heads}"><a th:href="${head.url}" th:utext="${head.title}" th:title="${head.title} +  ${head.date}" target="_blank"></a></div>
 						</div>
 					</div>
 				</div>
@@ -50,7 +49,7 @@
 					<div class="layui-card">
 						<div class="layui-card-header">历史今天<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" style="right: 10px; top: 10px; position: absolute;">更多</button></div>
 						<div class="layui-card-body">
-							<div class="list-item-one" th:each="today,todayIndex: ${todays}"><a href="javascript:;" th:utext="'(' +${today.date} + ')'+ ${today.title}" th:title="${today.title}" target="_blank">(1893年12月19日)清洋务运动首领李鸿章在天津开办医学堂</a></div>
+							<div class="list-item-one" th:each="today,todayIndex: ${todays}"><a th:href="'https://www.baidu.com/s?wd='+ ${today.title}" th:utext="'(' +${today.date} + ')'+ ${today.title}" th:title="${today.title}" target="_blank"></a></div>
 						</div>
 					</div>
 				</div>
@@ -58,16 +57,7 @@
 					<div class="layui-card">
 						<div class="layui-card-header">笑话精选<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" style="right: 10px; top: 10px; position: absolute;">更多</button></div>
 						<div class="layui-card-body">
-							<div class="list-item-two" th:each="joke, jokeIndex: ${jokes}"><a href="javascript:;" target="_blank" th:utext="${joke.content}" th:title="${joke.content}">某先生是地方上的要人。一天，他像往常一样在书房里例览当日报纸，突然对妻子大声喊道：喂，安娜，你看到今天早报上的流言蜚语了吗？真可笑！他们说，你收拾行装出走了。你听见了吗？安娜、你在哪儿？安娜？啊！</a></div>
-							<!--<div class="list-item-two"><a>有一天我看着报纸，小声嘟囔着一篇文章的题目鸟儿也有外语，丈夫听了对了一句：鸟儿当然也有‘外遇’。原来丈夫听错了，我笑得前仰后合。</a></div>
-							<div class="list-item-two"><a>新提拔的经理觉得从员工中得到的尊重不够，于是一天戴上一枚自制的徽章，上面写着：“我是头儿！”然后在办公室神气地来回巡视。中午吃完饭后，经理回到办公室，看见桌上留着一张字条，上面写着：“你的妻子打来电话，说让你记着下班后把徽章带回去，她要用。</a></div>
-							<div class="list-item-two"><a>每天最开心的事情就是早晨看着老婆抹了化妆水啪啪的拍自己的脸（据说是用来保湿的）。“啪啪”，“啪啪”，“啪啪”，听了太爽了，我边听边心里默念“叫你让我洗袜子，叫你让我接孩子，叫你不让我喝酒，叫你不叫我玩CS,打，打，给我使劲打！！”</a></div>
-							<div class="list-item-two"><a>有一对新婚夫妇，彼此都不太了解，这个新娘有口臭而新郎呢，他有脚臭，但是彼此都不想让对方知道，因此在新婚后的一个月里新娘在晚上从来不开口说话，而新郎呢在一个月里都不脱袜子。但是一个月后的一天晚上，新郎不知怎的把袜子给睡掉了，当他醒来时发现袜子不见了他就找，把新娘给吵醒了，新娘问到你：你找什么我帮你找吧！新郎用手捂着鼻子说：呀，我找到了，原来我的袜子在你的嘴里。</a></div>
-							<div class="list-item-two"><a>今天周日，陪我逛商场去好么？啊，求你啊，老婆，上次累得我的腿还没缓过劲来呢。你不去逛商场，那就在家里洗衣服好么？洗就洗！！哎？哎？你怎么跟着我来了，不是不去商场么？-我是不放心，还是跟你着比较好。再说了，在卫生间里洗衣服和在里面吸烟是两回事呢。呵呵，那帮我拎着包好么？拎就拎吧，回来的比这重我也不是不知道。</a></div>
-							<div class="list-item-two"><a>一天早晨，妻子正在厨房里安排早餐的时候，丈夫发现他的衣柜抽屉里只剩下一双干净的袜子了，他并没有发任何牢骚来责怪妻子洗衣不勤快，只是对着厨房大声说：“亲爱的，要是我还有一只脚，那它就会没有袜子穿了。</a></div>
-							<div class="list-item-two"><a>商人叮嘱老婆，如果他做生意赔了本，就把屋子弄得灯火通明，相反的话，则只是点一支蜡烛就行了。为什么这样呢？老婆不解地问。我赔了本，其他人该生气，他解释道，让他们生气的唯一方法就是让他们看到我家灯火通明。那你赚了钱呢？如果我赚了钱，那我当然要他们高兴，只点一支蜡烛，他们会认为我快要穷死了，一定会乐得跳起来！</a></div>
-							<div class="list-item-two"><a>妻子问我：“今天我生日，你给我买了什么礼物？”我笑着往对面一指：“看到那边那辆粉红色的奔驰了么？”“看到了！”她开心地回答。“我给你买了同样颜色的牙刷。”</a></div>
-							<div class="list-item-two"><a>有人问老陈：“听说你在公司是老虎，在家里却是一只柔顺的小猫咪.因为你怕老婆，是吗?”老陈回答道：“谁说的!我在家里也是老虎!敢小看我?没门!”这些话刚好被他老婆听见了，便破口大骂：“你是老虎，那我是谁？”老陈不好意思地说：“你~~~~你是武松呀！”</a></div>-->
+							<div class="list-item-two" th:each="joke, jokeIndex: ${jokes}"><a href="javascript:;" target="_blank" th:utext="${joke.content}" th:title="${joke.content}"></a></div>
 						</div>
 					</div>
 				</div>
@@ -105,7 +95,6 @@
 			</div>
 		</div>
 	</div>
-
 	<div class="layui-footer">
 		<!-- 底部固定区域 -->
 		<div th:include="common-bottom :: bottom">bottom?</div>

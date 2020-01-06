@@ -13,7 +13,7 @@
         <attvalues>
           <attvalue for="modularity_class" value="0"></attvalue>
         </attvalues>
-        <viz:size value="14"></viz:size>
+        <viz:size value="18"></viz:size>
         <viz:position x="430" y="50" z="0.0"></viz:position>
         <viz:color r="0" g="134" b="139"></viz:color>
       </node>
@@ -21,7 +21,7 @@
         <attvalues>
           <attvalue for="modularity_class" value="1"></attvalue>
         </attvalues>
-        <viz:size value="18"></viz:size>
+        <viz:size value="14"></viz:size>
         <viz:position x="430" y="70" z="0.0"></viz:position>
         <viz:color r="123" g="104" b="238"></viz:color>
       </node>

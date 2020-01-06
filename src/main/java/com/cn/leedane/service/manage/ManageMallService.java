@@ -44,4 +44,13 @@ public interface ManageMallService<T extends IDBean>{
 	 * @return
 	 */
 	public ResponseModel bindReferrer(JSONObject json, UserBean user, HttpRequestInfoBean request);
+
+	/**
+	 * 推荐关系
+	 * @param json
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public ResponseModel referrerRelation(JSONObject json, UserBean user, HttpRequestInfoBean request);
 }

@@ -30,19 +30,19 @@
 					<div th:if="${referrerRecord} == null" class="layui-input-inline">
 						<input type="text" id="referrer-code" placeholder="请输入推荐人的推荐码" class="layui-input"/>
 					</div>
-					<div th:if="${referrerRecord} == null" class="layui-form-mid layui-word-aux"><button type="button" class="layui-btn layui-btn-xs" onclick="bindReferrer();"><i class="layui-icon layui-icon-user"></i>绑定推荐人</button>&nbsp;&nbsp;注意：只能绑定一次</div>
+					<div th:if="${referrerRecord} == null" class="layui-form-mid layui-word-aux"><button type="button" class="layui-btn layui-btn-xs" onclick="bindReferrer();"><i class="layui-icon layui-icon-user"></i>绑定推荐人</button>&nbsp;&nbsp;注意：只能绑定一次，为空绑定管理员</div>
 				</div>
 			</div>
 		</form>
 		<fieldset class="layui-elem-field layui-field-title">
-			<legend>我推荐的人</legend>
+			<legend>我推荐的</legend>
 		</fieldset>
 		<form class="layui-form" action="">
 			<div class="layui-form-item">
 				<div class="layui-inline">
 					<label class="layui-form-label">您的推荐码</label>
 					<div th:if="${referrer} != null" class="layui-input-inline">
-						<span th:utext="${referrer.code}" style="line-height: 38px; font-size: 18px;"></span>
+						<span id="has-referrer-code" th:utext="${referrer.code}" style="line-height: 38px; font-size: 18px;"></span>
 					</div>
 					<div th:if="${referrer} == null" class="layui-form-mid layui-word-aux"><button type="button" class="layui-btn layui-btn-xs" onclick="buildReferrerCode();"><i class="layui-icon layui-icon-group"></i>生成推荐码</button>&nbsp;&nbsp;注意：每人只能生成一次</div>
 					<!--<div th:if="${referrer} == null" class="layui-form-mid layui-word-aux"><button type="button" class="layui-btn layui-btn-xs" style=""><i class="layui-icon layui-icon-group"></i></button></div>-->

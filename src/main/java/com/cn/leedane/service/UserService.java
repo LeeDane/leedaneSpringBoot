@@ -5,6 +5,7 @@ import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.notice.NoticeException;
+import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -488,7 +489,7 @@ public interface UserService<T extends IDBean>{
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> sendMessage(JSONObject json, UserBean user, HttpRequestInfoBean request);
+	public ResponseModel sendMessage(JSONObject json, UserBean user, HttpRequestInfoBean request);
 
 	/**
 	 * 添加用户(只能是管理员操作)

@@ -276,46 +276,58 @@ BEGIN
 	END $$
 delimiter
 
--- 获取所有上级推荐人(包括自身)的ID字符串组合的存储过程
-drop PROCEDURE if EXISTS `getSupperReferrerRelation`;
+-- 获取当前用户所有符合的推荐人和被推荐人(包括自身)的ID字符串组合的存储过程
+drop PROCEDURE if EXISTS `getReferrerRelation`;
 delimiter $$
--- $pid 当前用户的ID
+-- $rootId 当前用户的ID
 -- $level 遍历的最大深度，目前获取到上上级，传2进来即可
-CREATE PROCEDURE `getSupperReferrerRelation` (in rootId INT, in $level INT)
+CREATE PROCEDURE `getReferrerRelation` (in $rootId INT, in $level INT)
 BEGIN
-DECLARE uid INT default 0; -- 临时存放推荐人的ID
-DECLARE userIds varchar(255) default concat(rootId);
-DECLARE count INT default 0;  -- 计数器，当前遍历的深度
-WHILE (count < $level and rootId > 0)  do
-    SELECT r.user_id into uid FROM t_mall_referrer_record r WHERE r.create_user_id = rootId and r.status = 1;
-    IF uid > 0 THEN
-				SET userIds = concat(userIds, ',' , uid);
-    END IF;
-    SET rootId = uid;
-    SET uid = 0;
-    SET count = count + 1;
-END WHILE;
-select userIds;
-END $$
-delimiter
+	-- 开始获取父节点
+	DECLARE uid INT default 0; -- 临时存放推荐人的ID
+	DECLARE parentStrs varchar(255) DEFAULT CONCAT($rootId);
+	DECLARE countParent INT default 0;  -- 计数器，当前遍历的深度
 
--- 获取所有下级推荐人(包括自身)的ID字符串组合的存储过程
-drop PROCEDURE if EXISTS `getLowerReferrerRelation`;
-delimiter $$
-CREATE PROCEDURE `getLowerReferrerRelation`(in rootId int)
-BEGIN
-	DECLARE str varchar(2000) DEFAULT NULL;
-	DECLARE cid varchar(100);
-	SET cid = rootId;
-	WHILE cid is not null DO
-			if str IS NULL then
-				SET str = cid;
+	DECLARE childStrs varchar(2000) DEFAULT NULL;
+	DECLARE childId varchar(100);
+	DECLARE countChild INT DEFAULT 0; -- 计算子节点
+	SET childId = $rootId;
+
+	WHILE (countParent <= $level and $rootId > 0)  do
+			SELECT r.user_id into uid FROM t_mall_referrer_record r WHERE r.create_user_id = $rootId and r.status = 1;
+			IF uid > 0 THEN
+				SET parentStrs = concat(parentStrs, ',' , uid);
+			END IF;
+			SET $rootId = uid;
+			SET uid = 0;
+			SET countParent = countParent + 1;
+	END WHILE;
+	-- 结束获取父节点
+	-- 开始获取子节点
+	WHILE (countChild <= $level and childId is not null) DO
+			if childStrs IS NULL then
+				SET childStrs = childId;
 			ELSE
-				SET str = concat(str, ',', cid);
+				SET childStrs = concat(childStrs, ',', childId);
 			end if;
 
-			SELECT group_concat(create_user_id) INTO cid FROM t_mall_referrer_record where FIND_IN_SET(user_id, cid) > 0;
+			SELECT group_concat(create_user_id) INTO childId FROM t_mall_referrer_record where FIND_IN_SET(user_id, childId) > 0;
+			SET countChild = countChild + 1;
 	END WHILE;
-	select str;
+	set countChild = LENGTH(childStrs)-LENGTH(REPLACE(childStrs,',',''))+1;
+	-- 结束获取子节点
+	-- select countChild;
+	select DISTINCT(r.id) id, u.account, rr.user_id parent
+	from  (
+						(select SUBSTRING_INDEX(SUBSTRING_INDEX(parentStrs,',', b.help_topic_id + 1), ',', -1) as id
+						from  mysql.help_topic b
+						where b.help_topic_id < countParent)
+						UNION all
+						(select SUBSTRING_INDEX(SUBSTRING_INDEX(childStrs,',', b.help_topic_id + 1), ',', -1) as id
+						from  mysql.help_topic b
+						where b.help_topic_id < countChild)
+				) r
+				INNER JOIN t_user u on u.id = r.id
+				LEFT JOIN t_mall_referrer_record rr on rr.create_user_id = r.id ;
 END $$
 delimiter

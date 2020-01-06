@@ -1,8 +1,12 @@
 package com.cn.leedane.mapper.mall;
 
 import com.cn.leedane.mapper.BaseMapper;
+import com.cn.leedane.model.mall.ReferrerRelationBean;
 import com.cn.leedane.model.mall.S_ReferrerRecordBean;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 推荐关系mapper接口类
@@ -18,4 +22,12 @@ public interface ReferrerRecordMapper extends BaseMapper<S_ReferrerRecordBean>{
      * @return
      */
     public S_ReferrerRecordBean findReferrer(@Param("userId")long userId);
+
+    /**
+     * 获取推荐关系
+     * @param userId
+     * @param level
+     * @return
+     */
+    public List<ReferrerRelationBean> getReferrerRelation(@Param("userId")long userId, @Param("level")int level);
 }

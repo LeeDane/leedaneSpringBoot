@@ -194,7 +194,7 @@ function rowDeleteRole(obj){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message + ",1秒后自动刷新");
 					reloadPage(1000);
 				}else{
@@ -241,7 +241,7 @@ function deletesRole(){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message + ",1秒后自动刷新");
 					reloadPage(1000);
 				}else{
@@ -276,7 +276,7 @@ function showRoleOrPermissionList(obj, role, lnid){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				for(var i = 0 ; i < data.message.length; i++){
 					if(isEmpty(data.message[i].has)){
 						buildNotCodesHtml(data.message[i]);
@@ -364,7 +364,7 @@ function roleOrPermission(obj){
 		},
 		success : function(data) {
 			layer.close(loadi);
-			if(data.isSuccess){
+			if(data.success){
 				layer.msg(data.message + ",1秒后自动刷新");
 				reloadPage(1000);
 			}else{
@@ -419,7 +419,7 @@ function addOrEditCommit(obj){
 			},
 			success : function(data) {
 				layer.close(loadi);
-				if(data.isSuccess){
+				if(data.success){
 					layer.msg(data.message +",1秒钟后自动刷新");
 					setTimeout("window.location.reload();", 1000);
 				}else{

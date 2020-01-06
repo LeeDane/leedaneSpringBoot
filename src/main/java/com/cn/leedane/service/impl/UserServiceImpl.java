@@ -1470,45 +1470,33 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 	}
 
 	@Override
-	public Map<String, Object> sendMessage(JSONObject jo, UserBean user,
+	public ResponseModel sendMessage(JSONObject jo, UserBean user,
 			HttpRequestInfoBean request) {
 		logger.info("UserServiceImpl-->sendMessage():jo=" +jo.toString());
 		//type: 1为通知，2为邮件，3为私信，4为短信
 		long toUserId = JsonUtil.getLongValue(jo, "to_user_id");
 		
-		ResponseMap message = new ResponseMap();
-		if(toUserId < 1){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value));
-			message.put("responseCode", EnumUtil.ResponseCode.某些参数为空.value);
-			return message.getMap();
-		}
+		if(toUserId < 1)
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.某些参数为空.value)).code(EnumUtil.ResponseCode.某些参数为空.value);
 		
 		
-		if(toUserId == user.getId()){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.不能给自己发信息.value));
-			message.put("responseCode", EnumUtil.ResponseCode.不能给自己发信息.value);
-			return message.getMap();
-		}
+		if(toUserId == user.getId())
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.不能给自己发信息.value)).code(EnumUtil.ResponseCode.不能给自己发信息.value);
 		
 		UserBean toUser = userMapper.findById(UserBean.class, toUserId);
-		if(toUser == null){
-			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.该用户不存在.value));
-			message.put("responseCode", EnumUtil.ResponseCode.该用户不存在.value);
-			return message.getMap();
-		}
+		if(toUser == null)
+			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该用户不存在.value)).code(EnumUtil.ResponseCode.该用户不存在.value);
 		int type = JsonUtil.getIntValue(jo, "type");
 		String content = JsonUtil.getStringValue(jo, "content");
+		ResponseModel responseModel = new ResponseModel();
 		switch (type) {
 			case 1:  //1为通知
 				notificationHandler.sendNotificationById(false, user.getId(), toUserId, content, EnumUtil.NotificationType.通知, null, 0, null);
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.通知已经发送.value));
-				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+				responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.通知已经发送.value));
 				break;
 			case 2:  //2为邮件
-				
 				if(StringUtil.isNull(toUser.getEmail())){
-					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.对方还没有绑定电子邮箱.value));
-					message.put("responseCode", EnumUtil.ResponseCode.对方还没有绑定电子邮箱.value);
+					responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.对方还没有绑定电子邮箱.value)).code(EnumUtil.ResponseCode.对方还没有绑定电子邮箱.value);
 					break;
 				}
 				
@@ -1528,34 +1516,27 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 					ISend send = new EmailSend(emailBean);
 					SendMessage sendMessage = new SendMessage(send);
 					sendMessage.sendMsg();//发送消息队列到消息队列
-					message.put("success", true);
-					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件已经发送.value) +", 请注意查收！");
-					message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+					responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件已经发送.value) +", 请注意查收！");
 				} catch (Exception e) {
 					e.printStackTrace();
-					message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件发送失败.value)+",失败原因是："+e.toString());
-					message.put("responseCode", EnumUtil.ResponseCode.邮件发送失败.value);
+					responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.邮件发送失败.value)+",失败原因是："+e.toString()).code(EnumUtil.ResponseCode.邮件发送失败.value);
 				}		
 				break;
 			case 3:  //3为私信
 				notificationHandler.sendNotificationById(false, user.getId(), toUserId, content, EnumUtil.NotificationType.私信, null, 0, null);
-				message.put("success", true);
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.私信已经发送.value));
-				message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
+				responseModel.ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.私信已经发送.value));
 				break;
 			case 4:  //4为短信
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.暂时不支持发送短信.value));
-				message.put("responseCode", EnumUtil.ResponseCode.暂时不支持发送短信.value);
+				responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.暂时不支持发送短信.value)).code(EnumUtil.ResponseCode.暂时不支持发送短信.value);
 				break;
 			default:
-				message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.未知的发送消息类型.value));
-				message.put("responseCode", EnumUtil.ResponseCode.未知的发送消息类型.value);
+				responseModel.error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.未知的发送消息类型.value)).code(EnumUtil.ResponseCode.未知的发送消息类型.value);
 				break;
 		}
 		
 		//保存操作日志
 		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"给用户Id为"+toUserId +"的用户发送信息，信息类型为："+type, "sendMessage()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		return message.getMap();
+		return responseModel;
 	}
 
 	@Override
