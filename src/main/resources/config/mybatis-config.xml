@@ -4,9 +4,13 @@
 <configuration>
 	<settings> 
 		<!-- 开启驼峰命名规范 -->
-         <setting name="mapUnderscoreToCamelCase" value="true" /> 
-         <!-- 开启值为空的字段也要映射，默认是不开启的 -->
-         <setting name="callSettersOnNulls" value="true"/>
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+		<!-- 开启值为空的字段也要映射，默认是不开启的 -->
+		<setting name="callSettersOnNulls" value="true"/>
+		<!--  开启二级缓存，默认是false 参考： https://www.cnblogs.com/telwanggs/p/10786302.html -->
+		<setting name="cacheEnabled" value="true"/>
+		<!--  lazyLoadingEnabled:延迟加载启动，全局性设置懒加载。如果设为‘false’，则所有相关联的都会被初始化加载。默认是false 参考：https://www.cnblogs.com/telwanggs/p/10786302.html  -->
+		<setting name="lazyLoadingEnabled" value="true"/>
      </settings> 
 	<!-- 实体类,简称 -设置别名 -->
 	<typeAliases>
