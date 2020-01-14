@@ -5,6 +5,9 @@
 	<groupId>com.cn.leedane</groupId>
 	<artifactId>leedaneSpringBoot</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<!--<modules>
+		<module>cas-client</module>
+	</modules>-->
 	<packaging>jar</packaging>
 
 	<!-- Inherit defaults from Spring Boot -->
@@ -75,7 +78,8 @@
         
         <dependency>  
             <groupId>org.springframework.boot</groupId>  
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>  
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+			<version>2.1.1.RELEASE</version>
         </dependency>
 
 		<dependency>
@@ -731,7 +735,13 @@
 		    <groupId>junit</groupId>  
 		    <artifactId>junit</artifactId>  
 		</dependency>
-    </dependencies>
+		<!--<dependency>
+			<groupId>com.cn.leedane</groupId>
+			<artifactId>cas-client</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>-->
+	</dependencies>
 
     <!-- Package as an executable jar -->
     <build>
