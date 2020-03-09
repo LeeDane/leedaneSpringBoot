@@ -21,7 +21,7 @@ public class RSAKeyUtil {
     	privateKey = RSACoder.getPrivateKey(keyMap);
     }
 
-    public static RSAKeyUtil getInstance() {
+    public static synchronized RSAKeyUtil getInstance() {
         if (instance == null) {
             synchronized (RSAKeyUtil.class) {
                 if (instance == null) {

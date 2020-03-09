@@ -20,7 +20,7 @@ import com.cn.leedane.model.mall.S_ProductBean;
  * version 1.0
  */
 public class ProductSolrHandler implements BaseSolrHandler<S_ProductBean> {
-public static ProductSolrHandler handler;
+public volatile static ProductSolrHandler handler;
 	
 	public static HttpSolrServer server;
 	

@@ -14,7 +14,6 @@
      </settings> 
 	<!-- 实体类,简称 -设置别名 -->
 	<typeAliases>
-		<typeAlias alias="AttentionBean" type="com.cn.leedane.model.AttentionBean" />
 		<typeAlias alias="BlogBean" type="com.cn.leedane.model.BlogBean" />
 		<typeAlias alias="ChatBean" type="com.cn.leedane.model.ChatBean" />
 		<!-- <typeAlias alias="ChatBgBean" type="com.cn.leedane.model.ChatBgBean" />
@@ -54,7 +53,6 @@
 		说明：如果xxMapper.xml配置文件放在和xxMapper统一目录下，mappers也可以省略，因为org.mybatis.spring.mapper.MapperFactoryBean默认会去查找与xxMapper相同目录和名称的xxMapper.xml
 	-->
 	<mappers>
-		<mapper resource="com/cn/leedane/mapper/AttentionMapper.xml" />
 		<mapper resource="com/cn/leedane/mapper/BlogMapper.xml" />
 		<mapper resource="com/cn/leedane/mapper/ChatMapper.xml" />
 		<!-- <mapper resource="com/cn/leedane/mapper/ChatBgMapper.xml" />

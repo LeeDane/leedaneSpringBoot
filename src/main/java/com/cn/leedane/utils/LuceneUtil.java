@@ -38,7 +38,7 @@ import com.cn.leedane.springboot.SpringUtil;
 public class LuceneUtil {
 	private Logger logger = Logger.getLogger(getClass());
 	
-	private static LuceneUtil mLuceneUtil;
+	private volatile static LuceneUtil mLuceneUtil;
 
 	private IndexWriter indexWriter;
 	
@@ -61,7 +61,11 @@ public class LuceneUtil {
 	
 	public static synchronized LuceneUtil getInstance(){
 		if(mLuceneUtil == null){
-			mLuceneUtil = new LuceneUtil();
+			synchronized (LuceneUtil.class){
+				if(mLuceneUtil == null){
+					mLuceneUtil = new LuceneUtil();
+				}
+			}
 		}
 		
 		return mLuceneUtil;

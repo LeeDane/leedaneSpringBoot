@@ -1,10 +1,9 @@
 package com.cn.leedane.service.impl.manage;
 
 import com.cn.leedane.exception.OperateException;
+import com.cn.leedane.handler.CommonHandler;
 import com.cn.leedane.handler.UserHandler;
-import com.cn.leedane.mapper.MyTagsMapper;
-import com.cn.leedane.mapper.Oauth2Mapper;
-import com.cn.leedane.mapper.UserMapper;
+import com.cn.leedane.mapper.*;
 import com.cn.leedane.model.*;
 import com.cn.leedane.notice.model.Email;
 import com.cn.leedane.notice.send.INoticeFactory;
@@ -13,12 +12,23 @@ import com.cn.leedane.notice.send.SmsNotice;
 import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.manage.ManageMyService;
+import com.cn.leedane.springboot.ElasticSearchUtil;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.EsIndexAddThread;
 import com.cn.leedane.utils.*;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -40,6 +50,9 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 	private OperateLogService<OperateLogBean> operateLogService;
 
 	@Autowired
+	private OperateLogMapper operateLogMapper;
+
+	@Autowired
 	private SmsNotice smsNotice;
 
 	@Autowired
@@ -53,6 +66,21 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 
 	@Autowired
 	private MyTagsMapper myTagsMapper;
+
+	@Autowired
+	private ElasticSearchUtil elasticSearchUtil;
+
+	@Autowired
+	private TransportClient transportClient;
+
+	@Autowired
+	private AttentionMapper attentionMapper;
+
+	@Autowired
+	private CollectionMapper collectionMapper;
+
+	@Autowired
+	private CommonHandler commonHandler;
 
 	@Override
 	public ResponseModel bindEmail(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception {
@@ -182,8 +210,6 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 	@Override
 	public ResponseModel saveTags(JSONObject jo, UserBean user, HttpRequestInfoBean request){
 		logger.info("ManageMyServiceImpl-->saveTags():jo="+jo);
-		ResponseMap message = new ResponseMap();
-
 		String tags = JsonUtil.getStringValue(jo, "tags");
 		ParameterUnspecificationUtil.checkNullString(tags, "tags must not null.");
 
@@ -208,5 +234,168 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 			return new ResponseModel().ok().message("添加成功！");
 		}
 		return new ResponseModel().error().message("添加失败，请稍后重试。");
+	}
+
+	@Override
+	public LayuiTableResponseModel loginHistorys(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request){
+		logger.info("ManageMyServiceImpl-->loginHistorys():jo="+ jsonObject);
+		int current = JsonUtil.getIntValue(jsonObject, "page", 0);
+		int rows = JsonUtil.getIntValue(jsonObject, "limit", 10);
+		int start = SqlUtil.getPageStart(current -1, rows, 0);
+
+		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+		boolQuery.must(QueryBuilders.termQuery("operate_type", 0));
+		boolQuery.must(QueryBuilders.termQuery("create_user_id", user.getId()));
+		boolQuery.must(QueryBuilders.matchQuery("method", "账号登录"));
+		boolQuery.must(QueryBuilders.termQuery("status", ConstantsUtil.STATUS_NORMAL));
+
+		SearchRequestBuilder builder = transportClient.prepareSearch(ElasticSearchUtil.getDefaultIndexName(EnumUtil.DataTableType.操作日志.value)).setTypes(EnumUtil.DataTableType.操作日志.value)
+				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+				.setQuery(boolQuery)
+				.setFrom(start);
+		//高亮显示规则
+		HighlightBuilder highlightBuilder = new HighlightBuilder();
+		highlightBuilder.preTags("<span style='color:red'>");
+		highlightBuilder.postTags("</span>");
+		builder.highlighter(highlightBuilder);
+		builder.addSort("create_time", SortOrder.DESC);
+
+		builder.setSize(rows);
+		logger.error(builder.toString());
+		SearchResponse response = builder.get();
+
+		LayuiTableResponseModel responseModel = new LayuiTableResponseModel();
+		if(response != null && response.status() == RestStatus.OK){
+			Map<String, Object> result = new HashMap<>();
+			result.put("total", response.getHits().totalHits);
+			List rs = new ArrayList<Map<String, Object>>();
+			for (SearchHit hit : response.getHits()) {
+				Map<String, Object> documentFieldMap = hit.getSourceAsMap();
+				rs.add(documentFieldMap);
+			}
+			//搜索得到的结果数
+			logger.info("Find:" + response.getHits().totalHits);
+			responseModel.setData(rs).setCount(response.getHits().totalHits).code(0);
+		}else{
+			responseModel.code(0);
+			responseModel.setMsg("es检索响应失败");
+		}
+
+		return responseModel;
+	}
+
+	@Override
+	public ResponseModel deleteLoginHistory(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request){
+		logger.info("ManageMyServiceImpl-->deleteLoginHistory():jo="+ jsonObject);
+		long id = JsonUtil.getLongValue(jsonObject, "id", 0);
+		ParameterUnspecificationUtil.checkLong(id , "id 必须大于0");
+
+		OperateLogBean operateLogBean = operateLogMapper.findById(OperateLogBean.class, id);
+		if(operateLogBean == null){
+			elasticSearchUtil.delete(EnumUtil.DataTableType.操作日志.value, id);
+			throw new NullPointerException("日志不存在");
+		}
+
+		//检查是否是自己的记录
+		if(operateLogBean.getCreateUserId() != user.getId())
+			throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
+		boolean result = this.operateLogMapper.deleteById(OperateLogBean.class, id) > 0;
+		if(result){
+			elasticSearchUtil.delete(EnumUtil.DataTableType.操作日志.value, id);
+			return new ResponseModel().ok().message("删除成功！");
+		}
+		return new ResponseModel().error().message("删除失败！");
+	}
+
+	@Override
+	public LayuiTableResponseModel attentions(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request){
+		logger.info("ManageMyServiceImpl-->attentions():jo="+ jsonObject);
+		int current = JsonUtil.getIntValue(jsonObject, "page", 0);
+		int rows = JsonUtil.getIntValue(jsonObject, "limit", 10);
+		int start = SqlUtil.getPageStart(current -1, rows, 0);
+		List<Map<String, Object>> rs = attentionMapper.getMyAttentions(user.getId(), start, rows);
+		if(rs !=null && rs.size() > 0){
+			String tabName;
+			int tabId;
+			//为名字备注赋值
+			for(int i = 0; i < rs.size(); i++){
+				Map<String, Object> attention = rs.get(i);
+				//在非获取指定表下的评论列表的情况下的前面35个字符
+				tabName = StringUtil.changeNotNull((attention.get("table_name")));
+				tabId = StringUtil.changeObjectToInt(attention.get("table_id"));
+				attention.put("type", EnumUtil.getTableCNName(tabName));
+				attention.put("source", commonHandler.getContentByTableNameAndId(tabName, tabId, user));
+				attention.put("link", commonHandler.getLinkByTableNameAndId(tabName, tabId, user.getId()));
+			}
+		}
+		LayuiTableResponseModel responseModel = new LayuiTableResponseModel();
+		responseModel.setData(rs).setCount(SqlUtil.getTotalByList(attentionMapper.getTotalByUser(EnumUtil.DataTableType.关注.value, user.getId()))).code(0);
+		return responseModel;
+	}
+
+	@Override
+	public ResponseModel deleteAttention(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request){
+		logger.info("ManageMyServiceImpl-->deleteAttention():jo="+ jsonObject);
+		long id = JsonUtil.getLongValue(jsonObject, "id", 0);
+		ParameterUnspecificationUtil.checkLong(id , "id 必须大于0");
+
+		AttentionBean attentionBean = attentionMapper.findById(AttentionBean.class, id);
+		if(attentionBean == null)
+			throw new NullPointerException("关注记录不存在");
+
+		//检查是否是自己的记录
+		if(attentionBean.getCreateUserId() != user.getId())
+			throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
+		boolean result = this.attentionMapper.deleteById(AttentionBean.class, id) > 0;
+		if(result)
+			return new ResponseModel().ok().message("删除关注记录成功！");
+
+		return new ResponseModel().error().message("删除关注记录失败！");
+	}
+
+	@Override
+	public LayuiTableResponseModel collections(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request){
+		logger.info("ManageMyServiceImpl-->collections():jo="+ jsonObject);
+		int current = JsonUtil.getIntValue(jsonObject, "page", 0);
+		int rows = JsonUtil.getIntValue(jsonObject, "limit", 10);
+		int start = SqlUtil.getPageStart(current -1, rows, 0);
+		List<Map<String, Object>> rs = collectionMapper.getMyCollections(user.getId(), start, rows);
+		if(rs !=null && rs.size() > 0){
+			String tabName;
+			int tabId;
+			//为名字备注赋值
+			for(int i = 0; i < rs.size(); i++){
+				Map<String, Object> attention = rs.get(i);
+				//在非获取指定表下的评论列表的情况下的前面35个字符
+				tabName = StringUtil.changeNotNull((attention.get("table_name")));
+				tabId = StringUtil.changeObjectToInt(attention.get("table_id"));
+				attention.put("type", EnumUtil.getTableCNName(tabName));
+				attention.put("source", commonHandler.getContentByTableNameAndId(tabName, tabId, user));
+				attention.put("link", commonHandler.getLinkByTableNameAndId(tabName, tabId, user.getId()));
+			}
+		}
+		LayuiTableResponseModel responseModel = new LayuiTableResponseModel();
+		responseModel.setData(rs).setCount(SqlUtil.getTotalByList(collectionMapper.getTotalByUser(EnumUtil.DataTableType.收藏.value, user.getId()))).code(0);
+		return responseModel;
+	}
+
+	@Override
+	public ResponseModel deleteCollection(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request){
+		logger.info("ManageMyServiceImpl-->deleteCollection():jo="+ jsonObject);
+		long id = JsonUtil.getLongValue(jsonObject, "id", 0);
+		ParameterUnspecificationUtil.checkLong(id , "id 必须大于0");
+
+		CollectionBean collectionBean = collectionMapper.findById(CollectionBean.class, id);
+		if(collectionBean == null)
+			throw new NullPointerException("收藏记录不存在");
+
+		//检查是否是自己的记录
+		if(collectionBean.getCreateUserId() != user.getId())
+			throw new UnauthorizedException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.没有操作权限.value));
+		boolean result = this.collectionMapper.deleteById(CollectionBean.class, id) > 0;
+		if(result)
+			return new ResponseModel().ok().message("删除收藏记录成功！");
+
+		return new ResponseModel().error().message("删除收藏记录失败！");
 	}
 }

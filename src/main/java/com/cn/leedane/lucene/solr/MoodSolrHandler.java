@@ -20,7 +20,7 @@ import com.cn.leedane.model.MoodBean;
  * Version 1.0
  */
 public class MoodSolrHandler implements BaseSolrHandler<MoodBean> {
-	public static MoodSolrHandler handler;
+	public volatile static MoodSolrHandler handler;
 	
 	public static HttpSolrServer server;
 	

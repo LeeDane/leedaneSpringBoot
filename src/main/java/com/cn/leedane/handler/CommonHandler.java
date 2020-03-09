@@ -89,6 +89,27 @@ public class CommonHandler {
 		//logger.info("tableName:"+tableName+",tableId:"+tableId+",content:"+content);
 		return content;
 	}
+
+	/**
+	 * 通过表名和表ID获取该资源的详细情况的链接(可能会为空)
+	 * @param tableName
+	 * @param tableId
+	 * @param userId (查看心情的链接需要用，其他的目前用不上这个参数)
+	 * @return
+	 */
+	public String getLinkByTableNameAndId(String tableName, long tableId, long userId){
+
+		//只支持心情和博客获取源
+		if(DataTableType.心情.value.equalsIgnoreCase(tableName)){
+			return "<a href='/user/"+ userId +"/mood/"+ tableId +"/dt' target='_blank' style='color: green;'>查看详情</a>";
+		}else if(DataTableType.博客.value.equalsIgnoreCase(tableName)){
+			return "<a href='/dt/"+tableId+"' target='_blank' style='color: green;'>查看详情</a>";
+		}/*else if(DataTableType.帖子.value.equalsIgnoreCase(tableName)){
+			return "/dt/"+ tableId;
+		}*/else{
+			return "";
+		}
+	}
 	
 	/**
 	 * 通过表名和表ID获取该资源对象的展示内容, 创建人id,创建人账号名称， 创建时间

@@ -28,7 +28,7 @@ import java.util.Set;
 @Component
 public class EmailUtil {
 	
-	private static EmailUtil mEmailUtil;
+	private volatile static EmailUtil mEmailUtil;
 
 	/**
 	 *
@@ -87,7 +87,11 @@ public class EmailUtil {
 	 */
 	public static synchronized EmailUtil getInstance(){
 		if(mEmailUtil == null){
-			mEmailUtil = new EmailUtil();
+			synchronized (EmailUtil.class){
+				if(mEmailUtil == null){
+					mEmailUtil = new EmailUtil();
+				}
+			}
 		}
 		return mEmailUtil;
 	}

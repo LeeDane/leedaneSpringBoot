@@ -72,10 +72,12 @@ public class MyManagelHtmlController extends BaseController{
 	 * 加载公共部分
 	 * @param userBean
 	 * @param model
+	 * @param tabId
 	 */
-	private void loadCommon(UserBean userBean, Model model){
+	private void loadCommon(UserBean userBean, Model model, String tabId){
 		JSONArray mysettings = JSONArray.fromObject(optionHandler.getData("mysetting", true));
 		model.addAttribute("mysettings", mysettings);
+		model.addAttribute("tabId", tabId);
 	}
 
 	@RequestMapping("/my/welcome")
@@ -83,11 +85,10 @@ public class MyManagelHtmlController extends BaseController{
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的资料首页", "com.cn.leedane.springboot.controller.MallHtmlController.myWelcome", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
-		loadCommon(getMustLoginUserFromShiro(), model);
+		loadCommon(getMustLoginUserFromShiro(), model, "my-welcome");
 		model.addAttribute("jokes", juheApiHandler.getData(EnumUtil.JuheApiType.笑话精选, 10, false));
 		model.addAttribute("todays", juheApiHandler.getData(EnumUtil.JuheApiType.历史今天, 10, true));
 		model.addAttribute("heads", juheApiHandler.getData(EnumUtil.JuheApiType.头条新闻, 10,false));
-		model.addAttribute("tabId", "my-welcome");
 		return loginRoleCheck("manage/my/welcome", true, model, request);
 	}
 
@@ -96,9 +97,8 @@ public class MyManagelHtmlController extends BaseController{
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
 		UserBean user = getMustLoginUserFromShiro();
-		loadCommon(user, model);
+		loadCommon(user, model, "my-info");
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的资料首页", "com.cn.leedane.springboot.controller.MallHtmlController.myInfo", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
-		model.addAttribute("tabId", "my-info");
 		model.addAttribute("user", user);
 //		model.addAttribute("user", userHandler.getUserPicPath());
 		return loginRoleCheck("manage/my/info", true, model, request);
@@ -108,9 +108,8 @@ public class MyManagelHtmlController extends BaseController{
 	public String myPassword(Model model, HttpServletRequest request){
 		//检查权限，通过后台配置
 		checkRoleOrPermission(model, request);
-		loadCommon(getMustLoginUserFromShiro(), model);
+		loadCommon(getMustLoginUserFromShiro(), model, "my-password");
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入修改密码首页", "com.cn.leedane.springboot.controller.MallHtmlController.myPassword", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
-		model.addAttribute("tabId", "my-password");
 		model.addAttribute("publicKey",  RSAKeyUtil.getInstance().getPublicKey());
 		return loginRoleCheck("manage/my/password", true, model, request);
 	}
@@ -121,9 +120,8 @@ public class MyManagelHtmlController extends BaseController{
 		checkRoleOrPermission(model, request);
 		//获取当前登录用户
 		UserBean userBean = getMustLoginUserFromShiro();
-		loadCommon(userBean, model);
+		loadCommon(userBean, model, "my-email");
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入邮箱修改首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
-		model.addAttribute("tabId", "my-email");
 		model.addAttribute("oldEmail", userBean.getEmail());
 		model.addAttribute("publicKey",  RSAKeyUtil.getInstance().getPublicKey());
 		return loginRoleCheck("manage/my/email", true, model, request);
@@ -135,9 +133,8 @@ public class MyManagelHtmlController extends BaseController{
 		checkRoleOrPermission(model, request);
 		//获取当前登录用户
 		UserBean userBean = getMustLoginUserFromShiro();
-		loadCommon(userBean, model);
+		loadCommon(userBean, model, "my-phone");
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入手机号码绑定首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
-		model.addAttribute("tabId", "my-phone");
 		model.addAttribute("user", userBean);
 		model.addAttribute("publicKey",  RSAKeyUtil.getInstance().getPublicKey());
 		return loginRoleCheck("manage/my/phone", true, model, request);
@@ -149,9 +146,8 @@ public class MyManagelHtmlController extends BaseController{
 		checkRoleOrPermission(model, request);
 		//获取当前登录用户
 		UserBean userBean = getMustLoginUserFromShiro();
-		loadCommon(userBean, model);
+		loadCommon(userBean, model, "my-tags");
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入手机号码绑定首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
-		model.addAttribute("tabId", "my-tags");
 		model.addAttribute("tags", myTagsMapper.getTags(userBean.getId()));
 		return loginRoleCheck("manage/my/tags", true, model, request);
 	}
@@ -168,9 +164,8 @@ public class MyManagelHtmlController extends BaseController{
 		checkRoleOrPermission(model, request);
 		//获取当前登录用户
 		UserBean userBean = getMustLoginUserFromShiro();
-		loadCommon(userBean, model);
+		loadCommon(userBean, model, "mall-promotion");
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的推广位管理首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
-		model.addAttribute("tabId", "mall-promotion");
 		//获取推广位列表
 		model.addAttribute("seats", promotionSeatHandler.getMySeats(userBean.getId()));
 		return loginRoleCheck("manage/mall/promotion", true, model, request);
@@ -188,9 +183,8 @@ public class MyManagelHtmlController extends BaseController{
 		checkRoleOrPermission(model, request);
 		//获取当前登录用户
 		UserBean userBean = getMustLoginUserFromShiro();
-		loadCommon(userBean, model);
+		loadCommon(userBean, model, "mall-referrer");
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入推荐关系管理首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
-		model.addAttribute("tabId", "mall-referrer");
 		S_ReferrerBean referrerBean = referrerMapper.findReferrerCode(userBean.getId());
 		S_ReferrerRecordBean referrerRecord = referrerRecordMapper.findReferrer(userBean.getId());
 		model.addAttribute("referrer", referrerBean);
@@ -212,9 +206,8 @@ public class MyManagelHtmlController extends BaseController{
 		checkRoleOrPermission(model, request);
 		//获取当前登录用户
 		UserBean userBean = getMustLoginUserFromShiro();
-		loadCommon(userBean, model);
+		loadCommon(userBean, model, "mall-address");
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的地址管理首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
-		model.addAttribute("tabId", "mall-address");
 		return loginRoleCheck("manage/mall/address", true, model, request);
 	}
 
@@ -230,9 +223,8 @@ public class MyManagelHtmlController extends BaseController{
 		checkRoleOrPermission(model, request);
 		//获取当前登录用户
 		UserBean userBean = getMustLoginUserFromShiro();
-		loadCommon(userBean, model);
+		loadCommon(userBean, model, "my-third");
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入第三方绑定首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
-		model.addAttribute("tabId", "my-third");
 		model.addAttribute("user", userBean);
 		List<Oauth2Bean> oauth2Beans = oauth2Mapper.myOauth2s(userBean.getId());
 		EnumUtil.Oauth2PlatformType[] types = EnumUtil.Oauth2PlatformType.values();
@@ -322,6 +314,57 @@ public class MyManagelHtmlController extends BaseController{
 		JSONObject object = CommonUtil.sm4Decrypt(message);
 		model.addAttribute("message", object.optString("msg"));
 		return loginRoleCheck("manage/my/oauth2-bind-error", model, request);
+	}
+
+	/**
+	 * 登录历史
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/login/history")
+	public String loginHostory(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model, "login-history");
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的登录历史首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		return loginRoleCheck("manage/login-history", true, model, request);
+	}
+
+	/**
+	 * 我的关注
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/attention")
+	public String attention(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model, "attention");
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的关注管理首页", "com.cn.leedane.springboot.controller.MallHtmlController.attention", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		return loginRoleCheck("manage/attention", true, model, request);
+	}
+
+	/**
+	 * 我的收藏
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/collection")
+	public String collection(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model, "collection");
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的收藏管理首页", "com.cn.leedane.springboot.controller.MallHtmlController.collection", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		return loginRoleCheck("manage/collection", true, model, request);
 	}
 }
 

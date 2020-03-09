@@ -61,14 +61,14 @@ public class ElasticSearchUtil {
 	//private static ElasticSearchUtil mLuceneUtil;
 
 	@Autowired
-	private TransportClient transportClient;
+	private volatile TransportClient transportClient;
 
-	public TransportClient getTransportClient() {
+	/*public synchronized TransportClient getTransportClient() {
 		if(null == transportClient)
 			transportClient = (TransportClient) SpringUtil.getBean("transportClient");
 
 		return transportClient;
-	}
+	}*/
 
 	@Autowired
 	private SqlSearchMapper sqlSearchMapper;
@@ -113,11 +113,11 @@ public class ElasticSearchUtil {
 
 			//索引不存在就重新创建
 			if(!indexExists(table) && mapping != null){
-				CreateIndexRequestBuilder prepareCreate =getTransportClient().admin().indices().prepareCreate(getDefaultIndexName(table));
+				CreateIndexRequestBuilder prepareCreate =transportClient.admin().indices().prepareCreate(getDefaultIndexName(table));
 				prepareCreate.addMapping(table, mapping).execute().actionGet();
 			}
 
-			IndexResponse response = getTransportClient().prepareIndex(getDefaultIndexName(table), table, id +"")
+			IndexResponse response = transportClient.prepareIndex(getDefaultIndexName(table), table, id +"")
 					.setSource(fields)
 					.get();
 			logger.info("添加索引数据的结构："+ fields.toString());
@@ -141,7 +141,7 @@ public class ElasticSearchUtil {
 	 */
 	public boolean update(String table, int id, XContentBuilder fields){
 		try {
-			UpdateResponse response = getTransportClient().prepareUpdate(getDefaultIndexName(table), table, id +"")
+			UpdateResponse response = transportClient.prepareUpdate(getDefaultIndexName(table), table, id +"")
 					.setDoc(fields)
 					.get();
 			return response.status() == RestStatus.CREATED;
@@ -158,7 +158,7 @@ public class ElasticSearchUtil {
 	 */
 	public boolean indexExists(String table){
 		IndicesExistsRequest request = new IndicesExistsRequest(getDefaultIndexName(table));
-		IndicesExistsResponse response = getTransportClient().admin().indices().exists(request).actionGet();
+		IndicesExistsResponse response = transportClient.admin().indices().exists(request).actionGet();
 		if (response.isExists()) {
 			return true;
 		}
@@ -172,7 +172,7 @@ public class ElasticSearchUtil {
 	 * @return
 	 */
 	public String getIndex(String table, int id){
-		GetResponse getresponse = getTransportClient().prepareGet(getDefaultIndexName(table), table, id + "").execute().actionGet();
+		GetResponse getresponse = transportClient.prepareGet(getDefaultIndexName(table), table, id + "").execute().actionGet();
 		return getresponse.getSourceAsString();
 	}
 
@@ -184,7 +184,7 @@ public class ElasticSearchUtil {
 	 */
 	public boolean delete(String table, long id){
 		try {
-			DeleteResponse deleteresponse = getTransportClient().prepareDelete(getDefaultIndexName(table), table,id + "").execute().actionGet();
+			DeleteResponse deleteresponse = transportClient.prepareDelete(getDefaultIndexName(table), table,id + "").execute().actionGet();
 			System.out.println(deleteresponse.getVersion());
 			return deleteresponse.status() == RestStatus.OK;
 		} catch (Exception e) {
@@ -201,7 +201,7 @@ public class ElasticSearchUtil {
 	public boolean deleteIndex(String table){
 		try {
 			//删除所有记录
-			DeleteIndexResponse deleteIndexResponse = getTransportClient().admin().indices().prepareDelete(getDefaultIndexName(table)).execute().actionGet();
+			DeleteIndexResponse deleteIndexResponse = transportClient.admin().indices().prepareDelete(getDefaultIndexName(table)).execute().actionGet();
 			System.out.println(deleteIndexResponse.isAcknowledged());
 			return deleteIndexResponse.isAcknowledged();
 		} catch (Exception e) {
@@ -215,7 +215,7 @@ public class ElasticSearchUtil {
 	 * @return
 	 */
 	public String[] getAllIndex(){
-		ClusterStateResponse response = getTransportClient().admin().cluster().prepareState().execute().actionGet();
+		ClusterStateResponse response = transportClient.admin().cluster().prepareState().execute().actionGet();
 		//获取所有索引
 		String[] indexs=response.getState().getMetaData().getConcreteAllIndices();
 		for (String index : indexs) {
@@ -309,7 +309,7 @@ public class ElasticSearchUtil {
 			boolQuery.must(rangeQueryBuilder);
 		}
 
-		SearchRequestBuilder builder = getTransportClient().prepareSearch(getDefaultIndexName(elasticSearchRequestBean.getTable())).setTypes(elasticSearchRequestBean.getTable())
+		SearchRequestBuilder builder = transportClient.prepareSearch(getDefaultIndexName(elasticSearchRequestBean.getTable())).setTypes(elasticSearchRequestBean.getTable())
 				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
 				.setQuery(boolQuery)
 				.setFrom(elasticSearchRequestBean.getStart());
@@ -335,11 +335,11 @@ public class ElasticSearchUtil {
 
 		SearchResponse response = builder.get();
 
-		List result = new ArrayList<Map<String, Object>>();
+		/*List result = new ArrayList<Map<String, Object>>();
 		for (SearchHit hit : response.getHits()) {
 			Map<String, HighlightField> fieldMap = hit.getHighlightFields();
 			result.add(hit.getSourceAsMap());
-		}
+		}*/
 
 		logger.error(boolQuery.toString());
 		return response;

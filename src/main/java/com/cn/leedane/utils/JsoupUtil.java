@@ -21,7 +21,7 @@ import com.cn.leedane.enums.FileType;
 public class JsoupUtil {
 	private Logger logger = Logger.getLogger(getClass());
 	
-	private static JsoupUtil mJsoupUtil;
+	private static volatile JsoupUtil mJsoupUtil;
 	
 	/**
 	 * 摘要不能为第一个字符不能为以下这些
@@ -33,7 +33,11 @@ public class JsoupUtil {
 	}
 	public synchronized static JsoupUtil getInstance(){
 		if(mJsoupUtil == null) {
-			mJsoupUtil = new JsoupUtil();
+			synchronized (JsoupUtil.class){
+				if(mJsoupUtil == null){
+					mJsoupUtil = new JsoupUtil();
+				}
+			}
 		}
 		return mJsoupUtil;
 	}

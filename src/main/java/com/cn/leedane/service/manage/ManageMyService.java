@@ -4,6 +4,7 @@ import com.cn.leedane.mall.pdd.PddException;
 import com.cn.leedane.model.HttpRequestInfoBean;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.LayuiTableResponseModel;
 import com.cn.leedane.utils.ResponseModel;
 import com.suning.api.exception.SuningApiException;
 import com.taobao.api.ApiException;
@@ -57,5 +58,59 @@ public interface ManageMyService<T extends IDBean>{
 	 * @return
 	 */
 	public ResponseModel saveTags(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+
+	/**
+	 * 获取登录历史
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public LayuiTableResponseModel loginHistorys(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+
+	/**
+	 * 删除登录历史
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public ResponseModel deleteLoginHistory(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+
+	/**
+	 * 获取我的关注记录
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public LayuiTableResponseModel attentions(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+
+	/**
+	 * 删除我的关注
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public ResponseModel deleteAttention(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+
+	/**
+	 * 获取我的收藏记录
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public LayuiTableResponseModel collections(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+
+	/**
+	 * 删除我的收藏
+	 * @param jo
+	 * @param user
+	 * @param request
+	 * @return
+	 */
+	public ResponseModel deleteCollection(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
 }

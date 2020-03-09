@@ -23,7 +23,7 @@ import com.cn.leedane.model.UserBean;
 public class UserSolrHandler implements BaseSolrHandler<UserBean> {
 	private Logger logger = Logger.getLogger(getClass());
 	
-	public static UserSolrHandler handler;
+	public volatile static UserSolrHandler handler;
 	
 	public static HttpSolrServer server;
 	

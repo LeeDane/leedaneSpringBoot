@@ -20,7 +20,7 @@ import com.cn.leedane.model.BlogBean;
  * Version 1.0
  */
 public class BlogSolrHandler implements BaseSolrHandler<BlogBean> {
-public static BlogSolrHandler handler;
+public volatile static BlogSolrHandler handler;
 	
 	public static HttpSolrServer server;
 	

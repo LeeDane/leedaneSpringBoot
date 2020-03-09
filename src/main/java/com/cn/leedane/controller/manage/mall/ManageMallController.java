@@ -3,7 +3,6 @@ package com.cn.leedane.controller.manage.mall;
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.service.manage.ManageMallService;
-import com.cn.leedane.service.manage.ManageMyService;
 import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.ResponseMap;
 import com.cn.leedane.utils.ResponseModel;
@@ -12,11 +11,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 /**
  * 商城全局搜索统一入口接口controller
@@ -86,6 +83,8 @@ public class ManageMallController extends BaseController{
 		if(!checkParams(message, request)){
 			return message.getModel();
 		}
+        /*CheckTicket checkTicket = new CheckTicket();
+		System.out.println(checkTicket.check(getUserFromShiro().getAccount()));*/
 		return manageMallService.referrerRelation(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request));
 	}
 }

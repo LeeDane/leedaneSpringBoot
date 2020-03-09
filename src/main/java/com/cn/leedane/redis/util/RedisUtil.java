@@ -26,7 +26,7 @@ import com.cn.leedane.utils.StringUtil;
 public class RedisUtil{
 	private Logger logger = Logger.getLogger(getClass());
 	
-	private static RedisUtil redisUtil;
+	private volatile static RedisUtil redisUtil;
 	
 	//Redis服务器IP
 	private static String IP;
@@ -52,7 +52,7 @@ public class RedisUtil{
 	//在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；
 	private static boolean TEST_ON_BORROW = true;
 	    
-	private static JedisPool jedisPool = null;
+	private volatile static JedisPool jedisPool = null;
 		
 	/**
 	* 初始化Redis连接池
@@ -79,7 +79,11 @@ public class RedisUtil{
 	 */
 	public static synchronized RedisUtil getInstance(){
 		if(redisUtil == null){
-			redisUtil = new RedisUtil();
+			synchronized (RedisUtil.class){
+				if(redisUtil == null){
+					redisUtil = new RedisUtil();
+				}
+			}
 		}
 		return redisUtil;
 	}
