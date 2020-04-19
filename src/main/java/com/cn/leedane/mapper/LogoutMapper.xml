@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.LogoutMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="recode" resultMap="objectBean">
+		select l.id, l.status, l.create_user_id, date_format(l.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		,l.modify_user_id, date_format(l.modify_time,'%Y-%m-%d %H:%i:%s') modify_time, l.reason, l.note
+		,date_format(l.overdue,'%Y-%m-%d %H:%i:%s') overdue
+		from t_logout l where l.create_user_id = #{userId}
+	</select>
+
+	<resultMap type="com.cn.leedane.model.LogoutBean" id="objectBean">
+		<id property="id" column="id"/>
+		<result property="status" column="status"/>
+		<result property="createUserId" column="create_user_id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="modifyUserId" column="modify_user_id"/>
+		<result property="modifyTime" column="modify_time"/>
+		<result property="overdue" column="overdue"/>
+	</resultMap>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.ManageBlackMapper">
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->  
+	<select id="get" resultMap="objectBean">
+		select b.id, b.status, b.create_user_id, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		,b.modify_user_id, date_format(b.modify_time,'%Y-%m-%d %H:%i:%s') modify_time, b.user_id, b.authorization
+		from t_manage_black b where b.create_user_id = #{userId}
+	</select>
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
+	<select id="blacks" resultType="java.util.Map">
+		select b.id, b.status, b.create_user_id, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		, b.user_id, b.authorization
+		from t_manage_black b where b.create_user_id = #{userId} and b.status = 1 order by b.id desc limit #{start},#{limit}
+	</select>
+
+	<resultMap type="com.cn.leedane.model.ManageBlackBean" id="objectBean">
+		<id property="id" column="id"/>
+		<result property="status" column="status"/>
+		<result property="createUserId" column="create_user_id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="modifyUserId" column="modify_user_id"/>
+		<result property="modifyTime" column="modify_time"/>
+		<result property="userId" column="user_id"/>
+		<result property="authorization" column="authorization"/>
+	</resultMap>
+</mapper>

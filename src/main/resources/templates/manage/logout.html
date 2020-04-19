@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>注销账号</title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<link th:if="${not isDebug}" rel="stylesheet" href="https://www.layuicdn.com/layui-v2.5.4/css/layui.css"  media="all" />
+	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.5.4/css/layui.css"  media="all" />
+	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{/page/css/event-manage.min.css}" />
+	<link th:if="${isDebug}" rel="stylesheet" th:href="@{/page/css/event-manage.css}" />
+	<div th:include="manage/common-js :: manageJs">what?</div>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	<div th:replace="~{manage/common-head :: helloManage(${tabId})} "></div>
+	<div th:replace="~{manage/common-left :: helloManage(${tabId})} "></div>
+
+	<div class="layui-body">
+		<!-- 内容主体区域 -->
+		<fieldset class="layui-elem-field layui-field-title">
+			<legend>注销账号申请</legend>
+		</fieldset>
+		<blockquote class="layui-elem-quote">
+			<h2>注销账号须知事项：</h2>
+			<ul style="margin-top: 5px;">
+				<li>1、从申请到真正注销需要7天的时间，这期间仍然可以正常使用账号，功能不受影响。</li>
+				<li>2、7天后需要来当前的界面，会自动弹出真正注销的按钮，只有点击该按钮成功之后，系统才会把您所有的数据进行删除。。</li>
+				<li>3、真正注销后该账号将无法再使用，所有相关的数据（包括但不限于博客、心情、相册、消息、素材、圈子、购物等）都会删除，无法恢复，请慎重操作。</li>
+			</ul>
+		</blockquote>
+		<form class="layui-form" action="">
+			<div class="layui-form-item" id="reason-group" style="display: none;">
+				<label class="layui-form-label">注销原因</label>
+				<div class="layui-input-block">
+					<input type="radio" name="reason" value="不好玩/不适合我" title="不好玩/不适合我" checked="">
+					<input type="radio" name="reason" value="未达成我的预期" title="未达成我的预期">
+					<input type="radio" name="reason" value="个人原因" title="个人原因">
+					<input type="radio" name="reason" value="用户质量问题" title="用户质量问题">
+					<input type="radio" name="reason" value="产品性能问题" title="产品性能问题">
+					<input type="radio" name="reason" value="重新注册" title="重新注册">
+					<input type="radio" name="reason" value="其他" title="其他">
+				</div>
+			</div>
+			<div class="layui-form-item" id="note-group" style="display: none;">
+				<div class="layui-inline">
+					<label class="layui-form-label">其他说明</label>
+					<div class="layui-input-inline">
+						<input type="text" name="note" placeholder="其他说明(选填)" class="layui-input" />
+					</div>
+				</div>
+			</div>
+
+			<div th:if="${time} != null" class="layui-form-item">
+				<label class="layui-form-label">注销原因：</label>
+				<div class="layui-input-block" style="line-height: 36px;" th:utext="${reason}"></div>
+			</div>
+			<div th:if="${time} != null" class="layui-form-item">
+				<label class="layui-form-label">其他说明：</label>
+				<div class="layui-input-block" style="line-height: 36px;" th:utext="${note}"></div>
+			</div>
+
+			<div th:if="${time} != null" class="layui-form-item">
+				<label class="layui-form-label">申请时间：</label>
+				<div class="layui-input-block" style="line-height: 36px;" th:utext="${createTime}"></div>
+			</div>
+
+			<div th:if="${time} != null" class="layui-form-item">
+				<label class="layui-form-label">到期时间：</label>
+				<div class="layui-input-block" style="line-height: 36px;" th:utext="${time}"></div>
+			</div>
+
+			<div class="layui-form-item">
+				<div id="button-group" class="layui-input-block">
+
+				</div>
+			</div>
+		</form>
+		<!--<div id="button-group" style="text-align: center;">
+			<button type="button" class="layui-btn" onclick="doClick();">申请注销</button>
+			<button type="button" class="layui-btn" disabled>距离注销还有6天10小时10分10秒</button>
+		</div>-->
+
+	</div>
+
+	<div class="layui-footer">
+		<!-- 底部固定区域 -->
+		<div th:include="common-bottom :: bottom">bottom?</div>
+	</div>
+</div>
+</body>
+<script th:inline="javascript">//引用
+	var time = /*[[${time}]]*/;//取值
+	var reason = /*[[${reason}]]*/;//取值
+	var note = /*[[${note}]]*/;//取值
+</script>
+<script th:if="${not isDebug}" th:src="@{/page/js/page.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/page.js}" type="text/javascript"></script>
+<script th:if="${not isDebug}" th:src="@{/page/js/manage/logout.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/manage/logout.js}" type="text/javascript"></script>
+<script></script>
+</html>
