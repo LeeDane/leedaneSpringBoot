@@ -1,19 +1,12 @@
 package com.cn.leedane.utils;
 
 import org.apache.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
-import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.mgt.CookieRememberMeManager;
-import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -130,9 +123,12 @@ public class SessionManagerUtil {
 				}catch (UnknownSessionException e){
 					e.printStackTrace();
 				}finally {
-					userSessionMap.remove(sessionId);
-					userSubjectMap.remove(sessionId);
-					session.stop();
+					try{
+						userSessionMap.remove(sessionId);
+						session.stop();
+					}catch (UnknownSessionException e){
+						e.printStackTrace();
+					}
 				}
 			}
 		}

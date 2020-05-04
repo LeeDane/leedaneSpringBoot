@@ -9,7 +9,7 @@ layui.use('table', function(){
     	{field:'id', title:'ID', width:80, unresize: true, sort: true}
     	,{field:'type', title:'类型', width:100}
       ,{field:'source', title:'标题', width:600}
-      ,{field:'link', title:'链接', width:180}
+      ,{field:'link', title:'链接', width:90}
       ,{field:'create_time', title:'创建时间', width:180}
       ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:100}
     ]]

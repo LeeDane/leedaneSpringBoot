@@ -1,9 +1,9 @@
 package com.cn.leedane.utils;
 
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 请求响应的Map
@@ -20,6 +20,8 @@ public class ResponseModel{
 	private int code;
 	private long total;
 	private Object message;
+
+	private Map<String, Object> extra;
 
 	public ResponseModel(){
 		start = System.currentTimeMillis();
@@ -88,6 +90,15 @@ public class ResponseModel{
 
 	public long getTotal() {
 		return total;
+	}
+
+	public Map<String, Object> getExtra() {
+		return extra;
+	}
+
+	public ResponseModel extra(Map<String, Object> extra) {
+		this.extra = extra;
+		return ResponseModel.this;
 	}
 
 	/*public HashMap<String, Object> getMap(){

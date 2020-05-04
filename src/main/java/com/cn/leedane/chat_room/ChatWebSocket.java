@@ -230,7 +230,7 @@ public class ChatWebSocket {
 		}
 		
     	ScoreService<ScoreBean> scoreService = (ScoreService<ScoreBean>) SpringUtil.getBean("scoreService");
-    	UserService<UserBean> userService = (UserService<UserBean>) SpringUtil.getBean("userService");
+    	UserHandler userHandler = (UserHandler) SpringUtil.getBean("userHandler");
 		int score = scoreService.getTotalScore(userId);
 		if(score < 1){
 			jsonObject.put("content", "积分不足，无法发送弹屏！");
@@ -239,7 +239,7 @@ public class ChatWebSocket {
 			return;
 		}else{
 			//扣除积分
-			ResponseModel model = scoreService.reduceScore(1, "发弹屏扣积分", "", 0, userService.findById(userId));
+			ResponseModel model = scoreService.reduceScore(1, "发弹屏扣积分", "", 0, userHandler.getUserBean(userId));
 			if(model.isSuccess()){
 				jsonObject.put("screenText", screenText); //弹屏内容，纯文本
 				sendMessageToAll((StringUtil.isNull(type) || !"welcome".equals(type)), jsonObject, userId);

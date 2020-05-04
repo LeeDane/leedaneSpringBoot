@@ -97,7 +97,7 @@ public class ToolController extends BaseController{
 		if(StringUtil.isNull(toUserId) || StringUtil.isNull(content) || StringUtil.isNull(object))
 			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.参数不存在或为空.value)).code(EnumUtil.ResponseCode.参数不存在或为空.value);
 		
-		UserBean toUser = userService.findById(StringUtil.changeObjectToInt(toUserId));
+		UserBean toUser = userHandler.getUserBean(StringUtil.changeObjectToLong(toUserId));
 		if(toUser == null)
 			return new ResponseModel().error().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该用户不存在.value)).code(EnumUtil.ResponseCode.该用户不存在.value);
 

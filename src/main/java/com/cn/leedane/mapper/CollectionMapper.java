@@ -20,5 +20,5 @@ public interface CollectionMapper extends BaseMapper<CollectionBean>{
      * @param rows
      * @return
      */
-    public List<Map<String, Object>> getMyCollections(@Param("id")long userId, @Param("start")int start, @Param("limit")int rows);
+    public List<Map<String, Object>> getMyCollections(@Param("userId")long userId, @Param("start")int start, @Param("limit")int rows);
 }

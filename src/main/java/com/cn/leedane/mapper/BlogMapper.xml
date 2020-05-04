@@ -41,4 +41,24 @@
 		where
 		status = #{status} and id = #{id} limit 1
 	</select>
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
+	<select id="myList" resultType="java.util.Map">
+		select b.id, b.title, b.digest, b.create_user_id, b.category, b.can_comment, b.can_transmit, b.es_index, b.froms,
+		b.is_recommend, b.tag, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		from t_blog b where b.create_user_id = #{userId} and b.status = 1 order by b.id desc limit #{start},#{limit}
+	</select>
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
+	<select id="myDraft" resultType="java.util.Map">
+		select b.id, b.title, b.content, b.create_user_id, b.category, b.can_comment, b.can_transmit, b.froms,
+		b.is_recommend, b.tag, date_format(b.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		from t_blog b where b.create_user_id = #{userId} and b.status = -1 order by b.id desc limit #{start},#{limit}
+	</select>
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
+	<select id="myDraftTotal" resultType="java.util.Map">
+		select count(b.id) ct
+		from t_blog b where b.create_user_id = #{userId} and b.status = -1
+	</select>
 </mapper>

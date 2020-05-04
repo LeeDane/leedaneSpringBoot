@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import com.cn.leedane.handler.UserHandler;
 import org.junit.Test;
 
 import com.cn.leedane.mapper.CompanyMapper;
@@ -28,7 +29,7 @@ public class CompanyTest extends BaseTest {
 	private ProductService<ProductBean> productService;
 	
 	@Resource
-	private UserService<UserBean> userService;
+	private UserHandler userHandler;
 
 	@Resource
 	private CompanyMapper companyMapper;
@@ -36,11 +37,11 @@ public class CompanyTest extends BaseTest {
 	
 	@Test
 	public void addCompany() throws Exception{
-		UserBean user = userService.findById(1);
-		UserBean user2 = userService.findById(2);
-		UserBean user3 = userService.findById(3);
-		UserBean user4 = userService.findById(4);
-		UserBean user5 = userService.findById(5);
+		UserBean user = userHandler.getUserBean(1);
+		UserBean user2 = userHandler.getUserBean(2);
+		UserBean user3 = userHandler.getUserBean(3);
+		UserBean user4 = userHandler.getUserBean(4);
+		UserBean user5 = userHandler.getUserBean(5);
 		
 		Set<UserBean> custome1 = new HashSet<UserBean>();
 		custome1.add(user2);

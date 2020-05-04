@@ -4,14 +4,20 @@ import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.controller.BaseController;
 import com.cn.leedane.handler.JuheApiHandler;
 import com.cn.leedane.handler.OptionHandler;
-import com.cn.leedane.handler.mall.*;
+import com.cn.leedane.handler.mall.S_PromotionSeatHandler;
 import com.cn.leedane.juheapi.JuHeException;
+import com.cn.leedane.mapper.LogoutMapper;
 import com.cn.leedane.mapper.MyTagsMapper;
 import com.cn.leedane.mapper.Oauth2Mapper;
 import com.cn.leedane.mapper.UserMapper;
-import com.cn.leedane.mapper.mall.*;
-import com.cn.leedane.model.*;
-import com.cn.leedane.model.mall.*;
+import com.cn.leedane.mapper.mall.ReferrerMapper;
+import com.cn.leedane.mapper.mall.ReferrerRecordMapper;
+import com.cn.leedane.model.LogoutBean;
+import com.cn.leedane.model.Oauth2Bean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.VisitorBean;
+import com.cn.leedane.model.mall.S_ReferrerBean;
+import com.cn.leedane.model.mall.S_ReferrerRecordBean;
 import com.cn.leedane.service.VisitorService;
 import com.cn.leedane.thread.ThreadUtil;
 import com.cn.leedane.thread.single.EsIndexAddThread;
@@ -26,7 +32,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * 我的资料管理Html页面的控制器
@@ -68,6 +76,9 @@ public class MyManagelHtmlController extends BaseController{
 	@Autowired
 	private S_PromotionSeatHandler promotionSeatHandler;
 
+	@Autowired
+	private LogoutMapper logoutMapper;
+
 	/**
 	 * 加载公共部分
 	 * @param userBean
@@ -78,6 +89,7 @@ public class MyManagelHtmlController extends BaseController{
 		JSONArray mysettings = JSONArray.fromObject(optionHandler.getData("mysetting", true));
 		model.addAttribute("mysettings", mysettings);
 		model.addAttribute("tabId", tabId);
+		model.addAttribute("user", userBean);
 	}
 
 	@RequestMapping("/my/welcome")
@@ -99,8 +111,6 @@ public class MyManagelHtmlController extends BaseController{
 		UserBean user = getMustLoginUserFromShiro();
 		loadCommon(user, model, "my-info");
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的资料首页", "com.cn.leedane.springboot.controller.MallHtmlController.myInfo", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
-		model.addAttribute("user", user);
-//		model.addAttribute("user", userHandler.getUserPicPath());
 		return loginRoleCheck("manage/my/info", true, model, request);
 	}
 
@@ -135,7 +145,6 @@ public class MyManagelHtmlController extends BaseController{
 		UserBean userBean = getMustLoginUserFromShiro();
 		loadCommon(userBean, model, "my-phone");
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入手机号码绑定首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
-		model.addAttribute("user", userBean);
 		model.addAttribute("publicKey",  RSAKeyUtil.getInstance().getPublicKey());
 		return loginRoleCheck("manage/my/phone", true, model, request);
 	}
@@ -225,7 +234,6 @@ public class MyManagelHtmlController extends BaseController{
 		UserBean userBean = getMustLoginUserFromShiro();
 		loadCommon(userBean, model, "my-third");
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入第三方绑定首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
-		model.addAttribute("user", userBean);
 		List<Oauth2Bean> oauth2Beans = oauth2Mapper.myOauth2s(userBean.getId());
 		EnumUtil.Oauth2PlatformType[] types = EnumUtil.Oauth2PlatformType.values();
 		List<Oauth2Bean> oauth2s = new ArrayList<>(); //构建最终输出页面的列表
@@ -329,8 +337,111 @@ public class MyManagelHtmlController extends BaseController{
 		//获取当前登录用户
 		UserBean userBean = getMustLoginUserFromShiro();
 		loadCommon(userBean, model, "login-history");
-		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的登录历史首页", "com.cn.leedane.springboot.controller.MallHtmlController.myEmail", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的登录历史首页", "com.cn.leedane.springboot.controller.MallHtmlController.loginHostory", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("manage/login-history", true, model, request);
+	}
+
+	/**
+	 * 博客列表
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/blog/list")
+	public String blogList(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model, "blog-list");
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入博客列表页", "com.cn.leedane.springboot.controller.MallHtmlController.blogList", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		return loginRoleCheck("manage/blog/list", true, model, request);
+	}
+
+	/**
+	 * 博客草稿
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/blog/draft")
+	public String blogDraft(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model, "blog-draft");
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入博客草稿管理页", "com.cn.leedane.springboot.controller.MallHtmlController.blogDraft", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		return loginRoleCheck("manage/blog/draft", true, model, request);
+	}
+
+	/**
+	 * 安全--黑名单
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/security/black")
+	public String securityBlack(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model, "security-black");
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入安全黑名单管理页", "com.cn.leedane.springboot.controller.MallHtmlController.securityBlack", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		return loginRoleCheck("manage/security/black", true, model, request);
+	}
+
+	/**
+	 * 安全--实名验证
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/security/realname")
+	public String securityRealname(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model, "security-realname");
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入安全实名验证管理页", "com.cn.leedane.springboot.controller.MallHtmlController.securityRealname", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		return loginRoleCheck("manage/security/realname", true, model, request);
+	}
+
+	/**
+	 * 我的工具--> 抖音去水印
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/tool/douyin/remove/watermark")
+	public String toolDouyinRemoveWatermark(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model, "tool-douyin-remove-watermark");
+		model.addAttribute("path", optionHandler.getData("douyinremovewatermark", true));
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入抖音去水印管理页", "com.cn.leedane.springboot.controller.MallHtmlController.toolDouyinRemoveWatermark", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		return loginRoleCheck("manage/tool/douyin-remove-watermark", true, model, request);
+	}
+
+	/**
+	 * 我的云盘
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/clouddisk")
+	public String clouddisk(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model, "clouddisk");
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的云盘管理首页", "com.cn.leedane.springboot.controller.MallHtmlController.clouddisk", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		return loginRoleCheck("manage/clouddisk", true, model, request);
 	}
 
 	/**
@@ -366,5 +477,32 @@ public class MyManagelHtmlController extends BaseController{
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入我的收藏管理首页", "com.cn.leedane.springboot.controller.MallHtmlController.collection", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("manage/collection", true, model, request);
 	}
+
+
+	/**
+	 * 注销账号
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/logout")
+	public String logout(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model, "logout");
+		LogoutBean logoutBean = logoutMapper.recode(userBean.getId());
+		if(logoutBean != null){
+			model.addAttribute("time", DateUtil.DateToString(logoutBean.getOverdue()));
+			model.addAttribute("reason", logoutBean.getReason());
+			model.addAttribute("note", logoutBean.getNote());
+			model.addAttribute("createTime", DateUtil.DateToString(logoutBean.getCreateTime()));
+		}
+
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入注销账号首页", "com.cn.leedane.springboot.controller.MallHtmlController.loginHostory", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		return loginRoleCheck("manage/logout", true, model, request);
+	}
+
 }
 

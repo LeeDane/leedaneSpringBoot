@@ -40,6 +40,7 @@ function setTimeAgo(time){
     }
     return time;
 };
+
 /**
  * 判断json是否为空
  * @param e
@@ -719,7 +720,15 @@ function logout(){
                 ajaxError(data);
         },
         error : function(data) {
-            ajaxError(data);
+            //刷新当前页面
+            window.location.reload();
         }
     });
+}
+
+/**
+**
+**/
+function openTipMsg(domId, msg, tipDirectionNum) {
+    subtips = layer.tips(msg, domId,{tips:[tipDirectionNum,'#FFB800'], time: 8000});
 }

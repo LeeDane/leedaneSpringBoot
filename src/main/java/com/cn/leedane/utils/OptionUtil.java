@@ -1,5 +1,6 @@
 package com.cn.leedane.utils;
 
+import com.cn.leedane.handler.UserHandler;
 import org.apache.log4j.Logger;
 
 import com.cn.leedane.cache.SystemCache;
@@ -42,8 +43,8 @@ public class OptionUtil {
 		}
 		
 		@SuppressWarnings("unchecked")
-		UserService<UserBean> userService = (UserService<UserBean>) SpringUtil.getBean("userService");
-		adminUser = userService.findById(adminId);
+		UserHandler userHandler = (UserHandler) SpringUtil.getBean("userHandler");
+		adminUser = userHandler.getUserBean(adminId);
 	}
 
 }

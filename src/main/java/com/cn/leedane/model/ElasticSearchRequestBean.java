@@ -11,6 +11,7 @@ import org.elasticsearch.search.sort.SortOrder;
 public class ElasticSearchRequestBean {
     private String table; //不能为空， 业务表名称，相应创建的表会在后面添加index_
     private String[] searchFields; //不能为空，需要检索的字段
+    private String[] highlightFields;//可以为空，设置高亮字段
     private String searchKey; //不能为空，检索的关键字
     private int accurate; //不能为空，检索类型：0 模糊查询， 1 精确查询 2前缀查询
     private String sortField; //可以为空， 排序字段
@@ -125,5 +126,13 @@ public class ElasticSearchRequestBean {
 
     public void setSearchType(int searchType) {
         this.searchType = searchType;
+    }
+
+    public String[] getHighlightFields() {
+        return highlightFields;
+    }
+
+    public void setHighlightFields(String[] highlightFields) {
+        this.highlightFields = highlightFields;
     }
 }

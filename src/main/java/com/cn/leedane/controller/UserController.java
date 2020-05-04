@@ -278,7 +278,7 @@ public class UserController extends BaseController{
 			//获取查找的用户id
 			int searchUserId = JsonUtil.getIntValue(json, "searchUserId");
 			//执行密码等信息的验证
-			UserBean searchUser = userService.findById(searchUserId);
+			UserBean searchUser = userHandler.getUserBean(searchUserId);
 
 			if (searchUser != null) {			
 				
@@ -450,9 +450,8 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="/logout", method = RequestMethod.DELETE, produces = {"application/json;charset=UTF-8"})
-	public Map<String, Object> logout(Model model, HttpServletRequest request){
+	public ResponseModel logout(Model model, HttpServletRequest request){
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), new Date(), "安全退出系统", "logout", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
-		ResponseMap message = new ResponseMap();
 		/*HttpSession session = request.getSession();
 		//判断是否有在线的用户，那就先取消该用户的session
 		if(session.getAttribute(USER_INFO_KEY) != null) {
@@ -495,10 +494,7 @@ public class UserController extends BaseController{
 		}catch(Exception e){
 			logger.info("Exception ------");
 		}
-		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.注销成功.value));
-		message.put("responseCode", EnumUtil.ResponseCode.注销成功.value);
-		message.put("success", true);
-		return message.getMap();
+		return new ResponseModel().ok().message(EnumUtil.getResponseValue(EnumUtil.ResponseCode.注销成功.value)).code(EnumUtil.ResponseCode.注销成功.value);
 	}
 	
 	/**

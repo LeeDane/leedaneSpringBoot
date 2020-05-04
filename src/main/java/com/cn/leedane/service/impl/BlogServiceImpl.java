@@ -420,7 +420,6 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 									HttpRequestInfoBean request) {
 		logger.info("BlogServiceImpl-->edit():blogId=" +blogId +", user=" +user.getAccount());
 		
-		ResponseMap message = new ResponseMap();
 		if(blogId < 1)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.该博客不存在.value));
 		
@@ -430,9 +429,9 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		sql.append(" , b.digest, b.froms, b.content, b.can_comment, b.can_transmit, b.origin_link, b.source, b.category, b.create_user_id");
 		sql.append(" , b.is_recommend, b.stick ");
 		sql.append(" from "+DataTableType.博客.value+" b ");
-		sql.append(" where id = ? and status=?");
+		sql.append(" where id = ?");
 		
-		List<Map<String, Object>> r = blogMapper.executeSQL(sql.toString(), blogId, ConstantsUtil.STATUS_NORMAL);
+		List<Map<String, Object>> r = blogMapper.executeSQL(sql.toString(), blogId);
 		
 		if(r == null || r.size() != 1){
 			//删除缓存
@@ -446,7 +445,7 @@ public class BlogServiceImpl extends AdminRoleCheckService implements BlogServic
 		//获取当前的Subject  
 		checkAdmin(user, createUserId);
 
-		new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(blogMapper.findById(BlogBean.class, blogId)));
+//		new ThreadUtil().singleTask(new EsIndexAddThread<BlogBean>(blogMapper.findById(BlogBean.class, blogId)));
 		//异步修改solr索引
 		//new ThreadUtil().task(new BlogSolrUpdateThread(blogBean));
 		//BlogSolrHandler.getInstance().updateBean(blogBean);

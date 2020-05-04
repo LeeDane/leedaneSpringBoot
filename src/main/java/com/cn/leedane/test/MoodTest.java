@@ -4,6 +4,7 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
+import com.cn.leedane.handler.UserHandler;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -20,7 +21,6 @@ import com.cn.leedane.observer.Watcher;
 import com.cn.leedane.observer.template.UpdateMoodTemplate;
 import com.cn.leedane.service.MoodService;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.Base64ImageUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 
@@ -37,7 +37,7 @@ public class MoodTest extends BaseTest {
     private OperateLogService<OperateLogBean> operateLogService;
 
     @Resource
-    private UserService<UserBean> userService;
+    private UserHandler userHandler;
 
     @Resource
     private MoodService<MoodBean> moodService;
@@ -65,7 +65,7 @@ public class MoodTest extends BaseTest {
     public void sendDraft() throws Exception{
         long start = System.currentTimeMillis();
         for(int i = 0; i < 1000; i++){
-            UserBean user = userService.findById(1);
+            UserBean user = userHandler.getUserBean(1);
             String filePath = ConstantsUtil.getDefaultSaveFileFolder() +"liudehua.jpg";
             String base64 = Base64ImageUtil.convertImageToBase64(filePath, null);
             StringBuffer buffer = new StringBuffer();
@@ -84,12 +84,12 @@ public class MoodTest extends BaseTest {
         Watcher watcher = new ConcreteWatcher();
         watched.addWatcher(watcher);
         //int i = 10/0;
-        watched.notifyWatchers(userService.findById(1), new UpdateMoodTemplate());
+        watched.notifyWatchers(userHandler.getUserBean(1), new UpdateMoodTemplate());
     }
     @Test
     public void getMoodByLimit(){
         //MoodBean moodBean = moodMapper.findById(MoodBean.class, 279);
-        UserBean user = userService.findById(1);
+        UserBean user = userHandler.getUserBean(1);
         //String str = "{\"uid\": 1, \"pageSize\": 10, \"method\":\"lowloading\", \"last_id\":19, \"pic_size\":\"30x30\"}";
         String str = "{\"account\":\"leedane\",\"uid\":2,\"method\":\"firstloading\",\"login_mothod\":\"android\",\"no_login_code\":\"14480951808066e31568670e51be42bc7978cc2066ea060.521926355594616\",\"pageSize\":10}";
         JSONObject jo = JSONObject.fromObject(str);
@@ -107,7 +107,7 @@ public class MoodTest extends BaseTest {
 
     @Test
     public void updateMoodStatus(){
-        UserBean user = userService.findById(1);
+        UserBean user = userHandler.getUserBean(1);
         String str = "{\"mid\":1037, \"login_mothod\":\"android\",\"no_login_code\":\"14480951808066e31568670e51be42bc7978cc2066ea060.521926355594616\",\"pageSize\":10}";
         JSONObject jo = JSONObject.fromObject(str);
         try {

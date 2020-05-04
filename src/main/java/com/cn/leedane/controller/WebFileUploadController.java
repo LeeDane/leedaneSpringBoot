@@ -82,7 +82,6 @@ public class WebFileUploadController extends BaseController{
             for(CommonsMultipartFile multipartFile: multipartFiles){
             	if(multipartFile == null)
             		throw new NullPointerException("multipartFile为空");
-            	
             	//saveFile(user, currentUser, request, message, file);
                 File tempFile = new File(getRootPath(user, multipartFile));
                 multipartFile.transferTo(tempFile);

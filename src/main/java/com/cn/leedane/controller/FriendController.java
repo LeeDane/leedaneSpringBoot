@@ -95,8 +95,8 @@ public class FriendController extends BaseController{
 		JSONObject json = getJsonFromMessage(message);
 		UserBean user = getUserFromMessage(message);
 		if(json.has("to_user_id")) {
-			int to_user_id = json.getInt("to_user_id");			
-			UserBean toUser = userService.findById(to_user_id);
+			long to_user_id = json.optLong("to_user_id");
+			UserBean toUser = userHandler.getUserBean(to_user_id);
 			if(toUser!= null){
 				message.put("success", friendService.isFriend(getUserFromMessage(message).getId(), to_user_id));
 				

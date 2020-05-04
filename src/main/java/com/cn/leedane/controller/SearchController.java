@@ -17,8 +17,10 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.text.Text;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -174,6 +176,7 @@ public class SearchController extends BaseController{
 		ElasticSearchRequestBean requestBean = new ElasticSearchRequestBean();
 		requestBean.setTable(table);
 		requestBean.setSearchFields(searchFields);
+		requestBean.setHighlightFields(searchFields);
 		requestBean.setSearchKey(keyword);
 		requestBean.setAccurate(accurate);
 		requestBean.setSortField(sort);
@@ -193,6 +196,10 @@ public class SearchController extends BaseController{
 			result.put("total", response.getHits().totalHits);
 			List rs = new ArrayList<Map<String, Object>>();
 			for (SearchHit hit : response.getHits()) {
+				//获取高亮字段
+				Map<String, HighlightField> highlightFields = hit.getHighlightFields();
+				HighlightField titleField = highlightFields.get("title");
+				HighlightField contentField = highlightFields.get("content");
 				Map<String, Object> documentFieldMap = hit.getSourceAsMap();
 
 				//设置图片头像图片
@@ -218,7 +225,7 @@ public class SearchController extends BaseController{
 					}else if(searchType == ConstantsUtil.SEARCH_TYPE_BLOG){
 						documentFieldMap.put("account", userHandler.getUserName(createUserId));
 					}else if(searchType == ConstantsUtil.SEARCH_TYPE_OPERATE_LOG){
-						documentFieldMap.put("account", userHandler.getUserName(createUserId));
+						documentFieldMap.put("account", userHandler.getUserName(createUserId, false));
 					}
 				}else{
 					if(searchType == ConstantsUtil.SEARCH_TYPE_USER){
@@ -262,7 +269,7 @@ public class SearchController extends BaseController{
 
 				}*/
 //				rs.add(hit.getSourceAsMap());
-
+				documentFieldMap.putAll(getFieldMap(highlightFields));
 				rs.add(documentFieldMap);
 			}
 			result.put("hits", rs);
@@ -275,6 +282,22 @@ public class SearchController extends BaseController{
 			message.put("message", "es检索响应失败");
 		}
 		return message.getMap();
+	}
+
+	/**
+	 * 对高亮字段进行转化
+	 * @param highlightFields
+	 * @return
+	 */
+	private Map<String, Object> getFieldMap(Map<String, HighlightField> highlightFields) {
+		Map<String, Object> map = new HashMap<>();
+		for(Map.Entry<String, HighlightField> m: highlightFields.entrySet()){
+			HighlightField highlightField = m.getValue();
+			Text[] texts = highlightField.getFragments();
+			Text text = texts[0];
+			map.put(m.getKey(), highlightField.getFragments()[0].toString());
+		}
+		return map;
 	}
 
 	/**

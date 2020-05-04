@@ -2,6 +2,7 @@ package com.cn.leedane.test;
 
 import javax.annotation.Resource;
 
+import com.cn.leedane.handler.UserHandler;
 import net.sf.json.JSONObject;
 
 import org.junit.Test;
@@ -22,7 +23,7 @@ public class FriendTest extends BaseTest {
 	private FriendService<FriendBean> friendService;
 	
 	@Resource
-	private UserService<UserBean> userService;
+	private UserHandler userHandler;
 	@Test
 	public void deleteFriends(){
 		/*boolean delete = friendService.deleteFriends(3, 4, 2);
@@ -33,7 +34,7 @@ public class FriendTest extends BaseTest {
 	public void agreeFriends(){
 		String str = "{\"fid\":9, \"from_user_remark\":\"小羊\"}";
 		JSONObject jsonObject = JSONObject.fromObject(str);
-		UserBean user = userService.findById(1);
+		UserBean user = userHandler.getUserBean(1);
 		friendService.addAgree(jsonObject, user, null);
 	}
 }

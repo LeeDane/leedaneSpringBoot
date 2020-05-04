@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.cn.leedane.handler.UserHandler;
 import net.sf.json.JSONObject;
 
 import org.junit.Test;
@@ -60,7 +61,7 @@ public class JPushTest extends BaseTest{
 	//}
 	
 	@Resource
-	private UserService<UserBean> userService;
+	private UserHandler userHandler;
 	
 	/**
 	 * 测试通知
@@ -76,7 +77,7 @@ public class JPushTest extends BaseTest{
 	 */
 	@Test
 	public void chat() {
-		UserBean user = userService.findById(1);
+		UserBean user = userHandler.getUserBean(1);
 		if(user == null){
 			user = new UserBean();
 			user.setId(11);

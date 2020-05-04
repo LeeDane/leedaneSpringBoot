@@ -2,6 +2,7 @@ package com.cn.leedane.test;
 
 import javax.annotation.Resource;
 
+import com.cn.leedane.handler.UserHandler;
 import net.sf.json.JSONObject;
 
 import org.junit.Test;
@@ -24,13 +25,13 @@ public class CollectionTest extends BaseTest {
 	private CollectionService<CollectionBean> collectionService;
 
 	@Resource
-	private UserService<UserBean> userService;
+	private UserHandler userHandler;
 	
 	@Test
 	public void add() throws Exception{
 		String str = "{'table_name':'"+DataTableType.心情.value+"', 'table_id':1}";
 		JSONObject jsonObject = JSONObject.fromObject(str);
-		UserBean user = userService.findById(3);
+		UserBean user = userHandler.getUserBean(3);
 		logger.info(collectionService.addCollect(jsonObject, user, null));
 	}
 	
@@ -38,7 +39,7 @@ public class CollectionTest extends BaseTest {
 	public void cancel() throws Exception{
 		String str = "{'table_name':'"+DataTableType.心情.value+"', 'table_id':1}";
 		JSONObject jsonObject = JSONObject.fromObject(str);
-		UserBean user = userService.findById(1);
+		UserBean user = userHandler.getUserBean(1);
 		logger.info(collectionService.deleteCollection(jsonObject, user, null));
 	}
 	
@@ -46,7 +47,7 @@ public class CollectionTest extends BaseTest {
 	public void getLimit() throws Exception{
 		String str = " {'uid':2,'table_name':'','table_id':0, 'method':'lowloading','pageSize':5,'last_id':2,'first_id':0}";
 		JSONObject jsonObject = JSONObject.fromObject(str);
-		UserBean user = userService.findById(1);
+		UserBean user = userHandler.getUserBean(1);
 		logger.info(collectionService.getLimit(jsonObject, user, null).size());
 	}
 }

@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import com.cn.leedane.handler.UserHandler;
 import org.apache.log4j.Logger;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,8 +151,8 @@ class SingleTask implements Callable<Boolean>{
 			
 			SystemCache systemCache = (SystemCache) SpringUtil.getBean("systemCache");
 			int adminId = StringUtil.changeObjectToInt(systemCache.getCache("admin-id"));
-			UserService<UserBean> userService = (UserService<UserBean>) SpringUtil.getBean("userService");
-			UserBean adminUser = userService.findById(adminId);
+			UserHandler userHandler = (UserHandler) SpringUtil.getBean("userHandler");
+			UserBean adminUser = userHandler.getUserBean(adminId);
 			EmailBean emailBean = new EmailBean();
 			emailBean.setContent(report.getDesc());
 			emailBean.setCreateTime(new Date());

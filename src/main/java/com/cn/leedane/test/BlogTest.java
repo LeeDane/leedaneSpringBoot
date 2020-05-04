@@ -1,11 +1,11 @@
 package com.cn.leedane.test;
 
+import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.BlogMapper;
 import com.cn.leedane.model.BlogBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.JsoupUtil;
@@ -28,7 +28,7 @@ public class BlogTest extends BaseTest {
 	private BlogMapper blogMapper;
 	
 	@Resource
-	private UserService<UserBean> userService;
+	private UserHandler userHandler;
 	@Resource
 	private OperateLogService<OperateLogBean> operateLogService;
 
@@ -38,7 +38,7 @@ public class BlogTest extends BaseTest {
 		blog.setTitle("测试标题2");
 		blog.setContent("这是测试信息2。。。。。。。。。。");
 		//optionService.loadById(1);
-		blog.setCreateUserId(userService.findById(12).getId());
+		blog.setCreateUserId(userHandler.getUserBean(12).getId());
 		//operateLogService.loadById(1);
 		blog.setCreateTime(new Date());
 		blogMapper.save(blog);

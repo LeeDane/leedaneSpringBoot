@@ -3,9 +3,12 @@ package com.cn.leedane.mapper;
 import java.util.List;
 import java.util.Map;
 
+import com.cn.leedane.mybatis.SqlProvider;
 import org.apache.ibatis.annotations.Param;
 
 import com.cn.leedane.model.BlogBean;
+import org.apache.ibatis.annotations.SelectProvider;
+
 /**
  * 博客mapper接口类
  * @author LeeDane
@@ -111,4 +114,30 @@ public interface BlogMapper extends BaseMapper<BlogBean>{
 	 * @return
 	 */
 	public int getMaxStick();
+
+	/**
+	 * 分页获取我的博客列表记录
+	 * @param userId
+	 * @param start
+	 * @param rows
+	 * @return
+	 */
+	public List<Map<String, Object>> myList(@Param("userId")long userId, @Param("start")int start, @Param("limit")int rows);
+
+	/**
+	 * 分页获取我的博客草稿列表记录
+	 * @param userId
+	 * @param start
+	 * @param rows
+	 * @return
+	 */
+	public List<Map<String, Object>> myDraft(@Param("userId")long userId, @Param("start")int start, @Param("limit")int rows);
+
+
+	/**
+	 * 我的博客草稿列表总数
+	 * @param userId
+	 * @return
+	 */
+	public List<Map<String, Object>> myDraftTotal(long userId);
 }

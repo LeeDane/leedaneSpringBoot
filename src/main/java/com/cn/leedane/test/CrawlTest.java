@@ -45,9 +45,6 @@ public class CrawlTest extends BaseTest {
 	@Resource
 	private BlogService<BlogBean> blogService;
 	
-	@Resource
-	private UserService<UserBean> userService;
-	
 	@Autowired
 	private UserHandler userHandler;
 	
@@ -88,7 +85,7 @@ public class CrawlTest extends BaseTest {
 			aid = Integer.parseInt(adminId);
 		}
 		//获得用户
-		UserBean user = userService.findById(aid);
+		UserBean user = userHandler.getUserBean(aid);
 		//ExecutorService threadPool = Executors.newFixedThreadPool(5);
 		List<CrawlBean> beans = SqlUtil.convertMapsToBeans(CrawlBean.class, crawlMapper.findAllNotCrawl(0, EnumUtil.WebCrawlType.网易新闻.value));
 		for(CrawlBean bean: beans){
@@ -239,7 +236,7 @@ public class CrawlTest extends BaseTest {
 				aid = Integer.parseInt(adminId);
 			}
 			//获得用户
-			UserBean user = userService.findById(aid);
+			UserBean user = userHandler.getUserBean(aid);
 			//ExecutorService threadPool = Executors.newFixedThreadPool(5);
 			List<CrawlBean> beans = SqlUtil.convertMapsToBeans(CrawlBean.class, crawlMapper.findAllNotCrawl(0,EnumUtil.WebCrawlType.散文网.value));
 			for(CrawlBean bean: beans){

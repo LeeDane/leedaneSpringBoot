@@ -103,22 +103,22 @@ layui.use(['carousel', 'form', 'laypage', "laydate", 'layer'], function(){
 
     //鼠标悬停提示特效
     $("#longLinkTip").hover(function() {
-        openTipMsg("#longLinkTip", "1、请勿将此推广链接打开后再发送给用户，否则无法跟踪。<br/>2、若订单使用红包或购物券后佣金有可能支付给红包推广者，如您是自推自买，请勿使用他人分享的红包及购物券。红包推广是什么？<br/>Ps:当面付、火车票或者理财保险类商品不支持佣金<br/>");
+        openTipMsg("#longLinkTip", "1、请勿将此推广链接打开后再发送给用户，否则无法跟踪。<br/>2、若订单使用红包或购物券后佣金有可能支付给红包推广者，如您是自推自买，请勿使用他人分享的红包及购物券。红包推广是什么？<br/>Ps:当面付、火车票或者理财保险类商品不支持佣金<br/>", 4);
     }, function() {
         layer.close(subtips);
     });
     $("#shortLinkTip").hover(function() {
-        openTipMsg("#shortLinkTip", "1、有效期：300天，过期失效需要重新获取。<br/>2、请勿将此推广链接打开后再发送给用户，否则无法跟踪。<br/>3、若订单使用红包或购物券后佣金有可能支付给红包推广者，如您是自推自买，请勿使用他人分享的红包及购物券。红包推广是什么？<br/>Ps:当面付、火车票或者理财保险类商品不支持佣金<br/>");
+        openTipMsg("#shortLinkTip", "1、有效期：300天，过期失效需要重新获取。<br/>2、请勿将此推广链接打开后再发送给用户，否则无法跟踪。<br/>3、若订单使用红包或购物券后佣金有可能支付给红包推广者，如您是自推自买，请勿使用他人分享的红包及购物券。红包推广是什么？<br/>Ps:当面付、火车票或者理财保险类商品不支持佣金<br/>", 4);
     }, function() {
         layer.close(subtips);
     });
     $("#koulingLinkTip").hover(function() {
-        openTipMsg("#koulingLinkTip", "1、有效期：30天，过期失效需要重新获取。<br/>2、若订单使用红包或购物券后佣金有可能支付给红包推广者，如您是自推自买，请勿使用他人分享的红包及购物券。红包推广是什么？<br/>Ps:当面付、火车票或者理财保险类商品不支持佣金<br/>");
+        openTipMsg("#koulingLinkTip", "1、有效期：30天，过期失效需要重新获取。<br/>2、若订单使用红包或购物券后佣金有可能支付给红包推广者，如您是自推自买，请勿使用他人分享的红包及购物券。红包推广是什么？<br/>Ps:当面付、火车票或者理财保险类商品不支持佣金<br/>", 4);
     }, function() {
         layer.close(subtips);
     });
     $("#qrcodeTip").hover(function() {
-        openTipMsg("#qrcodeTip", "1、有效期：300天，过期失效需要重新获取。<br/>2、若订单使用红包或购物券后佣金有可能支付给红包推广者，如您是自推自买，请勿使用他人分享的红包及购物券。红包推广是什么？<br/>Ps:当面付、火车票或者理财保险类商品不支持佣金<br/>");
+        openTipMsg("#qrcodeTip", "1、有效期：300天，过期失效需要重新获取。<br/>2、若订单使用红包或购物券后佣金有可能支付给红包推广者，如您是自推自买，请勿使用他人分享的红包及购物券。红包推广是什么？<br/>Ps:当面付、火车票或者理财保险类商品不支持佣金<br/>", 4);
     }, function() {
         layer.close(subtips);
     });
@@ -129,9 +129,7 @@ layui.use(['carousel', 'form', 'laypage', "laydate", 'layer'], function(){
     getShareLinks();
     initClipBoard();
 });
-function openTipMsg(domId, msg) {
-    subtips = layer.tips(msg, domId,{tips:[4,'#FFB800'], time: 8000});
-}
+
 var $container;
 var $commentContainer;
 var $recommendContainer;

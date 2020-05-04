@@ -13,7 +13,7 @@
 			<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
 			<ul class="layui-nav layui-nav-tree"  lay-filter="test" >
 				<li th:class="'layui-nav-item'" th:each="setting, settingIndex : ${mysettings}">
-					<a th:href="${setting.path}" th:utext="${setting.name}" th:class="${tabId} == ${setting.id} ? 'layui-this':''">个人信息</a>
+					<a th:href="${setting.path}" th:class="${tabId} == ${setting.id} ? 'layui-this':''"><i th:class="layui-icon + ' ' +  ${setting.icon}" style="font-size: 13px; margin-right: 6px;"></i> <span th:utext="${setting.name}"></span></a>
 					<dl class="layui-nav-child" th:if="${setting.childern.size()} gt 0" th:each="childern : ${setting.childern}">
 						<dd><a th:href="${childern.path}" th:class="${tabId} == ${childern.id} ? 'layui-this':''" th:utext="${childern.name}">我的资料</a></dd>
 						<!--<dd><a href="javascript:;">修改密码</a></dd>

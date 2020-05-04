@@ -21,5 +21,5 @@ public interface AttentionMapper extends BaseMapper<AttentionBean>{
      * @param rows
      * @return
      */
-    public List<Map<String, Object>> getMyAttentions(@Param("id")long userId, @Param("start")int start, @Param("limit")int rows);
+    public List<Map<String, Object>> getMyAttentions(@Param("userId")long userId, @Param("start")int start, @Param("limit")int rows);
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.cn.leedane.handler.UserHandler;
 import net.sf.json.JSONObject;
 
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class SignInTest extends BaseTest {
 	private SignInService<SignInBean> signInService;
 	
 	@Resource
-	private UserService<UserBean> userService;
+	private UserHandler userHandler;
 
 	/**
 	 * 缓存
@@ -81,7 +82,7 @@ public class SignInTest extends BaseTest {
 		if(!StringUtil.isNull(adminId)){
 			aid = Integer.parseInt(adminId);
 		}
-		UserBean user = userService.findById(aid);
+		UserBean user = userHandler.getUserBean(aid);
 		
 		if(user != null)
 			bean.setCreateUserId(user.getId());
@@ -101,7 +102,7 @@ public class SignInTest extends BaseTest {
 	@Test
 	public void saveSignIn(){
 		
-		UserBean user = userService.findById(1);
+		UserBean user = userHandler.getUserBean(1);
 		String str = "{\"account\":\"leedane\",\"login_mothod\":\"android\",\"no_login_code\":\"14480951808066e31568670e51be42bc7978cc2066ea060.521926355594616\"}";
 		JSONObject jo = JSONObject.fromObject(str);
 		try {
@@ -114,7 +115,7 @@ public class SignInTest extends BaseTest {
 	
 	@Test
 	public void getSignInByLimit(){
-		UserBean user = userService.findById(1);
+		UserBean user = userHandler.getUserBean(1);
 		String str = "{'uid':1, 'pageSize':5,'timeScope':2, 'start_date': '2016-01-18', 'end_date':'2016-01-18'}";
 		JSONObject jo = JSONObject.fromObject(str);
 		try {

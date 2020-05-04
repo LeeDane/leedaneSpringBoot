@@ -1,19 +1,5 @@
 package com.cn.leedane.controller;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.cn.leedane.enums.FileType;
 import com.cn.leedane.model.FilePathBean;
 import com.cn.leedane.model.UserBean;
@@ -24,6 +10,18 @@ import com.cn.leedane.utils.ControllerBaseNameUtil;
 import com.cn.leedane.utils.EnumUtil;
 import com.cn.leedane.utils.EnumUtil.ResponseCode;
 import com.cn.leedane.utils.StringUtil;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = ControllerBaseNameUtil.adl)
@@ -47,9 +45,9 @@ public class AppFileDownloadController extends BaseController{
     	Map<String, Object> message = new HashMap<String, Object>();
         try {
         	
-        	int uid = StringUtil.parseInt(request.getParameter("uid"), 0);
+        	int uid = StringUtil.changeObjectToInt(request.getParameter("uid"));
         	logger.info("用户ID为："+uid);
-            UserBean user = userService.findById(uid);
+            UserBean user = userHandler.getUserBean(uid);
             if(user == null){
             	response.setStatus(ResponseCode.请先登录.value);
             	printWriter(message, response, startTime);
@@ -134,7 +132,7 @@ public class AppFileDownloadController extends BaseController{
     	String tableUuid = request.getParameter("uuid");  //客户端生成的唯一性uuid标识符
     	int uid = StringUtil.parseInt(request.getParameter("uid"), 0);
     	
-    	UserBean user = userService.findById(uid);
+    	UserBean user = userHandler.getUserBean(uid);
     	logger.info("用户ID为："+uid);
         
         if(user == null){

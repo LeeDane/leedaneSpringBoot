@@ -11,6 +11,6 @@
 	 <!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
 	<select id="getMyCollections" resultType="java.util.Map">
 		select a.id, a.table_name, a.table_id, a.create_user_id, date_format(a.create_time,'%Y-%m-%d %H:%i:%s') create_time
-		from t_collection a where a.create_user_id = #{id} and a.status = 1 order by a.id desc limit #{start},#{limit}
+		from t_collection a where a.create_user_id = #{userId} and a.status = 1 order by a.id desc limit #{start},#{limit}
 	</select>
 </mapper>

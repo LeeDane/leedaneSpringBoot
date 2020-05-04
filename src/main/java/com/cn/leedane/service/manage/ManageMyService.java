@@ -113,4 +113,36 @@ public interface ManageMyService<T extends IDBean>{
 	 */
 	public ResponseModel deleteCollection(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 
+	/* 添加注销账号记录
+	 * @param jo 参数
+	 * @param user 用户
+	 * @param request
+	 * @return
+	 */
+	public ResponseModel addLogout(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+
+	/* 取消注销账号申请记录
+	 * @param jo 参数
+	 * @param user 用户
+	 * @param request
+	 * @return
+	 */
+	public ResponseModel cancelLogout(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+
+	/* 注销账号
+	 * @param jo 参数
+	 * @param user 用户
+	 * @param request
+	 * @return
+	 */
+	public ResponseModel destroyLogout(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+
+	/* 获取注销账号记录
+	 * @param jo 参数
+	 * @param user 用户
+	 * @param request
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public ResponseModel getLogout(JSONObject jo, UserBean user, HttpRequestInfoBean request);
 }

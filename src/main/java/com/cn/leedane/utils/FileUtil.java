@@ -18,6 +18,9 @@ import java.util.UUID;
 import com.cn.leedane.handler.CloudStoreHandler;
 import com.cn.leedane.model.GalleryBean;
 import com.cn.leedane.model.UserBean;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 
 /**
  * 文件工具类(文件的读取操作)
@@ -335,5 +338,44 @@ public class FileUtil {
 			return bd.floatValue()  + "M";
 		}
 		return null;
+	}
+
+	/**
+	 * 把File转化为CommonsMultipartFile
+	 * @param inputStream
+	 * @param fieldName
+	 * @return
+	 */
+	public static FileItem createFileItem(InputStream inputStream, String fieldName) {
+		//DiskFileItemFactory()：构造一个配置好的该类的实例
+		//第一个参数threshold(阈值)：以字节为单位.在该阈值之下的item会被存储在内存中，在该阈值之上的item会被当做文件存储
+		//第二个参数data repository：将在其中创建文件的目录.用于配置在创建文件项目时，当文件项目大于临界值时使用的临时文件夹，默认采用系统默认的临时文件路径
+		FileItemFactory factory = new DiskFileItemFactory(16, null);
+		//fieldName：表单字段的名称；第二个参数 ContentType；第三个参数isFormField；第四个：文件名
+		FileItem item = factory.createItem(fieldName, "text/plain", true, fieldName);
+		int bytesRead = 0;
+		byte[] buffer = new byte[8192];
+		OutputStream os = null;
+		try {
+			os = item.getOutputStream();
+			//9.遍历输出文件
+			while((bytesRead = inputStream.read(buffer, 0, 8192)) != -1) {
+				os.write(buffer, 0, bytesRead);//从buffer中得到数据进行写操作
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(os != null) {
+					os.close();
+				}
+				if(inputStream != null) {
+					inputStream.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return item;
 	}
 }

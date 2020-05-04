@@ -5,7 +5,6 @@ import com.cn.leedane.exception.MustLoginException;
 import com.cn.leedane.exception.ParameterUnspecificationException;
 import com.cn.leedane.mapper.SqlSearchMapper;
 import com.cn.leedane.model.ElasticSearchRequestBean;
-import com.cn.leedane.model.UserBean;
 import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.SqlUtil;
@@ -19,6 +18,9 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
+import org.elasticsearch.action.bulk.BulkItemResponse;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
@@ -26,24 +28,25 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
+import org.elasticsearch.index.reindex.DeleteByQueryAction;
+import org.elasticsearch.index.reindex.DeleteByQueryRequest;
+import org.elasticsearch.index.reindex.DeleteByQueryRequestBuilder;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * ElasticSearch相关的工具类
@@ -194,6 +197,31 @@ public class ElasticSearchUtil {
 	}
 
 	/**
+	 * 通过用户IDs删除
+	 * @param table
+	 * @param field
+	 * @param userId
+	 * @return 返回删除成功的数量，默认是0
+	 */
+	public long deleteByUser(String table, String field, long userId) {
+
+		BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
+		String[] fields = field.split(",");
+		if(fields.length > 0){
+			for(String f: fields)
+				queryBuilder.must(QueryBuilders.termQuery(f, userId));
+
+			BulkByScrollResponse response =
+					DeleteByQueryAction.INSTANCE.newRequestBuilder(transportClient)
+							.filter(queryBuilder)
+							.source(getDefaultIndexName(table))
+							.get();
+			return response.getDeleted();
+		}
+		return 0;
+	}
+
+	/**
 	 * 删除索引及该索引所管辖的记录
 	 * @param table 数据表名称
 	 * @return
@@ -316,11 +344,30 @@ public class ElasticSearchUtil {
 
 		if(elasticSearchRequestBean.getShowFields() != null && elasticSearchRequestBean.getShowFields().length > 0)
 			builder.setFetchSource(elasticSearchRequestBean.getShowFields(), null);
-		//高亮显示规则
-		HighlightBuilder highlightBuilder = new HighlightBuilder();
-		highlightBuilder.preTags("<span style='color:red'>");
-		highlightBuilder.postTags("</span>");
-		builder.highlighter(highlightBuilder);
+
+
+		//使用默认标签包裹
+		//highlightBuilder.highlighterType("Unified");
+		//设置高亮的字段名, 设置高亮的字段
+		String[] highlightFields = elasticSearchRequestBean.getHighlightFields();
+		if(highlightFields != null){
+			//3.设置查询高亮显示--使用默认后缀
+			HighlightBuilder highlightBuilder = new HighlightBuilder();
+			String preTags = "<span style=\"color: #ff0000\">";
+			String postTags = "</span>";
+			//设置前缀-后缀
+			highlightBuilder.preTags(preTags);
+			highlightBuilder.postTags(postTags);
+			for(int i= 0; i< highlightFields.length; i++){
+				highlightBuilder.field(highlightFields[i]);
+			}
+			highlightBuilder.requireFieldMatch(false);
+			//下面这两项,如果你要高亮如文字内容等有很多字的字段,必须配置,不然会导致高亮不全,文章内容缺失等
+			highlightBuilder.fragmentSize(80000); //最大高亮分片数
+			builder.highlighter(highlightBuilder);
+		}
+
+
 		//控制是否新增排序
 		if(StringUtil.isNotNull(elasticSearchRequestBean.getSortField()))
 			builder.addSort(elasticSearchRequestBean.getSortField(), elasticSearchRequestBean.getOrder());
@@ -331,7 +378,7 @@ public class ElasticSearchUtil {
 			builder.setSize(0);
 		else
 			builder.setSize(elasticSearchRequestBean.getNumber());
-		logger.error(builder.toString());
+		logger.info(builder.toString());
 
 		SearchResponse response = builder.get();
 
@@ -341,7 +388,7 @@ public class ElasticSearchUtil {
 			result.add(hit.getSourceAsMap());
 		}*/
 
-		logger.error(boolQuery.toString());
+		logger.info(boolQuery.toString());
 		return response;
 	}
 

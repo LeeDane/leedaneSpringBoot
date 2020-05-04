@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.utils.EnumUtil;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ public class OperateLogTest extends BaseTest {
 	private OperateLogMapper operateLogMapper;
 	
 	@Resource
-	private UserService<UserBean> userService;
+	private UserHandler userHandler;
 	@Resource
 	private UploadQiniuCloud uploadQiniuCloud;
 	/**
@@ -49,7 +50,7 @@ public class OperateLogTest extends BaseTest {
     	String ip = "127.0.0.1";
         operateLogBean.setIp(ip);
         operateLogBean.setStatus(1);
-        operateLogBean.setCreateUserId(userService.findById(aid).getId());
+        operateLogBean.setCreateUserId(userHandler.getUserBean(aid).getId());
         operateLogBean.setCreateTime(new Date());
         operateLogBean.setBrowser("猎豹浏览器");
         operateLogBean.setMethod("单元测试");

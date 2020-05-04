@@ -35,6 +35,8 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,7 +158,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 				Watched watched = new ConcreteWatched();       
 		        Watcher watcher = new ConcreteWatcher();
 		        watched.addWatcher(watcher);
-		        watched.notifyWatchers(userService.findById(user.getId()), new UpdateMoodTemplate());      
+		        watched.notifyWatchers(userHandler.getUserBean(user.getId()), new UpdateMoodTemplate());
 	        	message.put("message", i);
 		        message.put("success", true);
 	        }
@@ -206,7 +208,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 				Watched watched = new ConcreteWatched();       
 		        Watcher watcher = new ConcreteWatcher();
 		        watched.addWatcher(watcher);
-		        watched.notifyWatchers(userService.findById(user.getId()), new UpdateMoodTemplate());
+		        watched.notifyWatchers(userHandler.getUserBean(user.getId()), new UpdateMoodTemplate());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -400,6 +402,9 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 		SearchResponse response = builder.get();
 
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		/*SearchHits searchHit = response.getHits();
+		SearchHit[] hits = searchHit.getHits();
+		long cu = searchHit.getTotalHits();*/
 		for (SearchHit hit : response.getHits()) {
 			Map<String, HighlightField> fieldMap = hit.getHighlightFields();
 			result.add(hit.getSourceAsMap());
@@ -426,7 +431,8 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 				}
 			}	
 		}
-		message.put("total", SqlUtil.getTotalByList(moodMapper.getTotal(DataTableType.心情.value, " m where create_user_id="+ toUserId +" and "+ getMoodStatusSQL(toUserId, user))));
+//		message.put("total", SqlUtil.getTotalByList(moodMapper.getTotal(DataTableType.心情.value, " m where create_user_id="+ toUserId +" and "+ getMoodStatusSQL(toUserId, user))));
+		message.put("total", response.getHits().getTotalHits());
 		//保存操作日志
 //		operateLogService.saveOperateLog(user, request, null, user.getAccount()+"查看用户id为"+toUserId+"个人中心", "getMoodPaging()", ConstantsUtil.STATUS_NORMAL, 0);
 		message.put("message", result);
@@ -502,7 +508,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			/*Watched watched = new ConcreteWatched();       
 	        Watcher watcher = new ConcreteWatcher();
 	        watched.addWatcher(watcher);
-	        watched.notifyWatchers(userService.findById(user.getId()), new UpdateMoodTemplate());*/
+	        watched.notifyWatchers(userHandler.getUserBean(user.getId()), new UpdateMoodTemplate());*/
 		}else{
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.服务器处理异常.value));
 			message.put("responseCode", EnumUtil.ResponseCode.服务器处理异常.value);
@@ -649,7 +655,7 @@ public class MoodServiceImpl extends AdminRoleCheckService implements MoodServic
 			Watched watched = new ConcreteWatched();       
 	        Watcher watcher = new ConcreteWatcher();
 	        watched.addWatcher(watcher);
-	        watched.notifyWatchers(userService.findById(user.getId()), new UpdateMoodTemplate());*/
+	        watched.notifyWatchers(userHandler.getUserBean(user.getId()), new UpdateMoodTemplate());*/
 			TimeLineBean timeLineBean = new TimeLineBean();
 			timeLineBean.setContent(moodBean.getContent());
 			timeLineBean.setCreateTime(DateUtil.DateToString(new Date()));

@@ -120,7 +120,7 @@ public class FriendServiceImpl implements FriendService<FriendBean> {
 			return message.getMap();	
 		}
 		
-		UserBean toUser = userService.findById(toUserId);
+		UserBean toUser = userHandler.getUserBean(toUserId);
 		if(toUser == null){
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.用户不存在或请求参数不对.value));
 		}

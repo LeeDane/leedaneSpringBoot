@@ -1,14 +1,7 @@
 package com.cn.leedane.test;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.junit.Test;
-
 import com.cn.leedane.cache.SystemCache;
+import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.CartMapper;
 import com.cn.leedane.mapper.ProductMapper;
 import com.cn.leedane.model.CartBean;
@@ -16,9 +9,14 @@ import com.cn.leedane.model.CartDetailsBean;
 import com.cn.leedane.model.ProductBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.CartDetailsService;
-import com.cn.leedane.service.UserService;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.utils.StringUtil;
+import org.junit.Test;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 购物车相关的测试类
@@ -32,7 +30,7 @@ public class CartTest extends BaseTest {
 	private CartMapper cartMapper;
 	
 	@Resource
-	private UserService<UserBean> userService;
+	private UserHandler userHandler;
 	
 	@Resource
 	private ProductMapper productMapper;
@@ -52,7 +50,7 @@ public class CartTest extends BaseTest {
 		if(!StringUtil.isNull(adminId)){
 			aid = Integer.parseInt(adminId);
 		}
-		UserBean user = userService.findById(aid);
+		UserBean user = userHandler.getUserBean(aid);
 		CartBean bean = new CartBean();
 		bean.setCreateUserId(user.getId());
 		bean.setCreateTime(new Date());

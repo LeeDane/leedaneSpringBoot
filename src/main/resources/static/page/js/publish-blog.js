@@ -50,7 +50,7 @@ var ue = UE.getEditor('editor', {
 });
 
 /**
- * 获取编辑的博客
+ * 编辑的博客
  * @param bid
  */
 function getEditBlog(bid){

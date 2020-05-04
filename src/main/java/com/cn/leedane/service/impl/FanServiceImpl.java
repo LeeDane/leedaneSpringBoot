@@ -12,7 +12,6 @@ import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.FanService;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import com.cn.leedane.utils.EnumUtil.NotificationType;
@@ -39,14 +38,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 	Logger logger = Logger.getLogger(getClass());
 	@Autowired
 	private FanMapper fanMapper;
-	
-	@Autowired
-	private UserService<UserBean> userService;
-	
-	public void setUserService(UserService<UserBean> userService) {
-		this.userService = userService;
-	}
-	
+
 	@Autowired
 	private UserHandler userHandler;
 	
@@ -391,7 +383,7 @@ public class FanServiceImpl implements FanService<FanBean> {
 			return message.getMap();			
 		}
 
-		UserBean toUser = userService.findById(toUserId);
+		UserBean toUser = userHandler.getUserBean(toUserId);
 		if(toUser == null)
 			throw new RE404Exception(EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作对象不存在.value));
 		

@@ -1,30 +1,24 @@
 package com.cn.leedane.controller;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cn.leedane.model.FilePathBean;
+import com.cn.leedane.model.UploadBean;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.service.FilePathService;
+import com.cn.leedane.service.UploadService;
+import com.cn.leedane.utils.*;
+import com.cn.leedane.utils.EnumUtil.ResponseCode;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.cn.leedane.model.FilePathBean;
-import com.cn.leedane.model.UploadBean;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.service.FilePathService;
-import com.cn.leedane.service.UploadService;
-import com.cn.leedane.utils.ConstantsUtil;
-import com.cn.leedane.utils.ControllerBaseNameUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.EnumUtil.ResponseCode;
-import com.cn.leedane.utils.ResponseMap;
-import com.cn.leedane.utils.StringUtil;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = ControllerBaseNameUtil.aul)
@@ -50,9 +44,9 @@ public class AppFileUploadController extends BaseController{
     public Map<String, Object> execute(HttpServletRequest request) {
     	ResponseMap message = new ResponseMap();
         try {
-        	int uid = StringUtil.parseInt(request.getParameter("uid"), 0);
-            
-            UserBean user = userService.findById(uid);
+        	long uid = StringUtil.changeObjectToLong(request.getParameter("uid"));
+
+            UserBean user = userHandler.getUserBean(uid);
             if(user == null){
             	message.put("message", EnumUtil.getResponseValue(ResponseCode.请先登录.value));
             	message.put("responseCode", ResponseCode.请先登录.value);

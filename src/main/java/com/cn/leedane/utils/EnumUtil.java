@@ -92,7 +92,7 @@ public class EnumUtil {
 		角色("t_role"), 用户角色("t_user_role"), 链接管理("t_link_manage"), 留言("t_message_board"), 素材("t_material"), 
 		任务("t_job_manage"), 贡献值("t_circle_contribution"),圈子("t_circle"), 圈子成员("t_circle_member"), 帖子("t_circle_post"), 
 		不存在的表("t_inexistence"), 分类("t_category"), 商店("t_mall_shop"), 商店商品("t_mall_product"), 商品订单("t_mall_order"),
-		商品心愿单("t_mall_wish"), 大事件("t_event"), 选项配置("t_option"), 推广位管理("t_mall_promotion_seat");
+		商品心愿单("t_mall_wish"), 大事件("t_event"), 选项配置("t_option"), 推广位管理("t_mall_promotion_seat"), 黑名单("t_manage_black");
 	
 		private DataTableType(String value) {
 			this.value = value;

@@ -1,18 +1,18 @@
 package com.cn.leedane.handler;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.cn.leedane.cache.SystemCache;
+import com.cn.leedane.controller.RoleController;
+import com.cn.leedane.exception.RE404Exception;
+import com.cn.leedane.mapper.UserMapper;
+import com.cn.leedane.model.UserBean;
+import com.cn.leedane.model.UserSettingBean;
+import com.cn.leedane.model.UserTokenBean;
+import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.utils.*;
+import com.cn.leedane.utils.EnumUtil.DataTableType;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -22,15 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.cn.leedane.cache.SystemCache;
-import com.cn.leedane.controller.RoleController;
-import com.cn.leedane.exception.RE404Exception;
-import com.cn.leedane.mapper.UserMapper;
-import com.cn.leedane.model.UserBean;
-import com.cn.leedane.model.UserSettingBean;
-import com.cn.leedane.model.UserTokenBean;
-import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.utils.EnumUtil.DataTableType;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * 用户的处理类
@@ -241,25 +234,43 @@ public class UserHandler {
 			}
 		}
 	}
-	
+
 	/**
-	 * 获取用户的信息
+	 * 获取用户的信息(不需要检查用户的信息)
+	 * @param userId
 	 * @return
 	 */
+
 	public JSONObject getUserDetail(long userId){
-		UserBean user = getUserBean(userId);
+		return getUserDetail(userId, false);
+	}
+
+	public JSONObject getUserDetail(long userId, boolean check){
+		UserBean user = getUserBean(userId, check);
 		if(user != null){
+			if(check && user.getStatus() != ConstantsUtil.STATUS_NORMAL)
+				throw new NullPointerException("该账号不存在");
 			return JSONObject.fromObject(user);
 		}
 		return new JSONObject();
 	}
-	
+
 	/**
-	 * 获取用户Bean
+	 * 获取用户Bean(需要检查用户是否是正常状态)
 	 * @param userId 用户Id
 	 * @return
 	 */
 	public UserBean getUserBean(long userId){
+		return getUserBean(userId, true);
+	}
+
+	/**
+	 * 获取用户Bean
+	 * @param userId
+	 * @param check 是否需要检查用户状态是正常
+	 * @return
+	 */
+	public UserBean getUserBean(long userId, boolean check){
 		String userInfoKey = getRedisUserInfoKey(userId);
 		UserBean user = null;
 		//先从ehCache中读取缓存信息
@@ -295,13 +306,16 @@ public class UserHandler {
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		if(check && (user == null || user.getStatus() != ConstantsUtil.STATUS_NORMAL))
+			throw new NullPointerException("该账号不存在");
 		return user;
 	}
 	
 	/**
 	 * 获取用户Bean
 	 * @param username 用户名
-	 * @param username 密码
+	 * @param pwd 密码
 	 * @return
 	 */
 	public UserBean getUserBean(String username, String pwd){
@@ -326,14 +340,25 @@ public class UserHandler {
 		redisUtil.delete(userInfoKey);
 		systemCache.removeCache(userInfoKey);
 	}
-	
+
 	/**
 	 * 获取用户的名称
+	 * @param userId
+	 * @param check 是否需要获取正常状态的用户
+	 * @return
+	 */
+	public String getUserName(long userId, boolean check){
+		JSONObject userInfo = getUserDetail(userId, check);
+		return userInfo != null ? JsonUtil.getStringValue(userInfo, "account") : "该用户已经不存在";
+	}
+
+	/**
+	 * 获取用户的名称(需要获取正常状态的用户)
+	 * @param userId
 	 * @return
 	 */
 	public String getUserName(long userId){
-		JSONObject userInfo = getUserDetail(userId);
-		return userInfo != null ? JsonUtil.getStringValue(userInfo, "account") : null;
+		return getUserName(userId, true);
 	}
 	
 	/**
@@ -360,7 +385,7 @@ public class UserHandler {
 	 * @return
 	 */
 	public String getUserMobilePhone(long userId){
-		JSONObject userInfo = getUserDetail(userId);
+		JSONObject userInfo = getUserDetail(userId, true);
 		return JsonUtil.getStringValue(userInfo, "mobile_phone");
 	}
 	

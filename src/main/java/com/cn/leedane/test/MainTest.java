@@ -73,7 +73,7 @@ public class MainTest {
 		//sqlSessionTemplate
 		//logger.info("sqlSessionTemplate object="+ o);
 		/*UserService<UserBean> userService = (UserService<UserBean>) SpringUtil.getBean("userService");
-		UserBean user = userService.findById(1);
+		UserBean user = userHandler.getUserBean(1);
 		logger.info(user.getAccount());*/
 		//UserBean user = new UserBean();
 		//user.setAccount("dane");

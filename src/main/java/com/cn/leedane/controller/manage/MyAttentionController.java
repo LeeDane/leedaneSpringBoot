@@ -39,8 +39,7 @@ public class MyAttentionController extends BaseController{
 	@RequestMapping(value = "/all/my/attention", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	public LayuiTableResponseModel attentions(HttpServletRequest request) throws Exception {
 		ResponseMap message = new ResponseMap();
-		if(!checkParams(message, request));
-
+		checkParams(message, request);
 		return manageMyService.attentions(getJsonFromMessage(message), getMustLoginUserFromShiro(), getHttpRequestInfo(request));
 	}
 

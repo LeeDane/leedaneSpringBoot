@@ -1,17 +1,16 @@
 package com.cn.leedane.test;
-import javax.annotation.Resource;
 
-import net.sf.json.JSONObject;
-
-import org.junit.Test;
-
+import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.model.CommentBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.CommentService;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
+import net.sf.json.JSONObject;
+import org.junit.Test;
+
+import javax.annotation.Resource;
 
 /**
  * 评论相关的测试类
@@ -24,7 +23,7 @@ public class CommentTest extends BaseTest {
     private OperateLogService<OperateLogBean> operateLogService;
 
     @Resource
-    private UserService<UserBean> userService;
+    private UserHandler userHandler;
 
     @Resource
     private CommentService<CommentBean> commentService;
@@ -34,7 +33,7 @@ public class CommentTest extends BaseTest {
     @Test
     public void publish() throws Exception{
         long start = System.currentTimeMillis();
-        UserBean user = userService.findById(1);
+        UserBean user = userHandler.getUserBean(1);
 
         String str = "{\"table_name\":\""+DataTableType.心情.value+"\", \"table_id\":1104, \"content\":\"谢谢，你也是！\", \"cid\":0}";
 
@@ -50,7 +49,7 @@ public class CommentTest extends BaseTest {
 
     @Test
     public void getCommentByLimit(){
-		/*UserBean user = userService.findById(1);
+		/*UserBean user = userHandler.getUserBean(1);
 
 		String str = "{\"table_name\":\""+DataTableType.心情.value+"\", \"table_id\":1,\"pageSize\":5,\"first_id\": 2, \"last_id\":2, \"method\":\"firstloading\"}";
 		JSONObject jo = JSONObject.fromObject(str);
@@ -70,7 +69,7 @@ public class CommentTest extends BaseTest {
 
     @Test
     public void getOneCommentItemsByLimit(){
-		/*UserBean user = userService.findById(1);
+		/*UserBean user = userHandler.getUserBean(1);
 
 		String str = "{\"table_name\":\""+DataTableType.心情.value+"\", \"cid\":1, \"table_id\":1,\"first_id\": 2, \"last_id\":2, \"method\":\"firstloading\"}";
 		JSONObject jo = JSONObject.fromObject(str);
@@ -89,7 +88,7 @@ public class CommentTest extends BaseTest {
 
     @Test
     public void getCommentsCount(){
-		/*UserBean user = userService.findById(1);
+		/*UserBean user = userHandler.getUserBean(1);
 
 		String str = "{\"table_name\":\""+DataTableType.心情.value+"\", \"table_id\":1}";
 		JSONObject jo = JSONObject.fromObject(str);

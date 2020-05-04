@@ -1608,3 +1608,49 @@ CREATE TABLE `t_util_county` (
   CONSTRAINT `FK_util_county_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_util_county_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
+-- Table structure for t_logout  省表
+-- ----------------------------
+DROP TABLE IF EXISTS `t_logout`;
+CREATE TABLE `t_logout` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
+  `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_user_id` int(11) DEFAULT NULL COMMENT '创建人',
+  `modify_user_id` int(11) DEFAULT NULL COMMENT '修改人',
+  `reason` varchar(50) NOT NULL COMMENT '注销原因',
+  `note` varchar(255) NOT NULL COMMENT '备注信息',
+  `overdue` datetime NOT NULL COMMENT '过期时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `t_logout_unique` (`create_user_id`),
+  KEY `FK_logout_create_user` (`create_user_id`),
+  KEY `FK_logout_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_logout_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_logout_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_manage_black  我的黑名单表
+-- ----------------------------
+DROP TABLE IF EXISTS `t_manage_black`;
+CREATE TABLE `t_manage_black` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
+  `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_user_id` int(11) DEFAULT NULL COMMENT '创建人',
+  `modify_user_id` int(11) DEFAULT NULL COMMENT '修改人',
+  `user_id` int(11) NOT NULL COMMENT '黑名单用户ID',
+  `authorization` varchar(255) DEFAULT NULL COMMENT '授权信息',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `t_manage_black_unique` (`create_user_id`, `user_id`),
+  KEY `FK_manage_black_create_user` (`create_user_id`),
+  KEY `FK_manage_black_modify_user` (`modify_user_id`),
+  KEY `FK_manage_black_modify_user_id` (`user_id`),
+  CONSTRAINT `FK_manage_black_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_manage_black_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_manage_black_modify_user_id` FOREIGN KEY (`user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

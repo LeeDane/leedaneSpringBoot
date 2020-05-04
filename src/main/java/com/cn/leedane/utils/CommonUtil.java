@@ -608,6 +608,21 @@ public class CommonUtil {
 		return new JSONObject();
 	}
 
+	/**
+	 * 从文本中解析到地址信息
+	 * 测试：司机：其实我是个 #预言家  #这就是山东   #搞笑  #亮一亮山东新动能 https://v.douyin.com/KAve9m/ 复制此链接，打开【抖音短视频】，直接观看视频！
+	 * @param text
+	 * @return
+	 */
+	public static String parseLink(String text){
+		Pattern pattern = Pattern.compile("https?://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]");
+		Matcher matcher = pattern.matcher(text);
+		if (matcher.find()) {
+			return matcher.group();
+		}
+		return null;
+	}
+
 	/*public static void main(String[] args) {
 		String url = "https://mobile.yangkeduo.com/duo_coupon_landing.html?goods_id1=4946116872&pid=9503869_122542943&cpsSign=CC_191202_9503869_122542943_0a778a5cb045d934c818f82128872ce9&duoduo_type=2";
 		System.out.println(parseLinkParams(url, "id", "goods_id", "pid"));

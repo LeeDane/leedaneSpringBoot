@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import com.cn.leedane.handler.UserHandler;
 import net.sf.json.JSONObject;
 
 import org.junit.Test;
@@ -15,6 +16,7 @@ import com.cn.leedane.service.UserService;
 import com.cn.leedane.utils.Base64ImageUtil;
 import com.cn.leedane.utils.ConstantsUtil;
 import com.cn.leedane.utils.DateUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 用户相关的测试类
@@ -28,6 +30,9 @@ public class UserTest extends BaseTest {
 	
 	@Resource
 	private RoleService<RoleBean> rolesService;
+
+	@Autowired
+	private UserHandler userHandler;
 	
 	private Date[] dates ={DateUtil.stringToDate("2015-06-16 14:10:37"),DateUtil.stringToDate("2015-07-10 12:13:08")
 			,DateUtil.stringToDate("2015-07-08 09:03:07"),DateUtil.stringToDate("2015-07-09 21:53:33")
@@ -100,7 +105,7 @@ public class UserTest extends BaseTest {
 	
 	@Test
 	public void deleteID(){
-		UserBean b = userService.findById(3);
+		UserBean b = userHandler.getUserBean(3);
 		try {
 			userService.delete(b);
 		} catch (Exception e) {
@@ -120,7 +125,7 @@ public class UserTest extends BaseTest {
 			String str = "{\"base64\": \""+ base64+ "\"}";
 			JSONObject jo = JSONObject.fromObject(str);
 			
-			UserBean user = userService.findById(6);
+			UserBean user = userHandler.getUserBean(6);
 			
 			boolean sucess = userService.uploadHeadBase64StrById(jo, user, null);
 			logger.info("sucess:"+sucess);
@@ -136,7 +141,7 @@ public class UserTest extends BaseTest {
 			String str = "{\"uid\":5, \"pic_size\":\"30x30\"}";
 			JSONObject jo = JSONObject.fromObject(str);
 			
-			UserBean user = userService.findById(1);
+			UserBean user = userHandler.getUserBean(1);
 			
 			String base64Str = userService.getHeadBase64StrById(jo, user, null);
 			logger.info("base64Str:"+base64Str);

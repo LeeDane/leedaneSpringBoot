@@ -2,6 +2,7 @@ package com.cn.leedane.service.impl.manage;
 
 import com.cn.leedane.exception.OperateException;
 import com.cn.leedane.handler.CommonHandler;
+import com.cn.leedane.handler.OptionHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.*;
 import com.cn.leedane.model.*;
@@ -18,6 +19,7 @@ import com.cn.leedane.thread.single.EsIndexAddThread;
 import com.cn.leedane.utils.*;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -81,6 +83,12 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 
 	@Autowired
 	private CommonHandler commonHandler;
+
+	@Autowired
+	private LogoutMapper logoutMapper;
+
+	@Autowired
+	private OptionHandler optionHandler;
 
 	@Override
 	public ResponseModel bindEmail(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws Exception {
@@ -398,4 +406,112 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 
 		return new ResponseModel().error().message("删除收藏记录失败！");
 	}
+
+	@Override
+	public ResponseModel addLogout(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
+		logger.info("LogoutServiceImpl-->addLogout():json="+jo);
+		LogoutBean logoutBean = new LogoutBean();
+		logoutBean.setNote(JsonUtil.getStringValue(jo, "note"));
+		logoutBean.setReason(JsonUtil.getStringValue(jo, "reason"));
+		logoutBean.setStatus(ConstantsUtil.STATUS_NORMAL);
+		logoutBean.setCreateUserId(user.getId());
+		logoutBean.setCreateTime(new Date());
+		logoutBean.setModifyUserId(user.getId());
+		logoutBean.setModifyTime(new Date());
+		logoutBean.setOverdue(DateUtil.getOverdueTime(new Date(), "10秒钟"));
+		boolean result = logoutMapper.save(logoutBean) > 0;
+		//保存操作日志
+		this.operateLogService.saveOperateLog(user, request, new Date(), "申请注销账号记录", "addLogout()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
+		if(result)
+			return new ResponseModel().ok().message("申请通过！");
+		else
+			return new ResponseModel().error().message("申请不通过，请稍后重试！");
+	}
+
+	@Override
+	public ResponseModel cancelLogout(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
+		logger.info("LogoutServiceImpl-->cancelLogout():json="+jo);
+		LogoutBean logoutBean = logoutMapper.recode(user.getId());
+		if(logoutBean == null)
+			throw new NullPointerException("还没有申请注销账号记录");
+
+		boolean result = logoutMapper.delete(logoutBean) > 0;
+		//保存操作日志
+		this.operateLogService.saveOperateLog(user, request, new Date(), "删除申请注销账号记录", "cancelLogout()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
+		if(result)
+			return new ResponseModel().ok().message("删除申请记录通过！");
+		else
+			return new ResponseModel().error().message("删除申请记录不通过，请稍后重试！");
+	}
+
+	@Override
+	public ResponseModel destroyLogout(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
+		logger.info("LogoutServiceImpl-->destroyLogout():json="+jo);
+		LogoutBean logoutBean = logoutMapper.recode(user.getId());
+		if(logoutBean == null)
+			throw new NullPointerException("还没有申请注销账号记录");
+
+		if(logoutBean.getOverdue().getTime() >= System.currentTimeMillis())
+			throw new NullPointerException("还未满时间，无法销毁");
+		//获取注销的数据
+		List<LogoutTable> list = com.alibaba.fastjson.JSONArray.parseArray(StringUtil.changeNotNull(optionHandler.getData("logout", true)), LogoutTable.class);
+		//对获取的数据进行排序
+		Collections.sort(list, new Comparator<LogoutTable>(){
+			@Override
+			public int compare(LogoutTable o1, LogoutTable o2) {
+				return o1.getOrder() - o2.getOrder();
+			}
+		});
+		if(CollectionUtil.isNotEmpty(list)){
+			for(LogoutTable table: list){
+				if(StringUtil.isNotNull(table.getField())){
+					String deleteSql = "delete from "+ table.getTable()+ getLogoutWhereSql(table.getTable(), table.getField(), user);
+//					System.out.println(deleteSql);
+					logoutMapper.executeSQL(deleteSql);
+				}
+			}
+		}
+		//删除elasticsearch缓存
+		long fiId = elasticSearchUtil.deleteByUser("t_mood", "create_user_id,modify_user_id", user.getId());
+		elasticSearchUtil.deleteByUser("t_user", "id", user.getId());
+		elasticSearchUtil.deleteByUser("t_blog", "create_user_id,modify_user_id", user.getId());
+
+		//删除注销申请记录
+		boolean result = logoutMapper.delete(logoutBean) > 0;
+		//修改用户的状态
+		user.setStatus(ConstantsUtil.STATUS_DELETE);
+		result = userMapper.update(user) > 0;
+//
+		//保存操作日志
+		this.operateLogService.saveOperateLog(user, request, new Date(), "注销账号", "destroyLogout()", StringUtil.changeBooleanToInt(result), EnumUtil.LogOperateType.内部接口.value);
+
+		if(result){
+			try{
+				SessionManagerUtil.getInstance().removeSession(SecurityUtils.getSubject().getSession(), true);
+			}catch(Exception e){
+				logger.info("用户注销失败！");
+			}
+			return new ResponseModel().ok().message("该账号已经注销！");
+		}else
+			return new ResponseModel().error().message("该账号已经注销失败，请稍后重试！");
+	}
+
+	private String getLogoutWhereSql(String table, String field, UserBean user) {
+		String[] fields = field.split(",");
+		if(fields.length == 0)
+			throw new IllegalArgumentException(table + "'s field must not null");
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( " where " );
+		for(String f: fields){
+			buffer.append(" "+ f + " = " +user.getId() + " and");
+		}
+		return buffer.delete(buffer.length() - 3, buffer.length()).toString(); //删掉最后面的and
+	}
+
+	@Override
+	public ResponseModel getLogout(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
+		logger.info("LogoutServiceImpl-->getLogout():json="+jo);
+		return new ResponseModel().ok().message(logoutMapper.recode(user.getId()));
+	}
+
 }

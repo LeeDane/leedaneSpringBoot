@@ -1,23 +1,20 @@
 package com.cn.leedane.test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import com.cn.leedane.utils.ResponseModel;
-import net.sf.json.JSONObject;
-
-import org.junit.Test;
-
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.model.GalleryBean;
 import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.GalleryService;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.service.UserService;
+import com.cn.leedane.utils.ResponseModel;
+import com.cn.leedane.utils.StringUtil;
+import net.sf.json.JSONObject;
+import org.junit.Test;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 图库相关的测试类
@@ -30,7 +27,7 @@ public class GalleryTest extends BaseTest {
 	private OperateLogService<OperateLogBean> operateLogService;
 	
 	@Resource
-	private UserService<UserBean> userService;
+	private UserHandler userHandler;
 	@Resource
 	private GalleryService<GalleryBean> galleryService;
 	
@@ -189,7 +186,7 @@ public class GalleryTest extends BaseTest {
 		urls.add("");
 		urls.add("");
 		
-		UserBean user = userService.findById(1);
+		UserBean user = userHandler.getUserBean(1);
 		String str;
 		for(String url: urls){
 			if(!StringUtil.isNull(url)){
@@ -215,7 +212,7 @@ public class GalleryTest extends BaseTest {
 			if(!StringUtil.isNull(url)){
 				bean = new GalleryBean();
 				bean.setCreateTime(new Date());
-				bean.setCreateUser(userService.findById(1));
+				bean.setCreateUser(userHandler.getUserBean(1));
 				bean.setDesc("测试方式上传的数据");
 				bean.setPath(url);
 				bean.setStatus(ConstantsUtil.STATUS_NORMAL);
@@ -288,7 +285,7 @@ public class GalleryTest extends BaseTest {
 		urls.add("http://192.168.42.21:8080/leedane/test/image/");
 		urls.add("http://192.168.42.21:8080/leedane/test/image/");
 		urls.add("http://192.168.42.21:8080/leedane/test/image/");*/
-		UserBean user = userService.findById(1);
+		UserBean user = userHandler.getUserBean(1);
 		String str;
 		for(String url: urls){
 			try {
@@ -312,7 +309,7 @@ public class GalleryTest extends BaseTest {
 	
 	@Test
 	public void getGallery(){
-		UserBean user = userService.findById(1);
+		UserBean user = userHandler.getUserBean(1);
 		//String str = "{\"uid\": 1, \"pageSize\": 10, \"method\":\"lowloading\", \"last_id\":19, \"pic_size\":\"30x30\"}";
 		String str = "{'uid':1,'method':'firstloading','pageSize':10}";
 		JSONObject jo = JSONObject.fromObject(str);

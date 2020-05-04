@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import com.cn.leedane.handler.UserHandler;
 import org.junit.Test;
 
 import com.cn.leedane.cache.SystemCache;
@@ -28,7 +29,7 @@ public class ProductTest extends BaseTest {
 	private ProductMapper productMapper;
 	
 	@Resource
-	private UserService<UserBean> userService;
+	private UserHandler userHandler;
 
 	@Resource
 	private CompanyMapper companyMapper;
@@ -47,7 +48,7 @@ public class ProductTest extends BaseTest {
 		if(!StringUtil.isNull(adminId)){
 			aid = Integer.parseInt(adminId);
 		}
-		UserBean user = userService.findById(aid);
+		UserBean user = userHandler.getUserBean(aid);
 		CompanyBean company1 = companyMapper.findById(CompanyBean.class, 1);
 		CompanyBean company2 = companyMapper.findById(CompanyBean.class, 2);
 		

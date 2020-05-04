@@ -12,8 +12,26 @@
 	<div class="layui-header" th:fragment="helloManage(tabId)">
 		<div class="layui-logo">个人后台管理</div>
 		<ul class="layui-nav layui-layout-left">
-			<li class="layui-nav-item"><a href="/">系统首页</a></li>
-			<li class="layui-nav-item" th:if="${isLogin and isShopping}"><a href="/mall/">MALL商城</a></li>
+			<li class="layui-nav-item layadmin-flexible" lay-unselect="">
+				<a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+					<i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+				</a>
+			</li>
+			<li class="layui-nav-item layui-hide-xs" lay-unselect>
+				<a href="/index" target="_blank" title="系统首页">
+					<i class="layui-icon layui-icon-website"></i>
+				</a>
+			</li>
+			<li class="layui-nav-item layui-hide-xs" th:if="${isLogin and isShopping}" lay-unselect>
+				<a href="/mall/" target="_blank" title="MALL商城">
+					<i class="layui-icon layui-icon-diamond"></i>
+				</a>
+			</li>
+			<li class="layui-nav-item layui-hide-xs" th:if="${isAdmin}" lay-unselect>
+				<a href="/ad/index" target="_blank" title="系统设置">
+					<i class="layui-icon layui-icon-set"></i>
+				</a>
+			</li>
 		</ul>
 		<ul class="layui-nav layui-layout-right">
 			<li class="layui-nav-item">

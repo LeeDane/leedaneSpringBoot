@@ -371,20 +371,9 @@ public class BaseController {
 			logger.info("请求参数:"+json.toString());
 		//if(json != null && !json.isEmpty()){
 			//从请求ID获取用户信息
-			/*if(user == null){
-				if(json.has("id")){
-					//设置为了防止过滤路径，直接在这里加载用户请求有id为默认登录用户
-					try {
-						user = userService.findById(JsonUtil.getIntValue(json, "id"));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}*/
 			
 			//对于有token的再进行shiro校验
 			if(user == null){			
-				//user = userService.findById(1);
 				user = appAuthCheck(request, message, result);
 			}
 			
