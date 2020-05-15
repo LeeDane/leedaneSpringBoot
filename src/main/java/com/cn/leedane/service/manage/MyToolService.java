@@ -6,6 +6,7 @@ import com.cn.leedane.model.UserBean;
 import com.cn.leedane.utils.ResponseModel;
 import net.sf.json.JSONObject;
 import org.apache.hadoop.fs.FSDataInputStream;
+import org.quartz.SchedulerException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
@@ -26,4 +27,34 @@ public interface MyToolService<T extends IDBean> {
      * @return
      */
     public ResponseModel removeWatermark(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+
+
+    /**
+     * 添加事件提醒
+     * @param jo
+     * @param user
+     * @param request
+     * @return
+     */
+    public ResponseModel addRemind(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws SchedulerException;
+
+    /**
+     * 删除事件提醒
+     * @param remindId
+     * @param jo
+     * @param user
+     * @param request
+     * @return
+     */
+    public ResponseModel deleteRemind(long remindId, JSONObject jo, UserBean user, HttpRequestInfoBean request) throws SchedulerException;
+
+    /**
+     * 事件提醒列表
+     * @param jo
+     * @param user
+     * @param request
+     * @return
+     */
+    public ResponseModel reminds(JSONObject jo, UserBean user, HttpRequestInfoBean request);
+
 }

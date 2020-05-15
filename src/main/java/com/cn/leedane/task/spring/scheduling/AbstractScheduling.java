@@ -3,6 +3,7 @@ package com.cn.leedane.task.spring.scheduling;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.cn.leedane.model.JobManageBean;
 import net.sf.json.JSONObject;
 
 import org.quartz.SchedulerException;
@@ -22,6 +23,11 @@ public abstract class AbstractScheduling implements BaseScheduling {
 	 */
 	private JSONObject params;
 
+	/**
+	 * 任务bean
+	 */
+	private JobManageBean jobBean;
+
 	@Override
 	public JSONObject getParams() {
 		return params;
@@ -36,7 +42,17 @@ public abstract class AbstractScheduling implements BaseScheduling {
 	public void execute() throws SchedulerException {
 		
 	}
-	
+
+	@Override
+	public void setJobBean(JobManageBean jobBean) {
+		this.jobBean = jobBean;
+	}
+
+	@Override
+	public JobManageBean getJobBean() {
+		return jobBean;
+	}
+
 	/**
 	 * 解析参数
 	 * @param params

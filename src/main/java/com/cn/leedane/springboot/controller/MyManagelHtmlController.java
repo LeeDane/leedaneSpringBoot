@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 我的资料管理Html页面的控制器
@@ -426,6 +427,37 @@ public class MyManagelHtmlController extends BaseController{
 		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入抖音去水印管理页", "com.cn.leedane.springboot.controller.MallHtmlController.toolDouyinRemoveWatermark", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
 		return loginRoleCheck("manage/tool/douyin-remove-watermark", true, model, request);
 	}
+
+	/**
+	 * 我的工具--> 事件提醒
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/tool/event/remind")
+	public String eventRemind(Model model, HttpServletRequest request){
+		//检查权限，通过后台配置
+		checkRoleOrPermission(model, request);
+		//获取当前登录用户
+		UserBean userBean = getMustLoginUserFromShiro();
+		loadCommon(userBean, model, "tool-event-remind");
+		model.addAttribute("limit", StringUtil.changeObjectToInt(optionHandler.getData("remindSmsLimit", true)));
+		model.addAttribute("sms", StringUtil.isPhone(userHandler.getUserMobilePhone(userBean.getId())));//判断用户是否可以用sms
+		model.addAttribute("email", StringUtil.isEmail(userHandler.getEmail(userBean.getId())));//判断用户是否可以用email
+		List<Map<String, Object>> types = new ArrayList<>();
+		Map<String, Object> type = new HashMap<>();
+		type.put("name", "提醒吃药");
+		type.put("value", "takeMedicine");
+		types.add(type);
+		type = new HashMap<>();
+		type.put("name", "再次提醒吃药");
+		type.put("value", "againTakeMedicine");
+		types.add(type);
+		model.addAttribute("types", types);
+		operateLogService.saveOperateLog(getUserFromShiro(), getHttpRequestInfo(request), null, "进入提醒吃药管理页", "com.cn.leedane.springboot.controller.MallHtmlController.eventRemind", ConstantsUtil.STATUS_SELF, EnumUtil.LogOperateType.网页端.value);
+		return loginRoleCheck("manage/tool/event-remind", true, model, request);
+	}
+
 
 	/**
 	 * 我的云盘

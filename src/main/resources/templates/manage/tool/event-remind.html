@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>事件提醒</title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<link th:if="${not isDebug}" rel="stylesheet" href="https://www.layuicdn.com/layui-v2.5.4/css/layui.css"  media="all" />
+	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.5.4/css/layui.css"  media="all" />
+	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{/page/css/event-manage.min.css}" />
+	<link th:if="${isDebug}" rel="stylesheet" th:href="@{/page/css/event-manage.css}" />
+	<div th:include="manage/common-js :: manageJs">what?</div>
+	<style type="text/css">
+		.layui-card-body:hover{
+			background-color: #F5F5F5;
+		}
+
+		#path-breadcrumb a{
+			cursor: pointer !important;
+		}
+
+		@media screen and (min-width: 1200px){
+			.layui-card-body .layui-container {
+				width: 1540px !important;
+				cursor: pointer !important;
+			}
+			.layui-card-header .layui-container {
+				width: 1540px !important;
+			}
+		}
+
+		body .delete-confirm-btn .layui-layer-btn0{
+			border-color: #E6E3E6;
+			background-color: #FF5722;
+		}
+
+		body .update-confirm-btn .layui-layer-btn0{
+			background-color: #FFB800;
+		}
+		.layui-card .layui-form-item{
+			margin-bottom: 0!important
+		}
+		.layui-card .layui-form-item .layui-form-checkbox{
+			margin-top: 0!important
+		}
+	</style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	<div th:replace="~{manage/common-head :: helloManage(${tabId})} "></div>
+	<div th:replace="~{manage/common-left :: helloManage(${tabId})} "></div>
+
+	<div class="layui-body">
+		<blockquote class="layui-elem-quote">
+			<h2><span id="layui-badge-dot-text">事件提醒<span id="layui-badge-dot" class="layui-badge-dot" style="margin-left: 8px;"></span></span></h2>
+			<h3>为了防止短信被滥用以及减轻短信接口的费用，单个用户每天最多限制发送<span th:utext="${limit}"></span>条提醒短信，多出的部分将无法发送。</h3>
+		</blockquote>
+		<hr>
+		<div style="margin-left: 10px;">
+			<form class="layui-form" action="">
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">消息名称</label>
+						<div class="layui-input-inline">
+							<input id="task-name" type="text" name="name" lay-verify="title" autocomplete="off" placeholder="请输入消息名称" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">消息类型</label>
+						<div class="layui-input-inline">
+							<select name="type" lay-filter="aihao">
+								<option th:each="type,userStat:${types}" th:value="${type.value}" th:utext="${type.name}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">提醒周期</label>
+						<div class="layui-input-inline">
+							<input type="radio" name="cycle" value="day" title="每天" checked="" />
+							<input type="radio" name="cycle" value="month" title="每月" disabled="" />
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">提醒时间</label>
+						<div class="layui-input-inline">
+							<input type="text" name="time" autocomplete="off" class="layui-input" id="task-time" placeholder="选择时间"/>
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">结束日期</label>
+						<div class="layui-input-inline">
+							<input type="text" name="end" autocomplete="off" class="layui-input" id="end-date" placeholder="选择日期，为空是不限制"/>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label" id="task-way">通知方式</label>
+						<div class="layui-input-block">
+							<input type="checkbox" name="waySms" title="短信" th:disabled="!${sms}" th:checked="${sms}"/>
+							<input type="checkbox" name="wayNotify" title="站内信" checked=""/>
+							<input type="checkbox" name="wayEmail" title="邮件" th:disabled="!${email}" th:checked="${email}" />
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<button type="submit" class="layui-btn layui-btn-radius" lay-submit="" lay-filter="add-task">添&nbsp;&nbsp;&nbsp;加</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<hr>
+		<h2 style="margin-left: 10px;">事件列表</h2>
+		<!-- 内容主体区域 -->
+		<table class="layui-hide" id="mytable" lay-filter="mytable"></table>
+
+		<script type="text/html" id="toolbarDemo">
+			<div class="layui-btn-container">
+				<button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+				<button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+				<button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+			</div>
+		</script>
+
+		<script type="text/html" id="barDemo">
+			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+		</script>
+	</div>
+
+	<div class="layui-footer">
+		<!-- 底部固定区域 -->
+		<div th:include="common-bottom :: bottom">bottom?</div>
+	</div>
+</div>
+</body>
+<script th:if="${not isDebug}" th:src="@{/page/js/page.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/page.js}" type="text/javascript"></script>
+<script th:if="${not isDebug}" th:src="@{/page/js/manage/tool/event-remind.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/manage/tool/event-remind.js}" type="text/javascript"></script>
+<script></script>
+</html>

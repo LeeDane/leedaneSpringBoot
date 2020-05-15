@@ -2,6 +2,7 @@ package com.cn.leedane.task.spring.scheduling;
 
 import java.util.Map;
 
+import com.cn.leedane.model.JobManageBean;
 import org.quartz.SchedulerException;
 
 /**
@@ -22,7 +23,19 @@ public interface BaseScheduling {
 	 * 设置参数
 	 */
 	public void setParams(String params);
-	
+
+	/**
+	 * 设置任务的bean
+	 * @return
+	 */
+	public void setJobBean(JobManageBean jobManageBean);
+
+	/**
+	 * 获取任务的bean
+	 * @return
+	 */
+	public JobManageBean getJobBean();
+
 	/**
 	 * 执行任务的操作
 	 * @throws SchedulerException

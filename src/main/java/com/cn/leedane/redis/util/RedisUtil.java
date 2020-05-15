@@ -844,4 +844,49 @@ public class RedisUtil{
 		
 		return false;
 	}
+
+	/**
+	 * 对key自增1
+	 * @param key
+	 * @return
+	 */
+	public boolean incr(String key){
+		boolean result = false;
+		Jedis jedis = getJedis();
+		try {
+			if(jedis != null){
+				jedis.incr(key);//自增1
+				result = true;
+			}
+		} catch (Exception e) {
+			logger.error("incr()", e);
+			e.printStackTrace();
+		}finally{
+			RedisUtil.returnResource(jedis);
+		}
+		return result;
+	}
+
+	/**
+	 * 对key自减1
+	 * @param key
+	 * @return
+	 */
+	public boolean decr(String key){
+		boolean result = false;
+		Jedis jedis = getJedis();
+		try {
+			if(jedis != null){
+				jedis.decr(key);//自减1
+				result = true;
+			}
+		} catch (Exception e) {
+			logger.error("incr()", e);
+			e.printStackTrace();
+		}finally{
+			RedisUtil.returnResource(jedis);
+		}
+		return result;
+	}
+
 }

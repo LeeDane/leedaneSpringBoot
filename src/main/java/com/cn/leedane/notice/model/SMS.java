@@ -69,10 +69,15 @@ public class SMS extends IDBean {
 	}
 
 	public int getExpire() {
-		return expire;
+		return expire > 0 ? expire : 60 * 10;
 	}
 
 	public void setExpire(int expire) {
 		this.expire = expire;
+	}
+
+	@Override
+	public String toString() {
+		return "内容："+content+",type："+type+", 发送用户："+ (fromUser != null ? fromUser.getId(): 0) +",目的用户："+(toUser != null ? toUser.getId(): 0)+",expire："+expire;
 	}
 }

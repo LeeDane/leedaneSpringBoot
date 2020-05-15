@@ -34,6 +34,7 @@ public class SchedulingThread implements Runnable{
 	public void run() {
 		try {
 			abstractScheduling.setParams(scheduleJob.getJobParams());
+			abstractScheduling.setJobBean(scheduleJob);
 			abstractScheduling.execute();
 		} catch (SchedulerException e) {
 			logger.error("任务调度执行失败，任务名称："+ scheduleJob.getJobName() 

@@ -1,6 +1,7 @@
 package com.cn.leedane.service.impl;
 
 import com.cn.leedane.exception.OperateException;
+import com.cn.leedane.handler.JobHandler;
 import com.cn.leedane.handler.UserHandler;
 import com.cn.leedane.mapper.JobManageMapper;
 import com.cn.leedane.model.HttpRequestInfoBean;
@@ -9,12 +10,11 @@ import com.cn.leedane.model.OperateLogBean;
 import com.cn.leedane.model.UserBean;
 import com.cn.leedane.service.JobManageService;
 import com.cn.leedane.service.OperateLogService;
-import com.cn.leedane.task.spring.QuartzJobFactory;
 import com.cn.leedane.utils.*;
 import com.cn.leedane.utils.EnumUtil.DataTableType;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
-import org.quartz.*;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +33,6 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
-	private Scheduler scheduler;
-	
-	@Autowired
 	private JobManageMapper jobManageMapper;
 	
 	@Autowired
@@ -43,6 +40,9 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
 
 	@Autowired
 	private UserHandler userHandler;
+
+	@Autowired
+	private JobHandler jobHandler;
 	
 	@Override
     public Map<String, Object> add(JSONObject jo, UserBean user, HttpRequestInfoBean request) throws SchedulerException{
@@ -73,29 +73,8 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
 		}
 		//只有正常状态才去启动任务
     	if(jobManageBean.getStatus() == ConstantsUtil.STATUS_NORMAL){
-    		TriggerKey triggerKey = TriggerKey.triggerKey(jobManageBean.getJobName(), jobManageBean.getJobGroup());
-            //获取trigger，即在spring配置文件中定义的 bean id="myTrigger"
-            CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-         
-            //存在，删掉
-            if (trigger != null) {
-                scheduler.deleteJob(trigger.getJobKey());
-            }
-            
-            //按新的trigger重新设置job执行
-            JobDetail jobDetail = JobBuilder.newJob(QuartzJobFactory.class)
-                    .withIdentity(jobManageBean.getJobName(), jobManageBean.getJobGroup()).build();
-            jobDetail.getJobDataMap().put("scheduleJob", jobManageBean);
-     
-            //表达式调度构建器
-            CronScheduleBuilder scheduleBuilder1 = CronScheduleBuilder.cronSchedule(jobManageBean
-                .getCronExpression());
-     
-            //按新的cronExpression表达式构建一个新的trigger
-            trigger = TriggerBuilder.newTrigger().withIdentity(jobManageBean.getJobName(), jobManageBean.getJobGroup()).withSchedule(scheduleBuilder1).build();
-            scheduler.scheduleJob(jobDetail, trigger);
+			jobHandler.start(jobManageBean);
     	}
-		
         message.put("success", true);
 		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.操作成功.value));
 		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -130,33 +109,15 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
 		jobManageBean.setModifyTime(new Date());
         boolean result = jobManageMapper.update(jobManageBean) > 0;
         if(result){
-        	
-        	TriggerKey triggerKey = TriggerKey.triggerKey(oldJobManageBean.getJobName(), oldJobManageBean.getJobGroup());
-            //获取trigger，即在spring配置文件中定义的 bean id="myTrigger"
-            CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-        	
+        	//停掉旧的任务
+			jobHandler.stop(oldJobManageBean.getJobName(), oldJobManageBean.getJobGroup());
+
             if(jobManageBean.getStatus() == ConstantsUtil.STATUS_NORMAL){
-            	 //存在，删掉
-                if (trigger != null) {
-                	scheduler.deleteJob(trigger.getJobKey());
-                }
-                //按新的trigger重新设置job执行
-                JobDetail jobDetail = JobBuilder.newJob(QuartzJobFactory.class)
-                        .withIdentity(jobManageBean.getJobName(), jobManageBean.getJobGroup()).build();
-                jobDetail.getJobDataMap().put("scheduleJob", jobManageBean);
-         
-                //表达式调度构建器
-                CronScheduleBuilder scheduleBuilder1 = CronScheduleBuilder.cronSchedule(jobManageBean
-                    .getCronExpression());
-         
-                //按新的cronExpression表达式构建一个新的trigger
-                trigger = TriggerBuilder.newTrigger().withIdentity(jobManageBean.getJobName(), jobManageBean.getJobGroup()).withSchedule(scheduleBuilder1).build();
-                scheduler.scheduleJob(jobDetail, trigger);
+            	//启动新的任务
+				jobHandler.start(jobManageBean);
             }else{
-            	//存在，删掉
-                if (trigger != null) {
-                	scheduler.deleteJob(trigger.getJobKey());
-                }
+				//停掉新的任务
+				jobHandler.stop(jobManageBean.getJobName(), jobManageBean.getJobGroup());
             }
             
         	message.put("success", true);
@@ -180,15 +141,8 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
         
         boolean result = jobManageMapper.deleteById(JobManageBean.class, jid) > 0;
         if(result){
-        	TriggerKey triggerKey = TriggerKey.triggerKey(jobManageBean.getJobName(), jobManageBean.getJobGroup());
-            //获取trigger，即在spring配置文件中定义的 bean id="myTrigger"
-            CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-         
-            //存在，删掉
-            if (trigger != null) {
-                scheduler.deleteJob(trigger.getJobKey());
-            }
-            
+			//停掉任务
+			jobHandler.stop(jobManageBean.getJobName(), jobManageBean.getJobGroup());
         	message.put("success", true);
     		message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.删除成功.value));
     		message.put("responseCode", EnumUtil.ResponseCode.请求返回成功码.value);
@@ -244,14 +198,8 @@ public class JobManageServiceImpl implements JobManageService<JobManageBean>{
 				throw new NullPointerException(EnumUtil.getResponseValue(EnumUtil.ResponseCode.资源不存在.value));
 			
 			result = jobManageMapper.deleteById(JobManageBean.class, jobManageBean.getId()) > 0;
-			
-            TriggerKey triggerKey = TriggerKey.triggerKey(jobManageBean.getJobName(), jobManageBean.getJobGroup());
-            //获取trigger，即在spring配置文件中定义的 bean id="myTrigger"
-            CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-         
-            if (trigger != null) {
-                scheduler.deleteJob(trigger.getJobKey());
-            }
+			//停掉新的任务
+			jobHandler.stop(jobManageBean.getJobName(), jobManageBean.getJobGroup());
 		}
 		
 		if(result){

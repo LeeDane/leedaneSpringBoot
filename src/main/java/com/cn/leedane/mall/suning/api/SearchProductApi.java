@@ -88,8 +88,12 @@ public class SearchProductApi {
                 suningProductBean.setCashBack(0d);
                 suningProductBean.setCashBackRatio(commodityInfo.optDouble("rate"));
                 JSONArray pictureUrl = commodityInfo.optJSONArray("pictureUrl");
-                if(pictureUrl != null)
-                    suningProductBean.setImg(pictureUrl.optJSONObject(0).optString("picUrl"));
+                if(pictureUrl != null){
+                    JSONObject jObject = pictureUrl.optJSONObject(0);
+                    if(jObject != null)
+                        suningProductBean.setImg(jObject.optString("picUrl"));
+                }
+
                 suningProductBean.setPlatform(EnumUtil.ProductPlatformType.苏宁.value);
                 suningProductBean.setPrice(commodityInfo.optDouble("commodityPrice"));
                 suningProductBean.setOldPrice(commodityInfo.optDouble("snPrice"));

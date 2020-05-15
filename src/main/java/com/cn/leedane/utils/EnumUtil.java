@@ -92,7 +92,8 @@ public class EnumUtil {
 		角色("t_role"), 用户角色("t_user_role"), 链接管理("t_link_manage"), 留言("t_message_board"), 素材("t_material"), 
 		任务("t_job_manage"), 贡献值("t_circle_contribution"),圈子("t_circle"), 圈子成员("t_circle_member"), 帖子("t_circle_post"), 
 		不存在的表("t_inexistence"), 分类("t_category"), 商店("t_mall_shop"), 商店商品("t_mall_product"), 商品订单("t_mall_order"),
-		商品心愿单("t_mall_wish"), 大事件("t_event"), 选项配置("t_option"), 推广位管理("t_mall_promotion_seat"), 黑名单("t_manage_black");
+		商品心愿单("t_mall_wish"), 大事件("t_event"), 选项配置("t_option"), 推广位管理("t_mall_promotion_seat"), 黑名单("t_manage_black"),
+		事件提醒("t_manage_remind");
 	
 		private DataTableType(String value) {
 			this.value = value;
@@ -928,7 +929,9 @@ public class EnumUtil {
 		LOGIN_ERROR_VALIDATION("loginError"), //登录异常验证码
 		IDENTITY_VALIDATION("identity"), //身份验证验证码
 		ACTIVITY_VALIDATION("activity"), //活动确认验证码
-		BIND_PHONE_VALIDATION("bindPhone"); //手机号码绑定验证码
+		BIND_PHONE_VALIDATION("bindPhone"), //手机号码绑定验证码
+		REMIND_TAKE_MEDICINE("takeMedicine"), //提醒吃药
+		AGAIN_REMIND_TAKE_MEDICINE("againTakeMedicine"); //再次提醒吃药
 
 		public String value;
 		private NoticeSMSType(String value){

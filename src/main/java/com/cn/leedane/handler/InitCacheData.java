@@ -3,8 +3,10 @@ package com.cn.leedane.handler;
 import com.cn.leedane.cache.JuheCache;
 import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.mapper.BaseMapper;
+import com.cn.leedane.mapper.ManageRemindMapper;
 import com.cn.leedane.mapper.circle.CircleMapper;
 import com.cn.leedane.model.JobManageBean;
+import com.cn.leedane.model.ManageRemindBean;
 import com.cn.leedane.model.RecordTimeBean;
 import com.cn.leedane.rabbitmq.RecieveMessage;
 import com.cn.leedane.rabbitmq.recieve.*;
@@ -64,10 +66,13 @@ public class InitCacheData {
 	private BaseMapper<RecordTimeBean> baseMapper;
 	
 	@Autowired
-	private Scheduler scheduler;
-	
-	@Autowired
 	private CircleMapper circleMapper;
+
+	@Autowired
+	private JobHandler jobHandler;
+
+	@Autowired
+	private ManageRemindMapper manageRemindMapper;
 	
 	public void init(){
 
@@ -75,6 +80,7 @@ public class InitCacheData {
 		initCache();
 		loadOptionTable(); //加载选项表中的数据
 		startJob(); //加载定时任务
+		startEventRemindJob(); //加载事件提醒任务
 		//getApplicationData(); //获取系统上下文的全局数据
 		new OptionUtil();//加载选项到内存中
 		
@@ -444,41 +450,58 @@ public class InitCacheData {
 					SqlUtil sqlUtil = new SqlUtil();
 					JobManageBean jobManageBean = (JobManageBean) sqlUtil.getBean(json, JobManageBean.class);
 					if(jobManageBean != null){
-						TriggerKey triggerKey = TriggerKey.triggerKey(jobManageBean.getJobName(), jobManageBean.getJobGroup());
-			            //获取trigger，即在spring配置文件中定义的 bean id="myTrigger"
-			            CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-			         
-			            //存在，删掉
-			            if (trigger != null) {
-			                scheduler.deleteJob(trigger.getJobKey());
-			            }
-			            
-			            //按新的trigger重新设置job执行
-			            JobDetail jobDetail = JobBuilder.newJob(QuartzJobFactory.class)
-			                    .withIdentity(jobManageBean.getJobName(), jobManageBean.getJobGroup()).build();
-			            jobDetail.getJobDataMap().put("scheduleJob", jobManageBean);
-			     
-			            //表达式调度构建器
-			            CronScheduleBuilder scheduleBuilder1 = CronScheduleBuilder.cronSchedule(jobManageBean
-			                .getCronExpression());
-			     
-			            //按新的cronExpression表达式构建一个新的trigger
-			            trigger = TriggerBuilder.newTrigger().withIdentity(jobManageBean.getJobName(), jobManageBean.getJobGroup()).withSchedule(scheduleBuilder1).build();
-			            scheduler.scheduleJob(jobDetail, trigger);
+						//启动任务
+						jobHandler.start(jobManageBean);
 					}
-					
+
 				}
 			}
-			long end = System.currentTimeMillis();  
-			logger.warn("加载定时任务表数据进缓存中结束，共计耗时："+(end - begin) +"ms");  
-			
+			long end = System.currentTimeMillis();
+			logger.warn("加载定时任务表数据进缓存中结束，共计耗时："+(end - begin) +"ms");
+
 			//logger.info("---->"+systemCache.getCache("page-size"));
-		} catch (Exception ex) {  
+		} catch (Exception ex) {
 			logger.error("初始化读取T_JOB_MANAGE表出现异常");
 			ex.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * 加载事件提醒任务到任务队列中
+	 */
+	private void startEventRemindJob(){
+		try {
+			long begin = System.currentTimeMillis();
+			List<ManageRemindBean> results = manageRemindMapper.all();
+			if(CollectionUtil.isNotEmpty(results)){
+				for(ManageRemindBean remindBean: results){
+					String className = null;
+					switch (remindBean.getType()){
+						case "takeMedicine":
+							className = "takeMedicine";
+							break;
+						case "againTakeMedicine":
+							className = "againTakeMedicine";
+							break;
+					}
+					JobManageBean jobManageBean = new JobManageBean();
+					jobManageBean.setClassName(className);
+					jobManageBean.setCronExpression(remindBean.getCron());
+					jobManageBean.setJobGroup("remind_"+ remindBean.getCreateUserId());
+					jobManageBean.setJobName("remind_job_"+ remindBean.getId());
+					//启动任务
+					jobHandler.start(jobManageBean);
+				}
+			}
+			long end = System.currentTimeMillis();
+			logger.warn("加载事件提醒任务表数据进缓存中结束，共计耗时："+(end - begin) +"ms");
+			//logger.info("---->"+systemCache.getCache("page-size"));
+		} catch (Exception ex) {
+			logger.error("初始化读取T_MANAGE_REMIND表出现异常");
+			ex.printStackTrace();
+		}
+	}
+
 	/**
 	 * 获取系统上下文的全局数据
 	 */

@@ -1654,3 +1654,29 @@ CREATE TABLE `t_manage_black` (
   CONSTRAINT `FK_manage_black_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_manage_black_modify_user_id` FOREIGN KEY (`user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_manage_remind  我的事件提醒表
+-- ----------------------------
+DROP TABLE IF EXISTS `t_manage_remind`;
+CREATE TABLE `t_manage_remind` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
+  `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_user_id` int(11) DEFAULT NULL COMMENT '创建人',
+  `modify_user_id` int(11) DEFAULT NULL COMMENT '修改人',
+  `name` varchar(50) NOT NULL COMMENT '事件的名称(显示)',
+  `cycle` varchar(25) NOT NULL COMMENT '事件的周期',
+  `time` varchar(25) NOT NULL COMMENT '事件的时间',
+  `cron` varchar(50) NOT NULL COMMENT '事件的触发表达式(周期加time处理的结果)',
+  `end` datetime DEFAULT NULL COMMENT '结束时间(可以为空)',
+  `type` varchar(25) NOT NULL COMMENT '事件的类型，如吃药提醒事件，吃药再次提醒事件',
+  `way` varchar(25) NOT NULL COMMENT '事件的方式，如短信，站内通知，邮件等',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `t_manage_remind_unique` (`name`, `create_user_id`),
+  KEY `FK_manage_remind_create_user` (`create_user_id`),
+  KEY `FK_manage_remind_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_manage_remind_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_manage_remind_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

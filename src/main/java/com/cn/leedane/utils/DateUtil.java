@@ -891,4 +891,38 @@ public class DateUtil {
         }  
         return age;
 	}
+
+	/**
+	 * 判断当前时间在一天中是什么时间
+	 * @return
+	 */
+	public static String getChineseDateFormat(){
+		return getChineseDateFormat(new Date());
+	}
+
+	/**
+	 * 判断时间在一天中是什么时间
+	 * @return
+	 */
+	public static String getChineseDateFormat(Date date){
+		SimpleDateFormat df = new SimpleDateFormat("HH");
+		String str = df.format(date);
+		int a = Integer.parseInt(str);
+		if (a >= 0 && a <= 6) {
+			return "凌晨";
+		}
+		if (a > 6 && a <= 12) {
+			return "上午";
+		}
+		if (a > 12 && a <= 13) {
+			return "中午";
+		}
+		if (a > 13 && a <= 18) {
+			return "下午";
+		}
+		if (a > 18 && a <= 24) {
+			return "晚上";
+		}
+		return "";
+	}
 }

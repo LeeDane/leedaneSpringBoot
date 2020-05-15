@@ -13,11 +13,7 @@ import com.cn.leedane.handler.OptionHandler;
 import com.cn.leedane.notice.NoticeException;
 import com.cn.leedane.notice.model.SMS;
 import com.cn.leedane.redis.util.RedisUtil;
-import com.cn.leedane.springboot.SpringUtil;
-import com.cn.leedane.utils.DateUtil;
-import com.cn.leedane.utils.EnumUtil;
-import com.cn.leedane.utils.ParameterUnspecificationUtil;
-import com.cn.leedane.utils.StringUtil;
+import com.cn.leedane.utils.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -44,11 +40,16 @@ public class SmsNotice extends BaseNotice<SMS>{
 	public static String IDENTITY_KEY_PREFIX = "ide_";
 	public static String ACTIVITY_KEY_PREFIX = "act_";
 	public static String BIND_PHONE_KEY_PREFIX = "bdph_";
+	public static String REMIND_TAKE_MEDICINE_KEY_PREFIX = "rtm_";
+	public static String AGAIN_REMIND_TAKE_MEDICINE_KEY_PREFIX = "artm_";
 
 	@Autowired
 	private OptionHandler optionHandler;
+
+	private SMS sms;
 	@Override
 	public boolean send(SMS sms) throws NoticeException {
+		this.sms = sms;
 		String type = sms.getType();
 		ParameterUnspecificationUtil.checkNullString(type, "没有短信业务类型");
 
@@ -79,6 +80,10 @@ public class SmsNotice extends BaseNotice<SMS>{
 			sendActivityValidation(sms);
 		}else if(EnumUtil.NoticeSMSType.BIND_PHONE_VALIDATION.value.equals(type)){//手机号码绑定验证码
 			sendBindPhoneValidation(sms);
+		}else if(EnumUtil.NoticeSMSType.REMIND_TAKE_MEDICINE.value.equals(type)){//提醒吃药
+			sendRemindTakeMedicine(sms);
+		}else if(EnumUtil.NoticeSMSType.AGAIN_REMIND_TAKE_MEDICINE.value.equals(type)){//再次提醒吃药
+			sendAgainRemindTakeMedicine(sms);
 		}
 		return true;
 	}
@@ -261,8 +266,56 @@ public class SmsNotice extends BaseNotice<SMS>{
 			e.printStackTrace();
 		}
 		RedisUtil.getInstance().addMap(key, map);
-		RedisUtil.getInstance().expire(key, 60*10);
+		RedisUtil.getInstance().expire(key, sms.getExpire());
 		logger.info(sendAliDaYu("LeeDane", "{\"code\":\""+validationCode+"\"}", mobilePhone, "SMS_181195996"));
+	}
+
+	/**
+	 * 提醒吃药(10分钟)
+	 * @param sms
+	 */
+	private void sendRemindTakeMedicine(SMS sms) throws NoticeException {
+		String mobilePhone = sms.getToUser().getMobilePhone();
+		String validationCode = StringUtil.build6ValidationCode();
+		//获取redis缓存的key
+		String key = getKey(mobilePhone, sms.getType());
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("validationCode", validationCode);
+		Date createTime = new Date();
+		map.put("createTime", DateUtil.DateToString(createTime));
+		try {
+			map.put("endTime", DateUtil.DateToString(DateUtil.getOverdueTime(createTime, "10分钟")));
+		} catch (ErrorException e) {
+			e.printStackTrace();
+		}
+		RedisUtil.getInstance().addMap(key, map);
+		RedisUtil.getInstance().expire(key, sms.getExpire());
+//		logger.info(sendAliDaYu("LeeDane", "{\"name\":\""+ sms.getToUser().getChinaName()+"\",\"content\":\""+DateUtil.getChineseDateFormat() + "好"+"\"}", mobilePhone, "SMS_190266535"));
+		logger.info(sendAliDaYu("LeeDane", "{\"content\":\""+DateUtil.getChineseDateFormat() + "好"+"\"}", mobilePhone, "SMS_190281153"));
+
+	}
+
+	/**
+	 * 再次提醒客户吃药(10分钟)
+	 * @param sms
+	 */
+	private void sendAgainRemindTakeMedicine(SMS sms) throws NoticeException {
+		String mobilePhone = sms.getToUser().getMobilePhone();
+		String validationCode = StringUtil.build6ValidationCode();
+		//获取redis缓存的key
+		String key = getKey(mobilePhone, sms.getType());
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("validationCode", validationCode);
+		Date createTime = new Date();
+		map.put("createTime", DateUtil.DateToString(createTime));
+		try {
+			map.put("endTime", DateUtil.DateToString(DateUtil.getOverdueTime(createTime, "10分钟")));
+		} catch (ErrorException e) {
+			e.printStackTrace();
+		}
+		RedisUtil.getInstance().addMap(key, map);
+		RedisUtil.getInstance().expire(key, sms.getExpire());
+		logger.info(sendAliDaYu("LeeDane", "{\"name\":\""+ sms.getToUser().getChinaName()+"\",\"content\":\""+DateUtil.getChineseDateFormat()+"\"}", mobilePhone, "SMS_190276381"));
 	}
 
 	/**
@@ -303,7 +356,8 @@ public class SmsNotice extends BaseNotice<SMS>{
 		request.setTemplateCode(tempCode);
 		//可选:模板中的变量替换JSON串,如模板内容为"亲爱的${name},您的验证码为${code}"时,此处的值为
 		//友情提示:如果JSON中需要带换行符,请参照标准的JSON协议对换行符的要求,比如短信内容中包含\r\n的情况在JSON中需要表示成\\r\\n,否则会导致JSON在服务端解析失败
-		request.setTemplateParam(tempParams);
+		if(StringUtil.isNotNull(tempParams))
+			request.setTemplateParam(tempParams);
 		//可选-上行短信扩展码(扩展码字段控制在7位或以下，无特殊需求用户请忽略此字段)
 		//request.setSmsUpExtendCode("90997");
 		//可选:outId为提供给业务方扩展字段,最终在短信回执消息中将此值带回给调用者
@@ -320,6 +374,10 @@ public class SmsNotice extends BaseNotice<SMS>{
 			//请求成功
 			logger.info("给"+ mobilePhone +"发送"+ tempCode +"短信返回成功");
 			return true;
+		}else{
+			//给管理员发送异常信息
+			if(OptionUtil.adminUser != null && OptionUtil.adminUser.getId() > 0)
+				NoticeUtil.notification(OptionUtil.adminUser.getId(), OptionUtil.adminUser.getId(), "发送短信异常, 异常信息："+ sendSmsResponse.getMessage()+", 发送数据="+ sms.toString());
 		}
 		throw new NoticeException("aliyun sms send result error");
 	}
@@ -408,6 +466,10 @@ public class SmsNotice extends BaseNotice<SMS>{
 			key = ACTIVITY_KEY_PREFIX;
 		}else if(EnumUtil.NoticeSMSType.BIND_PHONE_VALIDATION.value.equals(type)){//活手机号码绑定验证码
 			key = BIND_PHONE_KEY_PREFIX;
+		}else if(EnumUtil.NoticeSMSType.REMIND_TAKE_MEDICINE.value.equals(type)){//提醒吃药
+			key = REMIND_TAKE_MEDICINE_KEY_PREFIX;
+		}else if(EnumUtil.NoticeSMSType.AGAIN_REMIND_TAKE_MEDICINE.value.equals(type)){//再次提醒吃药
+			key = AGAIN_REMIND_TAKE_MEDICINE_KEY_PREFIX;
 		}else{
 			throw new NoticeException("未知的短信业务类型");
 		}

@@ -360,7 +360,47 @@ public class UserHandler {
 	public String getUserName(long userId){
 		return getUserName(userId, true);
 	}
-	
+
+	/**
+	 * 获取用户的中文名称
+	 * @param userId
+	 * @param check 是否需要获取正常状态的用户
+	 * @return
+	 */
+	public String getChinaName(long userId, boolean check){
+		JSONObject userInfo = getUserDetail(userId, check);
+		return userInfo != null ? JsonUtil.getStringValue(userInfo, "chinaName") : "该用户已经不存在";
+	}
+
+	/**
+	 * 获取用户的中文名称(需要获取正常状态的用户)
+	 * @param userId
+	 * @return
+	 */
+	public String getChinaName(long userId){
+		return getChinaName(userId, true);
+	}
+
+	/**
+	 * 获取用户的邮箱地址
+	 * @param userId
+	 * @param check 是否需要获取正常状态的用户
+	 * @return
+	 */
+	public String getEmail(long userId, boolean check){
+		JSONObject userInfo = getUserDetail(userId, check);
+		return userInfo != null ? JsonUtil.getStringValue(userInfo, "email") : "该用户已经不存在";
+	}
+
+	/**
+	 * 获取用户的邮箱地址(需要获取正常状态的用户)
+	 * @param userId
+	 * @return
+	 */
+	public String getEmail(long userId){
+		return getEmail(userId, true);
+	}
+
 	/**
 	 * 通过用户名获取用户的ID
 	 * @return
@@ -386,7 +426,7 @@ public class UserHandler {
 	 */
 	public String getUserMobilePhone(long userId){
 		JSONObject userInfo = getUserDetail(userId, true);
-		return JsonUtil.getStringValue(userInfo, "mobile_phone");
+		return JsonUtil.getStringValue(userInfo, "mobilePhone");
 	}
 	
 	/**
