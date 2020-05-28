@@ -140,7 +140,7 @@ public class SanwenNetNovelDeal extends AbstractScheduling{
 					try{
 						sanwenNet.execute();
 					}catch(IOException e){
-						logger.error("处理散文小说信息出现异常：deal()+url="+url +e.toString());
+						logger.error("处理散文小说信息出现异常：deal()+url="+url, e);
 						mCrawlBean.setCrawl(true);
 						//将抓取标记为已经抓取
 						crawlMapper.update(mCrawlBean);

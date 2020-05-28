@@ -576,11 +576,11 @@ public class CommonUtil {
 	}
 
 	/**
-	 * 对数据进行加密，其中+号用*jia*代替
+	 * 对数据进行加密，其中+号用*jia*代替(已经固定加密的key)
 	 * @param paramsMap
 	 * @return
 	 */
-	public static String sm4Encrypt(Map<String, Object> paramsMap){
+	public static String sm4EncryptByFixedKey(Map<String, Object> paramsMap){
 		//生成state
 		String plainText = JSONObject.fromObject(paramsMap).toString();
 		SM4Utils sm4 = new SM4Utils();
@@ -590,11 +590,11 @@ public class CommonUtil {
 	}
 
 	/**
-	 * 对数据进行解密，其中把*jia*还原成+号
+	 * 对数据进行解密，其中把*jia*还原成+号(已经固定加密的key)
 	 * @param cipherText 密文
 	 * @return
 	 */
-	public static JSONObject sm4Decrypt(String cipherText){
+	public static JSONObject sm4DecryptByFixedKey(String cipherText){
 		cipherText = cipherText.replaceAll("\\*jia\\*", "+"); //在网络传输过程中，会把+替换成%20，这里需要还原回来
 		SM4Utils sm4 = new SM4Utils();
 		sm4.secretKey = Oauth2HtmlController.secretKey;
@@ -606,6 +606,40 @@ public class CommonUtil {
 
 		}
 		return new JSONObject();
+	}
+
+	/**
+	 * 对数据进行加密, 其中+号用*jia*代替
+	 * @param text
+	 * @param key 长度必须为16位
+	 * @return
+	 */
+	public static String sm4EncryptByKey(String text, String key){
+		//生成state
+		SM4Utils sm4 = new SM4Utils();
+		sm4.secretKey = key;
+		String cipherText = sm4.encryptData_ECB(text);
+		return cipherText.replaceAll("\\+","*jia*");
+	}
+
+	/**
+	 * 对数据进行解密，其中把*jia*还原成+号(已经固定加密的key)
+	 * @param text 密文
+	 * @param key 长度必须为16位
+	 * @return
+	 */
+	public static String sm4DecryptByKey(String text, String key){
+		text = text.replaceAll("\\*jia\\*", "+"); //在网络传输过程中，会把+替换成%20，这里需要还原回来
+		SM4Utils sm4 = new SM4Utils();
+		sm4.secretKey = key;
+		try{
+			return sm4.decryptData_ECB(text);
+		}catch (Exception e){
+			e.printStackTrace();
+		}finally {
+
+		}
+		return "";
 	}
 
 	/**

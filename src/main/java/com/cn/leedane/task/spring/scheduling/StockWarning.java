@@ -33,7 +33,6 @@ import com.cn.leedane.utils.StringUtil;
 public class StockWarning extends AbstractScheduling{
 	private Logger logger = Logger.getLogger(getClass());
 	
-	private RedisUtil redis = new RedisUtil();
 	/**
 	 * 执行爬取方法
 	 */
@@ -58,7 +57,7 @@ public class StockWarning extends AbstractScheduling{
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("股票预警的任务出现异常：execute()");
+			logger.error("股票预警的任务出现异常：execute()", e);
 		}
 	}
 	
@@ -147,8 +146,8 @@ public class StockWarning extends AbstractScheduling{
 			if(now >= top || now <= low ){
 				long lastTime = 0;
 				//获取上一次的预警时间
-				if(redis.hasKey(code)){
-					lastTime = Long.parseLong(redis.getString(code));
+				if(RedisUtil.getInstance().hasKey(code)){
+					lastTime = Long.parseLong(RedisUtil.getInstance().getString(code));
 				}else{
 					lastTime = System.currentTimeMillis();
 				}
@@ -179,8 +178,8 @@ public class StockWarning extends AbstractScheduling{
 					logger.info(rsp.getBody());*/
 					System.out.println("发送消息："+ DateUtil.DateToString(new Date()) + ", 内容是："+ msg.toString());
 				}
-				
-				redis.addString(code, System.currentTimeMillis()+"");
+
+				RedisUtil.getInstance().addString(code, System.currentTimeMillis()+"");
 			}
 			return true;
 		}

@@ -36,6 +36,7 @@ public class JobHandler {
 				e.printStackTrace();
 			}
 		}
+
 		//按新的trigger重新设置job执行
 		JobDetail jobDetail = JobBuilder.newJob(QuartzJobFactory.class)
 				.withIdentity(bean.getJobName(), bean.getJobGroup()).build();

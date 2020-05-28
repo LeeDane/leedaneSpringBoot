@@ -38,9 +38,6 @@ import java.util.concurrent.Future;
 @Component("addEsIndex")
 public class AddEsIndex extends AbstractScheduling{
 	private Logger logger = Logger.getLogger(getClass());
-	
-	private RedisUtil redis = new RedisUtil();
-
 	@Autowired
 	private ElasticSearchUtil elasticSearchUtil;
 

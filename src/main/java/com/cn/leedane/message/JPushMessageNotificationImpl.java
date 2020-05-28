@@ -48,7 +48,7 @@ public class JPushMessageNotificationImpl implements MessageNotification {
 
 		} catch (APIRequestException e) {
 			// Should review the error, and fix the request
-			logger.error("Should review the error, and fix the request");
+			logger.error("Should review the error, and fix the request", e);
 			logger.error("HTTP Status: " + e.getStatus());
 			logger.error("Error Code: " + e.getErrorCode());
 			logger.error("Error Message: " + e.getErrorMessage());
@@ -88,7 +88,7 @@ public class JPushMessageNotificationImpl implements MessageNotification {
 	 * 把通知发送给指定的用户
 	 * @param alias
 	 * @param content
-	 * @param typeW
+	 * @param type
 	 * @return
 	 */
 	private static PushPayload buildPushAlias(String alias, String content, NotificationType type) {
@@ -114,7 +114,6 @@ public class JPushMessageNotificationImpl implements MessageNotification {
 	
 	/**
 	 * 把通知发送给所有的用户
-	 * @param alias
 	 * @param content
 	 * @return
 	 */

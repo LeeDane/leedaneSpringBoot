@@ -1,5 +1,7 @@
 package com.cn.leedane.model;
 
+import com.cn.leedane.utils.StringUtil;
+
 import java.util.Date;
 
 /**
@@ -44,6 +46,11 @@ public class ManageRemindBean extends RecordTimeBean{
      * 事件的方式，如短信，站内通知，邮件等
      */
     private String way;
+
+    /**
+     * 事件的内容，选填
+     */
+    private String content; //为空将默认用name代替
 
     public String getName() {
         return name;
@@ -99,5 +106,13 @@ public class ManageRemindBean extends RecordTimeBean{
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getContent() {
+        return StringUtil.isNull(content) ? getName(): content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

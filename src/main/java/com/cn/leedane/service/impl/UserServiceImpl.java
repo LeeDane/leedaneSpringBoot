@@ -772,7 +772,7 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 			return message.getMap();
 		}*/
 		
-		if(StringUtil.isNull(phone) || phone.length() != 11){
+		if(!StringUtil.isPhone(phone)){
 			message.put("message", EnumUtil.getResponseValue(EnumUtil.ResponseCode.手机号为空或者不是11位数.value));
 			message.put("responseCode", EnumUtil.ResponseCode.手机号为空或者不是11位数.value);
 			return message.getMap();
@@ -968,18 +968,14 @@ public class UserServiceImpl extends AdminRoleCheckService implements UserServic
 		logger.info("UserServiceImpl-->updateUserBase():jo="+jo.toString());
 		String head = JsonUtil.getStringValue(jo, "head");
 		String sex = JsonUtil.getStringValue(jo, "sex");
-		String mobilePhone = JsonUtil.getStringValue(jo, "mobile_phone");
 		String qq = JsonUtil.getStringValue(jo, "qq");
-		String email = JsonUtil.getStringValue(jo, "email");
 		String birthDay = JsonUtil.getStringValue(jo, "birth_day");
 		String educationBackground = JsonUtil.getStringValue(jo, "education_background");
 		String personalIntroduction = JsonUtil.getStringValue(jo, "personal_introduction");
 		ResponseMap message = new ResponseMap();
 		UserBean updateUser = userMapper.findById(UserBean.class, user.getId());
 		updateUser.setSex(sex);
-		updateUser.setMobilePhone(mobilePhone);
 		updateUser.setQq(qq);
-		updateUser.setEmail(email);
 		updateUser.setEducationBackground(StringUtil.changeNotNull(educationBackground));
 		updateUser.setPersonalIntroduction(StringUtil.changeNotNull(personalIntroduction));
 		if(StringUtil.isNotNull(birthDay)){

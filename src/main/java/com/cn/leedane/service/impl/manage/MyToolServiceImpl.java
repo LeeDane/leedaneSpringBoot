@@ -5,6 +5,7 @@ import com.cn.leedane.handler.OptionHandler;
 import com.cn.leedane.handler.tool.video.DouYinQushuiyin;
 import com.cn.leedane.mapper.ManageRemindMapper;
 import com.cn.leedane.model.*;
+import com.cn.leedane.redis.util.RedisUtil;
 import com.cn.leedane.service.AdminRoleCheckService;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.manage.CloudDiskService;
@@ -57,8 +58,24 @@ public class MyToolServiceImpl extends AdminRoleCheckService implements MyToolSe
     @Autowired
     private JobHandler jobHandler;
 
+    /**
+     * 提醒job的名称前缀
+     */
+    public static String REMIND_JOB_NAME_PREFIX = "remind_job_";
+
+    /**
+     * 提醒job的group前缀
+     */
+    public static String REMIND_JOB_GROUP_PREFIX = "remind_";
+
+    /**
+     * 时间提醒发送短信前缀
+     */
+    public static String SMS_REMIND_PREFIX = "sms_remind_";
+
     @Override
     public ResponseModel removeWatermark(JSONObject jo, UserBean user, HttpRequestInfoBean request) {
+        logger.info("MyToolServiceImpl-->removeWatermark():jo="+jo);
         String text = JsonUtil.getStringValue(jo, "text");
         ParameterUnspecificationUtil.checkNullString(text, "抖音链接地址文本 must not null.");
 
@@ -146,20 +163,11 @@ public class MyToolServiceImpl extends AdminRoleCheckService implements MyToolSe
         boolean result = manageRemindMapper.save(remindBean) > 0;
         operateLogService.saveOperateLog(user, request, new Date(), "添加事件，cron为："+ remindBean.getCron() +", 结果是："+ StringUtil.getSuccessOrNoStr(result), "addRemind()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
         if(result){
-            String className = null;
-            switch (remindBean.getType()){
-                case "takeMedicine":
-                    className = "takeMedicine";
-                    break;
-                case "againTakeMedicine":
-                    className = "againTakeMedicine";
-                    break;
-            }
             JobManageBean jobManageBean = new JobManageBean();
-            jobManageBean.setClassName(className);
+            jobManageBean.setClassName(remindBean.getType());
             jobManageBean.setCronExpression(remindBean.getCron());
-            jobManageBean.setJobGroup("remind_"+ user.getId());
-            jobManageBean.setJobName("remind_job_"+ remindBean.getId());
+            jobManageBean.setJobGroup(REMIND_JOB_GROUP_PREFIX + user.getId());
+            jobManageBean.setJobName(REMIND_JOB_NAME_PREFIX+ remindBean.getId());
             jobManageBean.setJobParams("id="+ remindBean.getId());
             //启动任务
             jobHandler.start(jobManageBean);
@@ -181,7 +189,7 @@ public class MyToolServiceImpl extends AdminRoleCheckService implements MyToolSe
         operateLogService.saveOperateLog(user, request, new Date(), "移除事件提醒，cron为："+ remindBean.getCron() +", 结果是："+ StringUtil.getSuccessOrNoStr(result), "deleteRemind()", ConstantsUtil.STATUS_NORMAL, EnumUtil.LogOperateType.内部接口.value);
         if(result){
             //删除任务
-            jobHandler.stop("remind_job_"+ remindBean.getId(), "remind_"+ user.getId());
+            jobHandler.stop(REMIND_JOB_NAME_PREFIX+ remindBean.getId(), REMIND_JOB_GROUP_PREFIX+ user.getId());
             return new ResponseModel().ok().message("移除成功");
         }
         else
@@ -191,6 +199,7 @@ public class MyToolServiceImpl extends AdminRoleCheckService implements MyToolSe
     @Override
     public LayuiTableResponseModel reminds(JSONObject jsonObject, UserBean user, HttpRequestInfoBean request){
         logger.info("MyToolServiceImpl-->reminds():jo="+ jsonObject);
+//        System.out.println("MyToolServiceImpl-->reminds():jo="+ jsonObject);
         int current = JsonUtil.getIntValue(jsonObject, "page", 0);
         int rows = JsonUtil.getIntValue(jsonObject, "limit", 10);
         int start = SqlUtil.getPageStart(current -1, rows, 0);
@@ -200,6 +209,8 @@ public class MyToolServiceImpl extends AdminRoleCheckService implements MyToolSe
             for(int i = 0; i < rs.size(); i++){
             }
         }
+
+//        System.out.println("执行结束；List = " + rs.toString() + ", size = "+ rs.size());
         LayuiTableResponseModel responseModel = new LayuiTableResponseModel();
         responseModel.setData(rs).setCount(SqlUtil.getTotalByList(manageRemindMapper.getTotalByUser(EnumUtil.DataTableType.事件提醒.value, user.getId()))).code(0);
         return responseModel;

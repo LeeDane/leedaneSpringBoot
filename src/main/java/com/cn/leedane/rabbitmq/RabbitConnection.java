@@ -46,6 +46,10 @@ public class RabbitConnection {
 	 * @return
 	 */
 	public Connection getConnection(){
+		//添加阻塞的监听
+		connection.addBlockedListener(new MyBlockedListener());
+		//添加挂掉的监听
+		connection.addShutdownListener(new MyShutdownListener());
 		return connection;
 	}
 	

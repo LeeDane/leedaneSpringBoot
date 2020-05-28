@@ -8,29 +8,16 @@ import com.cn.leedane.model.*;
 import com.cn.leedane.service.Oauth2Service;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.UserService;
-import com.cn.leedane.shiro.CustomAuthenticationToken;
 import com.cn.leedane.utils.*;
 import com.google.zxing.WriterException;
 import com.jd.open.api.sdk.JdException;
 import com.taobao.api.ApiException;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.util.UriEncoder;
 
-import javax.annotation.Resource;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.Map;
 
@@ -76,7 +63,7 @@ public class Oauth2ServiceImpl implements Oauth2Service<Oauth2Bean> {
 
 
 		//解析获取明文
-		JSONObject plainObject = CommonUtil.sm4Decrypt(params);
+		JSONObject plainObject = CommonUtil.sm4DecryptByFixedKey(params);
 		Date endTime = DateUtil.stringToDate(plainObject.optString("end"));
 		if(endTime.getTime() < System.currentTimeMillis()){
 			message.put("message","本页面授权链接已经过期，请重新授权。");

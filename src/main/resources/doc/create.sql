@@ -1680,3 +1680,32 @@ CREATE TABLE `t_manage_remind` (
   CONSTRAINT `FK_manage_remind_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FK_manage_remind_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_future_letter  未来的一封信
+-- ----------------------------
+DROP TABLE IF EXISTS `t_future_letter`;
+CREATE TABLE `t_future_letter` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '系统表唯一ID',
+  `status` int(11) DEFAULT '1' NOT NULL COMMENT '状态， 5表示私有状态，当信件到期，如果是公开信件设置为14，否则设置为1',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_user_id` int(11) DEFAULT NULL COMMENT '创建人',
+  `modify_user_id` int(11) DEFAULT NULL COMMENT '修改人',
+  `calla` varchar(50) DEFAULT NULL COMMENT '对收信人的称呼，可以为空',
+  `subject` varchar(100) DEFAULT NULL COMMENT '信件的标题，如：给未来的自己一封信，建议不为空',
+  `content` text NOT NULL COMMENT '信件的内容，大文本字段，不能为空，未到时间的信件将进行加密',
+  `sign` varchar(50) NOT NULL COMMENT '信件的署名, 不能为空，为空将获取用户的ChinaName字段填充',
+  `end` datetime NOT NULL COMMENT '信件到期时间。不能为空',
+  `phone` bigint(11) DEFAULT NULL COMMENT '11位的手机号码，用在到期的时候短信进行提醒用户，可以为空',
+  `phone_msg` varchar(25) DEFAULT NULL COMMENT '用于短信提醒时候的提示信息，为空将使用系统默认的，只有在phone字段不为空的时候才有效',
+  `pwd` varchar(255) NOT NULL COMMENT '未到期信件的密钥，不能为空',
+  `way` varchar(25) NOT NULL COMMENT '事件的方式，如短信，站内通知，邮件等',
+  `email` varchar(50) NOT NULL COMMENT '接收人的电子邮箱，不能为空，可以不是自己的电子邮箱，默认是自己的电子邮箱',
+  `publica` bit(1) DEFAULT b'0' COMMENT '标记是否是公开的，默认是false，不公开',
+  PRIMARY KEY (`id`),
+  KEY `FK_future_letter_create_user` (`create_user_id`),
+  KEY `FK_future_letter_modify_user` (`modify_user_id`),
+  CONSTRAINT `FK_future_letter_create_user` FOREIGN KEY (`create_user_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FK_future_letter_modify_user` FOREIGN KEY (`modify_user_id`) REFERENCES `t_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

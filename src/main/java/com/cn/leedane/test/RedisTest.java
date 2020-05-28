@@ -14,10 +14,9 @@ public class RedisTest extends BaseTest {
 	
 	@Test
 	public void addSet() throws Exception{
-		RedisUtil redisUtil = new RedisUtil();
-		logger.info(redisUtil.addString("mood_1", "hello mood 1"));
-		logger.info(redisUtil.getString("mood_1"));
-		redisUtil.clearAll();
+		logger.info(RedisUtil.getInstance().addString("mood_1", "hello mood 1"));
+		logger.info(RedisUtil.getInstance().getString("mood_1"));
+		RedisUtil.getInstance().clearAll();
 	}
 	
 	@Test

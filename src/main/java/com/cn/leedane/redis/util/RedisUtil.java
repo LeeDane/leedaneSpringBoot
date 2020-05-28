@@ -27,6 +27,8 @@ public class RedisUtil{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	private volatile static RedisUtil redisUtil;
+
+	private RedisUtil(){} //私有化构造方法
 	
 	//Redis服务器IP
 	private static String IP;
@@ -65,11 +67,11 @@ public class RedisUtil{
 				config.setMaxActive(MAX_ACTIVE);
 				config.setMaxIdle(MAX_IDLE);
 				config.setMaxWait(MAX_WAIT);
-				config.setTestOnBorrow(TEST_ON_BORROW);
-				jedisPool = new JedisPool(config, IP, PORT);
-				//jedisPool = new JedisPool(config, IP, PORT, TIMEOUT, AUTH);
-			} catch (Exception e) {
-				e.printStackTrace();
+			config.setTestOnBorrow(TEST_ON_BORROW);
+			jedisPool = new JedisPool(config, IP, PORT);
+			//jedisPool = new JedisPool(config, IP, PORT, TIMEOUT, AUTH);
+		} catch (Exception e) {
+			e.printStackTrace();
 	        }
 		}
    

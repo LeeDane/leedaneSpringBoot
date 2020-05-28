@@ -9,6 +9,11 @@
 </head>
 <body >
 	<div th:fragment="helloManage(tabId)" class="layui-side layui-bg-black">
+		<style type="text/css">
+			dl.layui-nav-child dd{
+				 text-indent: 20px!important;
+			}
+		</style>
 		<div class="layui-side-scroll">
 			<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
 			<ul class="layui-nav layui-nav-tree"  lay-filter="test" >

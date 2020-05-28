@@ -293,7 +293,7 @@ public class StartUpApplication /*implements TransactionManagementConfigurer*/{
         prop.put("org.quartz.scheduler.instanceId", "NON_CLUSTERED");  
         prop.put("org.quartz.scheduler.jobFactory.class", "org.quartz.simpl.SimpleJobFactory"); 
         prop.put("org.quartz.threadPool.class", "org.quartz.simpl.SimpleThreadPool");  
-        prop.put("org.quartz.threadPool.threadCount", "5");  
+        prop.put("org.quartz.threadPool.threadCount", "20");
         return prop;  
     }  
     

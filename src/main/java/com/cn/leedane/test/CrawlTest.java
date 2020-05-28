@@ -218,7 +218,7 @@ public class CrawlTest extends BaseTest {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.error("抓取散文网信息出现异常：Crawl()");
+			logger.error("抓取散文网信息出现异常：Crawl()", e);
 		}
 	}
 	
@@ -296,7 +296,7 @@ public class CrawlTest extends BaseTest {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.error("处理散文网信息出现异常：deal()");
+			logger.error("处理散文网信息出现异常：deal()", e);
 		}
 	}
 	/*public static void main(String[] args) {

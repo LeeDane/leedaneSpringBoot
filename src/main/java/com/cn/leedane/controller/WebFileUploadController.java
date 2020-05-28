@@ -188,7 +188,7 @@ public class WebFileUploadController extends BaseController{
             
         	return message.getMap();
         } catch (Exception e) {
-        	logger.error("上传文件发生异常,错误原因 : " + e.getMessage());
+        	logger.error("上传文件发生异常,错误原因 : ", e);
         }
         message.put("message", EnumUtil.getResponseValue(ResponseCode.服务器处理异常.value));
    		message.put("responseCode", ResponseCode.服务器处理异常.value);
@@ -215,7 +215,7 @@ public class WebFileUploadController extends BaseController{
             message.put("success", true);
             return message.getMap();
         } catch (Exception e) {
-        	logger.error("上传文件发生异常,错误原因 : " + e.getMessage());
+        	logger.error("上传文件发生异常,错误原因 : ", e);
         }
         message.put("message", EnumUtil.getResponseValue(ResponseCode.服务器处理异常.value));
    		message.put("responseCode", ResponseCode.服务器处理异常.value);
@@ -244,7 +244,7 @@ public class WebFileUploadController extends BaseController{
             currentUser.getSession().removeAttribute("qiniu-"+ item);
             return message.getMap();
         } catch (Exception e) {
-        	logger.error("上传文件发生异常,错误原因 : " + e.getMessage());
+        	logger.error("上传文件发生异常,错误原因 : ", e);
         }
         message.put("message", EnumUtil.getResponseValue(ResponseCode.服务器处理异常.value));
    		message.put("responseCode", ResponseCode.服务器处理异常.value);

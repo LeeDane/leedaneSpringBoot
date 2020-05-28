@@ -2,6 +2,10 @@ package com.cn.leedane.notice.model;
 
 import com.cn.leedane.model.IDBean;
 import com.cn.leedane.model.UserBean;
+import com.cn.leedane.utils.EnumUtil;
+import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * 通知的消息
@@ -22,9 +26,9 @@ public class SMS extends IDBean {
 	private UserBean toUser; 
 	
 	/**
-	 * 消息的内容
+	 * 消息的内容参数， key为模板的${} 的名称， value为对应的值
 	 */
-	private String content;
+	private Map<String, Object> params;
 	
 	/**
 	 * 通知的类型
@@ -52,16 +56,16 @@ public class SMS extends IDBean {
 		this.toUser = toUser;
 	}
 
-	public String getContent() {
-		return content;
+	public Map<String, Object> getParams() {
+		return params;
 	}
 
-	public void setContent(String content) {
-		this.content = content;
+	public void setParams(Map<String, Object> params) {
+		this.params = params;
 	}
 
-	public String getType() {
-		return type;
+	public EnumUtil.NoticeSMSType getType() {
+		return EnumUtil.getNoticeSMSType(type);
 	}
 
 	public void setType(String type) {
@@ -78,6 +82,6 @@ public class SMS extends IDBean {
 
 	@Override
 	public String toString() {
-		return "内容："+content+",type："+type+", 发送用户："+ (fromUser != null ? fromUser.getId(): 0) +",目的用户："+(toUser != null ? toUser.getId(): 0)+",expire："+expire;
+		return "内容："+ JSONObject.fromObject(params).toString()+",type："+type+", 发送用户："+ (fromUser != null ? fromUser.getId(): 0) +",目的用户："+(toUser != null ? toUser.getId(): 0)+",expire："+expire;
 	}
 }

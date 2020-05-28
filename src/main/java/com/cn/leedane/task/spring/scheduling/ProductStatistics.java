@@ -85,7 +85,7 @@ public class ProductStatistics extends AbstractScheduling{
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("商品统计的任务出现异常：execute()");
+			logger.error("商品统计的任务出现异常：execute()", e);
 		}
 	}
 

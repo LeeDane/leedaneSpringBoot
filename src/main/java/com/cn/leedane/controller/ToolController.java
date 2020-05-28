@@ -27,6 +27,10 @@ import com.qiniu.util.Auth;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,6 +60,9 @@ public class ToolController extends BaseController{
 
 	@Autowired
 	private ProvinceMapper provinceMapper;
+
+	@Autowired
+	private Scheduler scheduler;
 
 	@Autowired
 	private CityMapper cityMapper;
@@ -384,4 +391,21 @@ public class ToolController extends BaseController{
 		}
 		return new ResponseModel().ok().message("本次已经处理完成");
 	}
+
+	/**
+	 * 读取系统所有的jobs任务
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/tool/jobs", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+	public ResponseModel reminds(HttpServletRequest request) throws SchedulerException {
+		ResponseMap message = new ResponseMap();
+		checkParams(message, request);
+		getMustAdminLoginUserFromShiro(); //必须是管理员才能查看
+		Set<JobKey> jobKeySet = scheduler.getJobKeys(GroupMatcher.anyGroup());
+		List<JobKey> list = new ArrayList<>(jobKeySet);
+		return new ResponseModel().ok().message(list);
+	}
+
+
 }

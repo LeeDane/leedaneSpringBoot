@@ -1,4 +1,4 @@
-package com.cn.leedane.task.spring.scheduling;
+package com.cn.leedane.task.spring.remind;
 
 import com.cn.leedane.exception.ErrorException;
 import com.cn.leedane.handler.OptionHandler;
@@ -13,6 +13,8 @@ import com.cn.leedane.notice.send.INoticeFactory;
 import com.cn.leedane.notice.send.NoticeFactory;
 import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import com.cn.leedane.redis.util.RedisUtil;
+import com.cn.leedane.service.impl.manage.MyToolServiceImpl;
+import com.cn.leedane.task.spring.scheduling.AbstractScheduling;
 import com.cn.leedane.utils.*;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -31,7 +33,8 @@ import java.util.Set;
  * version 1.0
  */
 @Component("againTakeMedicine")
-public class AgainTakeMedicine extends AbstractScheduling{
+@RemindAnnotation(name = "再次提醒吃药", value = "againTakeMedicine")
+public class AgainTakeMedicine extends BaseRemind {
 	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
@@ -70,11 +73,10 @@ public class AgainTakeMedicine extends AbstractScheduling{
 
 			if(way.indexOf("短信") > -1) {
 				//判断当天短信是否用完
-				String smsKey = "sms_remind_" + manageRemindBean.getCreateUserId();
+				String smsKey = MyToolServiceImpl.SMS_REMIND_PREFIX + manageRemindBean.getCreateUserId();
 				int limit = StringUtil.changeObjectToInt(optionHandler.getData("remindSmsLimit", true));
-				RedisUtil redisUtil = new RedisUtil();
 				//超过限制的短信数量
-				if (StringUtil.changeObjectToInt(redisUtil.getString(smsKey)) >= limit) {
+				if (StringUtil.changeObjectToInt(RedisUtil.getInstance().getString(smsKey)) >= limit) {
 					//发送站内通知
 					Notification notification = new Notification();
 					notification.setContent("您当天的短信已经超过限制的" + limit + "条，将不再继续发送短信。明天自行恢复！当前消息名称：" + manageRemindBean.getName());
@@ -96,14 +98,14 @@ public class AgainTakeMedicine extends AbstractScheduling{
 				INoticeFactory factory = new NoticeFactory();
 				success = factory.create(EnumUtil.NoticeType.短信).send(sms);
 				if (success) {
-					redisUtil.incr(smsKey);//自增1
-					redisUtil.expire(smsKey, DateUtil.leftSeconds(new Date(), DateUtil.getTodayEnd()));//设置当天的过期时间
+					RedisUtil.getInstance().incr(smsKey);//自增1
+					RedisUtil.getInstance().expire(smsKey, DateUtil.leftSeconds(new Date(), DateUtil.getTodayEnd()));//设置当天的过期时间
 				}
 			}
 			logger.info("再次提醒吃药的任务执行"+ StringUtil.getSuccessOrNoStr(success));
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("再次提醒吃药的任务出现异常：execute()");
+			logger.error("再次提醒吃药的任务出现异常：execute():", e);
 		}
 	}
 }

@@ -85,7 +85,7 @@ public class Oauth2HtmlController extends BaseController {
 		stateMap.put("type", type < 1 ? EnumUtil.Oauth2Type.登录.value: type); //默认是登录
 		stateMap.put("end", DateUtil.DateToString(new Date(calendar2.getTimeInMillis())));
 		stateMap.put("url", oldUrl);
-		String cipherText = CommonUtil.sm4Encrypt(stateMap);
+		String cipherText = CommonUtil.sm4EncryptByFixedKey(stateMap);
 		if(EnumUtil.Oauth2PlatformType.淘宝.value.equalsIgnoreCase(platform)){
 			redirectUrl = "redirect:https://oauth.taobao.com/authorize?response_type=code&client_id="+ com.cn.leedane.mall.taobao.CommUtil.appkey +"&redirect_uri="+ com.cn.leedane.mall.taobao.CommUtil.getRedirectUrl() +"&state="+ cipherText +"&view=web";
 		}else if(EnumUtil.Oauth2PlatformType.京东.value.equalsIgnoreCase(platform)){
@@ -166,7 +166,7 @@ public class Oauth2HtmlController extends BaseController {
 		JSONObject json = getJsonFromMessage(message);
 		ModelAndView modelAndView = null;
 		String state = JsonUtil.getStringValue(json, "state");
-		JSONObject plainObject = CommonUtil.sm4Decrypt(state);
+		JSONObject plainObject = CommonUtil.sm4DecryptByFixedKey(state);
 		String code = JsonUtil.getStringValue(json, "code");
 		ParameterUnspecificationUtil.checkNullString(state, "平台返回的地址没有state信息，请重新授权或联系管理员处理。");
 		ParameterUnspecificationUtil.checkNullString(code, "平台返回的地址没有code信息，请重新授权或联系管理员处理。");
@@ -211,7 +211,7 @@ public class Oauth2HtmlController extends BaseController {
 				Calendar calendar2 = Calendar.getInstance();
 				calendar2.add(Calendar.MINUTE, 10); //10分钟过期
 				stateMap.put("end", DateUtil.DateToString(new Date(calendar2.getTimeInMillis())));
-				String cipherText = CommonUtil.sm4Encrypt(stateMap);
+				String cipherText = CommonUtil.sm4EncryptByFixedKey(stateMap);
 				modelAndView.addObject("params", cipherText);
 				return modelAndView;
 			}
@@ -227,7 +227,7 @@ public class Oauth2HtmlController extends BaseController {
 			if(oauth2Bean == null){
 				Map<String, Object> error = new HashMap<>();
 				error.put("msg", "授权失败，请稍后重试。");
-				modelAndView = new ModelAndView("redirect:/my/manage/my/third/oauth2/bind/error?message="+ CommonUtil.sm4Encrypt(error));
+				modelAndView = new ModelAndView("redirect:/my/manage/my/third/oauth2/bind/error?message="+ CommonUtil.sm4EncryptByFixedKey(error));
 				return modelAndView;
 			}
 			//进行授权记录保存
@@ -243,7 +243,7 @@ public class Oauth2HtmlController extends BaseController {
 			}catch (DuplicateKeyException e){
 				Map<String, Object> error = new HashMap<>();
 				error.put("msg", "您在"+ JsonUtil.getStringValue(plainObject, "platform") +"平台已经绑定过，请切换账号或直接登录以前的账号解绑再操作。");
-				modelAndView = new ModelAndView("redirect:/my/manage/my/third/oauth2/bind/error?message="+ CommonUtil.sm4Encrypt(error));
+				modelAndView = new ModelAndView("redirect:/my/manage/my/third/oauth2/bind/error?message="+ CommonUtil.sm4EncryptByFixedKey(error));
 				return modelAndView;
 			}
 			if(res > 0){
@@ -253,7 +253,7 @@ public class Oauth2HtmlController extends BaseController {
 			}
 			Map<String, Object> error = new HashMap<>();
 			error.put("msg", "绑定失败，请稍后重试！");
-			modelAndView = new ModelAndView("redirect:/my/manage/my/third/oauth2/bind/error?message="+ CommonUtil.sm4Encrypt(error));
+			modelAndView = new ModelAndView("redirect:/my/manage/my/third/oauth2/bind/error?message="+ CommonUtil.sm4EncryptByFixedKey(error));
 			return modelAndView;
 
 		}

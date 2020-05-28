@@ -201,7 +201,7 @@ public class GalleryTest extends BaseTest {
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					logger.error("加入图库失败，失败原因报错------>"+url);
+					logger.error("加入图库失败，失败原因报错------>"+url, e);
 					continue;
 				}
 				Thread.sleep(500);
@@ -299,7 +299,7 @@ public class GalleryTest extends BaseTest {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				logger.error("加入图库失败，失败原因报错------>"+url);
+				logger.error("加入图库失败，失败原因报错------>"+url, e);
 				continue;
 			}
 			Thread.sleep(500);

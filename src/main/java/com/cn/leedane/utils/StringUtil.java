@@ -369,7 +369,7 @@ public class StringUtil {
 			if (obj != null)
 				return Integer.parseInt(String.valueOf(obj));
 		} catch (Exception e) {
-			logger.error(obj + "转换成int失败");
+			logger.error(obj + "转换成int失败", e);
 		}
 		return 0;
 	}
@@ -385,7 +385,7 @@ public class StringUtil {
 			if (obj != null)
 				return Float.parseFloat(String.valueOf(obj));
 		} catch (Exception e) {
-			logger.error(obj + "转换成long失败");
+			logger.error(obj + "转换成long失败", e);
 		}
 		return 0f;
 	}
@@ -401,7 +401,7 @@ public class StringUtil {
 			if (obj != null)
 				return Double.parseDouble(String.valueOf(obj));
 		} catch (Exception e) {
-			logger.error(obj + "转换成Double失败");
+			logger.error(obj + "转换成Double失败", e);
 		}
 		return 0d;
 	}
@@ -427,7 +427,7 @@ public class StringUtil {
 			if (obj != null)
 				return Long.parseLong(String.valueOf(obj));
 		} catch (Exception e) {
-			logger.error(obj + "转换成long失败");
+			logger.error(obj + "转换成long失败", e);
 		}
 		return 0;
 	}
@@ -443,7 +443,7 @@ public class StringUtil {
 			if (obj != null)
 				return Boolean.parseBoolean(String.valueOf(obj));
 		} catch (Exception e) {
-			logger.error(obj + "转换成boolean失败");
+			logger.error(obj + "转换成boolean失败", e);
 		}
 		return false;
 	}
@@ -502,7 +502,7 @@ public class StringUtil {
 		try {
 			result = Integer.parseInt(origin);
 		} catch (Exception e) {
-			logger.error("字符串转化整形数字失败，返回-1");
+			logger.error("字符串转化整形数字失败，返回-1", e);
 		}
 		return result;
 	}
@@ -520,7 +520,7 @@ public class StringUtil {
 		try {
 			defaultValue = Integer.parseInt(origin);
 		} catch (Exception e) {
-			logger.error(origin + "字符串转化整形数字失败，返回默认值" + defaultValue);
+			logger.error(origin + "字符串转化整形数字失败，返回默认值" + defaultValue, e);
 		}
 		return defaultValue;
 	}

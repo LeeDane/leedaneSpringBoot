@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>写信</title>
+	<link rel="shortcut icon" type="image/icon" th:href="@{/page/images/favicon_my.ico}" media="screen"/>
+	<link th:if="${not isDebug}" rel="stylesheet" href="https://www.layuicdn.com/layui-v2.5.4/css/layui.css"  media="all" />
+	<link th:if="${isDebug}" rel="stylesheet" href="/page/other/layui-v2.5.4/css/layui.css"  media="all" />
+	<link th:if="${not isDebug}" rel="stylesheet" th:href="@{/page/css/event-manage.min.css}" />
+	<link th:if="${isDebug}" rel="stylesheet" th:href="@{/page/css/event-manage.css}" />
+	<div th:include="manage/common-js :: manageJs">what?</div>
+	<style type="text/css">
+		.layui-card-body:hover{
+			background-color: #F5F5F5;
+		}
+
+		#path-breadcrumb a{
+			cursor: pointer !important;
+		}
+
+		@media screen and (min-width: 1200px){
+			.layui-card-body .layui-container {
+				width: 1540px !important;
+				cursor: pointer !important;
+			}
+			.layui-card-header .layui-container {
+				width: 1540px !important;
+			}
+		}
+
+		body .delete-confirm-btn .layui-layer-btn0{
+			border-color: #E6E3E6;
+			background-color: #FF5722;
+		}
+
+		body .update-confirm-btn .layui-layer-btn0{
+			background-color: #FFB800;
+		}
+		.layui-card .layui-form-item{
+			margin-bottom: 0!important
+		}
+		.layui-card .layui-form-item .layui-form-checkbox{
+			margin-top: 0!important
+		}
+	</style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	<div th:replace="~{manage/common-head :: helloManage(${tabId})} "></div>
+	<div th:replace="~{manage/common-left :: helloManage(${tabId})} "></div>
+
+	<div class="layui-body">
+		<hr>
+		<h2 style="margin-left: 10px;">给未来的一封信<span id="layui-badge-dot-text"><span id="layui-badge-dot" class="layui-badge-dot" style="margin-left: 8px;"></span></span></h2>
+		<hr>
+		<div style="margin-left: 10px;">
+			<form class="layui-form" action="">
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">称呼</label>
+						<div class="layui-input-inline">
+							<input id="calla" type="text" th:value="${user.chinaName}" name="calla" autocomplete="off" placeholder="对收信人的称呼" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">送件日期</label>
+						<div class="layui-input-inline">
+							<input type="text" name="end" lay-verify="required|datetime" autocomplete="off" class="layui-input" id="end-date" placeholder="选择送件日期"/>
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+						<label class="layui-form-label">标题</label>
+						<div class="layui-input-block" style="width: 40%;">
+							<input type="text" name="subject" autocomplete="off" placeholder="信件的标题，建议不为空" class="layui-input" />
+						</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">内容</label>
+					<div class="layui-input-block" style="width: 40%;" id="contentContainer">
+						<textarea id="content" name="content"></textarea>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">签名</label>
+						<div class="layui-input-inline">
+							<input type="text" th:value="${user.chinaName}" name="sign" lay-verify="required" autocomplete="off" placeholder="请输入发送人的签名" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">到期公开</label>
+						<div class="layui-input-inline">
+							<input type="checkbox" name="publica" lay-skin="switch" lay-text="ON|OFF" value="true">
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label" id="way">通知方式</label>
+						<div class="layui-input-block">
+							<input type="checkbox" name="wayNotify" lay-filter="way" title="站内信" checked="checked"/>
+							<input type="checkbox" name="waySms" lay-filter="way" title="短信"/>
+							<input type="checkbox" name="wayEmail" lay-filter="way" title="邮件"/>
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item" id="phoneContainer" style="display: none;">
+					<div class="layui-inline">
+						<label class="layui-form-label">手机号码</label>
+						<div class="layui-input-inline">
+							<input id="phone" type="text" th:value="${user.mobilePhone}" name="phone" autocomplete="off" placeholder="请输入接收人的手机号码" class="layui-input">
+						</div>
+					</div>
+					<!--<div class="layui-inline">
+						<label class="layui-form-label">短信信息</label>
+						<div class="layui-input-inline">
+							<input type="text" name="phone_msg" autocomplete="off" placeholder="请输入短信提醒信息" class="layui-input">
+						</div>
+					</div>-->
+				</div>
+				<div class="layui-form-item" id="emailContainer" style="display: none;">
+					<div class="layui-inline">
+						<label class="layui-form-label">电子邮箱</label>
+						<div class="layui-input-inline">
+							<input id="email" type="text" th:value="${user.email}" name="email" autocomplete="off" placeholder="请输入接收人的电子邮箱" class="layui-input">
+						</div>
+					</div>
+				</div>
+				<hr/>
+				<div class="layui-form-item">
+					<div class="layui-input-block">
+						<button type="submit" class="layui-btn layui-btn-radius" lay-submit="" lay-filter="add-letter">添&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<hr>
+	</div>
+
+	<div class="layui-footer">
+		<!-- 底部固定区域 -->
+		<div th:include="common-bottom :: bottom">bottom?</div>
+	</div>
+</div>
+</body>
+<script th:if="${not isDebug}" th:src="@{/page/js/page.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/page.js}" type="text/javascript"></script>
+<script th:if="${not isDebug}" th:src="@{/page/js/manage/letter/public.min.js}" type="text/javascript"></script>
+<script th:if="${isDebug}" th:src="@{/page/js/manage/letter/public.js}" type="text/javascript"></script>
+<script></script>
+</html>

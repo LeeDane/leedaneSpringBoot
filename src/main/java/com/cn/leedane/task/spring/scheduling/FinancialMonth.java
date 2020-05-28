@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.cn.leedane.handler.UserHandler;
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import org.apache.log4j.Logger;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +121,7 @@ class SingleTask implements Callable<Boolean>{
 			report.setUser(mUser);
 			
 			if(CollectionUtil.isNotEmpty(financialBeans)){
-				String detailLink = "http://onlylove.top/fn";
+				String detailLink = LeedanePropertiesConfig.getSystemUrl() + "/fn";
 				float incomeTotal = 0;
 				float spendTotal = 0;
 				int incomeNum = 0;

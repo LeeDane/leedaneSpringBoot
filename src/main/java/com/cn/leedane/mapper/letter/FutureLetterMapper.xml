@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.cn.leedane.mapper.letter.FutureLetterMapper">
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
+	<select id="list" resultType="java.util.Map">
+		select f.id, f.status, f.create_user_id, date_format(f.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		, f.calla, f.subject, f.sign, date_format(f.end,'%Y-%m-%d %H:%i:%s') end, f.phone, f.email
+		, f.publica, f.way
+		from t_future_letter f where f.create_user_id = #{userId} order by f.id desc limit #{start},#{limit}
+	</select>
+
+	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
+	<select id="all" resultMap="objectBean">
+		select f.id, f.status, f.create_user_id, date_format(f.create_time,'%Y-%m-%d %H:%i:%s') create_time
+		, f.calla, f.subject, f.sign, date_format(f.end,'%Y-%m-%d %H:%i:%s') end, f.phone, f.email
+		, f.publica, f.way
+		from t_future_letter f where f.status = 5
+	</select>
+
+	<resultMap type="com.cn.leedane.model.letter.FutureLetterBean" id="objectBean">
+		<id property="id" column="id"/>
+		<result property="status" column="status"/>
+		<result property="createUserId" column="create_user_id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="modifyUserId" column="modify_user_id"/>
+		<result property="modifyTime" column="modify_time"/>
+		<result property="calla" column="calla"/>
+		<result property="subject" column="subject"/>
+		<result property="content" column="content"/>
+		<result property="sign" column="sign"/>
+		<result property="phone" column="phone"/>
+		<result property="end" column="end"/>
+		<result property="email" column="email"/>
+		<result property="way" column="way"/>
+		<result property="publica" column="publica"/>
+	</resultMap>
+</mapper>

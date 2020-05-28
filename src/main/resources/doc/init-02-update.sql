@@ -60,3 +60,6 @@ alter table t_option add constraint t_option_in_unique UNIQUE(option_key, versio
 
 /*添加imei码和localId、add_day的唯一性约束，避免用户多次提交*/
 alter table t_financial add constraint imei_local_id_unique UNIQUE(imei, local_id, add_day);
+
+/*修改事件提醒表，添加content字段*/
+alter table t_manage_remind add COLUMN `content` varchar(255) DEFAULT null;

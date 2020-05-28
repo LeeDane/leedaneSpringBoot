@@ -10,14 +10,14 @@
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
 	<select id="reminds" resultType="java.util.Map">
 		select r.id, r.status, r.create_user_id, date_format(r.create_time,'%Y-%m-%d %H:%i:%s') create_time
-		, r.name, r.cycle, r.cron, date_format(r.end,'%Y-%m-%d %H:%i:%s') end, r.type, r.way, r.time
+		, r.name, r.cycle, r.cron, date_format(r.end,'%Y-%m-%d %H:%i:%s') end, r.type, r.way, r.time, r.content
 		from t_manage_remind r where r.create_user_id = #{userId} and r.status = 1 order by r.id desc limit #{start},#{limit}
 	</select>
 
 	<!-- mybsits_config中配置的alias类别名,也可直接配置resultType为类路劲 -->
 	<select id="all" resultMap="objectBean">
 		select r.id, r.status, r.create_user_id, date_format(r.create_time,'%Y-%m-%d %H:%i:%s') create_time
-		, r.name, r.cycle, r.cron, date_format(r.end,'%Y-%m-%d %H:%i:%s') end, r.type, r.way, r.time
+		, r.name, r.cycle, r.cron, date_format(r.end,'%Y-%m-%d %H:%i:%s') end, r.type, r.way, r.time, r.content
 		from t_manage_remind r where r.status = 1
 	</select>
 
@@ -35,5 +35,6 @@
 		<result property="type" column="type"/>
 		<result property="way" column="way"/>
 		<result property="time" column="time"/>
+		<result property="content" column="content"/>
 	</resultMap>
 </mapper>

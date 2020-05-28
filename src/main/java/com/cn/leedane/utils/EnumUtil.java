@@ -93,7 +93,7 @@ public class EnumUtil {
 		任务("t_job_manage"), 贡献值("t_circle_contribution"),圈子("t_circle"), 圈子成员("t_circle_member"), 帖子("t_circle_post"), 
 		不存在的表("t_inexistence"), 分类("t_category"), 商店("t_mall_shop"), 商店商品("t_mall_product"), 商品订单("t_mall_order"),
 		商品心愿单("t_mall_wish"), 大事件("t_event"), 选项配置("t_option"), 推广位管理("t_mall_promotion_seat"), 黑名单("t_manage_black"),
-		事件提醒("t_manage_remind");
+		事件提醒("t_manage_remind"), 未来信件("t_future_letter");
 	
 		private DataTableType(String value) {
 			this.value = value;
@@ -931,11 +931,45 @@ public class EnumUtil {
 		ACTIVITY_VALIDATION("activity"), //活动确认验证码
 		BIND_PHONE_VALIDATION("bindPhone"), //手机号码绑定验证码
 		REMIND_TAKE_MEDICINE("takeMedicine"), //提醒吃药
-		AGAIN_REMIND_TAKE_MEDICINE("againTakeMedicine"); //再次提醒吃药
+		AGAIN_REMIND_TAKE_MEDICINE("againTakeMedicine"), //再次提醒吃药
+		MY_ATTENTION("myAttention"), //我的关注
+		FUTURE_LETTER("futureLetter"); //
 
 		public String value;
 		private NoticeSMSType(String value){
 			this.value = value;
 		}
+
+		public String getValue() {
+			return value;
+		}
+	}
+
+	/**
+	 * 获取NoticeSMSType对象
+	 * @param type
+	 * @return
+	 */
+	public static NoticeSMSType getNoticeSMSType(String type){
+		for(NoticeSMSType ns: NoticeSMSType.values()){
+			if(ns.value.equals(type)){
+				return ns;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 根据NoticeSMSType对象获取字符
+	 * @param type
+	 * @return
+	 */
+	public static String getNoticeSMSTypeValue(NoticeSMSType type){
+		for(NoticeSMSType nt: NoticeSMSType.values()){
+			if(nt.value.equalsIgnoreCase(type.value)){
+				return nt.name();
+			}
+		}
+		return "";
 	}
 }

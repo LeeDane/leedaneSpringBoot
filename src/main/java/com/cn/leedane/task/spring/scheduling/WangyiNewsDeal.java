@@ -84,7 +84,7 @@ public class WangyiNewsDeal extends AbstractScheduling{
 					try{
 						wangyi.execute();
 					}catch(IOException e){
-						logger.error("处理网易新闻信息出现异常：deal()+url="+bean.getUrl() +e.toString());
+						logger.error("处理网易新闻信息出现异常：deal()+url="+bean.getUrl(), e);
 					}
 					
 					if( wangyi != null && StringUtil.isNotNull(wangyi.getContent()) && StringUtil.isNotNull(wangyi.getTitle())){
@@ -137,7 +137,7 @@ public class WangyiNewsDeal extends AbstractScheduling{
 				crawlMapper.update(bean);
 			}//for循环到此结束
 		} catch (Exception e) {
-			logger.error("处理网易新闻信息出现异常：deal()"+ e.getMessage());
+			logger.error("处理网易新闻信息出现异常：deal()", e);
 		}
 	}
 }

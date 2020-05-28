@@ -762,11 +762,11 @@ function buildEditUserinfo(){
 					'</div>'+
 					'<div class="form-group">'+
 					  '<label for="mobile_phone">手机号码</label>'+
-					  '<input type="number" class="form-control" name="mobile_phone" placeholder="请输入11位的手机号码" value="'+changeNotNullString(userinfo.mobile_phone)+'">'+
+					  '<input type="number" class="form-control" name="mobile_phone" placeholder="请输入11位的手机号码" value="'+changeNotNullString(userinfo.mobile_phone)+'" disabled>'+
 					'</div>'+
 					'<div class="form-group">'+
 					  '<label for="email">邮箱</label>'+
-					  '<input type="email" class="form-control" name="email" placeholder="请输入电子邮箱地址" value="'+changeNotNullString(userinfo.email)+'">'+
+					  '<input type="email" class="form-control" name="email" placeholder="请输入电子邮箱地址" value="'+changeNotNullString(userinfo.email)+'" disabled>'+
 					'</div>'+
 					'<div class="form-group">'+
 					  '<label for="education_background">学历</label>'+

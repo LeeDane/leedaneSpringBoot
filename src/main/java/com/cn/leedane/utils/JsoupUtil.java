@@ -189,7 +189,7 @@ public class JsoupUtil {
 	
 	/**
 	 * 将map转化成html标签的style属性
-	 * @param style
+	 * @param mapStyles
 	 * @return
 	 */
 	public static String mapToStyle(Map<String, String> mapStyles){

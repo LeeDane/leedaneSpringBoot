@@ -205,7 +205,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 			message.put("message", exception.getMessage());
 			message.put("responseCode", ResponseCode.测试角色权限受限异常.value);
 		}else if(exception instanceof MustLoginException){
-			logger.error("必须登录才能使用该功能的异常", exception);
+			logger.error("必须登录才能使用该功能的异常, 此处不打印异常信息");
 			if(isPageRequest)
 				return new ModelAndView("redirect:/lg?errorcode="+ EnumUtil.ResponseCode.请先登录.value +"&ref="+ CommonUtil.getFullPath(request) +"&t="+ UUID.randomUUID().toString());
 			message.put("message", exception.getMessage());

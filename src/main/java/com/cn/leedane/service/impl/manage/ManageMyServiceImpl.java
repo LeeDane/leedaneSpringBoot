@@ -9,7 +9,6 @@ import com.cn.leedane.model.*;
 import com.cn.leedane.notice.model.Email;
 import com.cn.leedane.notice.send.INoticeFactory;
 import com.cn.leedane.notice.send.NoticeFactory;
-import com.cn.leedane.notice.send.SmsNotice;
 import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import com.cn.leedane.service.OperateLogService;
 import com.cn.leedane.service.manage.ManageMyService;
@@ -31,7 +30,6 @@ import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -54,9 +52,6 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 
 	@Autowired
 	private OperateLogMapper operateLogMapper;
-
-	@Autowired
-	private SmsNotice smsNotice;
 
 	@Autowired
 	private UserMapper userMapper;
@@ -125,7 +120,7 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 		params.put("end", end);
 		params.put("email", email);
 		params.put("uid", user.getId());
-		String cipherText = CommonUtil.sm4Encrypt(params);
+		String cipherText = CommonUtil.sm4EncryptByFixedKey(params);
 
 		INoticeFactory factory = new NoticeFactory();
 		Email emailBean = new Email();
@@ -172,8 +167,9 @@ public class ManageMyServiceImpl implements ManageMyService<IDBean> {
 			return new ResponseModel().error().message("该页面过期, 请刷新当前页面，重新操作！").code(EnumUtil.ResponseCode.RSA加密解密异常.value);
 		}
 
-		if(!smsNotice.check(phone, code, type))
-			return new ResponseModel().error().message("短信验证码校验失败，请检查是否正确或者过期。");
+
+		/*if(!smsNotice.check(phone, code, type))
+			return new ResponseModel().error().message("短信验证码校验失败，请检查是否正确或者过期。");*/
 
 		//这里必须要重新获取一份UserBean对象，不然直接修改参数user会导致shiro里面的user有值，Java是值传递
 		UserBean updateUser = userMapper.findById(UserBean.class, user.getId());

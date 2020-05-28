@@ -54,7 +54,7 @@
 	<div class="layui-body">
 		<blockquote class="layui-elem-quote">
 			<h2><span id="layui-badge-dot-text">事件提醒<span id="layui-badge-dot" class="layui-badge-dot" style="margin-left: 8px;"></span></span></h2>
-			<h3>为了防止短信被滥用以及减轻短信接口的费用，单个用户每天最多限制发送<span th:utext="${limit}"></span>条提醒短信，多出的部分将无法发送。</h3>
+			<h3>为了防止短信被滥用以及较少短信接口的费用压力，单个用户每天最多限制发送<span th:utext="${limit}"></span>条提醒短信，多出的部分将无法发送。今天还剩余<span th:utext="${left}" style="color: #ff0000;"></span>条</h3>
 		</blockquote>
 		<hr>
 		<div style="margin-left: 10px;">
@@ -99,14 +99,20 @@
 					</div>
 					<div class="layui-inline">
 						<label class="layui-form-label" id="task-way">通知方式</label>
-						<div class="layui-input-block">
-							<input type="checkbox" name="waySms" title="短信" th:disabled="!${sms}" th:checked="${sms}"/>
+						<div class="layui-input-block" id="layui-badge-task-way">
 							<input type="checkbox" name="wayNotify" title="站内信" checked=""/>
+							<input type="checkbox" name="waySms" title="短信" th:disabled="!${sms}" th:checked="${sms}"/>
 							<input type="checkbox" name="wayEmail" title="邮件" th:disabled="!${email}" th:checked="${email}" />
 						</div>
 					</div>
 				</div>
 				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">消息内容</label>
+						<div class="layui-input-inline">
+							<input type="text" name="content" lay-verify="title" autocomplete="off" placeholder="为空将用名称代替" class="layui-input">
+						</div>
+					</div>
 					<div class="layui-inline">
 						<div class="layui-input-inline">
 							<button type="submit" class="layui-btn layui-btn-radius" lay-submit="" lay-filter="add-task">添&nbsp;&nbsp;&nbsp;加</button>

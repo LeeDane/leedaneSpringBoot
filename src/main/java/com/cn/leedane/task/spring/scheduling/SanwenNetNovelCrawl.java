@@ -62,7 +62,7 @@ public class SanwenNetNovelCrawl extends AbstractScheduling{
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.error("抓取散文网短篇小说信息出现异常：Crawl()");
+			logger.error("抓取散文网短篇小说信息出现异常：Crawl()", e);
 		}
 	}
 }

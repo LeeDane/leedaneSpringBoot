@@ -11,7 +11,7 @@ layui.use(['layedit', 'form'], function(){
         //校验邮箱的格式
         /*if(!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(dataField.field.email)){
             layer.tips("请先填写正确的电子邮箱！", "#email",{tips:[3,'#FFB800'], time: 3000});
-            return;
+            return false;
         }*/
         var loadi = layer.load(2, {
             shade: [0.1,'#fff'] //0.1透明度的白色背景

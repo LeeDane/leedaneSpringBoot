@@ -61,7 +61,7 @@ public class SanwenNetCrawl extends AbstractScheduling{
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.error("抓取散文网信息出现异常：Crawl()");
+			logger.error("抓取散文网信息出现异常：Crawl()", e);
 		}
 	}
 }

@@ -72,7 +72,7 @@ public class ScanLoginWebSocket {
      */
     @OnError
     public void onError(Session session, Throwable error) {
-    	logger.error("发生错误");
+    	logger.error("发生错误", error);
         error.printStackTrace();
     }
 

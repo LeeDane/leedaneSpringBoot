@@ -65,7 +65,7 @@ public class WangyiNewsCrawl extends AbstractScheduling{
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.error("抓取网易新闻信息出现异常：Crawl()");
+			logger.error("抓取网易新闻信息出现异常：Crawl()", e);
 		}
 	}
 }

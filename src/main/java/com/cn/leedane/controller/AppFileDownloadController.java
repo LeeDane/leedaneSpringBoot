@@ -109,7 +109,7 @@ public class AppFileDownloadController extends BaseController{
             logger.info("下载完成");
             return null;
         } catch (Exception e) {
-        	logger.error("下载文件发生异常,错误原因 : " + e.toString());
+        	logger.error("下载文件发生异常,错误原因 : " , e);
         }
         
         long endTime = System.currentTimeMillis();

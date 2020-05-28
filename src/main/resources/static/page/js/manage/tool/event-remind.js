@@ -34,6 +34,7 @@ layui.use(['element', 'util', 'form', 'laydate','table'], function(){
             field:'id', title:'ID', width:80, unresize: true, sort: true}
             ,{field:'name', title:'名称', width:150}
             ,{field:'type', title:'类型', width:150}
+            ,{field:'content', title:'内容', width:150}
             ,{field:'time', title:'执行时间', width:90}
             ,{field:'cycle', title:'执行周期', width:90}
             ,{field:'cron', title:'表达式', width:120}
@@ -46,7 +47,13 @@ layui.use(['element', 'util', 'form', 'laydate','table'], function(){
 
     //鼠标悬停提示特效
     $("#layui-badge-dot-text").hover(function() {
-        openTipMsg("#layui-badge-dot-text", "1、m没发送一条短信，平台将支付0.045元，请合理使用该功能.<br/>2、请合法使用，不要发送非法信息.<br/>3、如果使用过程中有什么问题(包括侵权、涉案、取证等)，请及时联系管理员处理。感谢你的合作。<br/>", 2);
+        openTipMsg("#layui-badge-dot-text", "1、每发送一条短信，平台将自费支付0.045元，请合理使用该功能.<br/>2、请合法使用，不要发送非法信息.<br/>3、如果使用过程中有什么问题(包括侵权、涉案、取证等)，请及时联系管理员处理。感谢您的合作。<br/>", 2);
+    }, function() {
+        layer.close(subtips);
+    });
+
+    $("#layui-badge-task-way").hover(function() {
+        openTipMsg("#layui-badge-task-way", "1、如果短信无法选择，请核查是否绑定手机号码.<br/>2、如果邮件无法选择，请核查是否绑定电子邮箱.<br/>3、其他问题请联系管理员反馈。<br/>", 2);
     }, function() {
         layer.close(subtips);
     });
@@ -96,7 +103,8 @@ layui.use(['element', 'util', 'form', 'laydate','table'], function(){
                         cycle: dataField.field.cycle,
                         type: dataField.field.type,
                         end: dataField.field.end,
-                        way: way};
+                        way: way,
+                        content: isEmpty(dataField.field.content) ? dataField.field.name: dataField.field.content};
 
         var loadi = layer.load(2, {
             shade: [0.1,'#fff'] //0.1透明度的白色背景

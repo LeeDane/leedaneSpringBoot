@@ -5,12 +5,17 @@ import com.cn.leedane.cache.SystemCache;
 import com.cn.leedane.mapper.BaseMapper;
 import com.cn.leedane.mapper.ManageRemindMapper;
 import com.cn.leedane.mapper.circle.CircleMapper;
+import com.cn.leedane.mapper.letter.FutureLetterMapper;
 import com.cn.leedane.model.JobManageBean;
 import com.cn.leedane.model.ManageRemindBean;
 import com.cn.leedane.model.RecordTimeBean;
+import com.cn.leedane.model.letter.FutureLetterBean;
 import com.cn.leedane.rabbitmq.RecieveMessage;
 import com.cn.leedane.rabbitmq.recieve.*;
+import com.cn.leedane.redis.config.LeedanePropertiesConfig;
 import com.cn.leedane.redis.util.RedisUtil;
+import com.cn.leedane.service.impl.manage.FutureLetterServiceImpl;
+import com.cn.leedane.service.impl.manage.MyToolServiceImpl;
 import com.cn.leedane.springboot.SpringUtil;
 import com.cn.leedane.task.spring.QuartzJobFactory;
 import com.cn.leedane.utils.*;
@@ -73,14 +78,20 @@ public class InitCacheData {
 
 	@Autowired
 	private ManageRemindMapper manageRemindMapper;
-	
+
+	@Autowired
+	private FutureLetterMapper futureLetterMapper;
+
 	public void init(){
 
 		checdRidesOpen();//检查redis服务器有没有打开
 		initCache();
 		loadOptionTable(); //加载选项表中的数据
 		startJob(); //加载定时任务
-		startEventRemindJob(); //加载事件提醒任务
+		if(!LeedanePropertiesConfig.newInstance().isDebug())
+			startEventRemindJob(); //加载事件提醒任务
+
+		startFutureLetterJob(); //加载未来信件任务
 		//getApplicationData(); //获取系统上下文的全局数据
 		new OptionUtil();//加载选项到内存中
 		
@@ -475,20 +486,12 @@ public class InitCacheData {
 			List<ManageRemindBean> results = manageRemindMapper.all();
 			if(CollectionUtil.isNotEmpty(results)){
 				for(ManageRemindBean remindBean: results){
-					String className = null;
-					switch (remindBean.getType()){
-						case "takeMedicine":
-							className = "takeMedicine";
-							break;
-						case "againTakeMedicine":
-							className = "againTakeMedicine";
-							break;
-					}
 					JobManageBean jobManageBean = new JobManageBean();
-					jobManageBean.setClassName(className);
+					jobManageBean.setClassName(remindBean.getType());
 					jobManageBean.setCronExpression(remindBean.getCron());
-					jobManageBean.setJobGroup("remind_"+ remindBean.getCreateUserId());
-					jobManageBean.setJobName("remind_job_"+ remindBean.getId());
+					jobManageBean.setJobGroup(MyToolServiceImpl.REMIND_JOB_GROUP_PREFIX+ remindBean.getCreateUserId());
+					jobManageBean.setJobName(MyToolServiceImpl.REMIND_JOB_NAME_PREFIX + remindBean.getId());
+					jobManageBean.setJobParams("id="+ remindBean.getId());
 					//启动任务
 					jobHandler.start(jobManageBean);
 				}
@@ -498,6 +501,34 @@ public class InitCacheData {
 			//logger.info("---->"+systemCache.getCache("page-size"));
 		} catch (Exception ex) {
 			logger.error("初始化读取T_MANAGE_REMIND表出现异常");
+			ex.printStackTrace();
+		}
+	}
+
+	/**
+	 * 加载未来信件任务到任务队列中
+	 */
+	private void startFutureLetterJob(){
+		try {
+			long begin = System.currentTimeMillis();
+			List<FutureLetterBean> results = futureLetterMapper.all();
+			if(CollectionUtil.isNotEmpty(results)){
+				for(FutureLetterBean futureLetter: results){
+					JobManageBean jobManageBean = new JobManageBean();
+					jobManageBean.setClassName("letterExpire");
+					jobManageBean.setCronExpression(CronUtil.time(futureLetter.getEnd()));
+					jobManageBean.setJobGroup(FutureLetterServiceImpl.LETTER_EXPIRE_JOB_GROUP_PREFIX+ futureLetter.getCreateUserId());
+					jobManageBean.setJobName(FutureLetterServiceImpl.LETTER_EXPIRE_JOB_NAME_PREFIX + futureLetter.getId());
+					jobManageBean.setJobParams("id="+ futureLetter.getId());
+					//启动任务
+					jobHandler.start(jobManageBean);
+				}
+			}
+			long end = System.currentTimeMillis();
+			logger.warn("加载未来信件任务表数据进缓存中结束，共计耗时："+(end - begin) +"ms");
+			//logger.info("---->"+systemCache.getCache("page-size"));
+		} catch (Exception ex) {
+			logger.error("初始化读取T_FUTURE_LETTER表出现异常");
 			ex.printStackTrace();
 		}
 	}
