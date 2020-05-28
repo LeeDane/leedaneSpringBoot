@@ -22,7 +22,7 @@ public class MyAttentionSmsNotice extends BaseSmsNotice {
     private Logger logger = Logger.getLogger(getClass());
 
     public MyAttentionSmsNotice(SMS sms) throws NoticeException {
-        super(sms, "LeeDane", "SMS_124400087");
+        super(sms, "活动验证", "SMS_124400087");
     }
 
     @Override

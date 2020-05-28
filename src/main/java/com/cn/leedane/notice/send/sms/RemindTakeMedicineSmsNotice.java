@@ -23,7 +23,7 @@ public class RemindTakeMedicineSmsNotice extends BaseSmsNotice {
     private Logger logger = Logger.getLogger(getClass());
 
     public RemindTakeMedicineSmsNotice(SMS sms) throws NoticeException {
-        super(sms, "LeeDane", "SMS_190281153");
+        super(sms, "活动验证", "SMS_190281153");
     }
 
     @Override
