@@ -37,7 +37,7 @@
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.2.0",
-    "harp": "^0.23.0",
+    "harp": "^0.40.2",
     "headr": "0.0.4",
     "jasmine": "^2.5.3",
     "jasmine-core": "^2.5.2",
